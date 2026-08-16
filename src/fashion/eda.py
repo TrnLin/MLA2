@@ -16,6 +16,7 @@ class SchemaAudit:
     row_count: int
     physical_columns: tuple[str, ...]
     phantom_columns: tuple[str, ...]
+    phantom_nonempty_counts: dict[str, int]
     duplicate_ids: tuple[str, ...]
     blank_counts: dict[str, int]
     literal_na_usage_count: int
@@ -46,8 +47,13 @@ def audit_csv(path: Path) -> tuple[pd.DataFrame, SchemaAudit]:
         column: int(frame[column].astype("string").str.strip().ne("").sum())
         for column in phantom
     }
-    if any(nonempty_phantoms.values()):
-        raise ValueError(f"Trailing columns unexpectedly contain data: {nonempty_phantoms}")
+    display_columns = ["productDisplayName", *phantom]
+    frame["productDisplayName"] = frame[display_columns].apply(
+        lambda row: ",".join(
+            str(value) for value in row if str(value).strip()
+        ),
+        axis=1,
+    )
 
     duplicate_ids = tuple(
         sorted(frame.loc[frame["id"].duplicated(keep=False), "id"].astype(str).unique())
@@ -61,6 +67,7 @@ def audit_csv(path: Path) -> tuple[pd.DataFrame, SchemaAudit]:
         row_count=len(frame),
         physical_columns=tuple(frame.columns),
         phantom_columns=phantom,
+        phantom_nonempty_counts=nonempty_phantoms,
         duplicate_ids=duplicate_ids,
         blank_counts=blank_counts,
         literal_na_usage_count=int(named["usage"].eq("NA").sum()),
