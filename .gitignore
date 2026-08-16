@@ -1,0 +1,19 @@
+.DS_Store
+.idea/
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Supplied dataset and generated processed data must never enter Git.
+data/
+
+# Local scratch material and generated model weights.
+tmp/
+models/*.pt
+models/*.pth
+models/*.ckpt
+
+# Generated experiment registry; report-selected figures remain trackable.
+results/runs.csv

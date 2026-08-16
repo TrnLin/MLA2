@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fashion-intelligence"
+version = "0.1.0"
+description = "COSC2753 Assignment 2 fashion classification and visual search"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas",
+    "numpy",
+    "matplotlib",
+    "pillow",
+    "jupyter",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
