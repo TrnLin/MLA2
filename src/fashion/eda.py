@@ -311,7 +311,7 @@ def target_summary(
     for target in targets:
         distribution = target_distribution(styles, target)
         nonblank = distribution.loc[distribution["label"].ne("<BLANK>")]
-        majority = distribution.iloc[0] if not distribution.empty else None
+        majority = nonblank.iloc[0] if not nonblank.empty else None
         minority_count = int(nonblank["count"].min()) if not nonblank.empty else 0
         majority_count = int(majority["count"]) if majority is not None else 0
         rows.append(
@@ -429,6 +429,8 @@ def plot_image_grid(
     title: str,
     columns: int = 5,
 ) -> plt.Figure:
+    """Build an image grid; the caller owns and must close the returned figure."""
+
     if columns < 1:
         raise ValueError("columns must be at least 1")
     rows = max(1, int(np.ceil(len(ids) / columns)))
@@ -459,6 +461,8 @@ def build_dataset_overview(
     images: pd.DataFrame,
     output_path: Path,
 ) -> plt.Figure:
+    """Save the dataset overview; the caller owns and must close the figure."""
+
     figure, axes = plt.subplots(2, 2, figsize=(12, 8))
 
     article = target_distribution(styles, "articleType")
@@ -475,6 +479,17 @@ def build_dataset_overview(
         axis.set_title(target)
         axis.set_ylabel("Count")
         axis.tick_params(axis="x", rotation=35)
+        if target in {"season", "usage"}:
+            axis.set_yscale("log")
+        for index, count in enumerate(distribution["count"]):
+            axis.annotate(
+                f"{int(count):,}",
+                (index, count),
+                xytext=(0, 3),
+                textcoords="offset points",
+                ha="center",
+                fontsize=7,
+            )
 
     readable_count = int(images["error"].eq("").sum())
     style_ids = set(styles["id"].astype(str))
