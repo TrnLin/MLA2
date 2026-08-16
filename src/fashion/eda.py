@@ -282,3 +282,210 @@ def near_duplicate_groups(
     return tuple(
         sorted(tuple(group) for group in components.values() if len(group) > 1)
     )
+
+
+def _display_labels(values: pd.Series) -> pd.Series:
+    return values.astype("string").fillna("<BLANK>").replace("", "<BLANK>")
+
+
+def target_distribution(styles: pd.DataFrame, target: str) -> pd.DataFrame:
+    if target not in styles:
+        raise KeyError(f"Unknown target: {target}")
+    counts = (
+        _display_labels(styles[target])
+        .value_counts(dropna=False)
+        .rename_axis("label")
+        .reset_index(name="count")
+        .sort_values(["count", "label"], ascending=[False, True], ignore_index=True)
+    )
+    counts["share"] = counts["count"] / len(styles) if len(styles) else 0.0
+    counts["rank"] = np.arange(1, len(counts) + 1)
+    return counts[["label", "count", "share", "rank"]]
+
+
+def target_summary(
+    styles: pd.DataFrame,
+    targets: Sequence[str],
+) -> pd.DataFrame:
+    rows: list[dict[str, object]] = []
+    for target in targets:
+        distribution = target_distribution(styles, target)
+        nonblank = distribution.loc[distribution["label"].ne("<BLANK>")]
+        majority = distribution.iloc[0] if not distribution.empty else None
+        minority_count = int(nonblank["count"].min()) if not nonblank.empty else 0
+        majority_count = int(majority["count"]) if majority is not None else 0
+        rows.append(
+            {
+                "target": target,
+                "rows": len(styles),
+                "classes_including_blank": len(distribution),
+                "blank_count": int(
+                    distribution.loc[
+                        distribution["label"].eq("<BLANK>"), "count"
+                    ].sum()
+                ),
+                "majority_label": majority["label"] if majority is not None else "",
+                "majority_count": majority_count,
+                "majority_accuracy": majority_count / len(styles) if len(styles) else 0.0,
+                "minority_count": minority_count,
+                "imbalance_ratio": (
+                    majority_count / minority_count if minority_count else np.inf
+                ),
+            }
+        )
+    return pd.DataFrame.from_records(rows)
+
+
+def hierarchy_conflicts(styles: pd.DataFrame) -> pd.DataFrame:
+    grouped = (
+        styles.groupby("articleType", dropna=False)
+        .agg(
+            master_categories=(
+                "masterCategory",
+                lambda values: tuple(sorted(set(_display_labels(values)))),
+            ),
+            subcategories=(
+                "subCategory",
+                lambda values: tuple(sorted(set(_display_labels(values)))),
+            ),
+            rows=("id", "size"),
+        )
+        .reset_index()
+    )
+    grouped["master_category_count"] = grouped["master_categories"].str.len()
+    grouped["subcategory_count"] = grouped["subcategories"].str.len()
+    return grouped.loc[
+        grouped["master_category_count"].gt(1) | grouped["subcategory_count"].gt(1)
+    ].sort_values("articleType", ignore_index=True)
+
+
+def cooccurrence_table(
+    styles: pd.DataFrame,
+    left: str,
+    right: str,
+) -> pd.DataFrame:
+    if left not in styles or right not in styles:
+        raise KeyError(f"Unknown columns: {left}, {right}")
+    return pd.crosstab(
+        _display_labels(styles[left]),
+        _display_labels(styles[right]),
+        dropna=False,
+    )
+
+
+def cramers_v(left: pd.Series, right: pd.Series) -> float:
+    table = pd.crosstab(_display_labels(left), _display_labels(right), dropna=False)
+    observed = table.to_numpy(dtype=float)
+    total = observed.sum()
+    row_count, column_count = observed.shape
+    if total == 0 or row_count < 2 or column_count < 2:
+        return 0.0
+
+    expected = np.outer(observed.sum(axis=1), observed.sum(axis=0)) / total
+    chi_squared = np.divide(
+        (observed - expected) ** 2,
+        expected,
+        out=np.zeros_like(expected),
+        where=expected > 0,
+    ).sum()
+    phi_squared = chi_squared / total
+    correction = ((column_count - 1) * (row_count - 1)) / (total - 1)
+    corrected_phi = max(0.0, phi_squared - correction)
+    corrected_rows = row_count - ((row_count - 1) ** 2) / (total - 1)
+    corrected_columns = column_count - ((column_count - 1) ** 2) / (total - 1)
+    denominator = min(corrected_rows - 1, corrected_columns - 1)
+    if denominator <= 0:
+        return 0.0
+    return float(np.clip(np.sqrt(corrected_phi / denominator), 0.0, 1.0))
+
+
+def sample_ids(
+    styles: pd.DataFrame,
+    target: str,
+    labels: Sequence[str],
+    per_label: int,
+    seed: int,
+) -> tuple[str, ...]:
+    if target not in styles:
+        raise KeyError(f"Unknown target: {target}")
+    if per_label < 1:
+        raise ValueError("per_label must be at least 1")
+
+    normalized = styles.assign(_label=_display_labels(styles[target]))
+    selected: list[str] = []
+    for offset, label in enumerate(labels):
+        candidates = normalized.loc[normalized["_label"].eq(label), "id"]
+        count = min(per_label, len(candidates))
+        if count:
+            selected.extend(
+                candidates.sample(n=count, random_state=seed + offset).astype(str)
+            )
+    return tuple(selected)
+
+
+def plot_image_grid(
+    ids: Sequence[str],
+    image_dir: Path,
+    title: str,
+    columns: int = 5,
+) -> plt.Figure:
+    if columns < 1:
+        raise ValueError("columns must be at least 1")
+    rows = max(1, int(np.ceil(len(ids) / columns)))
+    figure, axes = plt.subplots(
+        rows,
+        columns,
+        figsize=(2.2 * columns, 2.7 * rows),
+        squeeze=False,
+    )
+    for axis, image_id in zip(axes.flat, ids):
+        path = image_dir / f"{image_id}.jpg"
+        try:
+            with Image.open(path) as image:
+                axis.imshow(image.convert("RGB"))
+        except (OSError, UnidentifiedImageError) as exc:
+            axis.text(0.5, 0.5, type(exc).__name__, ha="center", va="center")
+        axis.set_title(str(image_id), fontsize=8)
+        axis.axis("off")
+    for axis in axes.flat[len(ids):]:
+        axis.axis("off")
+    figure.suptitle(title)
+    figure.tight_layout()
+    return figure
+
+
+def build_dataset_overview(
+    styles: pd.DataFrame,
+    images: pd.DataFrame,
+    output_path: Path,
+) -> plt.Figure:
+    figure, axes = plt.subplots(2, 2, figsize=(12, 8))
+
+    article = target_distribution(styles, "articleType")
+    axes[0, 0].plot(article["rank"], article["count"], color="#b33b24")
+    axes[0, 0].set_yscale("log")
+    axes[0, 0].set(title="articleType long tail", xlabel="Class rank", ylabel="Count")
+
+    for axis, target in zip(
+        (axes[0, 1], axes[1, 0], axes[1, 1]),
+        ("season", "gender", "usage"),
+    ):
+        distribution = target_distribution(styles, target)
+        axis.bar(distribution["label"], distribution["count"], color="#345995")
+        axis.set_title(target)
+        axis.set_ylabel("Count")
+        axis.tick_params(axis="x", rotation=35)
+
+    readable_count = int(images["error"].eq("").sum())
+    style_ids = set(styles["id"].astype(str))
+    image_ids = set(images["id"].astype(str))
+    unmatched_count = len(style_ids.symmetric_difference(image_ids))
+    figure.suptitle(
+        "Fashion dataset overview\n"
+        f"{len(styles):,} metadata rows · {readable_count:,} readable images · "
+        f"{unmatched_count:,} unmatched IDs"
+    )
+    figure.tight_layout()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(output_path, dpi=200, bbox_inches="tight")
+    return figure
