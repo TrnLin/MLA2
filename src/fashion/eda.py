@@ -144,3 +144,128 @@ def reconcile_ids(styles: pd.DataFrame, images: pd.DataFrame) -> IdReconciliatio
         image_only_ids=tuple(sorted(image_ids - csv_ids)),
         matched_count=len(csv_ids & image_ids),
     )
+
+
+def exact_duplicate_groups(
+    images: pd.DataFrame,
+    hash_column: str = "pixel_sha256",
+) -> tuple[tuple[str, ...], ...]:
+    usable = images.dropna(subset=[hash_column])
+    groups = (
+        tuple(sorted(group["id"].astype(str)))
+        for _, group in usable.groupby(hash_column, sort=True)
+        if len(group) > 1
+    )
+    return tuple(sorted(groups))
+
+
+def hamming_distance(left: str, right: str) -> int:
+    return (int(left, 16) ^ int(right, 16)).bit_count()
+
+
+@dataclass
+class _BKNode:
+    value: int
+    children: dict[int, "_BKNode"]
+
+
+class _BKTree:
+    def __init__(self) -> None:
+        self._root: _BKNode | None = None
+
+    @staticmethod
+    def _distance(left: int, right: int) -> int:
+        return (left ^ right).bit_count()
+
+    def add(self, value: int) -> None:
+        if self._root is None:
+            self._root = _BKNode(value=value, children={})
+            return
+
+        node = self._root
+        while True:
+            distance = self._distance(value, node.value)
+            if distance == 0:
+                return
+            child = node.children.get(distance)
+            if child is None:
+                node.children[distance] = _BKNode(value=value, children={})
+                return
+            node = child
+
+    def query(self, value: int, radius: int) -> tuple[int, ...]:
+        if self._root is None:
+            return ()
+
+        matches: list[int] = []
+        stack = [self._root]
+        while stack:
+            node = stack.pop()
+            distance = self._distance(value, node.value)
+            if distance <= radius:
+                matches.append(node.value)
+            lower = distance - radius
+            upper = distance + radius
+            stack.extend(
+                child
+                for edge, child in node.children.items()
+                if lower <= edge <= upper
+            )
+        return tuple(sorted(matches))
+
+
+def near_duplicate_groups(
+    images: pd.DataFrame,
+    max_distance: int = 6,
+) -> tuple[tuple[str, ...], ...]:
+    if not 0 <= max_distance <= 64:
+        raise ValueError("max_distance must be between 0 and 64")
+
+    usable = images.dropna(subset=["dhash", "pixel_sha256"])[
+        ["id", "dhash", "pixel_sha256"]
+    ].copy()
+    records_by_hash: dict[int, list[tuple[str, str]]] = {}
+    for row in usable.itertuples(index=False):
+        records_by_hash.setdefault(int(row.dhash, 16), []).append(
+            (str(row.id), str(row.pixel_sha256))
+        )
+
+    parent = {image_id: image_id for image_id in usable["id"].astype(str)}
+
+    def find(image_id: str) -> str:
+        while parent[image_id] != image_id:
+            parent[image_id] = parent[parent[image_id]]
+            image_id = parent[image_id]
+        return image_id
+
+    def union(left: str, right: str) -> None:
+        left_root = find(left)
+        right_root = find(right)
+        if left_root != right_root:
+            parent[max(left_root, right_root)] = min(left_root, right_root)
+
+    def connect(
+        left_records: list[tuple[str, str]],
+        right_records: list[tuple[str, str]],
+        same_bucket: bool = False,
+    ) -> None:
+        for left_index, (left_id, left_pixels) in enumerate(left_records):
+            start = left_index + 1 if same_bucket else 0
+            for right_id, right_pixels in right_records[start:]:
+                if left_pixels != right_pixels:
+                    union(left_id, right_id)
+
+    tree = _BKTree()
+    for hash_value in sorted(records_by_hash):
+        current_records = records_by_hash[hash_value]
+        connect(current_records, current_records, same_bucket=True)
+        for match in tree.query(hash_value, max_distance):
+            connect(current_records, records_by_hash[match])
+        tree.add(hash_value)
+
+    components: dict[str, list[str]] = {}
+    for image_id in sorted(parent):
+        components.setdefault(find(image_id), []).append(image_id)
+    return tuple(
+        sorted(tuple(group) for group in components.values() if len(group) > 1)
+    )
