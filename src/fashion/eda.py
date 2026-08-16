@@ -218,6 +218,19 @@ def near_duplicate_groups(
     images: pd.DataFrame,
     max_distance: int = 6,
 ) -> tuple[tuple[str, ...], ...]:
+    """Return candidate near-duplicate components grouped by union-find over dHash.
+
+    Each returned tuple lists image IDs transitively linked through dHash pairs
+    within ``max_distance`` whose ``pixel_sha256`` values differ. Members of a
+    component are **not** guaranteed to be pairwise within ``max_distance``;
+    a chain A–B–C can place A and C in the same group even when their direct
+    Hamming distance exceeds ``max_distance``.
+
+    Pairs with identical ``pixel_sha256`` never receive a near-duplicate edge,
+    but two exact-pixel duplicates can still appear together when a third image
+    bridges them. Treat every group as a review queue—confirm visually before
+    treating members as near duplicates.
+    """
     if not 0 <= max_distance <= 64:
         raise ValueError("max_distance must be between 0 and 64")
 
