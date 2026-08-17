@@ -13,9 +13,9 @@ Established by inspecting the dataset and the spec, not assumed:
 
 | Fact | Source | Consequence |
 |---|---|---|
-| `styles_prediction.csv` header is `id,gender,articleType,season,usage` | `data/test/styles_prediction.csv` | Task 3 is **two separate targets**, not a combined class. Four target columns total. |
-| Images are 60×80 px | `sips` on `data/train/images_train/1163.jpg` | Training is cheap; upscaling beyond ~64–96 px adds no information. |
-| 38,617 metadata rows · 38,612 training images · 5,829 test images. 5 metadata rows have no training image (ids `12347`, `39401`, `39403`, `39410`, `39425`); no image lacks a metadata row | `00_eda.ipynb` §2.2 `reconciliation_summary` and `unmatched_ids`; `data/test/images_test/` directory count | Row count and image count are not interchangeable. Anything image-dependent uses the 38,612 matched rows, so `articleType` has 125 labelled classes but only 124 trainable ones — id `12347` is the dataset's only `Suits` row. |
+| `styles_prediction.csv` header is `id,gender,articleType,season,usage` | `data/raw/teacher/test/styles_prediction.csv` | Task 3 is **two separate targets**, not a combined class. Four target columns total. |
+| Images are 60×80 px | `data/raw/teacher/train/images_train/1163.jpg` | Training is cheap; upscaling beyond ~64–96 px adds no information. |
+| 38,617 metadata rows · 38,612 training images · 5,829 test images. 5 metadata rows have no training image (ids `12347`, `39401`, `39403`, `39410`, `39425`); no image lacks a metadata row | `00_eda.ipynb` §2.2 `reconciliation_summary` and `unmatched_ids`; `data/raw/teacher/test/images_test/` directory count | Row count and image count are not interchangeable. Anything image-dependent uses the 38,612 matched rows, so `articleType` has 125 labelled classes but only 124 trainable ones — id `12347` is the dataset's only `Suits` row. |
 | `articleType` has 125 classes, from 6,781 down to single-example classes | `styles_train.csv` | Macro-F1 over accuracy; rare-class policy must be decided and defended. |
 | `season`: Summer 19,137 · Fall 10,512 · Winter 7,381 · Spring 1,567 · 20 blank | `styles_train.csv` | 4 usable classes, imbalanced, plus blanks to handle. |
 | `gender`: Men 20,918 · Women 14,160 · Unisex 2,080 · Boys 814 · Girls 645 | `styles_train.csv` | 5 classes, moderate imbalance. |
@@ -453,7 +453,7 @@ The notebook must:
 6. run deterministic inference over all 5,829 official test images using the exact training
    preprocessing and mappings;
 7. write a new submission artifact without modifying
-   `data/test/styles_prediction.csv`, preserving ID order and the exact header
+   `data/raw/teacher/test/styles_prediction.csv`, preserving ID order and the exact header
    `id,gender,articleType,season,usage`;
 8. assert the row count, unique IDs, allowed label vocabularies, absence of blank
    predictions, absence of extra columns, and parity with `scripts/predict.py`;

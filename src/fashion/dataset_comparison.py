@@ -839,6 +839,10 @@ def run_dataset_comparison(
         "id_reconciliation": {
             "original_equals_teacher_union": original_ids == teacher_train_ids | test_ids,
             "teacher_train_test_overlap": len(teacher_train_ids & test_ids),
+            "teacher_train_id_min": min(map(int, teacher_train_ids)),
+            "teacher_train_id_max": max(map(int, teacher_train_ids)),
+            "teacher_test_id_min": min(map(int, test_ids)),
+            "teacher_test_id_max": max(map(int, test_ids)),
             "original_not_in_teacher_union": sorted(
                 original_ids - teacher_train_ids - test_ids, key=int
             ),

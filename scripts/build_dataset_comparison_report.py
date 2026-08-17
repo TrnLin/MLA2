@@ -20,6 +20,7 @@ def percent(value: float) -> str:
 def main() -> None:
     data = json.loads(SUMMARY.read_text(encoding="utf-8"))
     pop = data["populations"]
+    ids = data["id_reconciliation"]
     loss = data["teacher_train_image_loss"]
     labels = data["labels"]
     images = data["images"]
@@ -88,7 +89,7 @@ official answer key and invalidate the held-out evaluation.
 
 ## Teacher training copy is restored
 
-The current `data/train-old/images_train/` directory now reconciles with the source:
+The current `data/raw/teacher/train/images_train/` directory reconciles with the source:
 
 - expected metadata rows: {number(loss['metadata_rows'])};
 - present JPGs: {number(loss['present_images'])};
@@ -117,6 +118,11 @@ across {number(json_audit['files'])} files, with
 but both artefacts come from the same catalogue source.
 
 ### The official test population is shifted
+
+The split is ordered by product ID rather than randomly mixed: teacher-train IDs end at
+{number(ids['teacher_train_id_max'])}, while teacher-test IDs start at
+{number(ids['teacher_test_id_min'])}. This catalogue/time boundary helps explain why the
+target distributions differ so much.
 
 `articleType` has total-variation distance
 {article_shift['total_variation']:.3f} between teacher train and quarantined test labels.

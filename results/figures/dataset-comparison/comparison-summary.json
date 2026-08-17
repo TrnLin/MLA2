@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-17T11:13:49.353358+00:00",
+  "generated_at_utc": "2026-08-17T13:07:45.942576+00:00",
   "seed": 2753,
   "populations": {
     "original_metadata_rows": 44446,
@@ -14,6 +14,10 @@
   "id_reconciliation": {
     "original_equals_teacher_union": true,
     "teacher_train_test_overlap": 0,
+    "teacher_train_id_min": 1163,
+    "teacher_train_id_max": 51999,
+    "teacher_test_id_min": 52003,
+    "teacher_test_id_max": 60000,
     "original_not_in_teacher_union": [],
     "teacher_not_in_original": [],
     "shared_label_mismatch_counts": {

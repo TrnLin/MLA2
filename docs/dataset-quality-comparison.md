@@ -2,7 +2,7 @@
 
 Generated from the fresh machine-readable audit at
 `results/figures/dataset-comparison/comparison-summary.json`
-(2026-08-17T11:13:49.353358+00:00).
+(2026-08-17T13:07:45.942576+00:00).
 
 ## Bottom line
 
@@ -36,7 +36,7 @@ official answer key and invalidate the held-out evaluation.
 
 ## Teacher training copy is restored
 
-The current `data/train-old/images_train/` directory now reconciles with the source:
+The current `data/raw/teacher/train/images_train/` directory reconciles with the source:
 
 - expected metadata rows: 38,617;
 - present JPGs: 38,612;
@@ -65,6 +65,11 @@ across 44,446 files, with
 but both artefacts come from the same catalogue source.
 
 ### The official test population is shifted
+
+The split is ordered by product ID rather than randomly mixed: teacher-train IDs end at
+51,999, while teacher-test IDs start at
+52,003. This catalogue/time boundary helps explain why the
+target distributions differ so much.
 
 `articleType` has total-variation distance
 0.496 between teacher train and quarantined test labels.

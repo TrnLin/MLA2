@@ -19,7 +19,8 @@ analysis of the runs already done, choose the analysis.
   comparison and leaks evaluation images into the Task 4 index.
 - **Every training run appends a row to `results/runs.csv`** through
   `fashion.train.registry`. The report's comparison tables are generated from that file.
-- **`data/test/styles_prediction.csv` format is fixed**: `id,gender,articleType,season,usage`.
+- **`data/raw/teacher/test/styles_prediction.csv` format is fixed**:
+  `id,gender,articleType,season,usage`.
   This is why Task 3 predicts gender and usage as separate targets.
 
 ## Dataset gotchas

@@ -355,7 +355,7 @@ header.mast .chips{animation-delay:.36s}
       <tbody>
         <tr>
           <td><code>styles_prediction.csv</code> header is <code>id,gender,articleType,season,usage</code></td>
-          <td class="src">data/test/styles_prediction.csv</td>
+          <td class="src">data/raw/teacher/test/styles_prediction.csv</td>
           <td>Task 3 is <strong>two separate targets</strong>, not a combined class. Four target columns total.</td>
         </tr>
         <tr>
@@ -365,7 +365,7 @@ header.mast .chips{animation-delay:.36s}
         </tr>
         <tr>
           <td>38,617 metadata rows · 38,612 training images · 5,829 test images. 5 metadata rows have no training image (ids <code>12347</code>, <code>39401</code>, <code>39403</code>, <code>39410</code>, <code>39425</code>); no image lacks a metadata row</td>
-          <td class="src">00_eda.ipynb §2.2 reconciliation_summary and unmatched_ids; data/test/images_test/ directory count</td>
+          <td class="src">00_eda.ipynb §2.2 reconciliation_summary and unmatched_ids; data/raw/teacher/test/images_test/ directory count</td>
           <td>Row count and image count are not interchangeable. Anything image-dependent uses the 38,612 matched rows, so <code>articleType</code> has 125 labelled classes but only 124 trainable ones — id <code>12347</code> is the dataset's only <code>Suits</code> row.</td>
         </tr>
         <tr>
@@ -1072,7 +1072,7 @@ history = <span class="fnn">train</span>(model, train_dl, val_dl, epochs=<span c
         <li>evaluate visual search on held-out queries under the relevance rules fixed in Task 4;</li>
         <li>compare held-out and validation estimates and explain meaningful gaps without returning to tuning;</li>
         <li>run deterministic inference over all 5,829 official test images using the exact training preprocessing and mappings;</li>
-        <li>write a new submission artifact without modifying <code>data/test/styles_prediction.csv</code>, preserving ID order and the exact header <code>id,gender,articleType,season,usage</code>;</li>
+        <li>write a new submission artifact without modifying <code>data/raw/teacher/test/styles_prediction.csv</code>, preserving ID order and the exact header <code>id,gender,articleType,season,usage</code>;</li>
         <li>assert the row count, unique IDs, allowed label vocabularies, absence of blank predictions, absence of extra columns, and parity with <code>scripts/predict.py</code>;</li>
         <li>write an artifact manifest linking each output column and the visual-search app to its checkpoint, run ID, preprocessing configuration, and final evaluation.</li>
       </ol>

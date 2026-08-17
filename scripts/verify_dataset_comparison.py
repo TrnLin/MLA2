@@ -39,6 +39,11 @@ def main() -> None:
     require(ids["original_equals_teacher_union"] is True, "ID union proof failed", failures)
     require(ids["teacher_train_test_overlap"] == 0, "teacher train/test IDs overlap", failures)
     require(
+        ids["teacher_train_id_max"] < ids["teacher_test_id_min"],
+        "teacher split is not separated at the measured ID boundary",
+        failures,
+    )
+    require(
         sum(ids["shared_label_mismatch_counts"].values()) == 0,
         "shared teacher/original labels differ",
         failures,

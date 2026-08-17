@@ -9,6 +9,7 @@ from typing import Sequence
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.ticker import FuncFormatter
 from PIL import Image, UnidentifiedImageError
 
 
@@ -600,4 +601,425 @@ def build_dataset_overview(
     figure.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(output_path, dpi=200, bbox_inches="tight")
+    return figure
+
+
+def target_skew_summary(
+    styles: pd.DataFrame,
+    targets: Sequence[str],
+) -> pd.DataFrame:
+    """Measure concentration and effective diversity for categorical targets."""
+
+    rows: list[dict[str, object]] = []
+    for target in targets:
+        distribution = target_distribution(styles, target)
+        nonblank = distribution.loc[distribution["label"].ne("<BLANK>")].copy()
+        counts = nonblank["count"].to_numpy(dtype=float)
+        probabilities = counts / counts.sum()
+        entropy = float(-(probabilities * np.log2(probabilities)).sum())
+        class_count = len(counts)
+        normalized_entropy = (
+            entropy / np.log2(class_count) if class_count > 1 else 1.0
+        )
+        ordered = np.sort(counts)
+        gini = float(
+            (2 * np.dot(np.arange(1, class_count + 1), ordered))
+            / (class_count * ordered.sum())
+            - (class_count + 1) / class_count
+        )
+        rows.append(
+            {
+                "target": target,
+                "classes": class_count,
+                "majority_share": float(probabilities.max()),
+                "top5_share": float(np.sort(probabilities)[::-1][:5].sum()),
+                "imbalance_ratio": float(counts.max() / counts.min()),
+                "entropy_bits": entropy,
+                "normalized_entropy": float(normalized_entropy),
+                "effective_classes": float(2**entropy),
+                "gini": gini,
+            }
+        )
+    return pd.DataFrame.from_records(rows)
+
+
+def plot_schema_missingness(
+    blank_counts: pd.DataFrame,
+    literal_na_usage_count: int,
+) -> plt.Figure:
+    """Plot genuine blanks separately from the literal usage label ``NA``."""
+
+    visible = blank_counts.loc[
+        blank_counts["blank_count"].gt(0), ["column", "blank_count"]
+    ].copy()
+    visible = pd.concat(
+        [
+            visible,
+            pd.DataFrame(
+                [{"column": 'usage literal "NA"', "blank_count": literal_na_usage_count}]
+            ),
+        ],
+        ignore_index=True,
+    ).sort_values("blank_count")
+
+    figure, axis = plt.subplots(figsize=(8, 3.8))
+    bars = axis.barh(visible["column"], visible["blank_count"], color="#345995")
+    axis.set(
+        title="Missing annotations versus the literal usage label",
+        xlabel="Rows",
+        ylabel="CSV field",
+    )
+    axis.grid(axis="x", alpha=0.25)
+    axis.bar_label(bars, labels=[f"{int(value):,}" for value in visible["blank_count"]])
+    figure.tight_layout()
+    return figure
+
+
+def plot_image_dimension_profile(dimension_mode_counts: pd.DataFrame) -> plt.Figure:
+    """Show all image shape/mode combinations on a log count scale."""
+
+    profile = dimension_mode_counts.copy()
+    profile["profile"] = (
+        profile["width"].astype("Int64").astype(str)
+        + "×"
+        + profile["height"].astype("Int64").astype(str)
+        + " "
+        + profile["mode"].astype(str)
+    )
+    profile = profile.sort_values("count")
+
+    figure, axis = plt.subplots(figsize=(9, 5))
+    bars = axis.barh(profile["profile"], profile["count"], color="#345995")
+    axis.set_xscale("log")
+    axis.set(
+        title="Image dimensions and colour modes",
+        xlabel="Image files (log scale)",
+        ylabel="Width × height and mode",
+    )
+    axis.grid(axis="x", alpha=0.25)
+    axis.bar_label(bars, labels=[f"{int(value):,}" for value in profile["count"]])
+    figure.tight_layout()
+    return figure
+
+
+def plot_reconciliation_summary(reconciliation: pd.DataFrame) -> plt.Figure:
+    """Visualize metadata/image coverage and the small unmatched remainder."""
+
+    lookup = reconciliation.set_index("metric")["count"]
+    total = int(lookup["csv rows (unique ids)"])
+    matched = int(lookup["matched ids"])
+    csv_only = int(lookup["csv-only ids"])
+    image_only = int(lookup["image-only ids"])
+
+    figure, axes = plt.subplots(1, 2, figsize=(10, 3.8))
+    axes[0].barh(["Metadata IDs"], [matched], label="Matched", color="#345995")
+    axes[0].barh(
+        ["Metadata IDs"],
+        [csv_only],
+        left=[matched],
+        label="No image",
+        color="#b33b24",
+    )
+    axes[0].set(
+        title=f"Metadata-to-image coverage: {matched / total:.3%}",
+        xlabel="IDs",
+    )
+    axes[0].legend()
+    axes[0].grid(axis="x", alpha=0.25)
+
+    gap_labels = ["CSV-only", "Image-only"]
+    gap_values = [csv_only, image_only]
+    bars = axes[1].bar(gap_labels, gap_values, color=["#b33b24", "#345995"])
+    axes[1].set(title="Unmatched ID counts", ylabel="IDs")
+    axes[1].bar_label(bars)
+    axes[1].grid(axis="y", alpha=0.25)
+    figure.tight_layout()
+    return figure
+
+
+def plot_duplicate_summary(duplicate_summary: pd.DataFrame) -> plt.Figure:
+    """Compare duplicate group counts and affected-image counts."""
+
+    figure, axes = plt.subplots(1, 2, figsize=(10, 4))
+    labels = duplicate_summary["kind"].str.replace("-", "\n", regex=False)
+    group_bars = axes[0].bar(labels, duplicate_summary["groups"], color="#345995")
+    image_bars = axes[1].bar(labels, duplicate_summary["images"], color="#b33b24")
+    axes[0].set(title="Duplicate components", ylabel="Groups")
+    axes[1].set(title="Images touched by each detector", ylabel="Images")
+    axes[0].bar_label(group_bars, labels=[f"{value:,}" for value in duplicate_summary["groups"]])
+    axes[1].bar_label(image_bars, labels=[f"{value:,}" for value in duplicate_summary["images"]])
+    for axis in axes:
+        axis.tick_params(axis="x", labelrotation=20)
+        axis.grid(axis="y", alpha=0.25)
+    figure.tight_layout()
+    return figure
+
+
+def plot_near_duplicate_size_profile(
+    size_histogram: pd.DataFrame,
+) -> plt.Figure:
+    """Plot component-size frequency and the cumulative images they contain."""
+
+    profile = size_histogram.sort_values("group_size").copy()
+    profile["images"] = profile["group_size"] * profile["num_groups"]
+    figure, axes = plt.subplots(1, 2, figsize=(11, 4.2))
+    axes[0].scatter(
+        profile["group_size"],
+        profile["num_groups"],
+        s=28,
+        color="#345995",
+    )
+    axes[0].set_xscale("log")
+    axes[0].set_yscale("log")
+    axes[0].set(
+        title="Near-duplicate component-size frequency",
+        xlabel="Images per component (log scale)",
+        ylabel="Components (log scale)",
+    )
+
+    ordered = profile.sort_values("group_size", ascending=False)
+    axes[1].plot(
+        np.arange(1, len(ordered) + 1),
+        ordered["images"].cumsum() / ordered["images"].sum(),
+        color="#b33b24",
+    )
+    axes[1].set(
+        title="Concentration of linked images",
+        xlabel="Distinct component sizes, largest first",
+        ylabel="Cumulative share of linked images",
+        ylim=(0, 1.02),
+    )
+    axes[1].yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:.0%}"))
+    for axis in axes:
+        axis.grid(alpha=0.25)
+    figure.tight_layout()
+    return figure
+
+
+def plot_skew_dashboard(skew: pd.DataFrame) -> plt.Figure:
+    """Compare majority share, entropy, and imbalance across targets."""
+
+    figure, axes = plt.subplots(1, 3, figsize=(13, 4.2))
+    targets = skew["target"]
+
+    bars = axes[0].bar(targets, skew["majority_share"], color="#345995")
+    axes[0].set(title="Majority-class baseline", ylabel="Share of rows", ylim=(0, 1))
+    axes[0].yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:.0%}"))
+    axes[0].bar_label(bars, labels=[f"{value:.1%}" for value in skew["majority_share"]])
+
+    bars = axes[1].bar(targets, skew["normalized_entropy"], color="#4f8a5b")
+    axes[1].set(
+        title="Normalized label entropy",
+        ylabel="0 = concentrated, 1 = balanced",
+        ylim=(0, 1.05),
+    )
+    axes[1].bar_label(bars, labels=[f"{value:.2f}" for value in skew["normalized_entropy"]])
+
+    bars = axes[2].bar(targets, skew["imbalance_ratio"], color="#b33b24")
+    axes[2].set_yscale("log")
+    axes[2].set(title="Largest-to-smallest class ratio", ylabel="Ratio (log scale)")
+    axes[2].bar_label(bars, labels=[f"{value:,.0f}×" for value in skew["imbalance_ratio"]])
+
+    for axis in axes:
+        axis.tick_params(axis="x", labelrotation=25)
+        axis.grid(axis="y", alpha=0.25)
+    figure.tight_layout()
+    return figure
+
+
+def plot_article_type_diagnostics(
+    distribution: pd.DataFrame,
+    buckets: pd.DataFrame,
+) -> plt.Figure:
+    """Show the article-type head, tail, concentration, and support bands."""
+
+    ordered = distribution.sort_values("count", ascending=False).reset_index(drop=True)
+    top = ordered.head(20).sort_values("count")
+    cumulative = ordered["count"].cumsum() / ordered["count"].sum()
+    class_share = np.arange(1, len(ordered) + 1) / len(ordered)
+
+    figure, axes = plt.subplots(2, 2, figsize=(13, 10))
+    bars = axes[0, 0].barh(top["label"], top["count"], color="#345995")
+    axes[0, 0].set(title="Top 20 articleType labels", xlabel="Rows", ylabel="Label")
+    axes[0, 0].bar_label(bars, labels=[f"{value:,}" for value in top["count"]], fontsize=8)
+
+    axes[0, 1].plot(ordered.index + 1, ordered["count"], color="#b33b24")
+    axes[0, 1].set_yscale("log")
+    axes[0, 1].set(
+        title="All articleType labels ranked by support",
+        xlabel="Class rank",
+        ylabel="Rows (log scale)",
+    )
+
+    axes[1, 0].plot(class_share, cumulative, color="#345995", label="Observed")
+    axes[1, 0].plot([0, 1], [0, 1], linestyle="--", color="#777777", label="Equal support")
+    axes[1, 0].set(
+        title="How quickly common classes capture the rows",
+        xlabel="Share of articleType classes, largest first",
+        ylabel="Cumulative share of rows",
+        xlim=(0, 1),
+        ylim=(0, 1),
+    )
+    axes[1, 0].xaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:.0%}"))
+    axes[1, 0].yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:.0%}"))
+    axes[1, 0].legend()
+
+    bucket_bars = axes[1, 1].bar(
+        buckets.index.astype(str),
+        buckets["num_classes"],
+        color="#4f8a5b",
+    )
+    axes[1, 1].set(
+        title="Class support bands",
+        xlabel="Usable rows per class",
+        ylabel="Number of classes",
+    )
+    axes[1, 1].bar_label(bucket_bars)
+
+    for axis in axes.flat:
+        axis.grid(alpha=0.25)
+    figure.tight_layout()
+    return figure
+
+
+def plot_categorical_distribution(
+    distribution: pd.DataFrame,
+    target: str,
+) -> plt.Figure:
+    """Plot complete categorical counts with percentages and visible blanks."""
+
+    ordered = distribution.sort_values("count").copy()
+    figure_height = max(3.5, 0.55 * len(ordered) + 1.5)
+    figure, axis = plt.subplots(figsize=(9, figure_height))
+    bars = axis.barh(ordered["label"], ordered["count"], color="#345995")
+    labels = [
+        f"{int(count):,} ({share:.1%})"
+        for count, share in zip(ordered["count"], ordered["share"])
+    ]
+    axis.bar_label(bars, labels=labels, fontsize=8)
+    axis.set(
+        title=f"Complete {target} distribution",
+        xlabel="Rows",
+        ylabel=target,
+    )
+    axis.grid(axis="x", alpha=0.25)
+    axis.margins(x=0.22)
+    figure.tight_layout()
+    return figure
+
+
+def plot_hierarchy_conflict_summary(hierarchy: pd.DataFrame) -> plt.Figure:
+    """Rank hierarchy-conflict labels by category spread."""
+
+    ranked = hierarchy.assign(
+        conflict_span=hierarchy["master_category_count"] + hierarchy["subcategory_count"]
+    ).sort_values(["conflict_span", "rows"], ascending=[False, False]).head(20)
+    ranked = ranked.sort_values("conflict_span")
+
+    figure, axis = plt.subplots(figsize=(10, 7))
+    axis.barh(
+        ranked["articleType"],
+        ranked["subcategory_count"],
+        label="Subcategories",
+        color="#345995",
+    )
+    axis.barh(
+        ranked["articleType"],
+        ranked["master_category_count"],
+        left=ranked["subcategory_count"],
+        label="Master categories",
+        color="#b33b24",
+    )
+    axis.set(
+        title="Hierarchy-conflict labels with the widest category spread",
+        xlabel="Distinct mapped categories",
+        ylabel="articleType",
+    )
+    axis.legend()
+    axis.grid(axis="x", alpha=0.25)
+    figure.tight_layout()
+    return figure
+
+
+def plot_cooccurrence_heatmap(
+    table: pd.DataFrame,
+    left_name: str,
+    right_name: str,
+) -> plt.Figure:
+    """Plot row-normalized co-occurrence percentages without seaborn."""
+
+    normalized = table.div(table.sum(axis=1), axis=0).fillna(0)
+    figure, axis = plt.subplots(
+        figsize=(max(8, 0.9 * len(normalized.columns)), max(4, 0.7 * len(normalized)))
+    )
+    image = axis.imshow(normalized.to_numpy(), aspect="auto", cmap="Blues", vmin=0, vmax=1)
+    axis.set_xticks(np.arange(len(normalized.columns)), normalized.columns, rotation=35, ha="right")
+    axis.set_yticks(np.arange(len(normalized.index)), normalized.index)
+    axis.set(
+        title=f"{right_name} mix within each {left_name}",
+        xlabel=right_name,
+        ylabel=left_name,
+    )
+    for row in range(len(normalized.index)):
+        for column in range(len(normalized.columns)):
+            value = normalized.iat[row, column]
+            if value >= 0.01:
+                axis.text(
+                    column,
+                    row,
+                    f"{value:.0%}",
+                    ha="center",
+                    va="center",
+                    fontsize=7,
+                    color="white" if value > 0.55 else "black",
+                )
+    figure.colorbar(image, ax=axis, label=f"Share within {left_name}")
+    figure.tight_layout()
+    return figure
+
+
+def plot_split_feasibility(support_feasibility: pd.DataFrame) -> plt.Figure:
+    """Summarize how many labels fall into each evaluation-feasibility band."""
+
+    status_order = [
+        "no usable image; cannot be trained or evaluated",
+        "cannot appear in both training and evaluation",
+        "cannot support train/validation/held-out coverage",
+        "coverage possible but metric unstable",
+        "eligible for coverage checks",
+        "missing annotation, not a class",
+    ]
+    target_values = set(support_feasibility["target"])
+    target_order = [
+        target
+        for target in ("articleType", "season", "gender", "usage")
+        if target in target_values
+    ]
+    counts = (
+        pd.crosstab(
+            support_feasibility["target"],
+            support_feasibility["evaluation_status"],
+        )
+        .reindex(index=target_order, fill_value=0)
+        .reindex(columns=status_order, fill_value=0)
+    )
+
+    figure, axis = plt.subplots(figsize=(12, 5))
+    left = np.zeros(len(counts))
+    colors = ["#8f2d2d", "#b33b24", "#d47f35", "#d6a84b", "#4f8a5b", "#777777"]
+    for status, color in zip(status_order, colors):
+        values = counts[status].to_numpy()
+        axis.barh(counts.index, values, left=left, label=status, color=color)
+        for row, (start, value) in enumerate(zip(left, values)):
+            if value:
+                axis.text(start + value / 2, row, str(int(value)), ha="center", va="center", fontsize=8)
+        left += values
+    axis.set(
+        title="Label feasibility before development splitting",
+        xlabel="Number of labels",
+        ylabel="Target",
+    )
+    axis.legend(loc="upper center", bbox_to_anchor=(0.5, -0.18), ncol=2, fontsize=8)
+    axis.grid(axis="x", alpha=0.25)
+    figure.tight_layout()
     return figure
