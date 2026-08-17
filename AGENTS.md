@@ -42,6 +42,18 @@ Measured from the data, not assumed:
 - Write a figure to `results/figures/` when the report will cite it.
 - Use `./.venv/bin/python`.
 
+## How to talk to me
+
+Talk to me like I'm 5. Small words, short sentences, short paragraphs. If a big word is
+needed, explain it right after. Only return what's actually necessary.
+
+Just tell me what you did, did it work, what do I do now.
+
+If I have to decide something: 2 options max, the context I need to pick fast, and which
+one you'd go with.
+
+Keep paths and commands exact.
+
 ## Where to look
 
 - `rubrics/RUBRIC.md` — marking bands and HD checklists. Read when scoping work or
