@@ -1,1025 +1,1002 @@
+"""Metadata analysis for the official, image-paired fashion population."""
+
 from __future__ import annotations
 
-import csv
-from dataclasses import dataclass
+from collections import Counter
+from collections.abc import Mapping
+from dataclasses import asdict, dataclass, is_dataclass
 from hashlib import sha256
+import json
 from pathlib import Path
-from typing import Sequence
+import re
+from types import MappingProxyType
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from matplotlib.ticker import FuncFormatter
-from PIL import Image, UnidentifiedImageError
+
+from fashion.config import (
+    EDA_OUTPUT_DIR,
+    EDA_SAMPLE_SIZE,
+    ORIGINAL_CSV,
+    ORIGINAL_IMAGE_DIR,
+    PROCESSED_DATA_DIR,
+    RANDOM_SEED,
+    TARGET_COLUMNS,
+    TEACHER_TRAIN_CSV,
+    TEACHER_TRAIN_IMAGE_DIR,
+    TEST_CSV,
+)
+from fashion.data_audit import CsvAudit, audit_csv, hierarchy_conflicts
+from fashion.eda_images import (
+    IMAGE_METRICS,
+    MEASUREMENT_COLUMNS,
+    exact_duplicate_groups,
+    measure_images,
+    near_duplicate_candidates,
+    paired_image_comparison,
+    stratified_sample,
+)
+from fashion.eda_plots import (
+    build_report_summary,
+    plot_article_type_support,
+    plot_association_matrix,
+    plot_drift,
+    plot_duplicate_summary,
+    plot_image_profiles,
+    plot_relationship_heatmap,
+    plot_review_grid,
+    plot_target_distributions,
+)
 
 
 @dataclass(frozen=True)
-class SchemaAudit:
-    row_count: int
-    physical_columns: tuple[str, ...]
-    phantom_columns: tuple[str, ...]
-    phantom_nonempty_counts: dict[str, int]
-    duplicate_ids: tuple[str, ...]
-    blank_counts: dict[str, int]
-    literal_na_usage_count: int
+class EdaPaths:
+    """Locations needed to construct the selected EDA population."""
+
+    teacher_train_csv: Path = TEACHER_TRAIN_CSV
+    original_csv: Path = ORIGINAL_CSV
+    test_csv: Path = TEST_CSV
+    original_image_dir: Path = ORIGINAL_IMAGE_DIR
+    lowres_image_dir: Path = TEACHER_TRAIN_IMAGE_DIR
 
 
 @dataclass(frozen=True)
-class IdReconciliation:
-    csv_only_ids: tuple[str, ...]
-    image_only_ids: tuple[str, ...]
-    matched_count: int
+class PopulationAudit:
+    """Immutable reconciliation of metadata and image identifiers."""
+
+    source_train_ids: int
+    usable_products: int
+    quarantined_test_ids: tuple[int, ...]
+    teacher_duplicate_ids: tuple[int, ...]
+    test_duplicate_ids: tuple[int, ...]
+    original_duplicate_ids: tuple[int, ...]
+    missing_original_metadata_ids: tuple[int, ...]
+    missing_original_image_ids: tuple[int, ...]
+    missing_lowres_image_ids: tuple[int, ...]
+    missing_both_image_ids: tuple[int, ...]
+    unmatched_original_image_ids: tuple[int, ...]
+    unmatched_lowres_image_ids: tuple[int, ...]
+    invalid_original_image_filenames: tuple[str, ...]
+    invalid_lowres_image_filenames: tuple[str, ...]
+    duplicate_original_image_ids: tuple[int, ...]
+    duplicate_lowres_image_ids: tuple[int, ...]
+    teacher_csv_audit: CsvAudit
+    original_csv_audit: CsvAudit
 
 
-def audit_csv(path: Path) -> tuple[pd.DataFrame, SchemaAudit]:
+@dataclass(frozen=True)
+class EdaResult:
+    """Immutable locations and cache decisions from one EDA run."""
+
+    output_dir: Path
+    summary_path: Path
+    manifest: tuple[str, ...]
+    cache_status: Mapping[str, str]
+
+
+def _integer_ids(values: pd.Series, source: str) -> pd.Series:
+    text = values.astype("string")
+    invalid = ~text.str.fullmatch(r"[+-]?\d+")
+    if invalid.any():
+        examples = ", ".join(repr(value) for value in text[invalid].unique()[:5])
+        raise ValueError(f"{source} contains invalid integer ID values: {examples}")
+    return text.astype("int64")
+
+
+def _read_test_ids(path: Path) -> tuple[pd.Series, tuple[int, ...]]:
     if not path.is_file():
-        raise FileNotFoundError(f"Training metadata not found: {path}")
-
-    with path.open(newline="", encoding="utf-8") as handle:
-        reader = csv.reader(handle)
-        raw_header = next(reader)
-        maximum_width = max((len(row) for row in reader), default=len(raw_header))
-
-    header = [
-        column if column else f"Unnamed: {index}"
-        for index, column in enumerate(raw_header)
-    ]
-    overflow = [
-        f"Overflow: {index}"
-        for index in range(len(header), maximum_width)
-    ]
+        raise FileNotFoundError(f"Test metadata not found: {path}")
     frame = pd.read_csv(
         path,
-        header=None,
-        names=[*header, *overflow],
-        skiprows=1,
+        usecols=["id"],
         keep_default_na=False,
         dtype={"id": "string"},
-        engine="python",
     )
-    required = {
-        "id", "gender", "masterCategory", "subCategory", "articleType",
-        "baseColour", "season", "year", "usage", "productDisplayName",
-    }
-    missing = sorted(required.difference(frame.columns))
-    if missing:
-        raise ValueError(f"Metadata is missing required columns: {missing}")
-
-    phantom = tuple(
-        column
-        for column in frame.columns
-        if column.startswith(("Unnamed:", "Overflow:"))
-    )
-    nonempty_phantoms = {
-        column: int(
-            frame[column].fillna("").astype("string").str.strip().ne("").sum()
-        )
-        for column in phantom
-    }
-    display_columns = ["productDisplayName", *phantom]
-    frame["productDisplayName"] = frame[display_columns].apply(
-        lambda row: ",".join(
-            str(value) for value in row if pd.notna(value) and str(value).strip()
-        ),
-        axis=1,
-    )
-
-    duplicate_ids = tuple(
-        sorted(frame.loc[frame["id"].duplicated(keep=False), "id"].astype(str).unique())
-    )
-    named = frame.drop(columns=list(phantom))
-    blank_counts = {
-        column: int(named[column].astype("string").str.strip().eq("").sum())
-        for column in named.columns
-    }
-    audit = SchemaAudit(
-        row_count=len(frame),
-        physical_columns=tuple(frame.columns),
-        phantom_columns=phantom,
-        phantom_nonempty_counts=nonempty_phantoms,
-        duplicate_ids=duplicate_ids,
-        blank_counts=blank_counts,
-        literal_na_usage_count=int(named["usage"].eq("NA").sum()),
-    )
-    return named, audit
+    if "id" not in frame:
+        raise ValueError(f"Test metadata is missing required column: id ({path})")
+    ids = _integer_ids(frame["id"], "Test metadata")
+    duplicates = tuple(sorted(ids.loc[ids.duplicated(keep=False)].unique().tolist()))
+    return ids, duplicates
 
 
-def _sha256_file(path: Path) -> str:
-    digest = sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
-def _sha256_pixels(image: Image.Image) -> str:
-    rgb = image.convert("RGB")
-    digest = sha256()
-    digest.update(f"{rgb.width}x{rgb.height}:RGB:".encode())
-    digest.update(rgb.tobytes())
-    return digest.hexdigest()
-
-
-def _dhash(image: Image.Image) -> str:
-    grayscale = image.convert("L").resize((9, 8), Image.Resampling.LANCZOS)
-    pixels = np.asarray(grayscale, dtype=np.uint8)
-    bits = pixels[:, 1:] > pixels[:, :-1]
-    value = 0
-    for bit in bits.ravel():
-        value = (value << 1) | int(bit)
-    return f"{value:016x}"
-
-
-def audit_images(image_dir: Path) -> pd.DataFrame:
-    if not image_dir.is_dir():
-        raise FileNotFoundError(f"Training image directory not found: {image_dir}")
-
-    records: list[dict[str, object]] = []
-    for path in sorted(image_dir.glob("*.jpg"), key=lambda item: item.stem):
-        record: dict[str, object] = {
-            "id": path.stem,
-            "path": str(path),
-            "width": pd.NA,
-            "height": pd.NA,
-            "mode": pd.NA,
-            "byte_sha256": pd.NA,
-            "pixel_sha256": pd.NA,
-            "dhash": pd.NA,
-            "error": "",
-        }
+def _image_inventory(
+    directory: Path,
+) -> tuple[dict[int, Path], tuple[str, ...], tuple[int, ...]]:
+    if not directory.is_dir():
+        raise FileNotFoundError(f"Image directory not found: {directory}")
+    paths: dict[int, Path] = {}
+    invalid: list[str] = []
+    duplicate_ids: set[int] = set()
+    for path in sorted((item for item in directory.iterdir() if item.is_file()), key=lambda item: item.name):
+        if path.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
+            continue
         try:
-            record["byte_sha256"] = _sha256_file(path)
-            with Image.open(path) as image:
-                image.load()
-                record.update(
-                    width=image.width,
-                    height=image.height,
-                    mode=image.mode,
-                    pixel_sha256=_sha256_pixels(image),
-                    dhash=_dhash(image),
-                )
-        except (OSError, UnidentifiedImageError) as exc:
-            record["error"] = f"{type(exc).__name__}: {exc}"
-        records.append(record)
-
-    return pd.DataFrame.from_records(records).astype({"id": "string"})
+            product_id = int(path.stem)
+        except ValueError:
+            invalid.append(path.name)
+            continue
+        if product_id in paths:
+            duplicate_ids.add(product_id)
+        else:
+            paths[product_id] = path
+    return paths, tuple(invalid), tuple(sorted(duplicate_ids))
 
 
-def inventory_images(image_dir: Path, pattern: str = "*.jpg") -> pd.DataFrame:
-    """Inventory image files without decoding their full-resolution pixels."""
+def build_population(paths: EdaPaths = EdaPaths()) -> tuple[pd.DataFrame, PopulationAudit]:
+    """Return sorted products with original labels and both required image views."""
+    teacher, teacher_csv_audit = audit_csv(paths.teacher_train_csv)
+    original, original_csv_audit = audit_csv(paths.original_csv)
+    test_ids, test_duplicates = _read_test_ids(paths.test_csv)
 
-    if not image_dir.is_dir():
-        raise FileNotFoundError(f"Image directory not found: {image_dir}")
-
-    records = [
-        {
-            "id": path.stem,
-            "path": str(path),
-            "bytes": path.stat().st_size,
-            "suffix": path.suffix.lower(),
-        }
-        for path in sorted(image_dir.glob(pattern), key=lambda item: item.stem)
-    ]
-    return pd.DataFrame.from_records(
-        records,
-        columns=["id", "path", "bytes", "suffix"],
-    ).astype({"id": "string"})
-
-
-def audit_image_sample(
-    inventory: pd.DataFrame,
-    sample_size: int,
-    seed: int,
-) -> pd.DataFrame:
-    """Decode a deterministic sample from an image inventory.
-
-    This is intended for large, high-resolution collections where hashing and
-    decoding every file during interactive EDA would be unnecessarily costly.
-    It estimates image properties but does not prove that unsampled files are
-    readable.
-    """
-
-    required = {"id", "path"}
-    missing = sorted(required.difference(inventory.columns))
-    if missing:
-        raise ValueError(f"Image inventory is missing required columns: {missing}")
-    if sample_size < 1:
-        raise ValueError("sample_size must be at least 1")
-
-    selected = inventory.sort_values("id")
-    if sample_size < len(selected):
-        selected = selected.sample(n=sample_size, random_state=seed).sort_values("id")
-
-    records: list[dict[str, object]] = []
-    for row in selected.itertuples(index=False):
-        record: dict[str, object] = {
-            "id": str(row.id),
-            "path": str(row.path),
-            "width": pd.NA,
-            "height": pd.NA,
-            "mode": pd.NA,
-            "error": "",
-        }
-        try:
-            with Image.open(row.path) as image:
-                image.load()
-                record.update(width=image.width, height=image.height, mode=image.mode)
-        except (OSError, UnidentifiedImageError) as exc:
-            record["error"] = f"{type(exc).__name__}: {exc}"
-        records.append(record)
-
-    return pd.DataFrame.from_records(
-        records,
-        columns=["id", "path", "width", "height", "mode", "error"],
-    ).astype({"id": "string"})
-
-
-def reconcile_ids(styles: pd.DataFrame, images: pd.DataFrame) -> IdReconciliation:
-    csv_ids = set(styles["id"].astype(str))
-    image_ids = set(images["id"].astype(str))
-    return IdReconciliation(
-        csv_only_ids=tuple(sorted(csv_ids - image_ids)),
-        image_only_ids=tuple(sorted(image_ids - csv_ids)),
-        matched_count=len(csv_ids & image_ids),
-    )
-
-
-def exact_duplicate_groups(
-    images: pd.DataFrame,
-    hash_column: str = "pixel_sha256",
-) -> tuple[tuple[str, ...], ...]:
-    usable = images.dropna(subset=[hash_column])
-    groups = (
-        tuple(sorted(group["id"].astype(str)))
-        for _, group in usable.groupby(hash_column, sort=True)
-        if len(group) > 1
-    )
-    return tuple(sorted(groups))
-
-
-def hamming_distance(left: str, right: str) -> int:
-    return (int(left, 16) ^ int(right, 16)).bit_count()
-
-
-@dataclass
-class _BKNode:
-    value: int
-    children: dict[int, "_BKNode"]
-
-
-class _BKTree:
-    def __init__(self) -> None:
-        self._root: _BKNode | None = None
-
-    @staticmethod
-    def _distance(left: int, right: int) -> int:
-        return (left ^ right).bit_count()
-
-    def add(self, value: int) -> None:
-        if self._root is None:
-            self._root = _BKNode(value=value, children={})
-            return
-
-        node = self._root
-        while True:
-            distance = self._distance(value, node.value)
-            if distance == 0:
-                return
-            child = node.children.get(distance)
-            if child is None:
-                node.children[distance] = _BKNode(value=value, children={})
-                return
-            node = child
-
-    def query(self, value: int, radius: int) -> tuple[int, ...]:
-        if self._root is None:
-            return ()
-
-        matches: list[int] = []
-        stack = [self._root]
-        while stack:
-            node = stack.pop()
-            distance = self._distance(value, node.value)
-            if distance <= radius:
-                matches.append(node.value)
-            lower = distance - radius
-            upper = distance + radius
-            stack.extend(
-                child
-                for edge, child in node.children.items()
-                if lower <= edge <= upper
-            )
-        return tuple(sorted(matches))
-
-
-def near_duplicate_groups(
-    images: pd.DataFrame,
-    max_distance: int = 6,
-) -> tuple[tuple[str, ...], ...]:
-    """Return candidate near-duplicate components grouped by union-find over dHash.
-
-    Each returned tuple lists image IDs transitively linked through dHash pairs
-    within ``max_distance`` whose ``pixel_sha256`` values differ. Members of a
-    component are **not** guaranteed to be pairwise within ``max_distance``;
-    a chain A–B–C can place A and C in the same group even when their direct
-    Hamming distance exceeds ``max_distance``.
-
-    Pairs with identical ``pixel_sha256`` never receive a near-duplicate edge,
-    but two exact-pixel duplicates can still appear together when a third image
-    bridges them. Treat every group as a review queue—confirm visually before
-    treating members as near duplicates.
-    """
-    if not 0 <= max_distance <= 64:
-        raise ValueError("max_distance must be between 0 and 64")
-
-    usable = images.dropna(subset=["dhash", "pixel_sha256"])[
-        ["id", "dhash", "pixel_sha256"]
-    ].copy()
-    records_by_hash: dict[int, list[tuple[str, str]]] = {}
-    for row in usable.itertuples(index=False):
-        records_by_hash.setdefault(int(row.dhash, 16), []).append(
-            (str(row.id), str(row.pixel_sha256))
+    train_ids = pd.Index(teacher["id"].drop_duplicates().sort_values())
+    quarantined_ids = pd.Index(test_ids.drop_duplicates().sort_values())
+    overlap = train_ids.intersection(quarantined_ids)
+    if not overlap.empty:
+        values = ", ".join(map(str, overlap.tolist()[:10]))
+        raise ValueError(
+            "IDs appear in both teacher training and test metadata: "
+            f"{values}"
         )
 
-    parent = {image_id: image_id for image_id in usable["id"].astype(str)}
-
-    def find(image_id: str) -> str:
-        while parent[image_id] != image_id:
-            parent[image_id] = parent[parent[image_id]]
-            image_id = parent[image_id]
-        return image_id
-
-    def union(left: str, right: str) -> None:
-        left_root = find(left)
-        right_root = find(right)
-        if left_root != right_root:
-            parent[max(left_root, right_root)] = min(left_root, right_root)
-
-    def connect(
-        left_records: list[tuple[str, str]],
-        right_records: list[tuple[str, str]],
-        same_bucket: bool = False,
-    ) -> None:
-        for left_index, (left_id, left_pixels) in enumerate(left_records):
-            start = left_index + 1 if same_bucket else 0
-            for right_id, right_pixels in right_records[start:]:
-                if left_pixels != right_pixels:
-                    union(left_id, right_id)
-
-    tree = _BKTree()
-    for hash_value in sorted(records_by_hash):
-        current_records = records_by_hash[hash_value]
-        connect(current_records, current_records, same_bucket=True)
-        for match in tree.query(hash_value, max_distance):
-            connect(current_records, records_by_hash[match])
-        tree.add(hash_value)
-
-    components: dict[str, list[str]] = {}
-    for image_id in sorted(parent):
-        components.setdefault(find(image_id), []).append(image_id)
-    return tuple(
-        sorted(tuple(group) for group in components.values() if len(group) > 1)
+    selected = original.loc[original["id"].isin(train_ids)].copy()
+    original_duplicates = tuple(
+        sorted(selected.loc[selected["id"].duplicated(keep=False), "id"].unique().tolist())
     )
+    selected = selected.drop_duplicates("id", keep="first")
+    selected_ids = pd.Index(selected["id"])
+    missing_metadata = tuple(sorted(train_ids.difference(selected_ids).tolist()))
 
-
-def _display_labels(values: pd.Series) -> pd.Series:
-    return values.astype("string").fillna("<BLANK>").replace("", "<BLANK>")
-
-
-def target_distribution(styles: pd.DataFrame, target: str) -> pd.DataFrame:
-    if target not in styles:
-        raise KeyError(f"Unknown target: {target}")
-    counts = (
-        _display_labels(styles[target])
-        .value_counts(dropna=False)
-        .rename_axis("label")
-        .reset_index(name="count")
-        .sort_values(["count", "label"], ascending=[False, True], ignore_index=True)
+    original_images, invalid_original_images, duplicate_original_images = _image_inventory(
+        paths.original_image_dir
     )
-    counts["share"] = counts["count"] / len(styles) if len(styles) else 0.0
-    counts["rank"] = np.arange(1, len(counts) + 1)
-    return counts[["label", "count", "share", "rank"]]
+    lowres_images, invalid_lowres_images, duplicate_lowres_images = _image_inventory(
+        paths.lowres_image_dir
+    )
+    missing_original = tuple(sorted(selected_ids.difference(original_images).tolist()))
+    missing_lowres = tuple(sorted(selected_ids.difference(lowres_images).tolist()))
+    missing_both = tuple(
+        sorted(set(missing_original).intersection(missing_lowres))
+    )
+    unmatched_original = tuple(sorted(set(original_images).difference(selected_ids)))
+    unmatched_lowres = tuple(sorted(set(lowres_images).difference(selected_ids)))
+
+    selected["original_image_path"] = selected["id"].map(original_images)
+    selected["lowres_image_path"] = selected["id"].map(lowres_images)
+    population = (
+        selected.dropna(subset=["original_image_path", "lowres_image_path"])
+        .sort_values("id", ignore_index=True)
+    )
+    audit = PopulationAudit(
+        source_train_ids=len(train_ids),
+        usable_products=len(population),
+        quarantined_test_ids=tuple(quarantined_ids.tolist()),
+        teacher_duplicate_ids=tuple(map(int, teacher_csv_audit.duplicate_ids)),
+        test_duplicate_ids=test_duplicates,
+        original_duplicate_ids=original_duplicates,
+        missing_original_metadata_ids=missing_metadata,
+        missing_original_image_ids=missing_original,
+        missing_lowres_image_ids=missing_lowres,
+        missing_both_image_ids=missing_both,
+        unmatched_original_image_ids=unmatched_original,
+        unmatched_lowres_image_ids=unmatched_lowres,
+        invalid_original_image_filenames=invalid_original_images,
+        invalid_lowres_image_filenames=invalid_lowres_images,
+        duplicate_original_image_ids=duplicate_original_images,
+        duplicate_lowres_image_ids=duplicate_lowres_images,
+        teacher_csv_audit=teacher_csv_audit,
+        original_csv_audit=original_csv_audit,
+    )
+    return population, audit
 
 
-def target_summary(
-    styles: pd.DataFrame,
-    targets: Sequence[str],
-) -> pd.DataFrame:
-    rows: list[dict[str, object]] = []
-    for target in targets:
-        distribution = target_distribution(styles, target)
-        nonblank = distribution.loc[distribution["label"].ne("<BLANK>")]
-        majority = nonblank.iloc[0] if not nonblank.empty else None
-        minority_count = int(nonblank["count"].min()) if not nonblank.empty else 0
-        majority_count = int(majority["count"]) if majority is not None else 0
-        rows.append(
+def _labels(values: pd.Series) -> pd.Series:
+    return values.astype("string").fillna("")
+
+
+def distribution_table(frame: pd.DataFrame, column: str) -> pd.DataFrame:
+    """Return complete category counts and shares, preserving blank and literal NA."""
+    if column not in frame:
+        raise ValueError(f"Column not found: {column}")
+    if frame.empty:
+        return pd.DataFrame(
             {
-                "target": target,
-                "rows": len(styles),
-                "classes_including_blank": len(distribution),
-                "blank_count": int(
-                    distribution.loc[
-                        distribution["label"].eq("<BLANK>"), "count"
-                    ].sum()
-                ),
-                "majority_label": majority["label"] if majority is not None else "",
-                "majority_count": majority_count,
-                "majority_accuracy": majority_count / len(styles) if len(styles) else 0.0,
-                "minority_count": minority_count,
-                "imbalance_ratio": (
-                    majority_count / minority_count if minority_count else np.inf
-                ),
+                "label": pd.Series(dtype="string"),
+                "count": pd.Series(dtype="int64"),
+                "share": pd.Series(dtype="float64"),
+                "is_blank": pd.Series(dtype="bool"),
             }
         )
-    return pd.DataFrame.from_records(rows)
-
-
-def hierarchy_conflicts(styles: pd.DataFrame) -> pd.DataFrame:
-    grouped = (
-        styles.groupby("articleType", dropna=False)
-        .agg(
-            master_categories=(
-                "masterCategory",
-                lambda values: tuple(sorted(set(_display_labels(values)))),
-            ),
-            subcategories=(
-                "subCategory",
-                lambda values: tuple(sorted(set(_display_labels(values)))),
-            ),
-            rows=("id", "size"),
-        )
-        .reset_index()
+    counts = _labels(frame[column]).value_counts(dropna=False)
+    result = counts.rename_axis("label").reset_index(name="count")
+    result["label"] = result["label"].astype(str)
+    result = result.sort_values(
+        ["count", "label"], ascending=[False, True], ignore_index=True
     )
-    grouped["master_category_count"] = grouped["master_categories"].str.len()
-    grouped["subcategory_count"] = grouped["subcategories"].str.len()
-    return grouped.loc[
-        grouped["master_category_count"].gt(1) | grouped["subcategory_count"].gt(1)
-    ].sort_values("articleType", ignore_index=True)
+    result["share"] = result["count"] / len(frame)
+    result["is_blank"] = result["label"].eq("")
+    return result
 
 
-def cooccurrence_table(
-    styles: pd.DataFrame,
-    left: str,
-    right: str,
+def skew_table(
+    frame: pd.DataFrame, columns: tuple[str, ...] = TARGET_COLUMNS
 ) -> pd.DataFrame:
-    if left not in styles or right not in styles:
-        raise KeyError(f"Unknown columns: {left}, {right}")
-    return pd.crosstab(
-        _display_labels(styles[left]),
-        _display_labels(styles[right]),
-        dropna=False,
-    )
+    """Summarize target imbalance using descriptive, finite class metrics."""
+    records: list[dict[str, float | int | str]] = []
+    for column in columns:
+        distribution = distribution_table(frame, column)
+        learned = distribution.loc[~distribution["is_blank"], "count"]
+        counts = learned.to_numpy(dtype=float)
+        total = int(counts.sum())
+        classes = len(counts)
+        probabilities = counts / total if total else np.array([], dtype=float)
+        entropy = float(-(probabilities * np.log2(probabilities)).sum()) if total else 0.0
+        normalized_entropy = entropy / np.log2(classes) if classes > 1 else 0.0
+        records.append(
+            {
+                "column": column,
+                "total": total,
+                "classes": classes,
+                "blank_count": int(
+                    distribution.loc[distribution["is_blank"], "count"].sum()
+                ),
+                "literal_na_count": int(
+                    distribution.loc[distribution["label"].eq("NA"), "count"].sum()
+                ),
+                "majority_share": float(probabilities.max()) if total else 0.0,
+                "imbalance_ratio": float(counts.max() / counts.min()) if total else 0.0,
+                "normalized_entropy": float(normalized_entropy),
+                "effective_class_count": float(2**entropy) if total else 0.0,
+                "gini_impurity": float(1 - np.square(probabilities).sum()) if total else 0.0,
+                "top_1_share": float(probabilities[:1].sum()) if total else 0.0,
+                "top_5_share": float(probabilities[:5].sum()) if total else 0.0,
+            }
+        )
+    return pd.DataFrame.from_records(records).set_index("column")
+
+
+def support_band_table(
+    frame: pd.DataFrame, column: str = "articleType"
+) -> pd.DataFrame:
+    """Count label classes by fixed, report-ready training-support bands."""
+    distribution = distribution_table(frame, column)
+    counts = distribution.loc[~distribution["is_blank"], "count"]
+    bands = (("1", 1, 1), ("2", 2, 2), ("3–4", 3, 4), ("5–9", 5, 9), ("10+", 10, None))
+    total = int(counts.sum())
+    records = []
+    for name, lower, upper in bands:
+        mask = counts.ge(lower) if upper is None else counts.between(lower, upper)
+        records.append(
+            {
+                "band": name,
+                "class_count": int(mask.sum()),
+                "product_count": int(counts[mask].sum()),
+                "product_share": float(counts[mask].sum() / total) if total else 0.0,
+            }
+        )
+    return pd.DataFrame.from_records(records)
 
 
 def cramers_v(left: pd.Series, right: pd.Series) -> float:
-    table = pd.crosstab(_display_labels(left), _display_labels(right), dropna=False)
+    """Return bias-corrected Cramér's V for two categorical series."""
+    paired = pd.DataFrame({"left": _labels(left), "right": _labels(right)}).dropna()
+    if paired.empty or len(paired) <= 1:
+        return 0.0
+    table = pd.crosstab(paired["left"], paired["right"])
     observed = table.to_numpy(dtype=float)
     total = observed.sum()
-    row_count, column_count = observed.shape
-    if total == 0 or row_count < 2 or column_count < 2:
-        return 0.0
-
     expected = np.outer(observed.sum(axis=1), observed.sum(axis=0)) / total
-    chi_squared = np.divide(
-        (observed - expected) ** 2,
-        expected,
-        out=np.zeros_like(expected),
-        where=expected > 0,
-    ).sum()
-    phi_squared = chi_squared / total
-    correction = ((column_count - 1) * (row_count - 1)) / (total - 1)
+    valid = expected > 0
+    chi_square = float((np.square(observed - expected)[valid] / expected[valid]).sum())
+    rows, columns = observed.shape
+    phi_squared = chi_square / total
+    correction = ((columns - 1) * (rows - 1)) / (total - 1)
     corrected_phi = max(0.0, phi_squared - correction)
-    corrected_rows = row_count - ((row_count - 1) ** 2) / (total - 1)
-    corrected_columns = column_count - ((column_count - 1) ** 2) / (total - 1)
-    denominator = min(corrected_rows - 1, corrected_columns - 1)
-    if denominator <= 0:
-        return 0.0
-    return float(np.clip(np.sqrt(corrected_phi / denominator), 0.0, 1.0))
+    corrected_rows = rows - ((rows - 1) ** 2 / (total - 1))
+    corrected_columns = columns - ((columns - 1) ** 2 / (total - 1))
+    denominator = min(corrected_columns - 1, corrected_rows - 1)
+    return float(np.sqrt(corrected_phi / denominator)) if denominator > 0 else 0.0
 
 
-def sample_ids(
-    styles: pd.DataFrame,
-    target: str,
-    labels: Sequence[str],
-    per_label: int,
-    seed: int,
-) -> tuple[str, ...]:
-    if target not in styles:
-        raise KeyError(f"Unknown target: {target}")
-    if per_label < 1:
-        raise ValueError("per_label must be at least 1")
-
-    normalized = styles.assign(_label=_display_labels(styles[target]))
-    selected: list[str] = []
-    for offset, label in enumerate(labels):
-        candidates = normalized.loc[normalized["_label"].eq(label), "id"]
-        count = min(per_label, len(candidates))
-        if count:
-            selected.extend(
-                candidates.sample(n=count, random_state=seed + offset).astype(str)
-            )
-    return tuple(selected)
+def association_matrix(frame: pd.DataFrame, columns: tuple[str, ...]) -> pd.DataFrame:
+    """Return a symmetric, bias-corrected Cramér's V matrix."""
+    matrix = pd.DataFrame(0.0, index=columns, columns=columns)
+    for index, left in enumerate(columns):
+        for right in columns[index + 1 :]:
+            value = cramers_v(frame[left], frame[right])
+            matrix.loc[left, right] = value
+            matrix.loc[right, left] = value
+    if not frame.empty:
+        for column in columns:
+            matrix.loc[column, column] = cramers_v(frame[column], frame[column])
+    return matrix
 
 
-def plot_image_grid(
-    ids: Sequence[str],
-    image_dir: Path,
-    title: str,
-    columns: int = 5,
-) -> plt.Figure:
-    """Build an image grid; the caller owns and must close the returned figure."""
-
-    if columns < 1:
-        raise ValueError("columns must be at least 1")
-    rows = max(1, int(np.ceil(len(ids) / columns)))
-    figure, axes = plt.subplots(
-        rows,
-        columns,
-        figsize=(2.2 * columns, 2.7 * rows),
-        squeeze=False,
-    )
-    for axis, image_id in zip(axes.flat, ids):
-        path = image_dir / f"{image_id}.jpg"
-        try:
-            with Image.open(path) as image:
-                axis.imshow(image.convert("RGB"))
-        except (OSError, UnidentifiedImageError) as exc:
-            axis.text(0.5, 0.5, type(exc).__name__, ha="center", va="center")
-        axis.set_title(str(image_id), fontsize=8)
-        axis.axis("off")
-    for axis in axes.flat[len(ids):]:
-        axis.axis("off")
-    figure.suptitle(title)
-    figure.tight_layout()
-    return figure
-
-
-def build_dataset_overview(
-    styles: pd.DataFrame,
-    images: pd.DataFrame,
-    output_path: Path,
-) -> plt.Figure:
-    """Save the dataset overview; the caller owns and must close the figure."""
-
-    figure, axes = plt.subplots(2, 2, figsize=(12, 8))
-
-    article = target_distribution(styles, "articleType")
-    axes[0, 0].plot(article["rank"], article["count"], color="#b33b24")
-    axes[0, 0].set_yscale("log")
-    axes[0, 0].set(title="articleType long tail", xlabel="Class rank", ylabel="Count")
-
-    for axis, target in zip(
-        (axes[0, 1], axes[1, 0], axes[1, 1]),
-        ("season", "gender", "usage"),
-    ):
-        distribution = target_distribution(styles, target)
-        axis.bar(distribution["label"], distribution["count"], color="#345995")
-        axis.set_title(target)
-        axis.set_ylabel("Count")
-        axis.tick_params(axis="x", rotation=35)
-        if target in {"season", "usage"}:
-            axis.set_yscale("log")
-        for index, count in enumerate(distribution["count"]):
-            axis.annotate(
-                f"{int(count):,}",
-                (index, count),
-                xytext=(0, 3),
-                textcoords="offset points",
-                ha="center",
-                fontsize=7,
-            )
-
-    readable_count = int(images["error"].eq("").sum())
-    style_ids = set(styles["id"].astype(str))
-    image_ids = set(images["id"].astype(str))
-    unmatched_count = len(style_ids.symmetric_difference(image_ids))
-    figure.suptitle(
-        "Fashion dataset overview\n"
-        f"{len(styles):,} metadata rows · {readable_count:,} readable images · "
-        f"{unmatched_count:,} unmatched IDs"
-    )
-    figure.tight_layout()
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    figure.savefig(output_path, dpi=200, bbox_inches="tight")
-    return figure
-
-
-def target_skew_summary(
-    styles: pd.DataFrame,
-    targets: Sequence[str],
+def row_normalized_cooccurrence(
+    frame: pd.DataFrame, row_column: str, column: str
 ) -> pd.DataFrame:
-    """Measure concentration and effective diversity for categorical targets."""
+    """Return conditional category shares for each row category."""
+    table = pd.crosstab(_labels(frame[row_column]), _labels(frame[column]))
+    return table.div(table.sum(axis=1), axis=0).fillna(0.0)
 
-    rows: list[dict[str, object]] = []
-    for target in targets:
-        distribution = target_distribution(styles, target)
-        nonblank = distribution.loc[distribution["label"].ne("<BLANK>")].copy()
-        counts = nonblank["count"].to_numpy(dtype=float)
-        probabilities = counts / counts.sum()
-        entropy = float(-(probabilities * np.log2(probabilities)).sum())
-        class_count = len(counts)
-        normalized_entropy = (
-            entropy / np.log2(class_count) if class_count > 1 else 1.0
-        )
-        ordered = np.sort(counts)
-        gini = float(
-            (2 * np.dot(np.arange(1, class_count + 1), ordered))
-            / (class_count * ordered.sum())
-            - (class_count + 1) / class_count
-        )
-        rows.append(
+
+def deterministic_id_bins(frame: pd.DataFrame, bins: int = 10) -> pd.DataFrame:
+    """Add deterministic equal-width catalogue-ID range labels."""
+    if bins < 1:
+        raise ValueError("bins must be at least 1")
+    result = frame.copy()
+    if result.empty:
+        result["id_bin"] = pd.Series(dtype="string")
+        return result
+    ids = _integer_ids(result["id"], "Population")
+    minimum, maximum = int(ids.min()), int(ids.max())
+    width = max(1, int(np.ceil((maximum - minimum + 1) / bins)))
+    bin_index = ((ids - minimum) // width).clip(upper=bins - 1)
+    lower = minimum + bin_index * width
+    upper = np.minimum(lower + width - 1, maximum)
+    result["id_bin"] = lower.astype(str) + "–" + pd.Series(upper, index=result.index).astype(str)
+    return result
+
+
+def drift_table(
+    frame: pd.DataFrame, group_column: str, category_column: str
+) -> pd.DataFrame:
+    """Measure each group distribution's total variation from all products."""
+    if frame.empty:
+        return pd.DataFrame(
             {
-                "target": target,
-                "classes": class_count,
-                "majority_share": float(probabilities.max()),
-                "top5_share": float(np.sort(probabilities)[::-1][:5].sum()),
-                "imbalance_ratio": float(counts.max() / counts.min()),
-                "entropy_bits": entropy,
-                "normalized_entropy": float(normalized_entropy),
-                "effective_classes": float(2**entropy),
-                "gini": gini,
+                group_column: pd.Series(dtype="string"),
+                "total": pd.Series(dtype="int64"),
+                "total_variation": pd.Series(dtype="float64"),
             }
         )
-    return pd.DataFrame.from_records(rows)
-
-
-def plot_schema_missingness(
-    blank_counts: pd.DataFrame,
-    literal_na_usage_count: int,
-) -> plt.Figure:
-    """Plot genuine blanks separately from the literal usage label ``NA``."""
-
-    visible = blank_counts.loc[
-        blank_counts["blank_count"].gt(0), ["column", "blank_count"]
-    ].copy()
-    visible = pd.concat(
-        [
-            visible,
-            pd.DataFrame(
-                [{"column": 'usage literal "NA"', "blank_count": literal_na_usage_count}]
-            ),
-        ],
-        ignore_index=True,
-    ).sort_values("blank_count")
-
-    figure, axis = plt.subplots(figsize=(8, 3.8))
-    bars = axis.barh(visible["column"], visible["blank_count"], color="#345995")
-    axis.set(
-        title="Missing annotations versus the literal usage label",
-        xlabel="Rows",
-        ylabel="CSV field",
+    categories = _labels(frame[category_column])
+    overall = categories.value_counts(normalize=True)
+    grouped = pd.DataFrame(
+        {"group": _labels(frame[group_column]), "category": categories}
     )
-    axis.grid(axis="x", alpha=0.25)
-    axis.bar_label(bars, labels=[f"{int(value):,}" for value in visible["blank_count"]])
-    figure.tight_layout()
-    return figure
-
-
-def plot_image_dimension_profile(dimension_mode_counts: pd.DataFrame) -> plt.Figure:
-    """Show all image shape/mode combinations on a log count scale."""
-
-    profile = dimension_mode_counts.copy()
-    profile["profile"] = (
-        profile["width"].astype("Int64").astype(str)
-        + "×"
-        + profile["height"].astype("Int64").astype(str)
-        + " "
-        + profile["mode"].astype(str)
-    )
-    profile = profile.sort_values("count")
-
-    figure, axis = plt.subplots(figsize=(9, 5))
-    bars = axis.barh(profile["profile"], profile["count"], color="#345995")
-    axis.set_xscale("log")
-    axis.set(
-        title="Image dimensions and colour modes",
-        xlabel="Image files (log scale)",
-        ylabel="Width × height and mode",
-    )
-    axis.grid(axis="x", alpha=0.25)
-    axis.bar_label(bars, labels=[f"{int(value):,}" for value in profile["count"]])
-    figure.tight_layout()
-    return figure
-
-
-def plot_reconciliation_summary(reconciliation: pd.DataFrame) -> plt.Figure:
-    """Visualize metadata/image coverage and the small unmatched remainder."""
-
-    lookup = reconciliation.set_index("metric")["count"]
-    total = int(lookup["csv rows (unique ids)"])
-    matched = int(lookup["matched ids"])
-    csv_only = int(lookup["csv-only ids"])
-    image_only = int(lookup["image-only ids"])
-
-    figure, axes = plt.subplots(1, 2, figsize=(10, 3.8))
-    axes[0].barh(["Metadata IDs"], [matched], label="Matched", color="#345995")
-    axes[0].barh(
-        ["Metadata IDs"],
-        [csv_only],
-        left=[matched],
-        label="No image",
-        color="#b33b24",
-    )
-    axes[0].set(
-        title=f"Metadata-to-image coverage: {matched / total:.3%}",
-        xlabel="IDs",
-    )
-    axes[0].legend()
-    axes[0].grid(axis="x", alpha=0.25)
-
-    gap_labels = ["CSV-only", "Image-only"]
-    gap_values = [csv_only, image_only]
-    bars = axes[1].bar(gap_labels, gap_values, color=["#b33b24", "#345995"])
-    axes[1].set(title="Unmatched ID counts", ylabel="IDs")
-    axes[1].bar_label(bars)
-    axes[1].grid(axis="y", alpha=0.25)
-    figure.tight_layout()
-    return figure
-
-
-def plot_duplicate_summary(duplicate_summary: pd.DataFrame) -> plt.Figure:
-    """Compare duplicate group counts and affected-image counts."""
-
-    figure, axes = plt.subplots(1, 2, figsize=(10, 4))
-    labels = duplicate_summary["kind"].str.replace("-", "\n", regex=False)
-    group_bars = axes[0].bar(labels, duplicate_summary["groups"], color="#345995")
-    image_bars = axes[1].bar(labels, duplicate_summary["images"], color="#b33b24")
-    axes[0].set(title="Duplicate components", ylabel="Groups")
-    axes[1].set(title="Images touched by each detector", ylabel="Images")
-    axes[0].bar_label(group_bars, labels=[f"{value:,}" for value in duplicate_summary["groups"]])
-    axes[1].bar_label(image_bars, labels=[f"{value:,}" for value in duplicate_summary["images"]])
-    for axis in axes:
-        axis.tick_params(axis="x", labelrotation=20)
-        axis.grid(axis="y", alpha=0.25)
-    figure.tight_layout()
-    return figure
-
-
-def plot_near_duplicate_size_profile(
-    size_histogram: pd.DataFrame,
-) -> plt.Figure:
-    """Plot component-size frequency and the cumulative images they contain."""
-
-    profile = size_histogram.sort_values("group_size").copy()
-    profile["images"] = profile["group_size"] * profile["num_groups"]
-    figure, axes = plt.subplots(1, 2, figsize=(11, 4.2))
-    axes[0].scatter(
-        profile["group_size"],
-        profile["num_groups"],
-        s=28,
-        color="#345995",
-    )
-    axes[0].set_xscale("log")
-    axes[0].set_yscale("log")
-    axes[0].set(
-        title="Near-duplicate component-size frequency",
-        xlabel="Images per component (log scale)",
-        ylabel="Components (log scale)",
-    )
-
-    ordered = profile.sort_values("group_size", ascending=False)
-    axes[1].plot(
-        np.arange(1, len(ordered) + 1),
-        ordered["images"].cumsum() / ordered["images"].sum(),
-        color="#b33b24",
-    )
-    axes[1].set(
-        title="Concentration of linked images",
-        xlabel="Distinct component sizes, largest first",
-        ylabel="Cumulative share of linked images",
-        ylim=(0, 1.02),
-    )
-    axes[1].yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:.0%}"))
-    for axis in axes:
-        axis.grid(alpha=0.25)
-    figure.tight_layout()
-    return figure
-
-
-def plot_skew_dashboard(skew: pd.DataFrame) -> plt.Figure:
-    """Compare majority share, entropy, and imbalance across targets."""
-
-    figure, axes = plt.subplots(1, 3, figsize=(13, 4.2))
-    targets = skew["target"]
-
-    bars = axes[0].bar(targets, skew["majority_share"], color="#345995")
-    axes[0].set(title="Majority-class baseline", ylabel="Share of rows", ylim=(0, 1))
-    axes[0].yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:.0%}"))
-    axes[0].bar_label(bars, labels=[f"{value:.1%}" for value in skew["majority_share"]])
-
-    bars = axes[1].bar(targets, skew["normalized_entropy"], color="#4f8a5b")
-    axes[1].set(
-        title="Normalized label entropy",
-        ylabel="0 = concentrated, 1 = balanced",
-        ylim=(0, 1.05),
-    )
-    axes[1].bar_label(bars, labels=[f"{value:.2f}" for value in skew["normalized_entropy"]])
-
-    bars = axes[2].bar(targets, skew["imbalance_ratio"], color="#b33b24")
-    axes[2].set_yscale("log")
-    axes[2].set(title="Largest-to-smallest class ratio", ylabel="Ratio (log scale)")
-    axes[2].bar_label(bars, labels=[f"{value:,.0f}×" for value in skew["imbalance_ratio"]])
-
-    for axis in axes:
-        axis.tick_params(axis="x", labelrotation=25)
-        axis.grid(axis="y", alpha=0.25)
-    figure.tight_layout()
-    return figure
-
-
-def plot_article_type_diagnostics(
-    distribution: pd.DataFrame,
-    buckets: pd.DataFrame,
-) -> plt.Figure:
-    """Show the article-type head, tail, concentration, and support bands."""
-
-    ordered = distribution.sort_values("count", ascending=False).reset_index(drop=True)
-    top = ordered.head(20).sort_values("count")
-    cumulative = ordered["count"].cumsum() / ordered["count"].sum()
-    class_share = np.arange(1, len(ordered) + 1) / len(ordered)
-
-    figure, axes = plt.subplots(2, 2, figsize=(13, 10))
-    bars = axes[0, 0].barh(top["label"], top["count"], color="#345995")
-    axes[0, 0].set(title="Top 20 articleType labels", xlabel="Rows", ylabel="Label")
-    axes[0, 0].bar_label(bars, labels=[f"{value:,}" for value in top["count"]], fontsize=8)
-
-    axes[0, 1].plot(ordered.index + 1, ordered["count"], color="#b33b24")
-    axes[0, 1].set_yscale("log")
-    axes[0, 1].set(
-        title="All articleType labels ranked by support",
-        xlabel="Class rank",
-        ylabel="Rows (log scale)",
-    )
-
-    axes[1, 0].plot(class_share, cumulative, color="#345995", label="Observed")
-    axes[1, 0].plot([0, 1], [0, 1], linestyle="--", color="#777777", label="Equal support")
-    axes[1, 0].set(
-        title="How quickly common classes capture the rows",
-        xlabel="Share of articleType classes, largest first",
-        ylabel="Cumulative share of rows",
-        xlim=(0, 1),
-        ylim=(0, 1),
-    )
-    axes[1, 0].xaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:.0%}"))
-    axes[1, 0].yaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:.0%}"))
-    axes[1, 0].legend()
-
-    bucket_bars = axes[1, 1].bar(
-        buckets.index.astype(str),
-        buckets["num_classes"],
-        color="#4f8a5b",
-    )
-    axes[1, 1].set(
-        title="Class support bands",
-        xlabel="Usable rows per class",
-        ylabel="Number of classes",
-    )
-    axes[1, 1].bar_label(bucket_bars)
-
-    for axis in axes.flat:
-        axis.grid(alpha=0.25)
-    figure.tight_layout()
-    return figure
-
-
-def plot_categorical_distribution(
-    distribution: pd.DataFrame,
-    target: str,
-) -> plt.Figure:
-    """Plot complete categorical counts with percentages and visible blanks."""
-
-    ordered = distribution.sort_values("count").copy()
-    figure_height = max(3.5, 0.55 * len(ordered) + 1.5)
-    figure, axis = plt.subplots(figsize=(9, figure_height))
-    bars = axis.barh(ordered["label"], ordered["count"], color="#345995")
-    labels = [
-        f"{int(count):,} ({share:.1%})"
-        for count, share in zip(ordered["count"], ordered["share"])
-    ]
-    axis.bar_label(bars, labels=labels, fontsize=8)
-    axis.set(
-        title=f"Complete {target} distribution",
-        xlabel="Rows",
-        ylabel=target,
-    )
-    axis.grid(axis="x", alpha=0.25)
-    axis.margins(x=0.22)
-    figure.tight_layout()
-    return figure
-
-
-def plot_hierarchy_conflict_summary(hierarchy: pd.DataFrame) -> plt.Figure:
-    """Rank hierarchy-conflict labels by category spread."""
-
-    ranked = hierarchy.assign(
-        conflict_span=hierarchy["master_category_count"] + hierarchy["subcategory_count"]
-    ).sort_values(["conflict_span", "rows"], ascending=[False, False]).head(20)
-    ranked = ranked.sort_values("conflict_span")
-
-    figure, axis = plt.subplots(figsize=(10, 7))
-    axis.barh(
-        ranked["articleType"],
-        ranked["subcategory_count"],
-        label="Subcategories",
-        color="#345995",
-    )
-    axis.barh(
-        ranked["articleType"],
-        ranked["master_category_count"],
-        left=ranked["subcategory_count"],
-        label="Master categories",
-        color="#b33b24",
-    )
-    axis.set(
-        title="Hierarchy-conflict labels with the widest category spread",
-        xlabel="Distinct mapped categories",
-        ylabel="articleType",
-    )
-    axis.legend()
-    axis.grid(axis="x", alpha=0.25)
-    figure.tight_layout()
-    return figure
-
-
-def plot_cooccurrence_heatmap(
-    table: pd.DataFrame,
-    left_name: str,
-    right_name: str,
-) -> plt.Figure:
-    """Plot row-normalized co-occurrence percentages without seaborn."""
-
-    normalized = table.div(table.sum(axis=1), axis=0).fillna(0)
-    figure, axis = plt.subplots(
-        figsize=(max(8, 0.9 * len(normalized.columns)), max(4, 0.7 * len(normalized)))
-    )
-    image = axis.imshow(normalized.to_numpy(), aspect="auto", cmap="Blues", vmin=0, vmax=1)
-    axis.set_xticks(np.arange(len(normalized.columns)), normalized.columns, rotation=35, ha="right")
-    axis.set_yticks(np.arange(len(normalized.index)), normalized.index)
-    axis.set(
-        title=f"{right_name} mix within each {left_name}",
-        xlabel=right_name,
-        ylabel=left_name,
-    )
-    for row in range(len(normalized.index)):
-        for column in range(len(normalized.columns)):
-            value = normalized.iat[row, column]
-            if value >= 0.01:
-                axis.text(
-                    column,
-                    row,
-                    f"{value:.0%}",
-                    ha="center",
-                    va="center",
-                    fontsize=7,
-                    color="white" if value > 0.55 else "black",
-                )
-    figure.colorbar(image, ax=axis, label=f"Share within {left_name}")
-    figure.tight_layout()
-    return figure
-
-
-def plot_split_feasibility(support_feasibility: pd.DataFrame) -> plt.Figure:
-    """Summarize how many labels fall into each evaluation-feasibility band."""
-
-    status_order = [
-        "no usable image; cannot be trained or evaluated",
-        "cannot appear in both training and evaluation",
-        "cannot support train/validation/held-out coverage",
-        "coverage possible but metric unstable",
-        "eligible for coverage checks",
-        "missing annotation, not a class",
-    ]
-    target_values = set(support_feasibility["target"])
-    target_order = [
-        target
-        for target in ("articleType", "season", "gender", "usage")
-        if target in target_values
-    ]
-    counts = (
-        pd.crosstab(
-            support_feasibility["target"],
-            support_feasibility["evaluation_status"],
+    records: list[dict[str, object]] = []
+    for group, values in grouped.groupby("group", sort=True):
+        shares = values["category"].value_counts(normalize=True)
+        variation = 0.5 * sum(
+            abs(float(shares.get(category, 0.0)) - float(overall[category]))
+            for category in overall.index
         )
-        .reindex(index=target_order, fill_value=0)
-        .reindex(columns=status_order, fill_value=0)
+        records.append(
+            {group_column: str(group), "total": len(values), "total_variation": variation}
+        )
+    return pd.DataFrame.from_records(records)
+
+
+def product_name_audit(frame: pd.DataFrame) -> dict[str, object]:
+    """Return deterministic basic evidence from product names, not language inference."""
+    names = _labels(frame["productDisplayName"])
+    words = Counter(
+        word
+        for name in names
+        for word in re.findall(r"[a-z0-9]+", name.lower())
+    )
+    common_words = [
+        {"word": word, "count": count}
+        for word, count in sorted(words.items(), key=lambda item: (-item[1], item[0]))[:20]
+    ]
+    candidates: list[dict[str, object]] = []
+    gender_tokens = (
+        (re.compile(r"\b(?:men|male)\b"), "Men"),
+        (re.compile(r"\b(?:women|female)\b"), "Women"),
+        (re.compile(r"\b(?:boy|boys)\b"), "Boys"),
+        (re.compile(r"\b(?:girl|girls)\b"), "Girls"),
+    )
+    for row in frame.loc[:, ["id", "gender", "productDisplayName"]].itertuples(index=False):
+        name = str(row.productDisplayName).lower()
+        gender = str(row.gender)
+        expected_labels = {
+            expected_label
+            for pattern, expected_label in gender_tokens
+            if pattern.search(name)
+        }
+        if expected_labels and gender not in expected_labels:
+            candidates.append(
+                {
+                    "id": int(row.id),
+                    "gender": gender,
+                    "productDisplayName": str(row.productDisplayName),
+                }
+            )
+    lengths = names.str.len()
+    hierarchy_columns = {"id", "articleType", "masterCategory", "subCategory"}
+    return {
+        "total_products": len(frame),
+        "missing_name_count": int(names.eq("").sum()),
+        "name_length": {
+            "min": int(lengths.min()) if len(lengths) else 0,
+            "max": int(lengths.max()) if len(lengths) else 0,
+            "mean": float(lengths.mean()) if len(lengths) else 0.0,
+            "median": float(lengths.median()) if len(lengths) else 0.0,
+        },
+        "common_words": common_words,
+        "gender_contradiction_candidates": sorted(candidates, key=lambda item: item["id"]),
+        "hierarchy_conflicts": (
+            hierarchy_conflicts(frame).to_dict("records")
+            if hierarchy_columns.issubset(frame.columns)
+            else []
+        ),
+    }
+
+
+METRIC_VERSION = "eda-image-metrics-v1"
+MAX_REVIEW_EXAMPLES = 24
+EDA_REVIEW_GRIDS = (
+    "review-common.png",
+    "review-rare.png",
+    "review-unusual.png",
+    "review-grayscale.png",
+    "review-exact-duplicate.png",
+    "review-near-duplicate.png",
+)
+GENERATED_EDA_OUTPUTS = frozenset(
+    {
+        "summary.json",
+        "data-audit.json",
+        "product-name-audit.json",
+        "target-distributions.csv",
+        "metadata-distributions.csv",
+        "target-skew.csv",
+        "article-type-support.csv",
+        "associations.csv",
+        "gender-usage.csv",
+        "strongest-relationship.csv",
+        "year-drift.csv",
+        "id-range-drift.csv",
+        "hierarchy-conflicts.csv",
+        "lowres-measurements.csv",
+        "highres-measurements.csv",
+        "near-lowres-measurements.csv",
+        "paired-image-comparison.csv",
+        "exact-duplicates.csv",
+        "near-duplicates.csv",
+        "lowres-measurements.provenance.json",
+        "highres-measurements.provenance.json",
+        "near-lowres-measurements.provenance.json",
+        "target-distributions.png",
+        "article-type-support.png",
+        "associations.png",
+        "gender-usage.png",
+        "strongest-relationship.png",
+        "year-drift.png",
+        "id-range-drift.png",
+        "image-profiles.png",
+        "duplicate-summary.png",
+        "eda-report-summary.png",
+        *EDA_REVIEW_GRIDS,
+    }
+)
+_CACHE_OUTPUTS = frozenset(
+    {
+        "lowres-measurements.csv",
+        "highres-measurements.csv",
+        "near-lowres-measurements.csv",
+        "lowres-measurements.provenance.json",
+        "highres-measurements.provenance.json",
+        "near-lowres-measurements.provenance.json",
+    }
+)
+METADATA_COLUMNS = (
+    "id",
+    "gender",
+    "masterCategory",
+    "subCategory",
+    "articleType",
+    "baseColour",
+    "season",
+    "year",
+    "usage",
+    "productDisplayName",
+)
+USEFUL_CATEGORICAL_COLUMNS = (
+    "gender",
+    "masterCategory",
+    "subCategory",
+    "articleType",
+    "baseColour",
+    "season",
+    "usage",
+)
+
+
+def _directory_provenance(
+    frame: pd.DataFrame, path_column: str, seed: int, sample_limit: int
+) -> dict[str, object]:
+    selected = frame.loc[:, ["id", path_column]].copy()
+    selected["id"] = selected["id"].astype(int)
+    selected["path"] = selected[path_column].map(lambda path: str(Path(path)))
+    selected = selected.sort_values(["id", "path"], kind="stable")
+    inventory: list[dict[str, object]] = []
+    for path_text in selected["path"].drop_duplicates():
+        path = Path(path_text)
+        try:
+            stats = path.stat()
+            inventory.append(
+                {
+                    "path": path_text,
+                    "size": stats.st_size,
+                    "mtime_ns": stats.st_mtime_ns,
+                    "ctime_ns": stats.st_ctime_ns,
+                    "content_sha256": sha256(path.read_bytes()).hexdigest(),
+                }
+            )
+        except OSError:
+            inventory.append({"path": path_text, "missing": True})
+    inventory = sorted(inventory, key=lambda item: str(item["path"]))
+    selected_rows = [
+        {"id": int(row.id), "path": row.path}
+        for row in selected.loc[:, ["id", "path"]].itertuples(index=False)
+    ]
+    inventory_hash = sha256(
+        json.dumps(inventory, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    selected_hash = sha256(
+        json.dumps(selected_rows, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    input_directory = str(Path(selected_rows[0]["path"]).parent) if selected_rows else ""
+    return {
+        "metric_version": METRIC_VERSION,
+        "input_directory": input_directory,
+        "file_count": len(inventory),
+        "file_inventory": inventory,
+        "file_inventory_hash": inventory_hash,
+        "seed": int(seed),
+        "sample_limit": int(sample_limit),
+        "selected_id_path_hash": selected_hash,
+    }
+
+
+def _json_safe(value: object) -> object:
+    if is_dataclass(value):
+        return _json_safe(asdict(value))
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, dict):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_json_safe(item) for item in value]
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, float) and not np.isfinite(value):
+        return None
+    if value is pd.NA:
+        return None
+    return value
+
+
+def _write_json(path: Path, value: object) -> None:
+    path.write_text(
+        json.dumps(_json_safe(value), indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
     )
 
-    figure, axis = plt.subplots(figsize=(12, 5))
-    left = np.zeros(len(counts))
-    colors = ["#8f2d2d", "#b33b24", "#d47f35", "#d6a84b", "#4f8a5b", "#777777"]
-    for status, color in zip(status_order, colors):
-        values = counts[status].to_numpy()
-        axis.barh(counts.index, values, left=left, label=status, color=color)
-        for row, (start, value) in enumerate(zip(left, values)):
-            if value:
-                axis.text(start + value / 2, row, str(int(value)), ha="center", va="center", fontsize=8)
-        left += values
-    axis.set(
-        title="Label feasibility before development splitting",
-        xlabel="Number of labels",
-        ylabel="Target",
+
+_CACHE_STRING_COLUMNS = (
+    "path",
+    "mode",
+    "file_sha256",
+    "byte_sha256",
+    "pixel_sha256",
+    "dhash",
+    "error",
+)
+
+
+def _valid_cached_measurements(
+    cached: pd.DataFrame,
+    selected: pd.DataFrame,
+    path_column: str,
+) -> pd.DataFrame | None:
+    required = {"id", *MEASUREMENT_COLUMNS}
+    if not required.issubset(cached.columns):
+        return None
+    try:
+        cached = cached.copy()
+        cached["id"] = _integer_ids(cached["id"], "Cached measurements")
+        expected_rows = sorted(
+            (int(row.id), str(getattr(row, path_column)))
+            for row in selected.loc[:, ["id", path_column]].itertuples(index=False)
+        )
+        actual_rows = sorted(
+            (int(row.id), str(row.path))
+            for row in cached.loc[:, ["id", "path"]].itertuples(index=False)
+        )
+    except (TypeError, ValueError):
+        return None
+    if actual_rows != expected_rows:
+        return None
+
+    for column, width in (
+        ("file_sha256", 64),
+        ("byte_sha256", 64),
+        ("pixel_sha256", 64),
+        ("dhash", 16),
+    ):
+        values = cached[column].dropna()
+        if not values.astype("string").str.fullmatch(
+            rf"[0-9a-fA-F]{{{width}}}"
+        ).all():
+            return None
+
+    numeric_columns = (
+        "width",
+        "height",
+        "aspect_ratio",
+        "file_bytes",
+        *IMAGE_METRICS,
     )
-    axis.legend(loc="upper center", bbox_to_anchor=(0.5, -0.18), ncol=2, fontsize=8)
-    axis.grid(axis="x", alpha=0.25)
-    figure.tight_layout()
-    return figure
+    for column in numeric_columns:
+        numeric = pd.to_numeric(cached[column], errors="coerce")
+        if (cached[column].notna() & numeric.isna()).any():
+            return None
+        cached[column] = numeric
+    return cached
+
+
+def _read_cache(
+    csv_path: Path,
+    provenance_path: Path,
+    expected: dict[str, object],
+    refresh: bool,
+    selected: pd.DataFrame,
+    path_column: str,
+) -> pd.DataFrame | None:
+    if refresh or not csv_path.is_file() or not provenance_path.is_file():
+        return None
+    try:
+        provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if provenance != _json_safe(expected):
+        return None
+    try:
+        cached = pd.read_csv(
+            csv_path,
+            dtype={column: "string" for column in _CACHE_STRING_COLUMNS},
+        )
+    except (OSError, ValueError, pd.errors.ParserError):
+        return None
+    return _valid_cached_measurements(cached, selected, path_column)
+
+
+def _measure_with_cache(
+    frame: pd.DataFrame,
+    path_column: str,
+    cache_stem: str,
+    output_dir: Path,
+    *,
+    seed: int,
+    sample_limit: int,
+    refresh: bool,
+) -> tuple[pd.DataFrame, dict[str, object], str]:
+    selected = frame.loc[:, ["id", path_column]].copy()
+    expected = _directory_provenance(selected, path_column, seed, sample_limit)
+    csv_path = output_dir / f"{cache_stem}-measurements.csv"
+    provenance_path = output_dir / f"{cache_stem}-measurements.provenance.json"
+    cached = _read_cache(
+        csv_path,
+        provenance_path,
+        expected,
+        refresh,
+        selected,
+        path_column,
+    )
+    if cached is not None:
+        return cached, expected, "reused"
+    measured = measure_images(selected, path_column)
+    measured.to_csv(csv_path, index=False)
+    _write_json(provenance_path, expected)
+    return measured, expected, "recomputed"
+
+
+def _save_figure(figure, path: Path) -> None:
+    figure.savefig(path, dpi=160, bbox_inches="tight")
+    plt.close(figure)
+
+
+def _table_records(table: pd.DataFrame) -> list[dict[str, object]]:
+    return _json_safe(table.to_dict("records"))  # type: ignore[return-value]
+
+
+def _split_provenance() -> dict[str, object]:
+    path = PROCESSED_DATA_DIR / "splits.csv"
+    if not path.is_file():
+        return {"status": "absent", "path": str(path)}
+    return {
+        "status": "present",
+        "path": str(path),
+        "sha256": sha256(path.read_bytes()).hexdigest(),
+    }
+
+
+def _open_examples(
+    frame: pd.DataFrame, ids: list[int], title_column: str = "articleType"
+) -> list[tuple[int, object, str]]:
+    from PIL import Image
+
+    indexed = frame.set_index("id")
+    examples: list[tuple[int, object, str]] = []
+    for product_id in ids:
+        if product_id not in indexed.index:
+            continue
+        row = indexed.loc[product_id]
+        try:
+            with Image.open(row["lowres_image_path"]) as image:
+                examples.append((int(product_id), image.convert("RGB").copy(), str(row[title_column])))
+        except OSError:
+            continue
+    return examples
+
+
+def _unusual_review_ids(lowres: pd.DataFrame) -> list[int]:
+    """Select deterministic measurement extremes and uncommon image modes."""
+    columns = ("width", "height", *IMAGE_METRICS)
+    candidates: list[int] = []
+    for column in columns:
+        if column not in lowres:
+            continue
+        values = lowres.loc[:, ["id", column]].copy()
+        values[column] = pd.to_numeric(values[column], errors="coerce")
+        values = values.dropna().sort_values([column, "id"], kind="stable")
+        if not values.empty:
+            candidates.extend((int(values.iloc[0]["id"]), int(values.iloc[-1]["id"])))
+    if "mode" in lowres:
+        modes = lowres["mode"].dropna().astype(str)
+        if not modes.empty:
+            counts = modes.value_counts()
+            uncommon_modes = counts.loc[counts.lt(counts.max())].index
+            candidates.extend(
+                lowres.loc[lowres["mode"].astype(str).isin(uncommon_modes), "id"]
+                .astype(int)
+                .sort_values(kind="stable")
+                .tolist()
+            )
+    return list(dict.fromkeys(candidates))[:MAX_REVIEW_EXAMPLES]
+
+
+def _write_review_grids(
+    frame: pd.DataFrame,
+    lowres: pd.DataFrame,
+    exact: pd.DataFrame,
+    near: pd.DataFrame,
+    output_dir: Path,
+) -> list[str]:
+    counts = distribution_table(frame, "articleType").set_index("label")["count"]
+    labelled = frame.assign(_support=frame["articleType"].map(counts))
+    groups: dict[str, list[int]] = {
+        "common": labelled.sort_values(["_support", "id"], ascending=[False, True])["id"].head(MAX_REVIEW_EXAMPLES).tolist(),
+        "rare": labelled.sort_values(["_support", "id"])["id"].head(MAX_REVIEW_EXAMPLES).tolist(),
+        "unusual": _unusual_review_ids(lowres),
+        "grayscale": lowres.loc[lowres["mode"].eq("L"), "id"].head(MAX_REVIEW_EXAMPLES).tolist(),
+        "exact-duplicate": [int(item) for ids in exact.get("ids", pd.Series(dtype=object)) for item in ids],
+        "near-duplicate": near.loc[:, ["id_left", "id_right"]].to_numpy().ravel().tolist()
+        if not near.empty
+        else [],
+    }
+    manifest: list[str] = []
+    for name, ids in groups.items():
+        ranked_ids = list(dict.fromkeys(map(int, ids)))[:MAX_REVIEW_EXAMPLES]
+        examples = _open_examples(frame, ranked_ids)
+        filename = f"review-{name}.png"
+        _save_figure(plot_review_grid(examples, f"{name.title()} image review"), output_dir / filename)
+        manifest.append(filename)
+    return sorted(manifest)
+
+
+def _remove_stale_known_outputs(output_dir: Path) -> None:
+    """Clear generated evidence while retaining valid image cache candidates."""
+    for name in GENERATED_EDA_OUTPUTS.difference(_CACHE_OUTPUTS):
+        path = output_dir / name
+        if path.is_file():
+            path.unlink()
+
+
+def _strongest_pair(frame: pd.DataFrame, associations: pd.DataFrame) -> tuple[str, str, pd.DataFrame]:
+    pairs = [
+        (float(associations.loc[left, right]), left, right)
+        for index, left in enumerate(associations.index)
+        for right in associations.columns[index + 1 :]
+        if left in frame
+        and right in frame
+        and _labels(frame[left]).nunique(dropna=False) <= 20
+        and _labels(frame[right]).nunique(dropna=False) <= 20
+    ]
+    if pairs:
+        _, left, right = max(pairs, key=lambda item: item[0])
+    else:
+        left, right = "gender", "usage"
+    return left, right, row_normalized_cooccurrence(frame, left, right)
+
+
+def run_eda(
+    paths: EdaPaths | None = None,
+    output_dir: Path = EDA_OUTPUT_DIR,
+    refresh: bool = False,
+) -> EdaResult:
+    """Build reproducible report evidence without reading test labels or making a split."""
+    split_before = _split_provenance()
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    _remove_stale_known_outputs(output_dir)
+    population, population_audit = build_population(paths or EdaPaths())
+    distributions = {column: distribution_table(population, column) for column in METADATA_COLUMNS}
+    target_distributions = {column: distributions[column] for column in TARGET_COLUMNS}
+    skew = skew_table(population)
+    support = support_band_table(population)
+    categorical = tuple(column for column in USEFUL_CATEGORICAL_COLUMNS if column in population)
+    associations = association_matrix(population, categorical)
+    gender_usage = row_normalized_cooccurrence(population, "gender", "usage")
+    strongest_left, strongest_right, strongest = _strongest_pair(population, associations)
+    year_drift = drift_table(population, "year", "articleType")
+    id_population = deterministic_id_bins(population)
+    id_drift = drift_table(id_population, "id_bin", "articleType")
+
+    high_sample = stratified_sample(population, "articleType", EDA_SAMPLE_SIZE, RANDOM_SEED)
+    lowres, low_provenance, low_status = _measure_with_cache(
+        population, "lowres_image_path", "lowres", output_dir,
+        seed=RANDOM_SEED, sample_limit=len(population), refresh=refresh,
+    )
+    highres, high_provenance, high_status = _measure_with_cache(
+        high_sample, "original_image_path", "highres", output_dir,
+        seed=RANDOM_SEED, sample_limit=EDA_SAMPLE_SIZE, refresh=refresh,
+    )
+    near_sample = stratified_sample(population, "articleType", EDA_SAMPLE_SIZE, RANDOM_SEED)
+    near_measurements, near_provenance, near_status = _measure_with_cache(
+        near_sample, "lowres_image_path", "near-lowres", output_dir,
+        seed=RANDOM_SEED, sample_limit=EDA_SAMPLE_SIZE, refresh=refresh,
+    )
+    exact = exact_duplicate_groups(lowres)
+    near = near_duplicate_candidates(near_measurements)
+    paired = paired_image_comparison(
+        lowres.loc[lowres["id"].isin(high_sample["id"])],
+        highres,
+    )
+
+    detailed: dict[str, pd.DataFrame] = {
+        "target-distributions.csv": pd.concat(
+            [table.assign(target=target) for target, table in target_distributions.items()],
+            ignore_index=True,
+        ),
+        "metadata-distributions.csv": pd.concat(
+            [table.assign(column=column) for column, table in distributions.items()],
+            ignore_index=True,
+        ),
+        "target-skew.csv": skew.reset_index(),
+        "article-type-support.csv": support,
+        "associations.csv": associations.reset_index(names="column"),
+        "gender-usage.csv": gender_usage.reset_index(names="gender"),
+        "strongest-relationship.csv": strongest.reset_index(names=strongest_left),
+        "year-drift.csv": year_drift,
+        "id-range-drift.csv": id_drift,
+        "hierarchy-conflicts.csv": hierarchy_conflicts(population),
+        "exact-duplicates.csv": exact,
+        "near-duplicates.csv": near,
+        "paired-image-comparison.csv": paired,
+    }
+    for filename, table in detailed.items():
+        table.to_csv(output_dir / filename, index=False)
+    name_audit = product_name_audit(population)
+    data_audit = _json_safe(population_audit)
+    _write_json(output_dir / "product-name-audit.json", name_audit)
+    _write_json(output_dir / "data-audit.json", data_audit)
+
+    _save_figure(plot_target_distributions(target_distributions), output_dir / "target-distributions.png")
+    _save_figure(plot_article_type_support(target_distributions["articleType"], support), output_dir / "article-type-support.png")
+    _save_figure(plot_association_matrix(associations), output_dir / "associations.png")
+    _save_figure(plot_relationship_heatmap(gender_usage, "gender", "usage"), output_dir / "gender-usage.png")
+    _save_figure(plot_relationship_heatmap(strongest, strongest_left, strongest_right), output_dir / "strongest-relationship.png")
+    _save_figure(plot_drift(year_drift, "year"), output_dir / "year-drift.png")
+    _save_figure(plot_drift(id_drift, "id_bin"), output_dir / "id-range-drift.png")
+    _save_figure(plot_image_profiles(paired), output_dir / "image-profiles.png")
+    duplicate_summary = pd.DataFrame({"kind": ["exact", "near"], "count": [len(exact), len(near)]})
+    _save_figure(plot_duplicate_summary(duplicate_summary), output_dir / "duplicate-summary.png")
+    _save_figure(
+        build_report_summary(target_distributions, associations, paired),
+        output_dir / "eda-report-summary.png",
+    )
+    review_manifest = _write_review_grids(population, lowres, exact, near, output_dir)
+    split_after = _split_provenance()
+    split_unchanged = split_before == split_after
+    if not split_unchanged:
+        raise RuntimeError(
+            "Processed split was created or changed during the EDA run"
+        )
+
+    test_ids = population_audit.quarantined_test_ids
+    manifest = tuple(sorted(GENERATED_EDA_OUTPUTS))
+    summary = {
+        "population": {
+            "source_train_ids": population_audit.source_train_ids,
+            "usable_products": population_audit.usable_products,
+            "mismatch_ids": {
+                "missing_original_metadata": population_audit.missing_original_metadata_ids,
+                "missing_original_images": population_audit.missing_original_image_ids,
+                "missing_lowres_images": population_audit.missing_lowres_image_ids,
+                "missing_both_images": population_audit.missing_both_image_ids,
+            },
+        },
+        "test_quarantine": {
+            "test_id_count": len(test_ids),
+            "test_ids_hash": sha256(",".join(map(str, test_ids)).encode("utf-8")).hexdigest(),
+            "overlap_count": 0,
+        },
+        "metadata": {
+            "distributions": {column: _table_records(table) for column, table in distributions.items()},
+            "skew": _table_records(skew.reset_index()),
+            "article_type_support": _table_records(support),
+        },
+        "associations": {
+            "cramers_v": associations.to_dict(),
+            "gender_usage": gender_usage.to_dict(),
+            "strongest_pair": {"left": strongest_left, "right": strongest_right},
+        },
+        "drift": {"year": _table_records(year_drift), "id_range": _table_records(id_drift)},
+        "data_audit": data_audit,
+        "names_and_hierarchy": name_audit,
+        "images": {
+            "lowres_summary": _table_records(lowres.describe(include="all").reset_index()),
+            "highres_summary": _table_records(highres.describe(include="all").reset_index()),
+            "paired_summary": _table_records(paired.describe(include="all").reset_index()),
+        },
+        "duplicates": {
+            "exact_groups": len(exact),
+            "near_candidates": len(near),
+            "exact_group_count": len(exact),
+            "exact_product_count": int(exact["count"].sum()) if not exact.empty else 0,
+            "near_candidate_pair_count": len(near),
+            "near_sample_product_count": len(near_measurements),
+            "near_values_are": "sampled candidate pairs, not confirmed duplicates",
+        },
+        "cache_provenance": {
+            "lowres": low_provenance,
+            "highres": high_provenance,
+            "near_lowres": near_provenance,
+        },
+        "cache_status": {"lowres": low_status, "highres": high_status, "near_lowres": near_status},
+        "split_provenance": {
+            "before": split_before,
+            "after": split_after,
+            "unchanged": split_unchanged,
+        },
+        "output_manifest": {"files": manifest, "review_grids": review_manifest},
+    }
+    summary_path = output_dir / "summary.json"
+    _write_json(summary_path, summary)
+    return EdaResult(
+        output_dir=output_dir,
+        summary_path=summary_path,
+        manifest=manifest,
+        cache_status=MappingProxyType(
+            {"lowres": low_status, "highres": high_status, "near_lowres": near_status}
+        ),
+    )
+
+
+def load_eda_summary(output_dir: Path = EDA_OUTPUT_DIR) -> dict[str, object]:
+    """Load the JSON-safe summary generated by :func:`run_eda`."""
+    return json.loads((Path(output_dir) / "summary.json").read_text(encoding="utf-8"))

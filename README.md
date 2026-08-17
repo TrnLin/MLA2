@@ -40,14 +40,18 @@ MLA2/
 │   │           └── images_test/       # 5,829 low-resolution JPG files
 │   └── processed/                     # Rebuildable manifests and one shared split
 ├── notebooks/
-│   ├── 00_eda.ipynb                   # Teacher-training dataset audit
-│   ├── 00_eda_full_dataset.ipynb      # Original full dataset audit
+│   ├── 00_eda.ipynb                   # Selected training-population EDA
 │   └── 00_dataset_comparison.ipynb    # Original versus teacher comparison
 ├── src/fashion/
 │   ├── config.py                      # Repository paths, targets, and seed
-│   ├── eda.py                         # Reusable EDA helpers
+│   ├── data_audit.py                  # Shared raw-data audit helpers
+│   ├── eda.py                         # EDA population, metrics, and orchestration
+│   ├── eda_images.py                  # Image metrics and duplicate candidates
+│   ├── eda_plots.py                   # Detailed and report-ready EDA plots
 │   └── dataset_comparison.py          # Deep comparison and report data
 ├── scripts/
+│   ├── run_eda.py
+│   ├── verify_eda.py
 │   ├── build_dataset_comparison_report.py
 │   └── verify_dataset_comparison.py
 ├── docs/
@@ -56,6 +60,7 @@ MLA2/
 │   └── assignment-breakdown.html      # Assignment summary
 ├── results/
 │   └── figures/
+│       ├── eda/                        # EDA tables, caches, and figures
 │       └── dataset-comparison/         # Summary JSON and report figures
 ├── pyproject.toml
 └── README.md
@@ -88,8 +93,38 @@ cd /localhome/local-lintran/MLA2
 Suggested reading order:
 
 1. `notebooks/00_eda.ipynb`
-2. `notebooks/00_eda_full_dataset.ipynb`
-3. `notebooks/00_dataset_comparison.ipynb`
+2. `notebooks/00_dataset_comparison.ipynb`
+
+## Run the EDA
+
+The normal command reuses image measurements only when the source files and settings
+still match:
+
+```bash
+cd /localhome/local-lintran/MLA2
+./.venv/bin/python scripts/run_eda.py
+```
+
+Force every image measurement to be rebuilt:
+
+```bash
+cd /localhome/local-lintran/MLA2
+./.venv/bin/python scripts/run_eda.py --refresh
+```
+
+Execute the narrative notebook and verify all evidence:
+
+```bash
+cd /localhome/local-lintran/MLA2
+MPLBACKEND=Agg ./.venv/bin/jupyter nbconvert \
+  --to notebook \
+  --execute \
+  --inplace \
+  --ExecutePreprocessor.timeout=1800 \
+  notebooks/00_eda.ipynb
+
+./.venv/bin/python scripts/verify_eda.py
+```
 
 ## Run the dataset comparison
 

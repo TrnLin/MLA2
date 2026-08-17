@@ -27,7 +27,7 @@ from fashion.config import (
     TEST_CSV,
     TEST_IMAGE_DIR,
 )
-from fashion.eda import _dhash, audit_csv, hierarchy_conflicts, hamming_distance
+from fashion.data_audit import _dhash, audit_csv, hierarchy_conflicts, hamming_distance
 
 
 LABEL_COLUMNS = (
