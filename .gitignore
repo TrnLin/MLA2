@@ -5,6 +5,7 @@ __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
 .pytest_cache/
+*.egg-info/
 
 # Supplied dataset and generated processed data must never enter Git.
 data/
@@ -14,6 +15,9 @@ tmp/
 models/*.pt
 models/*.pth
 models/*.ckpt
+.agents/
+.claude/
+.superpowers/
 
 # Generated experiment registry; report-selected figures remain trackable.
 results/runs.csv
