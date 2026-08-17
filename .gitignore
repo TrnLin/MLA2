@@ -15,9 +15,7 @@ tmp/
 models/*.pt
 models/*.pth
 models/*.ckpt
-.agents/
-.claude/
-.superpowers/
+
 
 # Generated experiment registry; report-selected figures remain trackable.
 results/runs.csv

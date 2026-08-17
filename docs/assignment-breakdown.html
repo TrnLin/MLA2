@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fashion Intelligence — COSC2753 Assignment 2 Breakdown</title>
+<meta name="description" content="Dataset, tasks and steps for COSC2753 Assignment 2: Fashion Intelligence. Every figure measured from the supplied data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..600&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f4efe4;
+  --paper-2:#fffdf7;
+  --sand:#e7dfcd;
+  --ink:#17130d;
+  --ink-70:rgba(23,19,13,.70);
+  --ink-45:rgba(23,19,13,.45);
+  --rule:rgba(23,19,13,.18);
+  --rule-soft:rgba(23,19,13,.10);
+  --accent:#c8341a;
+  --accent-soft:rgba(200,52,26,.10);
+  --display:"Bodoni Moda",Didot,"Hoefler Text",Baskerville,Garamond,serif;
+  --sans:"Archivo",Optima,"Avenir Next",Corbel,sans-serif;
+  --mono:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace;
+  --gut:clamp(20px,4vw,64px);
+  --maxw:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:16px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+/* paper grain */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 var(--gut)}
+
+/* ---------- top bar + progress ---------- */
+.bar{
+  position:sticky;top:0;z-index:50;background:rgba(244,239,228,.90);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);
+}
+.bar-in{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut);
+  display:flex;align-items:center;justify-content:space-between;gap:20px;height:54px}
+.mark{font-family:var(--display);font-weight:700;letter-spacing:.01em;font-size:17px;white-space:nowrap}
+.mark em{font-style:italic;color:var(--accent)}
+.bar nav{display:flex;gap:2px;flex-wrap:wrap}
+.bar nav a{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.10em;text-transform:uppercase;
+  color:var(--ink-45);text-decoration:none;padding:6px 8px;border-radius:2px;transition:color .2s,background .2s;
+}
+.bar nav a:hover{color:var(--accent);background:var(--accent-soft)}
+#prog{position:fixed;top:0;left:0;height:2px;width:0;background:var(--accent);z-index:60}
+
+/* ---------- masthead ---------- */
+header.mast{padding:clamp(48px,8vw,104px) 0 0}
+.kicker{
+  font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent);display:flex;gap:14px;flex-wrap:wrap;align-items:center;
+}
+.kicker span{color:var(--ink-45)}
+h1.title{
+  font-family:var(--display);font-weight:400;letter-spacing:-.02em;line-height:.88;
+  font-size:clamp(58px,13.5vw,178px);margin:.16em 0 0;
+}
+h1.title em{font-style:italic;display:block;text-indent:.06em}
+.mast-grid{
+  display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(24px,5vw,72px);
+  margin-top:clamp(26px,4vw,44px);padding-bottom:clamp(30px,5vw,52px);
+  border-bottom:3px double var(--rule);
+}
+.lede{font-family:var(--display);font-size:clamp(19px,2.3vw,25px);line-height:1.42;margin:0;font-weight:400}
+.lede b{font-weight:600;color:var(--accent);font-style:italic}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);align-self:start}
+.fact{background:var(--paper-2);padding:13px 15px}
+.fact dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-45)}
+.fact dd{margin:5px 0 0;font-family:var(--display);font-size:21px;line-height:1.15;font-weight:600}
+.fact dd small{font-family:var(--sans);font-size:11px;font-weight:500;color:var(--ink-45);display:block;letter-spacing:.02em}
+
+/* question cards */
+.qs{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--rule);
+  border:1px solid var(--rule);border-top:none;margin-top:-1px}
+.q{background:var(--paper-2);padding:20px 16px 18px;position:relative;min-height:150px;display:flex;flex-direction:column}
+.q .n{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--ink-45)}
+.q h3{font-family:var(--display);font-size:20px;line-height:1.14;margin:10px 0 auto;font-weight:500}
+.q code{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.01em;margin-top:12px}
+.q.adv{background:var(--ink);color:var(--paper)}
+.q.adv .n{color:rgba(244,239,228,.5)}
+.q.adv code{color:#f0a08c}
+
+/* ---------- sections ---------- */
+section{padding:clamp(56px,8vw,104px) 0 0}
+.sec-head{display:flex;align-items:flex-start;gap:clamp(16px,3vw,34px);
+  border-top:1px solid var(--ink);padding-top:16px;margin-bottom:clamp(28px,4vw,44px)}
+.sec-head .num{font-family:var(--display);font-size:clamp(34px,5vw,62px);line-height:.8;color:var(--accent);font-weight:400}
+.sec-head .txt{flex:1;min-width:0}
+.sec-head h2{font-family:var(--display);font-weight:400;font-size:clamp(28px,4.4vw,50px);line-height:1.02;margin:0;letter-spacing:-.015em}
+.sec-head p{margin:10px 0 0;color:var(--ink-70);max-width:62ch;font-size:15px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-45);margin-bottom:6px}
+
+.prose{max-width:68ch;font-size:16.5px}
+.prose p{margin:0 0 1.05em}
+.prose.dropcap>p:first-of-type::first-letter{
+  font-family:var(--display);float:left;font-size:74px;line-height:.76;
+  padding:6px 12px 0 0;color:var(--accent);font-weight:600;
+}
+.prose a{color:var(--accent)}
+
+blockquote.pull{
+  margin:clamp(28px,4vw,44px) 0;padding:6px 0 6px clamp(22px,3vw,38px);
+  border-left:3px solid var(--accent);font-family:var(--display);
+  font-size:clamp(20px,2.6vw,30px);line-height:1.3;font-style:italic;max-width:32ch;
+}
+blockquote.pull cite{display:block;font-family:var(--mono);font-style:normal;font-size:10.5px;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--ink-45);margin-top:14px}
+.side-by{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:start}
+
+/* ---------- stat strip ---------- */
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--rule);
+  border:1px solid var(--rule);margin-bottom:clamp(30px,4vw,48px)}
+.strip div{background:var(--paper-2);padding:18px 16px}
+.strip .v{font-family:var(--display);font-size:clamp(26px,3.4vw,40px);line-height:1;font-weight:600;letter-spacing:-.01em}
+.strip .v.warn{color:var(--accent)}
+.strip .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-45);margin-top:9px}
+
+/* ---------- bars ---------- */
+.dist-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:clamp(26px,3.5vw,44px)}
+.dist h4{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  margin:0 0 4px;padding-bottom:8px;border-bottom:1px solid var(--ink);display:flex;justify-content:space-between;gap:10px}
+.dist h4 b{color:var(--accent);font-weight:500}
+.row{display:grid;grid-template-columns:minmax(78px,auto) 1fr minmax(52px,auto);align-items:center;
+  gap:10px;padding:5px 0;border-bottom:1px solid var(--rule-soft)}
+.row .lb{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .lb.na{color:var(--accent);font-family:var(--mono);font-size:11.5px}
+.row .track{height:9px;background:var(--sand);position:relative;overflow:hidden}
+.row .track i{position:absolute;inset:0 auto 0 0;width:0;min-width:2px;background:var(--ink);
+  transition:width 1s cubic-bezier(.22,.9,.24,1);transition-delay:var(--d,0s)}
+.row.hot .track i{background:var(--accent)}
+.in .row .track i{width:var(--w)}
+.row .pc{font-family:var(--mono);font-size:11px;color:var(--ink-45);text-align:right}
+
+/* ---------- long tail ---------- */
+.tail{border:1px solid var(--rule);background:var(--paper-2);padding:clamp(18px,3vw,28px);margin-top:clamp(30px,4vw,46px)}
+.tail-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.tail-head h4{font-family:var(--display);font-size:clamp(19px,2.3vw,26px);margin:0;font-weight:500}
+.tail-head p{margin:0;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-45)}
+.tail svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-45)}
+.legend b{display:inline-block;width:10px;height:10px;margin-right:7px;vertical-align:-1px}
+
+/* ---------- tables ---------- */
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--paper-2)}
+.tbl caption{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-45);padding-bottom:9px}
+.tbl th{text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-45);font-weight:400;padding:9px 12px;border-bottom:1px solid var(--ink);white-space:nowrap}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+.tbl tr.tgt td{background:var(--accent-soft)}
+.tbl tr.tgt td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.tbl code{font-family:var(--mono);font-size:12px}
+.tbl .num{font-family:var(--mono);text-align:right;white-space:nowrap}
+.scroll{overflow-x:auto;border:1px solid var(--rule)}
+
+/* ---------- gotchas ---------- */
+.gotchas{margin-top:clamp(30px,4vw,48px);border-top:3px double var(--rule);padding-top:clamp(24px,3vw,34px)}
+.gotchas ol{list-style:none;counter-reset:g;margin:0;padding:0;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.gotchas li{counter-increment:g;background:var(--paper-2);padding:18px 18px 20px;position:relative}
+.gotchas li::before{content:counter(g,decimal-leading-zero);font-family:var(--mono);font-size:10px;
+  letter-spacing:.1em;color:var(--accent)}
+.gotchas h5{font-family:var(--display);font-size:18px;font-weight:600;margin:7px 0 6px;line-height:1.2}
+.gotchas p{margin:0;font-size:13.5px;color:var(--ink-70)}
+.gotchas code{font-family:var(--mono);font-size:12px;background:var(--sand);padding:1px 4px}
+
+/* ---------- task cards ---------- */
+.tasks{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.task{background:var(--paper-2);padding:24px 22px 26px;display:flex;flex-direction:column}
+.task.adv{background:var(--ink);color:var(--paper)}
+.task .tn{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.task.adv .tn{color:#f0a08c}
+.task h3{font-family:var(--display);font-size:clamp(22px,2.6vw,29px);line-height:1.06;margin:12px 0 4px;font-weight:500}
+.task .tq{font-family:var(--display);font-style:italic;font-size:15px;color:var(--ink-70);margin:0 0 16px}
+.task.adv .tq{color:rgba(244,239,228,.66)}
+.task dl{margin:0;border-top:1px solid var(--rule);padding-top:12px}
+.task.adv dl{border-color:rgba(244,239,228,.24)}
+.task dl div{display:flex;justify-content:space-between;gap:12px;padding:4px 0;font-size:12.5px}
+.task dt{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-45);padding-top:2px}
+.task.adv dt{color:rgba(244,239,228,.5)}
+.task dd{margin:0;text-align:right;font-weight:500}
+.task .hard{margin:16px 0 0;font-size:13.5px;color:var(--ink-70);border-top:1px solid var(--rule);padding-top:13px}
+.task.adv .hard{color:rgba(244,239,228,.75);border-color:rgba(244,239,228,.24)}
+.task .hard b{color:var(--accent);font-weight:600}
+.task.adv .hard b{color:#f0a08c}
+
+/* ---------- diagram ---------- */
+.figure{border:1px solid var(--rule);background:var(--paper-2);padding:clamp(16px,2.5vw,26px);margin-top:8px}
+.figure svg{width:100%;height:auto;display:block}
+figcaption{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-45);margin-top:16px;padding-top:12px;border-top:1px solid var(--rule-soft)}
+.d-col{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;fill:var(--ink-45)}
+.d-stage{font-family:var(--mono);font-size:10px;fill:var(--accent);letter-spacing:.1em}
+.d-box{fill:#fffdf7;stroke:rgba(23,19,13,.34);stroke-width:1}
+.d-box.key{stroke:var(--accent);stroke-width:1.7;fill:rgba(200,52,26,.06)}
+.d-box.dark{fill:var(--ink);stroke:var(--ink)}
+.d-t{font-family:var(--sans);font-size:13px;font-weight:600;fill:var(--ink)}
+.d-t.inv{fill:var(--paper)}
+.d-s{font-family:var(--mono);font-size:10px;fill:rgba(23,19,13,.5)}
+.d-s.inv{fill:rgba(244,239,228,.6)}
+.d-s.acc{fill:var(--accent)}
+.d-line{stroke:rgba(23,19,13,.42);stroke-width:1.2;fill:none}
+.d-line.acc{stroke:var(--accent);stroke-width:1.5}
+.d-bus{stroke:var(--ink);stroke-width:2.4;fill:none}
+.d-note{font-family:var(--mono);font-size:9.5px;fill:rgba(23,19,13,.45);letter-spacing:.06em}
+.d-badge{fill:var(--accent)}
+.d-badge-t{font-family:var(--mono);font-size:9px;font-weight:500;fill:#fffdf7}
+.dash{stroke-dasharray:4 4}
+
+/* ---------- contracts ---------- */
+.contracts{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);margin-top:clamp(28px,4vw,42px)}
+.ct{background:var(--paper-2);padding:20px}
+.ct .cn{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;
+  background:var(--accent);color:#fffdf7;font-family:var(--mono);font-size:10px}
+.ct h4{font-family:var(--mono);font-size:12.5px;margin:12px 0 8px;letter-spacing:.02em}
+.ct p{margin:0;font-size:13px;color:var(--ink-70)}
+
+/* ---------- rubric band ---------- */
+.band{display:flex;border:1px solid var(--ink);margin:6px 0 0;overflow:hidden}
+.band div{padding:22px 18px;color:var(--paper);position:relative;min-width:0}
+.band .b1{flex:50;background:var(--accent)}
+.band .b2{flex:30;background:var(--ink)}
+.band .b3{flex:20;background:var(--sand);color:var(--ink)}
+.band .pts{font-family:var(--display);font-size:clamp(26px,3.6vw,42px);line-height:1;font-weight:600}
+.band .nm{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-top:9px;opacity:.85}
+.band-legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);border-top:none}
+.band-legend div{background:var(--paper-2);padding:16px 18px}
+.band-legend h5{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px;color:var(--accent)}
+.band-legend ul{margin:0;padding-left:16px;font-size:13px;color:var(--ink-70)}
+.band-legend li{margin-bottom:5px}
+
+/* ---------- ledger ---------- */
+.ledger{border:1px solid var(--rule);background:var(--paper-2)}
+.ledger .lh{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--ink)}
+.ledger .lh span{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  padding:11px 16px;color:var(--ink-45)}
+.ledger .lh span+span{border-left:1px solid var(--rule);color:var(--accent)}
+.lr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--rule-soft)}
+.lr:last-child{border-bottom:none}
+.lr>div{padding:14px 16px;font-size:13.5px}
+.lr>div+div{border-left:1px solid var(--rule);background:rgba(200,52,26,.035)}
+.lr b{display:block;font-family:var(--sans);font-size:13.5px;margin-bottom:3px}
+.lr p{margin:0;color:var(--ink-70)}
+.lr code{font-family:var(--mono);font-size:12px;background:var(--sand);padding:1px 4px}
+.lr .todo{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+
+/* ---------- notebooks ---------- */
+.nbs{margin-top:clamp(28px,4vw,44px)}
+.nb{display:grid;grid-template-columns:minmax(180px,220px) 1fr;gap:clamp(14px,2.5vw,30px);
+  padding:14px 0;border-bottom:1px solid var(--rule-soft);align-items:baseline}
+.nb code{font-family:var(--mono);font-size:12.5px;color:var(--accent)}
+.nb p{margin:0;font-size:13.5px;color:var(--ink-70)}
+
+/* ---------- timeline ---------- */
+.tl{margin-top:clamp(30px,4vw,46px);border:1px solid var(--rule);background:var(--paper-2);padding:clamp(22px,3vw,32px) clamp(20px,3vw,30px) clamp(30px,4vw,40px)}
+.tl-top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:34px}
+.tl-top h4{font-family:var(--display);font-size:clamp(19px,2.3vw,26px);margin:0;font-weight:500}
+.tl-top .rem{font-family:var(--display);font-size:clamp(22px,3vw,34px);font-weight:600;color:var(--accent);line-height:1}
+.tl-top .rem small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-45);font-weight:400;margin-top:5px;text-align:right}
+.axis{position:relative;height:2px;background:var(--rule);margin:0 0 6px}
+.axis .fill{position:absolute;left:0;top:0;bottom:0;background:var(--accent);width:0;
+  transition:width 1.3s cubic-bezier(.22,.9,.24,1)}
+.in .axis .fill{width:var(--w)}
+.mk{position:absolute;top:0;transform:translateX(-50%)}
+.mk i{display:block;width:1px;height:15px;background:var(--ink);margin:0 auto}
+.mk .lab{font-family:var(--mono);font-size:10px;letter-spacing:.08em;white-space:nowrap;margin-top:7px;
+  text-align:center;transform:translateX(-50%);position:absolute;left:50%}
+.mk .lab b{display:block;font-family:var(--sans);font-size:12px;letter-spacing:0;margin-bottom:2px}
+.mk.end .lab{text-align:right;transform:none;left:auto;right:0}
+.mk.start .lab{text-align:left;transform:none;left:0}
+.mk.hot i{background:var(--accent);height:22px;width:2px}
+.mk.hot .lab b{color:var(--accent)}
+.tl-note{margin:52px 0 0;font-size:13px;color:var(--ink-70);max-width:70ch}
+
+/* ---------- open questions ---------- */
+.oq{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.oq>div{background:var(--paper-2);padding:22px}
+.oq .st{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);border:1px solid var(--accent);padding:3px 7px;display:inline-block}
+.oq h4{font-family:var(--display);font-size:19px;font-weight:600;margin:14px 0 8px;line-height:1.2}
+.oq p{margin:0 0 10px;font-size:13.5px;color:var(--ink-70)}
+.oq .ev{font-family:var(--mono);font-size:11px;color:var(--ink-45)}
+
+/* ---------- footer ---------- */
+footer{margin-top:clamp(64px,9vw,120px);border-top:3px double var(--rule);padding:clamp(30px,4vw,44px) 0 clamp(48px,6vw,72px)}
+footer .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:clamp(22px,3vw,40px)}
+footer h5{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+footer ul{list-style:none;margin:0;padding:0;font-size:13px;color:var(--ink-70)}
+footer li{margin-bottom:6px}
+footer code{font-family:var(--mono);font-size:11.5px}
+footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px solid var(--rule);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-45);
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.9,.24,1);
+  transition-delay:var(--d,0s)}
+.rv.in{opacity:1;transform:none}
+.mast .kicker,.mast h1.title,.mast .mast-grid,.mast .qs{animation:rise .95s cubic-bezier(.22,.9,.24,1) both}
+.mast .kicker{animation-delay:.05s}
+.mast h1.title{animation-delay:.16s}
+.mast .mast-grid{animation-delay:.3s}
+.mast .qs{animation-delay:.42s}
+@keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+
+@media (max-width:900px){
+  .mast-grid,.side-by,.lr,.ledger .lh{grid-template-columns:1fr}
+  .qs{grid-template-columns:repeat(2,1fr)}
+  .nb{grid-template-columns:1fr;gap:4px}
+  .lr>div+div{border-left:none;border-top:1px solid var(--rule)}
+  .band{flex-direction:column}
+  .bar nav{display:none}
+}
+@media (max-width:560px){
+  .qs,.facts{grid-template-columns:1fr}
+  .band div{padding:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .rv{opacity:1;transform:none}
+  .row .track i{width:var(--w)}
+  .axis .fill{width:var(--w)}
+  html{scroll-behavior:auto}
+}
+@media print{
+  body{background:#fff}
+  body::before,.bar,#prog{display:none}
+  .rv{opacity:1;transform:none}
+  section{padding-top:24px;break-inside:avoid}
+  .task,.gotchas li,.figure,.ct,.oq>div{break-inside:avoid}
+  a{text-decoration:none;color:inherit}
+}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="mark">Fashion <em>Intelligence</em></div>
+    <nav>
+      <a href="#brief">01 Brief</a>
+      <a href="#dataset">02 Dataset</a>
+      <a href="#tasks">03 Tasks</a>
+      <a href="#pipeline">04 Pipeline</a>
+      <a href="#grading">05 Grading</a>
+      <a href="#steps">06 Steps</a>
+      <a href="#open">07 Open</a>
+    </nav>
+  </div>
+</div>
+
+<header class="mast wrap">
+  <div class="kicker">COSC2753&thinsp;/&thinsp;3013 — Machine Learning <span>·</span> Assignment 2 <span>·</span> Semester 2026B</div>
+  <h1 class="title">Fashion<em>Intelligence</em></h1>
+
+  <div class="mast-grid">
+    <p class="lede">
+      Build an end-to-end machine learning system over <b>38,612 photographs</b> of fashion
+      products, each 60&times;80 pixels. Four classifiers answer what an item is, when it is for,
+      who it is for and what occasion it suits. A fifth component retrieves the items that
+      merely <b>look alike</b>. Every model trained from scratch.
+    </p>
+    <dl class="facts">
+      <div class="fact"><dt>Weight</dt><dd>40%<small>of course grade</small></dd></div>
+      <div class="fact"><dt>Due</dt><dd>12 Sep<small>2026, 23:59 · Week 11</small></dd></div>
+      <div class="fact"><dt>Team</dt><dd>4–5<small>students, one submitter</small></dd></div>
+      <div class="fact"><dt>Report</dt><dd>5 + 2<small>pages text + appendix</small></dd></div>
+    </dl>
+  </div>
+
+  <div class="qs">
+    <div class="q"><div class="n">Task 01</div><h3>What type of item is this?</h3><code>articleType · 125 classes</code></div>
+    <div class="q"><div class="n">Task 02</div><h3>Which season is it for?</h3><code>season · 4 classes</code></div>
+    <div class="q"><div class="n">Task 03a</div><h3>Who is it intended for?</h3><code>gender · 5 classes</code></div>
+    <div class="q"><div class="n">Task 03b</div><h3>What occasion does it suit?</h3><code>usage · 8 classes</code></div>
+    <div class="q adv"><div class="n">Task 04 · advanced</div><h3>What else looks like it?</h3><code>Top-K retrieval · no labels</code></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ 01 BRIEF ============ -->
+<section id="brief">
+  <div class="sec-head rv">
+    <div class="num">01</div>
+    <div class="txt">
+      <div class="eyebrow">The brief</div>
+      <h2>The graded artefact is the reasoning, not the accuracy</h2>
+      <p>What the specification asks for, and the one sentence in it that should shape every decision you make.</p>
+    </div>
+  </div>
+
+  <div class="side-by">
+    <div class="prose dropcap rv">
+      <p>Fashion e-commerce platforms use machine learning to organise and search catalogues far
+      too large to tag by hand. Given a product photograph, the system should identify the item,
+      infer who and when it is for, and surface visually similar products. That is the problem
+      this assignment simulates, using a catalogue of roughly 38.6 thousand training images and
+      5.8 thousand unlabelled test images.</p>
+
+      <p>The deliverables are four: a report of no more than five pages plus two pages of
+      appendices; at least four trained models with the scripts that run them; a set of
+      predictions produced by your ultimate judgement; and the notebooks or scripts that built
+      everything, with a README so a marker can reproduce it on a standard machine.</p>
+
+      <p>Two constraints bind harder than they first appear. First, <strong>you must fully train
+      your own algorithms</strong> — pretrained systems trained on outside data are permitted only
+      as a comparison baseline, never as a submitted model. Second, for HD and DI grades the
+      specification explicitly requires that you investigate how the state of the data affects
+      results, propose improvements, <em>implement</em> them, and wrap the result in a GUI or API
+      so a customer is not typing at a terminal.</p>
+
+      <p>Independent evaluation is also mandatory, and it means two distinct things in the spec:
+      compare your numbers against published work with the same goals, and evaluate on data held
+      completely outside the scope of your training and tuning.</p>
+    </div>
+
+    <div class="rv" style="--d:.12s">
+      <blockquote class="pull">
+        The key aspect of this assignment isn’t your code or model, but the thought process behind
+        your work.
+        <cite>Assignment specification, §3.4</cite>
+      </blockquote>
+      <div class="figure" style="padding:20px 22px">
+        <div class="eyebrow" style="margin-bottom:10px">What counts as analysis</div>
+        <p style="margin:0 0 12px;font-size:13.5px;color:var(--ink-70)">
+          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent)">REJECTED</span><br>
+          “I did <em>xyz</em> because I felt that it was good.”
+        </p>
+        <p style="margin:0;font-size:13.5px;color:var(--ink-70)">
+          <span style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent)">ACCEPTED</span><br>
+          “I did <em>xyz</em> because it is more efficient. It is more efficient because&hellip;”
+        </p>
+        <figcaption>Paraphrased from §3.4 — an unjustified opinion is not analysis</figcaption>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 DATASET ============ -->
+<section id="dataset">
+  <div class="sec-head rv">
+    <div class="num">02</div>
+    <div class="txt">
+      <div class="eyebrow">The dataset</div>
+      <h2>What is actually in the files</h2>
+      <p>Every number below was measured from <code>data/</code> on 11 August 2026, not taken from the
+      specification. Where the two disagree, the files win.</p>
+    </div>
+  </div>
+
+  <div class="strip rv">
+    <div><div class="v">38,617</div><div class="k">rows in styles_train.csv</div></div>
+    <div><div class="v">38,612</div><div class="k">training images on disk</div></div>
+    <div><div class="v warn">5</div><div class="k">rows with no image file</div></div>
+    <div><div class="v">5,829</div><div class="k">unlabelled test images</div></div>
+    <div><div class="v">60&times;80</div><div class="k">pixels, every image</div></div>
+    <div><div class="v">125</div><div class="k">articleType classes</div></div>
+  </div>
+
+  <p class="eyebrow rv" style="margin-bottom:18px">Bars scaled to the largest class in each target · right column is share of all rows, or a raw count where the share rounds to nothing</p>
+
+  <div class="dist-grid">
+    <div class="dist rv">
+      <h4>gender <b>5 values</b></h4>
+      <div class="row"><span class="lb">Men</span><span class="track"><i style="--w:100%"></i></span><span class="pc">54.2%</span></div>
+      <div class="row"><span class="lb">Women</span><span class="track"><i style="--w:67.7%;--d:.06s"></i></span><span class="pc">36.7%</span></div>
+      <div class="row"><span class="lb">Unisex</span><span class="track"><i style="--w:9.9%;--d:.12s"></i></span><span class="pc">5.4%</span></div>
+      <div class="row"><span class="lb">Boys</span><span class="track"><i style="--w:3.9%;--d:.18s"></i></span><span class="pc">2.1%</span></div>
+      <div class="row"><span class="lb">Girls</span><span class="track"><i style="--w:3.1%;--d:.24s"></i></span><span class="pc">1.7%</span></div>
+    </div>
+
+    <div class="dist rv" style="--d:.08s">
+      <h4>season <b>4 + blanks</b></h4>
+      <div class="row"><span class="lb">Summer</span><span class="track"><i style="--w:100%"></i></span><span class="pc">49.6%</span></div>
+      <div class="row"><span class="lb">Fall</span><span class="track"><i style="--w:54.9%;--d:.06s"></i></span><span class="pc">27.2%</span></div>
+      <div class="row"><span class="lb">Winter</span><span class="track"><i style="--w:38.6%;--d:.12s"></i></span><span class="pc">19.1%</span></div>
+      <div class="row"><span class="lb">Spring</span><span class="track"><i style="--w:8.2%;--d:.18s"></i></span><span class="pc">4.1%</span></div>
+      <div class="row hot"><span class="lb na">(blank)</span><span class="track"><i style="--w:.4%;--d:.24s"></i></span><span class="pc">n=20</span></div>
+    </div>
+
+    <div class="dist rv" style="--d:.16s">
+      <h4>usage <b>8 + NA + blank</b></h4>
+      <div class="row"><span class="lb">Casual</span><span class="track"><i style="--w:100%"></i></span><span class="pc">76.8%</span></div>
+      <div class="row"><span class="lb">Sports</span><span class="track"><i style="--w:13.3%;--d:.05s"></i></span><span class="pc">10.2%</span></div>
+      <div class="row"><span class="lb">Ethnic</span><span class="track"><i style="--w:8.7%;--d:.1s"></i></span><span class="pc">6.7%</span></div>
+      <div class="row"><span class="lb">Formal</span><span class="track"><i style="--w:7.8%;--d:.15s"></i></span><span class="pc">6.0%</span></div>
+      <div class="row hot"><span class="lb na">"NA"</span><span class="track"><i style="--w:.4%;--d:.2s"></i></span><span class="pc">n=71</span></div>
+      <div class="row"><span class="lb">Smart Casual</span><span class="track"><i style="--w:.4%;--d:.25s"></i></span><span class="pc">n=55</span></div>
+      <div class="row"><span class="lb">Travel</span><span class="track"><i style="--w:.4%;--d:.3s"></i></span><span class="pc">n=25</span></div>
+      <div class="row"><span class="lb">Party</span><span class="track"><i style="--w:.4%;--d:.35s"></i></span><span class="pc">n=13</span></div>
+      <div class="row hot"><span class="lb na">(blank)</span><span class="track"><i style="--w:.4%;--d:.4s"></i></span><span class="pc">n=1</span></div>
+      <div class="row"><span class="lb">Home</span><span class="track"><i style="--w:.4%;--d:.45s"></i></span><span class="pc">n=1</span></div>
+    </div>
+
+    <div class="dist rv" style="--d:.24s">
+      <h4>articleType <b>top 12 of 125</b></h4>
+      <div class="row"><span class="lb">Tshirts</span><span class="track"><i style="--w:100%"></i></span><span class="pc">17.6%</span></div>
+      <div class="row"><span class="lb">Shirts</span><span class="track"><i style="--w:45.6%;--d:.05s"></i></span><span class="pc">8.0%</span></div>
+      <div class="row"><span class="lb">Casual Shoes</span><span class="track"><i style="--w:39.6%;--d:.1s"></i></span><span class="pc">6.9%</span></div>
+      <div class="row"><span class="lb">Watches</span><span class="track"><i style="--w:33.2%;--d:.15s"></i></span><span class="pc">5.8%</span></div>
+      <div class="row"><span class="lb">Sports Shoes</span><span class="track"><i style="--w:29.4%;--d:.2s"></i></span><span class="pc">5.2%</span></div>
+      <div class="row"><span class="lb">Tops</span><span class="track"><i style="--w:23.8%;--d:.25s"></i></span><span class="pc">4.2%</span></div>
+      <div class="row"><span class="lb">Kurtas</span><span class="track"><i style="--w:22.9%;--d:.3s"></i></span><span class="pc">4.0%</span></div>
+      <div class="row"><span class="lb">Handbags</span><span class="track"><i style="--w:21.2%;--d:.35s"></i></span><span class="pc">3.7%</span></div>
+      <div class="row"><span class="lb">Heels</span><span class="track"><i style="--w:15.5%;--d:.4s"></i></span><span class="pc">2.7%</span></div>
+      <div class="row"><span class="lb">Sunglasses</span><span class="track"><i style="--w:15.4%;--d:.45s"></i></span><span class="pc">2.7%</span></div>
+      <div class="row"><span class="lb">Sandals</span><span class="track"><i style="--w:12.8%;--d:.5s"></i></span><span class="pc">2.2%</span></div>
+      <div class="row"><span class="lb">Flip Flops</span><span class="track"><i style="--w:12.7%;--d:.55s"></i></span><span class="pc">2.2%</span></div>
+    </div>
+  </div>
+
+  <!-- long tail -->
+  <figure class="tail rv" style="margin-left:0;margin-right:0">
+    <div class="tail-head">
+      <h4>The long tail of <span style="font-family:var(--mono);font-size:.7em">articleType</span></h4>
+      <p>125 classes · log scale · 6,781 down to 1</p>
+    </div>
+    <svg id="tailchart" viewBox="0 0 1160 260" role="img"
+         aria-label="Bar chart of all 125 articleType class frequencies on a logarithmic scale, descending from 6,781 images for Tshirts to seven classes holding a single image each.">
+    </svg>
+    <div class="legend">
+      <span><b style="background:var(--accent)"></b>Top 10 classes — 60.9% of all images</span>
+      <span><b style="background:var(--ink)"></b>Classes 11–92</span>
+      <span><b style="background:var(--sand);outline:1px solid var(--rule)"></b>33 classes with fewer than 10 images</span>
+    </div>
+    <figcaption>
+      A log scale is used because a linear axis renders the entire tail invisible. The first 33
+      classes account for 90% of the images; a different 33 classes hold fewer than ten images
+      each, and seven hold exactly one — those cannot be learned, and cannot be fairly evaluated.
+    </figcaption>
+  </figure>
+
+  <!-- schema -->
+  <div class="rv" style="margin-top:clamp(30px,4vw,48px)">
+    <div class="scroll">
+      <table class="tbl">
+        <caption>styles_train.csv — 10 named columns, 4 of which are prediction targets (highlighted)</caption>
+        <thead><tr><th>Column</th><th class="num">Distinct</th><th>Most common</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td class="num">38,617</td><td>unique, no duplicates</td><td>Joins to <code>images_train/&lt;id&gt;.jpg</code></td></tr>
+          <tr class="tgt"><td><code>gender</code></td><td class="num">5</td><td>Men — 20,918</td><td><strong>Target</strong> · Task 3a</td></tr>
+          <tr><td><code>masterCategory</code></td><td class="num">7</td><td>Apparel — 19,147</td><td>Feature / hierarchy for merging rare classes</td></tr>
+          <tr><td><code>subCategory</code></td><td class="num">41</td><td>Topwear — 14,409</td><td>Feature / hierarchy for merging rare classes</td></tr>
+          <tr class="tgt"><td><code>articleType</code></td><td class="num">125</td><td>Tshirts — 6,781</td><td><strong>Target</strong> · Task 1</td></tr>
+          <tr><td><code>baseColour</code></td><td class="num">47</td><td>Black — 8,814</td><td>Feature · relevant to visual-search evaluation</td></tr>
+          <tr class="tgt"><td><code>season</code></td><td class="num">4 + blank</td><td>Summer — 19,137</td><td><strong>Target</strong> · Task 2</td></tr>
+          <tr><td><code>year</code></td><td class="num">12</td><td>2011 — 13,689</td><td>Feature · 2007–2018, 70% in 2011–2012</td></tr>
+          <tr class="tgt"><td><code>usage</code></td><td class="num">8 + NA + blank</td><td>Casual — 29,641</td><td><strong>Target</strong> · Task 3b</td></tr>
+          <tr><td><code>productDisplayName</code></td><td class="num">—</td><td>free text</td><td>Text side-channel — a from-image model may not use it at inference</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- gotchas -->
+  <div class="gotchas rv">
+    <div class="eyebrow" style="margin-bottom:16px">Traps found by measuring, not reading</div>
+    <ol>
+      <li>
+        <h5>“NA” is a string, not a gap</h5>
+        <p><code>usage</code> holds the literal text <code>NA</code> in 71 rows, and is genuinely
+        empty in exactly 1. A default <code>read_csv</code> collapses both into <code>NaN</code>
+        and quietly destroys the distinction.</p>
+      </li>
+      <li>
+        <h5>Five labels point at nothing</h5>
+        <p>Ids <code>12347</code>, <code>39401</code>, <code>39403</code>, <code>39410</code> and
+        <code>39425</code> exist in the CSV with no matching <code>.jpg</code>. That is why 38,617
+        rows yield only 38,612 usable examples.</p>
+      </li>
+      <li>
+        <h5>Seven classes have one example</h5>
+        <p>Shoe Laces, Suits, Ties and Cufflinks, Cushion Covers, Body Wash and Scrub, Ipad and
+        Lounge Tshirts appear once each. A single example cannot be split into train and
+        validation, so any policy you pick must be defended in the report.</p>
+      </li>
+      <li>
+        <h5>The header has two phantom columns</h5>
+        <p><code>styles_train.csv</code> ends its header with <code>,,</code> — twelve fields for
+        ten names. Parsers must tolerate it rather than shift every column by two.</p>
+      </li>
+      <li>
+        <h5>Majority-class accuracy is already high</h5>
+        <p>Predicting the single most common label scores 76.8% on <code>usage</code>, 54.2% on
+        <code>gender</code> and 49.6% on <code>season</code>. Accuracy is therefore close to
+        useless here; macro-F1 is the honest measure.</p>
+      </li>
+      <li>
+        <h5>Not everything is clothing</h5>
+        <p><code>masterCategory</code> includes Personal Care (1,001 rows — fragrance, nail
+        polish), Free Items (83), Sporting Goods (25) and a single Home item. “Season” and
+        “gender” mean something different for a perfume than for a coat.</p>
+      </li>
+      <li>
+        <h5>60&times;80 is the whole budget</h5>
+        <p>Every image is 4,800 pixels. Upscaling beyond roughly 96 px invents no new detail and
+        only buys compute cost — but small inputs also mean fine texture cues, which is what
+        distinguishes Formal from Casual, may simply not be present.</p>
+      </li>
+      <li>
+        <h5>The submission format is frozen</h5>
+        <p><code>styles_prediction.csv</code> has header
+        <code>id,gender,articleType,season,usage</code> over 5,829 blank rows. Four separate
+        columns is precisely why Task 3 is treated as two targets rather than one combined class.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ 03 TASKS ============ -->
+<section id="tasks">
+  <div class="sec-head rv">
+    <div class="num">03</div>
+    <div class="txt">
+      <div class="eyebrow">The four tasks</div>
+      <h2>Same 4,800 pixels, four different difficulties</h2>
+      <p>Each task shares an input and a split, and differs entirely in what makes it hard. The
+      baseline column is the accuracy of always predicting the majority class — the number any
+      real model must beat to have said anything at all.</p>
+    </div>
+  </div>
+
+  <div class="tasks rv">
+    <div class="task">
+      <div class="tn">Task 01 · classification</div>
+      <h3>Item type</h3>
+      <p class="tq">“What type of fashion item is shown?”</p>
+      <dl>
+        <div><dt>Target</dt><dd><code style="font-family:var(--mono);font-size:11.5px">articleType</code></dd></div>
+        <div><dt>Classes</dt><dd>125</dd></div>
+        <div><dt>Majority baseline</dt><dd>17.6%</dd></div>
+        <div><dt>Metric</dt><dd>Macro-F1</dd></div>
+      </dl>
+      <p class="hard"><b>The hard part.</b> A long tail with no middle: the top 10 classes hold
+      60.9% of the data while 33 classes hold under ten images. Visually near-identical pairs —
+      Casual Shoes against Sports Shoes, Tshirts against Tops — sit on either side of a label
+      boundary the pixels barely support.</p>
+    </div>
+
+    <div class="task">
+      <div class="tn">Task 02 · classification</div>
+      <h3>Season</h3>
+      <p class="tq">“Which season is the item intended for?”</p>
+      <dl>
+        <div><dt>Target</dt><dd><code style="font-family:var(--mono);font-size:11.5px">season</code></dd></div>
+        <div><dt>Classes</dt><dd>4 (+20 blank)</dd></div>
+        <div><dt>Majority baseline</dt><dd>49.6%</dd></div>
+        <div><dt>Metric</dt><dd>Macro-F1</dd></div>
+      </dl>
+      <p class="hard"><b>The hard part.</b> The label may not be in the image at all. A plain black
+      t-shirt is sold as Summer or Fall by merchandising decision, not appearance, so part of this
+      target is irreducible noise. Spring holds only 4.1% of rows. Establishing an <em>honest
+      ceiling</em> matters more here than squeezing out points.</p>
+    </div>
+
+    <div class="task">
+      <div class="tn">Task 03 · two targets</div>
+      <h3>Gender &amp; usage</h3>
+      <p class="tq">“Who is it for, and for what occasion?”</p>
+      <dl>
+        <div><dt>Targets</dt><dd><code style="font-family:var(--mono);font-size:11.5px">gender</code> + <code style="font-family:var(--mono);font-size:11.5px">usage</code></dd></div>
+        <div><dt>Classes</dt><dd>5 and 8</dd></div>
+        <div><dt>Majority baseline</dt><dd>54.2% / 76.8%</dd></div>
+        <div><dt>Metric</dt><dd>Macro-F1</dd></div>
+      </dl>
+      <p class="hard"><b>The hard part.</b> <code>usage</code> is the most skewed target in the
+      dataset — Casual takes 76.8% while Home takes one row. The spec permits a combined class, but
+      the submission header demands two columns, so two targets it is. Whether they share one
+      backbone is still open.</p>
+    </div>
+
+    <div class="task adv">
+      <div class="tn">Task 04 · advanced · retrieval</div>
+      <h3>Visual search</h3>
+      <p class="tq">“Which items look most similar to this one?”</p>
+      <dl>
+        <div><dt>Output</dt><dd>Top-K neighbours</dd></div>
+        <div><dt>Index size</dt><dd>~38k images</dd></div>
+        <div><dt>Ground truth</dt><dd>None supplied</dd></div>
+        <div><dt>Metric</dt><dd>Precision@K, mAP</dd></div>
+      </dl>
+      <p class="hard"><b>The hard part.</b> There is no similarity label to train or score against,
+      so relevance must be <b>defined</b> and that definition defended — a metadata proxy, human
+      inspection, or both. The index covers the same images used for evaluation, which makes
+      leakage the most likely silent failure in the entire project.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 PIPELINE ============ -->
+<section id="pipeline">
+  <div class="sec-head rv">
+    <div class="num">04</div>
+    <div class="txt">
+      <div class="eyebrow">The pipeline</div>
+      <h2>One split, one training loop, one metrics module</h2>
+      <p>The shape of the system, and the four contracts that keep thirty-plus experiments
+      comparable to one another. Circled numbers on the diagram mark each contract.</p>
+    </div>
+  </div>
+
+  <figure class="figure rv">
+    <svg viewBox="0 0 1160 560" role="img"
+      aria-label="Pipeline diagram. Training images and styles_train.csv feed a preprocessing stage that writes clean.csv then splits.csv. That single split fans out to four task tracks: articleType, season, gender plus usage, and embedding with indexing for visual search. All four feed a shared training bus that writes model weights and a row in runs.csv. Saved models produce both the prediction CSV and the web application.">
+
+      <!-- column headers -->
+      <text class="d-col" x="105"  y="26" text-anchor="middle">Source</text>
+      <text class="d-col" x="375"  y="26" text-anchor="middle">Prepare</text>
+      <text class="d-col" x="690"  y="26" text-anchor="middle">Model</text>
+      <text class="d-col" x="1037" y="26" text-anchor="middle">Ship</text>
+      <text class="d-stage" x="20"  y="26">01</text>
+      <text class="d-stage" x="275" y="26">02</text>
+      <text class="d-stage" x="560" y="26">03</text>
+      <text class="d-stage" x="935" y="26">04</text>
+      <line x1="20" y1="42" x2="1140" y2="42" stroke="rgba(23,19,13,.18)"/>
+
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,1 L9,5 L0,9 z" fill="rgba(23,19,13,.55)"/>
+        </marker>
+        <marker id="ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,1 L9,5 L0,9 z" fill="#c8341a"/>
+        </marker>
+      </defs>
+
+      <!-- C1 source -->
+      <rect class="d-box" x="20" y="190" width="170" height="76"/>
+      <text class="d-t" x="36" y="220">images_train/</text>
+      <text class="d-s" x="36" y="240">38,612 jpg · 60×80</text>
+      <text class="d-s" x="36" y="256">filename = id</text>
+
+      <rect class="d-box" x="20" y="290" width="170" height="76"/>
+      <text class="d-t" x="36" y="320">styles_train.csv</text>
+      <text class="d-s" x="36" y="340">38,617 rows · 10 cols</text>
+      <text class="d-s acc" x="36" y="356">5 rows lack an image</text>
+
+      <!-- C2 prepare -->
+      <rect class="d-box" x="275" y="170" width="200" height="76"/>
+      <text class="d-t" x="291" y="200">clean.csv</text>
+      <text class="d-s" x="291" y="220">"NA" vs blank · orphans</text>
+      <text class="d-s" x="291" y="236">rare-class policy</text>
+
+      <rect class="d-box key" x="275" y="300" width="200" height="86"/>
+      <text class="d-t" x="291" y="330">splits.csv</text>
+      <text class="d-s" x="291" y="350">train | val | test</text>
+      <text class="d-s acc" x="291" y="368">the only split in the repo</text>
+      <circle class="d-badge" cx="461" cy="314" r="10"/>
+      <text class="d-badge-t" x="461" y="317.5" text-anchor="middle">1</text>
+
+      <text class="d-note" x="275" y="410">written once by 01_preprocessing.ipynb</text>
+
+      <!-- C3 model tracks -->
+      <rect class="d-box" x="560" y="100" width="260" height="72"/>
+      <text class="d-s acc" x="576" y="122">TASK 1</text>
+      <text class="d-t" x="576" y="142">articleType — 125 classes</text>
+      <text class="d-s" x="576" y="160">baseline · CNN · tuned CNN</text>
+
+      <rect class="d-box" x="560" y="196" width="260" height="72"/>
+      <text class="d-s acc" x="576" y="218">TASK 2</text>
+      <text class="d-t" x="576" y="238">season — 4 classes</text>
+      <text class="d-s" x="576" y="256">baseline · CNN · tuned CNN</text>
+
+      <rect class="d-box" x="560" y="292" width="260" height="72"/>
+      <text class="d-s acc" x="576" y="314">TASK 3</text>
+      <text class="d-t" x="576" y="334">gender + usage — 2 heads?</text>
+      <text class="d-s" x="576" y="352">one backbone or two models</text>
+
+      <rect class="d-box" x="560" y="388" width="260" height="72"/>
+      <text class="d-s acc" x="576" y="410">TASK 4</text>
+      <text class="d-t" x="576" y="430">embed → index</text>
+      <text class="d-s" x="576" y="448">built over the train pool only</text>
+
+      <!-- shared loop label + badges -->
+      <text class="d-note" x="880" y="70" text-anchor="middle">one training loop · one metrics module</text>
+      <circle class="d-badge" cx="836" cy="86" r="10"/>
+      <text class="d-badge-t" x="836" y="89.5" text-anchor="middle">3</text>
+      <circle class="d-badge" cx="862" cy="86" r="10"/>
+      <text class="d-badge-t" x="862" y="89.5" text-anchor="middle">4</text>
+
+      <!-- the bus -->
+      <line class="d-bus" x1="880" y1="100" x2="880" y2="472"/>
+
+      <!-- C4 ship -->
+      <rect class="d-box dark" x="935" y="140" width="205" height="64"/>
+      <text class="d-t inv" x="951" y="168">models/</text>
+      <text class="d-s inv" x="951" y="187">saved weights · ≥ 4</text>
+
+      <rect class="d-box" x="935" y="250" width="205" height="64"/>
+      <text class="d-t" x="951" y="278">prediction.csv</text>
+      <text class="d-s" x="951" y="297">5,829 rows · fixed header</text>
+
+      <rect class="d-box" x="935" y="342" width="205" height="64"/>
+      <text class="d-t" x="951" y="370">app/ — API + web</text>
+      <text class="d-s" x="951" y="389">HD requirement</text>
+
+      <rect class="d-box key" x="935" y="440" width="205" height="64"/>
+      <text class="d-t" x="951" y="468">results/runs.csv</text>
+      <text class="d-s acc" x="951" y="487">every run → report tables</text>
+      <circle class="d-badge" cx="1126" cy="454" r="10"/>
+      <text class="d-badge-t" x="1126" y="457.5" text-anchor="middle">2</text>
+
+      <!-- connectors: source → clean -->
+      <path class="d-line" d="M190,228 C232,228 236,208 271,208" marker-end="url(#ar)"/>
+      <path class="d-line" d="M190,328 C240,328 240,208 271,208" marker-end="url(#ar)"/>
+      <!-- clean → splits -->
+      <path class="d-line" d="M375,246 L375,296" marker-end="url(#ar)"/>
+      <!-- splits → tracks -->
+      <path class="d-line acc" d="M475,343 C520,343 512,136 556,136" marker-end="url(#ara)"/>
+      <path class="d-line acc" d="M475,343 C520,343 512,232 556,232" marker-end="url(#ara)"/>
+      <path class="d-line acc" d="M475,343 C518,343 520,328 556,328" marker-end="url(#ara)"/>
+      <path class="d-line acc" d="M475,343 C520,343 512,424 556,424" marker-end="url(#ara)"/>
+      <!-- tracks → bus -->
+      <path class="d-line" d="M820,136 L878,136"/><circle cx="880" cy="136" r="3.2" fill="#17130d"/>
+      <path class="d-line" d="M820,232 L878,232"/><circle cx="880" cy="232" r="3.2" fill="#17130d"/>
+      <path class="d-line" d="M820,328 L878,328"/><circle cx="880" cy="328" r="3.2" fill="#17130d"/>
+      <path class="d-line" d="M820,424 L878,424"/><circle cx="880" cy="424" r="3.2" fill="#17130d"/>
+      <!-- bus → models, bus → runs -->
+      <path class="d-line" d="M880,172 L931,172" marker-end="url(#ar)"/>
+      <path class="d-line" d="M880,472 L931,472" marker-end="url(#ar)"/>
+      <!-- models → prediction -->
+      <path class="d-line" d="M1037,204 L1037,246" marker-end="url(#ar)"/>
+      <!-- models → app, routed left -->
+      <path class="d-line" d="M975,204 L975,216 L912,216 L912,374 L931,374" marker-end="url(#ar)"/>
+    </svg>
+    <figcaption>
+      Red paths carry the shared split. Nothing downstream re-splits the data — which is also what
+      keeps evaluation images out of the Task 4 index.
+    </figcaption>
+  </figure>
+
+  <div class="contracts rv">
+    <div class="ct">
+      <span class="cn">1</span>
+      <h4>data/processed/splits.csv</h4>
+      <p>Written exactly once; read by every notebook, the search index and the app. No other file
+      may call <code>train_test_split</code>. It is what makes cross-model comparison controlled
+      rather than coincidental, and what keeps the held-out portion genuinely independent.</p>
+    </div>
+    <div class="ct">
+      <span class="cn">2</span>
+      <h4>results/runs.csv</h4>
+      <p>Appended by code on every run — never by hand. One row per experiment with
+      hyperparameters, metrics, training time and parameter count. The report’s comparison tables
+      are a <code>groupby</code> over this file, not archaeology through old output cells.</p>
+    </div>
+    <div class="ct">
+      <span class="cn">3</span>
+      <h4>train/loop.py</h4>
+      <p>Every experiment trains through the same function with the same early stopping and
+      logging. Without it, “CNN versus tuned CNN” secretly compares two training regimes instead
+      of two models.</p>
+    </div>
+    <div class="ct">
+      <span class="cn">4</span>
+      <h4>eval/metrics.py</h4>
+      <p>One implementation of macro-F1, per-class breakdown and confusion matrices for all four
+      targets — so no task can quietly report accuracy while another reports macro-F1.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 GRADING ============ -->
+<section id="grading">
+  <div class="sec-head rv">
+    <div class="num">05</div>
+    <div class="txt">
+      <div class="eyebrow">What the grade rewards</div>
+      <h2>No criterion scores accuracy</h2>
+      <p>The rubric splits 100 points three ways. Read the bands and the incentive is unmistakable:
+      breadth of comparison, quality of justification, and clarity of writing.</p>
+    </div>
+  </div>
+
+  <div class="rv">
+    <div class="band">
+      <div class="b1"><div class="pts">50</div><div class="nm">Approach</div></div>
+      <div class="b2"><div class="pts">30</div><div class="nm">Ultimate judgement &amp; evaluation</div></div>
+      <div class="b3"><div class="pts">20</div><div class="nm">Report presentation</div></div>
+    </div>
+    <div class="band-legend">
+      <div>
+        <h5>HD needs &gt; 39 / 50</h5>
+        <ul>
+          <li>Multiple algorithms compared <em>per task</em>, not one model per task</li>
+          <li>At least one technique beyond class material</li>
+          <li>No gaps: selection, cleaning, splitting, augmentation, tuning, evaluation</li>
+          <li>The unique aspects of <em>this</em> dataset addressed explicitly</li>
+          <li>Real-world integration shown — a GUI or API, not a terminal</li>
+        </ul>
+      </div>
+      <div>
+        <h5>HD needs &gt; 24 / 30</h5>
+        <ul>
+          <li>A stated ultimate judgement per task: what you would deploy, and why</li>
+          <li>Justification beyond a single metric — error analysis, calibration, latency, cost of mistakes</li>
+          <li>Evidence of viability in practice, including degraded inputs</li>
+          <li>Independent evaluation: untouched held-out data <em>and</em> published comparisons</li>
+        </ul>
+      </div>
+      <div>
+        <h5>HD needs &gt; 17 / 20</h5>
+        <ul>
+          <li>Five pages of text, two of appendix, 11pt, single column</li>
+          <li>Structure that walks the reader to the conclusion</li>
+          <li>Every figure cited in the text and supporting a specific claim</li>
+          <li>All member names and student IDs present</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <blockquote class="pull rv" style="max-width:46ch">
+    A thoroughly investigated model with mediocre macro-F1 outscores an accurate one presented
+    without rationale.
+    <cite>Implication of the rubric weightings</cite>
+  </blockquote>
+</section>
+
+<!-- ============ 06 STEPS ============ -->
+<section id="steps">
+  <div class="sec-head rv">
+    <div class="num">06</div>
+    <div class="txt">
+      <div class="eyebrow">The steps</div>
+      <h2>What the spec demands, and how we answer it</h2>
+      <p>The left column is obligation, quoted from the specification. The right is our intended
+      response — drawn from the agreed repository design, with anything still undecided marked as
+      such rather than dressed up as settled.</p>
+    </div>
+  </div>
+
+  <div class="ledger rv">
+    <div class="lh"><span>The specification requires</span><span>Our response</span></div>
+
+    <div class="lr">
+      <div><b>Pre-process the dataset, collecting extra data if necessary</b>
+        <p>Any new dataset must be made accessible to the evaluator.</p></div>
+      <div><b><code>01_preprocessing.ipynb</code> → <code>clean.csv</code> + <code>splits.csv</code></b>
+        <p>Handles <code>"NA"</code> versus blank, the five orphaned rows, and the rare-class policy.
+        Carries inline assertions, because a silent bug here poisons everything downstream.</p></div>
+    </div>
+
+    <div class="lr">
+      <div><b>At least one algorithm per task — at least four models</b>
+        <p>“For every task, you must submit one different model.” Different <em>types</em> of
+        algorithm are not required, but a thorough investigation considers them.</p></div>
+      <div><b>Baseline → CNN → tuned CNN, per task, all logged</b>
+        <p>Classical baselines on hand-built features for contrast, from-scratch CNNs as the
+        submitted models. <span class="todo">Model shortlist not yet designed</span></p></div>
+    </div>
+
+    <div class="lr">
+      <div><b>Fully train your own algorithms</b>
+        <p>Pretrained systems trained on outside data are permitted for comparison only.</p></div>
+      <div><b>Pretrained weights confined to the benchmark table</b>
+        <p>A submitted model carrying <code>pretrained=True</code> violates the spec. The
+        comparison is still worth running — the spec recommends it.</p></div>
+    </div>
+
+    <div class="lr">
+      <div><b>Compare results between models, not just report one</b></div>
+      <div><b><code>results/runs.csv</code>, appended by the training loop</b>
+        <p>Report tables are generated from that file, so breadth of comparison is a byproduct of
+        working rather than a separate writing task.</p></div>
+    </div>
+
+    <div class="lr">
+      <div><b>An ultimate judgement, evaluated independently</b>
+        <p>Compare against other published work with the same goals, and against data outside the
+        original training and evaluation scope.</p></div>
+      <div><b>Held-out portion of <code>splits.csv</code> plus a literature comparison</b>
+        <p>The test portion stays untouched during tuning, which is what makes it independent.
+        <span class="todo">Literature set not yet gathered</span></p></div>
+    </div>
+
+    <div class="lr">
+      <div><b>HD/DI: show how the data affects results, and improve it</b>
+        <p>Propose improvements <em>and implement them</em>.</p></div>
+      <div><b>The long tail is the case study</b>
+        <p>Rare-class policy, class weighting or focal loss, and augmentation — each measured
+        before and after on the same split.</p></div>
+    </div>
+
+    <div class="lr">
+      <div><b>HD/DI: a better way for a customer to use the models</b>
+        <p>A GUI application, mobile or web, calling APIs — not running in a terminal.</p></div>
+      <div><b><code>app/api.py</code> plus a small web front end</b>
+        <p>Upload an image, get the four predictions and the Top-K similar items.
+        <span class="todo">Scope not yet designed</span></p></div>
+    </div>
+
+    <div class="lr">
+      <div><b>Predictions in the supplied format</b>
+        <p><code>styles_prediction.csv</code>’s format must not be changed.</p></div>
+      <div><b><code>90_final_predictions.ipynb</code> and <code>scripts/predict.py</code></b>
+        <p>A CLI as well as a notebook, so a marker never has to open Jupyter to reproduce the
+        submission.</p></div>
+    </div>
+
+    <div class="lr">
+      <div><b>Runs on any standard machine, with a README</b>
+        <p>Data placement, libraries to install, how to run.</p></div>
+      <div><b><code>pyproject.toml</code> + <code>pip install -e .</code> + README</b>
+        <p>No experiment-tracking service and no config framework — both risk the “runs anywhere”
+        requirement and earn nothing on this rubric.</p></div>
+    </div>
+  </div>
+
+  <div class="nbs rv">
+    <div class="eyebrow" style="margin-bottom:14px">Seven notebooks — narrative, with the logic imported from <code>src/fashion/</code></div>
+    <div class="nb"><code>00_eda.ipynb</code><p>Measure the dataset. Produce the evidence the three open questions need.</p></div>
+    <div class="nb"><code>01_preprocessing.ipynb</code><p>Write <code>clean.csv</code> and <code>splits.csv</code>. Runs once; everything downstream depends on it.</p></div>
+    <div class="nb"><code>10_task1_articletype.ipynb</code><p>125-class comparison, from majority baseline to tuned CNN.</p></div>
+    <div class="nb"><code>20_task2_season.ipynb</code><p>Four classes, weak signal. Establish and defend the ceiling.</p></div>
+    <div class="nb"><code>30_task3_gender_usage.ipynb</code><p>Two targets. Two models against one shared backbone, decided on evidence.</p></div>
+    <div class="nb"><code>40_task4_visual_search.ipynb</code><p>Embed, index, retrieve. Define relevance before measuring it.</p></div>
+    <div class="nb"><code>90_final_predictions.ipynb</code><p>Load the chosen models, write the submission CSV.</p></div>
+  </div>
+
+  <div class="tl rv">
+    <div class="tl-top">
+      <h4>Calendar</h4>
+      <div class="rem"><span id="daysleft">32</span> days<small>until the deadline</small></div>
+    </div>
+    <div class="axis" style="--w:88.9%">
+      <div class="fill"></div>
+      <div class="mk start" style="left:0"><i></i><div class="lab"><b>Tue 11 Aug</b>Today — planning</div></div>
+      <div class="mk hot" style="left:88.9%"><i></i><div class="lab"><b>Sat 12 Sep, 23:59</b>Due · Week 11</div></div>
+      <div class="mk end" style="left:100%"><i></i><div class="lab"><b>Tue 16 Sep, 23:59</b>Late cutoff · 20%/day</div></div>
+    </div>
+    <p class="tl-note">Three submission portals on Canvas, each taking one thing: the report as PDF
+    or DOC; models, code and support files as a single ZIP; the prediction CSV on its own. Naming
+    convention <code>COSC2753_A2_&lt;group&gt;_&lt;studentID1_studentID2_…&gt;</code> — note that
+    the spec gives it with the group number in §5.1 and without it in §5.4, so confirm with the
+    coordinator and include the group number if unsure. Marks are deducted for getting it wrong.</p>
+  </div>
+</section>
+
+<!-- ============ 07 OPEN ============ -->
+<section id="open">
+  <div class="sec-head rv">
+    <div class="num">07</div>
+    <div class="txt">
+      <div class="eyebrow">Open questions</div>
+      <h2>Three decisions waiting on evidence</h2>
+      <p>These are deliberately unresolved. Each needs a number from the EDA notebook, not an
+      opinion from a meeting — and each is exactly the kind of choice the Approach criterion asks
+      you to justify.</p>
+    </div>
+  </div>
+
+  <div class="oq rv">
+    <div>
+      <span class="st">Open · needs EDA</span>
+      <h4>What happens to the rare <code style="font-size:.8em">articleType</code> classes?</h4>
+      <p>Drop them, merge them upward through <code>subCategory</code>, or keep them and report the
+      failure honestly. Each choice changes what macro-F1 even means, so the report must state
+      which was taken and why.</p>
+      <p class="ev">Evidence needed: per-class counts, and macro-F1 under each policy.</p>
+    </div>
+    <div>
+      <span class="st">Open · needs EDA</span>
+      <h4>One backbone with two heads, or two separate models?</h4>
+      <p>The submission format permits either. Multi-task learning is the stronger claim to going
+      beyond class material, and gender and usage plausibly share features — but shared training
+      can let the 76.8% Casual majority drown the smaller target.</p>
+      <p class="ev">Evidence needed: per-target macro-F1, both ways, on the same split.</p>
+    </div>
+    <div>
+      <span class="st">Open · needs EDA</span>
+      <h4>What does “similar” mean for Task 4?</h4>
+      <p>No ground-truth similarity labels exist. A metadata proxy — same <code>articleType</code>
+      and <code>baseColour</code>, say — is measurable but circular; human inspection is honest but
+      small. Probably both, reported separately.</p>
+      <p class="ev">Evidence needed: agreement between the proxy and human judgement on a sample.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap">
+  <div class="fgrid">
+    <div>
+      <h5>Sources</h5>
+      <ul>
+        <li><code>docs/COSC2753_2026B_Assignment 2.pdf</code> — the specification</li>
+        <li><code>rubrics/RUBRIC.md</code> — transcribed marking rubric</li>
+        <li><code>docs/superpowers/specs/2026-08-11-repo-structure-design.md</code> — agreed layout and contracts</li>
+      </ul>
+    </div>
+    <div>
+      <h5>Measured from</h5>
+      <ul>
+        <li><code>data/train/styles_train.csv</code> — 38,617 rows</li>
+        <li><code>data/train/images_train/</code> — 38,612 files</li>
+        <li><code>data/test/images_test/</code> — 5,829 files</li>
+        <li><code>data/test/styles_prediction.csv</code> — fixed header</li>
+      </ul>
+    </div>
+    <div>
+      <h5>Not yet designed</h5>
+      <ul>
+        <li>Phase ordering and dependencies</li>
+        <li>Model shortlist per task</li>
+        <li>Application scope</li>
+      </ul>
+    </div>
+  </div>
+  <div class="colophon">
+    <span>Counts measured 11 Aug 2026 with the Python standard library — no figure on this page is quoted from the spec.</span>
+    <span>COSC2753 · Assignment 2 · 2026B</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- reveal on scroll ---- */
+  var rv = document.querySelectorAll('.rv');
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {rootMargin:'0px 0px -12% 0px', threshold:0.08});
+    rv.forEach(function(el){ io.observe(el); });
+  } else {
+    rv.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* ---- scroll progress ---- */
+  var prog = document.getElementById('prog');
+  function onScroll(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    prog.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  /* ---- days remaining ---- */
+  var due = new Date('2026-09-12T23:59:00+07:00');
+  var days = Math.ceil((due - new Date()) / 86400000);
+  var el = document.getElementById('daysleft');
+  if (el) el.textContent = days > 0 ? days : 0;
+
+  /* ---- long-tail chart: all 125 articleType counts, measured 2026-08-11 ---- */
+  var counts = [6781,3089,2683,2252,1991,1614,1556,1439,1048,1047,865,863,829,795,710,668,614,
+    610,559,557,526,513,418,345,297,295,293,280,276,274,245,242,228,223,215,203,175,161,159,154,
+    140,122,117,116,110,106,90,86,86,79,75,69,69,63,62,58,55,53,51,47,45,44,43,40,39,39,38,34,32,
+    30,28,27,25,25,23,20,19,17,17,15,15,14,13,13,13,12,12,12,12,11,11,11,9,8,8,8,7,7,6,6,6,5,5,4,
+    4,4,3,3,3,3,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1];
+
+  var svg = document.getElementById('tailchart');
+  if (!svg) return;
+  var W = 1160, H = 260, L = 52, R = 14, T = 16, B = 46;
+  var plotW = W - L - R, plotH = H - T - B;
+  var n = counts.length, slot = plotW / n, bw = Math.max(3, slot - 2.6);
+  var maxLog = Math.log10(counts[0]);
+  var ns = 'http://www.w3.org/2000/svg';
+
+  function add(tag, attrs, text){
+    var e = document.createElementNS(ns, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    svg.appendChild(e);
+    return e;
+  }
+
+  /* gridlines at 1, 10, 100, 1000 */
+  [1,10,100,1000].forEach(function(v){
+    var y = T + plotH - (Math.log10(v) / maxLog) * plotH;
+    add('line', {x1:L, y1:y, x2:W-R, y2:y, stroke:'rgba(23,19,13,.12)', 'stroke-dasharray':'3 4'});
+    add('text', {x:L-10, y:y+3.5, 'text-anchor':'end', class:'d-s'}, v.toLocaleString());
+  });
+
+  counts.forEach(function(c, i){
+    var h = Math.max(1.5, (Math.log10(c) / maxLog) * plotH);
+    var fill = i < 10 ? '#c8341a' : (c < 10 ? '#d8cdb5' : '#17130d');
+    var b = add('rect', {
+      x:(L + i*slot).toFixed(2), y:(T + plotH - h).toFixed(2),
+      width:bw.toFixed(2), height:h.toFixed(2), fill:fill
+    });
+    if (!reduce){
+      b.style.transformOrigin = (L + i*slot + bw/2).toFixed(2) + 'px ' + (T + plotH) + 'px';
+      b.style.transform = 'scaleY(0.001)';
+      b.style.transition = 'transform .7s cubic-bezier(.22,.9,.24,1) ' + (i * 6) + 'ms';
+    }
+  });
+
+  /* axis + end labels */
+  add('line', {x1:L, y1:T+plotH, x2:W-R, y2:T+plotH, stroke:'#17130d', 'stroke-width':1});
+  add('text', {x:L, y:H-22, class:'d-s'}, 'Tshirts — 6,781');
+  add('text', {x:W-R, y:H-22, 'text-anchor':'end', class:'d-s'}, '7 classes — 1 image each');
+
+  /* animate bars in when the figure scrolls into view */
+  var fig = svg.closest('.tail');
+  function play(){ svg.querySelectorAll('rect').forEach(function(r){ r.style.transform = 'scaleY(1)'; }); }
+  if (reduce || !('IntersectionObserver' in window)) { play(); }
+  else {
+    var io2 = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ play(); io2.unobserve(e.target); } });
+    }, {threshold:0.2});
+    io2.observe(fig);
+  }
+})();
+</script>
+</body>
+</html>
