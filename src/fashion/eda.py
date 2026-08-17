@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
@@ -33,7 +34,28 @@ def audit_csv(path: Path) -> tuple[pd.DataFrame, SchemaAudit]:
     if not path.is_file():
         raise FileNotFoundError(f"Training metadata not found: {path}")
 
-    frame = pd.read_csv(path, keep_default_na=False, dtype={"id": "string"})
+    with path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.reader(handle)
+        raw_header = next(reader)
+        maximum_width = max((len(row) for row in reader), default=len(raw_header))
+
+    header = [
+        column if column else f"Unnamed: {index}"
+        for index, column in enumerate(raw_header)
+    ]
+    overflow = [
+        f"Overflow: {index}"
+        for index in range(len(header), maximum_width)
+    ]
+    frame = pd.read_csv(
+        path,
+        header=None,
+        names=[*header, *overflow],
+        skiprows=1,
+        keep_default_na=False,
+        dtype={"id": "string"},
+        engine="python",
+    )
     required = {
         "id", "gender", "masterCategory", "subCategory", "articleType",
         "baseColour", "season", "year", "usage", "productDisplayName",
@@ -42,15 +64,21 @@ def audit_csv(path: Path) -> tuple[pd.DataFrame, SchemaAudit]:
     if missing:
         raise ValueError(f"Metadata is missing required columns: {missing}")
 
-    phantom = tuple(column for column in frame.columns if column.startswith("Unnamed:"))
+    phantom = tuple(
+        column
+        for column in frame.columns
+        if column.startswith(("Unnamed:", "Overflow:"))
+    )
     nonempty_phantoms = {
-        column: int(frame[column].astype("string").str.strip().ne("").sum())
+        column: int(
+            frame[column].fillna("").astype("string").str.strip().ne("").sum()
+        )
         for column in phantom
     }
     display_columns = ["productDisplayName", *phantom]
     frame["productDisplayName"] = frame[display_columns].apply(
         lambda row: ",".join(
-            str(value) for value in row if str(value).strip()
+            str(value) for value in row if pd.notna(value) and str(value).strip()
         ),
         axis=1,
     )
@@ -134,6 +162,75 @@ def audit_images(image_dir: Path) -> pd.DataFrame:
         records.append(record)
 
     return pd.DataFrame.from_records(records).astype({"id": "string"})
+
+
+def inventory_images(image_dir: Path, pattern: str = "*.jpg") -> pd.DataFrame:
+    """Inventory image files without decoding their full-resolution pixels."""
+
+    if not image_dir.is_dir():
+        raise FileNotFoundError(f"Image directory not found: {image_dir}")
+
+    records = [
+        {
+            "id": path.stem,
+            "path": str(path),
+            "bytes": path.stat().st_size,
+            "suffix": path.suffix.lower(),
+        }
+        for path in sorted(image_dir.glob(pattern), key=lambda item: item.stem)
+    ]
+    return pd.DataFrame.from_records(
+        records,
+        columns=["id", "path", "bytes", "suffix"],
+    ).astype({"id": "string"})
+
+
+def audit_image_sample(
+    inventory: pd.DataFrame,
+    sample_size: int,
+    seed: int,
+) -> pd.DataFrame:
+    """Decode a deterministic sample from an image inventory.
+
+    This is intended for large, high-resolution collections where hashing and
+    decoding every file during interactive EDA would be unnecessarily costly.
+    It estimates image properties but does not prove that unsampled files are
+    readable.
+    """
+
+    required = {"id", "path"}
+    missing = sorted(required.difference(inventory.columns))
+    if missing:
+        raise ValueError(f"Image inventory is missing required columns: {missing}")
+    if sample_size < 1:
+        raise ValueError("sample_size must be at least 1")
+
+    selected = inventory.sort_values("id")
+    if sample_size < len(selected):
+        selected = selected.sample(n=sample_size, random_state=seed).sort_values("id")
+
+    records: list[dict[str, object]] = []
+    for row in selected.itertuples(index=False):
+        record: dict[str, object] = {
+            "id": str(row.id),
+            "path": str(row.path),
+            "width": pd.NA,
+            "height": pd.NA,
+            "mode": pd.NA,
+            "error": "",
+        }
+        try:
+            with Image.open(row.path) as image:
+                image.load()
+                record.update(width=image.width, height=image.height, mode=image.mode)
+        except (OSError, UnidentifiedImageError) as exc:
+            record["error"] = f"{type(exc).__name__}: {exc}"
+        records.append(record)
+
+    return pd.DataFrame.from_records(
+        records,
+        columns=["id", "path", "width", "height", "mode", "error"],
+    ).astype({"id": "string"})
 
 
 def reconcile_ids(styles: pd.DataFrame, images: pd.DataFrame) -> IdReconciliation:
