@@ -387,6 +387,7 @@ def test_run_eda_writes_stable_review_grids_and_replaces_stale_ones(
         "near-duplicates.csv",
         "paired-image-comparison.csv",
         "eda-report-summary.png",
+        "master-category-distribution.png",
     }
     assert required | review_files <= {path.name for path in output_dir.iterdir()}
     assert all(path.stat().st_size > 0 for path in output_dir.iterdir() if path.is_file())
@@ -395,6 +396,7 @@ def test_run_eda_writes_stable_review_grids_and_replaces_stale_ones(
     assert low_cache.is_file() and provenance_path.is_file()
 
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    assert "master-category-distribution.png" in summary["output_manifest"]["files"]
     assert summary["output_manifest"]["review_grids"] == sorted(review_files)
     assert summary["population"]["source_train_ids"] == 4
     assert summary["population"]["usable_products"] == 4

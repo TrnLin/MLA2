@@ -44,6 +44,7 @@ from fashion.eda_plots import (
     plot_drift,
     plot_duplicate_summary,
     plot_image_profiles,
+    plot_master_category_distribution,
     plot_relationship_heatmap,
     plot_review_grid,
     plot_target_distributions,
@@ -479,6 +480,7 @@ GENERATED_EDA_OUTPUTS = frozenset(
         "highres-measurements.provenance.json",
         "near-lowres-measurements.provenance.json",
         "target-distributions.png",
+        "master-category-distribution.png",
         "article-type-support.png",
         "associations.png",
         "gender-usage.png",
@@ -906,6 +908,10 @@ def run_eda(
     _write_json(output_dir / "data-audit.json", data_audit)
 
     _save_figure(plot_target_distributions(target_distributions), output_dir / "target-distributions.png")
+    _save_figure(
+        plot_master_category_distribution(distributions["masterCategory"]),
+        output_dir / "master-category-distribution.png",
+    )
     _save_figure(plot_article_type_support(target_distributions["articleType"], support), output_dir / "article-type-support.png")
     _save_figure(plot_association_matrix(associations), output_dir / "associations.png")
     _save_figure(plot_relationship_heatmap(gender_usage, "gender", "usage"), output_dir / "gender-usage.png")

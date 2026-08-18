@@ -102,6 +102,19 @@ def plot_target_distributions(distributions: Mapping[str, pd.DataFrame]) -> Figu
     return figure
 
 
+def plot_master_category_distribution(distribution: pd.DataFrame) -> Figure:
+    """Plot every master category so dataset-scope decisions remain visible."""
+    height = max(4.5, 0.55 * len(distribution) + 1.5)
+    figure, axes = _new_figure(figsize=(11, height))
+    _horizontal_distribution(
+        axes[0, 0],
+        distribution,
+        title=f"masterCategory — all {len(distribution)} categories",
+    )
+    figure.tight_layout()
+    return figure
+
+
 def plot_article_type_support(distribution: pd.DataFrame, support: pd.DataFrame) -> Figure:
     """Name the learnable head and summarize every class in tail-safe views."""
     figure, axes = _new_figure(2, 2, figsize=(15, 10))
