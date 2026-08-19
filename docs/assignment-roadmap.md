@@ -99,6 +99,15 @@ holdout classes honestly. Use a small, separately labelled Fashionpedia set as a
 robustness check. Select permissively licensed images, crop one clear garment, use two
 reviewers, and mask unresolved target disagreements.
 
+Independent evaluation has a second part: a literature comparison. Find published results
+on the same or similar fashion dataset, record each work's setup and scores, and compare
+against ours in a table. The report frames the data in three steps: the Kaggle Fashion
+Product Images source, the course changes (60×80 downscale, subset, re-split with withheld
+test labels), and our quarantine of all 5,829 test IDs before any label access. Because
+published works split the full public pool themselves, their training sets likely overlap
+our test items — quote their scores as indicative context, never as a direct benchmark.
+This task needs no models and can start any time.
+
 After evaluation, retrain the selected classifier designs on all 38,612 allowed internal
 training products using settings fixed during development.
 
