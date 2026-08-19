@@ -89,6 +89,16 @@ Submitted classifiers are trained from scratch. Pretrained models are comparison
 only. Save metrics, figures, timing, and failure examples during each run even though report
 prose is written later.
 
+Comparison floor: every classification task compares at least two genuinely different
+approaches — a simple baseline (classic ML on pixels or features, or a tiny CNN) plus a
+proper from-scratch CNN — with the pretrained benchmark for context. Two learning rates on
+one design do not count as comparison.
+
+Across the project, at least two techniques go beyond class material. Visual search covers
+one (embedding-based retrieval). The article-type long tail hosts the second (for example
+focal loss or class-balanced sampling), which doubles as the imbalance analysis for
+decision 0006.
+
 **Complete when:** each target and visual search has reproducible comparison evidence and a
 frozen final candidate.
 
