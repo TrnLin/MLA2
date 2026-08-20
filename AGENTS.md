@@ -23,20 +23,6 @@ analysis of the runs already done, choose the analysis.
   `id,gender,articleType,season,usage`.
   This is why Task 3 predicts gender and usage as separate targets.
 
-## Dataset gotchas
-
-Measured from the data, not assumed:
-
-- `usage` contains the literal string `"NA"` (71 rows), distinct from blank (1 row).
-  `season` has 20 blanks.
-- `articleType` spans 125 classes, from Tshirts (6,781) down to classes with one example.
-  Singleton classes cannot be learned or fairly evaluated — handling them is a decision
-  the report must defend.
-- `usage` is severely skewed: Casual 29,641, Home 1.
-- `styles_train.csv` has two trailing empty columns in its header; parsers must tolerate it.
-- Images are 60×80. Upscaling much past 96px adds no information, only compute.
-- Verify every CSV row has a matching image file before trusting any count.
-
 ## Conventions
 
 - Notebooks stay narrative — import from `src/fashion/`, keep logic out of cells.
@@ -61,5 +47,3 @@ Keep paths and commands exact.
   deciding what to cut.
 - `docs/COSC2753_2026B_Assignment 2.pdf` — the spec. Read for deliverables, submission
   format, and naming conventions.
-- `docs/superpowers/specs/` — design decisions already made, with their rationale. Read
-  before proposing changes to structure or workflow.
