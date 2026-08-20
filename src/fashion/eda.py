@@ -18,16 +18,16 @@ import pandas as pd
 from fashion.config import (
     EDA_OUTPUT_DIR,
     EDA_SAMPLE_SIZE,
-    ORIGINAL_CSV,
-    ORIGINAL_IMAGE_DIR,
     PROCESSED_DATA_DIR,
     RANDOM_SEED,
     TARGET_COLUMNS,
-    TEACHER_TRAIN_CSV,
-    TEACHER_TRAIN_IMAGE_DIR,
-    TEST_CSV,
 )
-from fashion.data_audit import CsvAudit, audit_csv, hierarchy_conflicts
+from fashion.data.population import (
+    PopulationAudit,
+    PopulationPaths as EdaPaths,
+    build_allowed_population as build_population,
+)
+from fashion.data_audit import hierarchy_conflicts
 from fashion.eda_images import (
     IMAGE_METRICS,
     MEASUREMENT_COLUMNS,
@@ -52,41 +52,6 @@ from fashion.eda_plots import (
 
 
 @dataclass(frozen=True)
-class EdaPaths:
-    """Locations needed to construct the selected EDA population."""
-
-    teacher_train_csv: Path = TEACHER_TRAIN_CSV
-    original_csv: Path = ORIGINAL_CSV
-    test_csv: Path = TEST_CSV
-    original_image_dir: Path = ORIGINAL_IMAGE_DIR
-    lowres_image_dir: Path = TEACHER_TRAIN_IMAGE_DIR
-
-
-@dataclass(frozen=True)
-class PopulationAudit:
-    """Immutable reconciliation of metadata and image identifiers."""
-
-    source_train_ids: int
-    usable_products: int
-    quarantined_test_ids: tuple[int, ...]
-    teacher_duplicate_ids: tuple[int, ...]
-    test_duplicate_ids: tuple[int, ...]
-    original_duplicate_ids: tuple[int, ...]
-    missing_original_metadata_ids: tuple[int, ...]
-    missing_original_image_ids: tuple[int, ...]
-    missing_lowres_image_ids: tuple[int, ...]
-    missing_both_image_ids: tuple[int, ...]
-    unmatched_original_image_ids: tuple[int, ...]
-    unmatched_lowres_image_ids: tuple[int, ...]
-    invalid_original_image_filenames: tuple[str, ...]
-    invalid_lowres_image_filenames: tuple[str, ...]
-    duplicate_original_image_ids: tuple[int, ...]
-    duplicate_lowres_image_ids: tuple[int, ...]
-    teacher_csv_audit: CsvAudit
-    original_csv_audit: CsvAudit
-
-
-@dataclass(frozen=True)
 class EdaResult:
     """Immutable locations and cache decisions from one EDA run."""
 
@@ -103,112 +68,6 @@ def _integer_ids(values: pd.Series, source: str) -> pd.Series:
         examples = ", ".join(repr(value) for value in text[invalid].unique()[:5])
         raise ValueError(f"{source} contains invalid integer ID values: {examples}")
     return text.astype("int64")
-
-
-def _read_test_ids(path: Path) -> tuple[pd.Series, tuple[int, ...]]:
-    if not path.is_file():
-        raise FileNotFoundError(f"Test metadata not found: {path}")
-    frame = pd.read_csv(
-        path,
-        usecols=["id"],
-        keep_default_na=False,
-        dtype={"id": "string"},
-    )
-    if "id" not in frame:
-        raise ValueError(f"Test metadata is missing required column: id ({path})")
-    ids = _integer_ids(frame["id"], "Test metadata")
-    duplicates = tuple(sorted(ids.loc[ids.duplicated(keep=False)].unique().tolist()))
-    return ids, duplicates
-
-
-def _image_inventory(
-    directory: Path,
-) -> tuple[dict[int, Path], tuple[str, ...], tuple[int, ...]]:
-    if not directory.is_dir():
-        raise FileNotFoundError(f"Image directory not found: {directory}")
-    paths: dict[int, Path] = {}
-    invalid: list[str] = []
-    duplicate_ids: set[int] = set()
-    for path in sorted((item for item in directory.iterdir() if item.is_file()), key=lambda item: item.name):
-        if path.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
-            continue
-        try:
-            product_id = int(path.stem)
-        except ValueError:
-            invalid.append(path.name)
-            continue
-        if product_id in paths:
-            duplicate_ids.add(product_id)
-        else:
-            paths[product_id] = path
-    return paths, tuple(invalid), tuple(sorted(duplicate_ids))
-
-
-def build_population(paths: EdaPaths = EdaPaths()) -> tuple[pd.DataFrame, PopulationAudit]:
-    """Return sorted products with original labels and both required image views."""
-    teacher, teacher_csv_audit = audit_csv(paths.teacher_train_csv)
-    original, original_csv_audit = audit_csv(paths.original_csv)
-    test_ids, test_duplicates = _read_test_ids(paths.test_csv)
-
-    train_ids = pd.Index(teacher["id"].drop_duplicates().sort_values())
-    quarantined_ids = pd.Index(test_ids.drop_duplicates().sort_values())
-    overlap = train_ids.intersection(quarantined_ids)
-    if not overlap.empty:
-        values = ", ".join(map(str, overlap.tolist()[:10]))
-        raise ValueError(
-            "IDs appear in both teacher training and test metadata: "
-            f"{values}"
-        )
-
-    selected = original.loc[original["id"].isin(train_ids)].copy()
-    original_duplicates = tuple(
-        sorted(selected.loc[selected["id"].duplicated(keep=False), "id"].unique().tolist())
-    )
-    selected = selected.drop_duplicates("id", keep="first")
-    selected_ids = pd.Index(selected["id"])
-    missing_metadata = tuple(sorted(train_ids.difference(selected_ids).tolist()))
-
-    original_images, invalid_original_images, duplicate_original_images = _image_inventory(
-        paths.original_image_dir
-    )
-    lowres_images, invalid_lowres_images, duplicate_lowres_images = _image_inventory(
-        paths.lowres_image_dir
-    )
-    missing_original = tuple(sorted(selected_ids.difference(original_images).tolist()))
-    missing_lowres = tuple(sorted(selected_ids.difference(lowres_images).tolist()))
-    missing_both = tuple(
-        sorted(set(missing_original).intersection(missing_lowres))
-    )
-    unmatched_original = tuple(sorted(set(original_images).difference(selected_ids)))
-    unmatched_lowres = tuple(sorted(set(lowres_images).difference(selected_ids)))
-
-    selected["original_image_path"] = selected["id"].map(original_images)
-    selected["lowres_image_path"] = selected["id"].map(lowres_images)
-    population = (
-        selected.dropna(subset=["original_image_path", "lowres_image_path"])
-        .sort_values("id", ignore_index=True)
-    )
-    audit = PopulationAudit(
-        source_train_ids=len(train_ids),
-        usable_products=len(population),
-        quarantined_test_ids=tuple(quarantined_ids.tolist()),
-        teacher_duplicate_ids=tuple(map(int, teacher_csv_audit.duplicate_ids)),
-        test_duplicate_ids=test_duplicates,
-        original_duplicate_ids=original_duplicates,
-        missing_original_metadata_ids=missing_metadata,
-        missing_original_image_ids=missing_original,
-        missing_lowres_image_ids=missing_lowres,
-        missing_both_image_ids=missing_both,
-        unmatched_original_image_ids=unmatched_original,
-        unmatched_lowres_image_ids=unmatched_lowres,
-        invalid_original_image_filenames=invalid_original_images,
-        invalid_lowres_image_filenames=invalid_lowres_images,
-        duplicate_original_image_ids=duplicate_original_images,
-        duplicate_lowres_image_ids=duplicate_lowres_images,
-        teacher_csv_audit=teacher_csv_audit,
-        original_csv_audit=original_csv_audit,
-    )
-    return population, audit
 
 
 def _labels(values: pd.Series) -> pd.Series:
@@ -455,6 +314,11 @@ EDA_REVIEW_GRIDS = (
     "review-exact-duplicate.png",
     "review-near-duplicate.png",
 )
+BRIGHTNESS_BACKGROUND_REVIEW = (
+    (44998, "Blank in both views — exclude"),
+    (48716, "Valid bright background — keep"),
+    (43113, "Valid dark background — keep"),
+)
 GENERATED_EDA_OUTPUTS = frozenset(
     {
         "summary.json",
@@ -481,6 +345,7 @@ GENERATED_EDA_OUTPUTS = frozenset(
         "near-lowres-measurements.provenance.json",
         "target-distributions.png",
         "master-category-distribution.png",
+        "brightness-background-review.png",
         "article-type-support.png",
         "associations.png",
         "gender-usage.png",
@@ -810,6 +675,27 @@ def _write_review_grids(
     return sorted(manifest)
 
 
+def _write_brightness_background_review(
+    frame: pd.DataFrame,
+    output_dir: Path,
+) -> None:
+    """Save the manually reviewed blank, bright, and dark-background examples."""
+    review_labels = dict(BRIGHTNESS_BACKGROUND_REVIEW)
+    opened = _open_examples(frame, list(review_labels))
+    examples = [
+        (product_id, image, review_labels[product_id])
+        for product_id, image, _ in opened
+    ]
+    _save_figure(
+        plot_review_grid(
+            examples,
+            "Brightness and background review",
+            columns=3,
+        ),
+        output_dir / "brightness-background-review.png",
+    )
+
+
 def _remove_stale_known_outputs(output_dir: Path) -> None:
     """Clear generated evidence while retaining valid image cache candidates."""
     for name in GENERATED_EDA_OUTPUTS.difference(_CACHE_OUTPUTS):
@@ -926,6 +812,7 @@ def run_eda(
         output_dir / "eda-report-summary.png",
     )
     review_manifest = _write_review_grids(population, lowres, exact, near, output_dir)
+    _write_brightness_background_review(population, output_dir)
     split_after = _split_provenance()
     split_unchanged = split_before == split_after
     if not split_unchanged:
@@ -977,6 +864,11 @@ def run_eda(
             "near_candidate_pair_count": len(near),
             "near_sample_product_count": len(near_measurements),
             "near_values_are": "sampled candidate pairs, not confirmed duplicates",
+        },
+        "brightness_background_review": {
+            "exclude_unusable_ids": [44998],
+            "keep_valid_bright_ids": [48716],
+            "keep_valid_dark_background_ids": [43113],
         },
         "cache_provenance": {
             "lowres": low_provenance,

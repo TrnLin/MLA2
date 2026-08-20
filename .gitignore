@@ -8,7 +8,7 @@ __pycache__/
 *.egg-info/
 
 # Supplied dataset and generated processed data must never enter Git.
-data/
+/data/
 
 # Local scratch material and generated model weights.
 tmp/

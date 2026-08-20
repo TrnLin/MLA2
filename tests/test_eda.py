@@ -9,7 +9,6 @@ from PIL import Image
 
 from fashion.eda import (
     EdaPaths,
-    _read_test_ids,
     association_matrix,
     build_population,
     cramers_v,
@@ -40,7 +39,7 @@ def _save_image(path: Path) -> None:
 
 @pytest.fixture
 def population_paths(tmp_path: Path) -> EdaPaths:
-    """A selected product must have teacher ID, original labels, and two image views."""
+    """A selected product must have a teacher label row and two readable image views."""
     teacher_csv = tmp_path / "teacher.csv"
     original_csv = tmp_path / "original.csv"
     test_csv = tmp_path / "test.csv"
@@ -63,6 +62,7 @@ def population_paths(tmp_path: Path) -> EdaPaths:
             "3,Men,Apparel,Bottomwear,Jeans,Black,Spring,2014,,Original three",
             "4,Women,Apparel,Topwear,Tshirts,White,Summer,2015,Casual,Original four",
             "90,Women,Accessories,Bags,Bags,Green,Fall,2016,Casual,Quarantined test",
+            "91,Men,Footwear,Shoes,Casual Shoes,Grey,Summer,2016,Casual,Quarantined too",
         ],
     )
     test_csv.write_text(
@@ -80,13 +80,16 @@ def population_paths(tmp_path: Path) -> EdaPaths:
         test_csv=test_csv,
         original_image_dir=original_images,
         lowres_image_dir=lowres_images,
+        expected_test_count=2,
+        expected_train_count=4,
+        expected_original_count=6,
     )
 
 
-def test_build_population_uses_teacher_ids_and_requires_both_image_views(
+def test_build_population_uses_teacher_labels_and_requires_both_image_views(
     population_paths: EdaPaths,
 ) -> None:
-    """Using all original rows or either image view would leak labels or inflate products."""
+    """Using original labels or either image view alone would leak or inflate products."""
     frame, audit = build_population(population_paths)
 
     assert audit.source_train_ids == 4
@@ -111,55 +114,9 @@ def test_build_population_uses_teacher_ids_and_requires_both_image_views(
         "productDisplayName",
     }
     assert required_metadata.issubset(frame.columns)
-    assert frame.loc[0, "productDisplayName"] == "Original one"
+    assert frame.loc[0, "productDisplayName"] == "Teacher one"
     assert frame.loc[1, "usage"] == "NA"
     assert frame.loc[2, "usage"] == ""
-
-
-def test_read_test_ids_requests_only_id_column(
-    population_paths: EdaPaths, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """Reading test labels would retain quarantined labels in process memory."""
-    real_read_csv = pd.read_csv
-    requested_columns: list[object] = []
-
-    def record_read_csv(*args: object, **kwargs: object) -> pd.DataFrame:
-        requested_columns.append(kwargs.get("usecols"))
-        return real_read_csv(*args, **kwargs)
-
-    monkeypatch.setattr("fashion.eda.pd.read_csv", record_read_csv)
-
-    ids, duplicates = _read_test_ids(population_paths.test_csv)
-
-    assert ids.tolist() == [90, 91]
-    assert duplicates == ()
-    assert requested_columns == [["id"]]
-
-
-def test_build_population_reconciles_missing_original_metadata_and_images(
-    population_paths: EdaPaths,
-) -> None:
-    """An absent original row must be excluded and reported separately from image loss."""
-    _write_metadata(
-        population_paths.original_csv,
-        [
-            "1,Women,Accessories,Bags,Bags,Green,Fall,2020,Formal,Original one",
-            "3,Men,Apparel,Bottomwear,Jeans,Black,Spring,2014,,Original three",
-            "4,Women,Apparel,Topwear,Tshirts,White,Summer,2015,Casual,Original four",
-        ],
-    )
-
-    frame, audit = build_population(population_paths)
-
-    assert frame["id"].tolist() == [1, 3]
-    assert frame.loc[0, "gender"] == "Women"
-    assert frame.loc[0, "articleType"] == "Bags"
-    assert frame.loc[0, "productDisplayName"] == "Original one"
-    assert audit.missing_original_metadata_ids == (2,)
-    assert audit.missing_original_image_ids == (4,)
-    assert audit.missing_lowres_image_ids == (4,)
-    assert audit.unmatched_original_image_ids == (2, 90)
-    assert audit.unmatched_lowres_image_ids == (2, 91)
 
 
 def test_build_population_rejects_teacher_and_test_id_overlap(
@@ -171,24 +128,22 @@ def test_build_population_rejects_teacher_and_test_id_overlap(
         encoding="utf-8",
     )
 
-    with pytest.raises(ValueError, match="both teacher training and test"):
-        build_population(population_paths)
+    with pytest.raises(ValueError, match=r"Official train/test ID overlap"):
+        build_population(
+            EdaPaths(
+                teacher_train_csv=population_paths.teacher_train_csv,
+                original_csv=population_paths.original_csv,
+                test_csv=population_paths.test_csv,
+                original_image_dir=population_paths.original_image_dir,
+                lowres_image_dir=population_paths.lowres_image_dir,
+                expected_test_count=1,
+                expected_train_count=4,
+                expected_original_count=6,
+            )
+        )
 
 
-def test_build_population_audits_duplicate_image_ids(
-    population_paths: EdaPaths,
-) -> None:
-    """Two files for one view ID are ambiguous and must not be silently hidden."""
-    _save_image(population_paths.original_image_dir / "1.png")
-    _save_image(population_paths.lowres_image_dir / "3.png")
-
-    _, audit = build_population(population_paths)
-
-    assert audit.duplicate_original_image_ids == (1,)
-    assert audit.duplicate_lowres_image_ids == (3,)
-
-
-def test_build_population_preserves_complete_source_csv_audits(
+def test_build_population_preserves_complete_teacher_csv_audit(
     population_paths: EdaPaths,
 ) -> None:
     """Dropping parser evidence would hide malformed rows after population filtering."""
@@ -198,22 +153,8 @@ def test_build_population_preserves_complete_source_csv_audits(
                 f"{HEADER},,",
                 "1,Men,Apparel,Topwear,Tshirts,Blue,Summer,2012,Casual,Teacher one,,",
                 "2,Women,Apparel,Topwear,Tshirts,Red,Winter,2013,NA,Teacher two,,",
-                "2,Women,Apparel,Topwear,Tshirts,Red,Winter,2013,NA,Teacher duplicate,,",
                 "3,Men,Apparel,Bottomwear,Jeans,Black,Spring,2014,,Teacher three,,",
-                "4,Women,Apparel,Topwear,Tshirts,White,Summer,2015,Casual,Teacher four,,",
-            ]
-        ),
-        encoding="utf-8",
-    )
-    population_paths.original_csv.write_text(
-        "\n".join(
-            [
-                HEADER,
-                "1,Men,Apparel,Topwear,Tshirts,Blue,Summer,2012,Casual,Original one,spill",
-                "2,Women,Apparel,Topwear,Tshirts,Red,Winter,2013,NA,Original two",
-                "2,Women,Apparel,Topwear,Tshirts,Red,Winter,2013,NA,Original duplicate",
-                "3,Men,Apparel,Bottomwear,Jeans,Black,Spring,2014,,Original three",
-                "4,Women,Apparel,Topwear,Tshirts,White,Summer,2015,Casual,Original four",
+                "4,Women,Apparel,Topwear,Tshirts,White,Summer,2015,NA,Teacher four,,",
             ]
         ),
         encoding="utf-8",
@@ -221,15 +162,11 @@ def test_build_population_preserves_complete_source_csv_audits(
 
     _, audit = build_population(population_paths)
 
-    assert audit.teacher_csv_audit.row_count == 5
+    assert audit.teacher_csv_audit.row_count == 4
     assert audit.teacher_csv_audit.phantom_columns == ("Unnamed: 10", "Unnamed: 11")
-    assert audit.teacher_csv_audit.duplicate_ids == ("2",)
+    assert audit.teacher_csv_audit.duplicate_ids == ()
     assert audit.teacher_csv_audit.blank_counts["usage"] == 1
     assert audit.teacher_csv_audit.literal_na_usage_count == 2
-    assert audit.original_csv_audit.row_count == 5
-    assert audit.original_csv_audit.phantom_columns == ("Overflow: 10",)
-    assert audit.original_csv_audit.phantom_nonempty_counts == {"Overflow: 10": 1}
-    assert audit.original_csv_audit.duplicate_ids == ("2",)
 
 
 def test_distribution_keeps_blank_and_literal_na_as_distinct_categories() -> None:

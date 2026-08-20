@@ -17,7 +17,8 @@ the versioned processed review table defined by decision 0003.
 
 Apply these rules:
 
-1. keep fashion and beauty products; exclude only visually confirmed non-fashion products;
+1. keep readable fashion and beauty products; exclude only visually confirmed non-fashion
+   or unusable products, including the blank image at ID `44998`;
 2. treat 20 blank season labels, one blank usage label, and 71 literal `"NA"` usage values
    as target-specific missing labels;
 3. keep affected products for other valid targets and visual search;

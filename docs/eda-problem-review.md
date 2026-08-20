@@ -213,8 +213,12 @@ decisions.
 - Most low-resolution images are 60×80, but a small number have unusual dimensions; the
   observed minimum is 53×60.
 - The grayscale review shows valid products rather than corrupt files.
-- Brightness, contrast, and colour outliers also mostly look like valid catalogue-photo
-  variation: dark products, white products, models, and unusual backgrounds.
+- Most brightness, contrast, and colour outliers are valid catalogue-photo variation:
+  dark products, white products, models, and unusual backgrounds.
+- Manual review found one clear exception. ID `44998` is blank white in both image views
+  (low-resolution brightness `255`, contrast `0`) and contains no usable product evidence.
+- ID `48716` is a valid tiny pair of earrings on a very bright background. ID `43113` is
+  a valid perfume bottle on a dark background. These are hard examples, not broken images.
 - All 2,048 sampled original images decoded successfully and were RGB.
 - The sampled originals have a median size of 1080×1440, while the teacher copies are
   usually 60×80.
@@ -234,6 +238,9 @@ decisions.
 ### Agreed handling
 
 - Keep grayscale and unusual-but-readable images.
+- Exclude ID `44998` as visually unusable through `label_review.csv`; do not edit the raw
+  files.
+- Keep valid bright and dark-background products, including IDs `48716` and `43113`.
 - Compare all 343 low-resolution grayscale images with their same-ID originals during
   cleanup.
 - Use the original image as the source. If it contains colour, keep that real colour.

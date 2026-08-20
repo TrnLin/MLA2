@@ -25,46 +25,6 @@
     39425
   ],
   "missing_original_metadata_ids": [],
-  "original_csv_audit": {
-    "blank_counts": {
-      "articleType": 0,
-      "baseColour": 0,
-      "gender": 0,
-      "id": 0,
-      "masterCategory": 0,
-      "productDisplayName": 0,
-      "season": 21,
-      "subCategory": 0,
-      "usage": 1,
-      "year": 1
-    },
-    "duplicate_ids": [],
-    "literal_na_usage_count": 316,
-    "phantom_columns": [
-      "Overflow: 10",
-      "Overflow: 11"
-    ],
-    "phantom_nonempty_counts": {
-      "Overflow: 10": 22,
-      "Overflow: 11": 2
-    },
-    "physical_columns": [
-      "id",
-      "gender",
-      "masterCategory",
-      "subCategory",
-      "articleType",
-      "baseColour",
-      "season",
-      "year",
-      "usage",
-      "productDisplayName",
-      "Overflow: 10",
-      "Overflow: 11"
-    ],
-    "row_count": 44446
-  },
-  "original_duplicate_ids": [],
   "quarantined_test_ids": [
     52003,
     52007,
@@ -5937,7 +5897,6 @@
     "row_count": 38617
   },
   "teacher_duplicate_ids": [],
-  "test_duplicate_ids": [],
   "unmatched_lowres_image_ids": [],
   "unmatched_original_image_ids": [
     52003,
@@ -11770,5 +11729,7 @@
     59999,
     60000
   ],
+  "unreadable_lowres_image_ids": [],
+  "unreadable_original_image_ids": [],
   "usable_products": 38612
 }

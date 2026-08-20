@@ -62,7 +62,10 @@ def eda_paths(tmp_path: Path) -> EdaPaths:
         "4,Women,Accessories,Bags,Bags,Green,Fall,2015,NA,Green bag",
     ]
     _write_metadata(teacher_csv, rows)
-    _write_metadata(original_csv, rows)
+    _write_metadata(
+        original_csv,
+        [*rows, "90,Women,Accessories,Bags,Bags,Green,Fall,2016,Casual,Quarantined test"],
+    )
     test_csv.write_text("id,gender,articleType,season,usage\n90,,,,\n", encoding="utf-8")
     colors = [(20, 40, 200), (20, 40, 200), (40, 40, 40), (200, 180, 20)]
     for product_id, color in enumerate(colors, start=1):
@@ -78,6 +81,9 @@ def eda_paths(tmp_path: Path) -> EdaPaths:
         test_csv=test_csv,
         original_image_dir=original_images,
         lowres_image_dir=lowres_images,
+        expected_test_count=1,
+        expected_train_count=4,
+        expected_original_count=5,
     )
 
 
@@ -388,6 +394,7 @@ def test_run_eda_writes_stable_review_grids_and_replaces_stale_ones(
         "paired-image-comparison.csv",
         "eda-report-summary.png",
         "master-category-distribution.png",
+        "brightness-background-review.png",
     }
     assert required | review_files <= {path.name for path in output_dir.iterdir()}
     assert all(path.stat().st_size > 0 for path in output_dir.iterdir() if path.is_file())
@@ -408,6 +415,11 @@ def test_run_eda_writes_stable_review_grids_and_replaces_stale_ones(
     assert summary["duplicates"]["exact_product_count"] == 2
     assert summary["duplicates"]["near_candidate_pair_count"] >= 0
     assert summary["duplicates"]["near_sample_product_count"] == 4
+    assert summary["brightness_background_review"] == {
+        "exclude_unusable_ids": [44998],
+        "keep_valid_bright_ids": [48716],
+        "keep_valid_dark_background_ids": [43113],
+    }
     json.dumps(summary, allow_nan=False)
     assert (split_path.read_bytes() if split_path.is_file() else None) == split_before
     initial_mtime = low_cache.stat().st_mtime_ns
@@ -491,9 +503,6 @@ def test_run_eda_serializes_complete_data_audit_evidence(
     teacher_lines[0] += ",,"
     teacher_lines[1:] = [f"{line},," for line in teacher_lines[1:]]
     eda_paths.teacher_train_csv.write_text("\n".join(teacher_lines), encoding="utf-8")
-    original_lines = eda_paths.original_csv.read_text(encoding="utf-8").splitlines()
-    original_lines[1] += ",spilled"
-    eda_paths.original_csv.write_text("\n".join(original_lines), encoding="utf-8")
     _save_image(eda_paths.original_image_dir / "invalid-name.png", (1, 2, 3))
     _save_image(eda_paths.lowres_image_dir / "1.jpg", (1, 2, 3))
 
@@ -511,10 +520,7 @@ def test_run_eda_serializes_complete_data_audit_evidence(
     ]
     assert data_audit["teacher_csv_audit"]["blank_counts"]["usage"] == 0
     assert data_audit["teacher_csv_audit"]["literal_na_usage_count"] == 1
-    assert data_audit["original_csv_audit"]["row_count"] == 4
-    assert data_audit["original_csv_audit"]["phantom_nonempty_counts"] == {
-        "Overflow: 10": 1
-    }
+    assert "original_csv_audit" not in data_audit
     assert data_audit["invalid_original_image_filenames"] == ["invalid-name.png"]
     assert data_audit["duplicate_lowres_image_ids"] == [1]
     assert "unmatched_original_image_ids" in data_audit
