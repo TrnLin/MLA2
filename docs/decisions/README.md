@@ -18,4 +18,12 @@ mark the old one as superseded, and link both records.
 
 ## Accepted decisions
 
-None yet.
+- `0001-data-roles-and-raw-immutability.md`
+- `0002-single-split-and-duplicate-quarantine.md`
+- `0003-protected-eda-and-train-only-statistics.md`
+- `0005-conflicting-exact-duplicate-quarantine.md`
+
+## Proposed decisions and open gates
+
+- `0004-product-group-leakage-check.md`
+- `0006-dependency-lock-pending.md`

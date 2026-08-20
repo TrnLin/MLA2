@@ -1,6 +1,6 @@
 # MLA2 Assignment Roadmap
 
-**Status:** Not started
+**Status:** In progress — EDA complete; trusted split policy still under review
 **Due:** 12 September 2026 at 23:59
 
 This file gives the work order only. It does not choose methods. Record choices
@@ -15,8 +15,8 @@ and their evidence in `docs/decisions/`.
 
 ## Progress
 
-- [ ] Phase 0 — Inspect the data and record data decisions
-- [ ] Phase 1 — Build trusted training data and one shared split
+- [x] Phase 0 — Inspect the data and record data decisions
+- [ ] Phase 1 — Build trusted training data and one shared split (in progress)
 - [ ] Phase 2 — Build shared training and evaluation tools
 - [ ] Phase 3 — Compare classification approaches
 - [ ] Phase 4 — Compare visual search approaches
@@ -34,7 +34,10 @@ possible leakage. Save useful evidence and record decisions before cleaning data
 ### Phase 1 — Prepare trusted data
 
 Build rebuildable manifests and one shared split under `data/processed/`. Add
-checks that protect the official test set and keep related images together.
+checks that protect the official test set and keep related images together. Exact
+SHA-256 groups are protected, and contradictory target groups are quarantined.
+Decide and verify a defensible product-group leakage rule before model training,
+as recorded in decision `0004`.
 
 ### Phase 2 — Build shared experiment tools
 

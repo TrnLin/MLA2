@@ -374,9 +374,10 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
   <div class="mast-grid">
     <p class="lede">
       Build an end-to-end machine learning system over <b>38,612 photographs</b> of fashion
-      products, each 60&times;80 pixels. Four classifiers answer what an item is, when it is for,
-      who it is for and what occasion it suits. A fifth component retrieves the items that
-      merely <b>look alike</b>. Every model trained from scratch.
+      products. Of these, 38,595 are 60&times;80 pixels and 17 have other native resolutions. Four
+      classifiers answer what an item is, when it is for, who it is for and what occasion it
+      suits. A fifth component retrieves the items that merely <b>look alike</b>. Every model
+      trained from scratch.
     </p>
     <dl class="facts">
       <div class="fact"><dt>Weight</dt><dd>40%<small>of course grade</small></dd></div>
@@ -387,10 +388,10 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
   </div>
 
   <div class="qs">
-    <div class="q"><div class="n">Task 01</div><h3>What type of item is this?</h3><code>articleType · 125 classes</code></div>
+    <div class="q"><div class="n">Task 01</div><h3>What type of item is this?</h3><code>articleType · 124 usable classes</code></div>
     <div class="q"><div class="n">Task 02</div><h3>Which season is it for?</h3><code>season · 4 classes</code></div>
     <div class="q"><div class="n">Task 03a</div><h3>Who is it intended for?</h3><code>gender · 5 classes</code></div>
-    <div class="q"><div class="n">Task 03b</div><h3>What occasion does it suit?</h3><code>usage · 8 classes</code></div>
+    <div class="q"><div class="n">Task 03b</div><h3>What occasion does it suit?</h3><code>usage · 9 classes including NA</code></div>
     <div class="q adv"><div class="n">Task 04 · advanced</div><h3>What else looks like it?</h3><code>Top-K retrieval · no labels</code></div>
   </div>
 </header>
@@ -472,8 +473,8 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     <div><div class="v">38,612</div><div class="k">training images on disk</div></div>
     <div><div class="v warn">5</div><div class="k">rows with no image file</div></div>
     <div><div class="v">5,829</div><div class="k">unlabelled test images</div></div>
-    <div><div class="v">60&times;80</div><div class="k">pixels, every image</div></div>
-    <div><div class="v">125</div><div class="k">articleType classes</div></div>
+    <div><div class="v">38,595</div><div class="k">60&times;80 images; 17 other sizes</div></div>
+    <div><div class="v">125 → 124</div><div class="k">raw → image-backed articleType classes</div></div>
   </div>
 
   <p class="eyebrow rv" style="margin-bottom:18px">Bars scaled to the largest class in each target · right column is share of all rows, or a raw count where the share rounds to nothing</p>
@@ -498,7 +499,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     </div>
 
     <div class="dist rv" style="--d:.16s">
-      <h4>usage <b>8 + NA + blank</b></h4>
+      <h4>usage <b>9 valid values + blank</b></h4>
       <div class="row"><span class="lb">Casual</span><span class="track"><i style="--w:100%"></i></span><span class="pc">76.8%</span></div>
       <div class="row"><span class="lb">Sports</span><span class="track"><i style="--w:13.3%;--d:.05s"></i></span><span class="pc">10.2%</span></div>
       <div class="row"><span class="lb">Ethnic</span><span class="track"><i style="--w:8.7%;--d:.1s"></i></span><span class="pc">6.7%</span></div>
@@ -512,7 +513,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     </div>
 
     <div class="dist rv" style="--d:.24s">
-      <h4>articleType <b>top 12 of 125</b></h4>
+      <h4>articleType <b>raw top 12 of 125</b></h4>
       <div class="row"><span class="lb">Tshirts</span><span class="track"><i style="--w:100%"></i></span><span class="pc">17.6%</span></div>
       <div class="row"><span class="lb">Shirts</span><span class="track"><i style="--w:45.6%;--d:.05s"></i></span><span class="pc">8.0%</span></div>
       <div class="row"><span class="lb">Casual Shoes</span><span class="track"><i style="--w:39.6%;--d:.1s"></i></span><span class="pc">6.9%</span></div>
@@ -532,10 +533,10 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
   <figure class="tail rv" style="margin-left:0;margin-right:0">
     <div class="tail-head">
       <h4>The long tail of <span style="font-family:var(--mono);font-size:.7em">articleType</span></h4>
-      <p>125 classes · log scale · 6,781 down to 1</p>
+      <p>125 raw classes · 124 remain image-backed · log scale · 6,781 down to 1</p>
     </div>
     <svg id="tailchart" viewBox="0 0 1160 260" role="img"
-         aria-label="Bar chart of all 125 articleType class frequencies on a logarithmic scale, descending from 6,781 images for Tshirts to seven classes holding a single image each.">
+         aria-label="Bar chart of all 125 raw articleType class frequencies on a logarithmic scale, descending from 6,781 rows for Tshirts to seven classes holding a single row each; 124 classes remain after the image join.">
     </svg>
     <div class="legend">
       <span><b style="background:var(--accent)"></b>Top 10 classes — 60.9% of all images</span>
@@ -560,11 +561,11 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
           <tr class="tgt"><td><code>gender</code></td><td class="num">5</td><td>Men — 20,918</td><td><strong>Target</strong> · Task 3a</td></tr>
           <tr><td><code>masterCategory</code></td><td class="num">7</td><td>Apparel — 19,147</td><td>Feature / hierarchy for merging rare classes</td></tr>
           <tr><td><code>subCategory</code></td><td class="num">41</td><td>Topwear — 14,409</td><td>Feature / hierarchy for merging rare classes</td></tr>
-          <tr class="tgt"><td><code>articleType</code></td><td class="num">125</td><td>Tshirts — 6,781</td><td><strong>Target</strong> · Task 1</td></tr>
+          <tr class="tgt"><td><code>articleType</code></td><td class="num">125 raw / 124 usable</td><td>Tshirts — 6,781</td><td><strong>Target</strong> · Task 1</td></tr>
           <tr><td><code>baseColour</code></td><td class="num">47</td><td>Black — 8,814</td><td>Feature · relevant to visual-search evaluation</td></tr>
           <tr class="tgt"><td><code>season</code></td><td class="num">4 + blank</td><td>Summer — 19,137</td><td><strong>Target</strong> · Task 2</td></tr>
           <tr><td><code>year</code></td><td class="num">12</td><td>2011 — 13,689</td><td>Feature · 2007–2018, 70% in 2011–2012</td></tr>
-          <tr class="tgt"><td><code>usage</code></td><td class="num">8 + NA + blank</td><td>Casual — 29,641</td><td><strong>Target</strong> · Task 3b</td></tr>
+          <tr class="tgt"><td><code>usage</code></td><td class="num">9 valid + blank</td><td>Casual — 29,641</td><td><strong>Target</strong> · Task 3b</td></tr>
           <tr><td><code>productDisplayName</code></td><td class="num">—</td><td>free text</td><td>Text side-channel — a from-image model may not use it at inference</td></tr>
         </tbody>
       </table>
@@ -588,10 +589,11 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
         rows yield only 38,612 usable examples.</p>
       </li>
       <li>
-        <h5>Seven classes have one example</h5>
-        <p>Shoe Laces, Suits, Ties and Cufflinks, Cushion Covers, Body Wash and Scrub, Ipad and
-        Lounge Tshirts appear once each. A single example cannot be split into train and
-        validation, so any policy you pick must be defended in the report.</p>
+        <h5>One raw class disappears at the image join</h5>
+        <p>Suits appears once, at missing-image ID <code>12347</code>, so the usable taxonomy has
+        124 article types. Shoe Laces, Ties and Cufflinks, Cushion Covers, Body Wash and Scrub,
+        Ipad and Lounge Tshirts remain image-backed singletons. Their train-only allocation must
+        be defended in the report.</p>
       </li>
       <li>
         <h5>The header has two phantom columns</h5>
@@ -611,10 +613,11 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
         “gender” mean something different for a perfume than for a coat.</p>
       </li>
       <li>
-        <h5>60&times;80 is the whole budget</h5>
-        <p>Every image is 4,800 pixels. Upscaling beyond roughly 96 px invents no new detail and
-        only buys compute cost — but small inputs also mean fine texture cues, which is what
-        distinguishes Formal from Casual, may simply not be present.</p>
+        <h5>Native resolution is almost, not entirely, 60&times;80</h5>
+        <p>The audit finds 38,595 training images at 60&times;80 and 17 at other resolutions. The
+        shared image transform must therefore handle dimensions explicitly. Aggressive
+        upscaling still invents no detail and may not recover fine texture cues that distinguish
+        Formal from Casual.</p>
       </li>
       <li>
         <h5>The submission format is frozen</h5>
@@ -646,7 +649,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <p class="tq">“What type of fashion item is shown?”</p>
       <dl>
         <div><dt>Target</dt><dd><code style="font-family:var(--mono);font-size:11.5px">articleType</code></dd></div>
-        <div><dt>Classes</dt><dd>125</dd></div>
+        <div><dt>Classes</dt><dd>124 usable</dd></div>
         <div><dt>Majority baseline</dt><dd>17.6%</dd></div>
         <div><dt>Metric</dt><dd>Macro-F1</dd></div>
       </dl>
@@ -678,7 +681,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <p class="tq">“Who is it for, and for what occasion?”</p>
       <dl>
         <div><dt>Targets</dt><dd><code style="font-family:var(--mono);font-size:11.5px">gender</code> + <code style="font-family:var(--mono);font-size:11.5px">usage</code></dd></div>
-        <div><dt>Classes</dt><dd>5 and 8</dd></div>
+        <div><dt>Classes</dt><dd>5 and 9</dd></div>
         <div><dt>Majority baseline</dt><dd>54.2% / 76.8%</dd></div>
         <div><dt>Metric</dt><dd>Macro-F1</dd></div>
       </dl>
@@ -720,7 +723,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
 
   <figure class="figure rv">
     <svg viewBox="0 0 1160 560" role="img"
-      aria-label="Pipeline diagram. Training images and styles_train.csv feed a preprocessing stage that writes clean.csv then splits.csv. That single split fans out to four task tracks: articleType, season, gender plus usage, and embedding with indexing for visual search. All four feed a shared training bus that writes model weights and a row in runs.csv. Saved models produce both the prediction CSV and the web application.">
+      aria-label="Pipeline diagram. Training images and styles_train.csv feed scripts/prepare_data.py, which audits the inputs and writes the sole shared data/processed/splits.csv with train, val, holdout, and quarantine partitions. That validated split fans out to four task tracks: articleType, season, gender plus usage, and embedding with indexing for visual search. All four feed a shared training bus that writes model weights and a row in runs.csv. Saved models produce both the prediction CSV and the web application.">
 
       <!-- column headers -->
       <text class="d-col" x="105"  y="26" text-anchor="middle">Source</text>
@@ -745,8 +748,8 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <!-- C1 source -->
       <rect class="d-box" x="20" y="190" width="170" height="76"/>
       <text class="d-t" x="36" y="220">images_train/</text>
-      <text class="d-s" x="36" y="240">38,612 jpg · 60×80</text>
-      <text class="d-s" x="36" y="256">filename = id</text>
+      <text class="d-s" x="36" y="240">38,595 · 60×80</text>
+      <text class="d-s" x="36" y="256">17 · other sizes</text>
 
       <rect class="d-box" x="20" y="290" width="170" height="76"/>
       <text class="d-t" x="36" y="320">styles_train.csv</text>
@@ -755,23 +758,24 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
 
       <!-- C2 prepare -->
       <rect class="d-box" x="275" y="170" width="200" height="76"/>
-      <text class="d-t" x="291" y="200">clean.csv</text>
-      <text class="d-s" x="291" y="220">"NA" vs blank · orphans</text>
-      <text class="d-s" x="291" y="236">rare-class policy</text>
+      <text class="d-t" x="291" y="200">scripts/prepare_data.py</text>
+      <text class="d-s" x="291" y="220">audits · manifests · masks</text>
+      <text class="d-s" x="291" y="236">duplicates · train stats</text>
 
-      <rect class="d-box key" x="275" y="300" width="200" height="86"/>
+      <rect class="d-box key" x="275" y="294" width="200" height="102"/>
       <text class="d-t" x="291" y="330">splits.csv</text>
-      <text class="d-s" x="291" y="350">train | val | test</text>
-      <text class="d-s acc" x="291" y="368">the only split in the repo</text>
-      <circle class="d-badge" cx="461" cy="314" r="10"/>
-      <text class="d-badge-t" x="461" y="317.5" text-anchor="middle">1</text>
+      <text class="d-s" x="291" y="348">data/processed/ · sole split</text>
+      <text class="d-s" x="291" y="366">train · val · holdout</text>
+      <text class="d-s acc" x="291" y="384">quarantine · validated</text>
+      <circle class="d-badge" cx="461" cy="308" r="10"/>
+      <text class="d-badge-t" x="461" y="311.5" text-anchor="middle">1</text>
 
-      <text class="d-note" x="275" y="410">written once by 01_preprocessing.ipynb</text>
+      <text class="d-note" x="275" y="420">written once by scripts/prepare_data.py</text>
 
       <!-- C3 model tracks -->
       <rect class="d-box" x="560" y="100" width="260" height="72"/>
       <text class="d-s acc" x="576" y="122">TASK 1</text>
-      <text class="d-t" x="576" y="142">articleType — 125 classes</text>
+      <text class="d-t" x="576" y="142">articleType — 124 classes</text>
       <text class="d-s" x="576" y="160">baseline · CNN · tuned CNN</text>
 
       <rect class="d-box" x="560" y="196" width="260" height="72"/>
@@ -818,10 +822,10 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <circle class="d-badge" cx="1126" cy="454" r="10"/>
       <text class="d-badge-t" x="1126" y="457.5" text-anchor="middle">2</text>
 
-      <!-- connectors: source → clean -->
+      <!-- connectors: source → prepare -->
       <path class="d-line" d="M190,228 C232,228 236,208 271,208" marker-end="url(#ar)"/>
       <path class="d-line" d="M190,328 C240,328 240,208 271,208" marker-end="url(#ar)"/>
-      <!-- clean → splits -->
+      <!-- prepare → splits -->
       <path class="d-line" d="M375,246 L375,296" marker-end="url(#ar)"/>
       <!-- splits → tracks -->
       <path class="d-line acc" d="M475,343 C520,343 512,136 556,136" marker-end="url(#ara)"/>
@@ -954,9 +958,11 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     <div class="lr">
       <div><b>Pre-process the dataset, collecting extra data if necessary</b>
         <p>Any new dataset must be made accessible to the evaluator.</p></div>
-      <div><b><code>01_preprocessing.ipynb</code> → <code>clean.csv</code> + <code>splits.csv</code></b>
+      <div><b><code>scripts/prepare_data.py</code> → audits, manifests and
+        <code>data/processed/splits.csv</code></b>
         <p>Handles <code>"NA"</code> versus blank, the five orphaned rows, and the rare-class policy.
-        Carries inline assertions, because a silent bug here poisons everything downstream.</p></div>
+        It writes exactly one shared split with <code>train | val | holdout | quarantine</code>
+        partitions and validates it before downstream use.</p></div>
     </div>
 
     <div class="lr">
@@ -988,7 +994,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
         <p>Compare against other published work with the same goals, and against data outside the
         original training and evaluation scope.</p></div>
       <div><b>Held-out portion of <code>splits.csv</code> plus a literature comparison</b>
-        <p>The test portion stays untouched during tuning, which is what makes it independent.
+        <p>The holdout partition stays untouched during tuning, which is what makes it independent.
         <span class="todo">Literature set not yet gathered</span></p></div>
     </div>
 
@@ -1026,10 +1032,9 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
   </div>
 
   <div class="nbs rv">
-    <div class="eyebrow" style="margin-bottom:14px">Seven notebooks — narrative, with the logic imported from <code>src/fashion/</code></div>
+    <div class="eyebrow" style="margin-bottom:14px">Six notebooks — narrative, with preparation in <code>scripts/</code> and reusable logic imported from <code>src/fashion/</code></div>
     <div class="nb"><code>00_eda.ipynb</code><p>Measure the dataset. Produce the evidence the three open questions need.</p></div>
-    <div class="nb"><code>01_preprocessing.ipynb</code><p>Write <code>clean.csv</code> and <code>splits.csv</code>. Runs once; everything downstream depends on it.</p></div>
-    <div class="nb"><code>10_task1_articletype.ipynb</code><p>125-class comparison, from majority baseline to tuned CNN.</p></div>
+    <div class="nb"><code>10_task1_articletype.ipynb</code><p>124-class comparison, from majority baseline to tuned CNN.</p></div>
     <div class="nb"><code>20_task2_season.ipynb</code><p>Four classes, weak signal. Establish and defend the ceiling.</p></div>
     <div class="nb"><code>30_task3_gender_usage.ipynb</code><p>Two targets. Two models against one shared backbone, decided on evidence.</p></div>
     <div class="nb"><code>40_task4_visual_search.ipynb</code><p>Embed, index, retrieve. Define relevance before measuring it.</p></div>
@@ -1162,7 +1167,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
   var el = document.getElementById('daysleft');
   if (el) el.textContent = days > 0 ? days : 0;
 
-  /* ---- long-tail chart: all 125 articleType counts, measured 2026-08-11 ---- */
+  /* ---- long-tail chart: all 125 raw articleType counts, measured 2026-08-11 ---- */
   var counts = [6781,3089,2683,2252,1991,1614,1556,1439,1048,1047,865,863,829,795,710,668,614,
     610,559,557,526,513,418,345,297,295,293,280,276,274,245,242,228,223,215,203,175,161,159,154,
     140,122,117,116,110,106,90,86,86,79,75,69,69,63,62,58,55,53,51,47,45,44,43,40,39,39,38,34,32,
