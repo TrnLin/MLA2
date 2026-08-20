@@ -1,41 +1,33 @@
-# MLA2 — COSC2753 Assignment 2
+# MLA2 — COSC2753 Assignment 2 (Fashion Intelligence)
 
-This is a clean starter repository for four fashion classification targets
-(`articleType`, `season`, `gender`, and `usage`) plus Top-K visual search.
+Group ML project over ~38.6k 60×80 fashion product images: four classification targets
+(`articleType`, `season`, `gender`, `usage`) plus a Top-K visual search system.
 
-## Before working
+## What the grade rewards
 
-1. Read `docs/COSC2753_2026B_Assignment 2.pdf`.
-2. Read `rubrics/RUBRIC.md`.
-3. Read `docs/decisions/README.md` and all accepted decisions.
-4. Record a new decision when a choice will constrain later tasks.
+`rubrics/RUBRIC.md` scores Approach (50), Ultimate Judgement (30), Report (20).
+**No criterion scores accuracy.** Marks come from comparison breadth, justified choices,
+and honest analysis of failures. Given a choice between one more training run and better
+analysis of the runs already done, choose the analysis.
 
-Do not treat old Git history or backup branches as current project decisions.
+## Hard constraints
 
-## Hard assignment rules
-
-- Train submitted models from scratch. Pretrained weights are benchmarks only.
-- Use `data/processed/splits.csv` as the single shared split once it exists.
-- Record every training run in `results/runs.csv`.
-- Keep prediction columns in this order:
+- **Train models from scratch.** Pretrained weights belong in the comparison benchmarks
+  only — a submitted model carrying `pretrained=True` violates the spec.
+- **`data/processed/splits.csv` is the only split.** Every notebook, the search index, and
+  the app read it. A `train_test_split` call anywhere else invalidates cross-model
+  comparison and leaks evaluation images into the Task 4 index.
+- **Every training run appends a row to `results/runs.csv`** through
+  `fashion.train.registry`. The report's comparison tables are generated from that file.
+- **`data/raw/teacher/test/styles_prediction.csv` format is fixed**:
   `id,gender,articleType,season,usage`.
-- Never edit or commit supplied files under `data/raw/`.
+  This is why Task 3 predicts gender and usage as separate targets.
 
-## Folder rules
+## Conventions
 
-- Keep notebooks narrative. Put reusable logic in `src/fashion/`.
-- Put small command-line entry points in `scripts/`.
-- Mirror reusable code with tests in `tests/`.
-- Put report evidence in `results/figures/`.
-- Put rebuildable manifests and the shared split in `data/processed/`.
-- Do not add a folder before it is needed.
-
-## Working rules
-
+- Notebooks stay narrative — import from `src/fashion/`, keep logic out of cells.
+- Write a figure to `results/figures/` when the report will cite it.
 - Use `./.venv/bin/python`.
-- Test new behaviour before calling it complete.
-- Make one decision record per important choice.
-- Do not silently rewrite an accepted decision. Supersede it with a new record.
 
 ## How to talk to me
 
@@ -55,5 +47,3 @@ Keep paths and commands exact.
   deciding what to cut.
 - `docs/COSC2753_2026B_Assignment 2.pdf` — the spec. Read for deliverables, submission
   format, and naming conventions.
-- `docs/decisions/` — accepted project choices and the template for recording new ones.
-  Read every accepted record before proposing changes to structure or workflow.
