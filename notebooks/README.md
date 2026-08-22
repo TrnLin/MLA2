@@ -11,7 +11,10 @@ evaluation design, and modelling recommendations. Each analysis block presents i
 purpose, focused evidence, finding, and modelling consequence. Code stays in the
 notebook for auditability but is collapsed by default. Small technical cells sit
 beside the analysis they support instead of forming a helper-code wall at the start.
-It must not import a project EDA helper module.
+Every code cell has an immediately preceding markdown guide that explains its role,
+and long implementation blocks are split into focused steps. These code guides are
+kept in the notebook but removed from the code-free HTML report. The notebook must
+not import a project EDA helper module.
 
 Cached validation is the default. It fully hashes the lean protected-safe prepared
 pack and checks raw path/size inventory plus a fixed content sample. Use
