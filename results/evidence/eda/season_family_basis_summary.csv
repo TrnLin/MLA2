@@ -1,6 +1,6 @@
 family_group_basis,multirow_train_groups,mixed_season_train_groups,name_block_involved,eligible_as_label_ambiguity_signal,interpretation
-accepted_near_duplicate,30,1,False,True,possible visual-family ambiguity; human review is pending
-exact_sha256+accepted_near_duplicate,65,0,False,True,possible visual-family ambiguity; human review is pending
+accepted_near_duplicate,30,1,False,True,possible visual-family ambiguity; EDA does not relabel it
+exact_sha256+accepted_near_duplicate,65,0,False,True,possible visual-family ambiguity; EDA does not relabel it
 exact_sha256+normalized_product_name+accepted_near_duplicate,259,13,True,False,name blocking may be broad; this cannot prove label noise
 normalized_product_name,2775,542,True,False,name blocking may be broad; this cannot prove label noise
 normalized_product_name+accepted_near_duplicate,36,12,True,False,name blocking may be broad; this cannot prove label noise
