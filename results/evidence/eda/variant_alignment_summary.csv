@@ -1,2 +1,2 @@
-same_id_pairs,original_only,high_only,possible_mismatches,exception_distance,human_signoff
-44441,0,0,84,4,pending
+same_id_pairs,original_only,high_only,possible_mismatches,exception_distance,warning_count,blocks_preparation,safe_action
+44441,0,0,84,4,84,False,keep warning IDs visible; do not infer product identity
