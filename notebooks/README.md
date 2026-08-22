@@ -16,6 +16,10 @@ and long implementation blocks are split into focused steps. These code guides a
 kept in the notebook but removed from the code-free HTML report. The notebook must
 not import a project EDA helper module.
 
+Every count names its unit. Product IDs are used for label distributions and final
+metrics. The paired loader uses two image-input rows per active product, so train,
+validation, and holdout input counts are twice their product counts.
+
 Cached validation is the default. It fully hashes the lean protected-safe prepared
 pack and checks raw path/size inventory plus a fixed content sample. Use
 `FASHION_EDA_MODE=full` for the slow forensic rebuild after raw inputs change.
