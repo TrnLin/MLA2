@@ -1,5 +1,5 @@
-target,source_partition,valid_labels,outside_supported_slice,classes,most_common,most_common_count,singletons,classes_below_10
-articleType,train,26948,44,100,Tshirts,4732,0,13
-season,train,26975,17,4,Summer,13371,0,0
-gender,train,26992,0,5,Men,14622,0,0
-usage,train,26990,2,8,Casual,20710,0,0
+target,source_partition,official_label_products,missing_label_products,supported_primary_products,limited_official_products,classes,most_common,most_common_count,singletons,classes_below_10
+articleType,train,26992,0,26948,44,100,Tshirts,4732,0,13
+season,train,26975,17,26975,0,4,Summer,13371,0,0
+gender,train,26992,0,26992,0,5,Men,14622,0,0
+usage,train,26991,1,26990,1,8,Casual,20710,0,0
