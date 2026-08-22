@@ -28,7 +28,7 @@
     "sha256": "034ad5875ed2b3256b6727e6d831b528d949796d9d2e3bbfc7f29565d8eca099"
   },
   "high_resolution_only_count": 0,
-  "limitation": "Perceptual hashes strongly test visual identity but are not a mathematical proof. Seeded pairs are also reviewed as pixels and in a contact sheet.",
+  "limitation": "Perceptual hashes strongly test visual identity but are not a mathematical proof. High-distance same-ID pairs are non-blocking warnings for later inspection.",
   "original_hashes_csv": {
     "path": "data/processed/audit/perceptual_hashes.csv.gz",
     "sha256": "9127dcdb5dd14596cab20ac61abbb352fea59ed3cd7af0eceeacab95524179eb"
@@ -124,5 +124,5 @@
     56219,
     59770
   ],
-  "runtime_seconds": 261.9953573610037
+  "runtime_seconds": 272.35516431999986
 }
