@@ -8,7 +8,7 @@ quarantine, retrieval, and the app. The scored Task 4 development gallery uses
 train rows only; validation rows are queries and never enter that gallery.
 
 Whole product families stay together. Quarantine includes exact and every
-pending-or-confirmed cross-role visual match, plus exact-image groups with
+cross-role automatic visual match, plus exact-image groups with
 conflicting valid labels. Label maps and `taxonomy.json` are fitted on train after
 splitting. The frozen mapping is then applied to validation and protected rows.
 Separate `*_supported` columns mark the fair primary-metric slice with at least
