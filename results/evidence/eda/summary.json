@@ -258,7 +258,7 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_EDA_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 1.719
+    "preparation_seconds": 2.125
   },
   "image_variants": {
     "alignment": {

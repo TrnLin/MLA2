@@ -196,10 +196,10 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_EDA_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 1.719
+    "preparation_seconds": 2.125
   },
   "git": {
-    "commit": "bedb926b9dc6373bbf5da0495294dd4650760d00",
+    "commit": "6d51b29c17357a95e776c36e2787ae590e5e35fa",
     "dirty": true
   },
   "image_variants": {
@@ -393,12 +393,12 @@
   "volatile_outputs": [
     {
       "path": "results/evidence/eda/transform_benchmark.json",
-      "sha256": "059d58287f0f8c6da4c0e4723539915c8a1168e2a5eaa403fad6c002b8ff6022",
+      "sha256": "c5b23027a78bff348db31f412cebe0d6038fe0220391968e3163e01e3ccbe63e",
       "size_bytes": 6269
     },
     {
       "path": "results/evidence/eda/transform_summary.csv",
-      "sha256": "79976d9feb7cec414cd1b94be09d9ddcae7188a057e27c62b88261cfe525d37b",
+      "sha256": "b1a0af94011f012a187a3928c69774cc73eb5990545f0c48844f6e4d94661168",
       "size_bytes": 347
     }
   ]
