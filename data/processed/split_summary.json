@@ -564,12 +564,12 @@
   "quarantine": {
     "total_rows": 61,
     "cross_role_exact_rows": 11,
-    "cross_role_near_rows_pending_or_confirmed": 9,
+    "cross_role_near_rows_conservatively_quarantined": 9,
     "conflicting_exact_sha_groups": 20,
     "conflicting_exact_sha_rows": 41,
     "allowed_reasons": [
       "cross_role_exact_duplicate",
-      "cross_role_near_duplicate_pending_or_confirmed",
+      "cross_role_near_duplicate_conservative_quarantine",
       "conflicting_labels_exact_sha"
     ]
   },
