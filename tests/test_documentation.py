@@ -28,7 +28,9 @@ def test_assignment_breakdown_uses_canonical_data_contract():
         "38,595",
         "17 at other resolutions",
         "124 official outputs",
-        "pending-or-confirmed",
+        "27,009 family units",
+        "18 have only one",
+        "real-world similarity ground truth",
     ):
         assert current_claim in document
 
