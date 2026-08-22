@@ -280,6 +280,7 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     notebook = nbformat.read(NOTEBOOK, as_version=4)
     source = _source(notebook)
     markdown = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "markdown")
+    normalized_markdown = " ".join(markdown.split())
     code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
     code_cell_indices = [
         index for index, cell in enumerate(notebook.cells) if cell.cell_type == "code"
@@ -309,6 +310,17 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert source.count("> **Finding.**") == 10
     assert source.count("> **Modelling consequence.**") == 10
     assert all(source.count(f"Figure {number}. ") == 1 for number in range(1, 15))
+    assert all(
+        count in normalized_markdown
+        for count in (
+            "53,984 training",
+            "11,562 validation",
+            "11,556 holdout",
+            "26,992, 5,781, and 5,778 unique products",
+        )
+    )
+    assert "Product counts describe reporting units" in markdown
+    assert "image-input counts describe the actual loader size" in markdown
     assert "fashion.data.pipeline import prepare_data" in source
     assert "validate_prepared_data_cache" in source
     assert 'PREPARATION_MODE = "cached"' in source
@@ -420,6 +432,21 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
         assert counts["variant_count"] == 2 * counts["product_count"], partition
         assert counts["complete_pair_count"] == counts["product_count"], partition
         assert counts["incomplete_pair_count"] == 0, partition
+    for partition, inventory_name in (
+        ("train", "train"),
+        ("val", "validation"),
+        ("holdout", "holdout"),
+    ):
+        counts = first_summary["image_variants"]["partition_coverage"][partition]
+        assert (
+            first_summary["inventory"][f"{inventory_name}_product_ids"] == counts["product_count"]
+        )
+        assert (
+            first_summary["inventory"][f"{inventory_name}_image_inputs"] == counts["variant_count"]
+        )
+    assert first_summary["inventory"]["quarantine_image_inputs"] == 0
+    assert first_summary["inventory"]["target_distribution_unit"] == "unique product ID"
+    assert first_summary["inventory"]["model_loader_unit"] == "image input row"
 
     for root, notebook in (
         (first_root, first_notebook),
@@ -431,6 +458,9 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
         code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
         assert all(cell.execution_count is not None for cell in code_cells)
         assert sum(bool(cell.outputs) for cell in code_cells) >= 10
+        assert not any(
+            output.output_type == "execute_result" for cell in code_cells for output in cell.outputs
+        )
         final_text = json.dumps(code_cells[-1].outputs)
         assert "Run All complete" in final_text
         assert "Protected target values materialised by EDA: 0" in final_text
@@ -610,6 +640,9 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
     assert all(cell.execution_count is not None for cell in code_cells)
     assert sum(bool(cell.outputs) for cell in code_cells) >= 10
+    assert not any(
+        output.output_type == "execute_result" for cell in code_cells for output in cell.outputs
+    )
 
     report = ROOT / "results/notebooks/00_eda.html"
     assert report.is_file()
@@ -618,6 +651,7 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     assert document.count('<figure class="eda-figure">') == len(FIGURE_NAMES)
     assert all(heading.lstrip("# ") in document for heading in REQUIRED_HEADINGS)
     assert "Code step —" not in document
+    assert "PosixPath(" not in document
     assert "The next helpers keep tables" not in document
 
     summary = json.loads((ROOT / "results/evidence/eda/summary.json").read_text(encoding="utf-8"))
@@ -632,6 +666,23 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     )
     assert summary["image_variants"]["model_product_count"] == 38_551
     assert summary["image_variants"]["model_variant_count"] == 77_102
+    assert summary["inventory"]["train_product_ids"] == 26_992
+    assert summary["inventory"]["train_image_inputs"] == 53_984
+    assert summary["inventory"]["validation_product_ids"] == 5_781
+    assert summary["inventory"]["validation_image_inputs"] == 11_562
+    assert summary["inventory"]["holdout_product_ids"] == 5_778
+    assert summary["inventory"]["holdout_image_inputs"] == 11_556
+    assert summary["inventory"]["quarantine_product_ids"] == 61
+    assert summary["inventory"]["quarantine_image_inputs"] == 0
+    partition_summary = pd.read_csv(ROOT / "results/evidence/eda/partition_summary.csv")
+    counts = partition_summary.set_index("partition")
+    assert int(counts.loc["train", "image_inputs"]) == 53_984
+    assert int(counts.loc["val", "image_inputs"]) == 11_562
+    assert int(counts.loc["holdout", "image_inputs"]) == 11_556
+    assert int(counts.loc["quarantine", "image_inputs"]) == 0
+    assert "53,984 training" in document
+    assert "11,562 validation" in document
+    assert "11,556 holdout" in document
     assert not (ROOT / "results/evidence/eda/data_reconciliation.json").exists()
 
 
