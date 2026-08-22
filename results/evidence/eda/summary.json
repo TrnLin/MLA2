@@ -3,7 +3,7 @@
     {
       "area": "split",
       "decision": "use data/processed/splits.csv only",
-      "evidence": "zero active SHA/name/family/visual crossings",
+      "evidence": "53,984 train and 11,562 validation inputs; zero crossings",
       "later_check": "never make another split"
     },
     {
@@ -33,8 +33,8 @@
     {
       "area": "image variants",
       "decision": "use low and high resolution for every model product",
-      "evidence": "complete pairs plus label-free alignment audit",
-      "later_check": "one ID/score; compare original-only, high-only, doubled"
+      "evidence": "77,102 image inputs from 38,551 products",
+      "later_check": "pair-weight training; aggregate evaluation pairs to one score"
     },
     {
       "area": "Task 1",
@@ -69,8 +69,8 @@
     },
     {
       "path": "results/evidence/eda/decision_table.csv",
-      "sha256": "895637dec424ceade27cfb11fd7d5b27af58663bac0c7826d5da37262dcf82b3",
-      "size_bytes": 1324
+      "sha256": "3ccf5ee29fb858ccd33c518a8b6836656ba2ec5ef16e406abe70e80914975762",
+      "size_bytes": 1339
     },
     {
       "path": "results/evidence/eda/duplicate_summary.csv",
@@ -84,8 +84,8 @@
     },
     {
       "path": "results/evidence/eda/hierarchy_summary.csv",
-      "sha256": "6282caac110b71792703feb091e1a759075d5c326940b40a4cfa1fd1a351fb79",
-      "size_bytes": 4148
+      "sha256": "3965c23e17597fcaf792087aba0acbc8b37f48696e5e540d6bab7f9fb07c1d79",
+      "size_bytes": 4152
     },
     {
       "path": "results/evidence/eda/high_resolution_summary.csv",
@@ -94,8 +94,8 @@
     },
     {
       "path": "results/evidence/eda/image_summary.csv",
-      "sha256": "e7d8b40ed377dfce045123762af88196639da7674c785c29bec303c275e7bf92",
-      "size_bytes": 241
+      "sha256": "e3e911145dfa2d93be878571ef219b35dab3b00b2d8c0d5beab793da6325d37f",
+      "size_bytes": 338
     },
     {
       "path": "results/evidence/eda/joint_target_nmi.csv",
@@ -104,13 +104,13 @@
     },
     {
       "path": "results/evidence/eda/normalization_summary.csv",
-      "sha256": "9f7ef79d95597dfbf379b5d2900cedcbaadc19d56c28ce0643432c4e3af98f0d",
-      "size_bytes": 154
+      "sha256": "7bb7160e5caa6186f964352a71a1302f394bca45f673012dafbe7fc2aa2a4623",
+      "size_bytes": 159
     },
     {
       "path": "results/evidence/eda/partition_summary.csv",
-      "sha256": "1822140011c296d247097136f2bfae3674925453ccdf2dff6f3940e1126d6711",
-      "size_bytes": 207
+      "sha256": "dd4565e5a59aa1b9fbd7a52c5973b1b30830eaaedd9a8d389883a800e61e4cfb",
+      "size_bytes": 337
     },
     {
       "path": "results/evidence/eda/processed_inventory.csv",
@@ -144,8 +144,8 @@
     },
     {
       "path": "results/evidence/eda/task4_summary.csv",
-      "sha256": "d36fbb91ff612644ac70efe9b3be2d63dd4f1134b7d22b42c010845ae622d20b",
-      "size_bytes": 565
+      "sha256": "5af0c283a2d19f0e24fff0538f44c30a583671c4721e33a3421a244cde2d250f",
+      "size_bytes": 564
     },
     {
       "path": "results/evidence/eda/taxonomy_exclusions.csv",
@@ -179,8 +179,8 @@
     },
     {
       "path": "results/figures/eda/data_quality_examples.png",
-      "sha256": "f4a4034de77e491b01c9303d87a5f65840256883dca85f1ef27e7aa9d973cdd8",
-      "size_bytes": 198545
+      "sha256": "8ddc559937af41122f8bd6f24ef6253986a69a5091a0df2a7490de8240e7e2e3",
+      "size_bytes": 199323
     },
     {
       "path": "results/figures/eda/development_balance.png",
@@ -194,8 +194,8 @@
     },
     {
       "path": "results/figures/eda/image_profile.png",
-      "sha256": "97f90ab8cb61f7e5b5869a70d7210eb24b9a2e4e5d4c2aec786829fc5edcd7ee",
-      "size_bytes": 214868
+      "sha256": "60998258fda1504db972389ca2c961dc0eaf52120e21aa04a0f9ea2a400ce949",
+      "size_bytes": 225185
     },
     {
       "path": "results/figures/eda/joint_target_relationships.png",
@@ -219,8 +219,8 @@
     },
     {
       "path": "results/figures/eda/target_distributions.png",
-      "sha256": "1213d22fc9c790a3a8b54d022421b394151933dd4d2275c9615df12092e69671",
-      "size_bytes": 205586
+      "sha256": "7dba1fce3f29c0913483a10dc0521aa9a12b6265b5b24ac05a57fc938bce6465",
+      "size_bytes": 216526
     },
     {
       "path": "results/figures/eda/task4_protocol.png",
@@ -258,7 +258,7 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_EDA_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 1.793
+    "preparation_seconds": 1.992
   },
   "image_variants": {
     "alignment": {
@@ -311,12 +311,21 @@
     "target_columns_in_variant_manifest": 0
   },
   "inventory": {
-    "image_backed_labelled_rows": 38612,
+    "evaluation_metric_unit": "product ID after two-variant aggregation",
+    "holdout_image_inputs": 11556,
+    "holdout_product_ids": 5778,
+    "image_backed_labelled_product_ids": 38612,
+    "model_loader_unit": "image input row",
     "official_prediction_rows": 5829,
+    "original_train_image_inventory_digest": "1cff7807fb38c1e722c1b4c5ddc05239be203c5b54c620eab961563afdeb56bd",
+    "quarantine_image_inputs": 0,
+    "quarantine_product_ids": 61,
     "raw_train_rows": 38617,
-    "train_image_inventory_digest": "1cff7807fb38c1e722c1b4c5ddc05239be203c5b54c620eab961563afdeb56bd",
-    "train_rows": 26992,
-    "validation_rows": 5781
+    "target_distribution_unit": "unique product ID",
+    "train_image_inputs": 53984,
+    "train_product_ids": 26992,
+    "validation_image_inputs": 11562,
+    "validation_product_ids": 5781
   },
   "leakage_checks": {
     "accepted_visual_edges_crossing_active_partitions": 0,
@@ -374,7 +383,7 @@
       "status": "pending_team_signoff"
     }
   ],
-  "schema_version": "10.0.0",
+  "schema_version": "11.0.0",
   "scope": {
     "development_partition": "val",
     "modelling_partition": "train",
