@@ -1,6 +1,6 @@
 # MLA2 Assignment Roadmap
 
-**Status:** In progress — leakage-safe EDA complete; team image-review sign-off open
+**Status:** In progress - leakage-safe EDA complete; non-blocking human decisions listed
 **Due:** 12 September 2026 at 23:59
 
 This file gives the work order only. It does not choose methods. Record choices
@@ -35,9 +35,9 @@ possible leakage. Save useful evidence and record decisions before cleaning data
 
 Build rebuildable manifests and one shared split under `data/processed/`. The
 accepted family rule blocks exact hashes, automatic visual matches, and normalized
-product-name groups. Every pending-or-confirmed cross-role match and every
-conflicting exact hash is quarantined. Decision `0011` records the safety rule and
-the still-open human sign-off boundary.
+product-name groups. Every cross-role automatic match and every conflicting exact hash is
+quarantined. Decision `0011` records the automatic safety rule. Open human questions live only in
+`docs/reviews/open_decisions.md` and never block preparation or testing.
 
 ### Phase 2 — Build shared experiment tools
 
