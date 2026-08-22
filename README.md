@@ -13,44 +13,75 @@ the official prediction and internal holdout data.
 
 ## Setup
 
-Python 3.11 or newer is required.
+Python 3.12, 3.13, or 3.14 is required. Python 3.12 is the shared locked baseline.
 
 ```bash
-cd MLA2
-python3 -m venv .venv
-./.venv/bin/python -m pip install -e ".[dev]"
+cd MLA2-eda
+python3.12 -m venv .venv
+./.venv/bin/python -m pip install -c requirements/constraints-py312.txt -e ".[dev]"
+```
+
+For a normal (non-editable) wheel install, point data and report paths at this
+checkout before running commands from another folder:
+
+```bash
+export FASHION_PROJECT_ROOT="/absolute/path/to/MLA2-eda"
 ```
 
 The supplied dataset stays under `data/` and is ignored by Git.
 
-## Prepare data and EDA
+## Run the official EDA
 
-Place the teacher files in the layout described by `data/raw/README.md`, then run:
+Place the teacher files in the layout described by `data/raw/README.md`, and place
+the high-resolution Fashion Product Images Dataset under `data/fashion-dataset/`.
+Then open `notebooks/00_eda.ipynb`, start a fresh kernel, and choose **Run All**.
 
-```bash
-./.venv/bin/python scripts/prepare_data.py
-./.venv/bin/python scripts/generate_eda.py
-./.venv/bin/python -m pytest
-```
+Normal **Run All** uses a lean prepared pack delivered with the project. The pack keeps
+`splits.csv` readable and stores large repeat-heavy tables as deterministic `.csv.gz`
+files. It checks every source image name and size, content-hashes a fixed sample, fully
+hashes every protected-safe prepared artifact, checks the split and both image variants,
+then performs the full EDA. Prediction IDs and quarantine never enter the variant
+manifest. No EDA helper command is needed.
 
-`data/processed/splits.csv` is the only shared split. Do not create another split
-in a notebook or model script.
+The source-image guard is intentionally cheap. It detects missing files, path or size
+changes, and changes in the fixed content sample. It cannot detect every same-size edit
+to an unsampled raw image. Use full mode after any deliberate raw-image replacement.
+
+If raw files changed, launch Jupyter with `FASHION_EDA_MODE=full` and use **Run All**.
+That explicit forensic mode rebuilds and fully audits the low- and high-resolution
+collections, regenerates label-free alignment evidence, and writes both the paired
+main-policy normalization and the original-only baseline. It is I/O-bound and
+intentionally much slower than normal cached mode.
+
+The saved code-free report is `results/notebooks/00_eda.html`. External tests run
+the notebook twice in fresh temporary projects, compare stable hashes, and check
+the HTML structure and all 14 figures.
+
+`data/processed/splits.csv` is the only shared split. Its persisted holdout and
+quarantine target cells are blank. Only the explicit unlocked final-evaluation loader
+may join those targets from the evaluator's local teacher CSV. Do not create another
+split in a notebook or model script.
 
 ## Reproducibility boundary
 
-The template does not yet define a dependency lock or constraints-file convention.
-The checks therefore prove the environment in which they were run, but a later
-install may resolve different package versions. Agree and record a locking policy
-before shared model training; decision `0006` tracks this collaboration risk.
+`requirements/constraints-py312.txt` freezes the complete shared Python 3.12
+environment. Direct packages are also pinned in `pyproject.toml`. Decision `0006`
+explains how to update and verify both files.
+
+Notebook provenance records raw-file ID-only digests, the redacted split file digest,
+image inventory, audits, both-resolution manifest, notebook code, runtime,
+benchmark, and generated outputs. `results/evidence/eda/summary.json` lists stable
+report-output hashes without machine-specific checkout paths.
+Wall-time benchmark files are marked as hardware-dependent.
 
 ## Repository structure
 
 ```text
 data/             Supplied raw data and rebuildable processed data
 docs/             Assignment material and project decisions
-notebooks/        Short narrative notebooks
+notebooks/        Official self-contained EDA and later project notebooks
 results/          Report figures and compact EDA evidence
-scripts/           Small command-line entry points
+scripts/           Non-EDA utility entry points only
 src/fashion/      Reusable Python code
 tests/            Automated tests
 ```

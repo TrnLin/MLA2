@@ -1,0 +1,571 @@
+{
+  "ids": {
+    "canonical_splits_vs_labelled_images": {
+      "missing_count": 0,
+      "missing_ids": [],
+      "observed_count": 38612,
+      "orphan_count": 0,
+      "orphan_ids": [],
+      "reference_count": 38612
+    },
+    "images_csv_vs_images": {
+      "missing_count": 5,
+      "missing_ids": [
+        12347,
+        39401,
+        39403,
+        39410,
+        39425
+      ],
+      "observed_count": 44441,
+      "orphan_count": 0,
+      "orphan_ids": [],
+      "reference_count": 44446
+    },
+    "official_prediction_vs_images": {
+      "missing_count": 0,
+      "missing_ids": [],
+      "observed_count": 5829,
+      "orphan_count": 0,
+      "orphan_ids": [],
+      "reference_count": 5829
+    },
+    "split_prediction_intersection": 0,
+    "teacher_available_union_vs_images": {
+      "missing_count": 0,
+      "missing_ids": [],
+      "observed_count": 44441,
+      "orphan_count": 0,
+      "orphan_ids": [],
+      "reference_count": 44441
+    }
+  },
+  "images": {
+    "aspect_ratio": {
+      "count": 44441,
+      "mean": 0.7500094052795587,
+      "quantiles": {
+        "0.0": 0.664179104477612,
+        "0.25": 0.75,
+        "0.5": 0.75,
+        "0.75": 0.75,
+        "0.95": 0.75,
+        "0.99": 0.75,
+        "1.0": 1.0
+      }
+    },
+    "catalogue_sha256": "034ad5875ed2b3256b6727e6d831b528d949796d9d2e3bbfc7f29565d8eca099",
+    "corrupt_count": 0,
+    "corrupt_files": [],
+    "decoded_count": 44441,
+    "file_count": 44441,
+    "file_size_bytes": {
+      "count": 44441,
+      "mean": 335718.4141445962,
+      "quantiles": {
+        "0.0": 2727.0,
+        "0.25": 233714.0,
+        "0.5": 313634.0,
+        "0.75": 379021.0,
+        "0.95": 680198.0,
+        "0.99": 1112416.799999999,
+        "1.0": 4692328.0
+      }
+    },
+    "formats": {
+      "JPEG": 44441
+    },
+    "full_sha256_count": 44441,
+    "height": {
+      "count": 44441,
+      "mean": 1862.8735176976215,
+      "quantiles": {
+        "0.0": 200.0,
+        "0.25": 1440.0,
+        "0.5": 1440.0,
+        "0.75": 2400.0,
+        "0.95": 2400.0,
+        "0.99": 2400.0,
+        "1.0": 5616.0
+      }
+    },
+    "modes": {
+      "RGB": 44441
+    },
+    "non_image_file_count": 0,
+    "non_image_files": [],
+    "same_id_geometry": {
+      "aspect_changed": [
+        {
+          "high_resolution_aspect_ratio": 0.7496876301541024,
+          "high_resolution_height": 2401,
+          "high_resolution_width": 1800,
+          "id": 1559,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.04164931278634043
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7496876301541024,
+          "high_resolution_height": 2401,
+          "high_resolution_width": 1800,
+          "id": 1567,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.04164931278634043
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7495833333333334,
+          "high_resolution_height": 2400,
+          "high_resolution_width": 1799,
+          "id": 1572,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.05555555555554944
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7495833333333334,
+          "high_resolution_height": 2400,
+          "high_resolution_width": 1799,
+          "id": 1588,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.05555555555554944
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7503126302626094,
+          "high_resolution_height": 2399,
+          "high_resolution_width": 1800,
+          "id": 3728,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.041684035014588616
+        },
+        {
+          "high_resolution_aspect_ratio": 0.749925306244398,
+          "high_resolution_height": 3347,
+          "high_resolution_width": 2510,
+          "id": 7814,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.009959167413597925
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7501555693839452,
+          "high_resolution_height": 3214,
+          "high_resolution_width": 2411,
+          "id": 7815,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.020742584526030804
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7500782962730974,
+          "high_resolution_height": 3193,
+          "high_resolution_width": 2395,
+          "id": 7873,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.010439503079654838
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7500773275595423,
+          "high_resolution_height": 3233,
+          "high_resolution_width": 2425,
+          "id": 7921,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.01031034127230157
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7499232893525621,
+          "high_resolution_height": 3259,
+          "high_resolution_width": 2444,
+          "id": 7923,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.010228086325048125
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7500773275595423,
+          "high_resolution_height": 3233,
+          "high_resolution_width": 2425,
+          "id": 7926,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.01031034127230157
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7499331372024606,
+          "high_resolution_height": 3739,
+          "high_resolution_width": 2804,
+          "id": 8467,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.008915039671923235
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7499308437067773,
+          "high_resolution_height": 3615,
+          "high_resolution_width": 2711,
+          "id": 8471,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.009220839096357736
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7501352082206598,
+          "high_resolution_height": 3698,
+          "high_resolution_width": 2774,
+          "id": 8473,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.018027762754642872
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7501359434475259,
+          "high_resolution_height": 3678,
+          "high_resolution_width": 2759,
+          "id": 8475,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.018125793003450262
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7501359434475259,
+          "high_resolution_height": 3678,
+          "high_resolution_width": 2759,
+          "id": 8476,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.018125793003450262
+        },
+        {
+          "high_resolution_aspect_ratio": 0.783630822812364,
+          "high_resolution_height": 2297,
+          "high_resolution_width": 1800,
+          "id": 11151,
+          "original_aspect_ratio": 0.7792,
+          "original_height": 77.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.5686374245846965
+        },
+        {
+          "high_resolution_aspect_ratio": 0.783630822812364,
+          "high_resolution_height": 2297,
+          "high_resolution_width": 1800,
+          "id": 11160,
+          "original_aspect_ratio": 0.7792,
+          "original_height": 77.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.5686374245846965
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7890410958904109,
+          "high_resolution_height": 2920,
+          "high_resolution_width": 2304,
+          "id": 14776,
+          "original_aspect_ratio": 0.7895,
+          "original_height": 76.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.058125916350733664
+        },
+        {
+          "high_resolution_aspect_ratio": 0.6666666666666666,
+          "high_resolution_height": 1620,
+          "high_resolution_width": 1080,
+          "id": 25299,
+          "original_aspect_ratio": 0.6625,
+          "original_height": 80.0,
+          "original_width": 53.0,
+          "relative_aspect_difference_percent": 0.6289308176100606
+        },
+        {
+          "high_resolution_aspect_ratio": 0.6666666666666666,
+          "high_resolution_height": 5616,
+          "high_resolution_width": 3744,
+          "id": 25943,
+          "original_aspect_ratio": 0.6625,
+          "original_height": 80.0,
+          "original_width": 53.0,
+          "relative_aspect_difference_percent": 0.6289308176100606
+        },
+        {
+          "high_resolution_aspect_ratio": 0.6666666666666666,
+          "high_resolution_height": 5616,
+          "high_resolution_width": 3744,
+          "id": 25958,
+          "original_aspect_ratio": 0.6625,
+          "original_height": 80.0,
+          "original_width": 53.0,
+          "relative_aspect_difference_percent": 0.6289308176100606
+        },
+        {
+          "high_resolution_aspect_ratio": 0.6666666666666666,
+          "high_resolution_height": 5184,
+          "high_resolution_width": 3456,
+          "id": 28092,
+          "original_aspect_ratio": 0.6625,
+          "original_height": 80.0,
+          "original_width": 53.0,
+          "relative_aspect_difference_percent": 0.6289308176100606
+        },
+        {
+          "high_resolution_aspect_ratio": 0.6666666666666666,
+          "high_resolution_height": 5616,
+          "high_resolution_width": 3744,
+          "id": 28492,
+          "original_aspect_ratio": 0.6625,
+          "original_height": 80.0,
+          "original_width": 53.0,
+          "relative_aspect_difference_percent": 0.6289308176100606
+        },
+        {
+          "high_resolution_aspect_ratio": 0.6666666666666666,
+          "high_resolution_height": 3888,
+          "high_resolution_width": 2592,
+          "id": 29519,
+          "original_aspect_ratio": 0.6625,
+          "original_height": 80.0,
+          "original_width": 53.0,
+          "relative_aspect_difference_percent": 0.6289308176100606
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7981366459627329,
+          "high_resolution_height": 644,
+          "high_resolution_width": 514,
+          "id": 35915,
+          "original_aspect_ratio": 0.8,
+          "original_height": 75.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.2329192546583897
+        },
+        {
+          "high_resolution_aspect_ratio": 0.664179104477612,
+          "high_resolution_height": 4288,
+          "high_resolution_width": 2848,
+          "id": 44101,
+          "original_aspect_ratio": 0.6625,
+          "original_height": 80.0,
+          "original_width": 53.0,
+          "relative_aspect_difference_percent": 0.2534497324697347
+        },
+        {
+          "high_resolution_aspect_ratio": 0.6669921875,
+          "high_resolution_height": 1024,
+          "high_resolution_width": 683,
+          "id": 50908,
+          "original_aspect_ratio": 0.6625,
+          "original_height": 80.0,
+          "original_width": 53.0,
+          "relative_aspect_difference_percent": 0.6780660377358525
+        },
+        {
+          "high_resolution_aspect_ratio": 0.6666666666666666,
+          "high_resolution_height": 5184,
+          "high_resolution_width": 3456,
+          "id": 52166,
+          "original_aspect_ratio": 0.6625,
+          "original_height": 80.0,
+          "original_width": 53.0,
+          "relative_aspect_difference_percent": 0.6289308176100606
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7517289073305671,
+          "high_resolution_height": 1446,
+          "high_resolution_width": 1087,
+          "id": 56127,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.2305209774089434
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7561813186813187,
+          "high_resolution_height": 1456,
+          "high_resolution_width": 1101,
+          "id": 56128,
+          "original_aspect_ratio": 0.7595,
+          "original_height": 79.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.43695606565915657
+        },
+        {
+          "high_resolution_aspect_ratio": 0.664179104477612,
+          "high_resolution_height": 3216,
+          "high_resolution_width": 2136,
+          "id": 56624,
+          "original_aspect_ratio": 0.6625,
+          "original_height": 80.0,
+          "original_width": 53.0,
+          "relative_aspect_difference_percent": 0.2534497324697347
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7549896765313145,
+          "high_resolution_height": 1453,
+          "high_resolution_width": 1097,
+          "id": 57730,
+          "original_aspect_ratio": 0.7595,
+          "original_height": 79.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.5938543079243458
+        },
+        {
+          "high_resolution_aspect_ratio": 0.7500750075007501,
+          "high_resolution_height": 3333,
+          "high_resolution_width": 2500,
+          "id": 57963,
+          "original_aspect_ratio": 0.75,
+          "original_height": 80.0,
+          "original_width": 60.0,
+          "relative_aspect_difference_percent": 0.010001000100009112
+        },
+        {
+          "high_resolution_aspect_ratio": 0.6702970297029703,
+          "high_resolution_height": 2020,
+          "high_resolution_width": 1354,
+          "id": 59593,
+          "original_aspect_ratio": 0.675,
+          "original_height": 80.0,
+          "original_width": 54.0,
+          "relative_aspect_difference_percent": 0.6967363403006973
+        },
+        {
+          "high_resolution_aspect_ratio": 0.6688888888888889,
+          "high_resolution_height": 2700,
+          "high_resolution_width": 1806,
+          "id": 59606,
+          "original_aspect_ratio": 0.675,
+          "original_height": 80.0,
+          "original_width": 54.0,
+          "relative_aspect_difference_percent": 0.905349794238693
+        }
+      ],
+      "aspect_changed_count": 36,
+      "geometry_interpretation": "Observed aspect changes are below 1% and are consistent with minor pixel rounding during resizing. The catalogue found no evidence of changed product content; human review and sign-off are deferred.",
+      "high_resolution_only_count": 0,
+      "maximum_relative_aspect_difference_percent": 0.905349794238693,
+      "not_larger_count": 0,
+      "not_larger_ids": [],
+      "original_only_count": 0,
+      "pair_count": 44441
+    },
+    "total_file_size_bytes": 14919662043,
+    "unique_sha256_count": 43662,
+    "width": {
+      "count": 44441,
+      "mean": 1397.1412209446232,
+      "quantiles": {
+        "0.0": 150.0,
+        "0.25": 1080.0,
+        "0.5": 1080.0,
+        "0.75": 1800.0,
+        "0.95": 1800.0,
+        "0.99": 1800.0,
+        "1.0": 3744.0
+      }
+    }
+  },
+  "inputs": {
+    "layout": {
+      "candidate_roots": [
+        "data/fashion-dataset",
+        "data/fashion-dataset/fashion-dataset"
+      ],
+      "canonical_file_count": 44441,
+      "canonical_image_bytes": 14919662043,
+      "canonical_root": "data/fashion-dataset",
+      "dataset_dir": "data/fashion-dataset",
+      "duplicate_tree": {
+        "images": {
+          "first_count": 44441,
+          "hash_sample_mismatch_count": 0,
+          "hash_sample_mismatches": [],
+          "hash_sample_seed": 2753,
+          "hash_sample_size": 256,
+          "limitation": "All names and sizes were compared. SHA-256 was compared for a seeded sample; un-sampled large files were not byte-hashed in both trees.",
+          "name_or_size_mismatch_count": 0,
+          "name_or_size_mismatches": [],
+          "relation": "separate_probable_copy",
+          "same_device_inode_pairs": 0,
+          "second_count": 44441,
+          "shared_names": 44441
+        },
+        "safe_to_scan_canonical_once": true
+      }
+    },
+    "original_image_audit_csv": {
+      "path": "data/processed/audit/image_audit.csv.gz",
+      "sha256": "944cd6fd2b854360630566c0291ad3116420ec1695613da253309d9e247b983e"
+    },
+    "prediction_id_source": {
+      "kind": "trusted_processed_prediction_manifest",
+      "path": "data/processed/prediction_manifest.csv",
+      "sha256": "8d1fdd27721fc8604203b99308ecda9773b1f7c89b8cf6b2a33c82587b14954b"
+    },
+    "splits_csv": {
+      "path": "data/processed/splits.csv",
+      "sha256": "babeb0c9bfe526ceb9a39b84faad1183d1f0752b42729ded4895c9457951c229"
+    }
+  },
+  "limitations": [
+    "The duplicate outer tree was fully compared by name and byte size, then byte-hashed with a deterministic sample instead of hashing both 15 GB copies in full.",
+    "The canonical image tree was fully decoded and SHA-256 hashed once.",
+    "Kaggle styles.csv and styles/*.json were not opened; metadata equality is an external source assertion, not a catalogue finding."
+  ],
+  "runtime_seconds": 117.53776919600205,
+  "schema_version": 2,
+  "seed": 2753,
+  "source_provenance": {
+    "archive_digest_limitation": "The downloaded archive is not present locally. Recovering its SHA-256 would require downloading another 15.7 GB bundle, so the unpacked canonical file catalogue digest is recorded instead.",
+    "archive_name": "archive.zip",
+    "archive_sha256": null,
+    "dataset_file_bytes": 15711279132,
+    "dataset_id": 139630,
+    "download_api_url": "https://www.kaggle.com/api/v1/datasets/download/paramaggarwal/fashion-product-images-dataset?datasetVersionNumber=1",
+    "last_updated_utc": "2019-03-14T18:57:43.307Z",
+    "license": "MIT",
+    "metadata_api_url": "https://www.kaggle.com/api/v1/datasets/view/paramaggarwal/fashion-product-images-dataset",
+    "owner": "Param Aggarwal",
+    "ref": "paramaggarwal/fashion-product-images-dataset",
+    "source_url": "https://www.kaggle.com/datasets/paramaggarwal/fashion-product-images-dataset/data",
+    "title": "Fashion Product Images Dataset",
+    "verified_at": "2026-08-21",
+    "version": 1,
+    "version_notes": "Initial release"
+  },
+  "source_scope": {
+    "claim": "The high-resolution source contributes image bytes and safe image IDs only. No Kaggle target-bearing metadata file is opened.",
+    "excluded_paths": [
+      "styles.csv",
+      "styles/*.json"
+    ],
+    "images_csv": {
+      "columns_read": [
+        "filename"
+      ],
+      "duplicate_ids": 0,
+      "rows": 44446,
+      "sha256": "64dfd2449f22e39120e2ab4b0230a4521f27a3b3513e5eee5cc000ad865df831",
+      "unique_ids": 44446
+    },
+    "policy": "image_only",
+    "target_bearing_metadata_opened": false
+  }
+}

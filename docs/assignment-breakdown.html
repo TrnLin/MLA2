@@ -374,7 +374,8 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
   <div class="mast-grid">
     <p class="lede">
       Build an end-to-end machine learning system over <b>38,612 photographs</b> of fashion
-      products. Of these, 38,595 are 60&times;80 pixels and 17 have other native resolutions. Four
+      products. Of these, 38,595 are 60&times;80 pixels and 17 at other resolutions need explicit
+      aspect handling. Four
       classifiers answer what an item is, when it is for, who it is for and what occasion it
       suits. A fifth component retrieves the items that merely <b>look alike</b>. Every model
       trained from scratch.
@@ -388,10 +389,10 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
   </div>
 
   <div class="qs">
-    <div class="q"><div class="n">Task 01</div><h3>What type of item is this?</h3><code>articleType · 124 usable classes</code></div>
+    <div class="q"><div class="n">Task 01</div><h3>What type of item is this?</h3><code>articleType · 124 outputs · 100 primary-metric</code></div>
     <div class="q"><div class="n">Task 02</div><h3>Which season is it for?</h3><code>season · 4 classes</code></div>
     <div class="q"><div class="n">Task 03a</div><h3>Who is it intended for?</h3><code>gender · 5 classes</code></div>
-    <div class="q"><div class="n">Task 03b</div><h3>What occasion does it suit?</h3><code>usage · 9 classes including NA</code></div>
+    <div class="q"><div class="n">Task 03b</div><h3>What occasion does it suit?</h3><code>usage · 9 outputs · 8 primary-metric</code></div>
     <div class="q adv"><div class="n">Task 04 · advanced</div><h3>What else looks like it?</h3><code>Top-K retrieval · no labels</code></div>
   </div>
 </header>
@@ -462,168 +463,62 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     <div class="num">02</div>
     <div class="txt">
       <div class="eyebrow">The dataset</div>
-      <h2>What is actually in the files</h2>
-      <p>Every number below was measured from <code>data/</code> on 11 August 2026, not taken from the
-      specification. Where the two disagree, the files win.</p>
+      <h2>Structure first; sealed targets stay sealed</h2>
+      <p>Raw-file facts below use headers, IDs, and image files only. The persisted split blanks
+      holdout and quarantine targets. Target summaries use only training and validation rows;
+      protected target values are never read, hashed, or published by the EDA.</p>
     </div>
   </div>
 
   <div class="strip rv">
-    <div><div class="v">38,617</div><div class="k">rows in styles_train.csv</div></div>
-    <div><div class="v">38,612</div><div class="k">training images on disk</div></div>
-    <div><div class="v warn">5</div><div class="k">rows with no image file</div></div>
-    <div><div class="v">5,829</div><div class="k">unlabelled test images</div></div>
-    <div><div class="v">38,595</div><div class="k">60&times;80 images; 17 other sizes</div></div>
-    <div><div class="v">125 → 124</div><div class="k">raw → image-backed articleType classes</div></div>
+    <div><div class="v">38,617</div><div class="k">teacher metadata IDs</div></div>
+    <div><div class="v">38,612</div><div class="k">image-backed labelled IDs</div></div>
+    <div><div class="v warn">5</div><div class="k">IDs without an original image</div></div>
+    <div><div class="v">5,829</div><div class="k">official prediction IDs</div></div>
+    <div><div class="v">26,992</div><div class="k">training products</div></div>
+    <div><div class="v">5,781</div><div class="k">validation products</div></div>
   </div>
 
-  <p class="eyebrow rv" style="margin-bottom:18px">Bars scaled to the largest class in each target · right column is share of all rows, or a raw count where the share rounds to nothing</p>
-
-  <div class="dist-grid">
-    <div class="dist rv">
-      <h4>gender <b>5 values</b></h4>
-      <div class="row"><span class="lb">Men</span><span class="track"><i style="--w:100%"></i></span><span class="pc">54.2%</span></div>
-      <div class="row"><span class="lb">Women</span><span class="track"><i style="--w:67.7%;--d:.06s"></i></span><span class="pc">36.7%</span></div>
-      <div class="row"><span class="lb">Unisex</span><span class="track"><i style="--w:9.9%;--d:.12s"></i></span><span class="pc">5.4%</span></div>
-      <div class="row"><span class="lb">Boys</span><span class="track"><i style="--w:3.9%;--d:.18s"></i></span><span class="pc">2.1%</span></div>
-      <div class="row"><span class="lb">Girls</span><span class="track"><i style="--w:3.1%;--d:.24s"></i></span><span class="pc">1.7%</span></div>
-    </div>
-
-    <div class="dist rv" style="--d:.08s">
-      <h4>season <b>4 + blanks</b></h4>
-      <div class="row"><span class="lb">Summer</span><span class="track"><i style="--w:100%"></i></span><span class="pc">49.6%</span></div>
-      <div class="row"><span class="lb">Fall</span><span class="track"><i style="--w:54.9%;--d:.06s"></i></span><span class="pc">27.2%</span></div>
-      <div class="row"><span class="lb">Winter</span><span class="track"><i style="--w:38.6%;--d:.12s"></i></span><span class="pc">19.1%</span></div>
-      <div class="row"><span class="lb">Spring</span><span class="track"><i style="--w:8.2%;--d:.18s"></i></span><span class="pc">4.1%</span></div>
-      <div class="row hot"><span class="lb na">(blank)</span><span class="track"><i style="--w:.4%;--d:.24s"></i></span><span class="pc">n=20</span></div>
-    </div>
-
-    <div class="dist rv" style="--d:.16s">
-      <h4>usage <b>9 valid values + blank</b></h4>
-      <div class="row"><span class="lb">Casual</span><span class="track"><i style="--w:100%"></i></span><span class="pc">76.8%</span></div>
-      <div class="row"><span class="lb">Sports</span><span class="track"><i style="--w:13.3%;--d:.05s"></i></span><span class="pc">10.2%</span></div>
-      <div class="row"><span class="lb">Ethnic</span><span class="track"><i style="--w:8.7%;--d:.1s"></i></span><span class="pc">6.7%</span></div>
-      <div class="row"><span class="lb">Formal</span><span class="track"><i style="--w:7.8%;--d:.15s"></i></span><span class="pc">6.0%</span></div>
-      <div class="row hot"><span class="lb na">"NA"</span><span class="track"><i style="--w:.4%;--d:.2s"></i></span><span class="pc">n=71</span></div>
-      <div class="row"><span class="lb">Smart Casual</span><span class="track"><i style="--w:.4%;--d:.25s"></i></span><span class="pc">n=55</span></div>
-      <div class="row"><span class="lb">Travel</span><span class="track"><i style="--w:.4%;--d:.3s"></i></span><span class="pc">n=25</span></div>
-      <div class="row"><span class="lb">Party</span><span class="track"><i style="--w:.4%;--d:.35s"></i></span><span class="pc">n=13</span></div>
-      <div class="row hot"><span class="lb na">(blank)</span><span class="track"><i style="--w:.4%;--d:.4s"></i></span><span class="pc">n=1</span></div>
-      <div class="row"><span class="lb">Home</span><span class="track"><i style="--w:.4%;--d:.45s"></i></span><span class="pc">n=1</span></div>
-    </div>
-
-    <div class="dist rv" style="--d:.24s">
-      <h4>articleType <b>raw top 12 of 125</b></h4>
-      <div class="row"><span class="lb">Tshirts</span><span class="track"><i style="--w:100%"></i></span><span class="pc">17.6%</span></div>
-      <div class="row"><span class="lb">Shirts</span><span class="track"><i style="--w:45.6%;--d:.05s"></i></span><span class="pc">8.0%</span></div>
-      <div class="row"><span class="lb">Casual Shoes</span><span class="track"><i style="--w:39.6%;--d:.1s"></i></span><span class="pc">6.9%</span></div>
-      <div class="row"><span class="lb">Watches</span><span class="track"><i style="--w:33.2%;--d:.15s"></i></span><span class="pc">5.8%</span></div>
-      <div class="row"><span class="lb">Sports Shoes</span><span class="track"><i style="--w:29.4%;--d:.2s"></i></span><span class="pc">5.2%</span></div>
-      <div class="row"><span class="lb">Tops</span><span class="track"><i style="--w:23.8%;--d:.25s"></i></span><span class="pc">4.2%</span></div>
-      <div class="row"><span class="lb">Kurtas</span><span class="track"><i style="--w:22.9%;--d:.3s"></i></span><span class="pc">4.0%</span></div>
-      <div class="row"><span class="lb">Handbags</span><span class="track"><i style="--w:21.2%;--d:.35s"></i></span><span class="pc">3.7%</span></div>
-      <div class="row"><span class="lb">Heels</span><span class="track"><i style="--w:15.5%;--d:.4s"></i></span><span class="pc">2.7%</span></div>
-      <div class="row"><span class="lb">Sunglasses</span><span class="track"><i style="--w:15.4%;--d:.45s"></i></span><span class="pc">2.7%</span></div>
-      <div class="row"><span class="lb">Sandals</span><span class="track"><i style="--w:12.8%;--d:.5s"></i></span><span class="pc">2.2%</span></div>
-      <div class="row"><span class="lb">Flip Flops</span><span class="track"><i style="--w:12.7%;--d:.55s"></i></span><span class="pc">2.2%</span></div>
-    </div>
-  </div>
-
-  <!-- long tail -->
-  <figure class="tail rv" style="margin-left:0;margin-right:0">
-    <div class="tail-head">
-      <h4>The long tail of <span style="font-family:var(--mono);font-size:.7em">articleType</span></h4>
-      <p>125 raw classes · 124 remain image-backed · log scale · 6,781 down to 1</p>
-    </div>
-    <svg id="tailchart" viewBox="0 0 1160 260" role="img"
-         aria-label="Bar chart of all 125 raw articleType class frequencies on a logarithmic scale, descending from 6,781 rows for Tshirts to seven classes holding a single row each; 124 classes remain after the image join.">
-    </svg>
-    <div class="legend">
-      <span><b style="background:var(--accent)"></b>Top 10 classes — 60.9% of all images</span>
-      <span><b style="background:var(--ink)"></b>Classes 11–92</span>
-      <span><b style="background:var(--sand);outline:1px solid var(--rule)"></b>33 classes with fewer than 10 images</span>
-    </div>
-    <figcaption>
-      A log scale is used because a linear axis renders the entire tail invisible. The first 33
-      classes account for 90% of the images; a different 33 classes hold fewer than ten images
-      each, and seven hold exactly one — those cannot be learned, and cannot be fairly evaluated.
-    </figcaption>
-  </figure>
-
-  <!-- schema -->
   <div class="rv" style="margin-top:clamp(30px,4vw,48px)">
     <div class="scroll">
       <table class="tbl">
-        <caption>styles_train.csv — 10 named columns, 4 of which are prediction targets (highlighted)</caption>
-        <thead><tr><th>Column</th><th class="num">Distinct</th><th>Most common</th><th>Role</th></tr></thead>
+        <caption>Permitted target summary — training partition only, from the protected split loader</caption>
+        <thead><tr><th>Target</th><th class="num">Official outputs</th><th class="num">Primary slice</th><th>Largest training class</th><th>Holdout used</th></tr></thead>
         <tbody>
-          <tr><td><code>id</code></td><td class="num">38,617</td><td>unique, no duplicates</td><td>Joins to <code>images_train/&lt;id&gt;.jpg</code></td></tr>
-          <tr class="tgt"><td><code>gender</code></td><td class="num">5</td><td>Men — 20,918</td><td><strong>Target</strong> · Task 3a</td></tr>
-          <tr><td><code>masterCategory</code></td><td class="num">7</td><td>Apparel — 19,147</td><td>Feature / hierarchy for merging rare classes</td></tr>
-          <tr><td><code>subCategory</code></td><td class="num">41</td><td>Topwear — 14,409</td><td>Feature / hierarchy for merging rare classes</td></tr>
-          <tr class="tgt"><td><code>articleType</code></td><td class="num">125 raw / 124 usable</td><td>Tshirts — 6,781</td><td><strong>Target</strong> · Task 1</td></tr>
-          <tr><td><code>baseColour</code></td><td class="num">47</td><td>Black — 8,814</td><td>Feature · relevant to visual-search evaluation</td></tr>
-          <tr class="tgt"><td><code>season</code></td><td class="num">4 + blank</td><td>Summer — 19,137</td><td><strong>Target</strong> · Task 2</td></tr>
-          <tr><td><code>year</code></td><td class="num">12</td><td>2011 — 13,689</td><td>Feature · 2007–2018, 70% in 2011–2012</td></tr>
-          <tr class="tgt"><td><code>usage</code></td><td class="num">9 valid + blank</td><td>Casual — 29,641</td><td><strong>Target</strong> · Task 3b</td></tr>
-          <tr><td><code>productDisplayName</code></td><td class="num">—</td><td>free text</td><td>Text side-channel — a from-image model may not use it at inference</td></tr>
+          <tr class="tgt"><td><code>articleType</code></td><td class="num">124</td><td class="num">100</td><td>Tshirts — 4,732 of 26,965 valid</td><td>No</td></tr>
+          <tr class="tgt"><td><code>season</code></td><td class="num">4</td><td class="num">4</td><td>Summer — 13,371 of 26,975 valid</td><td>No</td></tr>
+          <tr class="tgt"><td><code>gender</code></td><td class="num">5</td><td class="num">5</td><td>Men — 14,622 of 26,992 valid</td><td>No</td></tr>
+          <tr class="tgt"><td><code>usage</code></td><td class="num">9</td><td class="num">8</td><td>Casual — 20,710 of 26,990 valid</td><td>No</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- gotchas -->
   <div class="gotchas rv">
-    <div class="eyebrow" style="margin-bottom:16px">Traps found by measuring, not reading</div>
+    <div class="eyebrow" style="margin-bottom:16px">What the protected EDA proves</div>
     <ol>
       <li>
-        <h5>“NA” is a string, not a gap</h5>
-        <p><code>usage</code> holds the literal text <code>NA</code> in 71 rows, and is genuinely
-        empty in exactly 1. A default <code>read_csv</code> collapses both into <code>NaN</code>
-        and quietly destroys the distinction.</p>
+        <h5>Twenty-four article types are weak but still official</h5>
+        <p>The training-fitted output space has 124 article types. The main comparison slice has
+        100 with at least three independent training families. The other 24 stay in model and
+        submission outputs and are reported separately.</p>
       </li>
       <li>
-        <h5>Five labels point at nothing</h5>
-        <p>Ids <code>12347</code>, <code>39401</code>, <code>39403</code>, <code>39410</code> and
-        <code>39425</code> exist in the CSV with no matching <code>.jpg</code>. That is why 38,617
-        rows yield only 38,612 usable examples.</p>
+        <h5>“NA” is a real usage label</h5>
+        <p>The training partition contains 50 literal <code>NA</code> usage labels and one real
+        blank. Reads use <code>keep_default_na=False</code>, so those cases stay different.</p>
       </li>
       <li>
-        <h5>One raw class disappears at the image join</h5>
-        <p>Suits appears once, at missing-image ID <code>12347</code>, so the usable taxonomy has
-        124 article types. Shoe Laces, Ties and Cufflinks, Cushion Covers, Body Wash and Scrub,
-        Ipad and Lounge Tshirts remain image-backed singletons. Their train-only allocation must
-        be defended in the report.</p>
+        <h5>Both image sizes are one product</h5>
+        <p>Every train, validation, and holdout ID has one original and one high-resolution image.
+        They share an ID and group and their weights sum to one. Prediction IDs and quarantine are
+        excluded.</p>
       </li>
       <li>
-        <h5>The header has two phantom columns</h5>
-        <p><code>styles_train.csv</code> ends its header with <code>,,</code> — twelve fields for
-        ten names. Parsers must tolerate it rather than shift every column by two.</p>
-      </li>
-      <li>
-        <h5>Majority-class accuracy is already high</h5>
-        <p>Predicting the single most common label scores 76.8% on <code>usage</code>, 54.2% on
-        <code>gender</code> and 49.6% on <code>season</code>. Accuracy is therefore close to
-        useless here; macro-F1 is the honest measure.</p>
-      </li>
-      <li>
-        <h5>Not everything is clothing</h5>
-        <p><code>masterCategory</code> includes Personal Care (1,001 rows — fragrance, nail
-        polish), Free Items (83), Sporting Goods (25) and a single Home item. “Season” and
-        “gender” mean something different for a perfume than for a coat.</p>
-      </li>
-      <li>
-        <h5>Native resolution is almost, not entirely, 60&times;80</h5>
-        <p>The audit finds 38,595 training images at 60&times;80 and 17 at other resolutions. The
-        shared image transform must therefore handle dimensions explicitly. Aggressive
-        upscaling still invents no detail and may not recover fine texture cues that distinguish
-        Formal from Casual.</p>
-      </li>
-      <li>
-        <h5>The submission format is frozen</h5>
-        <p><code>styles_prediction.csv</code> has header
-        <code>id,gender,articleType,season,usage</code> over 5,829 blank rows. Four separate
-        columns is precisely why Task 3 is treated as two targets rather than one combined class.</p>
+        <h5>Validation mirrors training without opening holdout</h5>
+        <p>All 100 train-supported article types and every supported season, gender, and usage class
+        are present in validation. Holdout target coverage is not inspected. All percentages use
+        their own train or validation denominator.</p>
       </li>
     </ol>
   </div>
@@ -637,8 +532,8 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <div class="eyebrow">The four tasks</div>
       <h2>Same 4,800 pixels, four different difficulties</h2>
       <p>Each task shares an input and a split, and differs entirely in what makes it hard. The
-      baseline column is the accuracy of always predicting the majority class — the number any
-      real model must beat to have said anything at all.</p>
+      baseline column uses training products only. It is the accuracy from always predicting the
+      largest training class; holdout stays closed.</p>
     </div>
   </div>
 
@@ -649,12 +544,13 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <p class="tq">“What type of fashion item is shown?”</p>
       <dl>
         <div><dt>Target</dt><dd><code style="font-family:var(--mono);font-size:11.5px">articleType</code></dd></div>
-        <div><dt>Classes</dt><dd>124 usable</dd></div>
+        <div><dt>Classes</dt><dd>124 official outputs; 100 primary-metric</dd></div>
         <div><dt>Majority baseline</dt><dd>17.6%</dd></div>
         <div><dt>Metric</dt><dd>Macro-F1</dd></div>
       </dl>
       <p class="hard"><b>The hard part.</b> A long tail with no middle: the top 10 classes hold
-      60.9% of the data while 33 classes hold under ten images. Visually near-identical pairs —
+      60.8% of training products while 37 official classes hold under ten products. Visually
+      near-identical pairs —
       Casual Shoes against Sports Shoes, Tshirts against Tops — sit on either side of a label
       boundary the pixels barely support.</p>
     </div>
@@ -665,14 +561,14 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <p class="tq">“Which season is the item intended for?”</p>
       <dl>
         <div><dt>Target</dt><dd><code style="font-family:var(--mono);font-size:11.5px">season</code></dd></div>
-        <div><dt>Classes</dt><dd>4 (+20 blank)</dd></div>
+        <div><dt>Classes</dt><dd>4 official</dd></div>
         <div><dt>Majority baseline</dt><dd>49.6%</dd></div>
         <div><dt>Metric</dt><dd>Macro-F1</dd></div>
       </dl>
-      <p class="hard"><b>The hard part.</b> The label may not be in the image at all. A plain black
-      t-shirt is sold as Summer or Fall by merchandising decision, not appearance, so part of this
-      target is irreducible noise. Spring holds only 4.1% of rows. Establishing an <em>honest
-      ceiling</em> matters more here than squeezing out points.</p>
+      <p class="hard"><b>The hard part.</b> The label may not be in the image at all. One visual-only near pair is labelled Summer/Fall. It is a review lead, not enough evidence
+      to estimate a general season-label error rate. Mixed-season groups formed through normalized names are reported
+      separately and cannot prove noise because the name rule may join different designs. Spring
+      holds only 4.1% of rows.</p>
     </div>
 
     <div class="task">
@@ -681,14 +577,14 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <p class="tq">“Who is it for, and for what occasion?”</p>
       <dl>
         <div><dt>Targets</dt><dd><code style="font-family:var(--mono);font-size:11.5px">gender</code> + <code style="font-family:var(--mono);font-size:11.5px">usage</code></dd></div>
-        <div><dt>Classes</dt><dd>5 and 9</dd></div>
-        <div><dt>Majority baseline</dt><dd>54.2% / 76.8%</dd></div>
+        <div><dt>Classes</dt><dd>5 and 9 official; 5 and 8 primary-metric</dd></div>
+        <div><dt>Majority baseline</dt><dd>54.2% / 76.7%</dd></div>
         <div><dt>Metric</dt><dd>Macro-F1</dd></div>
       </dl>
       <p class="hard"><b>The hard part.</b> <code>usage</code> is the most skewed target in the
-      dataset — Casual takes 76.8% while Home takes one row. The spec permits a combined class, but
-      the submission header demands two columns, so two targets it is. Whether they share one
-      backbone is still open.</p>
+      training partition — Casual takes 76.7% while Home has one independent family. Home remains an official
+      output but is excluded from the primary comparison metric. The submission header demands two
+      columns, so two targets remain. Whether they share one backbone is still open.</p>
     </div>
 
     <div class="task adv">
@@ -697,14 +593,20 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <p class="tq">“Which items look most similar to this one?”</p>
       <dl>
         <div><dt>Output</dt><dd>Top-K neighbours</dd></div>
-        <div><dt>Index size</dt><dd>~38k images</dd></div>
-        <div><dt>Ground truth</dt><dd>None supplied</dd></div>
-        <div><dt>Metric</dt><dd>Precision@K, mAP</dd></div>
+        <div><dt>Dev gallery</dt><dd>26,992 train products · 53,984 image variants</dd></div>
+        <div><dt>Scored queries</dt><dd>5,768 of 5,781 validation products · 11,536 image variants</dd></div>
+        <div><dt>Metric</dt><dd>nDCG@5, grade-2 Recall@5, coverage, latency</dd></div>
       </dl>
       <p class="hard"><b>The hard part.</b> There is no similarity label to train or score against,
       so relevance must be <b>defined</b> and that definition defended — a metadata proxy, human
-      inspection, or both. The index covers the same images used for evaluation, which makes
-      leakage the most likely silent failure in the entire project.</p>
+      inspection, or both. Scored development uses validation queries against a train-only
+      gallery. Query IDs, exact hashes, and product families are removed before Top-K. Both image variants
+      may be encoded, but each product ID can occupy only one ranked slot. Recall@5 counts
+      grade-2 products only; zero-positive queries leave the macro mean and enter coverage. In the
+      corrected train-fitted supported slice, 110 queries have no grade-2 positive and 412 have
+      fewer than five. The 13 unsupported validation products are reported later as a separate
+      coverage/failure slice, never silently omitted. The old 116/422 counts used the invalid
+      all-partition-fitted taxonomy.</p>
     </div>
   </div>
 </section>
@@ -723,7 +625,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
 
   <figure class="figure rv">
     <svg viewBox="0 0 1160 560" role="img"
-      aria-label="Pipeline diagram. Training images and styles_train.csv feed scripts/prepare_data.py, which audits the inputs and writes the sole shared data/processed/splits.csv with train, val, holdout, and quarantine partitions. That validated split fans out to four task tracks: articleType, season, gender plus usage, and embedding with indexing for visual search. All four feed a shared training bus that writes model weights and a row in runs.csv. Saved models produce both the prediction CSV and the web application.">
+      aria-label="Pipeline diagram. Training images and styles_train.csv feed the official EDA notebook full mode, which audits the inputs and writes the sole shared data/processed/splits.csv with train, val, holdout, and quarantine partitions. That validated split fans out to four task tracks: articleType, season, gender plus usage, and embedding with indexing for visual search. All four feed a shared training bus that writes model weights and a row in runs.csv. Saved models produce both the prediction CSV and the web application.">
 
       <!-- column headers -->
       <text class="d-col" x="105"  y="26" text-anchor="middle">Source</text>
@@ -758,7 +660,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
 
       <!-- C2 prepare -->
       <rect class="d-box" x="275" y="170" width="200" height="76"/>
-      <text class="d-t" x="291" y="200">scripts/prepare_data.py</text>
+      <text class="d-t" x="291" y="200">00_eda.ipynb full mode</text>
       <text class="d-s" x="291" y="220">audits · manifests · masks</text>
       <text class="d-s" x="291" y="236">duplicates · train stats</text>
 
@@ -770,12 +672,12 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <circle class="d-badge" cx="461" cy="308" r="10"/>
       <text class="d-badge-t" x="461" y="311.5" text-anchor="middle">1</text>
 
-      <text class="d-note" x="275" y="420">written once by scripts/prepare_data.py</text>
+      <text class="d-note" x="275" y="420">written once by the notebook full mode</text>
 
       <!-- C3 model tracks -->
       <rect class="d-box" x="560" y="100" width="260" height="72"/>
       <text class="d-s acc" x="576" y="122">TASK 1</text>
-      <text class="d-t" x="576" y="142">articleType — 124 classes</text>
+      <text class="d-t" x="576" y="142">articleType — 124 outputs · 100 metric</text>
       <text class="d-s" x="576" y="160">baseline · CNN · tuned CNN</text>
 
       <rect class="d-box" x="560" y="196" width="260" height="72"/>
@@ -791,7 +693,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <rect class="d-box" x="560" y="388" width="260" height="72"/>
       <text class="d-s acc" x="576" y="410">TASK 4</text>
       <text class="d-t" x="576" y="430">embed → index</text>
-      <text class="d-s" x="576" y="448">built over the train pool only</text>
+      <text class="d-s" x="576" y="448">val queries → train-only gallery</text>
 
       <!-- shared loop label + badges -->
       <text class="d-note" x="880" y="70" text-anchor="middle">one training loop · one metrics module</text>
@@ -846,8 +748,8 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <path class="d-line" d="M975,204 L975,216 L912,216 L912,374 L931,374" marker-end="url(#ar)"/>
     </svg>
     <figcaption>
-      Red paths carry the shared split. Nothing downstream re-splits the data — which is also what
-      keeps evaluation images out of the Task 4 index.
+      Red paths carry the shared split. Nothing downstream re-splits the data. Task 4 uses
+      validation queries against train only, with ID, SHA, and family isolation.
     </figcaption>
   </figure>
 
@@ -958,11 +860,13 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     <div class="lr">
       <div><b>Pre-process the dataset, collecting extra data if necessary</b>
         <p>Any new dataset must be made accessible to the evaluator.</p></div>
-      <div><b><code>scripts/prepare_data.py</code> → audits, manifests and
+      <div><b><code>notebooks/00_eda.ipynb</code> full mode → audits, manifests and
         <code>data/processed/splits.csv</code></b>
         <p>Handles <code>"NA"</code> versus blank, the five orphaned rows, and the rare-class policy.
         It writes exactly one shared split with <code>train | val | holdout | quarantine</code>
-        partitions and validates it before downstream use.</p></div>
+        partitions and validates it before downstream use. Every pending-or-confirmed
+        official-prediction visual match is quarantined; the provisional review ledgers still
+        need named team sign-off.</p></div>
     </div>
 
     <div class="lr">
@@ -1025,16 +929,16 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     <div class="lr">
       <div><b>Runs on any standard machine, with a README</b>
         <p>Data placement, libraries to install, how to run.</p></div>
-      <div><b><code>pyproject.toml</code> + <code>pip install -e .</code> + README</b>
+      <div><b><code>pyproject.toml</code> + Python 3.12 constraints + README</b>
         <p>No experiment-tracking service and no config framework — both risk the “runs anywhere”
         requirement and earn nothing on this rubric.</p></div>
     </div>
   </div>
 
   <div class="nbs rv">
-    <div class="eyebrow" style="margin-bottom:14px">Six notebooks — narrative, with preparation in <code>scripts/</code> and reusable logic imported from <code>src/fashion/</code></div>
-    <div class="nb"><code>00_eda.ipynb</code><p>Measure the dataset. Produce the evidence the three open questions need.</p></div>
-    <div class="nb"><code>10_task1_articletype.ipynb</code><p>124-class comparison, from majority baseline to tuned CNN.</p></div>
+    <div class="eyebrow" style="margin-bottom:14px">Six notebooks — the official EDA contains its visible analysis and invokes reusable data contracts directly</div>
+    <div class="nb"><code>00_eda.ipynb</code><p>Record split, taxonomy, image, bias, and retrieval decisions.</p></div>
+    <div class="nb"><code>10_task1_articletype.ipynb</code><p>124-output models; compare on the 100-class train-supported slice.</p></div>
     <div class="nb"><code>20_task2_season.ipynb</code><p>Four classes, weak signal. Establish and defend the ceiling.</p></div>
     <div class="nb"><code>30_task3_gender_usage.ipynb</code><p>Two targets. Two models against one shared backbone, decided on evidence.</p></div>
     <div class="nb"><code>40_task4_visual_search.ipynb</code><p>Embed, index, retrieve. Define relevance before measuring it.</p></div>
@@ -1066,28 +970,28 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     <div class="num">07</div>
     <div class="txt">
       <div class="eyebrow">Open questions</div>
-      <h2>Three decisions waiting on evidence</h2>
-      <p>These are deliberately unresolved. Each needs a number from the EDA notebook, not an
-      opinion from a meeting — and each is exactly the kind of choice the Approach criterion asks
-      you to justify.</p>
+      <h2>One EDA decision closed; two model questions remain</h2>
+      <p>The data policy is now evidence-backed. The remaining choices need registered model or
+      human-review results, not an opinion from a meeting.</p>
     </div>
   </div>
 
   <div class="oq rv">
     <div>
-      <span class="st">Open · needs EDA</span>
+      <span class="st">Accepted · EDA evidence</span>
       <h4>What happens to the rare <code style="font-size:.8em">articleType</code> classes?</h4>
-      <p>Drop them, merge them upward through <code>subCategory</code>, or keep them and report the
-      failure honestly. Each choice changes what macro-F1 even means, so the report must state
-      which was taken and why.</p>
-      <p class="ev">Evidence needed: per-class counts, and macro-F1 under each policy.</p>
+      <p>Keep every image-backed label in official model and submission outputs. Classes with
+      fewer than three independent product families stay trainable but leave the primary
+      cross-model macro metric. No semantic merge is made.</p>
+      <p class="ev">Evidence: 124 train-observed outputs; 100 have three-family training support.
+      Train-only thresholds 2/3/4/5 support 105/100/98/94 classes.</p>
     </div>
     <div>
       <span class="st">Open · needs EDA</span>
       <h4>One backbone with two heads, or two separate models?</h4>
       <p>The submission format permits either. Multi-task learning is the stronger claim to going
       beyond class material, and gender and usage plausibly share features — but shared training
-      can let the 76.8% Casual majority drown the smaller target.</p>
+      can let the 76.7% Casual majority drown the smaller target.</p>
       <p class="ev">Evidence needed: per-target macro-F1, both ways, on the same split.</p>
     </div>
     <div>
@@ -1167,65 +1071,6 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
   var el = document.getElementById('daysleft');
   if (el) el.textContent = days > 0 ? days : 0;
 
-  /* ---- long-tail chart: all 125 raw articleType counts, measured 2026-08-11 ---- */
-  var counts = [6781,3089,2683,2252,1991,1614,1556,1439,1048,1047,865,863,829,795,710,668,614,
-    610,559,557,526,513,418,345,297,295,293,280,276,274,245,242,228,223,215,203,175,161,159,154,
-    140,122,117,116,110,106,90,86,86,79,75,69,69,63,62,58,55,53,51,47,45,44,43,40,39,39,38,34,32,
-    30,28,27,25,25,23,20,19,17,17,15,15,14,13,13,13,12,12,12,12,11,11,11,9,8,8,8,7,7,6,6,6,5,5,4,
-    4,4,3,3,3,3,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1];
-
-  var svg = document.getElementById('tailchart');
-  if (!svg) return;
-  var W = 1160, H = 260, L = 52, R = 14, T = 16, B = 46;
-  var plotW = W - L - R, plotH = H - T - B;
-  var n = counts.length, slot = plotW / n, bw = Math.max(3, slot - 2.6);
-  var maxLog = Math.log10(counts[0]);
-  var ns = 'http://www.w3.org/2000/svg';
-
-  function add(tag, attrs, text){
-    var e = document.createElementNS(ns, tag);
-    for (var k in attrs) e.setAttribute(k, attrs[k]);
-    if (text != null) e.textContent = text;
-    svg.appendChild(e);
-    return e;
-  }
-
-  /* gridlines at 1, 10, 100, 1000 */
-  [1,10,100,1000].forEach(function(v){
-    var y = T + plotH - (Math.log10(v) / maxLog) * plotH;
-    add('line', {x1:L, y1:y, x2:W-R, y2:y, stroke:'rgba(23,19,13,.12)', 'stroke-dasharray':'3 4'});
-    add('text', {x:L-10, y:y+3.5, 'text-anchor':'end', class:'d-s'}, v.toLocaleString());
-  });
-
-  counts.forEach(function(c, i){
-    var h = Math.max(1.5, (Math.log10(c) / maxLog) * plotH);
-    var fill = i < 10 ? '#c8341a' : (c < 10 ? '#d8cdb5' : '#17130d');
-    var b = add('rect', {
-      x:(L + i*slot).toFixed(2), y:(T + plotH - h).toFixed(2),
-      width:bw.toFixed(2), height:h.toFixed(2), fill:fill
-    });
-    if (!reduce){
-      b.style.transformOrigin = (L + i*slot + bw/2).toFixed(2) + 'px ' + (T + plotH) + 'px';
-      b.style.transform = 'scaleY(0.001)';
-      b.style.transition = 'transform .7s cubic-bezier(.22,.9,.24,1) ' + (i * 6) + 'ms';
-    }
-  });
-
-  /* axis + end labels */
-  add('line', {x1:L, y1:T+plotH, x2:W-R, y2:T+plotH, stroke:'#17130d', 'stroke-width':1});
-  add('text', {x:L, y:H-22, class:'d-s'}, 'Tshirts — 6,781');
-  add('text', {x:W-R, y:H-22, 'text-anchor':'end', class:'d-s'}, '7 classes — 1 image each');
-
-  /* animate bars in when the figure scrolls into view */
-  var fig = svg.closest('.tail');
-  function play(){ svg.querySelectorAll('rect').forEach(function(r){ r.style.transform = 'scaleY(1)'; }); }
-  if (reduce || !('IntersectionObserver' in window)) { play(); }
-  else {
-    var io2 = new IntersectionObserver(function(es){
-      es.forEach(function(e){ if (e.isIntersecting){ play(); io2.unobserve(e.target); } });
-    }, {threshold:0.2});
-    io2.observe(fig);
-  }
 })();
 </script>
 </body>

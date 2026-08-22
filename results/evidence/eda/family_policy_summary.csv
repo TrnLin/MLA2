@@ -1,0 +1,5 @@
+check,value,meaning
+active family groups,27009,allocation unit
+active multi-row family groups,4567,kept whole
+largest active family,80,possible over-block size
+name review status,pending_team_signoff,provisional only

@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "status": "historical pre-policy triage",
+  "source_split_sha256": "de3986704ce6eed0abd4ff3913d67287864469be563186623835dbc07a8c11d4",
+  "source_split_rows": 38612,
+  "normalization": "case-fold text and collapse whitespace; blank keys excluded",
+  "scope": "non-quarantine normalized-name groups with more than one SHA-256 and more than one partition",
+  "crossing_groups": 2549,
+  "rows_in_crossing_groups": 10959,
+  "distinct_sha256_in_crossing_groups": 10788,
+  "interpretation": "triage signal only; a shared normalized name is not proof of one product",
+  "limitation": "The source split was superseded by the accepted family split. Its digest is retained so this historical count cannot be mistaken for the current zero-crossing result."
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": "4.0.0",
+  "seed": 2753,
+  "scope": "label-free audit over labelled and official prediction images before splitting",
+  "total_images": 44441,
+  "candidate_counts_by_dhash_distance": {
+    "0": 14849,
+    "1": 28410,
+    "2": 70334
+  },
+  "candidate_pairs": 113593,
+  "pixel_metric_size": 64,
+  "foreground_white_threshold": 245,
+  "automatic_rule": {
+    "maximum_dhash_distance": 2,
+    "maximum_ahash_distance": 1,
+    "maximum_canvas_mse": 0.0005,
+    "maximum_canvas_mae": 0.01,
+    "maximum_crop_mse": 0.005,
+    "maximum_crop_mae": 0.05,
+    "minimum_foreground_ratio": 0.8
+  },
+  "accepted_pairs": 2080,
+  "accepted_non_exact_pairs": 1171,
+  "accepted_cross_role_pairs": 21,
+  "cross_role_non_exact_candidates_requiring_review": 10,
+  "cross_role_review": {
+    "status": "pending_team_signoff",
+    "total_rows": 10,
+    "signed_off_rows": 0,
+    "pending_rows": 10,
+    "human_provenance_complete": false,
+    "blind_review_rows": 0,
+    "independent_review_rows": 0,
+    "second_reviewed_rows": 0,
+    "hd_review_evidence_complete": false,
+    "review_file": "/home/dinhquan/personal/academic/RMIT/Machine-Learning/MLA2-eda/docs/reviews/cross_role_near_duplicate_review.csv",
+    "operationally_quarantined_pending_or_accepted": 10,
+    "operationally_rejected_after_signoff": 0,
+    "provisional_same_or_variant": 6,
+    "provisional_different_or_uncertain": 4,
+    "safety_policy": "Every pending cross-role automatic match is quarantined; a signed-off different/uncertain decision is required before it may remain active."
+  },
+  "automatic_rule_review": {
+    "status": "pending_team_signoff",
+    "total_rows": 120,
+    "signed_off_rows": 0,
+    "pending_rows": 120,
+    "human_provenance_complete": false,
+    "blind_review_rows": 0,
+    "independent_review_rows": 0,
+    "second_reviewed_rows": 0,
+    "hd_review_evidence_complete": false,
+    "provisional_calls": 120,
+    "provisional_same_or_variant": 119,
+    "provisional_different": 1,
+    "provisional_uncertain": 0,
+    "provisional_observed_precision": 0.9916666666666667,
+    "provisional_wilson_95_percent_lower_bound": 0.9543025846256779,
+    "limitation": "Calls remain provisional until a named team reviewer signs them. Even after sign-off, the sample estimates precision, not recall; subtle variants outside the rule may remain ungrouped."
+  },
+  "warning": "Manual calls are pending team sign-off. Rejected hash collisions remain triage signals, not duplicate proof; the rule favours precision over recall."
+}

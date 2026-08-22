@@ -1,0 +1,5 @@
+partition,rows,percent,target_use_in_eda
+train,26992,69.90572879,training evidence
+val,5781,14.97202942,development balance and Task 4 queries
+holdout,5778,14.96425982,sealed
+quarantine,61,0.15798197,sealed

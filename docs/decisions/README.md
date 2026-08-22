@@ -22,8 +22,18 @@ mark the old one as superseded, and link both records.
 - `0002-single-split-and-duplicate-quarantine.md`
 - `0003-protected-eda-and-train-only-statistics.md`
 - `0005-conflicting-exact-duplicate-quarantine.md`
+- `0006-python-constraints-workflow.md`
+- `0008-aspect-preserving-image-contract.md`
+- `0009-task4-retrieval-isolation.md`
+- `0010-official-output-and-supported-metrics.md`
+- `0011-auditable-family-review-boundary.md`
+- `0012-protected-target-runtime-boundary.md`
+
+## Superseded decisions
+
+- `0004-product-group-leakage-check.md` — superseded by 0011.
+- `0007-supported-deployment-taxonomy.md` — superseded by 0010.
 
 ## Proposed decisions and open gates
 
-- `0004-product-group-leakage-check.md`
-- `0006-dependency-lock-pending.md`
+None for the EDA/data-preparation phase.

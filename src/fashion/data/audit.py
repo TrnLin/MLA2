@@ -20,7 +20,11 @@ from fashion.config import (
     TEST_CSV,
     TEST_IMAGE_DIR,
 )
-from fashion.data.hashing import compute_sha256
+from fashion.data.hashing import (
+    compute_sha256,
+    csv_header_and_id_fingerprint,
+    write_deterministic_csv,
+)
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 IMAGE_AUDIT_COLUMNS = (
@@ -49,11 +53,26 @@ DUPLICATE_COLUMNS = (
     "member_ids",
     "roles",
 )
+MISSING_VALUE_COLUMNS = (
+    "dataset",
+    "partition",
+    "column",
+    "null_count",
+    "null_percent",
+    "scope",
+)
+TARGET_COUNT_COLUMNS = ("target", "class", "partition", "count", "percentage", "scope")
 
 
 def _missing_mask(series: pd.Series) -> pd.Series:
     """Identify true CSV blanks without treating literal labels such as ``NA`` as missing."""
     return series.isna() | series.astype(str).str.strip().eq("")
+
+
+def _as_bool(series: pd.Series) -> pd.Series:
+    if pd.api.types.is_bool_dtype(series):
+        return series.fillna(False)
+    return series.astype(str).str.strip().str.lower().isin({"true", "1", "yes"})
 
 
 def _relative(path: Path, root: Path) -> str:
@@ -127,6 +146,157 @@ def _audit_images(
     )
 
 
+def refresh_structural_csv_summary(
+    train_csv: str | Path,
+    prediction_csv: str | Path,
+    image_audit_csv: str | Path,
+    output_path: str | Path,
+    root: str | Path = ROOT,
+) -> dict[str, Any]:
+    """Write all-row CSV evidence using headers, IDs, and image facts only."""
+    train_csv = Path(train_csv)
+    prediction_csv = Path(prediction_csv)
+    root = Path(root)
+    train_header = pd.read_csv(train_csv, nrows=0, keep_default_na=False).columns.tolist()
+    prediction_header = pd.read_csv(prediction_csv, nrows=0, keep_default_na=False).columns.tolist()
+    train_ids = pd.read_csv(train_csv, usecols=["id"], keep_default_na=False)["id"].astype(int)
+    prediction_ids = pd.read_csv(prediction_csv, usecols=["id"], keep_default_na=False)[
+        "id"
+    ].astype(int)
+    image_audit = pd.read_csv(image_audit_csv, keep_default_na=False)
+    decoded = image_audit[_as_bool(image_audit["decode_ok"])].copy()
+    decoded["id"] = pd.to_numeric(decoded["id"], errors="raise").astype(int)
+    train_image_ids = set(decoded.loc[decoded["role"].eq("train"), "id"])
+    prediction_image_ids = set(decoded.loc[decoded["role"].eq("prediction"), "id"])
+    train_id_set = set(train_ids)
+    prediction_id_set = set(prediction_ids)
+    summary = {
+        "schema_version": "2.0.0",
+        "scope": "all-row structure only; target evidence is development-only below",
+        "protected_target_values_hashed": 0,
+        "styles_train": {
+            "path": _relative(train_csv, root),
+            **csv_header_and_id_fingerprint(train_csv),
+            "total_columns": len(train_header),
+            "columns": train_header,
+            "unique_ids": int(train_ids.nunique()),
+            "duplicate_ids": int(train_ids.duplicated().sum()),
+            "image_reconciliation": {
+                "image_backed_rows": len(train_id_set & train_image_ids),
+                "metadata_rows_without_valid_image": len(train_id_set - train_image_ids),
+                "missing_valid_image_ids": sorted(train_id_set - train_image_ids),
+                "extra_valid_image_ids": sorted(train_image_ids - train_id_set),
+            },
+        },
+        "styles_prediction": {
+            "path": _relative(prediction_csv, root),
+            **csv_header_and_id_fingerprint(prediction_csv),
+            "total_columns": len(prediction_header),
+            "columns": prediction_header,
+            "unique_ids": int(prediction_ids.nunique()),
+            "duplicate_ids": int(prediction_ids.duplicated().sum()),
+            "image_reconciliation": {
+                "image_backed_rows": len(prediction_id_set & prediction_image_ids),
+                "metadata_rows_without_valid_image": len(prediction_id_set - prediction_image_ids),
+                "missing_valid_image_ids": sorted(prediction_id_set - prediction_image_ids),
+                "extra_valid_image_ids": sorted(prediction_image_ids - prediction_id_set),
+            },
+        },
+    }
+    output = Path(output_path)
+    output.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    return summary
+
+
+def write_development_target_audit(
+    splits_csv: str | Path,
+    summary_path: str | Path,
+    missing_values_path: str | Path,
+    target_counts_path: str | Path,
+    issues_path: str | Path,
+    targets: tuple[str, ...] = TARGET_COLUMNS,
+) -> None:
+    """Add target evidence from train and validation only; protected values stay unused."""
+    frame = pd.read_csv(splits_csv, keep_default_na=False)
+    development = frame[frame["partition"].isin({"train", "val"})].copy()
+    summary_file = Path(summary_path)
+    summary = json.loads(summary_file.read_text(encoding="utf-8"))
+    missing_rows: list[dict[str, Any]] = []
+    target_rows: list[dict[str, Any]] = []
+    missing_issues: list[dict[str, Any]] = []
+    audit_summary: dict[str, Any] = {
+        "scope": "train_and_validation_only",
+        "included_partitions": ["train", "val"],
+        "excluded_partitions": ["holdout", "quarantine"],
+        "protected_target_values_hashed": 0,
+        "rows": int(len(development)),
+        "targets": {},
+    }
+    for target in targets:
+        audit_summary["targets"][target] = {}
+        mask_column = f"has_{target}_label"
+        for partition in ("train", "val"):
+            rows = development[development["partition"].eq(partition)]
+            valid = _as_bool(rows[mask_column])
+            missing = ~valid
+            audit_summary["targets"][target][partition] = {
+                "rows": int(len(rows)),
+                "valid_count": int(valid.sum()),
+                "missing_count": int(missing.sum()),
+                "class_count": int(rows.loc[valid, target].astype(str).nunique()),
+            }
+            missing_rows.append(
+                {
+                    "dataset": "styles_train_image_backed",
+                    "partition": partition,
+                    "column": target,
+                    "null_count": int(missing.sum()),
+                    "null_percent": float(missing.mean() * 100) if len(rows) else 0.0,
+                    "scope": "development_targets_only",
+                }
+            )
+            counts = rows.loc[valid, target].astype(str).value_counts().sort_index()
+            for label, count in counts.items():
+                target_rows.append(
+                    {
+                        "target": target,
+                        "class": label,
+                        "partition": partition,
+                        "count": int(count),
+                        "percentage": float(count / max(int(valid.sum()), 1) * 100),
+                        "scope": "development_targets_only",
+                    }
+                )
+            for item_id in rows.loc[missing, "id"].astype(int):
+                missing_issues.append(
+                    {
+                        "role": "train",
+                        "id": item_id,
+                        "field": target,
+                        "issue_code": "missing_target_label",
+                        "severity": "warning",
+                        "action": "masked",
+                        "details": (
+                            f"{partition} has_{target}_label is false; target is not imputed"
+                        ),
+                    }
+                )
+    summary["development_target_audit"] = audit_summary
+    summary_file.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+    pd.DataFrame(missing_rows, columns=MISSING_VALUE_COLUMNS).to_csv(
+        missing_values_path, index=False
+    )
+    pd.DataFrame(target_rows, columns=TARGET_COUNT_COLUMNS).to_csv(target_counts_path, index=False)
+    issues_file = Path(issues_path)
+    existing = pd.read_csv(issues_file, keep_default_na=False)
+    existing = existing[~existing["issue_code"].eq("missing_target_label")]
+    combined = pd.concat(
+        [existing, pd.DataFrame(missing_issues, columns=ISSUE_COLUMNS)], ignore_index=True
+    )
+    combined.sort_values(["role", "id", "issue_code"], inplace=True)
+    combined.to_csv(issues_file, index=False)
+
+
 def audit_raw_data(
     train_csv: str | Path = TEACHER_TRAIN_CSV,
     prediction_csv: str | Path = TEST_CSV,
@@ -134,10 +304,9 @@ def audit_raw_data(
     prediction_image_dir: str | Path = TEST_IMAGE_DIR,
     output_dir: str | Path = AUDIT_DIR,
     root: str | Path = ROOT,
-    targets: tuple[str, ...] = TARGET_COLUMNS,
     workers: int | None = None,
 ) -> dict[str, Path]:
-    """Audit raw CSVs and images, then write rebuildable evidence under processed data."""
+    """Audit raw structure and images without publishing any target-value aggregate."""
     train_csv = Path(train_csv)
     prediction_csv = Path(prediction_csv)
     train_image_dir = Path(train_image_dir)
@@ -146,127 +315,34 @@ def audit_raw_data(
     root = Path(root)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    train = pd.read_csv(train_csv, keep_default_na=False)
-    prediction = pd.read_csv(prediction_csv, keep_default_na=False)
-    if "id" not in train or "id" not in prediction:
-        raise ValueError("both raw CSV files must contain an id column")
-
-    spill_columns = [column for column in train if column.startswith("Unnamed:")]
-    spill_mask = (
-        pd.concat([~_missing_mask(train[column]) for column in spill_columns], axis=1).any(axis=1)
-        if spill_columns
-        else pd.Series(False, index=train.index)
-    )
-    summary = {
-        "styles_train": {
-            "path": _relative(train_csv, root),
-            "sha256": compute_sha256(train_csv),
-            "size_bytes": train_csv.stat().st_size,
-            "total_rows": len(train),
-            "total_columns": len(train.columns),
-            "columns": train.columns.tolist(),
-            "unique_ids": int(train["id"].nunique()),
-            "duplicate_ids": int(train["id"].duplicated().sum()),
-            "spill_row_count": int(spill_mask.sum()),
-            "spill_ids": train.loc[spill_mask, "id"].astype(int).tolist(),
-            "missing_counts": {
-                column: int(_missing_mask(train[column]).sum()) for column in train.columns
-            },
-        },
-        "styles_prediction": {
-            "path": _relative(prediction_csv, root),
-            "sha256": compute_sha256(prediction_csv),
-            "size_bytes": prediction_csv.stat().st_size,
-            "total_rows": len(prediction),
-            "total_columns": len(prediction.columns),
-            "columns": prediction.columns.tolist(),
-            "unique_ids": int(prediction["id"].nunique()),
-            "duplicate_ids": int(prediction["id"].duplicated().sum()),
-            "missing_counts": {
-                column: int(_missing_mask(prediction[column]).sum())
-                for column in prediction.columns
-            },
-        },
-    }
-    summary_path = output_dir / "csv_summary.json"
-
-    missing_rows = [
-        {
-            "dataset": "styles_train",
-            "column": column,
-            "null_count": int(_missing_mask(train[column]).sum()),
-            "null_percent": float(_missing_mask(train[column]).mean() * 100),
-        }
-        for column in train.columns
-    ]
-    missing_path = output_dir / "missing_values.csv"
-    pd.DataFrame(missing_rows).to_csv(missing_path, index=False)
-
-    target_rows: list[dict[str, Any]] = []
-    for target in targets:
-        for label, count in train[target].value_counts(dropna=False).items():
-            target_rows.append(
-                {
-                    "target": target,
-                    "class": "<BLANK>"
-                    if pd.isna(label) or str(label).strip() == ""
-                    else str(label),
-                    "count": int(count),
-                    "percentage": float(count / len(train) * 100),
-                }
-            )
-    target_counts_path = output_dir / "target_class_counts.csv"
-    pd.DataFrame(target_rows).to_csv(target_counts_path, index=False)
-
     image_audit = _audit_images(train_image_dir, prediction_image_dir, root=root, workers=workers)
-    image_audit_path = output_dir / "image_audit.csv"
-    image_audit.to_csv(image_audit_path, index=False)
+    image_audit_path = output_dir / "image_audit.csv.gz"
+    write_deterministic_csv(
+        image_audit,
+        image_audit_path,
+        index=False,
+    )
+    summary_path = output_dir / "csv_summary.json"
+    summary = refresh_structural_csv_summary(
+        train_csv, prediction_csv, image_audit_path, summary_path, root
+    )
+    missing_path = output_dir / "missing_values.csv"
+    target_counts_path = output_dir / "target_class_counts.csv"
+    pd.DataFrame(columns=MISSING_VALUE_COLUMNS).to_csv(missing_path, index=False)
+    pd.DataFrame(columns=TARGET_COUNT_COLUMNS).to_csv(target_counts_path, index=False)
 
-    decoded = image_audit[image_audit["decode_ok"].astype(bool)].copy()
-    decoded["id"] = decoded["id"].astype(int)
-    issues: list[dict[str, Any]] = []
-    train_csv_ids = set(train["id"].astype(int))
+    decoded = image_audit[_as_bool(image_audit["decode_ok"])].copy()
+    decoded["id"] = pd.to_numeric(decoded["id"], errors="raise").astype(int)
+    train_csv_ids = set(
+        pd.read_csv(train_csv, usecols=["id"], keep_default_na=False)["id"].astype(int)
+    )
+    prediction_csv_ids = set(
+        pd.read_csv(prediction_csv, usecols=["id"], keep_default_na=False)["id"].astype(int)
+    )
     train_image_ids = set(decoded.loc[decoded["role"].eq("train"), "id"])
-    prediction_csv_ids = set(prediction["id"].astype(int))
     prediction_image_ids = set(decoded.loc[decoded["role"].eq("prediction"), "id"])
-    missing_train_image_ids = sorted(train_csv_ids - train_image_ids)
-    image_backed_train = train[train["id"].astype(int).isin(train_image_ids)]
-    taxonomy_changes: dict[str, Any] = {}
-    for target in targets:
-        raw_valid = train.loc[~_missing_mask(train[target]), target].astype(str).str.strip()
-        backed_valid = (
-            image_backed_train.loc[~_missing_mask(image_backed_train[target]), target]
-            .astype(str)
-            .str.strip()
-        )
-        removed_classes = sorted(set(raw_valid) - set(backed_valid))
-        taxonomy_changes[target] = {
-            "raw_valid_classes": int(raw_valid.nunique()),
-            "image_backed_valid_classes": int(backed_valid.nunique()),
-            "removed_classes": [
-                {
-                    "class": label,
-                    "raw_count": int(raw_valid.eq(label).sum()),
-                    "missing_image_ids": sorted(
-                        train.loc[
-                            train["id"].astype(int).isin(missing_train_image_ids)
-                            & train[target].astype(str).str.strip().eq(label),
-                            "id",
-                        ].astype(int)
-                    ),
-                }
-                for label in removed_classes
-            ],
-        }
-    summary["styles_train"]["image_reconciliation"] = {
-        "image_backed_rows": int(len(image_backed_train)),
-        "metadata_rows_without_valid_image": len(missing_train_image_ids),
-        "missing_valid_image_ids": missing_train_image_ids,
-        "target_taxonomy_changes": taxonomy_changes,
-    }
-    summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
-
-    for item_id in missing_train_image_ids:
+    issues: list[dict[str, Any]] = []
+    for item_id in summary["styles_train"]["image_reconciliation"]["missing_valid_image_ids"]:
         issues.append(
             {
                 "role": "train",
@@ -302,46 +378,20 @@ def audit_raw_data(
                 "details": "official prediction row has no valid image",
             }
         )
-    for row in image_audit.loc[~image_audit["decode_ok"].astype(bool)].itertuples():
+    for row in image_audit.loc[~_as_bool(image_audit["decode_ok"])].itertuples():
         issues.append(
             {
                 "role": row.role,
                 "id": row.id if pd.notna(row.id) else -1,
                 "field": "file",
-                "issue_code": "non_image_file"
-                if row.error == "non_image_extension"
-                else "corrupt_image",
+                "issue_code": (
+                    "non_image_file" if row.error == "non_image_extension" else "corrupt_image"
+                ),
                 "severity": "warning",
                 "action": "ignored",
                 "details": str(row.error),
             }
         )
-    for item_id in summary["styles_train"]["spill_ids"]:
-        issues.append(
-            {
-                "role": "train",
-                "id": item_id,
-                "field": "productDisplayName",
-                "issue_code": "csv_spill",
-                "severity": "warning",
-                "action": "repaired_in_manifest",
-                "details": "name segments are joined without changing the raw CSV",
-            }
-        )
-    for target in targets:
-        invalid = _missing_mask(train[target])
-        for item_id in train.loc[invalid, "id"].astype(int):
-            issues.append(
-                {
-                    "role": "train",
-                    "id": item_id,
-                    "field": target,
-                    "issue_code": "missing_target_label",
-                    "severity": "warning",
-                    "action": "masked",
-                    "details": f"has_{target}_label is false; the target is not imputed",
-                }
-            )
     issues_frame = pd.DataFrame(issues, columns=ISSUE_COLUMNS)
     if not issues_frame.empty:
         issues_frame.sort_values(["role", "id", "issue_code"], inplace=True)
@@ -369,7 +419,6 @@ def audit_raw_data(
         )
     duplicates_path = output_dir / "exact_duplicate_groups.csv"
     pd.DataFrame(duplicate_rows, columns=DUPLICATE_COLUMNS).to_csv(duplicates_path, index=False)
-
     return {
         "csv_summary": summary_path,
         "missing_values": missing_path,

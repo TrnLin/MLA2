@@ -1,0 +1,26 @@
+target,official_class,train_family_groups,action
+articleType,Baby Dolls,2,keep train-fitted output; report outside primary macro metric
+articleType,Body Wash and Scrub,1,keep train-fitted output; report outside primary macro metric
+articleType,Compact,1,keep train-fitted output; report outside primary macro metric
+articleType,Concealer,1,keep train-fitted output; report outside primary macro metric
+articleType,Cushion Covers,1,keep train-fitted output; report outside primary macro metric
+articleType,Eyeshadow,2,keep train-fitted output; report outside primary macro metric
+articleType,Hat,1,keep train-fitted output; report outside primary macro metric
+articleType,Highlighter and Blush,1,keep train-fitted output; report outside primary macro metric
+articleType,Ipad,1,keep train-fitted output; report outside primary macro metric
+articleType,Key chain,1,keep train-fitted output; report outside primary macro metric
+articleType,Lehenga Choli,1,keep train-fitted output; report outside primary macro metric
+articleType,Lip Plumper,2,keep train-fitted output; report outside primary macro metric
+articleType,Lipstick,1,keep train-fitted output; report outside primary macro metric
+articleType,Lounge Tshirts,1,keep train-fitted output; report outside primary macro metric
+articleType,Nehru Jackets,2,keep train-fitted output; report outside primary macro metric
+articleType,Rain Jacket,1,keep train-fitted output; report outside primary macro metric
+articleType,Rain Trousers,1,keep train-fitted output; report outside primary macro metric
+articleType,Robe,1,keep train-fitted output; report outside primary macro metric
+articleType,Shapewear,1,keep train-fitted output; report outside primary macro metric
+articleType,Shoe Laces,1,keep train-fitted output; report outside primary macro metric
+articleType,Shrug,1,keep train-fitted output; report outside primary macro metric
+articleType,Tablet Sleeve,1,keep train-fitted output; report outside primary macro metric
+articleType,Ties and Cufflinks,1,keep train-fitted output; report outside primary macro metric
+articleType,Trolley Bag,2,keep train-fitted output; report outside primary macro metric
+usage,Home,1,keep train-fitted output; report outside primary macro metric

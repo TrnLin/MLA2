@@ -19,13 +19,14 @@ class TinyProject:
     prediction_images: Path
     processed: Path
     audit: Path
-    train_manifest: Path
     prediction_manifest: Path
     label_maps: Path
     splits: Path
     split_summary: Path
     development_summary: Path
     normalization: Path
+    taxonomy: Path
+    paired_normalization: Path
 
 
 def _save_image(path: Path, color: tuple[int, int, int], mode: str = "RGB") -> None:
@@ -52,9 +53,9 @@ def tiny_project(tmp_path: Path) -> TinyProject:
         3: "A",
         4: "A",
         5: "A",
-        6: "B",
-        7: "B",
-        8: "B",
+        6: "A",
+        7: "A",
+        8: "A",
         9: "C",
         10: "A",
         11: "D",
@@ -120,18 +121,21 @@ def tiny_project(tmp_path: Path) -> TinyProject:
         prediction_images=prediction_images,
         processed=processed,
         audit=audit,
-        train_manifest=processed / "train_manifest.csv",
         prediction_manifest=processed / "prediction_manifest.csv",
         label_maps=processed / "label_maps.json",
         splits=processed / "splits.csv",
         split_summary=processed / "split_summary.json",
         development_summary=processed / "development_class_summary.csv",
-        normalization=processed / "normalization.json",
+        normalization=processed / "normalization_original_only.json",
+        taxonomy=processed / "taxonomy.json",
+        paired_normalization=processed / "paired_normalization.json",
     )
 
 
 @pytest.fixture()
 def prepared_project(tiny_project: TinyProject) -> TinyProject:
     project = tiny_project
-    prepare_data(root=project.root, workers=2)
+    # Most small data-contract tests do not need the separate high-resolution fixture.
+    # The official notebook test builds that fixture and exercises the doubled policy.
+    prepare_data(root=project.root, workers=2, include_high_resolution_variants=False)
     return project

@@ -1,12 +1,11 @@
 # Scripts
 
-Put small command-line entry points here.
+Put non-EDA command-line entry points here.
 
 Scripts should call reusable functions from `src/fashion/` instead of containing
 project logic.
 
-- `prepare_data.py` rebuilds audits, manifests, `data/processed/splits.csv`, and
-  train-only normalization statistics.
-- `generate_eda.py` rebuilds compact evidence and report figures.
-- `audit_perceptual_duplicates.py` runs an optional label-free diagnostic and
-  never rewrites the shared split.
+EDA and EDA preparation have no script entry point. Open `notebooks/00_eda.ipynb`
+and use **Run All**. Normal notebook use validates the delivered prepared-data cache.
+Set `FASHION_EDA_MODE=full` before launch only for the slow forensic rebuild. The
+notebook calls reusable contracts in `src/fashion/data/` directly.

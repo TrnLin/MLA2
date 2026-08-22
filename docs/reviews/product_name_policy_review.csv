@@ -1,0 +1,121 @@
+review_id,family_key,group_rows,id_1,id_2,decision,notes,reviewer_initials,review_date,review_method_or_tool,blind_to_metrics,independent_review,second_reviewer_initials,second_review_decision,second_review_status,disagreement_resolution,signoff_status
+name-001,rocia women brown handbag,2,49555,49553,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-002,cat unisex classic black sunglasses,2,17606,17596,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-003,park avenue men white tie,2,49743,50307,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-004,united colors of benetton women funky eyewear brown sunglasses,2,17231,17204,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-005,united colors of benetton women solid black belt,2,20069,20065,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-006,inaya women brown lounge shorts,2,51995,51994,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-007,femella women pink leggings,2,25909,33960,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-008,nike women court majestic white shoes,2,24455,35706,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-009,skechers women tone black sandals,2,11932,11925,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-010,nike men black jacket,2,32618,30615,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-011,scullers men navy blue striped t-shirt,2,40266,40264,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-012,mark taylor men black & white striped shirt,2,17564,17540,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-013,adrika pink necklace,2,46134,46130,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-014,superman men printed blue t-shirt,2,27649,7269,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-015,hush puppies men jungle brown formal shoes,2,12893,9696,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-016,scullers for her grey trousers,2,27904,27916,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-017,fabindia women printed beige kurtis,2,35052,32260,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-018,cobblerz women black peep toes,2,33513,33517,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-019,madagascar 3 infants girls pink booties,2,37549,37574,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-020,timberland women femmes blue casual shoes,2,13376,13362,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-021,aurelia women printed brown kurta,2,31318,28766,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-022,black coffee men micheal blue slim fit shirt,2,15693,15698,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-023,reebok men premier zigfly sports shoes,2,13689,13691,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-024,wrangler men black polo tshirts,2,10835,10856,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-025,peter england men casual navy blue belt,2,18813,18808,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-026,nike women free 4.0 v2 grey sports shoes,2,36143,36837,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-027,fabindia women red kurta,2,30866,32242,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-028,carlton london women classy silver heels,2,20780,20775,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-029,wrangler men american flag red shirt,2,29769,25534,uncertain,small or occluded image prevents a firm call,,,,,,,,,,pending_team_signoff
+name-030,nike men dunk high grey shoes,2,42133,36130,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-031,fabindia women white printed kurta,4,30848,46019,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-032,levis men pack of 2 briefs,3,25353,25354,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-033,flying machine women washed blue jeans,5,14122,14117,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-034,bulchee women brown handbag,4,46974,46981,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-035,maxima ssteele men watch,4,23261,23280,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-036,dunhill men perfume,3,44084,44083,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-037,image men classic eyewear black sunglasses,5,16953,16951,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-038,jack & jones men blue jeans,5,44930,44923,uncertain,small or occluded image prevents a firm call,,,,,,,,,,pending_team_signoff
+name-039,woodland men brown casual sandals,4,22891,22888,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-040,pal zileri men casual metalic frame sunglasses,4,21350,21342,uncertain,small or occluded image prevents a firm call,,,,,,,,,,pending_team_signoff
+name-041,scullers men scul cream trousers,4,8841,8884,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-042,titan women silver dial watch,5,40552,40543,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-043,doodle kids boy beige shorts,3,27217,27208,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-044,little miss intimates women navy blue brief,3,42819,42813,uncertain,small or occluded image prevents a firm call,,,,,,,,,,pending_team_signoff
+name-045,puma men red t-shirt,5,44877,44858,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-046,playboy men casual grey casual shoes,4,11832,11839,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-047,basics men grey trousers,4,12221,29846,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-048,peter england men elite black tie,4,18785,18769,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-049,french connection men blue printed t-shirt,3,48416,48437,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-050,helix women black watch,3,48024,47992,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-051,vans men black shoes,3,44660,49510,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-052,fastrack unisex black casual watch,5,22946,22941,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-053,rocia women brown casual sandals,3,26184,26185,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-054,w women printed green kurta,4,28732,28725,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-055,fastrack women pink dial watch,5,43161,25632,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-056,adidas women stripes pink sweaters,3,15030,14324,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-057,woodland men brown sandals,4,43547,38787,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-058,playboy men casual blue slippers,3,11864,11860,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-059,prafful multi coloured printed sari,3,50870,50884,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-060,vishudh women green kurta,4,36827,45845,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-061,united colors of benetton men black t-shirt,6,19630,19993,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-062,lino perros women blue sling bag,6,37006,37004,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-063,lino perros women black handbag,8,25149,33631,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-064,lino perros men black suspenders,9,25770,25761,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-065,united colors of benetton men printed white tshirts,7,13432,13441,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-066,baggit women brown wallet,6,38429,38461,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-067,united colors of benetton men solid blue shirts,8,13941,13464,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-068,flying machine men casual black casual shoes,9,14506,14488,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-069,tonga women printed black dress,9,34592,34586,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-070,united colors of benetton men check red shirts,6,13396,13932,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-071,miss sixty silver dial watch,8,50389,50396,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-072,highlander men blue check shirt,10,22570,23201,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-073,mark taylor men red striped shirt,7,24600,8863,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-074,celine dion women black frame sunglasses,6,21299,21311,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-075,estd. 1977 men black sandals,6,41863,41872,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-076,estelle women gold jewellery set,8,42610,46034,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-077,royal diadem green earrings,8,43811,43858,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-078,turtle men leather brown belts,6,15940,15934,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-079,franco leone men black formal shoe,9,15059,15061,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-080,fastrack men black sunglasses,7,28285,28309,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-081,united colors of benetton women black top,8,24987,37189,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-082,doodle boys printed white t-shirt,10,43697,34099,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-083,proline men grey track pants,6,7889,26317,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-084,indigo nation men striped purple shirt,7,29632,29652,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-085,flying machine men washed blue jeans,7,24848,14129,uncertain,small or occluded image prevents a firm call,,,,,,,,,,pending_team_signoff
+name-086,doodle boys printed green t-shirt,6,35460,41750,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-087,red chief men khaki sandals,7,39284,50762,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-088,adidas men white polo t-shirt,6,2202,32433,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-089,lino perros women leatherite brown handbag,7,25398,25188,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-090,peter england men formal brown belt,6,18835,18831,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-091,park avenue men maroon tie,11,49730,49738,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-092,hidekraft men black wallet,16,37850,37867,uncertain,small or occluded image prevents a firm call,,,,,,,,,,pending_team_signoff
+name-093,red tape men black sandals,16,24098,34523,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-094,wrangler men blue texas jeans,12,11293,11311,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-095,numero uno men white casual shoes,11,13084,24254,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-096,spykar men washed blue jeans,17,15561,20351,uncertain,small or occluded image prevents a firm call,,,,,,,,,,pending_team_signoff
+name-097,lucera women silver earrings,82,48674,48692,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-098,revv men steel bangle,13,48743,48731,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-099,arrow men black formal shoes,23,45588,45591,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-100,chromozome men pack of two briefs,12,50562,50549,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-101,franco leone men casual black sandals,11,11914,11918,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-102,ray-ban men aviator gold sunglasses,11,28168,28158,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-103,rocia women black sandals,20,45394,45406,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-104,scullers men check blue shirts,12,11056,11083,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-105,titan men white dial watch,21,31855,40501,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-106,united colors of benetton men washed blue jeans,12,11328,11323,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-107,otls men laurel black wallet,12,36114,36121,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-108,united colors of benetton men black sunglasses,18,48230,48228,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-109,mark taylor men striped white shirt,12,22407,22401,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-110,pepe jeans women casual sunglasses,11,17327,17315,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-111,lino perros women leatherette black handbag,19,25162,25157,uncertain,small or occluded image prevents a firm call,,,,,,,,,,pending_team_signoff
+name-112,royal diadem earrings,11,43788,43866,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-113,locomotive men washed blue jeans,27,16506,21584,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-114,q&q men white dial watch,12,32295,32358,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-115,highlander men check blue shirt,15,16038,16025,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-116,locomotive men check blue shirt,13,16456,16814,same_or_variant,same design or clear colour/angle variant,,,,,,,,,,pending_team_signoff
+name-117,sepia women blue top,14,33182,33167,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-118,catwalk women gold flats,12,39870,33092,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-119,basics men blue slim fit checked shirt,13,14662,12182,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff
+name-120,catwalk women black flats,17,27079,49622,different,same catalogue text but visibly different design,,,,,,,,,,pending_team_signoff

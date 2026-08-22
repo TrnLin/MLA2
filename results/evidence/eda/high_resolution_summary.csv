@@ -1,0 +1,4 @@
+partition,products,image_variants,complete_pairs,incomplete_pairs,weight_per_pair
+train,26992,53984,26992,0,1.00000000
+val,5781,11562,5781,0,1.00000000
+holdout,5778,11556,5778,0,1.00000000

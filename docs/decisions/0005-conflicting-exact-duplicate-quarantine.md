@@ -37,4 +37,4 @@ evidence, but protected target distributions remain closed.
 - Exact SHA groups and target masks in `data/processed/splits.csv`.
 - Conflict discovery and validation in `fashion.data.splits`, enforced for
   downstream consumers by `fashion.data.dataset.load_splits`.
-- Quarantine reconciliation in `fashion.eda.scope`.
+- Quarantine reconciliation in the official `notebooks/00_eda.ipynb` workflow.

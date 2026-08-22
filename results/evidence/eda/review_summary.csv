@@ -1,0 +1,4 @@
+evidence,rows,status,signed_rows,pending_rows,safe_action
+automatic near-duplicate sample,120,pending_team_signoff,0,120,quarantine pending cross-role matches; no human claim
+cross-role visual sample,10,pending_team_signoff,0,10,quarantine pending cross-role matches; no human claim
+normalized-name sample,120,pending_team_signoff,0,120,quarantine pending cross-role matches; no human claim

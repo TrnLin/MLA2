@@ -1,0 +1,15 @@
+contract,value
+total validation products,5781
+eligible supported query products,5768
+excluded unsupported query products,13
+exclusion reason,articleType lacks train-family support
+final unsupported-query policy,separate coverage/failure slice
+query image variants,11536
+gallery products,26992
+gallery image variants,53984
+shared IDs / SHA / families,0 / 0 / 0
+Recall@5 relevant grade,grade 2 only
+zero grade-2 positives,110
+fewer than five grade-2 positives,412
+zero-positive rule,exclude from mean; report coverage
+Top-K identity,one slot and score per product ID

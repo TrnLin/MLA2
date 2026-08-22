@@ -26,10 +26,12 @@ to compare. It also gives every future model the same fitted preprocessing input
 
 Some rare training classes can be absent from validation and must be reported as a
 coverage limit. Protected labels become available only during the locked final
-evaluation stage.
+evaluation stage, by joining the evaluator's local raw teacher CSV. They are blank
+in the persisted split and absent from the lean prepared pack.
 
 ## Evidence
 
 - `rubrics/RUBRIC.md` requirement for justified and independent evaluation.
-- Scope and provenance checks in `fashion.eda`.
-- Training-ID digest in `data/processed/normalization.json`.
+- Scope and provenance checks inside `notebooks/00_eda.ipynb`.
+- Training-ID digest in the main `data/processed/paired_normalization.json` and the
+  comparison baseline `data/processed/normalization_original_only.json`.

@@ -1,0 +1,43 @@
+{
+  "image_size": [
+    128,
+    96
+  ],
+  "mean": [
+    0.850714,
+    0.833706,
+    0.82826
+  ],
+  "pad_color": [
+    255,
+    255,
+    255
+  ],
+  "padding_after_standardization": 0.0,
+  "pixel_scope": "train variants only; each image's content moments receive its 0.5 variant weight; letterbox padding excluded",
+  "policy": "pair_weighted_original_and_high_resolution",
+  "product_count": 26992,
+  "raw_content_pixels": 663325568,
+  "raw_output_pixels": 663355392,
+  "schema_version": "3.0.0",
+  "seed": 2753,
+  "source_partition": "train",
+  "source_variants": [
+    "original",
+    "high_resolution"
+  ],
+  "std": [
+    0.271851,
+    0.283558,
+    0.287189
+  ],
+  "total_effective_product_weight": 26992.0,
+  "train_ids_digest": "9ed3d7507e844d1cd66d77562a0be48ce2b8a052c39f4feff4437acbc7e0d797",
+  "variant_count": 53984,
+  "variant_manifest_sha256": "9bdf5f5cc1de88002b4a6dc59d59047108a262262f6ceaeac0eeb39e848b08d5",
+  "variant_weight": 0.5,
+  "weighted_content_pixels": 331662784.0,
+  "weighted_output_pixels": 331677696.0,
+  "weighted_padding_pixels": 14912.0,
+  "weighted_padding_share": 4.49593089310413e-05
+}

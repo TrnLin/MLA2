@@ -1,5 +1,5 @@
-target,train_valid_labels,validation_valid_labels,training_classes,training_classes_seen_in_validation,training_class_coverage_percent,max_absolute_gap_percentage_points
-articleType,26978,5781,124,118,95.16129032258065,0.20510539451899135
-season,26965,5779,4,4,100.0,1.1606324002771338
-gender,26978,5781,5,5,100.0,0.49175871697926965
-usage,26977,5781,9,8,88.88888888888889,0.3301222654467093
+target,train_valid,val_valid,train_classes,classes_seen_in_val,coverage_percent,missing_classes,max_gap_percentage_points,mean_gap_percentage_points
+articleType,26948,5768,100,100,100.00000000,None,0.25106143,0.01694129
+season,26975,5778,4,4,100.00000000,None,0.03128417,0.01564209
+gender,26992,5781,5,5,100.00000000,None,0.02556896,0.01313170
+usage,26990,5781,8,8,100.00000000,None,0.10113492,0.02792058

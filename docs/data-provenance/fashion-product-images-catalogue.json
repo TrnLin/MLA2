@@ -1,0 +1,86 @@
+{
+  "catalogue": {
+    "canonical_image_bytes": 14919662043,
+    "canonical_root": "data/fashion-dataset",
+    "corrupt_count": 0,
+    "decoded_count": 44441,
+    "duplicate_tree": {
+      "hash_sample_mismatch_count": 0,
+      "hash_sample_seed": 2753,
+      "hash_sample_size": 256,
+      "name_or_size_mismatch_count": 0,
+      "relation": "separate_probable_copy",
+      "same_device_inode_pairs": 0
+    },
+    "format_counts": {
+      "JPEG": 44441
+    },
+    "geometry": {
+      "aspect_changed_count": 36,
+      "high_resolution_only_count": 0,
+      "maximum_relative_aspect_difference_percent": 0.905349794238693,
+      "not_larger_count": 0,
+      "original_only_count": 0,
+      "pair_count": 44441
+    },
+    "image_catalogue_sha256": "6b5518bc31cbdc10657568d47dea70f1d9624fe31337d5d6fcb56101de3ab50e",
+    "mode_counts": {
+      "RGB": 44441
+    },
+    "non_image_file_count": 0,
+    "source_policy": "image_only",
+    "target_bearing_metadata_opened": false,
+    "unique_sha256_count": 43662
+  },
+  "determinism": {
+    "image_catalogue_byte_stable": true,
+    "variant_manifest_byte_stable": true
+  },
+  "paired_train_normalization": {
+    "mean": [0.850714, 0.833706, 0.82826],
+    "policy": "pair_weighted_original_and_high_resolution",
+    "product_count": 26992,
+    "source_partition": "train",
+    "source_variants": ["original", "high_resolution"],
+    "std": [0.271851, 0.283558, 0.287189],
+    "total_effective_product_weight": 26992.0,
+    "train_ids_digest": "9ed3d7507e844d1cd66d77562a0be48ce2b8a052c39f4feff4437acbc7e0d797",
+    "variant_count": 53984,
+    "variant_weight": 0.5
+  },
+  "schema_version": 1,
+  "source": {
+    "acquisition_catalogue_date": "2026-08-21",
+    "archive_sha256": null,
+    "dataset_file_bytes": 15711279132,
+    "dataset_id": 139630,
+    "license": "MIT",
+    "ref": "paramaggarwal/fashion-product-images-dataset",
+    "url": "https://www.kaggle.com/datasets/paramaggarwal/fashion-product-images-dataset/data",
+    "version": 1
+  },
+  "variant_manifest": {
+    "excluded_prediction_quarantine_high_resolution_sha_group_count": 11,
+    "high_resolution_catalogue_sha256": "6b5518bc31cbdc10657568d47dea70f1d9624fe31337d5d6fcb56101de3ab50e",
+    "high_resolution_duplicate_membership_mismatch_count": 0,
+    "high_resolution_sha_partition_crossing_count": 0,
+    "high_resolution_sha_vs_prediction_intersection": 0,
+    "high_resolution_sha_vs_quarantine_intersection": 0,
+    "manifest_sha256": "2e3e99b95ae4660885de0eed39846bb8558064887aeaace146570245b851fe18",
+    "model_product_count": 38551,
+    "model_variant_count": 77102,
+    "official_prediction_id_intersection": 0,
+    "partition_coverage": {
+      "holdout": {"complete_pairs": 5778, "products": 5778, "variants": 11556},
+      "train": {"complete_pairs": 26992, "products": 26992, "variants": 53984},
+      "val": {"complete_pairs": 5781, "products": 5781, "variants": 11562}
+    },
+    "quarantine_canonical_sha256_intersection": 0,
+    "quarantine_duplicate_group_intersection": 0,
+    "quarantine_id_intersection": 0,
+    "quarantine_product_family_intersection": 0,
+    "splits_sha256": "8c966821773af5e395c9b7dcf43de260b0f84e9b7cda8959d6651d295297993d",
+    "target_columns_in_variant_manifest": 0,
+    "weight_per_variant": 0.5
+  }
+}

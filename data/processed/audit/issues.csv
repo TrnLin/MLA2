@@ -1,0 +1,49 @@
+role,id,field,issue_code,severity,action,details
+train,-1,file,non_image_file,warning,ignored,non_image_extension
+train,3413,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,3418,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,3428,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,4854,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,5354,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5355,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5360,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5361,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5365,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5368,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5370,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5376,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5377,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5380,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5385,season,missing_target_label,warning,masked,val has_season_label is false; target is not imputed
+train,5389,season,missing_target_label,warning,masked,val has_season_label is false; target is not imputed
+train,5390,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5391,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5392,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5398,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5401,season,missing_target_label,warning,masked,val has_season_label is false; target is not imputed
+train,5402,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5406,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,5407,season,missing_target_label,warning,masked,train has_season_label is false; target is not imputed
+train,12347,image,missing_image,error,excluded_from_manifest,metadata row has no valid training image
+train,23100,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23101,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23103,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23107,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23108,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23109,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23110,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23111,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23112,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23114,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23115,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23116,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23117,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23118,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23124,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,23127,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV
+train,28319,usage,missing_target_label,warning,masked,train has_usage_label is false; target is not imputed
+train,39401,image,missing_image,error,excluded_from_manifest,metadata row has no valid training image
+train,39403,image,missing_image,error,excluded_from_manifest,metadata row has no valid training image
+train,39410,image,missing_image,error,excluded_from_manifest,metadata row has no valid training image
+train,39425,image,missing_image,error,excluded_from_manifest,metadata row has no valid training image
+train,44065,productDisplayName,csv_spill,warning,repaired_in_manifest,name segments are joined without changing the raw CSV

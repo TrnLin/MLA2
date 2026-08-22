@@ -1,0 +1,11 @@
+role_1,id_1,role_2,id_2,decision,notes,reviewer_initials,review_date,review_method_or_tool,blind_to_metrics,independent_review,second_reviewer_initials,second_review_decision,second_review_status,disagreement_resolution,signoff_status
+labelled,50723,prediction,52131,same_or_variant,same dress design,,,,,,,,,,pending_team_signoff
+labelled,49743,prediction,58884,same_or_variant,same tie design with small colour shift,,,,,,,,,,pending_team_signoff
+labelled,50311,prediction,58893,same_or_variant,same tie design,,,,,,,,,,pending_team_signoff
+labelled,48604,prediction,53103,different,different earring shapes,,,,,,,,,,pending_team_signoff
+labelled,48716,prediction,59550,different,tiny earrings have different geometry,,,,,,,,,,pending_team_signoff
+labelled,49740,prediction,58893,same_or_variant,same tie design,,,,,,,,,,pending_team_signoff
+labelled,50305,prediction,58893,same_or_variant,same tie design,,,,,,,,,,pending_team_signoff
+labelled,49743,prediction,58888,same_or_variant,same tie design with small colour shift,,,,,,,,,,pending_team_signoff
+labelled,48708,prediction,59545,different,different earring shapes,,,,,,,,,,pending_team_signoff
+labelled,48591,prediction,58619,different,different stud patterns,,,,,,,,,,pending_team_signoff

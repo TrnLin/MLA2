@@ -1,0 +1,33 @@
+{
+  "schema_version": "2.0.0",
+  "policy": "original_resolution_only_baseline",
+  "image_size": [
+    128,
+    96
+  ],
+  "pad_color": [
+    255,
+    255,
+    255
+  ],
+  "mean": [
+    0.84993,
+    0.833085,
+    0.82747
+  ],
+  "std": [
+    0.270126,
+    0.281899,
+    0.285457
+  ],
+  "num_images": 26992,
+  "total_content_pixels": 331662784,
+  "total_output_pixels": 331677696,
+  "padding_pixels": 14912,
+  "padding_share": 4.49593089310413e-05,
+  "pixel_scope": "resized image content only; letterbox padding excluded",
+  "padding_after_standardization": 0.0,
+  "source_partition": "train",
+  "seed": 2753,
+  "train_ids_digest": "9ed3d7507e844d1cd66d77562a0be48ce2b8a052c39f4feff4437acbc7e0d797"
+}

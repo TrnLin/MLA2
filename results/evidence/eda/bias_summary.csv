@@ -1,0 +1,2 @@
+source_partition,article_types_with_at_least_20_rows,median_largest_gender_share,article_types_at_or_above_90_percent,decision
+train,72,0.81791680,27,report gender and usage slices plus qualitative failures

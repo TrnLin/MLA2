@@ -1,0 +1,101 @@
+article_type,train_rows,master_category_count,sub_category_count,master_categories,sub_categories
+Accessory Gift Set,76,1,1,Accessories,Accessories
+Backpacks,498,2,2,Accessories; Free Items,Bags; Free Gifts
+Bangle,42,1,1,Accessories,Jewellery
+Basketballs,10,1,1,Sporting Goods,Sports Equipment
+Belts,557,2,2,Accessories; Apparel,Belts; Topwear
+Blazers,6,1,1,Apparel,Topwear
+Booties,8,1,1,Apparel,Socks
+Boxers,28,1,1,Apparel,Innerwear
+Bra,205,1,1,Apparel,Innerwear
+Bracelet,37,1,1,Accessories,Jewellery
+Briefs,468,1,1,Apparel,Innerwear
+Camisoles,11,1,1,Apparel,Innerwear
+Capris,111,1,1,Apparel,Bottomwear
+Caps,188,1,1,Accessories,Headwear
+Casual Shoes,1874,1,1,Footwear,Shoes
+Churidar,22,1,1,Apparel,Bottomwear
+Clothing Set,6,1,1,Apparel,Apparel Set
+Clutches,155,2,2,Accessories; Free Items,Bags; Free Gifts
+Cufflinks,32,1,1,Accessories,Cufflinks
+Deodorant,203,1,1,Personal Care,Fragrance
+Dresses,237,1,2,Apparel,Dress; Topwear
+Duffel Bag,60,1,1,Accessories,Bags
+Dupatta,82,1,1,Apparel,Topwear
+Earrings,171,1,1,Accessories,Jewellery
+Flats,293,1,1,Footwear,Shoes
+Flip Flops,604,1,1,Footwear,Flip Flops
+Footballs,6,1,1,Sporting Goods,Sports Equipment
+Formal Shoes,423,1,1,Footwear,Shoes
+Foundation and Primer,10,1,1,Personal Care,Makeup
+Fragrance Gift Set,39,1,1,Personal Care,Fragrance
+Free Gifts,47,1,1,Free Items,Free Gifts
+Gloves,15,1,1,Accessories,Gloves
+Handbags,1005,2,2,Accessories; Free Items,Bags; Free Gifts
+Headband,5,1,1,Accessories,Headwear
+Heels,732,1,1,Footwear,Shoes
+Innerwear Vests,168,1,1,Apparel,Innerwear
+Jackets,158,1,1,Apparel,Topwear
+Jeans,387,1,1,Apparel,Bottomwear
+Jeggings,19,1,1,Apparel,Bottomwear
+Jewellery Set,32,1,1,Accessories,Jewellery
+Jumpsuit,9,1,1,Apparel,Dress
+Kajal and Eyeliner,10,1,2,Personal Care,Eyes; Makeup
+Kurta Sets,53,1,1,Apparel,Apparel Set
+Kurtas,1085,1,1,Apparel,Topwear
+Kurtis,141,1,1,Apparel,Topwear
+Laptop Bag,55,2,2,Accessories; Free Items,Bags; Free Gifts
+Leggings,111,1,1,Apparel,Bottomwear
+Lip Gloss,4,1,1,Personal Care,Lips
+Lip Liner,10,1,1,Personal Care,Lips
+Lounge Pants,37,1,1,Apparel,Loungewear and Nightwear
+Lounge Shorts,24,1,1,Apparel,Loungewear and Nightwear
+Messenger Bag,31,1,2,Accessories,Accessories; Bags
+Mobile Pouch,33,1,1,Accessories,Bags
+Mufflers,28,1,1,Accessories,Mufflers
+Nail Polish,14,1,1,Personal Care,Nails
+Necklace and Chains,44,1,1,Accessories,Jewellery
+Night suits,49,1,1,Apparel,Loungewear and Nightwear
+Nightdress,28,1,1,Apparel,Loungewear and Nightwear
+Patiala,20,1,1,Apparel,Bottomwear
+Pendant,88,1,1,Accessories,Jewellery
+Perfume and Body Mist,389,2,2,Accessories; Personal Care,Fragrance; Perfumes
+Ring,77,1,1,Accessories,Jewellery
+Rompers,10,1,1,Apparel,Topwear
+Rucksacks,9,1,1,Accessories,Bags
+Salwar,24,1,1,Apparel,Bottomwear
+Salwar and Dupatta,5,1,1,Apparel,Bottomwear
+Sandals,605,1,2,Footwear,Sandal; Shoes
+Sarees,106,1,1,Apparel,Saree
+Scarves,76,2,2,Accessories; Free Items,Free Gifts; Scarves
+Shirts,2156,1,1,Apparel,Topwear
+Shoe Accessories,18,1,1,Accessories,Shoe Accessories
+Shorts,368,1,2,Apparel,Bottomwear; Loungewear and Nightwear
+Skirts,81,1,1,Apparel,Bottomwear
+Socks,429,1,1,Accessories,Socks
+Sports Sandals,44,1,1,Footwear,Sandal
+Sports Shoes,1393,1,1,Footwear,Shoes
+Stockings,19,1,1,Apparel,Bottomwear
+Stoles,63,1,1,Accessories,Stoles
+Sunglasses,730,1,1,Accessories,Eyewear
+Suspenders,28,1,1,Apparel,Topwear
+Sweaters,191,1,1,Apparel,Topwear
+Sweatshirts,194,1,1,Apparel,Topwear
+Swimwear,13,1,2,Apparel,Apparel Set; Bottomwear
+Ties,146,2,2,Accessories; Free Items,Free Gifts; Ties
+Tights,7,1,1,Apparel,Bottomwear
+Tops,1127,1,1,Apparel,Topwear
+Track Pants,204,1,1,Apparel,Bottomwear
+Tracksuits,20,1,1,Apparel,Bottomwear
+Travel Accessory,10,1,2,Accessories,Accessories; Bags
+Trousers,358,1,1,Apparel,Bottomwear
+Trunk,98,1,1,Apparel,Innerwear
+Tshirts,4732,2,2,Accessories; Apparel,Belts; Topwear
+Tunics,121,1,1,Apparel,Topwear
+Umbrellas,4,1,1,Accessories,Umbrellas
+Waist Pouch,13,1,1,Accessories,Bags
+Waistcoat,10,1,1,Apparel,Topwear
+Wallets,580,1,2,Accessories,Bags; Wallets
+Watches,1573,1,1,Accessories,Watches
+Water Bottle,9,1,2,Accessories,Accessories; Water Bottle
+Wristbands,4,2,2,Accessories; Sporting Goods,Sports Accessories; Wristbands

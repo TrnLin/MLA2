@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
@@ -10,14 +9,13 @@ import pandas as pd
 
 from fashion.config import (
     AUDIT_DIR,
-    LABEL_MAPS_JSON,
     PREDICTION_MANIFEST_CSV,
     TARGET_COLUMNS,
     TEACHER_TRAIN_CSV,
     TEST_CSV,
-    TRAIN_MANIFEST_CSV,
 )
-from fashion.data.metadata import build_label_maps, has_valid_label, repair_product_name
+from fashion.data.hashing import write_deterministic_csv
+from fashion.data.metadata import has_valid_label, repair_product_name
 
 IMAGE_COLUMNS = (
     "id",
@@ -30,6 +28,8 @@ IMAGE_COLUMNS = (
     "file_size_bytes",
     "sha256",
 )
+
+STRUCTURAL_TRAIN_MANIFEST_COLUMNS = IMAGE_COLUMNS
 
 
 def _as_bool(series: pd.Series) -> pd.Series:
@@ -71,19 +71,18 @@ def _clean_metadata(train: pd.DataFrame, targets: tuple[str, ...]) -> pd.DataFra
 def build_manifests(
     train_csv: str | Path = TEACHER_TRAIN_CSV,
     prediction_csv: str | Path = TEST_CSV,
-    image_audit_csv: str | Path = AUDIT_DIR / "image_audit.csv",
-    train_output: str | Path = TRAIN_MANIFEST_CSV,
+    image_audit_csv: str | Path = AUDIT_DIR / "image_audit.csv.gz",
+    train_output: str | Path | None = None,
     prediction_output: str | Path = PREDICTION_MANIFEST_CSV,
-    label_maps_output: str | Path = LABEL_MAPS_JSON,
     targets: tuple[str, ...] = TARGET_COLUMNS,
 ) -> dict[str, Path]:
     """Repair metadata and join only valid, decoded images."""
+    if train_output is None:
+        raise ValueError("labelled train_output must be an explicit temporary build path")
     train_output = Path(train_output)
     prediction_output = Path(prediction_output)
-    label_maps_output = Path(label_maps_output)
     train_output.parent.mkdir(parents=True, exist_ok=True)
     prediction_output.parent.mkdir(parents=True, exist_ok=True)
-    label_maps_output.parent.mkdir(parents=True, exist_ok=True)
 
     raw_train = pd.read_csv(train_csv, keep_default_na=False)
     raw_prediction = pd.read_csv(prediction_csv, keep_default_na=False)
@@ -102,7 +101,11 @@ def build_manifests(
     if train_manifest["id"].duplicated().any():
         raise ValueError("labelled manifest IDs must be unique")
     train_manifest.sort_values("id", inplace=True)
-    train_manifest.to_csv(train_output, index=False)
+    write_deterministic_csv(
+        train_manifest,
+        train_output,
+        index=False,
+    )
 
     prediction_images = valid.loc[valid["role"].eq("prediction"), IMAGE_COLUMNS]
     prediction_manifest = raw_prediction[["id"]].merge(
@@ -111,12 +114,41 @@ def build_manifests(
     if prediction_manifest["path"].isna().any():
         missing_ids = prediction_manifest.loc[prediction_manifest["path"].isna(), "id"].tolist()
         raise ValueError(f"official prediction images are missing for IDs: {missing_ids[:5]}")
-    prediction_manifest.to_csv(prediction_output, index=False)
+    write_deterministic_csv(
+        prediction_manifest,
+        prediction_output,
+        index=False,
+    )
 
-    maps = build_label_maps(train_manifest, targets)
-    label_maps_output.write_text(json.dumps(maps, indent=2), encoding="utf-8")
     return {
         "train_manifest": train_output,
         "prediction_manifest": prediction_output,
-        "label_maps": label_maps_output,
     }
+
+
+def write_structural_train_manifest(
+    labelled_manifest: pd.DataFrame | str | Path,
+    output_path: str | Path,
+) -> Path:
+    """Persist only ID/path/image facts from a labelled build-time manifest."""
+    frame = (
+        pd.read_csv(
+            labelled_manifest,
+            usecols=list(STRUCTURAL_TRAIN_MANIFEST_COLUMNS),
+            keep_default_na=False,
+        )
+        if isinstance(labelled_manifest, (str, Path))
+        else labelled_manifest.loc[:, list(STRUCTURAL_TRAIN_MANIFEST_COLUMNS)].copy()
+    )
+    if frame["id"].isna().any() or frame["id"].duplicated().any():
+        raise ValueError("structural training manifest IDs must be non-null and unique")
+    frame["id"] = frame["id"].astype(int)
+    frame.sort_values("id", inplace=True)
+    output = Path(output_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    write_deterministic_csv(
+        frame,
+        output,
+        index=False,
+    )
+    return output

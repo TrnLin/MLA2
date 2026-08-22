@@ -1,0 +1,5 @@
+target,official_output_classes,supported_primary_metric_classes,limited_but_still_official,validation_unknown_to_train,semantic_merges,source
+articleType,124,100,24,0,None,train-fitted label map and train family support
+season,4,4,0,0,None,train-fitted label map and train family support
+gender,5,5,0,0,None,train-fitted label map and train family support
+usage,9,8,1,0,None,train-fitted label map and train family support

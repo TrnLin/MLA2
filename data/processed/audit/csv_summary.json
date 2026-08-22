@@ -1,0 +1,133 @@
+{
+  "schema_version": "2.0.0",
+  "scope": "all-row structure only; target evidence is development-only below",
+  "protected_target_values_hashed": 0,
+  "styles_train": {
+    "path": "data/raw/teacher/train/styles_train.csv",
+    "rows": 38617,
+    "header_and_id_sha256": "51d54a0bc077408b488cf006ec083f1c3569e7314a773ef9be72367c9cacdd87",
+    "protected_target_values_hashed": 0,
+    "total_columns": 12,
+    "columns": [
+      "id",
+      "gender",
+      "masterCategory",
+      "subCategory",
+      "articleType",
+      "baseColour",
+      "season",
+      "year",
+      "usage",
+      "productDisplayName",
+      "Unnamed: 10",
+      "Unnamed: 11"
+    ],
+    "unique_ids": 38617,
+    "duplicate_ids": 0,
+    "image_reconciliation": {
+      "image_backed_rows": 38612,
+      "metadata_rows_without_valid_image": 5,
+      "missing_valid_image_ids": [
+        12347,
+        39401,
+        39403,
+        39410,
+        39425
+      ],
+      "extra_valid_image_ids": []
+    }
+  },
+  "styles_prediction": {
+    "path": "data/raw/teacher/test/styles_prediction.csv",
+    "rows": 5829,
+    "header_and_id_sha256": "6de303f54b8c43737fe284e8c43db3151f0874f083c9280c73b114ff102c22ea",
+    "protected_target_values_hashed": 0,
+    "total_columns": 5,
+    "columns": [
+      "id",
+      "gender",
+      "articleType",
+      "season",
+      "usage"
+    ],
+    "unique_ids": 5829,
+    "duplicate_ids": 0,
+    "image_reconciliation": {
+      "image_backed_rows": 5829,
+      "metadata_rows_without_valid_image": 0,
+      "missing_valid_image_ids": [],
+      "extra_valid_image_ids": []
+    }
+  },
+  "development_target_audit": {
+    "scope": "train_and_validation_only",
+    "included_partitions": [
+      "train",
+      "val"
+    ],
+    "excluded_partitions": [
+      "holdout",
+      "quarantine"
+    ],
+    "protected_target_values_hashed": 0,
+    "rows": 32773,
+    "targets": {
+      "articleType": {
+        "train": {
+          "rows": 26992,
+          "valid_count": 26992,
+          "missing_count": 0,
+          "class_count": 124
+        },
+        "val": {
+          "rows": 5781,
+          "valid_count": 5781,
+          "missing_count": 0,
+          "class_count": 110
+        }
+      },
+      "season": {
+        "train": {
+          "rows": 26992,
+          "valid_count": 26975,
+          "missing_count": 17,
+          "class_count": 4
+        },
+        "val": {
+          "rows": 5781,
+          "valid_count": 5778,
+          "missing_count": 3,
+          "class_count": 4
+        }
+      },
+      "gender": {
+        "train": {
+          "rows": 26992,
+          "valid_count": 26992,
+          "missing_count": 0,
+          "class_count": 5
+        },
+        "val": {
+          "rows": 5781,
+          "valid_count": 5781,
+          "missing_count": 0,
+          "class_count": 5
+        }
+      },
+      "usage": {
+        "train": {
+          "rows": 26992,
+          "valid_count": 26991,
+          "missing_count": 1,
+          "class_count": 9
+        },
+        "val": {
+          "rows": 5781,
+          "valid_count": 5781,
+          "missing_count": 0,
+          "class_count": 8
+        }
+      }
+    }
+  }
+}

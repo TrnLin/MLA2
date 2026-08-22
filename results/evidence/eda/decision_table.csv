@@ -1,0 +1,11 @@
+area,decision,evidence,later_check
+split,use data/processed/splits.csv only,zero active SHA/name/family/visual crossings,never make another split
+protected labels,seal holdout and quarantine,shared loader returns blank protected targets,unlock only once for final evaluation
+official outputs,train the frozen train-observed output vocabulary,train-fitted taxonomy and label maps; no holdout influence,keep fixed prediction schema and literal NA
+primary comparison,rank on supported classes,at least three independent train families,also report rare official outputs
+image input,"RGB, 96x128, aspect preserving",zero common padding and 25% fewer tensor pixels,use paired train-only mean/std by default
+image variants,use low and high resolution for every model product,complete pairs plus label-free alignment audit,"one ID/score; compare original-only, high-only, doubled"
+Task 1,macro-F1 plus per-class and support slices,strong articleType long tail,show rare-class failures
+Tasks 2 and 3,separate targets with bias slices,mixed season signal and catalogue shortcuts,do not treat gender as identity
+Task 4,"validation queries, train-only gallery",zero ID/SHA/family overlap,"nDCG, grade-2 Recall, coverage, latency"
+human review,keep every row pending,no reviewer provenance or sign-off,never claim reviewed precision yet
