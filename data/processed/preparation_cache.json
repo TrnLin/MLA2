@@ -3,28 +3,28 @@
     "data/processed/audit/csv_summary.json": "8b12b3cfdcabba9a30efdfdb2c8cb01c01f2a556ac21ea047dd1be2579a24f0d",
     "data/processed/audit/exact_duplicate_groups.csv": "3a2a3c40fd242cf768db60908964e21a238e903760721145272dbfe6edf74b14",
     "data/processed/audit/image_audit.csv.gz": "944cd6fd2b854360630566c0291ad3116420ec1695613da253309d9e247b983e",
-    "data/processed/audit/issues.csv": "b4ef29844e6a6bfce3d80bcb0891647c4d06027b54318e64842c797b685f8945",
+    "data/processed/audit/issues.csv": "6741f153ba55125ee78db7b00503a8ba980b76c6c2ae8ef82b10ba6e0b5df602",
     "data/processed/audit/missing_values.csv": "6760449b1c01fced8f539436b39e71a66f77a129afcdd55eeb686e0a389e7cf0",
-    "data/processed/audit/near_duplicate_candidates.csv.gz": "c53fa71260c0a60a646e22f17752874d9065e16008cb4f894e35babd8103e2cd",
-    "data/processed/audit/near_duplicate_summary.json": "4d4c18f22c6f7147094f8758e871daf4cf38b9e56cedb0a34c18753b6f611859",
+    "data/processed/audit/near_duplicate_candidates.csv.gz": "2ac6de8f7628b4abc7f41f180d1ac734913ed6f6c5d829ebb4a6206ee3e8b0fa",
+    "data/processed/audit/near_duplicate_summary.json": "8f5babe037c9f2de80403309e638fcebc0e9cb1cb50a40f08f834d5c9ec8be38",
     "data/processed/audit/perceptual_hashes.csv.gz": "9127dcdb5dd14596cab20ac61abbb352fea59ed3cd7af0eceeacab95524179eb",
-    "data/processed/audit/product_family_groups.csv.gz": "c3762419ef21e957e838492ab374327631a600a4561e62a39d1b8698ee95fa2a",
-    "data/processed/audit/product_family_summary.json": "c9529dfe5eb680ae8b22017c0f748a28f17256cb71770a4f3ce67d808425fd1d",
+    "data/processed/audit/product_family_groups.csv.gz": "df2e2030e43e272addb38bef26e2eb7f0f1ce6602e62bbd55a182d27e838cf4f",
+    "data/processed/audit/product_family_summary.json": "2fc4881cf1d809bff29d64543c2ba8508536e2f9d91ec2ba05ed5c0f0928725f",
     "data/processed/audit/target_class_counts.csv": "c25c2f71be7e58f3f4ccbc196fb1dd2e21b6726c11bc81976e860731ad12010a",
     "data/processed/development_class_summary.csv": "6c0d7ede1f3c11e835ab5879a403afbc828ad4be9b0a0afbe9edc021e53f857f",
-    "data/processed/high_resolution/alignment_summary.json": "c80f5eddddf82551c4ab72337aa48eebec98b5070d5c862117a9c3de2313d937",
+    "data/processed/high_resolution/alignment_summary.json": "635315bb4cab59be0b05e06ad39c56495ca83115596b1122ea51385c92a599bc",
     "data/processed/high_resolution/all_alignment_pairs.csv.gz": "f99a571ac310046b7de3deb436b0d1ba2d7911bce12e704aea791191440be0bb",
-    "data/processed/high_resolution/catalogue.json": "9def88cfb68861f8c4a4f2b83dcd915afef2bbe53d4cf4cbd4a5ad48525aa385",
+    "data/processed/high_resolution/catalogue.json": "7217452f6dfef9d8f8190eb9baf32e65a53da8421deb2d247eaa0502c8254aff",
     "data/processed/high_resolution/image_catalogue.csv.gz": "034ad5875ed2b3256b6727e6d831b528d949796d9d2e3bbfc7f29565d8eca099",
     "data/processed/label_maps.json": "279b2a0083fd2a955bc680c18b703f8d1b803a4a3d1aff9b0ef1b120cb1b5321",
     "data/processed/normalization_original_only.json": "6be56b9d5b2d6b311ba63436c618279ef85a9352f7317be6585f7a72cfb3ffab",
     "data/processed/paired_normalization.json": "2457c76f4c2591b91db756320937adc47150a6f5a4b3c5c86091323fd97c2ecc",
     "data/processed/prediction_manifest.csv": "8d1fdd27721fc8604203b99308ecda9773b1f7c89b8cf6b2a33c82587b14954b",
-    "data/processed/split_summary.json": "c242232a52ba0d518af64415a03bcb475de8ff496c650ab737ccd321a38c393c",
-    "data/processed/splits.csv": "babeb0c9bfe526ceb9a39b84faad1183d1f0752b42729ded4895c9457951c229",
+    "data/processed/split_summary.json": "2d9c2295bbe15b2ac050bddb4b1ce0985300478222c0b59795929a462ede9c17",
+    "data/processed/splits.csv": "9f1201a5460796b6b955c0a8b44c59746fe2567557081f65e6ac63c4d8c9929a",
     "data/processed/taxonomy.json": "1f466110b163cdf68b450f018a97c30a893623ae143bbf3bd837c92dfea2b4e6",
     "data/processed/training_image_variants.csv.gz": "9bdf5f5cc1de88002b4a6dc59d59047108a262262f6ceaeac0eeb39e848b08d5",
-    "data/processed/training_image_variants_summary.json": "ac57e64b7927f1965a28a30938216b8d0372e4b1d3578e7d7c3d369da0ed281e"
+    "data/processed/training_image_variants_summary.json": "c0ca91da280a7a973245572fd93d4bdb5c60c14e6f4655c5ded26d891f706d85"
   },
   "include_high_resolution_variants": true,
   "input_fingerprints": {
@@ -37,12 +37,6 @@
     },
     "high_resolution_images_csv": {
       "sha256": "64dfd2449f22e39120e2ab4b0230a4521f27a3b3513e5eee5cc000ad865df831"
-    },
-    "pending_review_inputs": {
-      "docs/reviews/cross_role_near_duplicate_review.csv": "200d49c3efafb009bf85560a28f16951b8145cbbdc1b05a11e8124bdb9fcb65b",
-      "docs/reviews/near_duplicate_policy_review.csv": "7d1efffd50dc34ec60678a8288b54f68060be4067cb1842712569a032feaa4d0",
-      "docs/reviews/product_name_policy_review.csv": "bf88a0e9e0b97288bcbb2941b1ea9c1c5a965954680249e1b81d092abafbdc16",
-      "docs/reviews/product_name_pre_policy_triage.json": "39ccf795be52875be91dcad6f966577ccbf6ea64266bdbdfdeb9d33a1d9b3da4"
     },
     "teacher_prediction": {
       "header_and_id_sha256": "e125caa0dc337b882731f1e047797ec19c74360612b2485f065d0551fd747ae4",
@@ -71,7 +65,7 @@
     }
   },
   "mode": "full_forensic_rebuild_completed",
-  "schema_version": "3.0.0",
+  "schema_version": "4.0.0",
   "validation_policy": {
     "critical_artifacts": "full file SHA-256 for protected-safe tables, including the persisted redacted split; semantic JSON SHA-256 ignores only runtime and machine-path noise",
     "image_inventory": "all relative paths and sizes plus 64 deterministic SHA-256 samples; this is not full raw-image content assurance",
