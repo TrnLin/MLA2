@@ -33,7 +33,7 @@ from fashion.data.variants import (
     catalogue_high_resolution_dataset,
 )
 
-CACHE_SCHEMA_VERSION = "3.0.0"
+CACHE_SCHEMA_VERSION = "4.0.0"
 CACHE_FILENAME = "preparation_cache.json"
 CACHE_SAMPLE_SIZE = 64
 
@@ -220,12 +220,6 @@ def _input_fingerprints(
 ) -> dict[str, Any]:
     splits = load_splits(splits_path)
     development_ids = set(splits.loc[splits["partition"].isin({"train", "val"}), "id"].astype(int))
-    review_paths = (
-        root / "docs/reviews/cross_role_near_duplicate_review.csv",
-        root / "docs/reviews/near_duplicate_policy_review.csv",
-        root / "docs/reviews/product_name_policy_review.csv",
-        root / "docs/reviews/product_name_pre_policy_triage.json",
-    )
     fingerprints: dict[str, Any] = {
         "teacher_train": _teacher_csv_fingerprint(
             root / "data/raw/teacher/train/styles_train.csv", development_ids
@@ -235,11 +229,6 @@ def _input_fingerprints(
         ),
         "teacher_train_images": _tree_fingerprint(root / "data/raw/teacher/train/images_train"),
         "teacher_prediction_images": _tree_fingerprint(root / "data/raw/teacher/test/images_test"),
-        "pending_review_inputs": {
-            path.relative_to(root).as_posix(): compute_sha256(path)
-            for path in review_paths
-            if path.is_file()
-        },
     }
     if include_high_resolution_variants:
         high_resolution_root = _canonical_high_resolution_root(root)
@@ -495,8 +484,6 @@ def prepare_data(
             prediction_manifest_csv=processed_dir / "prediction_manifest.csv",
             output_dir=audit_dir,
             root=root,
-            cross_role_review_csv=root / "docs/reviews/cross_role_near_duplicate_review.csv",
-            policy_review_csv=root / "docs/reviews/near_duplicate_policy_review.csv",
             workers=workers,
         )
         build_product_families(
@@ -505,8 +492,6 @@ def prepare_data(
             candidates_csv=audit_dir / "near_duplicate_candidates.csv.gz",
             output_csv=audit_dir / "product_family_groups.csv.gz",
             summary_output=audit_dir / "product_family_summary.json",
-            product_name_review_csv=root / "docs/reviews/product_name_policy_review.csv",
-            product_name_triage_json=root / "docs/reviews/product_name_pre_policy_triage.json",
         )
         make_splits(
             train_manifest_csv=labelled_staging,
