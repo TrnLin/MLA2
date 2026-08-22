@@ -27,8 +27,8 @@ TRAINING_VARIANTS_CSV = ROOT / "data/processed/training_image_variants.csv.gz"
 TRAINING_VARIANTS_SUMMARY_JSON = ROOT / "data/processed/training_image_variants_summary.json"
 ALIGNMENT_AUDIT_CSV = HIGH_RES_AUDIT_DIR / "all_alignment_pairs.csv.gz"
 ALIGNMENT_SUMMARY_JSON = HIGH_RES_AUDIT_DIR / "alignment_summary.json"
-ALIGNMENT_EXCEPTION_REVIEW_CSV = HIGH_RES_AUDIT_DIR / "alignment_exception_review.csv"
-ALIGNMENT_EXCEPTION_SHEET = HIGH_RES_AUDIT_DIR / "alignment_exception_review.png"
+ALIGNMENT_WARNING_METRICS_CSV = HIGH_RES_AUDIT_DIR / "alignment_warning_metrics.csv"
+ALIGNMENT_WARNING_SHEET = HIGH_RES_AUDIT_DIR / "alignment_warning_examples.png"
 
 MODEL_PARTITIONS = ("train", "val", "holdout")
 VARIANT_NAMES = frozenset({"original", "high_resolution"})
@@ -477,8 +477,8 @@ def catalogue_high_resolution_dataset(
                 ),
                 "geometry_interpretation": (
                     "Observed aspect changes are below 1% and are consistent with minor pixel "
-                    "rounding during resizing. The catalogue found no evidence of changed product "
-                    "content; human review and sign-off are deferred."
+                    "rounding during resizing. Geometry alone cannot prove that product content "
+                    "matches."
                 ),
                 "aspect_changed": aspect_changed[
                     [
@@ -1065,7 +1065,7 @@ def audit_all_variant_alignment(
         "output_sha256": compute_sha256(output_csv),
         "limitation": (
             "Perceptual hashes strongly test visual identity but are not a mathematical proof. "
-            "Seeded pairs are also reviewed as pixels and in a contact sheet."
+            "High-distance same-ID pairs are non-blocking warnings for later inspection."
         ),
     }
     summary_output = Path(summary_output)
@@ -1160,16 +1160,16 @@ def audit_alignment_pairs(
     return result
 
 
-def review_alignment_exceptions(
+def measure_alignment_warnings(
     *,
     alignment_csv: str | Path = ALIGNMENT_AUDIT_CSV,
     original_hashes_csv: str | Path = AUDIT_DIR / "perceptual_hashes.csv.gz",
     high_resolution_catalogue_csv: str | Path = HIGH_RES_IMAGE_CATALOGUE_CSV,
-    output_csv: str | Path = ALIGNMENT_EXCEPTION_REVIEW_CSV,
-    contact_sheet_path: str | Path = ALIGNMENT_EXCEPTION_SHEET,
+    output_csv: str | Path = ALIGNMENT_WARNING_METRICS_CSV,
+    contact_sheet_path: str | Path = ALIGNMENT_WARNING_SHEET,
     root: str | Path = ROOT,
 ) -> pd.DataFrame:
-    """Measure and render every pair flagged by the full fingerprint audit."""
+    """Measure and render every non-blocking warning from the full fingerprint audit."""
     alignment = pd.read_csv(alignment_csv, keep_default_na=False)
     flagged = alignment[
         alignment["possible_content_mismatch"].astype(str).str.lower().isin({"true", "1"})
