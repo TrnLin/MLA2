@@ -36,8 +36,9 @@ quarantine, and prediction pixels never enter the fit. The old low-only statisti
 comparison baseline; it is not the statistic for the doubled policy.
 
 The geometry audit found 36 same-ID pairs with aspect-ratio changes below 1% (maximum 0.906%).
-These are consistent with minor pixel rounding during resizing. There is no catalogue evidence of
-changed product content. Human review and sign-off are deferred.
+These are consistent with minor pixel rounding during resizing. Geometry and perceptual hashes are
+strong automatic evidence, not proof of matching product content. The 84 high-distance same-ID
+pairs are non-blocking items in `docs/reviews/open_decisions.md`.
 
 ## Rebuild
 
