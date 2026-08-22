@@ -458,7 +458,7 @@
         }
       ],
       "aspect_changed_count": 36,
-      "geometry_interpretation": "Observed aspect changes are below 1% and are consistent with minor pixel rounding during resizing. The catalogue found no evidence of changed product content; human review and sign-off are deferred.",
+      "geometry_interpretation": "Observed aspect changes are below 1% and are consistent with minor pixel rounding during resizing. Geometry alone cannot prove that product content matches.",
       "high_resolution_only_count": 0,
       "maximum_relative_aspect_difference_percent": 0.905349794238693,
       "not_larger_count": 0,
@@ -521,7 +521,7 @@
     },
     "splits_csv": {
       "path": "data/processed/splits.csv",
-      "sha256": "babeb0c9bfe526ceb9a39b84faad1183d1f0752b42729ded4895c9457951c229"
+      "sha256": "9f1201a5460796b6b955c0a8b44c59746fe2567557081f65e6ac63c4d8c9929a"
     }
   },
   "limitations": [
@@ -529,7 +529,7 @@
     "The canonical image tree was fully decoded and SHA-256 hashed once.",
     "Kaggle styles.csv and styles/*.json were not opened; metadata equality is an external source assertion, not a catalogue finding."
   ],
-  "runtime_seconds": 117.53776919600205,
+  "runtime_seconds": 120.42931855400002,
   "schema_version": 2,
   "seed": 2753,
   "source_provenance": {
