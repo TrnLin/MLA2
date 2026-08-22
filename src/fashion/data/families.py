@@ -14,12 +14,9 @@ from fashion.config import (
     AUDIT_DIR,
     PREDICTION_MANIFEST_CSV,
     PRODUCT_FAMILIES_CSV,
-    PRODUCT_NAME_REVIEW_CSV,
-    PRODUCT_NAME_TRIAGE_JSON,
     TARGET_COLUMNS,
 )
 from fashion.data.hashing import write_deterministic_csv
-from fashion.data.reviews import validate_review_ledger
 
 
 def _as_bool(series: pd.Series) -> pd.Series:
@@ -100,100 +97,12 @@ def _union_equal_values(
             first[text] = int(index)
 
 
-def _review_counts(path: Path, manifest: pd.DataFrame) -> dict[str, Any]:
-    if not path.exists():
-        return {"status": "not supplied", "reviewed_pairs": 0}
-    review = pd.read_csv(path, keep_default_na=False)
-    required = {
-        "review_id",
-        "family_key",
-        "group_rows",
-        "id_1",
-        "id_2",
-        "decision",
-        "notes",
-    }
-    if missing := required.difference(review.columns):
-        raise ValueError(f"product-name review is missing columns: {sorted(missing)}")
-    audit = validate_review_ledger(review, path)
-    if review["review_id"].duplicated().any():
-        raise ValueError("product-name review IDs must be unique")
-    if not set(review["decision"]).issubset({"same_or_variant", "different", "uncertain"}):
-        raise ValueError("product-name review contains an unknown decision")
-    lookup = manifest.set_index("id")["product_name_key"].astype(str).to_dict()
-    # This triage was frozen after the earlier exact/collision quarantine and before
-    # the new reviewed cross-role near-duplicate decisions were applied.
-    review_scope = manifest[
-        ~_as_bool(manifest["is_cross_role_exact_duplicate"])
-        & ~_as_bool(manifest["has_conflicting_target_labels"])
-    ]
-    group_sizes = review_scope.groupby("product_name_key").size().to_dict()
-    for row in review.itertuples(index=False):
-        first_key = lookup.get(int(row.id_1))
-        second_key = lookup.get(int(row.id_2))
-        if not first_key or first_key != second_key or first_key != str(row.family_key):
-            raise ValueError(f"product-name review pair {row.review_id} has a stale key")
-        if int(row.group_rows) != int(group_sizes[first_key]):
-            raise ValueError(f"product-name review pair {row.review_id} has a stale group size")
-    bands = pd.cut(
-        review["group_rows"].astype(int),
-        bins=[1, 2, 5, 10, float("inf")],
-        labels=["2", "3-5", "6-10", "11+"],
-    )
-    band_counts = bands.value_counts().to_dict()
-    if any(int(band_counts.get(band, 0)) != 30 for band in ("2", "3-5", "6-10", "11+")):
-        raise ValueError("product-name review must contain 30 pairs in each size band")
-    counts = review["decision"].value_counts()
-    return {
-        **audit,
-        "provisional_calls": len(review),
-        "provisional_same_or_variant": int(counts.get("same_or_variant", 0)),
-        "provisional_different": int(counts.get("different", 0)),
-        "provisional_uncertain": int(counts.get("uncertain", 0)),
-        "sampling": (
-            "30 pre-policy crossing keys in each size band: 2, 3-5, 6-10, and "
-            "11+ rows; exact/collision quarantine excluded"
-        ),
-        "interpretation": (
-            "The name key is a conservative blocking signal, not proof of one SKU. False merges "
-            "reduce effective sample size but cannot leak a name block across active partitions. "
-            "The provisional calls are not human-validated evidence until team sign-off."
-        ),
-    }
-
-
-def _load_pre_policy_triage(path: Path) -> dict[str, Any]:
-    if not path.exists():
-        return {"status": "not supplied"}
-    record = json.loads(path.read_text(encoding="utf-8"))
-    required = {
-        "schema_version",
-        "status",
-        "source_split_sha256",
-        "source_split_rows",
-        "normalization",
-        "scope",
-        "crossing_groups",
-        "rows_in_crossing_groups",
-        "distinct_sha256_in_crossing_groups",
-        "interpretation",
-        "limitation",
-    }
-    if missing := required.difference(record):
-        raise ValueError(f"pre-policy product-name triage is missing fields: {sorted(missing)}")
-    if len(str(record["source_split_sha256"])) != 64:
-        raise ValueError("pre-policy product-name triage has an invalid split digest")
-    return record
-
-
 def build_product_families(
     train_manifest_csv: str | Path | None = None,
     prediction_manifest_csv: str | Path = PREDICTION_MANIFEST_CSV,
     candidates_csv: str | Path = AUDIT_DIR / "near_duplicate_candidates.csv.gz",
     output_csv: str | Path = PRODUCT_FAMILIES_CSV,
     summary_output: str | Path = AUDIT_DIR / "product_family_summary.json",
-    product_name_review_csv: str | Path = PRODUCT_NAME_REVIEW_CSV,
-    product_name_triage_json: str | Path = PRODUCT_NAME_TRIAGE_JSON,
     targets: Sequence[str] = TARGET_COLUMNS,
 ) -> pd.DataFrame:
     """Build family blocks after conservatively removing cross-role visual matches."""
@@ -260,7 +169,7 @@ def build_product_families(
         if row.is_cross_role_exact_duplicate:
             row_reasons.append("cross_role_exact_duplicate")
         elif row.is_cross_role_near_duplicate:
-            row_reasons.append("cross_role_near_duplicate_pending_or_confirmed")
+            row_reasons.append("cross_role_near_duplicate_conservative_quarantine")
         if row.has_conflicting_target_labels:
             row_reasons.append("conflicting_labels_exact_sha")
         reasons.append(";".join(row_reasons))
@@ -333,16 +242,21 @@ def build_product_families(
         .groupby("product_name_key")
         .agg(rows=("id", "size"), families=("product_family_group", "nunique"))
     )
+    family_units = int(active_rows["product_family_group"].nunique())
+    reduced_units = len(active_rows) - family_units
     summary = {
-        "schema_version": "3.0.0",
+        "schema_version": "4.0.0",
         "labelled_rows": len(result),
         "pre_quarantined_rows": int(result["pre_quarantine_reason"].ne("").sum()),
         "cross_role_exact_rows": int(result["is_cross_role_exact_duplicate"].sum()),
-        "cross_role_near_rows_pending_or_confirmed": int(
+        "cross_role_near_rows_conservatively_quarantined": int(
             result["is_cross_role_near_duplicate"].sum()
         ),
         "conflicting_exact_sha_rows": int(result["has_conflicting_target_labels"].sum()),
-        "active_family_groups": int(active_rows["product_family_group"].nunique()),
+        "active_product_rows": len(active_rows),
+        "active_family_groups": family_units,
+        "family_units_fewer_than_product_rows": reduced_units,
+        "family_unit_reduction_percent": float(reduced_units / len(active_rows) * 100),
         "active_multirow_family_groups": int(
             active_rows.groupby("product_family_group").size().gt(1).sum()
         ),
@@ -351,12 +265,11 @@ def build_product_families(
         ),
         "active_normalized_name_keys": len(name_groups),
         "active_name_keys_crossing_family_groups": int(name_groups["families"].gt(1).sum()),
-        "product_name_review": _review_counts(Path(product_name_review_csv), manifest),
-        "pre_policy_crossing_triage": _load_pre_policy_triage(Path(product_name_triage_json)),
         "policy": (
-            "First quarantine exact and all pending-or-confirmed cross-role visual components, "
-            "plus conflicting exact hashes. Then block each remaining normalized name, exact "
-            "hash, and accepted visual component for train/validation/holdout allocation."
+            "First quarantine every cross-role visual component and conflicting exact hash. "
+            "Then block each remaining normalized name, exact hash, and accepted automatic "
+            "visual component for train/validation/holdout allocation. Human input is not "
+            "part of preparation or split validation."
         ),
     }
     summary_output = Path(summary_output)
