@@ -196,10 +196,10 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_EDA_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 2.125
+    "preparation_seconds": 1.793
   },
   "git": {
-    "commit": "9bbd52e1a86e42c576a8ab239bcd2d31c31f0a71",
+    "commit": "959ba7aa0d352cda40004bb4208e5fcfa3f89845",
     "dirty": true
   },
   "image_variants": {
@@ -379,7 +379,7 @@
   ],
   "note": "Wall-time benchmark hashes may change; report figures and other evidence are deterministic for the locked runtime.",
   "notebook": {
-    "code_digest": "f561695db9ee1870d41e58b05400c25faa1e7e5a65168f4ede47dca23d6c8d9a",
+    "code_digest": "7a3df866afda7e96ca834b1bfecb7f746aa94a3abe0a5ffd5a1f27327884fa16",
     "path": "notebooks/00_eda.ipynb"
   },
   "runtime": {
@@ -393,12 +393,12 @@
   "volatile_outputs": [
     {
       "path": "results/evidence/eda/transform_benchmark.json",
-      "sha256": "6f30176492f2ac26c3873ee3d883cadd99ebcaea938de1a343bdf9579b6a6264",
+      "sha256": "3be0d152ac55310b2ae2419c0c4ab5a3b2bf5cca7f1808b9ddc8d22a8334fbfc",
       "size_bytes": 6270
     },
     {
       "path": "results/evidence/eda/transform_summary.csv",
-      "sha256": "b7ff239a3569904cc6d9df34b80afa38296322fb6d709259727c9c7536d09e13",
+      "sha256": "e549d881532a844a82f0a6b4519dfb8dacedee09b459efee1f1d4129ce3119c8",
       "size_bytes": 347
     }
   ]
