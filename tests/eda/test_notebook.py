@@ -33,11 +33,12 @@ FIGURE_NAMES = {
     "hierarchy_overlap.png",
     "image_profile.png",
     "joint_target_relationships.png",
-    "near_duplicate_review.png",
-    "product_name_review.png",
+    "near_duplicate_boundary.png",
+    "family_policy.png",
     "season_ambiguity.png",
     "target_distributions.png",
     "task4_protocol.png",
+    "train_image_quality.png",
     "transform_comparison.png",
     "variant_alignment_examples.png",
 }
@@ -65,7 +66,9 @@ EVIDENCE_NAMES = {
     "bias_summary.csv",
     "decision_table.csv",
     "duplicate_summary.csv",
+    "family_basis_summary.csv",
     "family_policy_summary.csv",
+    "family_size_distribution.csv",
     "hierarchy_summary.csv",
     "high_resolution_summary.csv",
     "image_summary.csv",
@@ -75,17 +78,20 @@ EVIDENCE_NAMES = {
     "processed_inventory.csv",
     "provenance.json",
     "raw_inventory.csv",
-    "review_summary.csv",
     "season_family_basis_summary.csv",
+    "support_threshold_sensitivity.csv",
     "summary.json",
     "target_summary.csv",
     "task4_protocol.json",
     "task4_summary.csv",
     "taxonomy_exclusions.csv",
     "taxonomy_summary.csv",
+    "train_image_quality_sample.csv",
+    "train_image_quality_summary.csv",
     "transform_benchmark.json",
     "transform_summary.csv",
     "validation_summary.csv",
+    "validation_family_coverage.csv",
     "variant_alignment_summary.csv",
 }
 
@@ -309,7 +315,7 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert "?" not in markdown
     assert source.count("> **Finding.**") == 10
     assert source.count("> **Modelling consequence.**") == 10
-    assert all(source.count(f"Figure {number}. ") == 1 for number in range(1, 15))
+    assert all(source.count(f"Figure {number}. ") == 1 for number in range(1, 16))
     assert all(
         count in normalized_markdown
         for count in (
@@ -321,6 +327,24 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     )
     assert "Product counts describe reporting units" in markdown
     assert "image-input counts describe the actual loader size" in markdown
+    provenance = json.loads(
+        (ROOT / "results/evidence/eda/provenance.json").read_text(encoding="utf-8")
+    )
+    stable_count = len(provenance["deterministic_outputs"])
+    figure_count = sum(
+        record["path"].startswith("results/figures/eda/")
+        and record["path"].endswith(".png")
+        for record in provenance["deterministic_outputs"]
+    )
+    saved_count_sentence = (
+        f"The notebook records {stable_count} stable evidence files, "
+        f"including all {figure_count} report figures,"
+    )
+    assert saved_count_sentence in normalized_markdown
+    rendered_report = " ".join(
+        (ROOT / "results/notebooks/00_eda.html").read_text(encoding="utf-8").split()
+    )
+    assert saved_count_sentence in rendered_report
     assert "fashion.data.pipeline import prepare_data" in source
     assert "validate_prepared_data_cache" in source
     assert 'PREPARATION_MODE = "cached"' in source
@@ -333,7 +357,16 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert "load_splits(SPLITS_PATH)" in source
     assert "keep_default_na=False" in source
     assert '"NA"' in source
-    assert "pending_team_signoff" in source
+    forbidden_review_workflow = {
+        "pending_team_signoff",
+        "signoff_status",
+        "signed_off",
+        "reviewer_initials",
+        "review_date",
+        "review_summary.csv",
+        "review_contact_sheet",
+    }
+    assert all(token not in source for token in forbidden_review_workflow)
     assert "fashion.eda" not in source
     assert "load_splits_for_final_evaluation" not in source
     assert "raw_train = pd.read_csv" not in source
@@ -419,14 +452,17 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
         first_summary["task4"]["recall_at_k"]["zero_positive_query_rule"]
         == "exclude from macro Recall@K and report in coverage"
     )
-    assert all(row["signed_rows"] == 0 for row in first_summary["reviews"])
+    assert "reviews" not in first_summary
     assert first_summary["image_variants"]["policy"] == (
         "complete_low_high_pairs_in_train_val_holdout"
     )
     assert first_summary["normalization"]["default_policy"] == (
         "pair_weighted_original_and_high_resolution"
     )
-    assert first_summary["image_variants"]["alignment"]["human_signoff"] == "pending"
+    assert first_summary["image_variants"]["alignment"]["blocks_preparation"] is False
+    assert "human_signoff" not in first_summary["image_variants"]["alignment"]
+    assert first_summary["family_policy"]["open_decisions_block_execution"] is False
+    assert first_summary["task4"]["evidence_kind"] == "metadata_proxy"
     assert first_summary["execution"]["preparation_mode"] == "full"
     for partition, counts in first_summary["image_variants"]["partition_coverage"].items():
         assert counts["variant_count"] == 2 * counts["product_count"], partition
@@ -472,9 +508,7 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
         assert "Code step —" not in report
         assert "The next helpers keep tables" not in report
 
-        contact_sheet = root / "results/reviews/review_contact_sheet.html"
-        assert contact_sheet.is_file()
-        assert "Blind image-review contact sheet" in contact_sheet.read_text(encoding="utf-8")
+        assert not list((root / "results/reviews").glob("*"))
 
         saved_summary = root / "results/evidence/eda/summary.json"
         assert hashlib.sha256(saved_summary.read_bytes()).hexdigest()
@@ -674,6 +708,44 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     assert summary["inventory"]["holdout_image_inputs"] == 11_556
     assert summary["inventory"]["quarantine_product_ids"] == 61
     assert summary["inventory"]["quarantine_image_inputs"] == 0
+    family_policy = pd.read_csv(ROOT / "results/evidence/eda/family_policy_summary.csv")
+    family_values = family_policy.set_index("measure")["value"]
+    assert int(family_values["active product rows"]) == 38_551
+    assert int(family_values["independent family units"]) == 27_009
+    assert int(family_values["units removed by blocking"]) == 11_542
+    assert int(family_values["multi-row families"]) == 4_567
+    assert int(family_values["largest family"]) == 80
+    validation = pd.read_csv(ROOT / "results/evidence/eda/validation_summary.csv").set_index(
+        "target"
+    )
+    assert int(validation.loc["articleType", "classes_with_one_val_family"]) == 18
+    assert int(
+        validation.loc["articleType", "classes_with_fewer_than_three_val_families"]
+    ) == 26
+    assert int(validation.loc["usage", "classes_with_two_val_families"]) == 1
+    sensitivity = pd.read_csv(
+        ROOT / "results/evidence/eda/support_threshold_sensitivity.csv"
+    )
+    article_sensitivity = sensitivity[sensitivity["target"].eq("articleType")].set_index(
+        "minimum_train_families"
+    )
+    assert article_sensitivity["supported_classes"].to_dict() == {
+        2: 105,
+        3: 100,
+        4: 98,
+        5: 94,
+    }
+    quality = pd.read_csv(ROOT / "results/evidence/eda/train_image_quality_sample.csv")
+    assert len(quality) == 2_048
+    assert quality["source_partition"].eq("train").all()
+    assert {
+        "brightness_mean",
+        "contrast_std",
+        "laplacian_variance",
+        "foreground_fraction",
+        "foreground_box_fraction",
+        "background_fraction",
+    }.issubset(quality.columns)
     partition_summary = pd.read_csv(ROOT / "results/evidence/eda/partition_summary.csv")
     counts = partition_summary.set_index("partition")
     assert int(counts.loc["train", "image_inputs"]) == 53_984
@@ -683,6 +755,23 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     assert "53,984 training" in document
     assert "11,562 validation" in document
     assert "11,556 holdout" in document
+    assert "metadata proxy" in document
+    assert "real-world similarity ground truth" in document
+    provenance = json.loads(
+        (ROOT / "results/evidence/eda/provenance.json").read_text(encoding="utf-8")
+    )
+    provenance_paths = {row["path"] for row in provenance["inputs"]}
+    assert {
+        "data/processed/audit/issues.csv",
+        "data/processed/audit/product_family_summary.json",
+        "data/processed/high_resolution/catalogue.json",
+        "data/processed/high_resolution/image_catalogue.csv.gz",
+    }.issubset(provenance_paths)
+    assert all(not Path(path).is_absolute() for path in provenance_paths)
+    assert sorted(path.name for path in (ROOT / "docs/reviews").iterdir()) == [
+        "open_decisions.md"
+    ]
+    assert not list((ROOT / "results/reviews").glob("*"))
     assert not (ROOT / "results/evidence/eda/data_reconciliation.json").exists()
 
 
