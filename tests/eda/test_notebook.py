@@ -42,19 +42,24 @@ FIGURE_NAMES = {
     "variant_alignment_examples.png",
 }
 REQUIRED_HEADINGS = (
-    "# 00 - Official exploratory data analysis",
-    "## 1. Environment and fixed rules",
-    "## 2. Validate or explicitly rebuild the one shared data contract",
-    "## 3. Raw and processed inventory",
-    "## 4. Sole split and protected target boundary",
-    "## 5. Duplicate, product-family, and human-review evidence",
-    "## 6. Taxonomy, rare classes, and development balance",
-    "## 7. Train-only image audit",
-    "## 8. Transform comparison and benchmark",
-    "## 9. All targets, joint links, hierarchy, season ambiguity, and bias risk",
-    "## 10. Task 4 visual-search protocol",
-    "## 11. Provenance and deterministic outputs",
-    "## 12. Decisions and honest limits",
+    "# Exploratory Data Analysis",
+    "## Executive summary",
+    "## 1. Scope and execution",
+    "## 2. Data provenance and inventory",
+    "### 2.1 Prepared-data contract",
+    "### 2.2 Dataset inventory",
+    "## 3. Data integrity and leakage controls",
+    "### 3.1 Split integrity",
+    "### 3.2 Duplicate and entity controls",
+    "## 4. Target distributions and class balance",
+    "## 5. Target relationships and bias",
+    "## 6. Image data quality and preprocessing",
+    "### 6.1 Image quality and resolution variants",
+    "### 6.2 Input transformation",
+    "## 7. Retrieval evaluation",
+    "## 8. Reproducibility and limitations",
+    "## 9. Modelling recommendations",
+    "## 10. Final assessment",
 )
 EVIDENCE_NAMES = {
     "bias_summary.csv",
@@ -274,11 +279,23 @@ def _hashes_from_summary(summary: dict) -> dict[str, str]:
 def test_the_official_notebook_contains_the_complete_workflow() -> None:
     notebook = nbformat.read(NOTEBOOK, as_version=4)
     source = _source(notebook)
+    markdown = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "markdown")
     code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
 
     assert sorted((ROOT / "notebooks").glob("*.ipynb")) == [NOTEBOOK]
     assert all(heading in source for heading in REQUIRED_HEADINGS)
     assert all("hide-input" in cell.metadata.get("tags", []) for cell in code_cells)
+    assert all(cell.metadata.get("jupyter", {}).get("source_hidden") for cell in code_cells)
+    technical_cells = [
+        cell for cell in code_cells if "report-hide" in cell.metadata.get("tags", [])
+    ]
+    assert len(technical_cells) == 7
+    assert max(len(cell.source.splitlines()) for cell in technical_cells) < 350
+    assert "**Question.**" not in markdown
+    assert "?" not in markdown
+    assert source.count("> **Finding.**") == 10
+    assert source.count("> **Modelling consequence.**") == 10
+    assert all(source.count(f"Figure {number}. ") == 1 for number in range(1, 15))
     assert "fashion.data.pipeline import prepare_data" in source
     assert "validate_prepared_data_cache" in source
     assert 'PREPARATION_MODE = "cached"' in source
