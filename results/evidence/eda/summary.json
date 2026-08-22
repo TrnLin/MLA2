@@ -50,15 +50,15 @@
     },
     {
       "area": "Task 4",
-      "decision": "validation queries, train-only gallery",
-      "evidence": "zero ID/SHA/family overlap",
-      "later_check": "nDCG, grade-2 Recall, coverage, latency"
+      "decision": "metadata-proxy relevance; validation queries, train-only gallery",
+      "evidence": "zero ID/SHA/family overlap; not similarity ground truth",
+      "later_check": "validate proxy later; report nDCG, Recall, coverage, latency"
     },
     {
-      "area": "human review",
-      "decision": "keep every row pending",
-      "evidence": "no reviewer provenance or sign-off",
-      "later_check": "never claim reviewed precision yet"
+      "area": "family uncertainty",
+      "decision": "report product rows and independent family units",
+      "evidence": "27,009 families from 38,551 active product rows",
+      "later_check": "slice classes with fewer than three validation families"
     }
   ],
   "deterministic_outputs": [
@@ -69,8 +69,8 @@
     },
     {
       "path": "results/evidence/eda/decision_table.csv",
-      "sha256": "3ccf5ee29fb858ccd33c518a8b6836656ba2ec5ef16e406abe70e80914975762",
-      "size_bytes": 1339
+      "sha256": "bb8bf2795afd96894af9971b2b64370cc0caeb855ab210c819f78adbcca72ea1",
+      "size_bytes": 1483
     },
     {
       "path": "results/evidence/eda/duplicate_summary.csv",
@@ -78,9 +78,19 @@
       "size_bytes": 276
     },
     {
+      "path": "results/evidence/eda/family_basis_summary.csv",
+      "sha256": "abefdcd12eb8e8a77c8188d96feed9b772fe58bd2a57b221adb02635121d99e8",
+      "size_bytes": 363
+    },
+    {
       "path": "results/evidence/eda/family_policy_summary.csv",
-      "sha256": "f68b107f64f85a115a9f4bbb6a0914c5f6654f762f06e4cf23fad9f8fb6a6627",
-      "size_bytes": 217
+      "sha256": "2d06fde3cc423e76b37eded02fb777e381b815b57e2b206a93ee4bbe5d35662b",
+      "size_bytes": 400
+    },
+    {
+      "path": "results/evidence/eda/family_size_distribution.csv",
+      "sha256": "6827cd9e5be85165fc3e99accba62ebdad125471acb82b2a7e0d8ee9fdabdf29",
+      "size_bytes": 230
     },
     {
       "path": "results/evidence/eda/hierarchy_summary.csv",
@@ -104,18 +114,18 @@
     },
     {
       "path": "results/evidence/eda/normalization_summary.csv",
-      "sha256": "7bb7160e5caa6186f964352a71a1302f394bca45f673012dafbe7fc2aa2a4623",
-      "size_bytes": 159
+      "sha256": "6e1c8329dba45e301eb2efd2740248ba1b1666aa158aace2c407b7e6bab15c1d",
+      "size_bytes": 329
     },
     {
       "path": "results/evidence/eda/partition_summary.csv",
-      "sha256": "dd4565e5a59aa1b9fbd7a52c5973b1b30830eaaedd9a8d389883a800e61e4cfb",
-      "size_bytes": 337
+      "sha256": "9940ae2ea629dcc9feb1dad89aec52a075d2c7f661831ff2615e12aa138cfe37",
+      "size_bytes": 369
     },
     {
       "path": "results/evidence/eda/processed_inventory.csv",
-      "sha256": "79f7b5fffdf2fba7ba43537b7535618796a7c7c6e02e2bd2ef571092914c1749",
-      "size_bytes": 2414
+      "sha256": "5c74c901ebdb7976f41b33a0acc8f825d90024ab6b20c6d44711f7c2eb6ea8b9",
+      "size_bytes": 2565
     },
     {
       "path": "results/evidence/eda/raw_inventory.csv",
@@ -123,29 +133,29 @@
       "size_bytes": 378
     },
     {
-      "path": "results/evidence/eda/review_summary.csv",
-      "sha256": "adf46c04988ee4ffa776e93bb7b93a801bca394c99e056d26e0361fc9e26f7b6",
-      "size_bytes": 391
-    },
-    {
       "path": "results/evidence/eda/season_family_basis_summary.csv",
-      "sha256": "70ddcf4295c49e51ab9611550a30be056a98e08c9888fc052d32cd9394394fa0",
+      "sha256": "cc42cd2c190903d3f84b7522bba776e2f5c52fc029c1c5c5d39b600c8780d7ee",
       "size_bytes": 708
     },
     {
+      "path": "results/evidence/eda/support_threshold_sensitivity.csv",
+      "sha256": "2708f272537a5e25ee3542a8fc11a6fd6b7d5510cbe513dbc7c9a44cf458990b",
+      "size_bytes": 355
+    },
+    {
       "path": "results/evidence/eda/target_summary.csv",
-      "sha256": "dda567703bc58113d96ecb7ddfe60244065273094b7622687bfd6069f207d421",
-      "size_bytes": 293
+      "sha256": "c072a896acaae39f4868d947aa79e015b08e936bef373f5a73b087ee1836dd18",
+      "size_bytes": 388
     },
     {
       "path": "results/evidence/eda/task4_protocol.json",
-      "sha256": "53d4c1e136c8d5901f94ee954110d4ed15c716b517edd175ad5534f5c5c548ae",
-      "size_bytes": 1939
+      "sha256": "f6c12f9e8d9e8f61b841eb66ad046fb162a86a56e9dce3de5e7e90c0b0d37316",
+      "size_bytes": 2136
     },
     {
       "path": "results/evidence/eda/task4_summary.csv",
-      "sha256": "5af0c283a2d19f0e24fff0538f44c30a583671c4721e33a3421a244cde2d250f",
-      "size_bytes": 564
+      "sha256": "f2e9f9f46fce85f492f9d3cf43a9b05868070c1e1601bf0b5ed32d653ec2b203",
+      "size_bytes": 677
     },
     {
       "path": "results/evidence/eda/taxonomy_exclusions.csv",
@@ -158,89 +168,104 @@
       "size_bytes": 423
     },
     {
+      "path": "results/evidence/eda/train_image_quality_sample.csv",
+      "sha256": "1a0acca4b3ff8aee91c33071dfde60aa0a408b2bdf04eb758836a899bdf4dbfc",
+      "size_bytes": 253333
+    },
+    {
+      "path": "results/evidence/eda/train_image_quality_summary.csv",
+      "sha256": "8ca327edcd3bcb3e13bb392ccb8bf0a1787f4614970c3b9fe5d9abd8c8ab33eb",
+      "size_bytes": 579
+    },
+    {
+      "path": "results/evidence/eda/validation_family_coverage.csv",
+      "sha256": "990b6750c80cfae8d75b839b72b7425bf45d43209ed6893e7fa7bf08dfdac90d",
+      "size_bytes": 3981
+    },
+    {
       "path": "results/evidence/eda/validation_summary.csv",
-      "sha256": "27ea0aee9d3f0a2a41883f17ff48abb9da03ba9ea23c78aed5d0130af80d42ba",
-      "size_bytes": 405
+      "sha256": "9fb61c40e03da6daf23c32f2a888eb3675e4f40fa74ae21cbb9838596340fe16",
+      "size_bytes": 532
     },
     {
       "path": "results/evidence/eda/variant_alignment_summary.csv",
-      "sha256": "0b9572f28cbfb04bbccabc2f64c49cb3ba59a3b7f1f3f9e1846eb322b0e666cc",
-      "size_bytes": 114
+      "sha256": "b57a052f933acafa78d889b18c1fd4df017087c525ef598f819fba32dd945820",
+      "size_bytes": 202
     },
     {
       "path": "results/figures/eda/article_type_long_tail.png",
-      "sha256": "17f4cec5035be9aa62c10469804f5f37a87deb15fd20d3102c016d3d7e94ddd7",
-      "size_bytes": 284104
+      "sha256": "0bfe3558ca711eaf7023c52331cd4bac6184cc3664f2155fcc90689c75482b86",
+      "size_bytes": 258720
     },
     {
       "path": "results/figures/eda/bias_risk.png",
-      "sha256": "9eb6483744261ce2bc560c9ad7c0ee71d4620ecca12303b01733ac677e5c4fe2",
-      "size_bytes": 284099
+      "sha256": "a9e485a70c9f7195fdcf7f6b41d8f01dbd738240488289def716bb73402563c6",
+      "size_bytes": 262162
     },
     {
       "path": "results/figures/eda/data_quality_examples.png",
-      "sha256": "8ddc559937af41122f8bd6f24ef6253986a69a5091a0df2a7490de8240e7e2e3",
-      "size_bytes": 199323
+      "sha256": "1e1afe7e80a576ae17476a2933d26a670aa5705bca914747c60a7c9bf651f842",
+      "size_bytes": 182437
     },
     {
       "path": "results/figures/eda/development_balance.png",
-      "sha256": "6cc2416683f8e94a3a967b07bf9c798b2ea362456c8257e319e519e592cc3f1d",
-      "size_bytes": 255518
+      "sha256": "5ca9852eb15158e0f1f7e67740f35333d3254501c9532b5d9be6a7529f419492",
+      "size_bytes": 266052
+    },
+    {
+      "path": "results/figures/eda/family_policy.png",
+      "sha256": "382b172f1130f4b4c5183abf5504dabd96f3e9c8610272f7d113035eb0c2b94f",
+      "size_bytes": 175655
     },
     {
       "path": "results/figures/eda/hierarchy_overlap.png",
-      "sha256": "337a02ace1fab23a06aaca432dc350fa18184cc51b760e15aa68d7d6aa6b94d0",
-      "size_bytes": 173709
+      "sha256": "982d74ccb85bbb84f4190baec9ebeaf88bb6188146e8f0cb419603544f7c7d46",
+      "size_bytes": 155766
     },
     {
       "path": "results/figures/eda/image_profile.png",
-      "sha256": "60998258fda1504db972389ca2c961dc0eaf52120e21aa04a0f9ea2a400ce949",
-      "size_bytes": 225185
+      "sha256": "09fe6f11c254fd951843899a23f6623822eb4deedf4afeffb746c0e44e107792",
+      "size_bytes": 203612
     },
     {
       "path": "results/figures/eda/joint_target_relationships.png",
-      "sha256": "584535c879dbcc4051c585ba5452715b5f49f36184a2d244c472392d54b6e918",
-      "size_bytes": 337870
+      "sha256": "b2f17f8a09e29551e5b643a02a8493a850fb0c2f3adcd1a09e0da15b90f7841a",
+      "size_bytes": 315244
     },
     {
-      "path": "results/figures/eda/near_duplicate_review.png",
-      "sha256": "49857ab46b789691586778e4447865b68745312b8e410f1d8bde1d413c479c91",
-      "size_bytes": 199666
-    },
-    {
-      "path": "results/figures/eda/product_name_review.png",
-      "sha256": "f9d2be32e357197049f172e581ad4167c7aa523c28aa8d530aa668ffbd1ca901",
-      "size_bytes": 242270
+      "path": "results/figures/eda/near_duplicate_boundary.png",
+      "sha256": "22a8165fc9bf186df8880da7a9fb7313b1f1172df13dd6fedb8ff4f989474b4d",
+      "size_bytes": 178100
     },
     {
       "path": "results/figures/eda/season_ambiguity.png",
-      "sha256": "6c697c86cd2ab554c1022e3cc05b64d2912975871f680dc5a040dac9bd86007c",
-      "size_bytes": 123686
+      "sha256": "ebc8562aff58fbe139032066c9c47452842acbc70b3b493c8b12dbbae6c20473",
+      "size_bytes": 108372
     },
     {
       "path": "results/figures/eda/target_distributions.png",
-      "sha256": "7dba1fce3f29c0913483a10dc0521aa9a12b6265b5b24ac05a57fc938bce6465",
-      "size_bytes": 216526
+      "sha256": "7b51f42200eb854263330119a50ce64fd553740efbac6ad1377911a2b69dc774",
+      "size_bytes": 193037
     },
     {
       "path": "results/figures/eda/task4_protocol.png",
-      "sha256": "d537fc1e7545c5b27981e9e8b546557a52c7b415895c833048f29aec6fd294d3",
-      "size_bytes": 151920
+      "sha256": "be4ca13e59fbee1dcacb2c0b6b82ba211dd1d04f2ca665c88229528caf33d87c",
+      "size_bytes": 141538
+    },
+    {
+      "path": "results/figures/eda/train_image_quality.png",
+      "sha256": "2e40ad3084fd16d84bf5b248b3055fc5b0c6caeeae8d156df54d8eb041c15342",
+      "size_bytes": 299996
     },
     {
       "path": "results/figures/eda/transform_comparison.png",
-      "sha256": "4a2b96de6a37cbfcda89db0222b3e0f44e156d35ff96a6156d5989be7a819b3d",
-      "size_bytes": 262617
+      "sha256": "cf5f9b05ac5d19c9736a64d93108d6dc54f0ccdb0499f3fd25978e9804a807d2",
+      "size_bytes": 239568
     },
     {
       "path": "results/figures/eda/variant_alignment_examples.png",
-      "sha256": "bcb03d258a9bdb023552178327990cb89e5252bf5f21bdef056d8d6a9afe4aab",
-      "size_bytes": 677615
-    },
-    {
-      "path": "results/reviews/review_contact_sheet.html",
-      "sha256": "64df2cec9148ed56a012bf7c1c4399baabee2e58f1f7ccbfd90e7ee62063b8f4",
-      "size_bytes": 813884
+      "sha256": "ab80f50eb0c3a1f203bfc809e16f73069604b42fe91c70f229d6777c0c6a96d6",
+      "size_bytes": 670739
     }
   ],
   "execution": {
@@ -258,19 +283,369 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_EDA_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 1.992
+    "preparation_seconds": 4.863
+  },
+  "family_policy": {
+    "block_basis": [
+      {
+        "block_basis": "accepted_near_duplicate",
+        "family_units": 42,
+        "largest_family": 6,
+        "multirow_families": 42,
+        "product_rows": 103
+      },
+      {
+        "block_basis": "exact_sha256+accepted_near_duplicate",
+        "family_units": 94,
+        "largest_family": 2,
+        "multirow_families": 94,
+        "product_rows": 188
+      },
+      {
+        "block_basis": "exact_sha256+normalized_product_name+accepted_near_duplicate",
+        "family_units": 364,
+        "largest_family": 51,
+        "multirow_families": 364,
+        "product_rows": 1554
+      },
+      {
+        "block_basis": "normalized_product_name",
+        "family_units": 4012,
+        "largest_family": 80,
+        "multirow_families": 4012,
+        "product_rows": 13786
+      },
+      {
+        "block_basis": "normalized_product_name+accepted_near_duplicate",
+        "family_units": 55,
+        "largest_family": 33,
+        "multirow_families": 55,
+        "product_rows": 478
+      },
+      {
+        "block_basis": "singleton",
+        "family_units": 22442,
+        "largest_family": 1,
+        "multirow_families": 0,
+        "product_rows": 22442
+      }
+    ],
+    "family_size_distribution": [
+      {
+        "family_size": 1,
+        "family_units": 22442
+      },
+      {
+        "family_size": 2,
+        "family_units": 2517
+      },
+      {
+        "family_size": 3,
+        "family_units": 809
+      },
+      {
+        "family_size": 4,
+        "family_units": 448
+      },
+      {
+        "family_size": 5,
+        "family_units": 239
+      },
+      {
+        "family_size": 6,
+        "family_units": 154
+      },
+      {
+        "family_size": 7,
+        "family_units": 94
+      },
+      {
+        "family_size": 8,
+        "family_units": 64
+      },
+      {
+        "family_size": 9,
+        "family_units": 48
+      },
+      {
+        "family_size": 10,
+        "family_units": 38
+      },
+      {
+        "family_size": 11,
+        "family_units": 23
+      },
+      {
+        "family_size": 12,
+        "family_units": 18
+      },
+      {
+        "family_size": 13,
+        "family_units": 17
+      },
+      {
+        "family_size": 14,
+        "family_units": 19
+      },
+      {
+        "family_size": 15,
+        "family_units": 8
+      },
+      {
+        "family_size": 16,
+        "family_units": 11
+      },
+      {
+        "family_size": 17,
+        "family_units": 9
+      },
+      {
+        "family_size": 18,
+        "family_units": 8
+      },
+      {
+        "family_size": 19,
+        "family_units": 5
+      },
+      {
+        "family_size": 20,
+        "family_units": 6
+      },
+      {
+        "family_size": 21,
+        "family_units": 4
+      },
+      {
+        "family_size": 22,
+        "family_units": 4
+      },
+      {
+        "family_size": 23,
+        "family_units": 2
+      },
+      {
+        "family_size": 24,
+        "family_units": 1
+      },
+      {
+        "family_size": 25,
+        "family_units": 2
+      },
+      {
+        "family_size": 26,
+        "family_units": 4
+      },
+      {
+        "family_size": 27,
+        "family_units": 2
+      },
+      {
+        "family_size": 28,
+        "family_units": 2
+      },
+      {
+        "family_size": 31,
+        "family_units": 2
+      },
+      {
+        "family_size": 33,
+        "family_units": 1
+      },
+      {
+        "family_size": 34,
+        "family_units": 1
+      },
+      {
+        "family_size": 37,
+        "family_units": 1
+      },
+      {
+        "family_size": 39,
+        "family_units": 1
+      },
+      {
+        "family_size": 44,
+        "family_units": 1
+      },
+      {
+        "family_size": 49,
+        "family_units": 1
+      },
+      {
+        "family_size": 51,
+        "family_units": 1
+      },
+      {
+        "family_size": 56,
+        "family_units": 1
+      },
+      {
+        "family_size": 80,
+        "family_units": 1
+      }
+    ],
+    "open_decisions_block_execution": false,
+    "open_decisions_file": "docs/reviews/open_decisions.md",
+    "summary": [
+      {
+        "meaning": "loader/reporting rows",
+        "measure": "active product rows",
+        "modelling_action": "do not treat rows as independent",
+        "value": 38551
+      },
+      {
+        "meaning": "split/uncertainty units",
+        "measure": "independent family units",
+        "modelling_action": "bootstrap by family",
+        "value": 27009
+      },
+      {
+        "meaning": "29.9% fewer units",
+        "measure": "units removed by blocking",
+        "modelling_action": "accept cost to stop leakage",
+        "value": 11542
+      },
+      {
+        "meaning": "kept whole",
+        "measure": "multi-row families",
+        "modelling_action": "never split their rows",
+        "value": 4567
+      },
+      {
+        "meaning": "largest over-block risk",
+        "measure": "largest family",
+        "modelling_action": "report support sensitivity",
+        "value": 80
+      }
+    ],
+    "support_threshold_sensitivity": [
+      {
+        "limited_classes": 19,
+        "minimum_train_families": 2,
+        "official_classes": 124,
+        "supported_classes": 105,
+        "target": "articleType"
+      },
+      {
+        "limited_classes": 24,
+        "minimum_train_families": 3,
+        "official_classes": 124,
+        "supported_classes": 100,
+        "target": "articleType"
+      },
+      {
+        "limited_classes": 26,
+        "minimum_train_families": 4,
+        "official_classes": 124,
+        "supported_classes": 98,
+        "target": "articleType"
+      },
+      {
+        "limited_classes": 30,
+        "minimum_train_families": 5,
+        "official_classes": 124,
+        "supported_classes": 94,
+        "target": "articleType"
+      },
+      {
+        "limited_classes": 0,
+        "minimum_train_families": 2,
+        "official_classes": 4,
+        "supported_classes": 4,
+        "target": "season"
+      },
+      {
+        "limited_classes": 0,
+        "minimum_train_families": 3,
+        "official_classes": 4,
+        "supported_classes": 4,
+        "target": "season"
+      },
+      {
+        "limited_classes": 0,
+        "minimum_train_families": 4,
+        "official_classes": 4,
+        "supported_classes": 4,
+        "target": "season"
+      },
+      {
+        "limited_classes": 0,
+        "minimum_train_families": 5,
+        "official_classes": 4,
+        "supported_classes": 4,
+        "target": "season"
+      },
+      {
+        "limited_classes": 0,
+        "minimum_train_families": 2,
+        "official_classes": 5,
+        "supported_classes": 5,
+        "target": "gender"
+      },
+      {
+        "limited_classes": 0,
+        "minimum_train_families": 3,
+        "official_classes": 5,
+        "supported_classes": 5,
+        "target": "gender"
+      },
+      {
+        "limited_classes": 0,
+        "minimum_train_families": 4,
+        "official_classes": 5,
+        "supported_classes": 5,
+        "target": "gender"
+      },
+      {
+        "limited_classes": 0,
+        "minimum_train_families": 5,
+        "official_classes": 5,
+        "supported_classes": 5,
+        "target": "gender"
+      },
+      {
+        "limited_classes": 1,
+        "minimum_train_families": 2,
+        "official_classes": 9,
+        "supported_classes": 8,
+        "target": "usage"
+      },
+      {
+        "limited_classes": 1,
+        "minimum_train_families": 3,
+        "official_classes": 9,
+        "supported_classes": 8,
+        "target": "usage"
+      },
+      {
+        "limited_classes": 1,
+        "minimum_train_families": 4,
+        "official_classes": 9,
+        "supported_classes": 8,
+        "target": "usage"
+      },
+      {
+        "limited_classes": 1,
+        "minimum_train_families": 5,
+        "official_classes": 9,
+        "supported_classes": 8,
+        "target": "usage"
+      }
+    ]
   },
   "image_variants": {
     "alignment": {
+      "blocks_preparation": false,
       "exception_distance": 4,
       "high_only": 0,
-      "human_signoff": "pending",
       "original_only": 0,
       "possible_mismatches": 84,
-      "same_id_pairs": 44441
+      "safe_action": "keep warning IDs visible; do not infer product identity",
+      "same_id_pairs": 44441,
+      "warning_count": 84
     },
     "alignment_pairs_sha256": "f99a571ac310046b7de3deb436b0d1ba2d7911bce12e704aea791191440be0bb",
-    "alignment_summary_sha256": "c80f5eddddf82551c4ab72337aa48eebec98b5070d5c862117a9c3de2313d937",
+    "alignment_summary_sha256": "635315bb4cab59be0b05e06ad39c56495ca83115596b1122ea51385c92a599bc",
     "high_resolution_catalogue_path": "data/processed/high_resolution/image_catalogue.csv.gz",
     "high_resolution_catalogue_sha256": "034ad5875ed2b3256b6727e6d831b528d949796d9d2e3bbfc7f29565d8eca099",
     "manifest_path": "data/processed/training_image_variants.csv.gz",
@@ -357,33 +732,7 @@
     "paired_sha256": "9e2c3da6bfdb9d0df01c0f31dfd8f53936bca1ebebe50c3ef67b10ba7150bf6f",
     "train_ids_digest": "9ed3d7507e844d1cd66d77562a0be48ce2b8a052c39f4feff4437acbc7e0d797"
   },
-  "reviews": [
-    {
-      "evidence": "automatic near-duplicate sample",
-      "pending_rows": 120,
-      "rows": 120,
-      "safe_action": "quarantine pending cross-role matches; no human claim",
-      "signed_rows": 0,
-      "status": "pending_team_signoff"
-    },
-    {
-      "evidence": "cross-role visual sample",
-      "pending_rows": 10,
-      "rows": 10,
-      "safe_action": "quarantine pending cross-role matches; no human claim",
-      "signed_rows": 0,
-      "status": "pending_team_signoff"
-    },
-    {
-      "evidence": "normalized-name sample",
-      "pending_rows": 120,
-      "rows": 120,
-      "safe_action": "quarantine pending cross-role matches; no human claim",
-      "signed_rows": 0,
-      "status": "pending_team_signoff"
-    }
-  ],
-  "schema_version": "11.0.0",
+  "schema_version": "12.0.0",
   "scope": {
     "development_partition": "val",
     "modelling_partition": "train",
@@ -397,6 +746,7 @@
   },
   "task4": {
     "eligible_supported_query_products": 5768,
+    "evidence_kind": "metadata_proxy",
     "excluded_unsupported_query_products": 13,
     "final_evaluation_unsupported_query_policy": "report separately as a coverage/failure slice; never silently omit",
     "final_gallery_policy": "a larger gallery is locked until independent evaluation ends",
@@ -408,7 +758,9 @@
       "1": "same official articleType but different baseColour",
       "2": "same official articleType and baseColour"
     },
-    "limitation": "metadata grades are a proxy, not human visual-similarity ground truth",
+    "human_validation_file": "docs/reviews/open_decisions.md",
+    "human_validation_status": "unresolved_non_blocking",
+    "limitation": "metadata grades are a proxy for catalogue relevance only; they are not real-world visual-similarity ground truth",
     "metrics": [
       "nDCG@5 over grades 2/1/0",
       "grade-2 Recall@5",
@@ -478,6 +830,73 @@
       "validation_unknown_to_train": 0
     }
   ],
+  "train_image_quality": {
+    "sample_method": "evenly spaced product IDs after sorting",
+    "sample_products": 2048,
+    "source_partition": "train",
+    "summary": [
+      {
+        "maximum": 0.9964514374732971,
+        "median": 0.8454867005348206,
+        "metric": "brightness_mean",
+        "minimum": 0.4876292049884796,
+        "p05": 0.6853879541158676,
+        "p95": 0.9619971930980682,
+        "sample_products": 2048,
+        "source_partition": "train"
+      },
+      {
+        "maximum": 0.4604175090789795,
+        "median": 0.2563379257917404,
+        "metric": "contrast_std",
+        "minimum": 0.023380843922495842,
+        "p05": 0.09935013130307198,
+        "p95": 0.37442953437566756,
+        "sample_products": 2048,
+        "source_partition": "train"
+      },
+      {
+        "maximum": 0.17540192604064941,
+        "median": 0.03512605465948582,
+        "metric": "laplacian_variance",
+        "minimum": 0.0010357454884797335,
+        "p05": 0.009386229282245041,
+        "p95": 0.07554173581302163,
+        "sample_products": 2048,
+        "source_partition": "train"
+      },
+      {
+        "maximum": 0.9825,
+        "median": 0.32010416666666663,
+        "metric": "foreground_fraction",
+        "minimum": 0.016458333333333332,
+        "p05": 0.103125,
+        "p95": 0.5018020833333333,
+        "sample_products": 2048,
+        "source_partition": "train"
+      },
+      {
+        "maximum": 1.0,
+        "median": 0.5103125,
+        "metric": "foreground_box_fraction",
+        "minimum": 0.09,
+        "p05": 0.19583333333333333,
+        "p95": 0.7570833333333333,
+        "sample_products": 2048,
+        "source_partition": "train"
+      },
+      {
+        "maximum": 0.9835416666666666,
+        "median": 0.6798958333333334,
+        "metric": "background_fraction",
+        "minimum": 0.0175,
+        "p05": 0.4981979166666667,
+        "p95": 0.896875,
+        "sample_products": 2048,
+        "source_partition": "train"
+      }
+    ]
+  },
   "transform_decision": {
     "common_source_padding_percent": 0.0,
     "downstream_macro_f1": "not available",
@@ -491,6 +910,9 @@
   "validation": [
     {
       "classes_seen_in_val": 100,
+      "classes_with_fewer_than_three_val_families": 26,
+      "classes_with_one_val_family": 18,
+      "classes_with_two_val_families": 8,
       "coverage_percent": 100.0,
       "max_gap_percentage_points": 0.25106142677416227,
       "mean_gap_percentage_points": 0.016941293624110308,
@@ -502,6 +924,9 @@
     },
     {
       "classes_seen_in_val": 4,
+      "classes_with_fewer_than_three_val_families": 0,
+      "classes_with_one_val_family": 0,
+      "classes_with_two_val_families": 0,
       "coverage_percent": 100.0,
       "max_gap_percentage_points": 0.03128417496168723,
       "mean_gap_percentage_points": 0.015642087480844058,
@@ -513,6 +938,9 @@
     },
     {
       "classes_seen_in_val": 5,
+      "classes_with_fewer_than_three_val_families": 0,
+      "classes_with_one_val_family": 0,
+      "classes_with_two_val_families": 0,
       "coverage_percent": 100.0,
       "max_gap_percentage_points": 0.025568961626126985,
       "mean_gap_percentage_points": 0.013131697801608232,
@@ -524,6 +952,9 @@
     },
     {
       "classes_seen_in_val": 8,
+      "classes_with_fewer_than_three_val_families": 1,
+      "classes_with_one_val_family": 0,
+      "classes_with_two_val_families": 1,
       "coverage_percent": 100.0,
       "max_gap_percentage_points": 0.10113492225397014,
       "mean_gap_percentage_points": 0.027920576912562806,
@@ -532,6 +963,944 @@
       "train_classes": 8,
       "train_valid": 26990,
       "val_valid": 5781
+    }
+  ],
+  "validation_family_coverage": [
+    {
+      "label": "Tshirts",
+      "target": "articleType",
+      "train_family_units": 3780,
+      "train_product_rows": 4732,
+      "val_family_units": 823,
+      "val_product_rows": 1016
+    },
+    {
+      "label": "Shirts",
+      "target": "articleType",
+      "train_family_units": 1260,
+      "train_product_rows": 2156,
+      "val_family_units": 267,
+      "val_product_rows": 463
+    },
+    {
+      "label": "Casual Shoes",
+      "target": "articleType",
+      "train_family_units": 1448,
+      "train_product_rows": 1874,
+      "val_family_units": 311,
+      "val_product_rows": 402
+    },
+    {
+      "label": "Watches",
+      "target": "articleType",
+      "train_family_units": 1065,
+      "train_product_rows": 1573,
+      "val_family_units": 239,
+      "val_product_rows": 338
+    },
+    {
+      "label": "Sports Shoes",
+      "target": "articleType",
+      "train_family_units": 1271,
+      "train_product_rows": 1393,
+      "val_family_units": 273,
+      "val_product_rows": 298
+    },
+    {
+      "label": "Tops",
+      "target": "articleType",
+      "train_family_units": 795,
+      "train_product_rows": 1127,
+      "val_family_units": 172,
+      "val_product_rows": 242
+    },
+    {
+      "label": "Kurtas",
+      "target": "articleType",
+      "train_family_units": 575,
+      "train_product_rows": 1085,
+      "val_family_units": 124,
+      "val_product_rows": 237
+    },
+    {
+      "label": "Handbags",
+      "target": "articleType",
+      "train_family_units": 652,
+      "train_product_rows": 1005,
+      "val_family_units": 141,
+      "val_product_rows": 217
+    },
+    {
+      "label": "Heels",
+      "target": "articleType",
+      "train_family_units": 389,
+      "train_product_rows": 732,
+      "val_family_units": 83,
+      "val_product_rows": 158
+    },
+    {
+      "label": "Sunglasses",
+      "target": "articleType",
+      "train_family_units": 347,
+      "train_product_rows": 730,
+      "val_family_units": 78,
+      "val_product_rows": 156
+    },
+    {
+      "label": "Sandals",
+      "target": "articleType",
+      "train_family_units": 406,
+      "train_product_rows": 605,
+      "val_family_units": 88,
+      "val_product_rows": 130
+    },
+    {
+      "label": "Flip Flops",
+      "target": "articleType",
+      "train_family_units": 501,
+      "train_product_rows": 604,
+      "val_family_units": 109,
+      "val_product_rows": 130
+    },
+    {
+      "label": "Wallets",
+      "target": "articleType",
+      "train_family_units": 346,
+      "train_product_rows": 580,
+      "val_family_units": 76,
+      "val_product_rows": 124
+    },
+    {
+      "label": "Belts",
+      "target": "articleType",
+      "train_family_units": 337,
+      "train_product_rows": 557,
+      "val_family_units": 73,
+      "val_product_rows": 119
+    },
+    {
+      "label": "Backpacks",
+      "target": "articleType",
+      "train_family_units": 351,
+      "train_product_rows": 498,
+      "val_family_units": 77,
+      "val_product_rows": 106
+    },
+    {
+      "label": "Briefs",
+      "target": "articleType",
+      "train_family_units": 331,
+      "train_product_rows": 468,
+      "val_family_units": 71,
+      "val_product_rows": 100
+    },
+    {
+      "label": "Socks",
+      "target": "articleType",
+      "train_family_units": 242,
+      "train_product_rows": 429,
+      "val_family_units": 53,
+      "val_product_rows": 92
+    },
+    {
+      "label": "Formal Shoes",
+      "target": "articleType",
+      "train_family_units": 183,
+      "train_product_rows": 423,
+      "val_family_units": 40,
+      "val_product_rows": 94
+    },
+    {
+      "label": "Perfume and Body Mist",
+      "target": "articleType",
+      "train_family_units": 330,
+      "train_product_rows": 389,
+      "val_family_units": 71,
+      "val_product_rows": 85
+    },
+    {
+      "label": "Jeans",
+      "target": "articleType",
+      "train_family_units": 184,
+      "train_product_rows": 387,
+      "val_family_units": 42,
+      "val_product_rows": 85
+    },
+    {
+      "label": "Shorts",
+      "target": "articleType",
+      "train_family_units": 284,
+      "train_product_rows": 368,
+      "val_family_units": 63,
+      "val_product_rows": 79
+    },
+    {
+      "label": "Trousers",
+      "target": "articleType",
+      "train_family_units": 229,
+      "train_product_rows": 358,
+      "val_family_units": 50,
+      "val_product_rows": 77
+    },
+    {
+      "label": "Flats",
+      "target": "articleType",
+      "train_family_units": 191,
+      "train_product_rows": 293,
+      "val_family_units": 43,
+      "val_product_rows": 63
+    },
+    {
+      "label": "Dresses",
+      "target": "articleType",
+      "train_family_units": 186,
+      "train_product_rows": 237,
+      "val_family_units": 41,
+      "val_product_rows": 52
+    },
+    {
+      "label": "Bra",
+      "target": "articleType",
+      "train_family_units": 160,
+      "train_product_rows": 205,
+      "val_family_units": 36,
+      "val_product_rows": 46
+    },
+    {
+      "label": "Track Pants",
+      "target": "articleType",
+      "train_family_units": 164,
+      "train_product_rows": 204,
+      "val_family_units": 36,
+      "val_product_rows": 45
+    },
+    {
+      "label": "Deodorant",
+      "target": "articleType",
+      "train_family_units": 182,
+      "train_product_rows": 203,
+      "val_family_units": 41,
+      "val_product_rows": 45
+    },
+    {
+      "label": "Sweatshirts",
+      "target": "articleType",
+      "train_family_units": 166,
+      "train_product_rows": 194,
+      "val_family_units": 37,
+      "val_product_rows": 43
+    },
+    {
+      "label": "Sweaters",
+      "target": "articleType",
+      "train_family_units": 162,
+      "train_product_rows": 191,
+      "val_family_units": 37,
+      "val_product_rows": 43
+    },
+    {
+      "label": "Caps",
+      "target": "articleType",
+      "train_family_units": 164,
+      "train_product_rows": 188,
+      "val_family_units": 37,
+      "val_product_rows": 42
+    },
+    {
+      "label": "Earrings",
+      "target": "articleType",
+      "train_family_units": 24,
+      "train_product_rows": 171,
+      "val_family_units": 9,
+      "val_product_rows": 35
+    },
+    {
+      "label": "Innerwear Vests",
+      "target": "articleType",
+      "train_family_units": 132,
+      "train_product_rows": 168,
+      "val_family_units": 29,
+      "val_product_rows": 37
+    },
+    {
+      "label": "Jackets",
+      "target": "articleType",
+      "train_family_units": 139,
+      "train_product_rows": 158,
+      "val_family_units": 31,
+      "val_product_rows": 35
+    },
+    {
+      "label": "Clutches",
+      "target": "articleType",
+      "train_family_units": 126,
+      "train_product_rows": 155,
+      "val_family_units": 27,
+      "val_product_rows": 34
+    },
+    {
+      "label": "Ties",
+      "target": "articleType",
+      "train_family_units": 69,
+      "train_product_rows": 146,
+      "val_family_units": 16,
+      "val_product_rows": 33
+    },
+    {
+      "label": "Kurtis",
+      "target": "articleType",
+      "train_family_units": 110,
+      "train_product_rows": 141,
+      "val_family_units": 24,
+      "val_product_rows": 31
+    },
+    {
+      "label": "Tunics",
+      "target": "articleType",
+      "train_family_units": 108,
+      "train_product_rows": 121,
+      "val_family_units": 24,
+      "val_product_rows": 27
+    },
+    {
+      "label": "Capris",
+      "target": "articleType",
+      "train_family_units": 81,
+      "train_product_rows": 111,
+      "val_family_units": 19,
+      "val_product_rows": 25
+    },
+    {
+      "label": "Leggings",
+      "target": "articleType",
+      "train_family_units": 93,
+      "train_product_rows": 111,
+      "val_family_units": 21,
+      "val_product_rows": 24
+    },
+    {
+      "label": "Sarees",
+      "target": "articleType",
+      "train_family_units": 86,
+      "train_product_rows": 106,
+      "val_family_units": 20,
+      "val_product_rows": 23
+    },
+    {
+      "label": "Trunk",
+      "target": "articleType",
+      "train_family_units": 70,
+      "train_product_rows": 98,
+      "val_family_units": 16,
+      "val_product_rows": 21
+    },
+    {
+      "label": "Pendant",
+      "target": "articleType",
+      "train_family_units": 5,
+      "train_product_rows": 88,
+      "val_family_units": 5,
+      "val_product_rows": 17
+    },
+    {
+      "label": "Dupatta",
+      "target": "articleType",
+      "train_family_units": 60,
+      "train_product_rows": 82,
+      "val_family_units": 13,
+      "val_product_rows": 17
+    },
+    {
+      "label": "Skirts",
+      "target": "articleType",
+      "train_family_units": 66,
+      "train_product_rows": 81,
+      "val_family_units": 15,
+      "val_product_rows": 18
+    },
+    {
+      "label": "Ring",
+      "target": "articleType",
+      "train_family_units": 3,
+      "train_product_rows": 77,
+      "val_family_units": 1,
+      "val_product_rows": 2
+    },
+    {
+      "label": "Scarves",
+      "target": "articleType",
+      "train_family_units": 60,
+      "train_product_rows": 76,
+      "val_family_units": 14,
+      "val_product_rows": 17
+    },
+    {
+      "label": "Accessory Gift Set",
+      "target": "articleType",
+      "train_family_units": 26,
+      "train_product_rows": 76,
+      "val_family_units": 7,
+      "val_product_rows": 15
+    },
+    {
+      "label": "Stoles",
+      "target": "articleType",
+      "train_family_units": 41,
+      "train_product_rows": 63,
+      "val_family_units": 11,
+      "val_product_rows": 14
+    },
+    {
+      "label": "Duffel Bag",
+      "target": "articleType",
+      "train_family_units": 47,
+      "train_product_rows": 60,
+      "val_family_units": 10,
+      "val_product_rows": 13
+    },
+    {
+      "label": "Laptop Bag",
+      "target": "articleType",
+      "train_family_units": 40,
+      "train_product_rows": 55,
+      "val_family_units": 9,
+      "val_product_rows": 12
+    },
+    {
+      "label": "Kurta Sets",
+      "target": "articleType",
+      "train_family_units": 48,
+      "train_product_rows": 53,
+      "val_family_units": 11,
+      "val_product_rows": 11
+    },
+    {
+      "label": "Night suits",
+      "target": "articleType",
+      "train_family_units": 28,
+      "train_product_rows": 49,
+      "val_family_units": 7,
+      "val_product_rows": 10
+    },
+    {
+      "label": "Free Gifts",
+      "target": "articleType",
+      "train_family_units": 32,
+      "train_product_rows": 47,
+      "val_family_units": 8,
+      "val_product_rows": 10
+    },
+    {
+      "label": "Sports Sandals",
+      "target": "articleType",
+      "train_family_units": 44,
+      "train_product_rows": 44,
+      "val_family_units": 9,
+      "val_product_rows": 10
+    },
+    {
+      "label": "Necklace and Chains",
+      "target": "articleType",
+      "train_family_units": 30,
+      "train_product_rows": 44,
+      "val_family_units": 7,
+      "val_product_rows": 9
+    },
+    {
+      "label": "Bangle",
+      "target": "articleType",
+      "train_family_units": 12,
+      "train_product_rows": 42,
+      "val_family_units": 6,
+      "val_product_rows": 8
+    },
+    {
+      "label": "Fragrance Gift Set",
+      "target": "articleType",
+      "train_family_units": 38,
+      "train_product_rows": 39,
+      "val_family_units": 8,
+      "val_product_rows": 8
+    },
+    {
+      "label": "Lounge Pants",
+      "target": "articleType",
+      "train_family_units": 34,
+      "train_product_rows": 37,
+      "val_family_units": 8,
+      "val_product_rows": 8
+    },
+    {
+      "label": "Bracelet",
+      "target": "articleType",
+      "train_family_units": 12,
+      "train_product_rows": 37,
+      "val_family_units": 4,
+      "val_product_rows": 7
+    },
+    {
+      "label": "Mobile Pouch",
+      "target": "articleType",
+      "train_family_units": 32,
+      "train_product_rows": 33,
+      "val_family_units": 7,
+      "val_product_rows": 7
+    },
+    {
+      "label": "Cufflinks",
+      "target": "articleType",
+      "train_family_units": 12,
+      "train_product_rows": 32,
+      "val_family_units": 5,
+      "val_product_rows": 6
+    },
+    {
+      "label": "Jewellery Set",
+      "target": "articleType",
+      "train_family_units": 12,
+      "train_product_rows": 32,
+      "val_family_units": 4,
+      "val_product_rows": 6
+    },
+    {
+      "label": "Messenger Bag",
+      "target": "articleType",
+      "train_family_units": 30,
+      "train_product_rows": 31,
+      "val_family_units": 6,
+      "val_product_rows": 6
+    },
+    {
+      "label": "Mufflers",
+      "target": "articleType",
+      "train_family_units": 22,
+      "train_product_rows": 28,
+      "val_family_units": 5,
+      "val_product_rows": 5
+    },
+    {
+      "label": "Boxers",
+      "target": "articleType",
+      "train_family_units": 22,
+      "train_product_rows": 28,
+      "val_family_units": 5,
+      "val_product_rows": 6
+    },
+    {
+      "label": "Suspenders",
+      "target": "articleType",
+      "train_family_units": 14,
+      "train_product_rows": 28,
+      "val_family_units": 5,
+      "val_product_rows": 6
+    },
+    {
+      "label": "Nightdress",
+      "target": "articleType",
+      "train_family_units": 21,
+      "train_product_rows": 28,
+      "val_family_units": 5,
+      "val_product_rows": 6
+    },
+    {
+      "label": "Lounge Shorts",
+      "target": "articleType",
+      "train_family_units": 18,
+      "train_product_rows": 24,
+      "val_family_units": 5,
+      "val_product_rows": 5
+    },
+    {
+      "label": "Salwar",
+      "target": "articleType",
+      "train_family_units": 20,
+      "train_product_rows": 24,
+      "val_family_units": 4,
+      "val_product_rows": 4
+    },
+    {
+      "label": "Churidar",
+      "target": "articleType",
+      "train_family_units": 20,
+      "train_product_rows": 22,
+      "val_family_units": 4,
+      "val_product_rows": 4
+    },
+    {
+      "label": "Tracksuits",
+      "target": "articleType",
+      "train_family_units": 16,
+      "train_product_rows": 20,
+      "val_family_units": 4,
+      "val_product_rows": 4
+    },
+    {
+      "label": "Patiala",
+      "target": "articleType",
+      "train_family_units": 16,
+      "train_product_rows": 20,
+      "val_family_units": 3,
+      "val_product_rows": 3
+    },
+    {
+      "label": "Stockings",
+      "target": "articleType",
+      "train_family_units": 7,
+      "train_product_rows": 19,
+      "val_family_units": 3,
+      "val_product_rows": 3
+    },
+    {
+      "label": "Jeggings",
+      "target": "articleType",
+      "train_family_units": 11,
+      "train_product_rows": 19,
+      "val_family_units": 3,
+      "val_product_rows": 3
+    },
+    {
+      "label": "Shoe Accessories",
+      "target": "articleType",
+      "train_family_units": 15,
+      "train_product_rows": 18,
+      "val_family_units": 2,
+      "val_product_rows": 2
+    },
+    {
+      "label": "Gloves",
+      "target": "articleType",
+      "train_family_units": 9,
+      "train_product_rows": 15,
+      "val_family_units": 3,
+      "val_product_rows": 3
+    },
+    {
+      "label": "Nail Polish",
+      "target": "articleType",
+      "train_family_units": 13,
+      "train_product_rows": 14,
+      "val_family_units": 2,
+      "val_product_rows": 2
+    },
+    {
+      "label": "Swimwear",
+      "target": "articleType",
+      "train_family_units": 12,
+      "train_product_rows": 13,
+      "val_family_units": 2,
+      "val_product_rows": 2
+    },
+    {
+      "label": "Waist Pouch",
+      "target": "articleType",
+      "train_family_units": 12,
+      "train_product_rows": 13,
+      "val_family_units": 2,
+      "val_product_rows": 2
+    },
+    {
+      "label": "Camisoles",
+      "target": "articleType",
+      "train_family_units": 11,
+      "train_product_rows": 11,
+      "val_family_units": 2,
+      "val_product_rows": 2
+    },
+    {
+      "label": "Basketballs",
+      "target": "articleType",
+      "train_family_units": 10,
+      "train_product_rows": 10,
+      "val_family_units": 2,
+      "val_product_rows": 2
+    },
+    {
+      "label": "Travel Accessory",
+      "target": "articleType",
+      "train_family_units": 9,
+      "train_product_rows": 10,
+      "val_family_units": 2,
+      "val_product_rows": 2
+    },
+    {
+      "label": "Waistcoat",
+      "target": "articleType",
+      "train_family_units": 8,
+      "train_product_rows": 10,
+      "val_family_units": 2,
+      "val_product_rows": 2
+    },
+    {
+      "label": "Rompers",
+      "target": "articleType",
+      "train_family_units": 6,
+      "train_product_rows": 10,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Kajal and Eyeliner",
+      "target": "articleType",
+      "train_family_units": 8,
+      "train_product_rows": 10,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Lip Liner",
+      "target": "articleType",
+      "train_family_units": 6,
+      "train_product_rows": 10,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Foundation and Primer",
+      "target": "articleType",
+      "train_family_units": 4,
+      "train_product_rows": 10,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Water Bottle",
+      "target": "articleType",
+      "train_family_units": 9,
+      "train_product_rows": 9,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Rucksacks",
+      "target": "articleType",
+      "train_family_units": 9,
+      "train_product_rows": 9,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Jumpsuit",
+      "target": "articleType",
+      "train_family_units": 9,
+      "train_product_rows": 9,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Booties",
+      "target": "articleType",
+      "train_family_units": 4,
+      "train_product_rows": 8,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Tights",
+      "target": "articleType",
+      "train_family_units": 6,
+      "train_product_rows": 7,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Footballs",
+      "target": "articleType",
+      "train_family_units": 6,
+      "train_product_rows": 6,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Blazers",
+      "target": "articleType",
+      "train_family_units": 6,
+      "train_product_rows": 6,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Clothing Set",
+      "target": "articleType",
+      "train_family_units": 6,
+      "train_product_rows": 6,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Headband",
+      "target": "articleType",
+      "train_family_units": 5,
+      "train_product_rows": 5,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Salwar and Dupatta",
+      "target": "articleType",
+      "train_family_units": 5,
+      "train_product_rows": 5,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Wristbands",
+      "target": "articleType",
+      "train_family_units": 4,
+      "train_product_rows": 4,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Umbrellas",
+      "target": "articleType",
+      "train_family_units": 3,
+      "train_product_rows": 4,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Lip Gloss",
+      "target": "articleType",
+      "train_family_units": 4,
+      "train_product_rows": 4,
+      "val_family_units": 1,
+      "val_product_rows": 1
+    },
+    {
+      "label": "Summer",
+      "target": "season",
+      "train_family_units": 9508,
+      "train_product_rows": 13371,
+      "val_family_units": 2136,
+      "val_product_rows": 2864
+    },
+    {
+      "label": "Fall",
+      "target": "season",
+      "train_family_units": 5640,
+      "train_product_rows": 7354,
+      "val_family_units": 1236,
+      "val_product_rows": 1574
+    },
+    {
+      "label": "Winter",
+      "target": "season",
+      "train_family_units": 3274,
+      "train_product_rows": 5155,
+      "val_family_units": 713,
+      "val_product_rows": 1106
+    },
+    {
+      "label": "Spring",
+      "target": "season",
+      "train_family_units": 955,
+      "train_product_rows": 1095,
+      "val_family_units": 206,
+      "val_product_rows": 234
+    },
+    {
+      "label": "Men",
+      "target": "gender",
+      "train_family_units": 10136,
+      "train_product_rows": 14622,
+      "val_family_units": 2207,
+      "val_product_rows": 3131
+    },
+    {
+      "label": "Women",
+      "target": "gender",
+      "train_family_units": 6884,
+      "train_product_rows": 9906,
+      "val_family_units": 1514,
+      "val_product_rows": 2121
+    },
+    {
+      "label": "Unisex",
+      "target": "gender",
+      "train_family_units": 1168,
+      "train_product_rows": 1455,
+      "val_family_units": 260,
+      "val_product_rows": 311
+    },
+    {
+      "label": "Boys",
+      "target": "gender",
+      "train_family_units": 323,
+      "train_product_rows": 563,
+      "val_family_units": 74,
+      "val_product_rows": 121
+    },
+    {
+      "label": "Girls",
+      "target": "gender",
+      "train_family_units": 274,
+      "train_product_rows": 446,
+      "val_family_units": 62,
+      "val_product_rows": 97
+    },
+    {
+      "label": "Casual",
+      "target": "usage",
+      "train_family_units": 14468,
+      "train_product_rows": 20710,
+      "val_family_units": 3168,
+      "val_product_rows": 4441
+    },
+    {
+      "label": "Sports",
+      "target": "usage",
+      "train_family_units": 2475,
+      "train_product_rows": 2755,
+      "val_family_units": 545,
+      "val_product_rows": 591
+    },
+    {
+      "label": "Ethnic",
+      "target": "usage",
+      "train_family_units": 1113,
+      "train_product_rows": 1798,
+      "val_family_units": 238,
+      "val_product_rows": 385
+    },
+    {
+      "label": "Formal",
+      "target": "usage",
+      "train_family_units": 817,
+      "train_product_rows": 1610,
+      "val_family_units": 199,
+      "val_product_rows": 339
+    },
+    {
+      "label": "NA",
+      "target": "usage",
+      "train_family_units": 39,
+      "train_product_rows": 50,
+      "val_family_units": 6,
+      "val_product_rows": 11
+    },
+    {
+      "label": "Smart Casual",
+      "target": "usage",
+      "train_family_units": 29,
+      "train_product_rows": 39,
+      "val_family_units": 8,
+      "val_product_rows": 8
+    },
+    {
+      "label": "Travel",
+      "target": "usage",
+      "train_family_units": 18,
+      "train_product_rows": 18,
+      "val_family_units": 4,
+      "val_product_rows": 4
+    },
+    {
+      "label": "Party",
+      "target": "usage",
+      "train_family_units": 8,
+      "train_product_rows": 10,
+      "val_family_units": 2,
+      "val_product_rows": 2
     }
   ]
 }
