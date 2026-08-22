@@ -1,5 +1,5 @@
-partition,rows,percent,target_use_in_eda
-train,26992,69.90572879,training evidence
-val,5781,14.97202942,development balance and Task 4 queries
-holdout,5778,14.96425982,sealed
-quarantine,61,0.15798197,sealed
+partition,product_ids,image_inputs,target_access,counting_rule
+train,26992,53984,targets available,two image samples; pair weights sum to one
+val,5781,11562,development only,two forward passes; one product-level score
+holdout,5778,11556,sealed,two forward passes; one product-level score
+quarantine,61,0,sealed,excluded from model input
