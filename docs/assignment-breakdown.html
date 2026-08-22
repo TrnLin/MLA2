@@ -483,12 +483,12 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     <div class="scroll">
       <table class="tbl">
         <caption>Permitted target summary — training partition only, from the protected split loader</caption>
-        <thead><tr><th>Target</th><th class="num">Official outputs</th><th class="num">Primary slice</th><th>Largest training class</th><th>Holdout used</th></tr></thead>
+        <thead><tr><th>Target</th><th class="num">Official outputs</th><th class="num">Primary slice</th><th class="num">Missing rows</th><th class="num">Limited official rows</th><th>Largest training class</th><th>Holdout used</th></tr></thead>
         <tbody>
-          <tr class="tgt"><td><code>articleType</code></td><td class="num">124</td><td class="num">100</td><td>Tshirts — 4,732 of 26,965 valid</td><td>No</td></tr>
-          <tr class="tgt"><td><code>season</code></td><td class="num">4</td><td class="num">4</td><td>Summer — 13,371 of 26,975 valid</td><td>No</td></tr>
-          <tr class="tgt"><td><code>gender</code></td><td class="num">5</td><td class="num">5</td><td>Men — 14,622 of 26,992 valid</td><td>No</td></tr>
-          <tr class="tgt"><td><code>usage</code></td><td class="num">9</td><td class="num">8</td><td>Casual — 20,710 of 26,990 valid</td><td>No</td></tr>
+          <tr class="tgt"><td><code>articleType</code></td><td class="num">124</td><td class="num">100</td><td class="num">0</td><td class="num">44</td><td>Tshirts — 4,732 of 26,948 primary</td><td>No</td></tr>
+          <tr class="tgt"><td><code>season</code></td><td class="num">4</td><td class="num">4</td><td class="num">17</td><td class="num">0</td><td>Summer — 13,371 of 26,975 primary</td><td>No</td></tr>
+          <tr class="tgt"><td><code>gender</code></td><td class="num">5</td><td class="num">5</td><td class="num">0</td><td class="num">0</td><td>Men — 14,622 of 26,992 primary</td><td>No</td></tr>
+          <tr class="tgt"><td><code>usage</code></td><td class="num">9</td><td class="num">8</td><td class="num">1</td><td class="num">1</td><td>Casual — 20,710 of 26,990 primary</td><td>No</td></tr>
         </tbody>
       </table>
     </div>
@@ -515,10 +515,31 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
         excluded.</p>
       </li>
       <li>
-        <h5>Validation mirrors training without opening holdout</h5>
-        <p>All 100 train-supported article types and every supported season, gender, and usage class
-        are present in validation. Holdout target coverage is not inspected. All percentages use
-        their own train or validation denominator.</p>
+        <h5>Validation rows do not equal independent evidence</h5>
+        <p>All 100 train-supported article types appear in validation, but 18 have only one
+        validation family and 26 have fewer than three. One usage class has two validation
+        families. Holdout target coverage is not inspected. Thin classes need wide uncertainty,
+        even when product-row coverage says 100%.</p>
+      </li>
+      <li>
+        <h5>Family blocking buys safety by reducing independence</h5>
+        <p>The 38,551 active product rows become 27,009 family units: 11,542 fewer units, or
+        29.9%. There are 4,567 multi-row families and the largest has 80 rows. Exact hashes,
+        accepted visual links, and normalized names define the block basis. The name rule can
+        over-block different designs, so family sizes and bases stay visible.</p>
+      </li>
+      <li>
+        <h5>The support threshold is a measured trade-off</h5>
+        <p>Requiring 2, 3, 4, or 5 training families keeps 105, 100, 98, or 94 article types.
+        Three is the chosen balance between broader output coverage and credible independent
+        support. It is not a claim that rare official labels are invalid.</p>
+      </li>
+      <li>
+        <h5>Image quality evidence stays train only</h5>
+        <p>A fixed 2,048-product training sample measures brightness, contrast, sharpness, and
+        foreground/background scale. Paired train-only RGB mean and standard deviation set
+        normalization. These values define augmentation bounds and later error slices; they do
+        not claim a model gain.</p>
       </li>
     </ol>
   </div>
@@ -598,8 +619,9 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
         <div><dt>Metric</dt><dd>nDCG@5, grade-2 Recall@5, coverage, latency</dd></div>
       </dl>
       <p class="hard"><b>The hard part.</b> There is no similarity label to train or score against,
-      so relevance must be <b>defined</b> and that definition defended — a metadata proxy, human
-      inspection, or both. Scored development uses validation queries against a train-only
+      so relevance must be <b>defined</b> and that definition defended. Development uses only a
+      catalogue-metadata proxy. It is not real-world similarity ground truth, and its later human
+      validation is an unresolved, non-blocking decision. Scored development uses validation queries against a train-only
       gallery. Query IDs, exact hashes, and product families are removed before Top-K. Both image variants
       may be encoded, but each product ID can occupy only one ranked slot. Recall@5 counts
       grade-2 products only; zero-positive queries leave the macro mean and enter coverage. In the
@@ -864,9 +886,8 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
         <code>data/processed/splits.csv</code></b>
         <p>Handles <code>"NA"</code> versus blank, the five orphaned rows, and the rare-class policy.
         It writes exactly one shared split with <code>train | val | holdout | quarantine</code>
-        partitions and validates it before downstream use. Every pending-or-confirmed
-        official-prediction visual match is quarantined; the provisional review ledgers still
-        need named team sign-off.</p></div>
+        partitions and validates it before downstream use. Every cross-role automatic visual match
+        is quarantined. Human decisions are listed separately and never block the pipeline.</p></div>
     </div>
 
     <div class="lr">
@@ -971,8 +992,8 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     <div class="txt">
       <div class="eyebrow">Open questions</div>
       <h2>One EDA decision closed; two model questions remain</h2>
-      <p>The data policy is now evidence-backed. The remaining choices need registered model or
-      human-review results, not an opinion from a meeting.</p>
+      <p>The data policy is now evidence-backed. The remaining choices need registered model results
+      or a small later human validation, not an opinion from a meeting.</p>
     </div>
   </div>
 
@@ -987,7 +1008,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       Train-only thresholds 2/3/4/5 support 105/100/98/94 classes.</p>
     </div>
     <div>
-      <span class="st">Open · needs EDA</span>
+      <span class="st">Open · needs model evidence</span>
       <h4>One backbone with two heads, or two separate models?</h4>
       <p>The submission format permits either. Multi-task learning is the stronger claim to going
       beyond class material, and gender and usage plausibly share features — but shared training
@@ -995,12 +1016,13 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <p class="ev">Evidence needed: per-target macro-F1, both ways, on the same split.</p>
     </div>
     <div>
-      <span class="st">Open · needs EDA</span>
+      <span class="st">Open · non-blocking human validation</span>
       <h4>What does “similar” mean for Task 4?</h4>
       <p>No ground-truth similarity labels exist. A metadata proxy — same <code>articleType</code>
-      and <code>baseColour</code>, say — is measurable but circular; human inspection is honest but
-      small. Probably both, reported separately.</p>
-      <p class="ev">Evidence needed: agreement between the proxy and human judgement on a sample.</p>
+      and <code>baseColour</code> — is measurable but circular. It is a metadata proxy, never
+      real-world similarity ground truth.</p>
+      <p class="ev">Evidence needed later: agreement between the proxy and human judgement on the
+      IDs listed in <code>docs/reviews/open_decisions.md</code>. This does not block EDA.</p>
     </div>
   </div>
 </section>
