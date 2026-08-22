@@ -74,9 +74,3 @@ MIN_SUPPORTED_GROUPS = 3
 # Fixed before allocation so the required visual-only season example is never
 # selected from validation or protected holdout outcomes.
 TRAIN_ONLY_EDA_EXAMPLE_IDS = (41303, 43587)
-
-REVIEW_DIR = ROOT / "docs/reviews"
-NEAR_DUPLICATE_REVIEW_CSV = REVIEW_DIR / "near_duplicate_policy_review.csv"
-CROSS_ROLE_REVIEW_CSV = REVIEW_DIR / "cross_role_near_duplicate_review.csv"
-PRODUCT_NAME_REVIEW_CSV = REVIEW_DIR / "product_name_policy_review.csv"
-PRODUCT_NAME_TRIAGE_JSON = REVIEW_DIR / "product_name_pre_policy_triage.json"
