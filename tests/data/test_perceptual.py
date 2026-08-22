@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import inspect
+import json
+
 import numpy as np
-import pandas as pd
-import pytest
 from PIL import Image
 
 from fashion.data.hashing import compute_sha256
@@ -11,9 +12,8 @@ from fashion.data.perceptual import (
     compute_pair_pixel_metrics,
     find_hamming_candidates_multi_index,
     hamming_distance,
-    select_near_duplicate_review_sample,
+    run_perceptual_audit,
 )
-from fashion.data.reviews import REVIEW_AUDIT_COLUMNS, validate_review_ledger
 
 
 def _pattern(path, vertical: bool) -> None:
@@ -94,41 +94,16 @@ def test_perceptual_audit_records_objective_metrics_before_splitting(prepared_pr
     for field in ("mse", "mae", "crop_mse", "crop_mae", "foreground_ratio"):
         assert field in candidates.dtype.names
     assert "partition_1" not in candidates.dtype.names
+    assert "review_notes" not in candidates.dtype.names
 
 
-def test_review_sample_is_deterministic_and_distance_stratified():
-    rows = []
-    for distance in range(3):
-        for index in range(45):
-            rows.append(
-                {
-                    "role_1": "labelled",
-                    "id_1": distance * 1000 + index,
-                    "role_2": "labelled",
-                    "id_2": distance * 1000 + index + 100,
-                    "dhash_distance": distance,
-                    "is_exact_sha256": False,
-                    "meets_automatic_rule": True,
-                }
-            )
-    frame = pd.DataFrame(rows)
-    first = select_near_duplicate_review_sample(frame)
-    second = select_near_duplicate_review_sample(frame)
-    assert first.equals(second)
-    assert first.groupby("dhash_distance").size().to_dict() == {0: 40, 1: 40, 2: 40}
-    assert first["review_id"].iloc[[0, -1]].tolist() == ["accepted-001", "accepted-120"]
+def test_perceptual_audit_has_no_human_gate(prepared_project):
+    parameters = inspect.signature(run_perceptual_audit).parameters
+    assert not {"cross_role_review_csv", "policy_review_csv"}.intersection(parameters)
 
-
-def test_pending_review_is_honest_and_signed_review_requires_provenance(tmp_path):
-    row = {column: "" for column in REVIEW_AUDIT_COLUMNS}
-    row["decision"] = "same_or_variant"
-    row["signoff_status"] = "pending_team_signoff"
-    pending = pd.DataFrame([row])
-    audit = validate_review_ledger(pending, tmp_path / "pending.csv")
-    assert audit["status"] == "pending_team_signoff"
-    assert audit["human_provenance_complete"] is False
-
-    signed = pending.copy()
-    signed.loc[0, "signoff_status"] = "signed_off"
-    with pytest.raises(ValueError, match="blank reviewer_initials"):
-        validate_review_ledger(signed, tmp_path / "signed.csv")
+    summary = json.loads(
+        (prepared_project.audit / "near_duplicate_summary.json").read_text(encoding="utf-8")
+    )
+    assert "cross_role_review" not in summary
+    assert "automatic_rule_review" not in summary
+    assert "cross_role_automatic_matches" in summary
