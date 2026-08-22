@@ -1,5 +1,7 @@
 contract,value
 total validation products,5781
+relevance evidence kind,metadata proxy
+unresolved proxy validation,docs/reviews/open_decisions.md (non-blocking)
 eligible supported query products,5768
 excluded unsupported query products,13
 exclusion reason,articleType lacks train-family support
