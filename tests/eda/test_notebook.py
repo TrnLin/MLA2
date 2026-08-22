@@ -281,16 +281,29 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     source = _source(notebook)
     markdown = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "markdown")
     code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
+    code_cell_indices = [
+        index for index, cell in enumerate(notebook.cells) if cell.cell_type == "code"
+    ]
+    guide_cells = [cell for cell in notebook.cells if "code-guide" in cell.metadata.get("tags", [])]
 
     assert sorted((ROOT / "notebooks").glob("*.ipynb")) == [NOTEBOOK]
     assert all(heading in source for heading in REQUIRED_HEADINGS)
+    assert len(code_cells) == 34
+    assert len(guide_cells) == len(code_cells)
+    assert all(
+        notebook.cells[index - 1].cell_type == "markdown"
+        and notebook.cells[index - 1].source.startswith("**Code step — ")
+        and "code-guide" in notebook.cells[index - 1].metadata.get("tags", [])
+        and "report-hide" in notebook.cells[index - 1].metadata.get("tags", [])
+        for index in code_cell_indices
+    )
     assert all("hide-input" in cell.metadata.get("tags", []) for cell in code_cells)
     assert all(cell.metadata.get("jupyter", {}).get("source_hidden") for cell in code_cells)
     technical_cells = [
         cell for cell in code_cells if "report-hide" in cell.metadata.get("tags", [])
     ]
-    assert len(technical_cells) == 7
-    assert max(len(cell.source.splitlines()) for cell in technical_cells) < 350
+    assert technical_cells
+    assert max(len(cell.source.splitlines()) for cell in code_cells) < 150
     assert "**Question.**" not in markdown
     assert "?" not in markdown
     assert source.count("> **Finding.**") == 10
@@ -426,6 +439,7 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
         assert not re.search(r'class="[^"]*jp-InputArea-editor', report)
         assert report.count('<figure class="eda-figure">') == len(FIGURE_NAMES)
         assert all(heading.lstrip("# ") in report for heading in REQUIRED_HEADINGS)
+        assert "Code step —" not in report
         assert "The next helpers keep tables" not in report
 
         contact_sheet = root / "results/reviews/review_contact_sheet.html"
@@ -603,6 +617,7 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     assert not re.search(r'class="[^"]*jp-InputArea-editor', document)
     assert document.count('<figure class="eda-figure">') == len(FIGURE_NAMES)
     assert all(heading.lstrip("# ") in document for heading in REQUIRED_HEADINGS)
+    assert "Code step —" not in document
     assert "The next helpers keep tables" not in document
 
     summary = json.loads((ROOT / "results/evidence/eda/summary.json").read_text(encoding="utf-8"))
