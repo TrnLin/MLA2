@@ -78,7 +78,7 @@ def validate_split_structure(frame: pd.DataFrame) -> None:
         frame["is_cross_role_near_duplicate"]
     )
     if not frame.loc[cross_role, "partition"].eq("quarantine").all():
-        raise ValueError("a pending-or-confirmed cross-role visual match exists outside quarantine")
+        raise ValueError("a cross-role visual match exists outside quarantine")
 
     conflict_flags = _as_bool(frame["has_conflicting_target_labels"])
     conflict_names = frame["conflicting_targets"].astype(str).str.strip()
@@ -464,7 +464,7 @@ def write_split_public_evidence(
         "quarantine": {
             "total_rows": int(partition_counts.get("quarantine", 0)),
             "cross_role_exact_rows": int(_as_bool(manifest["is_cross_role_exact_duplicate"]).sum()),
-            "cross_role_near_rows_pending_or_confirmed": int(
+            "cross_role_near_rows_conservatively_quarantined": int(
                 _as_bool(manifest["is_cross_role_near_duplicate"]).sum()
             ),
             "conflicting_exact_sha_groups": int(
@@ -473,7 +473,7 @@ def write_split_public_evidence(
             "conflicting_exact_sha_rows": int(conflict_rows.sum()),
             "allowed_reasons": [
                 "cross_role_exact_duplicate",
-                "cross_role_near_duplicate_pending_or_confirmed",
+                "cross_role_near_duplicate_conservative_quarantine",
                 "conflicting_labels_exact_sha",
             ],
         },
