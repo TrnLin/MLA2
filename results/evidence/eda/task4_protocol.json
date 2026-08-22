@@ -1,5 +1,6 @@
 {
   "eligible_supported_query_products": 5768,
+  "evidence_kind": "metadata_proxy",
   "excluded_unsupported_query_products": 13,
   "final_evaluation_unsupported_query_policy": "report separately as a coverage/failure slice; never silently omit",
   "final_gallery_policy": "a larger gallery is locked until independent evaluation ends",
@@ -11,7 +12,9 @@
     "1": "same official articleType but different baseColour",
     "2": "same official articleType and baseColour"
   },
-  "limitation": "metadata grades are a proxy, not human visual-similarity ground truth",
+  "human_validation_file": "docs/reviews/open_decisions.md",
+  "human_validation_status": "unresolved_non_blocking",
+  "limitation": "metadata grades are a proxy for catalogue relevance only; they are not real-world visual-similarity ground truth",
   "metrics": [
     "nDCG@5 over grades 2/1/0",
     "grade-2 Recall@5",
