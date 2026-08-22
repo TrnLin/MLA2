@@ -1,48 +1,31 @@
-# 0011 — Auditable family review boundary
+# 0011 - Automatic family safety boundary
 
 - Status: Accepted
-- Date: 2026-08-21
+- Date: 2026-08-22
 
 ## Context
 
-The existing near-duplicate and product-name ledgers preserve useful pairs and
-provisional calls, but do not contain real reviewer provenance. They cannot prove
-human review precision. Leakage safety must not depend on those unsigned calls.
+Leakage safety must be automatic and repeatable. It cannot depend on a person completing a form.
+Normalized names are also broad: they can join different designs and reduce the number of
+independent products available for splitting and evaluation.
 
 ## Decision
 
-- Mark every existing ledger row `pending_team_signoff`; never invent reviewer
-  metadata.
-- Quarantine every pending labelled-versus-prediction automatic visual match.
-  Only a fully signed `different` or `uncertain` decision may reactivate it.
-- Accepted labelled-only automatic matches may enlarge a split block. A mistaken
-  acceptance can reduce sample size but cannot create a crossing.
-- Keep normalized names as conservative split blocks only. Mixed labels inside a
-  name block are triage evidence, not proof of label noise.
-- Require reviewer initials, date, method/tool, blind-to-metrics flag,
-  independence flag, second-review status, and disagreement resolution before
-  calling a row signed. The exact procedure lives in `docs/reviews/README.md`.
-- Fix IDs `41303/43587` as one train-only evidence family before allocation. The
-  pair was named externally as the required visual-only Summer/Fall example; the
-  constraint prevents EDA from selecting or displaying a validation/holdout
-  outcome after splitting.
+- Quarantine every labelled product in a visual component that also contains an official
+  prediction image.
+- Quarantine exact-image groups with conflicting target labels.
+- Keep each remaining normalized name, exact hash, and accepted automatic visual component in one
+  partition.
+- Never read a human decision during preparation, cached validation, notebook Run All, or tests.
+- Keep unresolved questions only in `docs/reviews/open_decisions.md`. They are non-blocking.
+- Keep IDs `41303/43587` in train as a predeclared visual-family example so no validation or holdout
+  outcome selects the example after splitting.
 
 ## Consequences
 
-All active exact-SHA, accepted-visual, and normalized-name blocks must remain in
-one partition. Pending human sign-off is an honest evidence limitation, but it
-cannot leak a protected or prediction image into model development.
+The rule is conservative. A broad family can reduce effective sample size, but it cannot cross an
+active partition. The final active data has 38,551 product rows and 27,009 family units, a reduction
+of 11,542 units or 29.9%. There are 4,567 multi-row families and the largest contains 80 rows.
 
-## Evidence
-
-- All 250 existing review rows are explicitly `pending_team_signoff`; reviewer
-  identity, date, method, independence, and second-review fields are blank.
-- The blind contact sheet lists every ledger pair by ID and image while hiding
-  labels, metrics, notes, and provisional decisions.
-- All 10 non-exact cross-role rule matches remain quarantined while unsigned.
-  The final split has 61 quarantine rows.
-- The final active split has zero exact-SHA, product-family, and normalized-name
-  crossings. Its counts are 26,992 train, 5,781 validation, and 5,778 holdout.
-- Of 568 mixed-season multi-row train groups, 567 involve normalized-name
-  blocking. The sole visual-only mixed group is IDs `41303/43587`, joined by the
-  objective accepted-near rule; its human interpretation is still pending.
+All active exact-hash, automatic-visual, normalized-name, and family blocks have zero crossings.
+The fixed partitions contain 26,992 train, 5,781 validation, 5,778 holdout, and 61 quarantine rows.
