@@ -153,7 +153,7 @@
         "Casual Shoes": 1759,
         "Churidar": 24,
         "Clothing Set": 7,
-        "Clutches": 153,
+        "Clutches": 154,
         "Compact": 1,
         "Concealer": 1,
         "Cufflinks": 17,
@@ -209,7 +209,7 @@
         "Nightdress": 26,
         "Patiala": 19,
         "Pendant": 10,
-        "Perfume and Body Mist": 401,
+        "Perfume and Body Mist": 405,
         "Rain Jacket": 1,
         "Rain Trousers": 1,
         "Ring": 4,
@@ -401,9 +401,9 @@
       "family_counts": {
         "Boys": 397,
         "Girls": 336,
-        "Men": 12343,
+        "Men": 12345,
         "Unisex": 1428,
-        "Women": 8398
+        "Women": 8401
       },
       "label_column": "gender",
       "num_classes": 5,
@@ -426,8 +426,8 @@
       ],
       "family_counts": {
         "Fall": 6876,
-        "Spring": 1161,
-        "Summer": 11644,
+        "Spring": 1165,
+        "Summer": 11645,
         "Winter": 3987
       },
       "label_column": "season",
@@ -454,11 +454,11 @@
         "Travel"
       ],
       "family_counts": {
-        "Casual": 17636,
+        "Casual": 17637,
         "Ethnic": 1351,
         "Formal": 1016,
         "Home": 1,
-        "NA": 45,
+        "NA": 49,
         "Party": 10,
         "Smart Casual": 37,
         "Sports": 3020,

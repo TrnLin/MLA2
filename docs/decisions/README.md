@@ -24,6 +24,7 @@ mark the old one as superseded, and link both records.
 - `0014-development-holdout-cv-boundary.md`
 - `0015-teacher-only-shared-image-preparation.md`
 - `0016-development-label-scope.md`
+- `0017-product-name-na-and-cv-refreeze.md`
 
 ## Superseded decisions
 
@@ -38,8 +39,8 @@ mark the old one as superseded, and link both records.
 
 - `0002-single-split-and-duplicate-quarantine.md` — partition details superseded by 0014;
   the sole-split and duplicate-quarantine rules remain active.
-- `0011-auditable-family-review-boundary.md` — fixed partition counts superseded by 0014;
-  the automatic family safety rule remains active.
+- `0011-auditable-family-review-boundary.md` — fixed partition counts superseded by 0014 and the
+  product-name `NA` rule amended by 0017; the automatic family safety rule remains active.
 - `0012-protected-target-runtime-boundary.md` — partition wording superseded by 0014;
   the protected runtime boundary remains active.
 - `0009-task4-retrieval-isolation.md` — the fixed shared query/gallery and image-variant protocol is

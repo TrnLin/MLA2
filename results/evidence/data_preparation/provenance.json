@@ -1,10 +1,13 @@
 {
+  "cv_assignment_sha256": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd",
   "cv_folds": 5,
   "cv_seed": 2753,
   "development_eda_only": true,
   "lineage_file": "results/evidence/data_preparation/lineage.csv",
   "model_fit_allowed": false,
+  "product_name_na_policy": "missing_for_name_and_family_only",
   "protected_target_values_used": 0,
   "schema_version": "1.0.0",
-  "shared_source_policy": "teacher_only"
+  "shared_source_policy": "teacher_only",
+  "usage_na_policy": "valid_teacher_label"
 }

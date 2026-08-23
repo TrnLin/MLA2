@@ -17,6 +17,7 @@ from fashion.config import (
     TARGET_COLUMNS,
 )
 from fashion.data.hashing import write_deterministic_csv
+from fashion.data.metadata import is_missing_product_name
 
 
 def _as_bool(series: pd.Series) -> pd.Series:
@@ -26,8 +27,8 @@ def _as_bool(series: pd.Series) -> pd.Series:
 
 
 def normalize_product_name(value: Any) -> str:
-    """Case-fold and collapse whitespace without deleting semantic tokens."""
-    if value is None or pd.isna(value):
+    """Normalize a real name; map the product-name-only missing token ``NA`` to blank."""
+    if is_missing_product_name(value):
         return ""
     return " ".join(str(value).casefold().split())
 
@@ -261,7 +262,7 @@ def build_product_families(
     family_units = int(active_rows["product_family_group"].nunique())
     reduced_units = len(active_rows) - family_units
     summary = {
-        "schema_version": "4.0.0",
+        "schema_version": "5.0.0",
         "labelled_rows": len(result),
         "pre_quarantined_rows": int(result["pre_quarantine_reason"].ne("").sum()),
         "cross_role_exact_rows": int(result["is_cross_role_exact_duplicate"].sum()),
@@ -283,7 +284,8 @@ def build_product_families(
         "active_name_keys_crossing_family_groups": int(name_groups["families"].gt(1).sum()),
         "policy": (
             "First quarantine every cross-role visual component and conflicting exact hash. "
-            "Then block each remaining normalized name, exact hash, and accepted automatic "
+            "Treat literal NA as missing only for product names. Then block each remaining "
+            "normalized real name, exact hash, and accepted automatic "
             "visual component for development/holdout allocation. Human input is not "
             "part of preparation or split validation."
         ),

@@ -1,17 +1,17 @@
 {
-  "schema_version": "4.0.0",
+  "schema_version": "5.0.0",
   "labelled_rows": 38612,
   "pre_quarantined_rows": 61,
   "cross_role_exact_rows": 11,
   "cross_role_near_rows_conservatively_quarantined": 9,
   "conflicting_exact_sha_rows": 41,
   "active_product_rows": 38551,
-  "active_family_groups": 27009,
-  "family_units_fewer_than_product_rows": 11542,
-  "family_unit_reduction_percent": 29.939560582086067,
+  "active_family_groups": 27015,
+  "family_units_fewer_than_product_rows": 11536,
+  "family_unit_reduction_percent": 29.92399678348162,
   "active_multirow_family_groups": 4567,
   "largest_active_family_group": 80,
-  "active_normalized_name_keys": 27311,
+  "active_normalized_name_keys": 27310,
   "active_name_keys_crossing_family_groups": 0,
-  "policy": "First quarantine every cross-role visual component and conflicting exact hash. Then block each remaining normalized name, exact hash, and accepted automatic visual component for development/holdout allocation. Human input is not part of preparation or split validation."
+  "policy": "First quarantine every cross-role visual component and conflicting exact hash. Treat literal NA as missing only for product names. Then block each remaining normalized real name, exact hash, and accepted automatic visual component for development/holdout allocation. Human input is not part of preparation or split validation."
 }

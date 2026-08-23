@@ -8,17 +8,17 @@
     "data/processed/audit/near_duplicate_candidates.csv.gz": "637f5c82f97829094596fa91997a4f95c2b2d2155621d3c8c0f8f9f964c34f9c",
     "data/processed/audit/near_duplicate_summary.json": "8f5babe037c9f2de80403309e638fcebc0e9cb1cb50a40f08f834d5c9ec8be38",
     "data/processed/audit/perceptual_hashes.csv.gz": "9127dcdb5dd14596cab20ac61abbb352fea59ed3cd7af0eceeacab95524179eb",
-    "data/processed/audit/product_family_groups.csv.gz": "0921bc1ff686897041ae1db6c16f08b7462765540636c80c13612e4555c74c8e",
-    "data/processed/audit/product_family_summary.json": "bcfb80aa05feeaeb0ed0f7c5e9bcfca1721ee6ba088ec66c17a7e57a62ea1262",
+    "data/processed/audit/product_family_groups.csv.gz": "eef32eaf55fa11fcfd766e5576a6aa264ec19a921297f45f63eb17c99eba6a63",
+    "data/processed/audit/product_family_summary.json": "dffa9aae1f3f9c13ca36b4ef2682bc1e01e1b5b45bb1c6f2e03e7695d6498706",
     "data/processed/audit/target_class_counts.csv": "d95c4dd587a378b5753c8b7d2c2cfc84629b5ba1afebb3ded4413a6f92329b30",
-    "data/processed/cv_fold_summary.json": "cecefe19d2fac403e4838e636927f31cb86f71e623f05605933aeda1eb18cb6c",
-    "data/processed/development_class_summary.csv": "1be4769870d0650ea321af8b97f619dabfa04c46ce8b1fc825ed9e13a18312f8",
+    "data/processed/cv_fold_summary.json": "cee8491094622a87a6144ec26523e2851c01413f2826308f9b301bec6445acf8",
+    "data/processed/development_class_summary.csv": "e45cb3e5c093dc0fea8f68da11779e607f34a3c037f719fbc0c67a63899c7af0",
     "data/processed/development_image_profile.json": "7ee43e66adc657330e3c932a0ca76dacbfea7099c3a32e8356de2d4bbe5171c9",
     "data/processed/label_maps.json": "2ee5dbcfd431ef3018f3db046c52deb4ff9e52d6972e138a194c7bdb8cf3dba2",
     "data/processed/prediction_manifest.csv": "8d1fdd27721fc8604203b99308ecda9773b1f7c89b8cf6b2a33c82587b14954b",
-    "data/processed/split_summary.json": "fb22c558f3e6e41af2b51b6226a5c8128384b6b92a7a4a8b1ad02bba7ae54765",
-    "data/processed/splits.csv": "a072ee9489ca35b7ca04ae57fa665d73ac8504a7f35bdd70d6dca8a6fded5420",
-    "data/processed/taxonomy.json": "389126ffa2e2762c049c9388ad4b6161cc6113fa9da8dd93a1333a76ac0f9c5e"
+    "data/processed/split_summary.json": "17b1e43e08f9f6f4162143a4daeaeb9ba5733fd05f759e8b3cb02d42c6a03cca",
+    "data/processed/splits.csv": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+    "data/processed/taxonomy.json": "1e2706fcfe52f24dbe9dba89ec6b663cb05482ed75a264cabc3c2abc970f1ad6"
   },
   "input_fingerprints": {
     "teacher_prediction": {
@@ -48,7 +48,7 @@
     }
   },
   "mode": "full_teacher_only_rebuild_completed",
-  "schema_version": "5.0.0",
+  "schema_version": "6.0.0",
   "shared_source_policy": "teacher_only",
   "validation_policy": {
     "cached_image_inventory": "all relative paths and sizes plus 64 deterministic SHA-256 samples per tree",

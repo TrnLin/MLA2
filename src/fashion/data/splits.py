@@ -46,6 +46,19 @@ def id_set_digest(values: pd.Series | list[int] | set[int]) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
+def cv_assignment_digest(frame: pd.DataFrame) -> str:
+    """Hash sorted ``development ID,fold`` pairs, one per line."""
+    development = frame[frame["partition"].eq("development")].copy()
+    folds = _fold_values(development)
+    if folds.isna().any():
+        raise ValueError("every development row needs a fold before hashing")
+    if not folds.mod(1).eq(0).all():
+        raise ValueError("development folds must be integers before hashing")
+    pairs = sorted(zip(development["id"].astype(int), folds.astype(int), strict=True))
+    payload = "".join(f"{item_id},{fold}\n" for item_id, fold in pairs).encode("ascii")
+    return hashlib.sha256(payload).hexdigest()
+
+
 def _fold_values(frame: pd.DataFrame) -> pd.Series:
     return pd.to_numeric(frame["cv_fold"].replace("", pd.NA), errors="coerce")
 
@@ -204,13 +217,13 @@ def validate_built_splits(
     development_rows = frame.loc[development]
     conflicts = find_exact_duplicate_label_conflicts(development_rows, targets)
     expected_conflict = development_rows["sha256"].astype(str).isin(conflicts)
-    actual_conflict = _as_bool(
-        development_rows["has_conflicting_target_labels"]
-    )
+    actual_conflict = _as_bool(development_rows["has_conflicting_target_labels"])
     if not actual_conflict.equals(expected_conflict):
         raise ValueError("conflicting-target flags disagree with exact duplicate labels")
-    expected_targets = development_rows["sha256"].astype(str).map(
-        lambda digest: ",".join(conflicts.get(digest, ()))
+    expected_targets = (
+        development_rows["sha256"]
+        .astype(str)
+        .map(lambda digest: ",".join(conflicts.get(digest, ())))
     )
     if not development_rows["conflicting_targets"].astype(str).eq(expected_targets).all():
         raise ValueError("conflicting-target names disagree with exact duplicate labels")
@@ -234,9 +247,9 @@ def _group_inputs(
     label_rows: dict[tuple[str, str], int] = defaultdict(int)
     for target in targets:
         mask = _as_bool(frame[f"has_{target}_label"])
-        for group_id, label in frame.loc[
-            mask, ["product_family_group", target]
-        ].itertuples(index=False, name=None):
+        for group_id, label in frame.loc[mask, ["product_family_group", target]].itertuples(
+            index=False, name=None
+        ):
             key = (target, str(label))
             group_id = str(group_id)
             group_labels[group_id].add(key)
@@ -305,9 +318,7 @@ def _allocate_groups(
             new_rows = rows_by_bin[name] + group_sizes[group]
             row_load = new_rows / desired_rows[name]
             class_loads = [
-                (
-                    label_counts[key][name] + group_label_counts[group][key]
-                )
+                (label_counts[key][name] + group_label_counts[group][key])
                 / desired_labels[key][name]
                 for key in group_labels[group]
             ]
@@ -406,6 +417,8 @@ def _apply_existing_membership(
     existing: pd.DataFrame,
     seed: int,
     targets: tuple[str, ...],
+    *,
+    refreeze_development_folds: bool = False,
 ) -> pd.DataFrame:
     if set(existing["partition"]).issubset(set(LEGACY_PARTITIONS)):
         existing = migrate_legacy_split_frame(existing, seed=seed, targets=targets)
@@ -432,13 +445,27 @@ def _apply_existing_membership(
     new_quarantine = set(
         manifest.loc[manifest["quarantine_reason"].astype(str).str.strip().ne(""), "id"].astype(int)
     )
-    old_quarantine = set(
-        existing.loc[existing["partition"].eq("quarantine"), "id"].astype(int)
-    )
+    old_quarantine = set(existing.loc[existing["partition"].eq("quarantine"), "id"].astype(int))
     if new_quarantine != old_quarantine:
         raise ValueError(
             "quarantine membership changed; review before replacing the canonical split"
         )
+    existing_family = existing.set_index("id")["product_family_group"].astype(str)
+    rebuilt_family = manifest.set_index("id")["product_family_group"].astype(str)
+    development_ids = set(existing.loc[existing["partition"].eq("development"), "id"].astype(int))
+    changed_development_ids = sorted(
+        item_id
+        for item_id in development_ids
+        if existing_family.loc[item_id] != rebuilt_family.loc[item_id]
+    )
+    if changed_development_ids:
+        if not refreeze_development_folds:
+            raise ValueError(
+                "development family contract changed for "
+                f"{len(changed_development_ids)} rows; explicitly refreeze CV folds before "
+                "training with refreeze_development_folds=True"
+            )
+
     membership = existing[["id", "partition", "cv_fold"]]
     result = manifest.drop(columns=["partition", "cv_fold"], errors="ignore").merge(
         membership,
@@ -446,6 +473,8 @@ def _apply_existing_membership(
         how="left",
         validate="one_to_one",
     )
+    if changed_development_ids:
+        result["cv_fold"] = _assign_cv_folds(result, seed, targets)
     return result
 
 
@@ -463,9 +492,7 @@ def write_protected_safe_splits(
     development = safe["partition"].eq("development")
     fold_numbers = pd.to_numeric(safe["cv_fold"], errors="coerce")
     safe["cv_fold"] = pd.Series("", index=safe.index, dtype=object)
-    safe.loc[development, "cv_fold"] = (
-        fold_numbers.loc[development].astype(int).astype(str)
-    )
+    safe.loc[development, "cv_fold"] = fold_numbers.loc[development].astype(int).astype(str)
     safe.sort_values("id", inplace=True)
     validate_splits(safe)
     output = Path(output_csv)
@@ -567,7 +594,7 @@ def write_split_public_evidence(
         }
     largest_family = int(development.groupby("product_family_group").size().max())
     cv_summary = {
-        "schema_version": "1.0.0",
+        "schema_version": "2.0.0",
         "source_scope": "development",
         "fold_count": CV_FOLD_COUNT,
         "seed": seed,
@@ -576,6 +603,7 @@ def write_split_public_evidence(
         "maximum_allowed_size_deviation": largest_family,
         "folds": fold_rows,
         "rare_class_policy": "report_missing_training_support_without_dropping_rows",
+        "cv_assignment_sha256": cv_assignment_digest(manifest),
     }
     Path(cv_summary_output).write_text(
         json.dumps(cv_summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
@@ -585,7 +613,7 @@ def write_split_public_evidence(
         development_summary_output, index=False, lineterminator="\n"
     )
     summary = {
-        "schema_version": "8.0.0",
+        "schema_version": "9.0.0",
         "seed": seed,
         "split_file": "data/processed/splits.csv",
         "cv_fold_file": "data/processed/splits.csv",
@@ -608,6 +636,7 @@ def write_split_public_evidence(
             partition: id_set_digest(manifest.loc[manifest["partition"].eq(partition), "id"])
             for partition in PARTITIONS
         },
+        "cv_assignment_sha256": cv_assignment_digest(manifest),
         "development_union_policy": "preserved legacy train plus validation IDs",
         "fold_policy": cv_summary,
         "group_safety": {
@@ -625,9 +654,9 @@ def write_split_public_evidence(
         "quarantine": {
             "total_rows": int(counts.get("quarantine", 0)),
             "allowed_reasons": sorted(
-                manifest.loc[
-                    manifest["partition"].eq("quarantine"), "quarantine_reason"
-                ].astype(str).unique()
+                manifest.loc[manifest["partition"].eq("quarantine"), "quarantine_reason"]
+                .astype(str)
+                .unique()
             ),
         },
     }
@@ -683,6 +712,7 @@ def make_splits(
     targets: tuple[str, ...] = TARGET_COLUMNS,
     *,
     initialize_split: bool = False,
+    refreeze_development_folds: bool = False,
 ) -> pd.DataFrame:
     """Build structural evidence while preserving canonical protected membership."""
     if train_manifest_csv is None:
@@ -694,7 +724,13 @@ def make_splits(
     output_path = Path(output_csv)
     if output_path.is_file():
         existing = pd.read_csv(output_path, keep_default_na=False)
-        manifest = _apply_existing_membership(manifest, existing, seed, targets)
+        manifest = _apply_existing_membership(
+            manifest,
+            existing,
+            seed,
+            targets,
+            refreeze_development_folds=refreeze_development_folds,
+        )
     elif initialize_split:
         manifest["partition"] = _initial_partition_allocation(manifest, seed, targets)
         manifest["cv_fold"] = _assign_cv_folds(manifest, seed, targets)
