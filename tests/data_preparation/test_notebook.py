@@ -26,6 +26,13 @@ from fashion.data.pipeline import (
 
 PROBLEM_NOTEBOOK = ROOT / "notebooks/00_problem_definition.ipynb"
 NOTEBOOK = ROOT / "notebooks/01_data_preparation.ipynb"
+ALLOWED_TASK_NOTEBOOKS = {
+    ROOT / "notebooks/02_task1_article_type.ipynb",
+    ROOT / "notebooks/03_task2_season.ipynb",
+    ROOT / "notebooks/04_task3_gender_usage.ipynb",
+    ROOT / "notebooks/05_task4_visual_search.ipynb",
+    ROOT / "notebooks/06_final_evaluation.ipynb",
+}
 FIGURE_NAMES = {
     "article_type_long_tail.png",
     "bias_risk.png",
@@ -365,7 +372,9 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     guide_cells = [cell for cell in notebook.cells if "code-guide" in cell.metadata.get("tags", [])]
 
     assert notebook.metadata["title"] == "Data Preparation and Shared Dataset Analysis"
-    assert set((ROOT / "notebooks").glob("*.ipynb")) == {PROBLEM_NOTEBOOK, NOTEBOOK}
+    notebook_paths = set((ROOT / "notebooks").glob("*.ipynb"))
+    assert {PROBLEM_NOTEBOOK, NOTEBOOK}.issubset(notebook_paths)
+    assert notebook_paths <= {PROBLEM_NOTEBOOK, NOTEBOOK, *ALLOWED_TASK_NOTEBOOKS}
     assert all(heading in source for heading in REQUIRED_HEADINGS)
     assert len(code_cells) == 38
     assert len(guide_cells) == len(code_cells)
