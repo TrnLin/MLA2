@@ -1,0 +1,12 @@
+# Keep source and generated text byte-stable on Windows, macOS, and Linux.
+*.csv text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.py text eol=lf
+*.ipynb text eol=lf
+
+# Generated archives and report assets are binary.
+*.csv.gz binary
+*.png binary
+*.pdf binary
+*.zip binary
