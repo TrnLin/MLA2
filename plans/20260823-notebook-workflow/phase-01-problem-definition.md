@@ -32,7 +32,7 @@
 - [x] Create the notebook with complete headers and subheaders.
 - [x] Validate notebook JSON and heading hierarchy.
 - [x] Check every statement against the assignment, rubric, and accepted decisions.
-- [ ] Commit the completed phase separately.
+- [x] Commit the completed phase separately.
 
 ## Success criteria
 

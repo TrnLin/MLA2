@@ -30,10 +30,10 @@ shared preprocessing in the correct order.
 
 | # | Phase | Status | Commit boundary | Link |
 |---|---|---|---|---|
-| 1 | Complete problem definition | In progress | `docs(notebooks): add problem definition workflow` | [phase 01](./phase-01-problem-definition.md) |
-| 2 | Restructure data preparation | Pending | `refactor(notebooks): clarify data preparation workflow` | [phase 02](./phase-02-data-preparation.md) |
-| 3 | Add future task handoffs | Pending | `docs(notebooks): add task workflow scaffolds` | [phase 03](./phase-03-task-scaffolds.md) |
-| 4 | Verify and reconcile project contracts | Pending | Amend only the phase that owns any required correction | [phase 04](./phase-04-verification.md) |
+| 1 | Complete problem definition | Completed | `docs(notebooks): add problem definition workflow` | [phase 01](./phase-01-problem-definition.md) |
+| 2 | Restructure data preparation | Completed | rename, workflow, evidence, and title commits | [phase 02](./phase-02-data-preparation.md) |
+| 3 | Add future task handoffs | Completed | one scaffold commit per notebook | [phase 03](./phase-03-task-scaffolds.md) |
+| 4 | Verify and reconcile project contracts | In progress | amend only the phase that owns a required correction | [phase 04](./phase-04-verification.md) |
 
 ## Notebook reading order
 

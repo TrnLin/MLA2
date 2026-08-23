@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import re
-from pathlib import Path
 
 import nbformat
 
 from fashion.config import ROOT
-
 
 TASK_SPECS = {
     "02_task1_article_type.ipynb": {
@@ -39,8 +37,7 @@ def _source(notebook: nbformat.NotebookNode) -> str:
 def test_only_planned_notebook_names_are_present() -> None:
     allowed = {"00_problem_definition.ipynb", "01_data_preparation.ipynb", *TASK_SPECS}
     present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
-    assert {"00_problem_definition.ipynb", "01_data_preparation.ipynb"} <= present
-    assert present <= allowed
+    assert present == allowed
 
 
 def test_existing_task_scaffolds_keep_decisions_with_teammates() -> None:

@@ -41,12 +41,12 @@
 
 ## Todo
 
-- [ ] Preserve and remap useful code cells.
-- [ ] Add or revise markdown headers and explanations.
-- [ ] Add focused evidence cells for the identified gaps.
-- [ ] Execute the notebook and refresh deterministic evidence, figures, and HTML.
-- [ ] Update affected tests and documentation references.
-- [ ] Commit the completed phase separately.
+- [x] Preserve and remap useful code cells.
+- [x] Add or revise markdown headers and explanations.
+- [x] Add focused evidence cells for the identified gaps.
+- [x] Execute the notebook and refresh deterministic evidence, figures, and HTML.
+- [x] Update affected tests and documentation references.
+- [x] Commit the completed phase separately.
 
 ## Success criteria
 
