@@ -329,9 +329,8 @@ def _execute_notebook(
         capture_output=True,
         text=True,
     )
-    summary = json.loads(
-        (project_root / "results/evidence/data_preparation/summary.json").read_text(encoding="utf-8")
-    )
+    summary_path = project_root / "results/evidence/data_preparation/summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
     return summary, nbformat.read(notebook_path, as_version=4)
 
 
@@ -524,7 +523,10 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
         "raw_teacher_target_columns_read_by_data_preparation": 0,
     }
     assert first_summary["leakage_checks"]["protected_target_fields_visible"] == 0
-    assert first_summary["leakage_checks"]["raw_teacher_target_columns_read_by_data_preparation"] == 0
+    assert (
+        first_summary["leakage_checks"]["raw_teacher_target_columns_read_by_data_preparation"]
+        == 0
+    )
     assert first_summary["leakage_checks"]["prediction_ids_in_labelled_splits"] == 0
     assert first_summary["leakage_checks"]["prediction_ids_in_variant_manifest"] == 0
     assert first_summary["leakage_checks"]["quarantine_ids_in_variant_manifest"] == 0
@@ -820,7 +822,8 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     assert "PosixPath(" not in document
     assert "The next helpers keep tables" not in document
 
-    summary = json.loads((ROOT / "results/evidence/data_preparation/summary.json").read_text(encoding="utf-8"))
+    summary_path = ROOT / "results/evidence/data_preparation/summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
     task4_coverage = summary["task4"]["strict_relevance_coverage_diagnostic"]
     assert task4_coverage["queries_with_zero_strict_positives"] == 110
     assert task4_coverage["queries_with_fewer_than_diagnostic_k_strict_positives"] == 412
@@ -842,16 +845,18 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     assert summary["inventory"]["holdout_image_inputs"] == 11_556
     assert summary["inventory"]["quarantine_product_ids"] == 61
     assert summary["inventory"]["quarantine_image_inputs"] == 0
-    family_policy = pd.read_csv(ROOT / "results/evidence/data_preparation/family_policy_summary.csv")
+    family_policy = pd.read_csv(
+        ROOT / "results/evidence/data_preparation/family_policy_summary.csv"
+    )
     family_values = family_policy.set_index("measure")["value"]
     assert int(family_values["active product rows"]) == 38_551
     assert int(family_values["independent family units"]) == 27_009
     assert int(family_values["units removed by blocking"]) == 11_542
     assert int(family_values["multi-row families"]) == 4_567
     assert int(family_values["largest family"]) == 80
-    validation = pd.read_csv(ROOT / "results/evidence/data_preparation/validation_summary.csv").set_index(
-        "target"
-    )
+    validation = pd.read_csv(
+        ROOT / "results/evidence/data_preparation/validation_summary.csv"
+    ).set_index("target")
     assert int(validation.loc["articleType", "classes_with_one_val_family"]) == 18
     assert int(
         validation.loc["articleType", "classes_with_fewer_than_three_val_families"]
@@ -911,7 +916,9 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
         "foreground_box_fraction",
         "background_fraction",
     }.issubset(quality.columns)
-    partition_summary = pd.read_csv(ROOT / "results/evidence/data_preparation/partition_summary.csv")
+    partition_summary = pd.read_csv(
+        ROOT / "results/evidence/data_preparation/partition_summary.csv"
+    )
     counts = partition_summary.set_index("partition")
     assert int(counts.loc["train", "image_inputs"]) == 53_984
     assert int(counts.loc["val", "image_inputs"]) == 11_562
@@ -947,7 +954,11 @@ def test_delivered_prepared_and_evidence_pack_is_lean() -> None:
         f"data/processed/{CACHE_FILENAME}",
     }
     prepared = [ROOT / relative for relative in sorted(relative_paths)]
-    evidence = [path for path in (ROOT / "results/evidence/data_preparation").iterdir() if path.is_file()]
+    evidence = [
+        path
+        for path in (ROOT / "results/evidence/data_preparation").iterdir()
+        if path.is_file()
+    ]
     assert all(path.is_file() for path in prepared)
     total_bytes = sum(path.stat().st_size for path in [*prepared, *evidence])
     assert total_bytes < 50 * 1024 * 1024
