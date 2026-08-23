@@ -103,6 +103,11 @@
       "size_bytes": 189
     },
     {
+      "path": "results/evidence/eda/image_quality_spearman.csv",
+      "sha256": "26e45b741a4f82c2b7b058c616d79d23ed8964ff538b01d53bc964bf0e1e8814",
+      "size_bytes": 2198
+    },
+    {
       "path": "results/evidence/eda/image_reconciliation.csv",
       "sha256": "97c231838c9adab9dc72874a9017a28410ac1596dce09052aae455ff8a24cefd",
       "size_bytes": 282
@@ -248,6 +253,11 @@
       "size_bytes": 203612
     },
     {
+      "path": "results/figures/eda/image_quality_correlation.png",
+      "sha256": "c2ccc1d8b3d49436d9fa84d151a6ec9f15b394a491abd595f5005a5762cec784",
+      "size_bytes": 217400
+    },
+    {
       "path": "results/figures/eda/joint_target_relationships.png",
       "sha256": "b2f17f8a09e29551e5b643a02a8493a850fb0c2f3adcd1a09e0da15b90f7841a",
       "size_bytes": 315244
@@ -308,7 +318,7 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_EDA_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 14.607
+    "preparation_seconds": 13.614
   },
   "family_policy": {
     "block_basis": [
@@ -657,6 +667,25 @@
         "target": "usage"
       }
     ]
+  },
+  "image_feature_correlation": {
+    "causal_claim": false,
+    "features": [
+      "brightness_mean",
+      "contrast_std",
+      "laplacian_variance",
+      "foreground_fraction",
+      "foreground_box_fraction",
+      "background_fraction"
+    ],
+    "method": "spearman",
+    "sample_products": 2048,
+    "source_partition": "train",
+    "strongest_pair": {
+      "feature_x": "foreground_fraction",
+      "feature_y": "background_fraction",
+      "spearman_rho": -1.0
+    }
   },
   "image_reconciliation": [
     {

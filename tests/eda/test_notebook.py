@@ -33,6 +33,7 @@ FIGURE_NAMES = {
     "development_balance.png",
     "hierarchy_overlap.png",
     "image_profile.png",
+    "image_quality_correlation.png",
     "joint_target_relationships.png",
     "label_image_sanity.png",
     "near_duplicate_boundary.png",
@@ -60,7 +61,8 @@ REQUIRED_HEADINGS = (
     "## 5. Target relationships and bias",
     "## 6. Image data quality and preprocessing",
     "### 6.1 Image quality and resolution variants",
-    "### 6.2 Input transformation",
+    "### 6.2 Numeric image-feature correlation",
+    "### 6.3 Input transformation",
     "## 7. Retrieval evaluation",
     "## 8. Reproducibility and limitations",
     "## 9. Modelling recommendations",
@@ -102,6 +104,7 @@ EVIDENCE_NAMES = {
     "hierarchy_summary.csv",
     "high_resolution_summary.csv",
     "image_reconciliation.csv",
+    "image_quality_spearman.csv",
     "image_summary.csv",
     "joint_target_nmi.csv",
     "label_image_sanity.csv",
@@ -350,7 +353,7 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
 
     assert set((ROOT / "notebooks").glob("*.ipynb")) == {PROBLEM_NOTEBOOK, NOTEBOOK}
     assert all(heading in source for heading in REQUIRED_HEADINGS)
-    assert len(code_cells) == 36
+    assert len(code_cells) == 37
     assert len(guide_cells) == len(code_cells)
     assert all(
         notebook.cells[index - 1].cell_type == "markdown"
@@ -368,9 +371,9 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert max(len(cell.source.splitlines()) for cell in code_cells) < 150
     assert "**Question.**" not in markdown
     assert "?" not in markdown
-    assert source.count("> **Finding.**") == 12
-    assert source.count("> **Modelling consequence.**") == 12
-    assert all(source.count(f"Figure {number}. ") == 1 for number in range(1, 17))
+    assert source.count("> **Finding.**") == 13
+    assert source.count("> **Modelling consequence.**") == 13
+    assert all(source.count(f"Figure {number}. ") == 1 for number in range(1, 18))
     assert all(
         count in normalized_markdown
         for count in (
@@ -409,6 +412,8 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert "metadata_without_decoded_image" in source
     assert "label_image_sanity.csv" in source
     assert "automatic_label_changes" in source
+    assert 'method="spearman"' in source
+    assert "Correlation alone does not" in source
     assert "paired_normalization.json" in source
     assert "normalization_original_only.json" in source
     assert "all_alignment_pairs.csv.gz" in source
@@ -505,6 +510,9 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
     )
     assert first_summary["label_image_sanity"]["source_partition"] == "train"
     assert first_summary["label_image_sanity"]["automatic_label_changes"] == 0
+    assert first_summary["image_feature_correlation"]["source_partition"] == "train"
+    assert first_summary["image_feature_correlation"]["method"] == "spearman"
+    assert first_summary["image_feature_correlation"]["causal_claim"] is False
     assert first_summary["task4"]["shared_ids"] == 0
     assert first_summary["task4"]["shared_sha256"] == 0
     assert first_summary["task4"]["shared_product_families"] == 0
@@ -820,6 +828,16 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     assert {"id", "articleType", "season", "gender", "usage", "sample_reason"}.issubset(
         label_image_sanity.columns
     )
+    image_quality_spearman = pd.read_csv(
+        ROOT / "results/evidence/eda/image_quality_spearman.csv"
+    )
+    assert len(image_quality_spearman) == 36
+    correlation_matrix = image_quality_spearman.pivot(
+        index="feature_x", columns="feature_y", values="spearman_rho"
+    )
+    assert correlation_matrix.shape == (6, 6)
+    assert (correlation_matrix.values.diagonal() == 1).all()
+    assert correlation_matrix.equals(correlation_matrix.T)
     quality = pd.read_csv(ROOT / "results/evidence/eda/train_image_quality_sample.csv")
     assert len(quality) == 2_048
     assert quality["source_partition"].eq("train").all()

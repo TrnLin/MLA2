@@ -41,6 +41,11 @@
       "size_bytes": 189
     },
     {
+      "path": "results/evidence/eda/image_quality_spearman.csv",
+      "sha256": "26e45b741a4f82c2b7b058c616d79d23ed8964ff538b01d53bc964bf0e1e8814",
+      "size_bytes": 2198
+    },
+    {
       "path": "results/evidence/eda/image_reconciliation.csv",
       "sha256": "97c231838c9adab9dc72874a9017a28410ac1596dce09052aae455ff8a24cefd",
       "size_bytes": 282
@@ -186,6 +191,11 @@
       "size_bytes": 203612
     },
     {
+      "path": "results/figures/eda/image_quality_correlation.png",
+      "sha256": "c2ccc1d8b3d49436d9fa84d151a6ec9f15b394a491abd595f5005a5762cec784",
+      "size_bytes": 217400
+    },
+    {
       "path": "results/figures/eda/joint_target_relationships.png",
       "sha256": "b2f17f8a09e29551e5b643a02a8493a850fb0c2f3adcd1a09e0da15b90f7841a",
       "size_bytes": 315244
@@ -246,10 +256,10 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_EDA_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 14.607
+    "preparation_seconds": 13.614
   },
   "git": {
-    "commit": "26851b8e619cf32d8ae3f0dc10ebb353c8b10448",
+    "commit": "bd262b447b72a72d6ccbb4f21c94d1ce8c4e4705",
     "dirty": true
   },
   "image_variants": {
@@ -422,7 +432,7 @@
   ],
   "note": "Wall-time benchmark hashes may change; report figures and other evidence are deterministic for the locked runtime.",
   "notebook": {
-    "code_digest": "8bd4bd87743cb0aa68de5b598cb504c4971b713f18d22fdd16570c4d7292b27b",
+    "code_digest": "85dd0ae48235aa0ed677423c25f557412d74ed14dd63f87e95762ab43167b615",
     "path": "notebooks/00_eda.ipynb"
   },
   "runtime": {
@@ -436,13 +446,13 @@
   "volatile_outputs": [
     {
       "path": "results/evidence/eda/transform_benchmark.json",
-      "sha256": "b345e3f749e340aff2b13ddab69406e9d2f238c4bb673934a3c2fe630e856b91",
-      "size_bytes": 6827
+      "sha256": "bf0a62453b42f6b8ddea6935ea047acd6aa9f938b7b601ce274e1ae419719761",
+      "size_bytes": 6831
     },
     {
       "path": "results/evidence/eda/transform_summary.csv",
-      "sha256": "b23b7b0ccb2d92681e95eb71fd0adb0669c6f8c57d1cd842e2ea53d4ba69a6b8",
-      "size_bytes": 345
+      "sha256": "fac5fc9e15366cfd16d5930d0826fc85347451c09e7f287e96a6763e0e13d667",
+      "size_bytes": 347
     }
   ]
 }
