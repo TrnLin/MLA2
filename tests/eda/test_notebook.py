@@ -34,6 +34,7 @@ FIGURE_NAMES = {
     "hierarchy_overlap.png",
     "image_profile.png",
     "joint_target_relationships.png",
+    "label_image_sanity.png",
     "near_duplicate_boundary.png",
     "family_policy.png",
     "season_ambiguity.png",
@@ -53,7 +54,8 @@ REQUIRED_HEADINGS = (
     "### 2.3 Raw hashing and metadata-image reconciliation",
     "## 3. Data integrity and leakage controls",
     "### 3.1 Split integrity",
-    "### 3.2 Duplicate and entity controls",
+    "### 3.2 Label-image sanity check",
+    "### 3.3 Duplicate and entity controls",
     "## 4. Target distributions and class balance",
     "## 5. Target relationships and bias",
     "## 6. Image data quality and preprocessing",
@@ -102,6 +104,7 @@ EVIDENCE_NAMES = {
     "image_reconciliation.csv",
     "image_summary.csv",
     "joint_target_nmi.csv",
+    "label_image_sanity.csv",
     "normalization_summary.csv",
     "partition_summary.csv",
     "preparation_stage_order.csv",
@@ -347,7 +350,7 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
 
     assert set((ROOT / "notebooks").glob("*.ipynb")) == {PROBLEM_NOTEBOOK, NOTEBOOK}
     assert all(heading in source for heading in REQUIRED_HEADINGS)
-    assert len(code_cells) == 35
+    assert len(code_cells) == 36
     assert len(guide_cells) == len(code_cells)
     assert all(
         notebook.cells[index - 1].cell_type == "markdown"
@@ -365,9 +368,9 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert max(len(cell.source.splitlines()) for cell in code_cells) < 150
     assert "**Question.**" not in markdown
     assert "?" not in markdown
-    assert source.count("> **Finding.**") == 11
-    assert source.count("> **Modelling consequence.**") == 11
-    assert all(source.count(f"Figure {number}. ") == 1 for number in range(1, 16))
+    assert source.count("> **Finding.**") == 12
+    assert source.count("> **Modelling consequence.**") == 12
+    assert all(source.count(f"Figure {number}. ") == 1 for number in range(1, 17))
     assert all(
         count in normalized_markdown
         for count in (
@@ -404,6 +407,8 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert "Raw inventory and SHA-256" in source
     assert "Perceptual dHash and aHash" in source
     assert "metadata_without_decoded_image" in source
+    assert "label_image_sanity.csv" in source
+    assert "automatic_label_changes" in source
     assert "paired_normalization.json" in source
     assert "normalization_original_only.json" in source
     assert "all_alignment_pairs.csv.gz" in source
@@ -498,6 +503,8 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
         row["decoded_image_without_metadata"] == 0
         for row in first_summary["image_reconciliation"]
     )
+    assert first_summary["label_image_sanity"]["source_partition"] == "train"
+    assert first_summary["label_image_sanity"]["automatic_label_changes"] == 0
     assert first_summary["task4"]["shared_ids"] == 0
     assert first_summary["task4"]["shared_sha256"] == 0
     assert first_summary["task4"]["shared_product_families"] == 0
@@ -804,6 +811,15 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
         4: 98,
         5: 94,
     }
+    label_image_sanity = pd.read_csv(
+        ROOT / "results/evidence/eda/label_image_sanity.csv",
+        keep_default_na=False,
+    )
+    assert len(label_image_sanity) == 12
+    assert label_image_sanity["source_partition"].eq("train").all()
+    assert {"id", "articleType", "season", "gender", "usage", "sample_reason"}.issubset(
+        label_image_sanity.columns
+    )
     quality = pd.read_csv(ROOT / "results/evidence/eda/train_image_quality_sample.csv")
     assert len(quality) == 2_048
     assert quality["source_partition"].eq("train").all()

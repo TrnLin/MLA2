@@ -56,6 +56,11 @@
       "size_bytes": 247
     },
     {
+      "path": "results/evidence/eda/label_image_sanity.csv",
+      "sha256": "94cbf9a3070fdb915770cdb60ae77d220c039a38e532a8b2e8feb2d7f596d0b9",
+      "size_bytes": 1542
+    },
+    {
       "path": "results/evidence/eda/normalization_summary.csv",
       "sha256": "6e1c8329dba45e301eb2efd2740248ba1b1666aa158aace2c407b7e6bab15c1d",
       "size_bytes": 329
@@ -186,6 +191,11 @@
       "size_bytes": 315244
     },
     {
+      "path": "results/figures/eda/label_image_sanity.png",
+      "sha256": "3487c911661d301f3bad1f8714a8a49199b75ad5398860724d9643b6c122610d",
+      "size_bytes": 234513
+    },
+    {
       "path": "results/figures/eda/near_duplicate_boundary.png",
       "sha256": "22a8165fc9bf186df8880da7a9fb7313b1f1172df13dd6fedb8ff4f989474b4d",
       "size_bytes": 178100
@@ -236,10 +246,10 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_EDA_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 14.511
+    "preparation_seconds": 14.607
   },
   "git": {
-    "commit": "b712030a0f9622cdc08e9b5f76dc8c81503194ea",
+    "commit": "26851b8e619cf32d8ae3f0dc10ebb353c8b10448",
     "dirty": true
   },
   "image_variants": {
@@ -412,7 +422,7 @@
   ],
   "note": "Wall-time benchmark hashes may change; report figures and other evidence are deterministic for the locked runtime.",
   "notebook": {
-    "code_digest": "f40b22109e3e96913725dcc944d9045043cd22de886b257e26876a2d432b43ff",
+    "code_digest": "8bd4bd87743cb0aa68de5b598cb504c4971b713f18d22fdd16570c4d7292b27b",
     "path": "notebooks/00_eda.ipynb"
   },
   "runtime": {
@@ -426,13 +436,13 @@
   "volatile_outputs": [
     {
       "path": "results/evidence/eda/transform_benchmark.json",
-      "sha256": "540265bad27621225400b958a90b188cf8eed2e0cc6ed5a2265f9aa6ee6ad376",
-      "size_bytes": 6831
+      "sha256": "b345e3f749e340aff2b13ddab69406e9d2f238c4bb673934a3c2fe630e856b91",
+      "size_bytes": 6827
     },
     {
       "path": "results/evidence/eda/transform_summary.csv",
-      "sha256": "6f9272fd75b404edff70e63e4a9563ddfd1bda0278b0d5bba4781ed92c8f85c6",
-      "size_bytes": 346
+      "sha256": "b23b7b0ccb2d92681e95eb71fd0adb0669c6f8c57d1cd842e2ea53d4ba69a6b8",
+      "size_bytes": 345
     }
   ]
 }
