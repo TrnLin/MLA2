@@ -7,7 +7,7 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 
-# Supplied raw datasets stay local. Only the exact lean protected-safe EDA pack is
+# Supplied raw datasets stay local. Only the exact lean protected-safe preparation pack is
 # deliverable so normal Run All does not need the slow forensic rebuild.
 /data/*
 !/data/README.md

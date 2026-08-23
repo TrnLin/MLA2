@@ -682,7 +682,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
 
       <!-- C2 prepare -->
       <rect class="d-box" x="275" y="170" width="200" height="76"/>
-      <text class="d-t" x="291" y="200">00_eda.ipynb full mode</text>
+      <text class="d-t" x="291" y="200">01_data_preparation.ipynb full mode</text>
       <text class="d-s" x="291" y="220">audits · manifests · masks</text>
       <text class="d-s" x="291" y="236">duplicates · train stats</text>
 
@@ -882,7 +882,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     <div class="lr">
       <div><b>Pre-process the dataset, collecting extra data if necessary</b>
         <p>Any new dataset must be made accessible to the evaluator.</p></div>
-      <div><b><code>notebooks/00_eda.ipynb</code> full mode → audits, manifests and
+      <div><b><code>notebooks/01_data_preparation.ipynb</code> full mode → audits, manifests and
         <code>data/processed/splits.csv</code></b>
         <p>Handles <code>"NA"</code> versus blank, the five orphaned rows, and the rare-class policy.
         It writes exactly one shared split with <code>train | val | holdout | quarantine</code>
@@ -958,7 +958,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
 
   <div class="nbs rv">
     <div class="eyebrow" style="margin-bottom:14px">Six notebooks — the official EDA contains its visible analysis and invokes reusable data contracts directly</div>
-    <div class="nb"><code>00_eda.ipynb</code><p>Record split, taxonomy, image, bias, and retrieval decisions.</p></div>
+    <div class="nb"><code>01_data_preparation.ipynb</code><p>Build and validate the shared data contract, then record focused analysis and task handoffs.</p></div>
     <div class="nb"><code>10_task1_articletype.ipynb</code><p>124-output models; compare on the 100-class train-supported slice.</p></div>
     <div class="nb"><code>20_task2_season.ipynb</code><p>Four classes, weak signal. Establish and defend the ceiling.</p></div>
     <div class="nb"><code>30_task3_gender_usage.ipynb</code><p>Two targets. Two models against one shared backbone, decided on evidence.</p></div>

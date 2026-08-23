@@ -25,7 +25,7 @@ from fashion.data.pipeline import (
 )
 
 PROBLEM_NOTEBOOK = ROOT / "notebooks/00_problem_definition.ipynb"
-NOTEBOOK = ROOT / "notebooks/00_eda.ipynb"
+NOTEBOOK = ROOT / "notebooks/01_data_preparation.ipynb"
 FIGURE_NAMES = {
     "article_type_long_tail.png",
     "bias_risk.png",
@@ -46,7 +46,7 @@ FIGURE_NAMES = {
     "variant_alignment_examples.png",
 }
 REQUIRED_HEADINGS = (
-    "# Exploratory Data Analysis",
+    "# Data Preparation and Shared Dataset Analysis",
     "## Executive summary",
     "## 1. Scope and execution",
     "## 2. Data provenance and inventory",
@@ -209,7 +209,7 @@ def _copy_tiny_project(source_root: Path, destination: Path) -> Path:
     )
     _write_high_resolution_fixture(destination)
     (destination / "notebooks").mkdir(parents=True)
-    shutil.copy2(NOTEBOOK, destination / "notebooks/00_eda.ipynb")
+    shutil.copy2(NOTEBOOK, destination / "notebooks/01_data_preparation.ipynb")
     return destination
 
 
@@ -248,7 +248,7 @@ def _execute_notebook(
     *,
     rebuild: bool = True,
 ) -> tuple[dict, nbformat.NotebookNode]:
-    notebook_path = project_root / "notebooks/00_eda.ipynb"
+    notebook_path = project_root / "notebooks/01_data_preparation.ipynb"
     if rebuild:
         assert not (project_root / "data/processed").exists()
         assert not (project_root / "results").exists()
@@ -260,16 +260,16 @@ def _execute_notebook(
         {
             "PYTHONPATH": os.pathsep.join(python_path),
             "FASHION_PROJECT_ROOT": str(project_root),
-            "FASHION_EDA_NOTEBOOK_PATH": str(notebook_path),
-            "FASHION_EDA_WORKERS": "2",
-            "FASHION_EDA_BENCHMARK_SIZE": "4",
-            "FASHION_EDA_BENCHMARK_REPETITIONS": "1",
+            "FASHION_DATA_PREPARATION_NOTEBOOK_PATH": str(notebook_path),
+            "FASHION_DATA_PREPARATION_WORKERS": "2",
+            "FASHION_DATA_PREPARATION_BENCHMARK_SIZE": "4",
+            "FASHION_DATA_PREPARATION_BENCHMARK_REPETITIONS": "1",
         }
     )
     if rebuild:
-        environment["FASHION_EDA_MODE"] = "full"
+        environment["FASHION_DATA_PREPARATION_MODE"] = "full"
     else:
-        environment.pop("FASHION_EDA_MODE", None)
+        environment.pop("FASHION_DATA_PREPARATION_MODE", None)
     subprocess.run(
         [
             sys.executable,
@@ -301,7 +301,7 @@ def _execute_notebook(
             "--TagRemovePreprocessor.enabled=True",
             "--TagRemovePreprocessor.remove_cell_tags=report-hide",
             "--output",
-            "00_eda.html",
+            "01_data_preparation.html",
             "--output-dir",
             str(project_root / "results/notebooks"),
             str(notebook_path),
@@ -313,7 +313,7 @@ def _execute_notebook(
         text=True,
     )
     summary = json.loads(
-        (project_root / "results/evidence/eda/summary.json").read_text(encoding="utf-8")
+        (project_root / "results/evidence/data_preparation/summary.json").read_text(encoding="utf-8")
     )
     return summary, nbformat.read(notebook_path, as_version=4)
 
@@ -389,11 +389,11 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert "Product counts describe reporting units" in markdown
     assert "image-input counts describe the actual loader size" in markdown
     provenance = json.loads(
-        (ROOT / "results/evidence/eda/provenance.json").read_text(encoding="utf-8")
+        (ROOT / "results/evidence/data_preparation/provenance.json").read_text(encoding="utf-8")
     )
     stable_count = len(provenance["deterministic_outputs"])
     figure_count = sum(
-        record["path"].startswith("results/figures/eda/")
+        record["path"].startswith("results/figures/data_preparation/")
         and record["path"].endswith(".png")
         for record in provenance["deterministic_outputs"]
     )
@@ -403,7 +403,7 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     )
     assert saved_count_sentence in normalized_markdown
     rendered_report = " ".join(
-        (ROOT / "results/notebooks/00_eda.html").read_text(encoding="utf-8").split()
+        (ROOT / "results/notebooks/01_data_preparation.html").read_text(encoding="utf-8").split()
     )
     assert saved_count_sentence in rendered_report
     assert "fashion.data.pipeline import prepare_data" in source
@@ -442,7 +442,10 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert "load_splits_for_final_evaluation" not in source
     assert "raw_train = pd.read_csv" not in source
     assert 'usecols=["id"]' in source
-    assert "raw_teacher_target_columns_read_by_eda" in source
+    assert "raw_teacher_target_columns_read_by_data_preparation" in source
+    assert "def atomic_write_text" in source
+    assert "temporary.replace(path)" in source
+    assert "this notebook does not train or select a model" in normalized_markdown
     assert all(name in source for name in FIGURE_NAMES)
 
     for cell in code_cells:
@@ -490,13 +493,13 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
     assert first_summary["scope"] == {
         "development_partition": "val",
         "modelling_partition": "train",
-        "prediction_images_in_target_eda": 0,
+        "prediction_images_in_target_analysis": 0,
         "prediction_role": "label-free duplicate audit only",
         "protected_partitions": ["holdout", "quarantine"],
-        "raw_teacher_target_columns_read_by_eda": 0,
+        "raw_teacher_target_columns_read_by_data_preparation": 0,
     }
     assert first_summary["leakage_checks"]["protected_target_fields_visible"] == 0
-    assert first_summary["leakage_checks"]["raw_teacher_target_columns_read_by_eda"] == 0
+    assert first_summary["leakage_checks"]["raw_teacher_target_columns_read_by_data_preparation"] == 0
     assert first_summary["leakage_checks"]["prediction_ids_in_labelled_splits"] == 0
     assert first_summary["leakage_checks"]["prediction_ids_in_variant_manifest"] == 0
     assert first_summary["leakage_checks"]["quarantine_ids_in_variant_manifest"] == 0
@@ -583,7 +586,7 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
         (first_root, first_notebook),
         (second_root, second_notebook),
     ):
-        figures = root / "results/figures/eda"
+        figures = root / "results/figures/data_preparation"
         assert {path.name for path in figures.glob("*.png")} == FIGURE_NAMES
         assert all(path.stat().st_size > 1_000 for path in figures.glob("*.png"))
         code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
@@ -594,20 +597,20 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
         )
         final_text = json.dumps(code_cells[-1].outputs)
         assert "Run All complete" in final_text
-        assert "Protected target values materialised by EDA: 0" in final_text
+        assert "Protected target values materialised by data preparation: 0" in final_text
 
-        report = (root / "results/notebooks/00_eda.html").read_text(encoding="utf-8")
+        report = (root / "results/notebooks/01_data_preparation.html").read_text(encoding="utf-8")
         assert not re.search(r'class="[^"]*jp-InputArea-editor', report)
-        assert report.count('<figure class="eda-figure">') == len(FIGURE_NAMES)
+        assert report.count('<figure class="data-preparation-figure">') == len(FIGURE_NAMES)
         assert all(heading.lstrip("# ") in report for heading in REQUIRED_HEADINGS)
         assert "Code step —" not in report
         assert "The next helpers keep tables" not in report
 
         assert not list((root / "results/reviews").glob("*"))
 
-        saved_summary = root / "results/evidence/eda/summary.json"
+        saved_summary = root / "results/evidence/data_preparation/summary.json"
         assert hashlib.sha256(saved_summary.read_bytes()).hexdigest()
-        evidence = root / "results/evidence/eda"
+        evidence = root / "results/evidence/data_preparation"
         assert {path.name for path in evidence.iterdir()} == EVIDENCE_NAMES
         assert not (evidence / "data_reconciliation.json").exists()
         variants = pd.read_csv(root / "data/processed/training_image_variants.csv.gz")
@@ -647,7 +650,7 @@ def test_protected_target_sentinels_do_not_change_normal_eda_state(
 
     sentinel_root = tmp_path / "sentinel"
     shutil.copytree(baseline_root, sentinel_root)
-    shutil.copy2(NOTEBOOK, sentinel_root / "notebooks/00_eda.ipynb")
+    shutil.copy2(NOTEBOOK, sentinel_root / "notebooks/01_data_preparation.ipynb")
     shutil.rmtree(sentinel_root / "results")
 
     splits_path = sentinel_root / "data/processed/splits.csv"
@@ -716,7 +719,7 @@ def test_clean_delivered_package_runs_once_in_default_cached_mode(
 
     package_root = tmp_path / "delivered"
     package_root.mkdir()
-    for relative in ("pyproject.toml", "notebooks/00_eda.ipynb", "data/raw/README.md"):
+    for relative in ("pyproject.toml", "notebooks/01_data_preparation.ipynb", "data/raw/README.md"):
         source = ROOT / relative
         target = package_root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -773,17 +776,17 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
         output.output_type == "execute_result" for cell in code_cells for output in cell.outputs
     )
 
-    report = ROOT / "results/notebooks/00_eda.html"
+    report = ROOT / "results/notebooks/01_data_preparation.html"
     assert report.is_file()
     document = report.read_text(encoding="utf-8")
     assert not re.search(r'class="[^"]*jp-InputArea-editor', document)
-    assert document.count('<figure class="eda-figure">') == len(FIGURE_NAMES)
+    assert document.count('<figure class="data-preparation-figure">') == len(FIGURE_NAMES)
     assert all(heading.lstrip("# ") in document for heading in REQUIRED_HEADINGS)
     assert "Code step —" not in document
     assert "PosixPath(" not in document
     assert "The next helpers keep tables" not in document
 
-    summary = json.loads((ROOT / "results/evidence/eda/summary.json").read_text(encoding="utf-8"))
+    summary = json.loads((ROOT / "results/evidence/data_preparation/summary.json").read_text(encoding="utf-8"))
     assert summary["task4"]["recall_at_k"]["queries_with_zero_grade2_positives"] == 110
     assert summary["task4"]["recall_at_k"]["queries_with_fewer_than_k_grade2_positives"] == 412
     assert summary["task4"]["total_validation_products"] == 5_781
@@ -803,14 +806,14 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     assert summary["inventory"]["holdout_image_inputs"] == 11_556
     assert summary["inventory"]["quarantine_product_ids"] == 61
     assert summary["inventory"]["quarantine_image_inputs"] == 0
-    family_policy = pd.read_csv(ROOT / "results/evidence/eda/family_policy_summary.csv")
+    family_policy = pd.read_csv(ROOT / "results/evidence/data_preparation/family_policy_summary.csv")
     family_values = family_policy.set_index("measure")["value"]
     assert int(family_values["active product rows"]) == 38_551
     assert int(family_values["independent family units"]) == 27_009
     assert int(family_values["units removed by blocking"]) == 11_542
     assert int(family_values["multi-row families"]) == 4_567
     assert int(family_values["largest family"]) == 80
-    validation = pd.read_csv(ROOT / "results/evidence/eda/validation_summary.csv").set_index(
+    validation = pd.read_csv(ROOT / "results/evidence/data_preparation/validation_summary.csv").set_index(
         "target"
     )
     assert int(validation.loc["articleType", "classes_with_one_val_family"]) == 18
@@ -819,7 +822,7 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     ) == 26
     assert int(validation.loc["usage", "classes_with_two_val_families"]) == 1
     sensitivity = pd.read_csv(
-        ROOT / "results/evidence/eda/support_threshold_sensitivity.csv"
+        ROOT / "results/evidence/data_preparation/support_threshold_sensitivity.csv"
     )
     article_sensitivity = sensitivity[sensitivity["target"].eq("articleType")].set_index(
         "minimum_train_families"
@@ -831,7 +834,7 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
         5: 94,
     }
     label_image_sanity = pd.read_csv(
-        ROOT / "results/evidence/eda/label_image_sanity.csv",
+        ROOT / "results/evidence/data_preparation/label_image_sanity.csv",
         keep_default_na=False,
     )
     assert len(label_image_sanity) == 12
@@ -840,7 +843,7 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
         label_image_sanity.columns
     )
     image_quality_spearman = pd.read_csv(
-        ROOT / "results/evidence/eda/image_quality_spearman.csv"
+        ROOT / "results/evidence/data_preparation/image_quality_spearman.csv"
     )
     assert len(image_quality_spearman) == 36
     correlation_matrix = image_quality_spearman.pivot(
@@ -850,7 +853,7 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     assert (correlation_matrix.values.diagonal() == 1).all()
     assert correlation_matrix.equals(correlation_matrix.T)
     imbalance_handoff = pd.read_csv(
-        ROOT / "results/evidence/eda/imbalance_handoff.csv",
+        ROOT / "results/evidence/data_preparation/imbalance_handoff.csv",
         keep_default_na=False,
     )
     assert set(imbalance_handoff["target"]) == {"articleType", "season", "gender", "usage"}
@@ -861,7 +864,7 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
         "never resample or rebalance"
     ).all()
     assert imbalance_handoff["raw_pixel_smote"].eq("not used").all()
-    quality = pd.read_csv(ROOT / "results/evidence/eda/train_image_quality_sample.csv")
+    quality = pd.read_csv(ROOT / "results/evidence/data_preparation/train_image_quality_sample.csv")
     assert len(quality) == 2_048
     assert quality["source_partition"].eq("train").all()
     assert {
@@ -872,7 +875,7 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
         "foreground_box_fraction",
         "background_fraction",
     }.issubset(quality.columns)
-    partition_summary = pd.read_csv(ROOT / "results/evidence/eda/partition_summary.csv")
+    partition_summary = pd.read_csv(ROOT / "results/evidence/data_preparation/partition_summary.csv")
     counts = partition_summary.set_index("partition")
     assert int(counts.loc["train", "image_inputs"]) == 53_984
     assert int(counts.loc["val", "image_inputs"]) == 11_562
@@ -884,7 +887,7 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     assert "metadata proxy" in document
     assert "real-world similarity ground truth" in document
     provenance = json.loads(
-        (ROOT / "results/evidence/eda/provenance.json").read_text(encoding="utf-8")
+        (ROOT / "results/evidence/data_preparation/provenance.json").read_text(encoding="utf-8")
     )
     provenance_paths = {row["path"] for row in provenance["inputs"]}
     assert {
@@ -898,7 +901,7 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
         "open_decisions.md"
     ]
     assert not list((ROOT / "results/reviews").glob("*"))
-    assert not (ROOT / "results/evidence/eda/data_reconciliation.json").exists()
+    assert not (ROOT / "results/evidence/data_preparation/data_reconciliation.json").exists()
 
 
 def test_delivered_prepared_and_evidence_pack_is_lean() -> None:
@@ -908,7 +911,7 @@ def test_delivered_prepared_and_evidence_pack_is_lean() -> None:
         f"data/processed/{CACHE_FILENAME}",
     }
     prepared = [ROOT / relative for relative in sorted(relative_paths)]
-    evidence = [path for path in (ROOT / "results/evidence/eda").iterdir() if path.is_file()]
+    evidence = [path for path in (ROOT / "results/evidence/data_preparation").iterdir() if path.is_file()]
     assert all(path.is_file() for path in prepared)
     total_bytes = sum(path.stat().st_size for path in [*prepared, *evidence])
     assert total_bytes < 50 * 1024 * 1024

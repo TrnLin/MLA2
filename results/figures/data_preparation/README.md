@@ -1,6 +1,6 @@
-# EDA figures
+# Data-preparation figures
 
-The official `notebooks/00_eda.ipynb` generates all report-cited exploratory
+The official `notebooks/01_data_preparation.ipynb` generates all report-cited preparation and exploratory
 figures here during **Run All**.
 
 The plots use training data for modelling evidence. Validation appears only in

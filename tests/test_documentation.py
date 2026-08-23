@@ -22,7 +22,7 @@ def test_assignment_breakdown_uses_canonical_data_contract():
         assert stale_claim not in document
 
     for current_claim in (
-        "notebooks/00_eda.ipynb",
+        "notebooks/01_data_preparation.ipynb",
         "data/processed/splits.csv",
         "train | val | holdout | quarantine",
         "38,595",
@@ -51,7 +51,7 @@ def test_locked_setup_and_single_split_rule_are_documented():
         *sorted((ROOT / "src").rglob("*.py")),
         *sorted((ROOT / "scripts").glob("*.py")),
     ]
-    searched_files.append(ROOT / "notebooks/00_eda.ipynb")
+    searched_files.append(ROOT / "notebooks/01_data_preparation.ipynb")
     offenders = [
         path.relative_to(ROOT).as_posix()
         for path in searched_files

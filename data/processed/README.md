@@ -13,7 +13,7 @@ conflicting valid labels. Label maps and `taxonomy.json` are fitted on train aft
 splitting. The frozen mapping is then applied to validation and protected rows.
 Separate `*_supported` columns mark the fair primary-metric slice with at least
 three independent **training** families. A validation label unknown to train is
-masked and reported; holdout target coverage is not audited in public EDA.
+masked and reported; holdout target coverage is not audited during data preparation.
 
 Holdout and quarantine targets are blank in the persisted `splits.csv`, not merely
 hidden after loading. Full target values require the explicit final-evaluation loader,
@@ -35,7 +35,7 @@ delivered; training uses `splits.csv`. Normal **Run All** rejects missing or cha
 artifacts. Raw image content assurance is narrower: every path and size plus a fixed
 hash sample.
 
-Set `FASHION_EDA_MODE=full` before opening the notebook for a slow forensic rebuild
+Set `FASHION_DATA_PREPARATION_MODE=full` before opening the notebook for a slow forensic rebuild
 after raw inputs change. Full mode requires `data/fashion-dataset/`, rebuilds the
 doubled image manifest, regenerates label-free low/high alignment evidence, and
-recomputes both normalization policies. There is no EDA preparation script.
+recomputes both normalization policies. There is no separate preparation script.

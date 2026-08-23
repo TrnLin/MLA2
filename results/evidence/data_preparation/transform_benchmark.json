@@ -524,21 +524,21 @@
   "seed": 2753,
   "timings": {
     "chosen_96x128": {
-      "median_images_per_second": 1041.19,
-      "median_seconds": 0.491745,
+      "median_images_per_second": 5568.88,
+      "median_seconds": 0.09194,
       "seconds": [
-        0.459009,
-        0.522499,
-        0.491745
+        0.09194,
+        0.08972,
+        0.093416
       ]
     },
     "old_128x128": {
-      "median_images_per_second": 977.44,
-      "median_seconds": 0.523817,
+      "median_images_per_second": 5346.96,
+      "median_seconds": 0.095755,
       "seconds": [
-        0.542088,
-        0.502596,
-        0.523817
+        0.114845,
+        0.095755,
+        0.094376
       ]
     }
   }

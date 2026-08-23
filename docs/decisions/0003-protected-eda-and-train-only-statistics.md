@@ -32,6 +32,6 @@ in the persisted split and absent from the lean prepared pack.
 ## Evidence
 
 - `rubrics/RUBRIC.md` requirement for justified and independent evaluation.
-- Scope and provenance checks inside `notebooks/00_eda.ipynb`.
+- Scope and provenance checks inside `notebooks/01_data_preparation.ipynb`.
 - Training-ID digest in the main `data/processed/paired_normalization.json` and the
   comparison baseline `data/processed/normalization_original_only.json`.

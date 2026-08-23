@@ -2,7 +2,7 @@
 
 ## Ownership
 
-- Rename and restructure `notebooks/00_eda.ipynb` as `notebooks/01_data_preparation.ipynb`.
+- Restructure the renamed `notebooks/01_data_preparation.ipynb` workflow.
 - Preserve reusable code cells and current trusted evidence wherever possible.
 - Update direct tests, saved HTML, documentation paths, and provenance references owned by the rename.
 
@@ -54,4 +54,3 @@
 - Routine cached run validates the prepared contract without hiding the logical build process.
 - Required outputs are reproducible and protected targets never enter notebook state.
 - Every main finding names its downstream modelling action.
-

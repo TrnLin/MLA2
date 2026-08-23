@@ -22,7 +22,7 @@ shared preprocessing in the correct order.
 - `docs/COSC2753_2026B_Assignment 2.pdf`
 - `rubrics/RUBRIC.md`
 - `AGENTS.md` and `docs/decisions/`
-- `notebooks/00_eda.ipynb`
+- `notebooks/01_data_preparation.ipynb`
 - `C:/Users/Khoai/RMIT/Machine_Learning/Machine Learning at RMIT/ASM2/notebooks/01_Data_preparation.ipynb`
 - `C:/Users/Khoai/RMIT/Machine_Learning/Machine Learning tổng/`
 
@@ -59,6 +59,6 @@ shared preprocessing in the correct order.
 ## Dependencies
 
 - Phase 1 can be completed independently.
-- Phase 2 owns the rename of `00_eda.ipynb` and all direct path/test/documentation updates.
+- Phase 2 owns the data-preparation name and all direct path, test, and documentation updates.
 - Phase 3 starts after Phase 2 fixes the notebook contract and reading order.
 - Phase 4 runs after all notebook files exist.

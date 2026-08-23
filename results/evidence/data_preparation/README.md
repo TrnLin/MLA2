@@ -1,6 +1,6 @@
-# EDA evidence
+# Data-preparation evidence
 
-The official `notebooks/00_eda.ipynb` writes a scoped JSON summary and flat CSV
+The official `notebooks/01_data_preparation.ipynb` writes a scoped JSON summary and flat CSV
 evidence here during **Run All**.
 The tables cover partitions, family-block trade-offs, full official outputs, the supported
 primary-metric slice, product and family validation coverage, train-only image quality and
