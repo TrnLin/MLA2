@@ -18,15 +18,26 @@ def _as_bool(series: pd.Series) -> pd.Series:
 
 
 def repair_product_name(segments: Sequence[Any]) -> str:
-    """Join non-empty CSV spill segments in their original order."""
+    """Join real product-name CSV segments in their original order.
+
+    Literal ``NA`` is missing only in the product-name contract. Target fields use
+    :func:`has_valid_label`, where ``NA`` remains a valid teacher label.
+    """
     cleaned: list[str] = []
     for segment in segments:
-        if segment is None or pd.isna(segment):
+        if is_missing_product_name(segment):
             continue
         text = str(segment).strip()
-        if text:
-            cleaned.append(text)
+        cleaned.append(text)
     return ", ".join(cleaned)
+
+
+def is_missing_product_name(value: Any) -> bool:
+    """Return whether a product-name value is blank or the literal missing token ``NA``."""
+    if value is None or pd.isna(value):
+        return True
+    text = str(value).strip()
+    return text == "" or text.casefold() == "na"
 
 
 def has_valid_label(value: Any) -> bool:

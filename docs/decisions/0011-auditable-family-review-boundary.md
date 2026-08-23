@@ -1,6 +1,6 @@
 # 0011 - Automatic family safety boundary
 
-- Status: Superseded in part by 0014
+- Status: Superseded in part by 0014 and amended by 0017
 - Date: 2026-08-22
 
 ## Context
@@ -26,6 +26,9 @@ independent products available for splitting and evaluation.
 The rule is conservative. A broad family can reduce effective sample size, but it cannot cross an
 active partition. The final active data has 38,551 product rows and 27,009 family units, a reduction
 of 11,542 units or 29.9%. There are 4,567 multi-row families and the largest contains 80 rows.
+
+ADR 0017 later treats literal product-name `NA` as missing and records the resulting family and CV
+refreeze changes. The counts in this historical record describe the earlier family graph.
 
 All active exact-hash, automatic-visual, normalized-name, and family blocks have zero crossings.
 The fixed partitions contain 26,992 train, 5,781 validation, 5,778 holdout, and 61 quarantine rows.

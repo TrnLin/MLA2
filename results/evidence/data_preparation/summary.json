@@ -1,12 +1,14 @@
 {
   "active_group_crossings": 0,
+  "cv_assignment_sha256": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd",
   "cv_fold_counts": {
-    "0": 6555,
-    "1": 6555,
-    "2": 6554,
-    "3": 6556,
-    "4": 6553
+    "0": 6553,
+    "1": 6556,
+    "2": 6553,
+    "3": 6554,
+    "4": 6557
   },
+  "development_independent_families": 22905,
   "known_labelled_ids_without_valid_image": [
     12347,
     39401,

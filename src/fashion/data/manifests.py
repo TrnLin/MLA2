@@ -15,7 +15,7 @@ from fashion.config import (
     TEST_CSV,
 )
 from fashion.data.hashing import write_deterministic_csv
-from fashion.data.metadata import has_valid_label, repair_product_name
+from fashion.data.metadata import has_valid_label, is_missing_product_name, repair_product_name
 
 IMAGE_COLUMNS = (
     "id",
@@ -52,7 +52,7 @@ def _clean_metadata(train: pd.DataFrame, targets: tuple[str, ...]) -> pd.DataFra
     )
     for row in train.to_dict("records"):
         segments = [row.get("productDisplayName"), *(row.get(column) for column in spill_columns)]
-        has_spill = any(has_valid_label(row.get(column)) for column in spill_columns)
+        has_spill = any(not is_missing_product_name(row.get(column)) for column in spill_columns)
         record: dict[str, Any] = {"id": int(row["id"])}
         for column in metadata_columns:
             value = row.get(column)

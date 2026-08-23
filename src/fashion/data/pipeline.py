@@ -25,7 +25,7 @@ from fashion.data.metadata import write_label_maps_from_splits
 from fashion.data.perceptual import run_perceptual_audit
 from fashion.data.splits import make_splits, refresh_fixed_split_public_artifacts
 
-CACHE_SCHEMA_VERSION = "5.0.0"
+CACHE_SCHEMA_VERSION = "6.0.0"
 CACHE_FILENAME = "preparation_cache.json"
 CACHE_SAMPLE_SIZE = 64
 
@@ -50,6 +50,7 @@ _BASE_ARTIFACTS = (
     "data/processed/splits.csv",
     "data/processed/taxonomy.json",
 )
+
 
 def _json_digest(value: Any) -> str:
     payload = json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -154,8 +155,7 @@ def _tree_fingerprint(path: Path, *, sample_size: int = CACHE_SAMPLE_SIZE) -> di
         indexes = {0}
     else:
         indexes = {
-            round(index * (len(files) - 1) / (sample_size - 1))
-            for index in range(sample_size)
+            round(index * (len(files) - 1) / (sample_size - 1)) for index in range(sample_size)
         }
     samples = [
         {
@@ -175,9 +175,7 @@ def _tree_fingerprint(path: Path, *, sample_size: int = CACHE_SAMPLE_SIZE) -> di
 
 def _input_fingerprints(root: Path, splits_path: Path) -> dict[str, Any]:
     splits = load_splits(splits_path)
-    development_ids = set(
-        splits.loc[splits["partition"].eq("development"), "id"].astype(int)
-    )
+    development_ids = set(splits.loc[splits["partition"].eq("development"), "id"].astype(int))
     return {
         "teacher_train": _teacher_csv_fingerprint(
             root / "data/raw/teacher/train/styles_train.csv", development_ids
@@ -185,12 +183,8 @@ def _input_fingerprints(root: Path, splits_path: Path) -> dict[str, Any]:
         "teacher_prediction": _id_only_csv_fingerprint(
             root / "data/raw/teacher/test/styles_prediction.csv"
         ),
-        "teacher_train_images": _tree_fingerprint(
-            root / "data/raw/teacher/train/images_train"
-        ),
-        "teacher_prediction_images": _tree_fingerprint(
-            root / "data/raw/teacher/test/images_test"
-        ),
+        "teacher_train_images": _tree_fingerprint(root / "data/raw/teacher/train/images_train"),
+        "teacher_prediction_images": _tree_fingerprint(root / "data/raw/teacher/test/images_test"),
     }
 
 
@@ -252,9 +246,7 @@ def write_preparation_cache(root: str | Path = ROOT) -> dict[str, Any]:
         "schema_version": CACHE_SCHEMA_VERSION,
         "mode": "full_teacher_only_rebuild_completed",
         "shared_source_policy": "teacher_only",
-        "input_fingerprints": _input_fingerprints(
-            root, root / "data/processed/splits.csv"
-        ),
+        "input_fingerprints": _input_fingerprints(root, root / "data/processed/splits.csv"),
         "artifact_fingerprints": _artifact_fingerprints(root),
         "validation_policy": {
             "full_build_image_order": "raw_sha256_before_decode",
@@ -348,6 +340,7 @@ def prepare_data(
     workers: int | None = None,
     *,
     initialize_split: bool = False,
+    refreeze_development_folds: bool = False,
 ) -> None:
     """Run the teacher-only forensic build while preserving canonical membership."""
     root = Path(root)
@@ -398,6 +391,7 @@ def prepare_data(
             taxonomy_output=processed / "taxonomy.json",
             development_summary_output=processed / "development_class_summary.csv",
             initialize_split=initialize_split,
+            refreeze_development_folds=refreeze_development_folds,
         )
     write_development_target_audit(
         processed / "splits.csv",

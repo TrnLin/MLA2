@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from fashion.config import TARGET_COLUMNS
+from fashion.config import RANDOM_SEED, TARGET_COLUMNS
 from fashion.data.dataset import (
     FashionDataset,
     get_cv_split,
@@ -17,7 +17,12 @@ from fashion.data.dataset import (
     load_splits_for_final_evaluation,
 )
 from fashion.data.pipeline import _BASE_ARTIFACTS, prepare_data, validate_prepared_data_cache
-from fashion.data.splits import id_set_digest, validate_splits
+from fashion.data.splits import (
+    _apply_existing_membership,
+    cv_assignment_digest,
+    id_set_digest,
+    validate_splits,
+)
 
 
 def _sha256(path: Path) -> str:
@@ -41,11 +46,7 @@ def test_prepare_data_writes_teacher_only_development_contract(prepared_project)
     for target in TARGET_COLUMNS:
         assert splits.loc[protected, target].eq("").all()
         assert not (
-            splits.loc[protected, f"has_{target}_label"]
-            .astype(str)
-            .str.lower()
-            .eq("true")
-            .any()
+            splits.loc[protected, f"has_{target}_label"].astype(str).str.lower().eq("true").any()
         )
 
     for path in (
@@ -163,3 +164,46 @@ def test_protected_target_sentinel_cannot_change_public_artifacts(prepared_proje
 def test_id_set_digest_has_a_declared_newline_contract() -> None:
     expected = hashlib.sha256(b"1\n2\n3\n").hexdigest()
     assert id_set_digest([3, 1, 2]) == expected
+
+
+def test_cv_assignment_digest_has_a_declared_sorted_pair_contract() -> None:
+    frame = pd.DataFrame(
+        {
+            "id": [3, 1, 2, 9],
+            "partition": ["development", "development", "development", "holdout"],
+            "cv_fold": [2, 0, 1, ""],
+        }
+    )
+    expected = hashlib.sha256(b"1,0\n2,1\n3,2\n").hexdigest()
+    assert cv_assignment_digest(frame) == expected
+
+
+def test_family_contract_change_requires_explicit_cv_refreeze(prepared_project) -> None:
+    existing = pd.read_csv(prepared_project.splits, keep_default_na=False)
+    development = existing[existing["partition"].eq("development")]
+    family_sizes = development.groupby("product_family_group")["id"].transform("size")
+    singleton = development.loc[family_sizes.eq(1)].iloc[0]
+    rebuilt = existing.copy()
+    changed = rebuilt["id"].eq(int(singleton["id"]))
+    rebuilt.loc[changed, "product_family_group"] = "family_contract_changed_for_test"
+
+    with pytest.raises(ValueError, match="explicitly refreeze CV folds"):
+        _apply_existing_membership(rebuilt, existing, RANDOM_SEED, TARGET_COLUMNS)
+
+    refrozen = _apply_existing_membership(
+        rebuilt,
+        existing,
+        RANDOM_SEED,
+        TARGET_COLUMNS,
+        refreeze_development_folds=True,
+    )
+    validate_splits(refrozen)
+    assert set(refrozen["id"]) == set(existing["id"])
+    assert refrozen.groupby("product_family_group")["partition"].nunique().max() == 1
+    assert (
+        refrozen[refrozen["partition"].eq("development")]
+        .groupby("product_family_group")["cv_fold"]
+        .nunique()
+        .max()
+        == 1
+    )

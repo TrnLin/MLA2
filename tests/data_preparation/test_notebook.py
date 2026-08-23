@@ -6,9 +6,12 @@ import re
 
 import nbformat
 import pandas as pd
+import pytest
 
 from fashion.config import RANDOM_SEED, ROOT, TARGET_COLUMNS
+from fashion.data.evidence import family_profile, fold_support_tables, shortcut_benchmarks
 from fashion.data.pipeline import validate_prepared_data_cache
+from fashion.data.splits import cv_assignment_digest
 
 PROBLEM_NOTEBOOK = ROOT / "notebooks/00_problem_definition.ipynb"
 NOTEBOOK = ROOT / "notebooks/01_data_preparation.ipynb"
@@ -26,13 +29,13 @@ DATA_HEADINGS = (
     "## 8. Development, internal holdout, quarantine, and five CV folds",
     "## 9. Development-only target analysis",
     "## 10. Imbalance and class support by fold",
-    "## 11. Association among categorical targets (NMI)",
-    "## 12. Development image profile and quality correlations",
+    "## 11. Shortcut risk and categorical association",
+    "## 12. Development image profile and pixel diagnostics",
     "## 13. Labelled development contact sheet",
     "## 14. Duplicate, missing-image, and quality-extreme examples",
     "## 15. Transform-risk illustration",
     "## 16. Artifact registry and lineage",
-    "## 17. Teammate handoff",
+    "## 17. Using the prepared data for model development",
     "## 18. Completion gate",
 )
 
@@ -42,6 +45,41 @@ EXPECTED_DIGESTS = {
     "holdout": "48a9e2e389657744d2771a3ab5ca34e85e015b21b18ef4d0ed29c2e648cf8fc0",
     "quarantine": "5a672e34e485c8ddad0cef37c2dc37d99f8774f8874279a5d0ed69aff7022f43",
 }
+EXPECTED_CV_DIGEST = "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd"
+REDUNDANT_GRAPH_TABLES = (
+    "article_type_gender_shares.csv",
+    "article_type_season_shares.csv",
+    "article_type_usage_shares.csv",
+    "class_support_points.csv",
+    "development_family_profile.csv",
+    "development_family_sizes.csv",
+    "family_source_profile.csv",
+    "metadata_pattern_audit.csv",
+    "near_threshold_review.csv",
+    "rare_class_fold_support.csv",
+    "shortcut_majority_benchmarks.csv",
+    "untrainable_fold_flags.csv",
+)
+HELPER_FILE_BY_CODE_FRAGMENT = (
+    ("from fashion.config import", "src/fashion/config.py"),
+    ("from fashion.data.audit import", "src/fashion/data/audit.py"),
+    ("from fashion.data.dataset import", "src/fashion/data/dataset.py"),
+    ("from fashion.data.evidence import", "src/fashion/data/evidence.py"),
+    ("from fashion.data.hashing import", "src/fashion/data/hashing.py"),
+    ("from fashion.data.pipeline import", "src/fashion/data/pipeline.py"),
+    ("from fashion.data.splits import", "src/fashion/data/splits.py"),
+    ("cache_status = validate_prepared_data_cache(ROOT)", "src/fashion/data/pipeline.py"),
+    ("splits = load_splits(ROOT /", "src/fashion/data/dataset.py"),
+    ("audit_source = inspect.getsource(audit_image)", "src/fashion/data/audit.py"),
+    ("audit_source = inspect.getsource(audit_image)", "src/fashion/data/hashing.py"),
+    ("family_sizes, development_family_profile", "src/fashion/data/evidence.py"),
+    ("threshold_review = near_threshold_review", "src/fashion/data/evidence.py"),
+    ("current_cv_digest = cv_assignment_digest(splits)", "src/fashion/data/splits.py"),
+    ("for fold, training, validation in iter_cv_folds(splits):", "src/fashion/data/dataset.py"),
+    ("support_points, rare_fold_counts", "src/fashion/data/evidence.py"),
+    ("shortcut_summary = shortcut_benchmarks(development)", "src/fashion/data/evidence.py"),
+    ("target: article_target_heatmap(development", "src/fashion/data/evidence.py"),
+)
 
 
 def _source(notebook: nbformat.NotebookNode) -> str:
@@ -172,6 +210,26 @@ def test_hashing_reconciliation_and_analysis_contracts_are_visible() -> None:
     assert "QUALITY_SAMPLE_SIZE" in source
     assert "spearman" in lowered
     assert "allowed_for_model_fit" in source
+    assert "family_profile" in source
+    assert "fold_support_tables" in source
+    assert "shortcut_benchmarks" in source
+    assert "near_threshold_review" in source
+
+
+def test_outside_helper_files_are_named_at_each_call_site() -> None:
+    notebook = nbformat.read(NOTEBOOK, as_version=4)
+    for fragment, helper_path in HELPER_FILE_BY_CODE_FRAGMENT:
+        matching_indexes = [
+            index
+            for index, cell in enumerate(notebook.cells)
+            if cell.cell_type == "code" and fragment in cell.source
+        ]
+        assert matching_indexes, fragment
+        for index in matching_indexes:
+            assert index > 0
+            previous = notebook.cells[index - 1]
+            assert previous.cell_type == "markdown"
+            assert helper_path in previous.source, (fragment, helper_path)
 
 
 def test_split_membership_digests_folds_and_protected_cells_are_frozen() -> None:
@@ -193,6 +251,61 @@ def test_split_membership_digests_folds_and_protected_cells_are_frozen() -> None
     assert development.groupby("product_family_group")["cv_fold"].nunique().max() == 1
     assert splits.groupby("product_family_group")["partition"].nunique().max() == 1
     assert development.groupby("duplicate_group")["cv_fold"].nunique().max() == 1
+    assert cv_assignment_digest(splits) == EXPECTED_CV_DIGEST
+
+    raw = pd.read_csv(ROOT / "data/raw/teacher/train/styles_train.csv", keep_default_na=False)
+    missing_name_ids = raw.loc[
+        raw["productDisplayName"].astype(str).str.strip().str.casefold().eq("na"), "id"
+    ]
+    missing_names = splits[splits["id"].isin(missing_name_ids)]
+    assert len(missing_names) == 7
+    assert missing_names["product_name_key"].eq("").all()
+    assert missing_names["product_family_group"].nunique() == 7
+
+
+def test_computed_data_preparation_figures_and_statistics_are_complete() -> None:
+    evidence = ROOT / "results/evidence/data_preparation"
+    figures = ROOT / "results/figures/data_preparation"
+    splits = pd.read_csv(ROOT / "data/processed/splits.csv", keep_default_na=False)
+
+    _, profile_table, _ = family_profile(splits)
+    profile = profile_table.iloc[0]
+    assert profile["product_rows"] == 32773
+    assert profile["independent_families"] == 22905
+    assert profile["active_partition_crossings"] == 0
+    assert profile["development_fold_crossings"] == 0
+    assert profile["largest_family_products"] == 80
+
+    class_summary = pd.read_csv(
+        ROOT / "data/processed/development_class_summary.csv", keep_default_na=False
+    )
+    support, _, _ = fold_support_tables(class_summary)
+    article = support[support["target"].eq("articleType")]
+    assert article["rare_warning"].ne("").sum() == 26
+    assert pd.to_numeric(article["untrainable_fold_count"]).gt(0).sum() == 12
+    home = support[support["target"].eq("usage") & support["class"].eq("Home")]
+    assert pd.to_numeric(home["untrainable_fold_count"]).item() == 1
+
+    development = splits[splits["partition"].eq("development")]
+    shortcut = shortcut_benchmarks(development).set_index("predicted_target")
+    assert shortcut.loc["season", "group_majority_accuracy"] == pytest.approx(0.6505, abs=0.0001)
+    assert shortcut.loc["usage", "group_majority_accuracy"] == pytest.approx(0.9004, abs=0.0001)
+    assert shortcut.loc["gender", "group_majority_accuracy"] == pytest.approx(0.7854, abs=0.0001)
+
+    spearman = pd.read_csv(evidence / "image_quality_spearman.csv")
+    assert not {"width", "height", "aspect_ratio"}.intersection(spearman["feature_1"])
+    assert not any((evidence / filename).exists() for filename in REDUNDANT_GRAPH_TABLES)
+    for filename in (
+        "family_duplicate_profile.png",
+        "near_duplicate_threshold_review.png",
+        "class_support_by_fold.png",
+        "shortcut_risk_heatmaps.png",
+        "target_distributions.png",
+        "image_quality_and_spearman.png",
+        "development_contact_sheet.png",
+        "transform_risk.png",
+    ):
+        assert (figures / filename).is_file()
 
 
 def test_delivered_cache_and_artifact_registry_match_bytes() -> None:
@@ -202,7 +315,7 @@ def test_delivered_cache_and_artifact_registry_match_bytes() -> None:
     assert result["protected_target_values_hashed"] == 0
 
     registry = pd.read_csv(ROOT / "results/evidence/data_preparation/artifact_registry.csv")
-    assert len(registry) == 40
+    assert len(registry) == 44
     for row in registry.itertuples(index=False):
         path = ROOT / row.repository_path
         assert path.is_file(), row.repository_path
