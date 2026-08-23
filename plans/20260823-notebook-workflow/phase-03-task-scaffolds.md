@@ -33,11 +33,11 @@
 
 ## Todo
 
-- [ ] Replace stale train/validation and paired-image contracts.
-- [ ] Add CV-mode, fold-local preprocessing, metric-freeze, and decision-log TODOs.
-- [ ] Keep all five notebooks Markdown-only with no completed model claims.
-- [ ] Validate notebook JSON and heading order.
-- [ ] Commit the scaffold refresh separately.
+- [x] Replace stale train/validation and paired-image contracts.
+- [x] Add CV-mode, fold-local preprocessing, metric-freeze, and decision-log TODOs.
+- [x] Keep all five notebooks Markdown-only with no completed model claims.
+- [x] Validate notebook JSON and heading order.
+- [x] Commit the scaffold refresh separately.
 
 ## Success criteria
 

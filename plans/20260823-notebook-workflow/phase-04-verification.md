@@ -23,11 +23,26 @@
 
 ## Todo
 
-- [ ] Run split migration, leakage, deterministic-fold, and external-isolation tests.
-- [ ] Run notebook structure, execution, provenance, and output-adjacency checks.
-- [ ] Run targeted pytest, full pytest, Ruff, dependency, and secret checks.
-- [ ] Run independent code review and fix critical findings.
-- [ ] Mark all completed plan items and set final plan status.
+- [x] Run split migration, leakage, deterministic-fold, and external-isolation tests.
+- [x] Run notebook structure, execution, provenance, and output-adjacency checks.
+- [x] Run targeted pytest, full pytest, Ruff, dependency, and secret checks.
+- [x] Run a fresh final code review and fix critical findings.
+- [x] Mark all completed plan items and set final plan status.
+
+## Completion evidence
+
+- Full teacher-only build completed in a child process.
+- Two cached Run All output manifests matched at SHA-256
+  `a54ce37adf08e4e5c72e2ba70a30e57de70d5c6bc8672dfc33588d2ff9a8cc13`.
+- A cached Run All also passed while `data/raw/external/` was temporarily absent.
+- The artifact registry contains 40 files and every byte hash matches.
+- All seven notebooks pass `nbformat`; saved HTML has 18 sections and no visible code input.
+- Ruff passed, `pip check` reported no broken requirements, and full pytest reported 45 passed.
+- Secret, stale-contract, external-input, and portable-path scans passed.
+- External migration retained 177,778 files and 31,422,558,264 bytes. The canonical
+  before/after manifest digest is
+  `5d22d856f2e8f9a17ae361837d8c4eaaf49dcf00b5f1839b14b84401867401ea`.
+- `results/runs.csv`, model files, and checkpoints were unchanged.
 
 ## Success criteria
 

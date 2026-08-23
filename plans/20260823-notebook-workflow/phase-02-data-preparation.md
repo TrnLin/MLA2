@@ -43,13 +43,13 @@
 
 ## Todo
 
-- [ ] Migrate the canonical split to development/holdout/quarantine plus `cv_fold`.
-- [ ] Remove supported/deployed label masking and paired-image defaults.
-- [ ] Make full preparation teacher-only and preserve the existing protected membership.
-- [ ] Rebuild the notebook with local outputs and tailored explanations.
-- [ ] Execute the notebook and refresh deterministic evidence, figures, and HTML.
-- [ ] Update affected tests and documentation references.
-- [ ] Commit each completed implementation slice separately.
+- [x] Migrate the canonical split to development/holdout/quarantine plus `cv_fold`.
+- [x] Remove supported/deployed label masking and paired-image defaults.
+- [x] Make full preparation teacher-only and preserve the existing protected membership.
+- [x] Rebuild the notebook with local outputs and tailored explanations.
+- [x] Execute the notebook and refresh deterministic evidence, figures, and HTML.
+- [x] Update affected tests and documentation references.
+- [x] Commit each completed implementation slice separately.
 
 ## Success criteria
 

@@ -31,11 +31,11 @@
 
 ## Todo
 
-- [ ] Remove empirical data findings and premature technical choices.
-- [ ] Add the complete conceptual header and subheader sequence.
-- [ ] Validate notebook JSON, zero-code status, and heading hierarchy.
-- [ ] Check every statement against the assignment, rubric, and active decisions.
-- [ ] Commit the completed phase separately.
+- [x] Remove empirical data findings and premature technical choices.
+- [x] Add the complete conceptual header and subheader sequence.
+- [x] Validate notebook JSON, zero-code status, and heading hierarchy.
+- [x] Check every statement against the assignment, rubric, and active decisions.
+- [x] Commit the completed phase separately.
 
 ## Success criteria
 

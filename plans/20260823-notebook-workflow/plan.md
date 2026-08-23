@@ -1,7 +1,7 @@
 ---
 title: "Notebook workflow restructuring"
 description: "Build a protected development/holdout workflow with five reusable CV folds and teacher-only shared preparation."
-status: in-progress
+status: completed
 priority: P1
 effort: 10h
 branch: data-processing
@@ -23,17 +23,16 @@ prepared data without guessing or leaking protected outcomes.
 - `rubrics/RUBRIC.md`
 - `AGENTS.md` and `docs/decisions/`
 - `notebooks/01_data_preparation.ipynb`
-- `C:/Users/Khoai/RMIT/Machine_Learning/Machine Learning at RMIT/ASM2/notebooks/01_Data_preparation.ipynb`
-- `C:/Users/Khoai/RMIT/Machine_Learning/Machine Learning tổng/`
+- The handoff plan and source-chat snapshot attached to this Codex task
 
 ## Phases
 
 | # | Phase | Status | Commit boundary | Link |
 |---|---|---|---|---|
-| 1 | Correct problem definition | Pending | `docs(notebooks): correct problem definition scope` | [phase 01](./phase-01-problem-definition.md) |
-| 2 | Rebuild shared data preparation | In progress | data contracts, teacher-only workflow, then notebook | [phase 02](./phase-02-data-preparation.md) |
-| 3 | Refresh future task handoffs | Pending | `docs(notebooks): refresh task workflow scaffolds` | [phase 03](./phase-03-task-scaffolds.md) |
-| 4 | Verify and reconcile project contracts | Pending | tests, handoff, and final plan sync | [phase 04](./phase-04-verification.md) |
+| 1 | Correct problem definition | Complete | `docs(notebooks): correct problem definition scope` | [phase 01](./phase-01-problem-definition.md) |
+| 2 | Rebuild shared data preparation | Complete | data contracts, teacher-only workflow, then notebook | [phase 02](./phase-02-data-preparation.md) |
+| 3 | Refresh future task handoffs | Complete | `docs(notebooks): refresh task workflow scaffolds` | [phase 03](./phase-03-task-scaffolds.md) |
+| 4 | Verify and reconcile project contracts | Complete | tests, handoff, and final plan sync | [phase 04](./phase-04-verification.md) |
 
 ## Notebook reading order
 
