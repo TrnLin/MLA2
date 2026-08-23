@@ -1,3 +1,3 @@
-role,candidate_files,decoded_files,raw_sha256_values,exact_duplicate_groups,files_in_exact_duplicate_groups,cross_role_exact_hash_groups_global
-train,38612,38612,37849,636,1399,11
-prediction,5829,5829,5824,5,10,11
+role,candidate_files,decoded_files,files_with_raw_sha256,unique_raw_sha256_values,exact_duplicate_groups,files_in_exact_duplicate_groups,cross_role_exact_hash_groups_global
+train,38612,38612,38612,37849,636,1399,11
+prediction,5829,5829,5829,5824,5,10,11

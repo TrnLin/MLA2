@@ -48,27 +48,37 @@ FIGURE_NAMES = {
 REQUIRED_HEADINGS = (
     "# Data Preparation and Shared Dataset Analysis",
     "## Executive summary",
-    "## 1. Scope and execution",
-    "## 2. Data provenance and inventory",
-    "### 2.1 Prepared-data contract",
-    "### 2.2 Dataset inventory",
-    "### 2.3 Raw hashing and metadata-image reconciliation",
-    "## 3. Data integrity and leakage controls",
-    "### 3.1 Split integrity",
-    "### 3.2 Label-image sanity check",
-    "### 3.3 Duplicate and entity controls",
-    "## 4. Target distributions and class balance",
-    "### 4.1 Product-level support and development balance",
+    "## 1. Scope, contracts, and execution",
+    "### 1.1 Notebook boundary",
+    "### 1.2 Shared implementation setup",
+    "### 1.3 Execution modes and prepared-data contract",
+    "## 2. Raw inventory, hashing, and reconciliation",
+    "### 2.1 Source and prepared-contract inventory",
+    "### 2.2 Raw SHA-256, decode order, and CSV-to-image reconciliation",
+    "## 3. Duplicate control, canonical split, and leakage safety",
+    "### 3.1 Canonical split and train-only statistics",
+    "### 3.2 Label-image semantic sanity check",
+    "### 3.3 Exact, perceptual, and family duplicate controls",
+    "## 4. Train-only targets and imbalance",
+    "### 4.1 Class support and development balance",
     "### 4.2 Imbalance handoff to task owners",
-    "## 5. Target relationships and bias",
-    "## 6. Image data quality and preprocessing",
-    "### 6.1 Image quality and resolution variants",
+    "## 5. Train-only target association and shortcut risk",
+    "### 5.1 Categorical target association",
+    "### 5.2 Hierarchy, ambiguity, and shortcut slices",
+    "## 6. Shared image quality and preprocessing",
+    "### 6.1 Image properties and paired-variant alignment",
     "### 6.2 Numeric image-feature correlation",
-    "### 6.3 Input transformation",
-    "## 7. Retrieval evaluation",
-    "## 8. Reproducibility and limitations",
-    "## 9. Modelling recommendations",
-    "## 10. Final assessment",
+    "### 6.3 Common transformation contract",
+    "## 7. Task 4 data boundary and retrieval handoff",
+    "### 7.1 Query and gallery isolation",
+    "### 7.2 Relevance proxy and metric-selection boundary",
+    "## 8. Reproducibility, provenance, and limitations",
+    "### 8.1 Shared decision record",
+    "### 8.2 Saved evidence and provenance",
+    "## 9. Task notebook handoff",
+    "### 9.1 Fixed shared contracts",
+    "### 9.2 Decisions left to task owners",
+    "## 10. Data-preparation completion gate",
 )
 PROBLEM_REQUIRED_HEADINGS = (
     "# Fashion Intelligence: Problem Definition",
@@ -425,6 +435,11 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert "all_alignment_pairs.csv.gz" in source
     assert "taxonomy.json" in source
     assert "build_development_retrieval_variant_sets" in source
+    assert '"metrics":' not in source
+    assert "nDCG@5" not in source
+    assert "Recall@5" not in source
+    assert '"final_metric_selected": False' in source
+    assert "TODO in Task 4 notebook after baseline evidence" in source
     assert "load_splits(SPLITS_PATH)" in source
     assert "keep_default_na=False" in source
     assert '"NA"' in source
@@ -510,7 +525,11 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
         "Raw inventory and SHA-256"
     )
     assert all(
-        row["decoded_files"] == row["raw_sha256_values"]
+        row["decoded_files"] == row["files_with_raw_sha256"]
+        for row in first_summary["raw_hashing"]
+    )
+    assert all(
+        row["unique_raw_sha256_values"] <= row["files_with_raw_sha256"]
         for row in first_summary["raw_hashing"]
     )
     assert all(
@@ -545,11 +564,15 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
         first_summary["task4"]["gallery_image_variants"]
         == 2 * first_summary["task4"]["gallery_products"]
     )
-    assert first_summary["task4"]["recall_at_k"]["relevant_grades"] == [2]
-    assert (
-        first_summary["task4"]["recall_at_k"]["zero_positive_query_rule"]
-        == "exclude from macro Recall@K and report in coverage"
+    task4_coverage = first_summary["task4"]["strict_relevance_coverage_diagnostic"]
+    assert task4_coverage["diagnostic_k"] == 5
+    assert task4_coverage["strict_relevance_grade"] == 2
+    assert first_summary["task4"]["metric_selection"]["final_metric_selected"] is False
+    assert first_summary["task4"]["metric_selection"]["owner"] == "Task 4 teammate"
+    assert first_summary["task4"]["metric_selection"]["status"] == (
+        "TODO in Task 4 notebook after baseline evidence"
     )
+    assert "metrics" not in first_summary["task4"]
     assert "reviews" not in first_summary
     assert first_summary["image_variants"]["policy"] == (
         "complete_low_high_pairs_in_train_val_holdout"
@@ -787,8 +810,10 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     assert "The next helpers keep tables" not in document
 
     summary = json.loads((ROOT / "results/evidence/data_preparation/summary.json").read_text(encoding="utf-8"))
-    assert summary["task4"]["recall_at_k"]["queries_with_zero_grade2_positives"] == 110
-    assert summary["task4"]["recall_at_k"]["queries_with_fewer_than_k_grade2_positives"] == 412
+    task4_coverage = summary["task4"]["strict_relevance_coverage_diagnostic"]
+    assert task4_coverage["queries_with_zero_strict_positives"] == 110
+    assert task4_coverage["queries_with_fewer_than_diagnostic_k_strict_positives"] == 412
+    assert summary["task4"]["metric_selection"]["final_metric_selected"] is False
     assert summary["task4"]["total_validation_products"] == 5_781
     assert summary["task4"]["eligible_supported_query_products"] == 5_768
     assert summary["task4"]["excluded_unsupported_query_products"] == 13

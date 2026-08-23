@@ -50,9 +50,9 @@
     },
     {
       "area": "Task 4",
-      "decision": "metadata-proxy relevance; validation queries, train-only gallery",
+      "decision": "fix the safe data boundary and metadata-proxy relevance only",
       "evidence": "zero ID/SHA/family overlap; not similarity ground truth",
-      "later_check": "validate proxy later; report nDCG, Recall, coverage, latency"
+      "later_check": "Task 4 owner selects metric families, exact metrics, cutoffs, averaging, failure slices, and operational measures after baseline evidence"
     },
     {
       "area": "family uncertainty",
@@ -69,8 +69,8 @@
     },
     {
       "path": "results/evidence/data_preparation/decision_table.csv",
-      "sha256": "8c24bf82e7c3106fe161c712fb10654c199ad3399117685c895976f996fcb520",
-      "size_bytes": 1552
+      "sha256": "b81f681899cb1bc739efc586147924226a6103e9964725452cbfab6da31b58df",
+      "size_bytes": 1623
     },
     {
       "path": "results/evidence/data_preparation/duplicate_summary.csv",
@@ -154,8 +154,8 @@
     },
     {
       "path": "results/evidence/data_preparation/raw_hashing_summary.csv",
-      "sha256": "7a71746f4404f24f60040adc8af554b2085dc817f1d6e24dfb805f4b497238b1",
-      "size_bytes": 214
+      "sha256": "615ef2d7e998db9065bb464929c3807cde60bb92b425801ac57b3f51f613c52b",
+      "size_bytes": 254
     },
     {
       "path": "results/evidence/data_preparation/raw_inventory.csv",
@@ -179,13 +179,13 @@
     },
     {
       "path": "results/evidence/data_preparation/task4_protocol.json",
-      "sha256": "f6c12f9e8d9e8f61b841eb66ad046fb162a86a56e9dce3de5e7e90c0b0d37316",
-      "size_bytes": 2136
+      "sha256": "a8e17513a7bf61258f08a9ba202b2dca60b7575c54f27b5e6c7cfa741f718944",
+      "size_bytes": 2317
     },
     {
       "path": "results/evidence/data_preparation/task4_summary.csv",
-      "sha256": "f2e9f9f46fce85f492f9d3cf43a9b05868070c1e1601bf0b5ed32d653ec2b203",
-      "size_bytes": 677
+      "sha256": "a96b837a4dcc756f6c326ad7263c50b6517162427f5a4b15801a9a366dc5b383",
+      "size_bytes": 812
     },
     {
       "path": "results/evidence/data_preparation/taxonomy_exclusions.csv",
@@ -323,7 +323,7 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_DATA_PREPARATION_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 5.328
+    "preparation_seconds": 15.954
   },
   "family_policy": {
     "block_basis": [
@@ -886,7 +886,7 @@
     "Task 4 grades are a metadata proxy, not human visual-similarity ground truth.",
     "Perceptual same-ID alignment is strong automatic evidence, not human proof.",
     "Doubled inputs add storage and decoding cost; the planned three-way ablation is not run yet.",
-    "Queries with no grade-2 positives are excluded from mean Recall@5 and reported.",
+    "The K=5 strict-match counts are data-coverage diagnostics, not a selected Task 4 metric.",
     "No registered model run yet compares transform choices under a task-owned metric.",
     "Cached mode checks every image path and size but content-hashes only a fixed sample; use full mode after any deliberate raw-image replacement.",
     "Full forensic mode is I/O-bound and is not the normal reader path."
@@ -946,8 +946,9 @@
       "decoded_files": 38612,
       "exact_duplicate_groups": 636,
       "files_in_exact_duplicate_groups": 1399,
-      "raw_sha256_values": 37849,
-      "role": "train"
+      "files_with_raw_sha256": 38612,
+      "role": "train",
+      "unique_raw_sha256_values": 37849
     },
     {
       "candidate_files": 5829,
@@ -955,11 +956,12 @@
       "decoded_files": 5829,
       "exact_duplicate_groups": 5,
       "files_in_exact_duplicate_groups": 10,
-      "raw_sha256_values": 5824,
-      "role": "prediction"
+      "files_with_raw_sha256": 5829,
+      "role": "prediction",
+      "unique_raw_sha256_values": 5824
     }
   ],
-  "schema_version": "12.0.0",
+  "schema_version": "13.0.0",
   "scope": {
     "development_partition": "val",
     "modelling_partition": "train",
@@ -988,34 +990,39 @@
     "human_validation_file": "docs/reviews/open_decisions.md",
     "human_validation_status": "unresolved_non_blocking",
     "limitation": "metadata grades are a proxy for catalogue relevance only; they are not real-world visual-similarity ground truth",
-    "metrics": [
-      "nDCG@5 over grades 2/1/0",
-      "grade-2 Recall@5",
-      "latency",
-      "coverage"
-    ],
+    "metric_selection": {
+      "candidate_metric_families": [
+        "graded ranking quality",
+        "strict-match retrieval quality",
+        "query and gallery coverage",
+        "latency, storage, and throughput"
+      ],
+      "final_metric_selected": false,
+      "owner": "Task 4 teammate",
+      "required_decisions": [
+        "exact metric definitions",
+        "cutoffs and averaging rules",
+        "primary versus supporting roles",
+        "failure slices and operational budget"
+      ],
+      "status": "TODO in Task 4 notebook after baseline evidence"
+    },
     "query_exclusion_reason": "articleType is outside the train-fitted supported slice",
     "query_image_variants": 11536,
     "query_partition": "val",
     "query_products": 5768,
     "query_scope": "train-fitted supported articleType classes only",
-    "recall_at_k": {
-      "caller_requirement": "pass an explicit total relevant count or complete gallery relevance vector",
-      "denominator": "all distinct grade-2 product IDs in the allowed train gallery",
-      "k": 5,
-      "numerator": "distinct grade-2 product IDs among the first K product IDs",
-      "queries_eligible_for_macro_recall": 5658,
-      "queries_with_fewer_than_k_grade2_positives": 412,
-      "queries_with_zero_grade2_positives": 110,
-      "relevant_grades": [
-        2
-      ],
-      "zero_positive_query_rule": "exclude from macro Recall@K and report in coverage"
-    },
     "self_match_policy": "remove every query product ID before product-level Top-K",
     "shared_ids": 0,
     "shared_product_families": 0,
     "shared_sha256": 0,
+    "strict_relevance_coverage_diagnostic": {
+      "diagnostic_k": 5,
+      "purpose": "measure whether the fixed train gallery can support a strict-match top-K diagnostic",
+      "queries_with_fewer_than_diagnostic_k_strict_positives": 412,
+      "queries_with_zero_strict_positives": 110,
+      "strict_relevance_grade": 2
+    },
     "total_validation_products": 5781,
     "variant_policy": "encode both image variants; rank by the best variant score; collapse to one product ID before Top-K and product-level scoring"
   },

@@ -7,8 +7,8 @@
     },
     {
       "path": "results/evidence/data_preparation/decision_table.csv",
-      "sha256": "8c24bf82e7c3106fe161c712fb10654c199ad3399117685c895976f996fcb520",
-      "size_bytes": 1552
+      "sha256": "b81f681899cb1bc739efc586147924226a6103e9964725452cbfab6da31b58df",
+      "size_bytes": 1623
     },
     {
       "path": "results/evidence/data_preparation/duplicate_summary.csv",
@@ -92,8 +92,8 @@
     },
     {
       "path": "results/evidence/data_preparation/raw_hashing_summary.csv",
-      "sha256": "7a71746f4404f24f60040adc8af554b2085dc817f1d6e24dfb805f4b497238b1",
-      "size_bytes": 214
+      "sha256": "615ef2d7e998db9065bb464929c3807cde60bb92b425801ac57b3f51f613c52b",
+      "size_bytes": 254
     },
     {
       "path": "results/evidence/data_preparation/raw_inventory.csv",
@@ -117,13 +117,13 @@
     },
     {
       "path": "results/evidence/data_preparation/task4_protocol.json",
-      "sha256": "f6c12f9e8d9e8f61b841eb66ad046fb162a86a56e9dce3de5e7e90c0b0d37316",
-      "size_bytes": 2136
+      "sha256": "a8e17513a7bf61258f08a9ba202b2dca60b7575c54f27b5e6c7cfa741f718944",
+      "size_bytes": 2317
     },
     {
       "path": "results/evidence/data_preparation/task4_summary.csv",
-      "sha256": "f2e9f9f46fce85f492f9d3cf43a9b05868070c1e1601bf0b5ed32d653ec2b203",
-      "size_bytes": 677
+      "sha256": "a96b837a4dcc756f6c326ad7263c50b6517162427f5a4b15801a9a366dc5b383",
+      "size_bytes": 812
     },
     {
       "path": "results/evidence/data_preparation/taxonomy_exclusions.csv",
@@ -261,10 +261,10 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_DATA_PREPARATION_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 5.328
+    "preparation_seconds": 15.954
   },
   "git": {
-    "commit": "ca7d0733f43961a9b81cd0dfc7d10c5cfd8919fc",
+    "commit": "1730903a9f2bddc1e94049abe76e7849ffeb64aa",
     "dirty": true
   },
   "image_variants": {
@@ -437,7 +437,7 @@
   ],
   "note": "Wall-time benchmark hashes may change; report figures and other evidence are deterministic for the locked runtime.",
   "notebook": {
-    "code_digest": "9c4fa196896fdf5cfc9c3ba25693eb7b94999d6ac3b25bd5d722d92044dd6e6f",
+    "code_digest": "c2d981fe2d7b838d0265d9e3b90af9bcf9ddbeeec88cae67f29537af49686a44",
     "path": "notebooks/01_data_preparation.ipynb"
   },
   "runtime": {
@@ -451,13 +451,13 @@
   "volatile_outputs": [
     {
       "path": "results/evidence/data_preparation/transform_benchmark.json",
-      "sha256": "74dcb4a7bd415f8be590cd6a1e2157ad216c4f089330993ddad3f09431009b59",
-      "size_bytes": 6285
+      "sha256": "1f826be77f650fb0e9f867d8d02dd72c515b16fe2d7651b1e6da76b02098a82e",
+      "size_bytes": 6287
     },
     {
       "path": "results/evidence/data_preparation/transform_summary.csv",
-      "sha256": "1e16095deb26358d5ce605f7a009be87095de55c5c474ce58db1cb97c6c9a416",
-      "size_bytes": 347
+      "sha256": "9d1a9ec69ec6517fdb2b91551fa15b5d4c41b52c3becf27a90af8adf98e1a63d",
+      "size_bytes": 346
     }
   ]
 }
