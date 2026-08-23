@@ -261,10 +261,10 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_DATA_PREPARATION_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 15.954
+    "preparation_seconds": 16.799
   },
   "git": {
-    "commit": "1730903a9f2bddc1e94049abe76e7849ffeb64aa",
+    "commit": "40557ee5fd608a0a883af50ad92c0e2a2ded082b",
     "dirty": true
   },
   "image_variants": {
@@ -437,7 +437,7 @@
   ],
   "note": "Wall-time benchmark hashes may change; report figures and other evidence are deterministic for the locked runtime.",
   "notebook": {
-    "code_digest": "c2d981fe2d7b838d0265d9e3b90af9bcf9ddbeeec88cae67f29537af49686a44",
+    "code_digest": "74717e151e38f2837d22258a5ddccdb5653ca6f00ce3000fe678cf1b1d6d581c",
     "path": "notebooks/01_data_preparation.ipynb"
   },
   "runtime": {
@@ -451,12 +451,12 @@
   "volatile_outputs": [
     {
       "path": "results/evidence/data_preparation/transform_benchmark.json",
-      "sha256": "1f826be77f650fb0e9f867d8d02dd72c515b16fe2d7651b1e6da76b02098a82e",
-      "size_bytes": 6287
+      "sha256": "330ee57d50b8339a5b14e8010bcb6d9712666d7f336722da782a2dd3ac88475f",
+      "size_bytes": 6284
     },
     {
       "path": "results/evidence/data_preparation/transform_summary.csv",
-      "sha256": "9d1a9ec69ec6517fdb2b91551fa15b5d4c41b52c3becf27a90af8adf98e1a63d",
+      "sha256": "e0b98f9eb18bf4433e86aa28edf0f52c8e026fc951a7dfccea9550e9ec56850c",
       "size_bytes": 346
     }
   ]

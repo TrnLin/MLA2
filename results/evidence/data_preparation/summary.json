@@ -323,7 +323,7 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_DATA_PREPARATION_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 15.954
+    "preparation_seconds": 16.799
   },
   "family_policy": {
     "block_basis": [
