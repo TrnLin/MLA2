@@ -5,68 +5,48 @@
 - Dataset: [Fashion Product Images Dataset](https://www.kaggle.com/datasets/paramaggarwal/fashion-product-images-dataset/data)
 - Owner: Param Aggarwal
 - Kaggle reference: `paramaggarwal/fashion-product-images-dataset`
-- Kaggle dataset ID: `139630`
-- Version: `1`, “Initial release”
-- Released/last updated: `2019-03-14T18:57:43.307Z`
-- Kaggle-reported dataset file bytes: `15,711,279,132`
-- Dataset licence: MIT
-- Platform terms: [Kaggle Terms of Use](https://www.kaggle.com/terms)
-- Metadata checked: 2026-08-21 through Kaggle's public dataset API
-- Local acquisition/catalogue date: 2026-08-21. The earlier download time was not separately logged.
+- Dataset ID and version: `139630`, version `1`
+- Licence: MIT
+- Kaggle-reported unpacked bytes: `15,711,279,132`
+- Local migration verified: 2026-08-23
 
-The project uses only `images/<id>.jpg` and, when present, the safe filename IDs in `images.csv`.
-It never opens or uses `styles.csv` or `styles/<id>.json`. The teacher 60x80 image and Kaggle image
-are treated as resolution variants of the same product, not independent observations.
+This collection is optional Task 4 input. Shared preparation never scans it, parses
+`images.csv`, or uses it for Tasks 1–3.
 
-## Exact version and archive limitation
-
-The public API reports that version 1 is the only and current version. Its download endpoint returns
-an `archive.zip` bundle. The original downloaded archive is not present in this checkout, so its
-exact archive byte size and SHA-256 cannot be recovered without downloading another large bundle.
-No archive digest is guessed. Kaggle reports `15,711,279,132` total unpacked dataset bytes. The
-runtime keeps one canonical image tree only. Its byte count and digest are recorded in the compact
-catalogue evidence.
-
-The unpacked data is identified instead by:
-
-- Full canonical image catalogue SHA-256: recorded in
-  `docs/data-provenance/fashion-product-images-catalogue.json`
-- Every canonical image's SHA-256: recorded in
-  `data/processed/high_resolution/image_catalogue.csv.gz`
-
-## Acquisition and evaluator access
-
-The Kaggle CLI has no dataset-version download flag. Do not append `/1` to the dataset name. This
-verified official API URL pins `datasetVersionNumber=1` and redirects to archive version `329006`:
-
-```bash
-mkdir -p data/downloads tmp/fashion-product-images-v1 data/fashion-dataset
-curl --fail --location \
-  'https://www.kaggle.com/api/v1/datasets/download/paramaggarwal/fashion-product-images-dataset?datasetVersionNumber=1' \
-  --output data/downloads/fashion-product-images-dataset-v1.zip
-sha256sum data/downloads/fashion-product-images-dataset-v1.zip
-unzip -q data/downloads/fashion-product-images-dataset-v1.zip \
-  'fashion-dataset/fashion-dataset/images/*' \
-  'fashion-dataset/fashion-dataset/images.csv' \
-  -d tmp/fashion-product-images-v1
-mv tmp/fashion-product-images-v1/fashion-dataset/fashion-dataset/images \
-  data/fashion-dataset/images
-mv tmp/fashion-product-images-v1/fashion-dataset/fashion-dataset/images.csv \
-  data/fashion-dataset/images.csv
-```
-
-Keep the printed archive digest in local acquisition records. Do not commit the archive or unpacked
-dataset.
-
-The archive is nested, but the runtime canonical layout is one flat image tree:
+## Canonical local layout
 
 ```text
-data/fashion-dataset/
-├── images.csv       # optional safe filename/link table
-└── images/
+data/raw/external/fashion_product_images_v1/
+├── images.csv
+└── images/        # 44,441 JPEG files
 ```
 
-The current checkout also contains a nested image copy. The catalogue compares image names and
-sizes, device-plus-inode identity, and deterministic sampled SHA-256 values. It rejects any found
-mismatch and scans `data/fashion-dataset/images` once. A clean evaluator needs only the single flat
-tree above and never needs to create the duplicate extraction.
+The folder is outside Git. `images.csv` is retained only for provenance. It is not a
+teacher-label source.
+
+## Safe migration evidence
+
+The former local extraction was inventoried before it was moved. The whole tree was
+renamed first, so no image bytes were copied or deleted. Extra nested copies and style
+metadata were then preserved under the ignored local folder
+`data/raw/external/fashion_product_images_v1_legacy_extras/`.
+
+Before and after, the combined local holdings were 177,778 files and 31,422,558,264
+bytes. The canonical `images/` plus `images.csv` manifest contains 44,442 files. Its
+full path/size/SHA-256 manifest digest is recorded in
+`fashion-product-images-catalogue.json` and matched before and after the move.
+
+Local proof files are in ignored `tmp/external-migration/`. They are machine-local audit
+records, not submission files.
+
+## Fresh acquisition
+
+Download and unpack only the image tree and `images.csv`, then place them in the
+canonical layout above. Do not commit the archive or extracted images. Record the archive
+SHA-256 locally if a fresh download is made.
+
+The public API URL for version 1 is:
+
+```text
+https://www.kaggle.com/api/v1/datasets/download/paramaggarwal/fashion-product-images-dataset?datasetVersionNumber=1
+```

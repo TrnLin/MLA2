@@ -1,11 +1,14 @@
 # Data-preparation figures
 
-The official `notebooks/01_data_preparation.ipynb` generates all report-cited preparation and exploratory
-figures here during **Run All**.
+Notebook 01 creates the six report-ready figures here during Run All:
 
-The plots use training data for modelling evidence. Validation appears only in
-normalized development diagnostics and as Task 4 queries against a train-only
-gallery. Holdout and quarantine outcomes stay closed. Official prediction images
-appear only in label-free duplicate triage. Every cross-role automatic match is quarantined without
-reading a human decision. Remaining human questions are non-blocking and listed only in
-`docs/reviews/open_decisions.md`.
+- development target distributions;
+- development class support across folds;
+- categorical target association;
+- development image quality and Spearman correlation;
+- labelled development contact sheet and quality examples;
+- transform-risk examples.
+
+The plots use development rows only. Holdout and quarantine outcomes stay sealed.
+Teacher images are the only shared image source. The transform figure shows risks; it
+does not select a transform or define a Task 4 protocol.

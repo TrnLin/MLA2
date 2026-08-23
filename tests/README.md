@@ -1,15 +1,12 @@
 # Tests
 
-Add automated tests here as reusable code is added to `src/fashion/`.
+Tests use small temporary teacher datasets. They do not copy or change the supplied raw
+dataset.
 
-Use small temporary data in tests. Never change or copy the supplied raw dataset.
+The suites check the sole split, deterministic five-fold allocation, family and duplicate
+isolation, sealed protected targets, cache validation, exact artifact hashes, notebook
+structure, saved HTML, task scaffolds, and active documentation.
 
-Tests are grouped under `data/`, `data_preparation/`, and `retrieval/`. The shared fixtures
-create a tiny temporary teacher dataset with missing, duplicate, rare-class, and
-cross-role cases. Data-preparation tests execute the official notebook twice in fresh temporary
-projects with tiny high-resolution images and compare its stable outputs. A
-sentinel test changes sealed target values, regenerates every small public table, and
-proves normal data-preparation state does not change or expose them. Pipeline tests also prove the
-lean gzip pack is deterministic, cached validation accepts an unchanged contract, and
-a changed artifact is rejected. Source-image tests pin the narrower
-path/size-plus-sample guarantee.
+Pipeline fixtures also rebuild without `data/raw/external/`. This proves shared
+preparation is teacher-only. A protected-label sentinel test changes sealed target
+values and proves that public folds, cache, label maps, tables, and figures do not change.

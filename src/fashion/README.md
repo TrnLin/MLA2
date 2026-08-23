@@ -1,11 +1,11 @@
 # Fashion package
 
-Put reusable project code in this package.
+Reusable project code lives here. Notebooks import it instead of copying shared logic.
 
-Keep modules focused on one job. Notebooks and scripts should import this code
-instead of copying it.
+- `data/` owns teacher audits, the sole split, fold loaders, image loading, and the
+  protected final-evaluation boundary.
+- `eda/` owns reusable calculations, diagnostics, provenance, and plotting helpers.
+- `train/` owns the run registry. Every real training run must be recorded there.
+- `retrieval/` owns reusable visual-search logic once Task 4 choices are made.
 
-- `data/` owns raw audits, manifest construction, the sole shared split, image
-  transforms, and train-only statistics. Downstream code must load partitioned
-  data through `fashion.data.dataset.load_splits` so split invariants are checked.
-- `eda/` owns scope protection, calculations, diagnostics, provenance, and plots.
+Dataset callers pass transforms explicitly. Shared code does not choose one for them.
