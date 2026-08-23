@@ -21,9 +21,9 @@ mark the old one as superseded, and link both records.
 - `0001-data-roles-and-raw-immutability.md`
 - `0005-conflicting-exact-duplicate-quarantine.md`
 - `0006-python-constraints-workflow.md`
-- `0010-official-output-and-supported-metrics.md`
 - `0014-development-holdout-cv-boundary.md`
 - `0015-teacher-only-shared-image-preparation.md`
+- `0016-development-label-scope.md`
 
 ## Superseded decisions
 
@@ -32,6 +32,7 @@ mark the old one as superseded, and link both records.
 - `0003-protected-eda-and-train-only-statistics.md` — superseded by 0014.
 - `0008-aspect-preserving-image-contract.md` — superseded by 0015.
 - `0013-high-resolution-training-variants.md` — superseded by 0015.
+- `0010-official-output-and-supported-metrics.md` — superseded by 0016.
 
 ## Accepted with later amendments
 
