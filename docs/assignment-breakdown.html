@@ -389,10 +389,10 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
   </div>
 
   <div class="qs">
-    <div class="q"><div class="n">Task 01</div><h3>What type of item is this?</h3><code>articleType · 124 outputs · 100 primary-metric</code></div>
+    <div class="q"><div class="n">Task 01</div><h3>What type of item is this?</h3><code>articleType · 124 outputs · 100 supported-comparison</code></div>
     <div class="q"><div class="n">Task 02</div><h3>Which season is it for?</h3><code>season · 4 classes</code></div>
     <div class="q"><div class="n">Task 03a</div><h3>Who is it intended for?</h3><code>gender · 5 classes</code></div>
-    <div class="q"><div class="n">Task 03b</div><h3>What occasion does it suit?</h3><code>usage · 9 outputs · 8 primary-metric</code></div>
+    <div class="q"><div class="n">Task 03b</div><h3>What occasion does it suit?</h3><code>usage · 9 outputs · 8 supported-comparison</code></div>
     <div class="q adv"><div class="n">Task 04 · advanced</div><h3>What else looks like it?</h3><code>Top-K retrieval · no labels</code></div>
   </div>
 </header>
@@ -466,7 +466,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <h2>Structure first; sealed targets stay sealed</h2>
       <p>Raw-file facts below use headers, IDs, and image files only. The persisted split blanks
       holdout and quarantine targets. Target summaries use only training and validation rows;
-      protected target values are never read, hashed, or published by the EDA.</p>
+      protected target values are never read, hashed, or published by data preparation.</p>
     </div>
   </div>
 
@@ -495,7 +495,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
   </div>
 
   <div class="gotchas rv">
-    <div class="eyebrow" style="margin-bottom:16px">What the protected EDA proves</div>
+    <div class="eyebrow" style="margin-bottom:16px">What protected data preparation proves</div>
     <ol>
       <li>
         <h5>Twenty-four article types are weak but still official</h5>
@@ -565,9 +565,9 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <p class="tq">“What type of fashion item is shown?”</p>
       <dl>
         <div><dt>Target</dt><dd><code style="font-family:var(--mono);font-size:11.5px">articleType</code></dd></div>
-        <div><dt>Classes</dt><dd>124 official outputs; 100 primary-metric</dd></div>
+        <div><dt>Classes</dt><dd>124 official outputs; 100 supported-comparison</dd></div>
         <div><dt>Majority baseline</dt><dd>17.6%</dd></div>
-        <div><dt>Metric</dt><dd>Macro-F1</dd></div>
+        <div><dt>Metric</dt><dd>Owner TODO after baseline evidence</dd></div>
       </dl>
       <p class="hard"><b>The hard part.</b> A long tail with no middle: the top 10 classes hold
       60.8% of training products while 37 official classes hold under ten products. Visually
@@ -584,7 +584,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
         <div><dt>Target</dt><dd><code style="font-family:var(--mono);font-size:11.5px">season</code></dd></div>
         <div><dt>Classes</dt><dd>4 official</dd></div>
         <div><dt>Majority baseline</dt><dd>49.6%</dd></div>
-        <div><dt>Metric</dt><dd>Macro-F1</dd></div>
+        <div><dt>Metric</dt><dd>Owner TODO after baseline evidence</dd></div>
       </dl>
       <p class="hard"><b>The hard part.</b> The label may not be in the image at all. One visual-only near pair is labelled Summer/Fall. It is a review lead, not enough evidence
       to estimate a general season-label error rate. Mixed-season groups formed through normalized names are reported
@@ -598,9 +598,9 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <p class="tq">“Who is it for, and for what occasion?”</p>
       <dl>
         <div><dt>Targets</dt><dd><code style="font-family:var(--mono);font-size:11.5px">gender</code> + <code style="font-family:var(--mono);font-size:11.5px">usage</code></dd></div>
-        <div><dt>Classes</dt><dd>5 and 9 official; 5 and 8 primary-metric</dd></div>
+        <div><dt>Classes</dt><dd>5 and 9 official; 5 and 8 supported-comparison</dd></div>
         <div><dt>Majority baseline</dt><dd>54.2% / 76.7%</dd></div>
-        <div><dt>Metric</dt><dd>Macro-F1</dd></div>
+        <div><dt>Metric</dt><dd>One owner-chosen metric set per target</dd></div>
       </dl>
       <p class="hard"><b>The hard part.</b> <code>usage</code> is the most skewed target in the
       training partition — Casual takes 76.7% while Home has one independent family. Home remains an official
@@ -616,17 +616,18 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
         <div><dt>Output</dt><dd>Top-K neighbours</dd></div>
         <div><dt>Dev gallery</dt><dd>26,992 train products · 53,984 image variants</dd></div>
         <div><dt>Scored queries</dt><dd>5,768 of 5,781 validation products · 11,536 image variants</dd></div>
-        <div><dt>Metric</dt><dd>nDCG@5, grade-2 Recall@5, coverage, latency</dd></div>
+        <div><dt>Metric</dt><dd>Owner chooses ranking, recovery, coverage, and cost evidence</dd></div>
       </dl>
       <p class="hard"><b>The hard part.</b> There is no similarity label to train or score against,
       so relevance must be <b>defined</b> and that definition defended. Development uses only a
       catalogue-metadata proxy. It is not real-world similarity ground truth, and its later human
       validation is an unresolved, non-blocking decision. Scored development uses validation queries against a train-only
       gallery. Query IDs, exact hashes, and product families are removed before Top-K. Both image variants
-      may be encoded, but each product ID can occupy only one ranked slot. Recall@5 counts
-      grade-2 products only; zero-positive queries leave the macro mean and enter coverage. In the
-      corrected train-fitted supported slice, 110 queries have no grade-2 positive and 412 have
-      fewer than five. The 13 unsupported validation products are reported later as a separate
+      may be encoded, but each product ID can occupy only one ranked slot. The K=5 counts below are
+      gallery-coverage diagnostics only. The Task 4 owner must choose the final cutoff, metric
+      definitions, averaging, and zero-positive rule before model comparison. In the corrected
+      train-fitted supported slice, 110 queries have no grade-2 positive and 412 have fewer than five.
+      The 13 unsupported validation products are reported later as a separate
       coverage/failure slice, never silently omitted. The old 116/422 counts used the invalid
       all-partition-fitted taxonomy.</p>
     </div>
@@ -647,7 +648,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
 
   <figure class="figure rv">
     <svg viewBox="0 0 1160 560" role="img"
-      aria-label="Pipeline diagram. Training images and styles_train.csv feed the official EDA notebook full mode, which audits the inputs and writes the sole shared data/processed/splits.csv with train, val, holdout, and quarantine partitions. That validated split fans out to four task tracks: articleType, season, gender plus usage, and embedding with indexing for visual search. All four feed a shared training bus that writes model weights and a row in runs.csv. Saved models produce both the prediction CSV and the web application.">
+      aria-label="Pipeline diagram. Training images and styles_train.csv feed the official data-preparation notebook full mode, which audits the inputs and writes the sole shared data/processed/splits.csv with train, val, holdout, and quarantine partitions. That validated split fans out to four task tracks: articleType, season, gender plus usage, and embedding with indexing for visual search. All four feed a shared training bus that writes model weights and a row in runs.csv. Saved models produce both the prediction CSV and the web application.">
 
       <!-- column headers -->
       <text class="d-col" x="105"  y="26" text-anchor="middle">Source</text>
@@ -699,7 +700,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <!-- C3 model tracks -->
       <rect class="d-box" x="560" y="100" width="260" height="72"/>
       <text class="d-s acc" x="576" y="122">TASK 1</text>
-      <text class="d-t" x="576" y="142">articleType — 124 outputs · 100 metric</text>
+      <text class="d-t" x="576" y="142">articleType — 124 outputs · 100 supported</text>
       <text class="d-s" x="576" y="160">baseline · CNN · tuned CNN</text>
 
       <rect class="d-box" x="560" y="196" width="260" height="72"/>
@@ -800,8 +801,8 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     <div class="ct">
       <span class="cn">4</span>
       <h4>eval/metrics.py</h4>
-      <p>One implementation of macro-F1, per-class breakdown and confusion matrices for all four
-      targets — so no task can quietly report accuracy while another reports macro-F1.</p>
+      <p>One implementation of each task owner’s frozen metric definitions, class breakdowns and
+      confusion matrices — so no task can quietly change a denominator or scoring rule.</p>
     </div>
   </div>
 </section>
@@ -857,7 +858,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
   </div>
 
   <blockquote class="pull rv" style="max-width:46ch">
-    A thoroughly investigated model with mediocre macro-F1 outscores an accurate one presented
+    A thoroughly investigated model with a mediocre headline score outscores an accurate one presented
     without rationale.
     <cite>Implication of the rubric weightings</cite>
   </blockquote>
@@ -942,7 +943,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     <div class="lr">
       <div><b>Predictions in the supplied format</b>
         <p><code>styles_prediction.csv</code>’s format must not be changed.</p></div>
-      <div><b><code>90_final_predictions.ipynb</code> and <code>scripts/predict.py</code></b>
+      <div><b><code>06_final_evaluation.ipynb</code> and <code>scripts/predict.py</code></b>
         <p>A CLI as well as a notebook, so a marker never has to open Jupyter to reproduce the
         submission.</p></div>
     </div>
@@ -957,13 +958,14 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
   </div>
 
   <div class="nbs rv">
-    <div class="eyebrow" style="margin-bottom:14px">Six notebooks — the official EDA contains its visible analysis and invokes reusable data contracts directly</div>
+    <div class="eyebrow" style="margin-bottom:14px">Seven notebooks — shared contracts first, task choices next, independent evaluation last</div>
+    <div class="nb"><code>00_problem_definition.ipynb</code><p>Define users, tasks, boundaries, success criteria, and risks.</p></div>
     <div class="nb"><code>01_data_preparation.ipynb</code><p>Build and validate the shared data contract, then record focused analysis and task handoffs.</p></div>
-    <div class="nb"><code>10_task1_articletype.ipynb</code><p>124-output models; compare on the 100-class train-supported slice.</p></div>
-    <div class="nb"><code>20_task2_season.ipynb</code><p>Four classes, weak signal. Establish and defend the ceiling.</p></div>
-    <div class="nb"><code>30_task3_gender_usage.ipynb</code><p>Two targets. Two models against one shared backbone, decided on evidence.</p></div>
-    <div class="nb"><code>40_task4_visual_search.ipynb</code><p>Embed, index, retrieve. Define relevance before measuring it.</p></div>
-    <div class="nb"><code>90_final_predictions.ipynb</code><p>Load the chosen models, write the submission CSV.</p></div>
+    <div class="nb"><code>02_task1_article_type.ipynb</code><p>Plan article-type preprocessing, metrics, comparisons, and provisional judgement.</p></div>
+    <div class="nb"><code>03_task2_season.ipynb</code><p>Plan season experiments, ambiguity, confidence, and shortcut analysis.</p></div>
+    <div class="nb"><code>04_task3_gender_usage.ipynb</code><p>Keep separate decisions for two targets and compare shared learning.</p></div>
+    <div class="nb"><code>05_task4_visual_search.ipynb</code><p>Choose retrieval representation, fusion, metrics, coverage, and cost evidence.</p></div>
+    <div class="nb"><code>06_final_evaluation.ipynb</code><p>Evaluate frozen choices once and produce the ultimate judgement and handoffs.</p></div>
   </div>
 
   <div class="tl rv">
@@ -991,7 +993,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
     <div class="num">07</div>
     <div class="txt">
       <div class="eyebrow">Open questions</div>
-      <h2>One EDA decision closed; two model questions remain</h2>
+      <h2>One data-preparation decision closed; two model questions remain</h2>
       <p>The data policy is now evidence-backed. The remaining choices need registered model results
       or a small later human validation, not an opinion from a meeting.</p>
     </div>
@@ -999,11 +1001,11 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
 
   <div class="oq rv">
     <div>
-      <span class="st">Accepted · EDA evidence</span>
+      <span class="st">Accepted · data-preparation evidence</span>
       <h4>What happens to the rare <code style="font-size:.8em">articleType</code> classes?</h4>
       <p>Keep every image-backed label in official model and submission outputs. Classes with
       fewer than three independent product families stay trainable but leave the primary
-      cross-model macro metric. No semantic merge is made.</p>
+      cross-model supported comparison. No semantic merge is made.</p>
       <p class="ev">Evidence: 124 train-observed outputs; 100 have three-family training support.
       Train-only thresholds 2/3/4/5 support 105/100/98/94 classes.</p>
     </div>
@@ -1013,7 +1015,8 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       <p>The submission format permits either. Multi-task learning is the stronger claim to going
       beyond class material, and gender and usage plausibly share features — but shared training
       can let the 76.7% Casual majority drown the smaller target.</p>
-      <p class="ev">Evidence needed: per-target macro-F1, both ways, on the same split.</p>
+      <p class="ev">Evidence needed: each target’s frozen primary and supporting metrics, both ways,
+      on the same split and budget.</p>
     </div>
     <div>
       <span class="st">Open · non-blocking human validation</span>
@@ -1022,7 +1025,7 @@ footer .colophon{margin-top:clamp(30px,4vw,44px);padding-top:18px;border-top:1px
       and <code>baseColour</code> — is measurable but circular. It is a metadata proxy, never
       real-world similarity ground truth.</p>
       <p class="ev">Evidence needed later: agreement between the proxy and human judgement on the
-      IDs listed in <code>docs/reviews/open_decisions.md</code>. This does not block EDA.</p>
+      IDs listed in <code>docs/reviews/open_decisions.md</code>. This does not block data preparation.</p>
     </div>
   </div>
 </section>
