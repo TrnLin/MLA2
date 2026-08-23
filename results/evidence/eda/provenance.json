@@ -41,6 +41,11 @@
       "size_bytes": 189
     },
     {
+      "path": "results/evidence/eda/image_reconciliation.csv",
+      "sha256": "97c231838c9adab9dc72874a9017a28410ac1596dce09052aae455ff8a24cefd",
+      "size_bytes": 282
+    },
+    {
       "path": "results/evidence/eda/image_summary.csv",
       "sha256": "e3e911145dfa2d93be878571ef219b35dab3b00b2d8c0d5beab793da6325d37f",
       "size_bytes": 338
@@ -61,9 +66,19 @@
       "size_bytes": 369
     },
     {
+      "path": "results/evidence/eda/preparation_stage_order.csv",
+      "sha256": "8b97f82d9b336d0e67462a94f416974f280858f5da24af7f9461c26bbbcea230",
+      "size_bytes": 411
+    },
+    {
       "path": "results/evidence/eda/processed_inventory.csv",
       "sha256": "5c74c901ebdb7976f41b33a0acc8f825d90024ab6b20c6d44711f7c2eb6ea8b9",
       "size_bytes": 2565
+    },
+    {
+      "path": "results/evidence/eda/raw_hashing_summary.csv",
+      "sha256": "7a71746f4404f24f60040adc8af554b2085dc817f1d6e24dfb805f4b497238b1",
+      "size_bytes": 214
     },
     {
       "path": "results/evidence/eda/raw_inventory.csv",
@@ -87,8 +102,8 @@
     },
     {
       "path": "results/evidence/eda/task4_protocol.json",
-      "sha256": "f6c12f9e8d9e8f61b841eb66ad046fb162a86a56e9dce3de5e7e90c0b0d37316",
-      "size_bytes": 2136
+      "sha256": "3ca7d174c4b431b8c9b037c6ebb85be75014ec475ec809b51c25c9cff2cbb24f",
+      "size_bytes": 2184
     },
     {
       "path": "results/evidence/eda/task4_summary.csv",
@@ -221,10 +236,10 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_EDA_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 4.863
+    "preparation_seconds": 14.511
   },
   "git": {
-    "commit": "db8641f7e8efcd36ecb67d700dce7bd007766601",
+    "commit": "b712030a0f9622cdc08e9b5f76dc8c81503194ea",
     "dirty": true
   },
   "image_variants": {
@@ -397,7 +412,7 @@
   ],
   "note": "Wall-time benchmark hashes may change; report figures and other evidence are deterministic for the locked runtime.",
   "notebook": {
-    "code_digest": "88db3a9db5d944ca0022dbc37ecd21a652a0184172261fcdfc793244f2a105bc",
+    "code_digest": "f40b22109e3e96913725dcc944d9045043cd22de886b257e26876a2d432b43ff",
     "path": "notebooks/00_eda.ipynb"
   },
   "runtime": {
@@ -406,18 +421,18 @@
     "numpy": "2.5.2",
     "pandas": "3.0.5",
     "pillow": "12.3.0",
-    "python": "3.14.7"
+    "python": "3.12.13"
   },
   "volatile_outputs": [
     {
       "path": "results/evidence/eda/transform_benchmark.json",
-      "sha256": "2c2712923dee14e6a24ef37bdf51385b8f72891e6155fe45d2c472c3217343d8",
-      "size_bytes": 6287
+      "sha256": "540265bad27621225400b958a90b188cf8eed2e0cc6ed5a2265f9aa6ee6ad376",
+      "size_bytes": 6831
     },
     {
       "path": "results/evidence/eda/transform_summary.csv",
-      "sha256": "6c427d95f9e43e5379c355c81874a43373dcbf570116d2839bac3446ca220309",
-      "size_bytes": 347
+      "sha256": "6f9272fd75b404edff70e63e4a9563ddfd1bda0278b0d5bba4781ed92c8f85c6",
+      "size_bytes": 346
     }
   ]
 }

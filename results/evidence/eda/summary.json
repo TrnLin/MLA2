@@ -103,6 +103,11 @@
       "size_bytes": 189
     },
     {
+      "path": "results/evidence/eda/image_reconciliation.csv",
+      "sha256": "97c231838c9adab9dc72874a9017a28410ac1596dce09052aae455ff8a24cefd",
+      "size_bytes": 282
+    },
+    {
       "path": "results/evidence/eda/image_summary.csv",
       "sha256": "e3e911145dfa2d93be878571ef219b35dab3b00b2d8c0d5beab793da6325d37f",
       "size_bytes": 338
@@ -123,9 +128,19 @@
       "size_bytes": 369
     },
     {
+      "path": "results/evidence/eda/preparation_stage_order.csv",
+      "sha256": "8b97f82d9b336d0e67462a94f416974f280858f5da24af7f9461c26bbbcea230",
+      "size_bytes": 411
+    },
+    {
       "path": "results/evidence/eda/processed_inventory.csv",
       "sha256": "5c74c901ebdb7976f41b33a0acc8f825d90024ab6b20c6d44711f7c2eb6ea8b9",
       "size_bytes": 2565
+    },
+    {
+      "path": "results/evidence/eda/raw_hashing_summary.csv",
+      "sha256": "7a71746f4404f24f60040adc8af554b2085dc817f1d6e24dfb805f4b497238b1",
+      "size_bytes": 214
     },
     {
       "path": "results/evidence/eda/raw_inventory.csv",
@@ -149,8 +164,8 @@
     },
     {
       "path": "results/evidence/eda/task4_protocol.json",
-      "sha256": "f6c12f9e8d9e8f61b841eb66ad046fb162a86a56e9dce3de5e7e90c0b0d37316",
-      "size_bytes": 2136
+      "sha256": "3ca7d174c4b431b8c9b037c6ebb85be75014ec475ec809b51c25c9cff2cbb24f",
+      "size_bytes": 2184
     },
     {
       "path": "results/evidence/eda/task4_summary.csv",
@@ -283,7 +298,7 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_EDA_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 4.863
+    "preparation_seconds": 14.511
   },
   "family_policy": {
     "block_basis": [
@@ -633,6 +648,30 @@
       }
     ]
   },
+  "image_reconciliation": [
+    {
+      "candidate_image_ids": 38612,
+      "decoded_image_ids": 38612,
+      "decoded_image_without_metadata": 0,
+      "extra_id_sample": "None",
+      "metadata_ids": 38617,
+      "metadata_without_decoded_image": 5,
+      "missing_id_sample": "12347; 39401; 39403; 39410; 39425",
+      "repeated_image_ids": 0,
+      "role": "train"
+    },
+    {
+      "candidate_image_ids": 5829,
+      "decoded_image_ids": 5829,
+      "decoded_image_without_metadata": 0,
+      "extra_id_sample": "None",
+      "metadata_ids": 5829,
+      "metadata_without_decoded_image": 0,
+      "missing_id_sample": "None",
+      "repeated_image_ids": 0,
+      "role": "prediction"
+    }
+  ],
   "image_variants": {
     "alignment": {
       "blocks_preparation": false,
@@ -728,10 +767,72 @@
   ],
   "normalization": {
     "default_policy": "pair_weighted_original_and_high_resolution",
-    "original_only_baseline_sha256": "49c2e7ab96f01fa67afdf69eefcd8b55d30ca2e0f886089ccf5d36fe44f201e1",
+    "original_only_baseline_sha256": "1eae361c40fda0262e045d6cb8910c24b66f5b96e35aa0e44bbd1a3425aa6423",
     "paired_sha256": "9e2c3da6bfdb9d0df01c0f31dfd8f53936bca1ebebe50c3ef67b10ba7150bf6f",
     "train_ids_digest": "9ed3d7507e844d1cd66d77562a0be48ce2b8a052c39f4feff4437acbc7e0d797"
   },
+  "preparation_stage_order": [
+    {
+      "boundary": "all candidate files",
+      "order": 1,
+      "stage": "Raw inventory and SHA-256"
+    },
+    {
+      "boundary": "image bytes only",
+      "order": 2,
+      "stage": "Decode and structural validation"
+    },
+    {
+      "boundary": "IDs and paths",
+      "order": 3,
+      "stage": "Metadata-image reconciliation"
+    },
+    {
+      "boundary": "decodable images only",
+      "order": 4,
+      "stage": "Perceptual dHash and aHash"
+    },
+    {
+      "boundary": "before splitting",
+      "order": 5,
+      "stage": "Duplicate families and quarantine"
+    },
+    {
+      "boundary": "product IDs",
+      "order": 6,
+      "stage": "Canonical family-safe split"
+    },
+    {
+      "boundary": "train partition only",
+      "order": 7,
+      "stage": "Train-only statistics"
+    },
+    {
+      "boundary": "frozen contracts",
+      "order": 8,
+      "stage": "Variants, cache, and provenance"
+    }
+  ],
+  "raw_hashing": [
+    {
+      "candidate_files": 38612,
+      "cross_role_exact_hash_groups_global": 11,
+      "decoded_files": 38612,
+      "exact_duplicate_groups": 636,
+      "files_in_exact_duplicate_groups": 1399,
+      "raw_sha256_values": 37849,
+      "role": "train"
+    },
+    {
+      "candidate_files": 5829,
+      "cross_role_exact_hash_groups_global": 11,
+      "decoded_files": 5829,
+      "exact_duplicate_groups": 5,
+      "files_in_exact_duplicate_groups": 10,
+      "raw_sha256_values": 5824,
+      "role": "prediction"
+    }
+  ],
   "schema_version": "12.0.0",
   "scope": {
     "development_partition": "val",

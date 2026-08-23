@@ -3,7 +3,7 @@
   "limitation": "wall time depends on hardware and cache state",
   "repetitions": 3,
   "runtime": {
-    "python": "3.14.7"
+    "python": "3.12.13"
   },
   "sample_ids": [
     1646,
@@ -524,21 +524,21 @@
   "seed": 2753,
   "timings": {
     "chosen_96x128": {
-      "median_images_per_second": 3320.48,
-      "median_seconds": 0.154195,
+      "median_images_per_second": 1100.9,
+      "median_seconds": 0.465075,
       "seconds": [
-        0.153711,
-        0.154195,
-        0.155476
+        0.463913,
+        0.468203,
+        0.465075
       ]
     },
     "old_128x128": {
-      "median_images_per_second": 2655.84,
-      "median_seconds": 0.192783,
+      "median_images_per_second": 986.63,
+      "median_seconds": 0.518939,
       "seconds": [
-        0.273873,
-        0.192783,
-        0.157133
+        0.577128,
+        0.518939,
+        0.491987
       ]
     }
   }

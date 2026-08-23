@@ -50,6 +50,7 @@ REQUIRED_HEADINGS = (
     "## 2. Data provenance and inventory",
     "### 2.1 Prepared-data contract",
     "### 2.2 Dataset inventory",
+    "### 2.3 Raw hashing and metadata-image reconciliation",
     "## 3. Data integrity and leakage controls",
     "### 3.1 Split integrity",
     "### 3.2 Duplicate and entity controls",
@@ -98,12 +99,15 @@ EVIDENCE_NAMES = {
     "family_size_distribution.csv",
     "hierarchy_summary.csv",
     "high_resolution_summary.csv",
+    "image_reconciliation.csv",
     "image_summary.csv",
     "joint_target_nmi.csv",
     "normalization_summary.csv",
     "partition_summary.csv",
+    "preparation_stage_order.csv",
     "processed_inventory.csv",
     "provenance.json",
+    "raw_hashing_summary.csv",
     "raw_inventory.csv",
     "season_family_basis_summary.csv",
     "support_threshold_sensitivity.csv",
@@ -343,7 +347,7 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
 
     assert set((ROOT / "notebooks").glob("*.ipynb")) == {PROBLEM_NOTEBOOK, NOTEBOOK}
     assert all(heading in source for heading in REQUIRED_HEADINGS)
-    assert len(code_cells) == 34
+    assert len(code_cells) == 35
     assert len(guide_cells) == len(code_cells)
     assert all(
         notebook.cells[index - 1].cell_type == "markdown"
@@ -361,8 +365,8 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert max(len(cell.source.splitlines()) for cell in code_cells) < 150
     assert "**Question.**" not in markdown
     assert "?" not in markdown
-    assert source.count("> **Finding.**") == 10
-    assert source.count("> **Modelling consequence.**") == 10
+    assert source.count("> **Finding.**") == 11
+    assert source.count("> **Modelling consequence.**") == 11
     assert all(source.count(f"Figure {number}. ") == 1 for number in range(1, 16))
     assert all(
         count in normalized_markdown
@@ -397,6 +401,9 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert "validate_prepared_data_cache" in source
     assert 'PREPARATION_MODE = "cached"' in source
     assert "include_high_resolution_variants=True" in source
+    assert "Raw inventory and SHA-256" in source
+    assert "Perceptual dHash and aHash" in source
+    assert "metadata_without_decoded_image" in source
     assert "paired_normalization.json" in source
     assert "normalization_original_only.json" in source
     assert "all_alignment_pairs.csv.gz" in source
@@ -477,6 +484,20 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
     assert first_summary["leakage_checks"]["prediction_ids_in_labelled_splits"] == 0
     assert first_summary["leakage_checks"]["prediction_ids_in_variant_manifest"] == 0
     assert first_summary["leakage_checks"]["quarantine_ids_in_variant_manifest"] == 0
+    assert [row["order"] for row in first_summary["preparation_stage_order"]] == list(
+        range(1, 9)
+    )
+    assert first_summary["preparation_stage_order"][0]["stage"] == (
+        "Raw inventory and SHA-256"
+    )
+    assert all(
+        row["decoded_files"] == row["raw_sha256_values"]
+        for row in first_summary["raw_hashing"]
+    )
+    assert all(
+        row["decoded_image_without_metadata"] == 0
+        for row in first_summary["image_reconciliation"]
+    )
     assert first_summary["task4"]["shared_ids"] == 0
     assert first_summary["task4"]["shared_sha256"] == 0
     assert first_summary["task4"]["shared_product_families"] == 0

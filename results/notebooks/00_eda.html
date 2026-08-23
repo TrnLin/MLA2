@@ -7931,7 +7931,7 @@ performs the slow forensic rebuild in a separate process.</p>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><strong>Prepared-data cached mode complete.</strong> Checked 17 required files in 4.9 seconds. Validation or rebuilding ran outside the EDA kernel, so protected target values were not materialised in notebook state. Human decisions are not preparation inputs.</p>
+<p><strong>Prepared-data cached mode complete.</strong> Checked 17 required files in 14.5 seconds. Validation or rebuilding ran outside the EDA kernel, so protected target values were not materialised in notebook state. Human decisions are not preparation inputs.</p>
 </div>
 </div>
 </div>
@@ -8104,6 +8104,250 @@ prediction IDs remain label-free and separate. The displayed four-file contract 
 later model consumes; the full technical inventory is saved as evidence.</p>
 <p><strong>Modelling consequence.</strong> Training uses only image-backed IDs from the shared split. The official
 prediction set stays outside target analysis, validation, normalization, and retrieval tuning.</p>
+</blockquote>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a702ad01">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="2.3-Raw-hashing-and-metadata-image-reconciliation">2.3 Raw hashing and metadata-image reconciliation<a class="anchor-link" href="#2.3-Raw-hashing-and-metadata-image-reconciliation">¶</a></h3><p>Hashing is not a late provenance step. In a full rebuild, the pipeline reads the raw file bytes and
+computes SHA-256 before it trusts image content, builds duplicate families, or creates the shared
+split. Decode validation follows the byte hash. Perceptual dHash and aHash are computed only for
+decodable images because they describe visual content rather than file identity.</p>
+<p>The three hash roles stay separate:</p>
+<ol>
+<li><strong>Raw SHA-256</strong> identifies exact file-byte matches and supports CSV-to-image reconciliation.</li>
+<li><strong>Perceptual hashes</strong> find visually close decoded images for duplicate review and family grouping.</li>
+<li><strong>Artifact SHA-256</strong> fingerprints generated manifests, evidence, and notebook provenance at the
+end of the workflow.</li>
+</ol>
+<p>This section exposes the first role and proves that metadata IDs and decoded image IDs agree before
+the split or any training-only statistic is interpreted.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noInput celltag_hide-input" id="cell-id=490c1ba1">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<style type="text/css">
+#T_eda_93d25f3383 caption {
+  font-weight: 600;
+  text-align: left;
+}
+#T_eda_93d25f3383 th {
+  background: #E8EEF2;
+  text-align: left;
+}
+#T_eda_93d25f3383 td {
+  text-align: left;
+  vertical-align: top;
+}
+</style>
+<table id="T_eda_93d25f3383">
+<caption>Full preparation order: hashing is first</caption>
+<thead>
+<tr>
+<th class="blank level0"> </th>
+<th class="col_heading level0 col0" id="T_eda_93d25f3383_level0_col0">order</th>
+<th class="col_heading level0 col1" id="T_eda_93d25f3383_level0_col1">stage</th>
+<th class="col_heading level0 col2" id="T_eda_93d25f3383_level0_col2">boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_eda_93d25f3383_level0_row0">0</th>
+<td class="data row0 col0" id="T_eda_93d25f3383_row0_col0">1</td>
+<td class="data row0 col1" id="T_eda_93d25f3383_row0_col1">Raw inventory and SHA-256</td>
+<td class="data row0 col2" id="T_eda_93d25f3383_row0_col2">all candidate files</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_eda_93d25f3383_level0_row1">1</th>
+<td class="data row1 col0" id="T_eda_93d25f3383_row1_col0">2</td>
+<td class="data row1 col1" id="T_eda_93d25f3383_row1_col1">Decode and structural validation</td>
+<td class="data row1 col2" id="T_eda_93d25f3383_row1_col2">image bytes only</td>
+</tr>
+<tr>
+<th class="row_heading level0 row2" id="T_eda_93d25f3383_level0_row2">2</th>
+<td class="data row2 col0" id="T_eda_93d25f3383_row2_col0">3</td>
+<td class="data row2 col1" id="T_eda_93d25f3383_row2_col1">Metadata-image reconciliation</td>
+<td class="data row2 col2" id="T_eda_93d25f3383_row2_col2">IDs and paths</td>
+</tr>
+<tr>
+<th class="row_heading level0 row3" id="T_eda_93d25f3383_level0_row3">3</th>
+<td class="data row3 col0" id="T_eda_93d25f3383_row3_col0">4</td>
+<td class="data row3 col1" id="T_eda_93d25f3383_row3_col1">Perceptual dHash and aHash</td>
+<td class="data row3 col2" id="T_eda_93d25f3383_row3_col2">decodable images only</td>
+</tr>
+<tr>
+<th class="row_heading level0 row4" id="T_eda_93d25f3383_level0_row4">4</th>
+<td class="data row4 col0" id="T_eda_93d25f3383_row4_col0">5</td>
+<td class="data row4 col1" id="T_eda_93d25f3383_row4_col1">Duplicate families and quarantine</td>
+<td class="data row4 col2" id="T_eda_93d25f3383_row4_col2">before splitting</td>
+</tr>
+<tr>
+<th class="row_heading level0 row5" id="T_eda_93d25f3383_level0_row5">5</th>
+<td class="data row5 col0" id="T_eda_93d25f3383_row5_col0">6</td>
+<td class="data row5 col1" id="T_eda_93d25f3383_row5_col1">Canonical family-safe split</td>
+<td class="data row5 col2" id="T_eda_93d25f3383_row5_col2">product IDs</td>
+</tr>
+<tr>
+<th class="row_heading level0 row6" id="T_eda_93d25f3383_level0_row6">6</th>
+<td class="data row6 col0" id="T_eda_93d25f3383_row6_col0">7</td>
+<td class="data row6 col1" id="T_eda_93d25f3383_row6_col1">Train-only statistics</td>
+<td class="data row6 col2" id="T_eda_93d25f3383_row6_col2">train partition only</td>
+</tr>
+<tr>
+<th class="row_heading level0 row7" id="T_eda_93d25f3383_level0_row7">7</th>
+<td class="data row7 col0" id="T_eda_93d25f3383_row7_col0">8</td>
+<td class="data row7 col1" id="T_eda_93d25f3383_row7_col1">Variants, cache, and provenance</td>
+<td class="data row7 col2" id="T_eda_93d25f3383_row7_col2">frozen contracts</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<style type="text/css">
+#T_eda_1a63b81f83 caption {
+  font-weight: 600;
+  text-align: left;
+}
+#T_eda_1a63b81f83 th {
+  background: #E8EEF2;
+  text-align: left;
+}
+#T_eda_1a63b81f83 td {
+  text-align: left;
+  vertical-align: top;
+}
+</style>
+<table id="T_eda_1a63b81f83">
+<caption>Raw SHA-256 coverage and exact-byte duplicate evidence</caption>
+<thead>
+<tr>
+<th class="blank level0"> </th>
+<th class="col_heading level0 col0" id="T_eda_1a63b81f83_level0_col0">role</th>
+<th class="col_heading level0 col1" id="T_eda_1a63b81f83_level0_col1">candidate_files</th>
+<th class="col_heading level0 col2" id="T_eda_1a63b81f83_level0_col2">decoded_files</th>
+<th class="col_heading level0 col3" id="T_eda_1a63b81f83_level0_col3">raw_sha256_values</th>
+<th class="col_heading level0 col4" id="T_eda_1a63b81f83_level0_col4">exact_duplicate_groups</th>
+<th class="col_heading level0 col5" id="T_eda_1a63b81f83_level0_col5">files_in_exact_duplicate_groups</th>
+<th class="col_heading level0 col6" id="T_eda_1a63b81f83_level0_col6">cross_role_exact_hash_groups_global</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_eda_1a63b81f83_level0_row0">0</th>
+<td class="data row0 col0" id="T_eda_1a63b81f83_row0_col0">train</td>
+<td class="data row0 col1" id="T_eda_1a63b81f83_row0_col1">38,612</td>
+<td class="data row0 col2" id="T_eda_1a63b81f83_row0_col2">38,612</td>
+<td class="data row0 col3" id="T_eda_1a63b81f83_row0_col3">37,849</td>
+<td class="data row0 col4" id="T_eda_1a63b81f83_row0_col4">636</td>
+<td class="data row0 col5" id="T_eda_1a63b81f83_row0_col5">1,399</td>
+<td class="data row0 col6" id="T_eda_1a63b81f83_row0_col6">11</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_eda_1a63b81f83_level0_row1">1</th>
+<td class="data row1 col0" id="T_eda_1a63b81f83_row1_col0">prediction</td>
+<td class="data row1 col1" id="T_eda_1a63b81f83_row1_col1">5,829</td>
+<td class="data row1 col2" id="T_eda_1a63b81f83_row1_col2">5,829</td>
+<td class="data row1 col3" id="T_eda_1a63b81f83_row1_col3">5,824</td>
+<td class="data row1 col4" id="T_eda_1a63b81f83_row1_col4">5</td>
+<td class="data row1 col5" id="T_eda_1a63b81f83_row1_col5">10</td>
+<td class="data row1 col6" id="T_eda_1a63b81f83_row1_col6">11</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<style type="text/css">
+#T_eda_b87db14160 caption {
+  font-weight: 600;
+  text-align: left;
+}
+#T_eda_b87db14160 th {
+  background: #E8EEF2;
+  text-align: left;
+}
+#T_eda_b87db14160 td {
+  text-align: left;
+  vertical-align: top;
+}
+</style>
+<table id="T_eda_b87db14160">
+<caption>Metadata IDs matched to decoded image IDs</caption>
+<thead>
+<tr>
+<th class="blank level0"> </th>
+<th class="col_heading level0 col0" id="T_eda_b87db14160_level0_col0">role</th>
+<th class="col_heading level0 col1" id="T_eda_b87db14160_level0_col1">metadata_ids</th>
+<th class="col_heading level0 col2" id="T_eda_b87db14160_level0_col2">candidate_image_ids</th>
+<th class="col_heading level0 col3" id="T_eda_b87db14160_level0_col3">decoded_image_ids</th>
+<th class="col_heading level0 col4" id="T_eda_b87db14160_level0_col4">metadata_without_decoded_image</th>
+<th class="col_heading level0 col5" id="T_eda_b87db14160_level0_col5">decoded_image_without_metadata</th>
+<th class="col_heading level0 col6" id="T_eda_b87db14160_level0_col6">repeated_image_ids</th>
+<th class="col_heading level0 col7" id="T_eda_b87db14160_level0_col7">missing_id_sample</th>
+<th class="col_heading level0 col8" id="T_eda_b87db14160_level0_col8">extra_id_sample</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_eda_b87db14160_level0_row0">0</th>
+<td class="data row0 col0" id="T_eda_b87db14160_row0_col0">train</td>
+<td class="data row0 col1" id="T_eda_b87db14160_row0_col1">38,617</td>
+<td class="data row0 col2" id="T_eda_b87db14160_row0_col2">38,612</td>
+<td class="data row0 col3" id="T_eda_b87db14160_row0_col3">38,612</td>
+<td class="data row0 col4" id="T_eda_b87db14160_row0_col4">5</td>
+<td class="data row0 col5" id="T_eda_b87db14160_row0_col5">0</td>
+<td class="data row0 col6" id="T_eda_b87db14160_row0_col6">0</td>
+<td class="data row0 col7" id="T_eda_b87db14160_row0_col7">12347; 39401; 39403; 39410; 39425</td>
+<td class="data row0 col8" id="T_eda_b87db14160_row0_col8">None</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_eda_b87db14160_level0_row1">1</th>
+<td class="data row1 col0" id="T_eda_b87db14160_row1_col0">prediction</td>
+<td class="data row1 col1" id="T_eda_b87db14160_row1_col1">5,829</td>
+<td class="data row1 col2" id="T_eda_b87db14160_row1_col2">5,829</td>
+<td class="data row1 col3" id="T_eda_b87db14160_row1_col3">5,829</td>
+<td class="data row1 col4" id="T_eda_b87db14160_row1_col4">0</td>
+<td class="data row1 col5" id="T_eda_b87db14160_row1_col5">0</td>
+<td class="data row1 col6" id="T_eda_b87db14160_row1_col6">0</td>
+<td class="data row1 col7" id="T_eda_b87db14160_row1_col7">None</td>
+<td class="data row1 col8" id="T_eda_b87db14160_row1_col8">None</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0a8cbe1c">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<blockquote>
+<p><strong>Finding.</strong> Every decodable raw image has a 64-character SHA-256 value before visual
+duplicate analysis begins. The labelled metadata has five IDs without a usable decoded image;
+the official prediction metadata and image IDs match completely. No decoded image ID exists
+outside its matching metadata role. Exact-byte duplicates are retained as audit evidence and
+handled as product-family constraints before the canonical split.</p>
+<p><strong>Modelling consequence.</strong> Missing or corrupt files are excluded by an objective file rule, not by
+label or model performance. Later notebooks read the reconciled manifest and the single shared
+split; they do not rediscover files, create another split, or treat perceptual similarity as an
+exact-byte hash.</p>
 </blockquote>
 </div>
 </div>
@@ -9080,7 +9324,7 @@ quality remains an open experimental result rather than an EDA claim.</p>
 <td class="data row0 col2" id="T_eda_7c0cb8d233_row0_col2">25.000</td>
 <td class="data row0 col3" id="T_eda_7c0cb8d233_row0_col3">16,384</td>
 <td class="data row0 col4" id="T_eda_7c0cb8d233_row0_col4">192.000</td>
-<td class="data row0 col5" id="T_eda_7c0cb8d233_row0_col5">2,655.800</td>
+<td class="data row0 col5" id="T_eda_7c0cb8d233_row0_col5">986.600</td>
 </tr>
 <tr>
 <th class="row_heading level0 row1" id="T_eda_7c0cb8d233_level0_row1">1</th>
@@ -9089,7 +9333,7 @@ quality remains an open experimental result rather than an EDA claim.</p>
 <td class="data row1 col2" id="T_eda_7c0cb8d233_row1_col2">0.000</td>
 <td class="data row1 col3" id="T_eda_7c0cb8d233_row1_col3">12,288</td>
 <td class="data row1 col4" id="T_eda_7c0cb8d233_row1_col4">144.000</td>
-<td class="data row1 col5" id="T_eda_7c0cb8d233_row1_col5">3,320.500</td>
+<td class="data row1 col5" id="T_eda_7c0cb8d233_row1_col5">1,100.900</td>
 </tr>
 </tbody>
 </table>
@@ -9309,9 +9553,9 @@ records the unresolved limits that later experiments must preserve or close.</p>
 <tbody>
 <tr>
 <th class="row_heading level0 row0" id="T_eda_eab3fb8d4d_level0_row0">0</th>
-<td class="data row0 col0" id="T_eda_eab3fb8d4d_row0_col0">41</td>
+<td class="data row0 col0" id="T_eda_eab3fb8d4d_row0_col0">44</td>
 <td class="data row0 col1" id="T_eda_eab3fb8d4d_row0_col1">15</td>
-<td class="data row0 col2" id="T_eda_eab3fb8d4d_row0_col2">88db3a9db5d944ca...</td>
+<td class="data row0 col2" id="T_eda_eab3fb8d4d_row0_col2">f40b22109e3e9691...</td>
 <td class="data row0 col3" id="T_eda_eab3fb8d4d_row0_col3">False</td>
 </tr>
 </tbody>
@@ -9327,7 +9571,7 @@ records the unresolved limits that later experiments must preserve or close.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <blockquote>
-<p><strong>Finding.</strong> The notebook records 41 stable evidence files, including all 15 report figures,
+<p><strong>Finding.</strong> The notebook records 44 stable evidence files, including all 15 report figures,
 with project-relative paths and hashes. Raw target files are represented only by permitted ID-level
 fingerprints. Wall-time benchmarks remain outside the stable set because hardware and cache state
 change them.</p>
@@ -9463,7 +9707,7 @@ policy, its supporting evidence, and the result that later model work must still
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><strong>Run All complete in cached mode.</strong> Prepared data in 4.9 seconds and saved 15 figures. Actual paired inputs: 53,984 train, 11,562 validation, and 11,556 holdout images. These represent 26,992, 5,781, and 5,778 product-level reporting units. Protected target values materialised by EDA: 0.</p>
+<p><strong>Run All complete in cached mode.</strong> Prepared data in 14.5 seconds and saved 15 figures. Actual paired inputs: 53,984 train, 11,562 validation, and 11,556 holdout images. These represent 26,992, 5,781, and 5,778 product-level reporting units. Protected target values materialised by EDA: 0.</p>
 </div>
 </div>
 </div>

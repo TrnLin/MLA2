@@ -1,0 +1,9 @@
+order,stage,boundary
+1,Raw inventory and SHA-256,all candidate files
+2,Decode and structural validation,image bytes only
+3,Metadata-image reconciliation,IDs and paths
+4,Perceptual dHash and aHash,decodable images only
+5,Duplicate families and quarantine,before splitting
+6,Canonical family-safe split,product IDs
+7,Train-only statistics,train partition only
+8,"Variants, cache, and provenance",frozen contracts
