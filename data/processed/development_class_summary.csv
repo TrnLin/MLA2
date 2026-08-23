@@ -1,235 +1,143 @@
-target,class,partition,count,scope
-articleType,Tshirts,train,4732,supported_primary_metric_slice
-articleType,Shirts,train,2156,supported_primary_metric_slice
-articleType,Casual Shoes,train,1874,supported_primary_metric_slice
-articleType,Watches,train,1573,supported_primary_metric_slice
-articleType,Sports Shoes,train,1393,supported_primary_metric_slice
-articleType,Tops,train,1127,supported_primary_metric_slice
-articleType,Kurtas,train,1085,supported_primary_metric_slice
-articleType,Handbags,train,1005,supported_primary_metric_slice
-articleType,Heels,train,732,supported_primary_metric_slice
-articleType,Sunglasses,train,730,supported_primary_metric_slice
-articleType,Sandals,train,605,supported_primary_metric_slice
-articleType,Flip Flops,train,604,supported_primary_metric_slice
-articleType,Wallets,train,580,supported_primary_metric_slice
-articleType,Belts,train,557,supported_primary_metric_slice
-articleType,Backpacks,train,498,supported_primary_metric_slice
-articleType,Briefs,train,468,supported_primary_metric_slice
-articleType,Socks,train,429,supported_primary_metric_slice
-articleType,Formal Shoes,train,423,supported_primary_metric_slice
-articleType,Perfume and Body Mist,train,389,supported_primary_metric_slice
-articleType,Jeans,train,387,supported_primary_metric_slice
-articleType,Shorts,train,368,supported_primary_metric_slice
-articleType,Trousers,train,358,supported_primary_metric_slice
-articleType,Flats,train,293,supported_primary_metric_slice
-articleType,Dresses,train,237,supported_primary_metric_slice
-articleType,Bra,train,205,supported_primary_metric_slice
-articleType,Track Pants,train,204,supported_primary_metric_slice
-articleType,Deodorant,train,203,supported_primary_metric_slice
-articleType,Sweatshirts,train,194,supported_primary_metric_slice
-articleType,Sweaters,train,191,supported_primary_metric_slice
-articleType,Caps,train,188,supported_primary_metric_slice
-articleType,Earrings,train,171,supported_primary_metric_slice
-articleType,Innerwear Vests,train,168,supported_primary_metric_slice
-articleType,Jackets,train,158,supported_primary_metric_slice
-articleType,Clutches,train,155,supported_primary_metric_slice
-articleType,Ties,train,146,supported_primary_metric_slice
-articleType,Kurtis,train,141,supported_primary_metric_slice
-articleType,Tunics,train,121,supported_primary_metric_slice
-articleType,Capris,train,111,supported_primary_metric_slice
-articleType,Leggings,train,111,supported_primary_metric_slice
-articleType,Sarees,train,106,supported_primary_metric_slice
-articleType,Trunk,train,98,supported_primary_metric_slice
-articleType,Pendant,train,88,supported_primary_metric_slice
-articleType,Dupatta,train,82,supported_primary_metric_slice
-articleType,Skirts,train,81,supported_primary_metric_slice
-articleType,Ring,train,77,supported_primary_metric_slice
-articleType,Scarves,train,76,supported_primary_metric_slice
-articleType,Accessory Gift Set,train,76,supported_primary_metric_slice
-articleType,Stoles,train,63,supported_primary_metric_slice
-articleType,Duffel Bag,train,60,supported_primary_metric_slice
-articleType,Laptop Bag,train,55,supported_primary_metric_slice
-articleType,Kurta Sets,train,53,supported_primary_metric_slice
-articleType,Night suits,train,49,supported_primary_metric_slice
-articleType,Free Gifts,train,47,supported_primary_metric_slice
-articleType,Sports Sandals,train,44,supported_primary_metric_slice
-articleType,Necklace and Chains,train,44,supported_primary_metric_slice
-articleType,Bangle,train,42,supported_primary_metric_slice
-articleType,Fragrance Gift Set,train,39,supported_primary_metric_slice
-articleType,Lounge Pants,train,37,supported_primary_metric_slice
-articleType,Bracelet,train,37,supported_primary_metric_slice
-articleType,Mobile Pouch,train,33,supported_primary_metric_slice
-articleType,Cufflinks,train,32,supported_primary_metric_slice
-articleType,Jewellery Set,train,32,supported_primary_metric_slice
-articleType,Messenger Bag,train,31,supported_primary_metric_slice
-articleType,Mufflers,train,28,supported_primary_metric_slice
-articleType,Boxers,train,28,supported_primary_metric_slice
-articleType,Suspenders,train,28,supported_primary_metric_slice
-articleType,Nightdress,train,28,supported_primary_metric_slice
-articleType,Lounge Shorts,train,24,supported_primary_metric_slice
-articleType,Salwar,train,24,supported_primary_metric_slice
-articleType,Churidar,train,22,supported_primary_metric_slice
-articleType,Tracksuits,train,20,supported_primary_metric_slice
-articleType,Patiala,train,20,supported_primary_metric_slice
-articleType,Stockings,train,19,supported_primary_metric_slice
-articleType,Jeggings,train,19,supported_primary_metric_slice
-articleType,Shoe Accessories,train,18,supported_primary_metric_slice
-articleType,Gloves,train,15,supported_primary_metric_slice
-articleType,Nail Polish,train,14,supported_primary_metric_slice
-articleType,Swimwear,train,13,supported_primary_metric_slice
-articleType,Waist Pouch,train,13,supported_primary_metric_slice
-articleType,Camisoles,train,11,supported_primary_metric_slice
-articleType,Basketballs,train,10,supported_primary_metric_slice
-articleType,Travel Accessory,train,10,supported_primary_metric_slice
-articleType,Waistcoat,train,10,supported_primary_metric_slice
-articleType,Rompers,train,10,supported_primary_metric_slice
-articleType,Kajal and Eyeliner,train,10,supported_primary_metric_slice
-articleType,Lip Liner,train,10,supported_primary_metric_slice
-articleType,Foundation and Primer,train,10,supported_primary_metric_slice
-articleType,Water Bottle,train,9,supported_primary_metric_slice
-articleType,Rucksacks,train,9,supported_primary_metric_slice
-articleType,Jumpsuit,train,9,supported_primary_metric_slice
-articleType,Booties,train,8,supported_primary_metric_slice
-articleType,Tights,train,7,supported_primary_metric_slice
-articleType,Footballs,train,6,supported_primary_metric_slice
-articleType,Blazers,train,6,supported_primary_metric_slice
-articleType,Clothing Set,train,6,supported_primary_metric_slice
-articleType,Headband,train,5,supported_primary_metric_slice
-articleType,Salwar and Dupatta,train,5,supported_primary_metric_slice
-articleType,Wristbands,train,4,supported_primary_metric_slice
-articleType,Umbrellas,train,4,supported_primary_metric_slice
-articleType,Lip Gloss,train,4,supported_primary_metric_slice
-articleType,Tshirts,val,1016,supported_primary_metric_slice
-articleType,Shirts,val,463,supported_primary_metric_slice
-articleType,Casual Shoes,val,402,supported_primary_metric_slice
-articleType,Watches,val,338,supported_primary_metric_slice
-articleType,Sports Shoes,val,298,supported_primary_metric_slice
-articleType,Tops,val,242,supported_primary_metric_slice
-articleType,Kurtas,val,237,supported_primary_metric_slice
-articleType,Handbags,val,217,supported_primary_metric_slice
-articleType,Heels,val,158,supported_primary_metric_slice
-articleType,Sunglasses,val,156,supported_primary_metric_slice
-articleType,Sandals,val,130,supported_primary_metric_slice
-articleType,Flip Flops,val,130,supported_primary_metric_slice
-articleType,Wallets,val,124,supported_primary_metric_slice
-articleType,Belts,val,119,supported_primary_metric_slice
-articleType,Backpacks,val,106,supported_primary_metric_slice
-articleType,Briefs,val,100,supported_primary_metric_slice
-articleType,Formal Shoes,val,94,supported_primary_metric_slice
-articleType,Socks,val,92,supported_primary_metric_slice
-articleType,Jeans,val,85,supported_primary_metric_slice
-articleType,Perfume and Body Mist,val,85,supported_primary_metric_slice
-articleType,Shorts,val,79,supported_primary_metric_slice
-articleType,Trousers,val,77,supported_primary_metric_slice
-articleType,Flats,val,63,supported_primary_metric_slice
-articleType,Dresses,val,52,supported_primary_metric_slice
-articleType,Bra,val,46,supported_primary_metric_slice
-articleType,Track Pants,val,45,supported_primary_metric_slice
-articleType,Deodorant,val,45,supported_primary_metric_slice
-articleType,Sweatshirts,val,43,supported_primary_metric_slice
-articleType,Sweaters,val,43,supported_primary_metric_slice
-articleType,Caps,val,42,supported_primary_metric_slice
-articleType,Innerwear Vests,val,37,supported_primary_metric_slice
-articleType,Jackets,val,35,supported_primary_metric_slice
-articleType,Earrings,val,35,supported_primary_metric_slice
-articleType,Clutches,val,34,supported_primary_metric_slice
-articleType,Ties,val,33,supported_primary_metric_slice
-articleType,Kurtis,val,31,supported_primary_metric_slice
-articleType,Tunics,val,27,supported_primary_metric_slice
-articleType,Capris,val,25,supported_primary_metric_slice
-articleType,Leggings,val,24,supported_primary_metric_slice
-articleType,Sarees,val,23,supported_primary_metric_slice
-articleType,Trunk,val,21,supported_primary_metric_slice
-articleType,Skirts,val,18,supported_primary_metric_slice
-articleType,Dupatta,val,17,supported_primary_metric_slice
-articleType,Scarves,val,17,supported_primary_metric_slice
-articleType,Pendant,val,17,supported_primary_metric_slice
-articleType,Accessory Gift Set,val,15,supported_primary_metric_slice
-articleType,Stoles,val,14,supported_primary_metric_slice
-articleType,Duffel Bag,val,13,supported_primary_metric_slice
-articleType,Laptop Bag,val,12,supported_primary_metric_slice
-articleType,Kurta Sets,val,11,supported_primary_metric_slice
-articleType,Sports Sandals,val,10,supported_primary_metric_slice
-articleType,Free Gifts,val,10,supported_primary_metric_slice
-articleType,Night suits,val,10,supported_primary_metric_slice
-articleType,Necklace and Chains,val,9,supported_primary_metric_slice
-articleType,Lounge Pants,val,8,supported_primary_metric_slice
-articleType,Fragrance Gift Set,val,8,supported_primary_metric_slice
-articleType,Bangle,val,8,supported_primary_metric_slice
-articleType,Mobile Pouch,val,7,supported_primary_metric_slice
-articleType,Bracelet,val,7,supported_primary_metric_slice
-articleType,Messenger Bag,val,6,supported_primary_metric_slice
-articleType,Cufflinks,val,6,supported_primary_metric_slice
-articleType,Suspenders,val,6,supported_primary_metric_slice
-articleType,Boxers,val,6,supported_primary_metric_slice
-articleType,Jewellery Set,val,6,supported_primary_metric_slice
-articleType,Nightdress,val,6,supported_primary_metric_slice
-articleType,Lounge Shorts,val,5,supported_primary_metric_slice
-articleType,Mufflers,val,5,supported_primary_metric_slice
-articleType,Tracksuits,val,4,supported_primary_metric_slice
-articleType,Churidar,val,4,supported_primary_metric_slice
-articleType,Salwar,val,4,supported_primary_metric_slice
-articleType,Stockings,val,3,supported_primary_metric_slice
-articleType,Gloves,val,3,supported_primary_metric_slice
-articleType,Jeggings,val,3,supported_primary_metric_slice
-articleType,Patiala,val,3,supported_primary_metric_slice
-articleType,Swimwear,val,2,supported_primary_metric_slice
-articleType,Basketballs,val,2,supported_primary_metric_slice
-articleType,Shoe Accessories,val,2,supported_primary_metric_slice
-articleType,Waist Pouch,val,2,supported_primary_metric_slice
-articleType,Camisoles,val,2,supported_primary_metric_slice
-articleType,Travel Accessory,val,2,supported_primary_metric_slice
-articleType,Waistcoat,val,2,supported_primary_metric_slice
-articleType,Ring,val,2,supported_primary_metric_slice
-articleType,Nail Polish,val,2,supported_primary_metric_slice
-articleType,Footballs,val,1,supported_primary_metric_slice
-articleType,Water Bottle,val,1,supported_primary_metric_slice
-articleType,Rucksacks,val,1,supported_primary_metric_slice
-articleType,Wristbands,val,1,supported_primary_metric_slice
-articleType,Umbrellas,val,1,supported_primary_metric_slice
-articleType,Blazers,val,1,supported_primary_metric_slice
-articleType,Clothing Set,val,1,supported_primary_metric_slice
-articleType,Booties,val,1,supported_primary_metric_slice
-articleType,Rompers,val,1,supported_primary_metric_slice
-articleType,Tights,val,1,supported_primary_metric_slice
-articleType,Headband,val,1,supported_primary_metric_slice
-articleType,Jumpsuit,val,1,supported_primary_metric_slice
-articleType,Lip Liner,val,1,supported_primary_metric_slice
-articleType,Foundation and Primer,val,1,supported_primary_metric_slice
-articleType,Lip Gloss,val,1,supported_primary_metric_slice
-articleType,Kajal and Eyeliner,val,1,supported_primary_metric_slice
-articleType,Salwar and Dupatta,val,1,supported_primary_metric_slice
-season,Summer,train,13371,supported_primary_metric_slice
-season,Fall,train,7354,supported_primary_metric_slice
-season,Winter,train,5155,supported_primary_metric_slice
-season,Spring,train,1095,supported_primary_metric_slice
-season,Summer,val,2864,supported_primary_metric_slice
-season,Fall,val,1574,supported_primary_metric_slice
-season,Winter,val,1106,supported_primary_metric_slice
-season,Spring,val,234,supported_primary_metric_slice
-gender,Men,train,14622,supported_primary_metric_slice
-gender,Women,train,9906,supported_primary_metric_slice
-gender,Unisex,train,1455,supported_primary_metric_slice
-gender,Boys,train,563,supported_primary_metric_slice
-gender,Girls,train,446,supported_primary_metric_slice
-gender,Men,val,3131,supported_primary_metric_slice
-gender,Women,val,2121,supported_primary_metric_slice
-gender,Unisex,val,311,supported_primary_metric_slice
-gender,Boys,val,121,supported_primary_metric_slice
-gender,Girls,val,97,supported_primary_metric_slice
-usage,Casual,train,20710,supported_primary_metric_slice
-usage,Sports,train,2755,supported_primary_metric_slice
-usage,Ethnic,train,1798,supported_primary_metric_slice
-usage,Formal,train,1610,supported_primary_metric_slice
-usage,NA,train,50,supported_primary_metric_slice
-usage,Smart Casual,train,39,supported_primary_metric_slice
-usage,Travel,train,18,supported_primary_metric_slice
-usage,Party,train,10,supported_primary_metric_slice
-usage,Casual,val,4441,supported_primary_metric_slice
-usage,Sports,val,591,supported_primary_metric_slice
-usage,Ethnic,val,385,supported_primary_metric_slice
-usage,Formal,val,339,supported_primary_metric_slice
-usage,NA,val,11,supported_primary_metric_slice
-usage,Smart Casual,val,8,supported_primary_metric_slice
-usage,Travel,val,4,supported_primary_metric_slice
-usage,Party,val,2,supported_primary_metric_slice
+target,class,source_scope,development_product_count,development_family_count,folds_present,fold_count,fold_0_validation_products,fold_0_training_products,fold_0_training_families,fold_1_validation_products,fold_1_training_products,fold_1_training_families,fold_2_validation_products,fold_2_training_products,fold_2_training_families,fold_3_validation_products,fold_3_training_products,fold_3_training_families,fold_4_validation_products,fold_4_training_products,fold_4_training_families,minimum_fold_training_products,minimum_fold_training_families,untrainable_fold_count,rare_warning
+articleType,Accessory Gift Set,development,91,33,"0,1,2,3,4",5,18,73,26,18,73,27,18,73,27,18,73,26,19,72,26,72,26,0,
+articleType,Baby Dolls,development,2,2,"1,2",2,0,2,2,1,1,1,1,1,1,0,2,2,0,2,2,1,1,0,low_independent_family_support
+articleType,Backpacks,development,604,428,"0,1,2,3,4",5,121,483,343,120,484,342,120,484,345,124,480,341,119,485,341,480,341,0,
+articleType,Bangle,development,50,18,"0,1,2,3,4",5,18,32,17,7,43,12,6,44,13,13,37,17,6,44,13,32,12,0,
+articleType,Basketballs,development,12,12,"0,1,2,3,4",5,3,9,9,2,10,10,2,10,10,3,9,9,2,10,10,9,9,0,
+articleType,Belts,development,676,410,"0,1,2,3,4",5,136,540,329,135,541,328,134,542,330,134,542,326,137,539,327,539,326,0,
+articleType,Blazers,development,7,7,"0,1,2,3,4",5,2,5,5,1,6,6,1,6,6,2,5,5,1,6,6,5,5,0,
+articleType,Body Wash and Scrub,development,1,1,1,1,0,1,1,1,0,0,0,1,1,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Booties,development,9,5,"0,1,2,3,4",5,2,7,4,2,7,4,2,7,4,2,7,4,1,8,4,7,4,0,
+articleType,Boxers,development,34,27,"0,1,2,3,4",5,7,27,21,6,28,22,7,27,21,7,27,22,7,27,22,27,21,0,
+articleType,Bra,development,251,196,"0,1,2,3,4",5,50,201,157,51,200,157,51,200,156,48,203,158,51,200,156,200,156,0,
+articleType,Bracelet,development,44,16,"0,1,2,3,4",5,16,28,15,7,37,12,7,37,10,7,37,14,7,37,13,28,10,0,
+articleType,Briefs,development,568,402,"0,1,2,3,4",5,115,453,318,114,454,323,113,455,323,112,456,324,114,454,320,453,318,0,
+articleType,Camisoles,development,13,13,"0,1,2,3,4",5,3,10,10,3,10,10,2,11,11,3,10,10,2,11,11,10,10,0,
+articleType,Capris,development,136,100,"0,1,2,3,4",5,28,108,79,28,108,80,28,108,80,25,111,81,27,109,80,108,79,0,
+articleType,Caps,development,230,201,"0,1,2,3,4",5,46,184,162,47,183,161,47,183,159,44,186,162,46,184,160,183,159,0,
+articleType,Casual Shoes,development,2276,1759,"0,1,2,3,4",5,455,1821,1406,454,1822,1409,456,1820,1413,454,1822,1404,457,1819,1404,1819,1404,0,
+articleType,Churidar,development,26,24,"0,1,2,3,4",5,5,21,19,5,21,19,5,21,19,6,20,19,5,21,20,20,19,0,
+articleType,Clothing Set,development,7,7,"0,1,2,3,4",5,1,6,6,1,6,6,2,5,5,2,5,5,1,6,6,5,5,0,
+articleType,Clutches,development,189,153,"0,1,2,3,4",5,38,151,122,38,151,122,39,150,122,36,153,123,38,151,123,150,122,0,
+articleType,Compact,development,4,1,2,1,0,4,1,0,4,1,4,0,0,0,4,1,0,4,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Concealer,development,2,1,4,1,0,2,1,0,2,1,0,2,1,0,2,1,2,0,0,0,0,1,untrainable_in_one_or_more_folds
+articleType,Cufflinks,development,38,17,"0,1,2,3,4",5,13,25,16,6,32,12,6,32,11,7,31,15,6,32,14,25,11,0,
+articleType,Cushion Covers,development,1,1,1,1,0,1,1,1,0,0,0,1,1,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Deodorant,development,248,223,"0,1,2,3,4",5,50,198,179,50,198,178,49,199,179,49,199,178,50,198,178,198,178,0,
+articleType,Dresses,development,289,227,"0,1,2,3,4",5,58,231,181,58,231,183,58,231,181,57,232,183,58,231,180,231,180,0,
+articleType,Duffel Bag,development,73,57,"0,1,2,3,4",5,15,58,46,15,58,45,15,58,45,13,60,46,15,58,46,58,45,0,
+articleType,Dupatta,development,99,73,"0,1,2,3,4",5,20,79,58,20,79,59,20,79,59,19,80,58,20,79,58,79,58,0,
+articleType,Earrings,development,206,33,"0,1,2,3,4",5,45,161,30,27,179,23,27,179,24,80,126,32,27,179,23,126,23,0,
+articleType,Eyeshadow,development,4,3,"0,2,4",3,2,2,2,0,4,3,1,3,2,0,4,3,1,3,2,2,2,0,low_independent_family_support
+articleType,Flats,development,356,234,"0,1,2,3,4",5,72,284,188,72,284,191,71,285,184,70,286,188,71,285,185,284,184,0,
+articleType,Flip Flops,development,734,610,"0,1,2,3,4",5,146,588,488,147,587,492,146,588,487,148,586,486,147,587,487,586,486,0,
+articleType,Footballs,development,7,7,"0,1,2,3,4",5,2,5,5,1,6,6,2,5,5,1,6,6,1,6,6,5,5,0,
+articleType,Formal Shoes,development,517,223,"0,1,2,3,4",5,103,414,180,104,413,180,104,413,180,104,413,177,102,415,175,413,175,0,
+articleType,Foundation and Primer,development,11,5,"0,1,2,3,4",5,4,7,4,1,10,4,2,9,4,3,8,4,1,10,4,7,4,0,
+articleType,Fragrance Gift Set,development,47,46,"0,1,2,3,4",5,10,37,36,9,38,37,9,38,37,9,38,37,10,37,37,37,36,0,
+articleType,Free Gifts,development,57,40,"0,1,2,3,4",5,11,46,33,12,45,30,12,45,32,10,47,33,12,45,32,45,30,0,
+articleType,Gloves,development,18,12,"0,1,2,3,4",5,4,14,10,4,14,9,3,15,10,4,14,9,3,15,10,14,9,0,
+articleType,Handbags,development,1222,793,"0,1,2,3,4",5,244,978,634,245,977,633,244,978,635,245,977,636,244,978,634,977,633,0,
+articleType,Hat,development,2,2,"1,2",2,0,2,2,1,1,1,1,1,1,0,2,2,0,2,2,1,1,0,low_independent_family_support
+articleType,Headband,development,6,6,"0,1,2,3,4",5,2,4,4,1,5,5,1,5,5,1,5,5,1,5,5,4,4,0,
+articleType,Heels,development,890,472,"0,1,2,3,4",5,177,713,379,178,712,380,177,713,375,181,709,379,177,713,375,709,375,0,
+articleType,Highlighter and Blush,development,4,1,3,1,0,4,1,0,4,1,0,4,1,4,0,0,0,4,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Innerwear Vests,development,205,161,"0,1,2,3,4",5,41,164,129,42,163,128,42,163,128,39,166,130,41,164,129,163,128,0,
+articleType,Ipad,development,1,1,1,1,0,1,1,1,0,0,0,1,1,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Jackets,development,193,170,"0,1,2,3,4",5,39,154,135,39,154,137,39,154,136,37,156,136,39,154,136,154,135,0,
+articleType,Jeans,development,472,226,"0,1,2,3,4",5,95,377,181,95,377,178,94,378,185,93,379,183,95,377,177,377,177,0,
+articleType,Jeggings,development,22,14,"0,1,2,3,4",5,4,18,11,6,16,13,4,18,10,4,18,11,4,18,11,16,10,0,
+articleType,Jewellery Set,development,38,16,"0,1,2,3,4",5,6,32,12,15,23,15,5,33,12,6,32,13,6,32,12,23,12,0,
+articleType,Jumpsuit,development,10,10,"0,1,2,3,4",5,2,8,8,2,8,8,2,8,8,2,8,8,2,8,8,8,8,0,
+articleType,Kajal and Eyeliner,development,11,9,"0,1,2,3,4",5,2,9,7,2,9,8,2,9,7,3,8,7,2,9,7,8,7,0,
+articleType,Key chain,development,1,1,2,1,0,1,1,0,1,1,1,0,0,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Kurta Sets,development,64,59,"0,1,2,3,4",5,13,51,47,13,51,47,13,51,47,12,52,48,13,51,47,51,47,0,
+articleType,Kurtas,development,1322,699,"0,1,2,3,4",5,263,1059,560,267,1055,559,263,1059,559,266,1056,559,263,1059,559,1055,559,0,
+articleType,Kurtis,development,172,134,"0,1,2,3,4",5,35,137,107,34,138,106,35,137,108,33,139,108,35,137,107,137,106,0,
+articleType,Laptop Bag,development,67,49,"0,1,2,3,4",5,13,54,40,14,53,39,14,53,39,12,55,39,14,53,39,53,39,0,
+articleType,Leggings,development,135,114,"0,1,2,3,4",5,27,108,91,28,107,91,27,108,91,26,109,91,27,108,92,107,91,0,
+articleType,Lehenga Choli,development,2,2,"2,3",2,0,2,2,0,2,2,1,1,1,1,1,1,0,2,2,1,1,0,low_independent_family_support
+articleType,Lip Gloss,development,5,5,"0,1,2,3,4",5,1,4,4,1,4,4,1,4,4,1,4,4,1,4,4,4,4,0,
+articleType,Lip Liner,development,11,7,"0,1,2,3,4",5,2,9,5,2,9,5,4,7,6,2,9,6,1,10,6,7,5,0,
+articleType,Lip Plumper,development,3,3,"0,2,3",3,1,2,2,0,3,3,1,2,2,1,2,2,0,3,3,2,2,0,low_independent_family_support
+articleType,Lipstick,development,10,2,"1,4",2,0,10,2,6,4,1,0,10,2,0,10,2,4,6,1,4,1,0,low_independent_family_support
+articleType,Lounge Pants,development,45,42,"0,1,2,3,4",5,9,36,34,10,35,33,9,36,34,8,37,34,9,36,33,35,33,0,
+articleType,Lounge Shorts,development,29,23,"0,1,2,3,4",5,6,23,18,5,24,18,6,23,18,6,23,19,6,23,19,23,18,0,
+articleType,Lounge Tshirts,development,1,1,1,1,0,1,1,1,0,0,0,1,1,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Messenger Bag,development,37,36,"0,1,2,3,4",5,7,30,29,7,30,29,8,29,29,7,30,29,8,29,28,29,28,0,
+articleType,Mobile Pouch,development,40,39,"0,1,2,3,4",5,8,32,31,8,32,31,8,32,31,8,32,31,8,32,32,32,31,0,
+articleType,Mufflers,development,33,27,"0,1,2,3,4",5,7,26,21,6,27,22,6,27,22,7,26,22,7,26,21,26,21,0,
+articleType,Nail Polish,development,16,15,"0,1,2,3,4",5,4,12,11,3,13,13,3,13,12,3,13,12,3,13,12,12,11,0,
+articleType,Necklace and Chains,development,53,37,"0,1,2,3,4",5,11,42,29,11,42,30,10,43,30,10,43,30,11,42,29,42,29,0,
+articleType,Nehru Jackets,development,4,3,"1,3,4",3,0,4,3,1,3,2,0,4,3,1,3,2,2,2,2,2,2,0,low_independent_family_support
+articleType,Night suits,development,59,35,"0,1,2,3,4",5,12,47,27,12,47,31,12,47,27,11,48,26,12,47,29,47,26,0,
+articleType,Nightdress,development,34,26,"0,1,2,3,4",5,7,27,21,7,27,20,6,28,21,7,27,21,7,27,21,27,20,0,
+articleType,Patiala,development,23,19,"0,1,2,3,4",5,4,19,15,5,18,15,4,19,15,5,18,16,5,18,15,18,15,0,
+articleType,Pendant,development,105,10,"0,1,2,3,4",5,5,100,7,11,94,9,56,49,9,28,77,9,5,100,6,49,6,0,
+articleType,Perfume and Body Mist,development,474,401,"0,1,2,3,4",5,95,379,321,97,377,321,94,380,322,94,380,321,94,380,319,377,319,0,
+articleType,Rain Jacket,development,1,1,4,1,0,1,1,0,1,1,0,1,1,0,1,1,1,0,0,0,0,1,untrainable_in_one_or_more_folds
+articleType,Rain Trousers,development,1,1,4,1,0,1,1,0,1,1,0,1,1,0,1,1,1,0,0,0,0,1,untrainable_in_one_or_more_folds
+articleType,Ring,development,79,4,"1,2,3,4",4,0,79,4,25,54,3,2,77,3,3,76,3,49,30,3,30,3,0,low_independent_family_support
+articleType,Robe,development,2,2,"2,3",2,0,2,2,0,2,2,1,1,1,1,1,1,0,2,2,1,1,0,low_independent_family_support
+articleType,Rompers,development,11,7,"0,1,2,3,4",5,3,8,6,2,9,5,2,9,6,2,9,6,2,9,5,8,5,0,
+articleType,Rucksacks,development,10,10,"0,1,2,3,4",5,2,8,8,2,8,8,2,8,8,2,8,8,2,8,8,8,8,0,
+articleType,Salwar,development,28,24,"0,1,2,3,4",5,5,23,19,6,22,19,5,23,19,6,22,20,6,22,19,22,19,0,
+articleType,Salwar and Dupatta,development,6,6,"0,1,2,3,4",5,1,5,5,1,5,5,2,4,4,1,5,5,1,5,5,4,4,0,
+articleType,Sandals,development,735,494,"0,1,2,3,4",5,146,589,396,147,588,392,147,588,390,149,586,400,146,589,398,586,390,0,
+articleType,Sarees,development,129,106,"0,1,2,3,4",5,26,103,84,26,103,85,26,103,87,25,104,84,26,103,84,103,84,0,
+articleType,Scarves,development,93,74,"0,1,2,3,4",5,19,74,59,19,74,60,19,74,59,17,76,59,19,74,59,74,59,0,
+articleType,Shapewear,development,2,2,"3,4",2,0,2,2,0,2,2,0,2,2,1,1,1,1,1,1,1,1,0,low_independent_family_support
+articleType,Shirts,development,2619,1527,"0,1,2,3,4",5,525,2094,1229,522,2097,1218,525,2094,1213,523,2096,1225,524,2095,1223,2094,1213,0,
+articleType,Shoe Accessories,development,20,17,"0,1,2,3,4",5,4,16,13,4,16,14,4,16,13,4,16,13,4,16,15,16,13,0,
+articleType,Shoe Laces,development,1,1,3,1,0,1,1,0,1,1,0,1,1,1,0,0,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Shorts,development,447,347,"0,1,2,3,4",5,90,357,276,90,357,280,89,358,278,89,358,277,89,358,277,357,276,0,
+articleType,Shrug,development,2,2,"2,3",2,0,2,2,0,2,2,1,1,1,1,1,1,0,2,2,1,1,0,low_independent_family_support
+articleType,Skirts,development,99,81,"0,1,2,3,4",5,20,79,65,21,78,64,20,79,65,18,81,66,20,79,64,78,64,0,
+articleType,Socks,development,521,295,"0,1,2,3,4",5,105,416,238,105,416,235,104,417,235,103,418,236,104,417,236,416,235,0,
+articleType,Sports Sandals,development,54,53,"0,1,2,3,4",5,11,43,42,11,43,43,11,43,42,10,44,43,11,43,42,43,42,0,
+articleType,Sports Shoes,development,1691,1544,"0,1,2,3,4",5,338,1353,1241,337,1354,1234,339,1352,1236,338,1353,1231,339,1352,1234,1352,1231,0,
+articleType,Stockings,development,22,10,"0,1,2,3,4",5,8,14,9,4,18,9,3,19,7,4,18,8,3,19,7,14,7,0,
+articleType,Stoles,development,77,52,"0,1,2,3,4",5,15,62,42,16,61,41,16,61,42,15,62,41,15,62,42,61,41,0,
+articleType,Sunglasses,development,886,425,"0,1,2,3,4",5,178,708,339,173,713,339,175,711,340,185,701,341,175,711,341,701,339,0,
+articleType,Suspenders,development,34,19,"0,1,2,3,4",5,6,28,14,7,27,15,6,28,14,6,28,15,9,25,18,25,14,0,
+articleType,Sweaters,development,234,199,"0,1,2,3,4",5,47,187,160,48,186,158,47,187,159,45,189,160,47,187,159,186,158,0,
+articleType,Sweatshirts,development,237,203,"0,1,2,3,4",5,48,189,162,48,189,162,48,189,162,45,192,164,48,189,162,189,162,0,
+articleType,Swimwear,development,15,14,"0,1,2,3,4",5,3,12,12,3,12,11,3,12,11,3,12,11,3,12,11,12,11,0,
+articleType,Tablet Sleeve,development,2,2,"2,4",2,0,2,2,0,2,2,1,1,1,0,2,2,1,1,1,1,1,0,low_independent_family_support
+articleType,Ties,development,179,85,"0,1,2,3,4",5,36,143,67,36,143,67,37,142,69,34,145,69,36,143,68,142,67,0,
+articleType,Ties and Cufflinks,development,1,1,0,1,1,0,0,0,1,1,0,1,1,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Tights,development,8,7,"0,1,2,3,4",5,2,6,5,1,7,6,2,6,5,2,6,6,1,7,6,6,5,0,
+articleType,Tops,development,1369,967,"0,1,2,3,4",5,273,1096,773,274,1095,775,273,1096,773,275,1094,773,274,1095,774,1094,773,0,
+articleType,Track Pants,development,249,200,"0,1,2,3,4",5,50,199,160,50,199,160,50,199,159,48,201,159,51,198,162,198,159,0,
+articleType,Tracksuits,development,24,20,"0,1,2,3,4",5,5,19,16,5,19,16,4,20,16,5,19,16,5,19,16,19,16,0,
+articleType,Travel Accessory,development,12,11,"0,1,2,3,4",5,3,9,9,3,9,8,2,10,9,2,10,9,2,10,9,9,8,0,
+articleType,Trolley Bag,development,3,2,"2,3",2,0,3,2,0,3,2,1,2,1,2,1,1,0,3,2,1,1,0,low_independent_family_support
+articleType,Trousers,development,435,279,"0,1,2,3,4",5,88,347,224,88,347,222,87,348,224,85,350,223,87,348,223,347,222,0,
+articleType,Trunk,development,119,86,"0,1,2,3,4",5,24,95,70,25,94,70,24,95,67,22,97,68,24,95,69,94,67,0,
+articleType,Tshirts,development,5748,4603,"0,1,2,3,4",5,1148,4600,3682,1151,4597,3682,1150,4598,3685,1147,4601,3683,1152,4596,3680,4596,3680,0,
+articleType,Tunics,development,148,132,"0,1,2,3,4",5,30,118,105,30,118,106,30,118,106,28,120,106,30,118,105,118,105,0,
+articleType,Umbrellas,development,5,4,"0,1,2,3",4,1,4,3,1,4,3,1,4,3,2,3,3,0,5,4,3,3,0,low_independent_family_support
+articleType,Waist Pouch,development,15,14,"0,1,2,3,4",5,3,12,12,3,12,11,3,12,11,3,12,11,3,12,11,12,11,0,
+articleType,Waistcoat,development,12,10,"0,1,2,3,4",5,3,9,8,3,9,7,2,10,8,2,10,9,2,10,8,9,7,0,
+articleType,Wallets,development,704,422,"0,1,2,3,4",5,141,563,336,141,563,335,141,563,337,139,565,341,142,562,339,562,335,0,
+articleType,Watches,development,1911,1304,"0,1,2,3,4",5,383,1528,1040,380,1531,1039,383,1528,1046,382,1529,1047,383,1528,1044,1528,1039,0,
+articleType,Water Bottle,development,10,10,"0,1,2,3,4",5,2,8,8,2,8,8,2,8,8,2,8,8,2,8,8,8,8,0,
+articleType,Wristbands,development,5,5,"0,1,2,3,4",5,1,4,4,1,4,4,1,4,4,1,4,4,1,4,4,4,4,0,
+gender,Boys,development,684,397,"0,1,2,3,4",5,138,546,315,137,547,322,137,547,319,136,548,316,136,548,316,546,315,0,
+gender,Girls,development,543,336,"0,1,2,3,4",5,109,434,267,109,434,271,108,435,268,108,435,269,109,434,269,434,267,0,
+gender,Men,development,17753,12343,"0,1,2,3,4",5,3550,14203,9899,3551,14202,9849,3550,14203,9870,3553,14200,9873,3549,14204,9881,14200,9849,0,
+gender,Unisex,development,1766,1428,"0,1,2,3,4",5,354,1412,1145,353,1413,1147,353,1413,1146,353,1413,1133,353,1413,1141,1412,1133,0,
+gender,Women,development,12027,8398,"0,1,2,3,4",5,2404,9623,6710,2405,9622,6726,2406,9621,6703,2406,9621,6758,2406,9621,6695,9621,6695,0,
+season,Fall,development,8928,6876,"0,1,2,3,4",5,1784,7144,5502,1786,7142,5485,1786,7142,5506,1786,7142,5500,1786,7142,5511,7142,5485,0,
+season,Spring,development,1329,1161,"0,1,2,3,4",5,266,1063,931,265,1064,929,267,1062,932,266,1063,928,265,1064,924,1062,924,0,
+season,Summer,development,16235,11644,"0,1,2,3,4",5,3246,12989,9323,3247,12988,9296,3249,12986,9294,3247,12988,9339,3246,12989,9324,12986,9294,0,
+season,Winter,development,6261,3987,"0,1,2,3,4",5,1254,5007,3191,1253,5008,3216,1248,5013,3191,1253,5008,3198,1253,5008,3152,5007,3152,0,
+usage,Casual,development,25151,17636,"0,1,2,3,4",5,5036,20115,14094,5030,20121,14094,5029,20122,14114,5027,20124,14160,5029,20122,14082,20115,14082,0,
+usage,Ethnic,development,2183,1351,"0,1,2,3,4",5,437,1746,1105,436,1747,1085,437,1746,1073,436,1747,1065,437,1746,1076,1746,1065,0,
+usage,Formal,development,1949,1016,"0,1,2,3,4",5,387,1562,815,390,1559,809,389,1560,808,394,1555,818,389,1560,814,1555,808,0,
+usage,Home,development,1,1,1,1,0,1,1,1,0,0,0,1,1,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+usage,NA,development,61,45,"0,1,2,3,4",5,11,50,34,13,48,38,14,47,36,11,50,37,12,49,35,47,34,0,
+usage,Party,development,12,10,"0,1,2,3,4",5,3,9,7,2,10,8,2,10,8,3,9,9,2,10,8,9,7,0,
+usage,Smart Casual,development,47,37,"0,1,2,3,4",5,9,38,30,10,37,28,9,38,30,9,38,31,10,37,29,37,28,0,
+usage,Sports,development,3346,3020,"0,1,2,3,4",5,668,2678,2421,669,2677,2419,669,2677,2410,671,2675,2408,669,2677,2422,2675,2408,0,
+usage,Travel,development,22,22,"0,1,2,3,4",5,4,18,18,4,18,18,4,18,18,5,17,17,5,17,17,17,17,0,

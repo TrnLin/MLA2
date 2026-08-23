@@ -1,43 +1,26 @@
 {
   "artifact_fingerprints": {
-    "data/processed/audit/csv_summary.json": "8b12b3cfdcabba9a30efdfdb2c8cb01c01f2a556ac21ea047dd1be2579a24f0d",
+    "data/processed/audit/csv_summary.json": "0b0e40355f774ed4010a95f3353b43ae8a363d94ba9c7d877b01ece7ea131cad",
     "data/processed/audit/exact_duplicate_groups.csv": "3a2a3c40fd242cf768db60908964e21a238e903760721145272dbfe6edf74b14",
     "data/processed/audit/image_audit.csv.gz": "944cd6fd2b854360630566c0291ad3116420ec1695613da253309d9e247b983e",
-    "data/processed/audit/issues.csv": "6741f153ba55125ee78db7b00503a8ba980b76c6c2ae8ef82b10ba6e0b5df602",
-    "data/processed/audit/missing_values.csv": "6760449b1c01fced8f539436b39e71a66f77a129afcdd55eeb686e0a389e7cf0",
+    "data/processed/audit/issues.csv": "c962ab9a67881123c643ead7652f6301f18ee7b7f81e94f180d7605b86169584",
+    "data/processed/audit/missing_values.csv": "da3c6b0aaaf3a26a389e5ae8aa07186553e5cf5af3569ac781a937dd0abd68ba",
     "data/processed/audit/near_duplicate_candidates.csv.gz": "2ac6de8f7628b4abc7f41f180d1ac734913ed6f6c5d829ebb4a6206ee3e8b0fa",
     "data/processed/audit/near_duplicate_summary.json": "8f5babe037c9f2de80403309e638fcebc0e9cb1cb50a40f08f834d5c9ec8be38",
     "data/processed/audit/perceptual_hashes.csv.gz": "9127dcdb5dd14596cab20ac61abbb352fea59ed3cd7af0eceeacab95524179eb",
     "data/processed/audit/product_family_groups.csv.gz": "df2e2030e43e272addb38bef26e2eb7f0f1ce6602e62bbd55a182d27e838cf4f",
     "data/processed/audit/product_family_summary.json": "2fc4881cf1d809bff29d64543c2ba8508536e2f9d91ec2ba05ed5c0f0928725f",
-    "data/processed/audit/target_class_counts.csv": "c25c2f71be7e58f3f4ccbc196fb1dd2e21b6726c11bc81976e860731ad12010a",
-    "data/processed/development_class_summary.csv": "6c0d7ede1f3c11e835ab5879a403afbc828ad4be9b0a0afbe9edc021e53f857f",
-    "data/processed/high_resolution/alignment_summary.json": "635315bb4cab59be0b05e06ad39c56495ca83115596b1122ea51385c92a599bc",
-    "data/processed/high_resolution/all_alignment_pairs.csv.gz": "f99a571ac310046b7de3deb436b0d1ba2d7911bce12e704aea791191440be0bb",
-    "data/processed/high_resolution/catalogue.json": "7217452f6dfef9d8f8190eb9baf32e65a53da8421deb2d247eaa0502c8254aff",
-    "data/processed/high_resolution/image_catalogue.csv.gz": "034ad5875ed2b3256b6727e6d831b528d949796d9d2e3bbfc7f29565d8eca099",
-    "data/processed/label_maps.json": "279b2a0083fd2a955bc680c18b703f8d1b803a4a3d1aff9b0ef1b120cb1b5321",
-    "data/processed/normalization_original_only.json": "6be56b9d5b2d6b311ba63436c618279ef85a9352f7317be6585f7a72cfb3ffab",
-    "data/processed/paired_normalization.json": "2457c76f4c2591b91db756320937adc47150a6f5a4b3c5c86091323fd97c2ecc",
+    "data/processed/audit/target_class_counts.csv": "2783ecfb931b1f36718ee05a2de35a2d2c8cc50250a84567000020b19f8ccd79",
+    "data/processed/cv_fold_summary.json": "cecefe19d2fac403e4838e636927f31cb86f71e623f05605933aeda1eb18cb6c",
+    "data/processed/development_class_summary.csv": "1be4769870d0650ea321af8b97f619dabfa04c46ce8b1fc825ed9e13a18312f8",
+    "data/processed/development_image_profile.json": "7ee43e66adc657330e3c932a0ca76dacbfea7099c3a32e8356de2d4bbe5171c9",
+    "data/processed/label_maps.json": "2ee5dbcfd431ef3018f3db046c52deb4ff9e52d6972e138a194c7bdb8cf3dba2",
     "data/processed/prediction_manifest.csv": "8d1fdd27721fc8604203b99308ecda9773b1f7c89b8cf6b2a33c82587b14954b",
-    "data/processed/split_summary.json": "2d9c2295bbe15b2ac050bddb4b1ce0985300478222c0b59795929a462ede9c17",
-    "data/processed/splits.csv": "9f1201a5460796b6b955c0a8b44c59746fe2567557081f65e6ac63c4d8c9929a",
-    "data/processed/taxonomy.json": "1f466110b163cdf68b450f018a97c30a893623ae143bbf3bd837c92dfea2b4e6",
-    "data/processed/training_image_variants.csv.gz": "9bdf5f5cc1de88002b4a6dc59d59047108a262262f6ceaeac0eeb39e848b08d5",
-    "data/processed/training_image_variants_summary.json": "c0ca91da280a7a973245572fd93d4bdb5c60c14e6f4655c5ded26d891f706d85"
+    "data/processed/split_summary.json": "fb22c558f3e6e41af2b51b6226a5c8128384b6b92a7a4a8b1ad02bba7ae54765",
+    "data/processed/splits.csv": "a072ee9489ca35b7ca04ae57fa665d73ac8504a7f35bdd70d6dca8a6fded5420",
+    "data/processed/taxonomy.json": "389126ffa2e2762c049c9388ad4b6161cc6113fa9da8dd93a1333a76ac0f9c5e"
   },
-  "include_high_resolution_variants": true,
   "input_fingerprints": {
-    "high_resolution_images": {
-      "file_count": 44441,
-      "path_and_size_sha256": "e258e8e113d555b8445569426559618e74472b00a139fa04d15b63a8e26c279e",
-      "sample_sha256": "6d1197a46d35e44dfa4e131d72d1adfb2b61c3a7c8d05bca908f1b42ed8f74de",
-      "sample_size": 64,
-      "total_bytes": 14919662043
-    },
-    "high_resolution_images_csv": {
-      "sha256": "64dfd2449f22e39120e2ab4b0230a4521f27a3b3513e5eee5cc000ad865df831"
-    },
     "teacher_prediction": {
       "header_and_id_sha256": "e125caa0dc337b882731f1e047797ec19c74360612b2485f065d0551fd747ae4",
       "rows": 5829
@@ -64,11 +47,13 @@
       "total_bytes": 481901143
     }
   },
-  "mode": "full_forensic_rebuild_completed",
-  "schema_version": "4.0.0",
+  "mode": "full_teacher_only_rebuild_completed",
+  "schema_version": "5.0.0",
+  "shared_source_policy": "teacher_only",
   "validation_policy": {
-    "critical_artifacts": "full file SHA-256 for protected-safe tables, including the persisted redacted split; semantic JSON SHA-256 ignores only runtime and machine-path noise",
-    "image_inventory": "all relative paths and sizes plus 64 deterministic SHA-256 samples; this is not full raw-image content assurance",
-    "teacher_targets": "train and validation only; protected target values are ignored"
+    "cached_image_inventory": "all relative paths and sizes plus 64 deterministic SHA-256 samples per tree",
+    "critical_artifacts": "full protected-safe artifact hashes",
+    "full_build_image_order": "raw_sha256_before_decode",
+    "teacher_targets": "development only; protected target values are ignored"
   }
 }

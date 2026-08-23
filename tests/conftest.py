@@ -23,10 +23,10 @@ class TinyProject:
     label_maps: Path
     splits: Path
     split_summary: Path
+    cv_fold_summary: Path
     development_summary: Path
-    normalization: Path
+    development_image_profile: Path
     taxonomy: Path
-    paired_normalization: Path
 
 
 def _save_image(path: Path, color: tuple[int, int, int], mode: str = "RGB") -> None:
@@ -125,17 +125,15 @@ def tiny_project(tmp_path: Path) -> TinyProject:
         label_maps=processed / "label_maps.json",
         splits=processed / "splits.csv",
         split_summary=processed / "split_summary.json",
+        cv_fold_summary=processed / "cv_fold_summary.json",
         development_summary=processed / "development_class_summary.csv",
-        normalization=processed / "normalization_original_only.json",
+        development_image_profile=processed / "development_image_profile.json",
         taxonomy=processed / "taxonomy.json",
-        paired_normalization=processed / "paired_normalization.json",
     )
 
 
 @pytest.fixture()
 def prepared_project(tiny_project: TinyProject) -> TinyProject:
     project = tiny_project
-    # Most small data-contract tests do not need the separate high-resolution fixture.
-    # The official notebook test builds that fixture and exercises the doubled policy.
-    prepare_data(root=project.root, workers=2, include_high_resolution_variants=False)
+    prepare_data(root=project.root, workers=2, initialize_split=True)
     return project

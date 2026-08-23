@@ -3,25 +3,22 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Sequence
+from collections.abc import Callable, Iterator, Sequence
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
 from fashion.config import (
-    IMAGE_SIZE,
+    CV_FOLD_COUNT,
     LABEL_MAPS_JSON,
     ROOT,
     SPLITS_CSV,
     TARGET_COLUMNS,
-    TAXONOMY_JSON,
     TEACHER_TRAIN_CSV,
 )
-from fashion.data.images import ImageSize, load_and_transform_image
 from fashion.data.metadata import has_valid_label
 from fashion.data.splits import validate_splits
-from fashion.data.taxonomy import apply_deployment_taxonomy
 
 PROTECTED_TARGET_PARTITIONS = ("holdout", "quarantine")
 
@@ -39,27 +36,17 @@ def _redact_protected_targets(frame: pd.DataFrame) -> pd.DataFrame:
     result = frame.copy()
     protected = result["partition"].isin(PROTECTED_TARGET_PARTITIONS)
     for target in TARGET_COLUMNS:
-        for column in (target, f"{target}_deployed", f"{target}_supported"):
-            if column in result:
-                result.loc[protected, column] = ""
-        for column in (
-            f"has_{target}_label",
-            f"has_{target}_deployed_label",
-            f"has_{target}_supported_label",
-        ):
-            if column in result:
-                result.loc[protected, column] = False
-        for column in (f"{target}_deployment_status", f"{target}_evaluation_status"):
-            if column in result:
-                result.loc[protected, column] = "protected"
+        if target in result:
+            result.loc[protected, target] = ""
+        mask_column = f"has_{target}_label"
+        if mask_column in result:
+            result.loc[protected, mask_column] = False
     return result
 
 
 def _normalise_manifest_frame(frame: pd.DataFrame) -> pd.DataFrame:
     """Coerce persisted manifest fields without deciding target access."""
     for column in [f"has_{target}_label" for target in TARGET_COLUMNS] + [
-        *[f"has_{target}_deployed_label" for target in TARGET_COLUMNS],
-        *[f"has_{target}_supported_label" for target in TARGET_COLUMNS],
         "product_name_repaired",
         "is_cross_role_duplicate",
         "is_cross_role_exact_duplicate",
@@ -70,6 +57,10 @@ def _normalise_manifest_frame(frame: pd.DataFrame) -> pd.DataFrame:
             frame[column] = _coerce_boolean(frame[column])
     if "id" in frame and frame["id"].notna().all():
         frame["id"] = frame["id"].astype(int)
+    if "cv_fold" in frame:
+        frame["cv_fold"] = pd.to_numeric(
+            frame["cv_fold"].replace("", pd.NA), errors="coerce"
+        ).astype("Int64")
     return frame
 
 
@@ -94,7 +85,6 @@ def load_splits_for_final_evaluation(
     *,
     evaluation_unlocked: bool = False,
     raw_teacher_csv: str | Path | None = None,
-    taxonomy_json: str | Path | None = None,
 ) -> pd.DataFrame:
     """Join protected targets from local raw data only after an explicit unlock."""
     if not evaluation_unlocked:
@@ -107,9 +97,6 @@ def load_splits_for_final_evaluation(
         Path(raw_teacher_csv)
         if raw_teacher_csv
         else inferred_root / TEACHER_TRAIN_CSV.relative_to(ROOT)
-    )
-    taxonomy_path = (
-        Path(taxonomy_json) if taxonomy_json else splits_path.parent / TAXONOMY_JSON.name
     )
     raw = pd.read_csv(
         raw_path,
@@ -129,10 +116,6 @@ def load_splits_for_final_evaluation(
         frame.loc[protected, f"has_{target}_label"] = frame.loc[protected, target].map(
             has_valid_label
         )
-    frame, rebuilt_policy = apply_deployment_taxonomy(frame)
-    expected_policy = json.loads(taxonomy_path.read_text(encoding="utf-8"))
-    if rebuilt_policy != expected_policy:
-        raise ValueError("train-fitted taxonomy changed before final evaluation")
     return _normalise_manifest_frame(frame)
 
 
@@ -141,16 +124,41 @@ def load_label_maps(path: str | Path = LABEL_MAPS_JSON) -> dict[str, dict[str, o
     with Path(path).open("r", encoding="utf-8") as handle:
         maps = json.load(handle)
     for target, mapping in maps.items():
-        if mapping.get("source_partition") != "train":
-            raise ValueError(f"{target} label map was not fitted on train")
+        if mapping.get("source_scope") != "development":
+            raise ValueError(f"{target} label map was not fitted on development")
     return maps
+
+
+def get_cv_split(
+    splits: pd.DataFrame,
+    validation_fold: int,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Return four training folds and one validation fold from development."""
+    if validation_fold not in range(CV_FOLD_COUNT):
+        raise ValueError(f"validation_fold must be in range({CV_FOLD_COUNT})")
+    validate_splits(splits)
+    development = splits[splits["partition"].eq("development")].copy()
+    fold_values = pd.to_numeric(development["cv_fold"], errors="raise").astype(int)
+    validation = development[fold_values.eq(validation_fold)].copy()
+    training = development[fold_values.ne(validation_fold)].copy()
+    if training.empty or validation.empty:
+        raise ValueError(f"cv_fold {validation_fold} does not create train and validation rows")
+    return training, validation
+
+
+def iter_cv_folds(
+    splits: pd.DataFrame,
+) -> Iterator[tuple[int, pd.DataFrame, pd.DataFrame]]:
+    """Yield every precomputed fold without creating a second split."""
+    for validation_fold in range(CV_FOLD_COUNT):
+        training, validation = get_cv_split(splits, validation_fold)
+        yield validation_fold, training, validation
 
 
 def get_samples(
     manifest: pd.DataFrame,
     partition: str | None = None,
     target: str | None = None,
-    deployed: bool = True,
 ) -> pd.DataFrame:
     """Filter a manifest by partition and target validity without creating a new split."""
     filtered = manifest.copy()
@@ -159,10 +167,7 @@ def get_samples(
             raise ValueError("manifest has no partition column")
         filtered = filtered[filtered["partition"].eq(partition)]
     if target is not None:
-        deployed_mask = f"has_{target}_deployed_label"
-        mask_column = (
-            deployed_mask if deployed and deployed_mask in filtered else f"has_{target}_label"
-        )
+        mask_column = f"has_{target}_label"
         if mask_column not in filtered:
             raise ValueError(f"manifest has no {mask_column} column")
         filtered = filtered[_coerce_boolean(filtered[mask_column])]
@@ -175,19 +180,13 @@ class FashionDataset:
     def __init__(
         self,
         frame: pd.DataFrame,
+        transform: Callable[[Path], Any],
         root: str | Path = ROOT,
-        image_size: ImageSize = IMAGE_SIZE,
-        pad_color: tuple[int, int, int] = (255, 255, 255),
-        mean: Sequence[float] | None = None,
-        std: Sequence[float] | None = None,
         targets: Sequence[str] = TARGET_COLUMNS,
     ) -> None:
         self.frame = frame.reset_index(drop=True)
         self.root = Path(root)
-        self.image_size = image_size
-        self.pad_color = pad_color
-        self.mean = mean
-        self.std = std
+        self.transform = transform
         self.targets = tuple(targets)
 
     def __len__(self) -> int:
@@ -199,13 +198,7 @@ class FashionDataset:
         sample: dict[str, Any] = {
             "id": int(row["id"]),
             "path": relative_path.as_posix(),
-            "image": load_and_transform_image(
-                self.root / relative_path,
-                image_size=self.image_size,
-                pad_color=self.pad_color,
-                mean=self.mean,
-                std=self.std,
-            ),
+            "image": self.transform(self.root / relative_path),
         }
         for target in self.targets:
             if target in row.index:
@@ -221,6 +214,7 @@ class FashionDataset:
             "duplicate_group",
             "product_family_group",
             "partition",
+            "cv_fold",
         ):
             if column in row.index:
                 sample[column] = row[column]

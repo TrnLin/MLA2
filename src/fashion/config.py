@@ -48,7 +48,9 @@ PRODUCT_FAMILIES_CSV = AUDIT_DIR / "product_family_groups.csv.gz"
 LABEL_MAPS_JSON = PROCESSED_DATA_DIR / "label_maps.json"
 SPLITS_CSV = PROCESSED_DATA_DIR / "splits.csv"
 SPLIT_SUMMARY_JSON = PROCESSED_DATA_DIR / "split_summary.json"
+CV_FOLD_SUMMARY_JSON = PROCESSED_DATA_DIR / "cv_fold_summary.json"
 DEVELOPMENT_CLASS_SUMMARY_CSV = PROCESSED_DATA_DIR / "development_class_summary.csv"
+DEVELOPMENT_IMAGE_PROFILE_JSON = PROCESSED_DATA_DIR / "development_image_profile.json"
 TAXONOMY_JSON = PROCESSED_DATA_DIR / "taxonomy.json"
 ORIGINAL_ONLY_NORMALIZATION_JSON = PROCESSED_DATA_DIR / "normalization_original_only.json"
 PAIRED_NORMALIZATION_JSON = PROCESSED_DATA_DIR / "paired_normalization.json"
@@ -67,10 +69,6 @@ RANDOM_SEED = 2753
 IMAGE_SIZE = (128, 96)
 LEGACY_IMAGE_SIZE = (128, 128)
 PAD_COLOR = (255, 255, 255)
-TRAIN_RATIO = 0.70
-VALIDATION_RATIO = 0.15
+DEVELOPMENT_RATIO = 0.85
 HOLDOUT_RATIO = 0.15
-MIN_SUPPORTED_GROUPS = 3
-# Fixed before allocation so the required visual-only season example is never
-# selected from validation or protected holdout outcomes.
-TRAIN_ONLY_EDA_EXAMPLE_IDS = (41303, 43587)
+CV_FOLD_COUNT = 5

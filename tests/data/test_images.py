@@ -9,7 +9,12 @@ from PIL import Image
 
 from fashion.data.dataset import FashionDataset
 from fashion.data.hashing import compute_sha256, write_deterministic_csv
-from fashion.data.images import StreamingStats, transform_image, transform_image_with_mask
+from fashion.data.images import (
+    StreamingStats,
+    load_and_transform_image,
+    transform_image,
+    transform_image_with_mask,
+)
 
 
 def test_sha256_is_deterministic(tmp_path):
@@ -93,9 +98,22 @@ def test_streaming_stats_can_exclude_padding():
 
 def test_dataset_adapter_loads_relative_path(tiny_project):
     frame = pd.DataFrame(
-        [{"id": 1, "path": "data/raw/teacher/train/images_train/1.jpg", "partition": "train"}]
+        [
+            {
+                "id": 1,
+                "path": "data/raw/teacher/train/images_train/1.jpg",
+                "partition": "development",
+                "cv_fold": 0,
+            }
+        ]
     )
-    sample = FashionDataset(frame, root=tiny_project.root, targets=())[0]
+    sample = FashionDataset(
+        frame,
+        transform=lambda path: load_and_transform_image(path, image_size=(128, 96)),
+        root=tiny_project.root,
+        targets=(),
+    )[0]
     assert sample["id"] == 1
-    assert sample["partition"] == "train"
+    assert sample["partition"] == "development"
+    assert sample["cv_fold"] == 0
     assert sample["image"].shape == (128, 96, 3)

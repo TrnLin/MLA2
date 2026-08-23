@@ -1,9 +1,5 @@
 dataset,partition,column,null_count,null_percent,scope
-styles_train_image_backed,train,articleType,0,0.0,development_targets_only
-styles_train_image_backed,val,articleType,0,0.0,development_targets_only
-styles_train_image_backed,train,season,17,0.06298162418494369,development_targets_only
-styles_train_image_backed,val,season,3,0.05189413596263622,development_targets_only
-styles_train_image_backed,train,gender,0,0.0,development_targets_only
-styles_train_image_backed,val,gender,0,0.0,development_targets_only
-styles_train_image_backed,train,usage,1,0.003704801422643746,development_targets_only
-styles_train_image_backed,val,usage,0,0.0,development_targets_only
+styles_train_image_backed,development,articleType,0,0.0,development_targets_only
+styles_train_image_backed,development,season,20,0.06102584444512251,development_targets_only
+styles_train_image_backed,development,gender,0,0.0,development_targets_only
+styles_train_image_backed,development,usage,1,0.0030512922222561255,development_targets_only
