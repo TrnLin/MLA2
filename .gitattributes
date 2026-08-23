@@ -4,6 +4,7 @@
 *.md text eol=lf
 *.py text eol=lf
 *.ipynb text eol=lf
+*.html text eol=lf
 
 # Generated archives and report assets are binary.
 *.csv.gz binary
