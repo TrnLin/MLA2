@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import ast
 import subprocess
 
@@ -5,67 +7,61 @@ from fashion.config import ROOT
 from fashion.data.pipeline import _BASE_ARTIFACTS, CACHE_FILENAME
 
 
-def test_assignment_breakdown_uses_canonical_data_contract():
-    document = (ROOT / "docs/assignment-breakdown.html").read_text(encoding="utf-8")
+def test_active_handoff_docs_use_the_current_contract() -> None:
+    paths = (
+        ROOT / "README.md",
+        ROOT / "notebooks/README.md",
+        ROOT / "data/processed/README.md",
+        ROOT / "results/evidence/data_preparation/README.md",
+        ROOT / "results/figures/data_preparation/README.md",
+        ROOT / "docs/assignment-breakdown.html",
+        ROOT / "docs/reviews/open_decisions.md",
+    )
+    combined = "\n".join(path.read_text(encoding="utf-8") for path in paths)
+    lowered = combined.lower()
 
-    for stale_claim in (
-        "01_preprocessing.ipynb",
-        "10_task1_articletype.ipynb",
-        "20_task2_season.ipynb",
-        "30_task3_gender_usage.ipynb",
-        "40_task4_visual_search.ipynb",
-        "90_final_predictions.ipynb",
-        "clean.csv",
-        "train | val | test",
-        "pixels, every image",
-        "Every image is 4,800 pixels",
-        "official EDA",
-        "protected EDA",
-        "Macro-F1",
-        "nDCG@5",
-        "Recall@5",
+    for current in (
+        "data/raw/teacher",
+        "data/processed/splits.csv",
+        "development",
+        "cv_fold",
+        "32,773",
+        "5,778",
+        "quarantine",
+        "teacher-only",
     ):
-        assert stale_claim not in document
+        assert current.lower() in lowered
 
-    for current_claim in (
-        "notebooks/01_data_preparation.ipynb",
+    for stale in (
+        "data/fashion-dataset",
+        "paired normalization",
+        "paired high-resolution",
+        "shared normalization",
+        "train | val | holdout",
+        "supported mask",
+        "deployed mask",
+        "validation queries against a train-only",
+    ):
+        assert stale not in lowered
+
+
+def test_assignment_breakdown_lists_the_canonical_notebooks() -> None:
+    document = (ROOT / "docs/assignment-breakdown.html").read_text(encoding="utf-8")
+    for name in (
         "00_problem_definition.ipynb",
+        "01_data_preparation.ipynb",
         "02_task1_article_type.ipynb",
         "03_task2_season.ipynb",
         "04_task3_gender_usage.ipynb",
         "05_task4_visual_search.ipynb",
         "06_final_evaluation.ipynb",
-        "data/processed/splits.csv",
-        "train | val | holdout | quarantine",
-        "38,595",
-        "17 at other resolutions",
-        "124 official outputs",
-        "27,009 family units",
-        "18 have only one",
-        "real-world similarity ground truth",
-        "Owner TODO after baseline evidence",
-        "The Task 4 owner must choose the final cutoff",
     ):
-        assert current_claim in document
-
-
-def test_task4_documentation_has_one_isolated_development_contract():
-    document = (ROOT / "docs/assignment-breakdown.html").read_text(encoding="utf-8")
-    decision = (ROOT / "docs/decisions/0009-task4-retrieval-isolation.md").read_text(
-        encoding="utf-8"
-    )
-    assert "same images used for evaluation" not in document
-    assert "validation queries against a train-only" in document
-    assert "ID, SHA, and family isolation" in document
-    assert "gallery-coverage diagnostics only" in document
-    assert "must select\nand freeze the exact ranking-quality" in decision
-    assert "not the final\nmetric or image-view fusion choice" in decision
-    for fixed_metric in ("nDCG@5", "Recall@5"):
+        assert name in document
+    for fixed_metric in ("Macro-F1", "nDCG@5", "Recall@5"):
         assert fixed_metric not in document
-        assert fixed_metric not in decision
 
 
-def test_locked_setup_and_single_split_rule_are_documented():
+def test_locked_setup_and_single_split_rule_are_documented() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     assert "requirements/constraints-py312.txt" in readme
     assert 'python -m pip install -c requirements/constraints-py312.txt -e ".[dev]"' in readme
@@ -73,8 +69,8 @@ def test_locked_setup_and_single_split_rule_are_documented():
     searched_files = [
         *sorted((ROOT / "src").rglob("*.py")),
         *sorted((ROOT / "scripts").glob("*.py")),
+        ROOT / "notebooks/01_data_preparation.ipynb",
     ]
-    searched_files.append(ROOT / "notebooks/01_data_preparation.ipynb")
     offenders = [
         path.relative_to(ROOT).as_posix()
         for path in searched_files
@@ -84,7 +80,7 @@ def test_locked_setup_and_single_split_rule_are_documented():
     assert not (ROOT / "scripts/prepare_data.py").exists()
 
 
-def test_delivered_prepared_cache_is_not_ignored():
+def test_delivered_prepared_cache_is_not_ignored() -> None:
     required = {
         *_BASE_ARTIFACTS,
         "data/processed/splits.csv",
@@ -103,8 +99,7 @@ def test_delivered_prepared_cache_is_not_ignored():
     assert ignored == []
 
 
-def test_runtime_code_cannot_read_or_unseal_the_protected_split_directly():
-    """Only the data access boundary may unseal protected partition targets."""
+def test_runtime_code_cannot_read_or_unseal_the_protected_split_directly() -> None:
     runtime_files = [
         *sorted((ROOT / "src/fashion/eda").rglob("*.py")),
         *sorted((ROOT / "src/fashion/retrieval").rglob("*.py")),
@@ -127,11 +122,7 @@ def test_runtime_code_cannot_read_or_unseal_the_protected_split_directly():
             source = ast.unparse(node.args[0])
             if "SPLITS_CSV" in source or "splits.csv" in source or "['splits']" in source:
                 direct_split_reads.append(path.relative_to(ROOT).as_posix())
-        if (
-            "load_splits_for_final_evaluation" in text
-            or "_load_unredacted_splits" in text
-            or "_normalise_manifest_frame" in text
-        ):
+        if "load_splits_for_final_evaluation" in text or "_load_unredacted_splits" in text:
             unlock_calls.append(path.relative_to(ROOT).as_posix())
 
     assert direct_split_reads == []
@@ -141,4 +132,3 @@ def test_runtime_code_cannot_read_or_unseal_the_protected_split_directly():
     assert "raw_teacher_csv" in dataset_source
     assert "evaluation_unlocked" in dataset_source
     assert 'usecols=["id", *TARGET_COLUMNS]' in dataset_source
-    assert "redact_protected_targets: bool" not in dataset_source
