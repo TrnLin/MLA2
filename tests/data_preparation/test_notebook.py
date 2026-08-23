@@ -364,6 +364,7 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     ]
     guide_cells = [cell for cell in notebook.cells if "code-guide" in cell.metadata.get("tags", [])]
 
+    assert notebook.metadata["title"] == "Data Preparation and Shared Dataset Analysis"
     assert set((ROOT / "notebooks").glob("*.ipynb")) == {PROBLEM_NOTEBOOK, NOTEBOOK}
     assert all(heading in source for heading in REQUIRED_HEADINGS)
     assert len(code_cells) == 38
@@ -802,6 +803,7 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     report = ROOT / "results/notebooks/01_data_preparation.html"
     assert report.is_file()
     document = report.read_text(encoding="utf-8")
+    assert "<title>Data Preparation and Shared Dataset Analysis</title>" in document
     assert not re.search(r'class="[^"]*jp-InputArea-editor', document)
     assert document.count('<figure class="data-preparation-figure">') == len(FIGURE_NAMES)
     assert all(heading.lstrip("# ") in document for heading in REQUIRED_HEADINGS)
