@@ -1,6 +1,6 @@
 # 0012 — Protected target runtime boundary
 
-- Status: Accepted
+- Status: Superseded in part by 0014
 - Date: 2026-08-21
 
 ## Context

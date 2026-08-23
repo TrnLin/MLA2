@@ -1,6 +1,6 @@
 # 0002 — Single split and exact-duplicate quarantine
 
-- Status: Accepted
+- Status: Superseded in part by 0014
 - Date: 2026-08-20
 
 ## Context

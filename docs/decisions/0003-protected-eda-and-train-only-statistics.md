@@ -1,6 +1,6 @@
 # 0003 — Protected EDA and train-only statistics
 
-- Status: Accepted
+- Status: Superseded by 0014
 - Date: 2026-08-20
 
 ## Context
