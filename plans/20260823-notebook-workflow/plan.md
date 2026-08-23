@@ -30,7 +30,7 @@ shared preprocessing in the correct order.
 
 | # | Phase | Status | Commit boundary | Link |
 |---|---|---|---|---|
-| 1 | Complete problem definition | Pending | `docs(notebooks): add problem definition workflow` | [phase 01](./phase-01-problem-definition.md) |
+| 1 | Complete problem definition | In progress | `docs(notebooks): add problem definition workflow` | [phase 01](./phase-01-problem-definition.md) |
 | 2 | Restructure data preparation | Pending | `refactor(notebooks): clarify data preparation workflow` | [phase 02](./phase-02-data-preparation.md) |
 | 3 | Add future task handoffs | Pending | `docs(notebooks): add task workflow scaffolds` | [phase 03](./phase-03-task-scaffolds.md) |
 | 4 | Verify and reconcile project contracts | Pending | Amend only the phase that owns any required correction | [phase 04](./phase-04-verification.md) |
@@ -62,4 +62,3 @@ shared preprocessing in the correct order.
 - Phase 2 owns the rename of `00_eda.ipynb` and all direct path/test/documentation updates.
 - Phase 3 starts after Phase 2 fixes the notebook contract and reading order.
 - Phase 4 runs after all notebook files exist.
-

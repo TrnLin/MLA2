@@ -22,16 +22,16 @@
 - Explain Task 3 as separate `gender` and `usage` outputs.
 - Explain product IDs versus image-variant inputs.
 - State that the specification sets no arbitrary accuracy threshold.
-- Use macro-F1 and per-class recall for classification development.
-- Use nDCG@5, Recall@5, coverage, and latency for visual search.
+- Require each task owner to select and justify primary and supporting metrics from data evidence.
+- Describe the properties classification and retrieval metrics must cover without freezing exact choices.
 - Include model size, latency, robustness, and failure analysis in the final judgement criteria.
 - Keep the notebook narrative and runnable from a fresh kernel without prepared data.
 
 ## Todo
 
-- [ ] Create the notebook with complete headers and subheaders.
-- [ ] Validate notebook JSON and heading hierarchy.
-- [ ] Check every statement against the assignment, rubric, and accepted decisions.
+- [x] Create the notebook with complete headers and subheaders.
+- [x] Validate notebook JSON and heading hierarchy.
+- [x] Check every statement against the assignment, rubric, and accepted decisions.
 - [ ] Commit the completed phase separately.
 
 ## Success criteria
@@ -39,4 +39,3 @@
 - A reader can state the input, output, unit, user, metric, constraint, and final-evaluation rule
   without opening another notebook.
 - No data preparation, EDA, or model training is duplicated here.
-

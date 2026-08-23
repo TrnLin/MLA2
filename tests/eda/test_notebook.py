@@ -24,6 +24,7 @@ from fashion.data.pipeline import (
     refresh_protected_safe_tabular_artifacts,
 )
 
+PROBLEM_NOTEBOOK = ROOT / "notebooks/00_problem_definition.ipynb"
 NOTEBOOK = ROOT / "notebooks/00_eda.ipynb"
 FIGURE_NAMES = {
     "article_type_long_tail.png",
@@ -61,6 +62,32 @@ REQUIRED_HEADINGS = (
     "## 8. Reproducibility and limitations",
     "## 9. Modelling recommendations",
     "## 10. Final assessment",
+)
+PROBLEM_REQUIRED_HEADINGS = (
+    "# Fashion Intelligence: Problem Definition",
+    "## Executive summary",
+    "## 1. Real-world context and users",
+    "### 1.1 User needs",
+    "### 1.2 Decisions supported",
+    "## 2. Problem statement and prediction unit",
+    "### 2.1 Prediction unit",
+    "### 2.2 Inputs available at prediction time",
+    "### 2.3 Outputs",
+    "## 3. Machine-learning task definitions",
+    "### 3.1 Task 1 - Fashion item type classification",
+    "### 3.2 Task 2 - Fashion season classification",
+    "### 3.3 Task 3 - Gender and usage classification",
+    "### 3.4 Task 4 - Fashion visual search",
+    "## 4. Data roles and evaluation boundary",
+    "## 5. Success criteria and evaluation framework",
+    "### 5.1 Classification metric-selection criteria",
+    "### 5.2 Retrieval metric-selection criteria",
+    "### 5.3 Final judgement criteria",
+    "## 6. Constraints and non-goals",
+    "## 7. Assumptions, risks, and failure costs",
+    "## 8. End-to-end system design",
+    "## 9. Deliverables and notebook handoff",
+    "## 10. Problem-definition completion gate",
 )
 EVIDENCE_NAMES = {
     "bias_summary.csv",
@@ -282,6 +309,27 @@ def _hashes_from_summary(summary: dict) -> dict[str, str]:
     return {record["path"]: record["sha256"] for record in summary["deterministic_outputs"]}
 
 
+def test_problem_definition_notebook_is_complete_and_data_independent() -> None:
+    notebook = nbformat.read(PROBLEM_NOTEBOOK, as_version=4)
+    source = _source(notebook)
+
+    assert notebook.cells
+    assert all(cell.cell_type == "markdown" for cell in notebook.cells)
+    assert all(heading in source for heading in PROBLEM_REQUIRED_HEADINGS)
+    heading_positions = [source.index(heading) for heading in PROBLEM_REQUIRED_HEADINGS]
+    assert heading_positions == sorted(heading_positions)
+    assert all(source.count(heading) == 1 for heading in PROBLEM_REQUIRED_HEADINGS)
+    assert "articleType" in source
+    assert "season" in source
+    assert "gender" in source
+    assert "usage" in source
+    assert "task owner" in source
+    assert "Primary development metric:" not in source
+    assert "Ranking quality: nDCG" not in source
+    assert "data/processed/splits.csv" in source
+    assert "trained from scratch" in source
+
+
 def test_the_official_notebook_contains_the_complete_workflow() -> None:
     notebook = nbformat.read(NOTEBOOK, as_version=4)
     source = _source(notebook)
@@ -293,7 +341,7 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     ]
     guide_cells = [cell for cell in notebook.cells if "code-guide" in cell.metadata.get("tags", [])]
 
-    assert sorted((ROOT / "notebooks").glob("*.ipynb")) == [NOTEBOOK]
+    assert set((ROOT / "notebooks").glob("*.ipynb")) == {PROBLEM_NOTEBOOK, NOTEBOOK}
     assert all(heading in source for heading in REQUIRED_HEADINGS)
     assert len(code_cells) == 34
     assert len(guide_cells) == len(code_cells)
