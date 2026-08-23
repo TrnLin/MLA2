@@ -2,11 +2,7 @@ import ast
 import subprocess
 
 from fashion.config import ROOT
-from fashion.data.pipeline import (
-    _BASE_ARTIFACTS,
-    _HIGH_RESOLUTION_ARTIFACTS,
-    CACHE_FILENAME,
-)
+from fashion.data.pipeline import _BASE_ARTIFACTS, CACHE_FILENAME
 
 
 def test_assignment_breakdown_uses_canonical_data_contract():
@@ -14,15 +10,31 @@ def test_assignment_breakdown_uses_canonical_data_contract():
 
     for stale_claim in (
         "01_preprocessing.ipynb",
+        "10_task1_articletype.ipynb",
+        "20_task2_season.ipynb",
+        "30_task3_gender_usage.ipynb",
+        "40_task4_visual_search.ipynb",
+        "90_final_predictions.ipynb",
         "clean.csv",
         "train | val | test",
         "pixels, every image",
         "Every image is 4,800 pixels",
+        "official EDA",
+        "protected EDA",
+        "Macro-F1",
+        "nDCG@5",
+        "Recall@5",
     ):
         assert stale_claim not in document
 
     for current_claim in (
-        "notebooks/00_eda.ipynb",
+        "notebooks/01_data_preparation.ipynb",
+        "00_problem_definition.ipynb",
+        "02_task1_article_type.ipynb",
+        "03_task2_season.ipynb",
+        "04_task3_gender_usage.ipynb",
+        "05_task4_visual_search.ipynb",
+        "06_final_evaluation.ipynb",
         "data/processed/splits.csv",
         "train | val | holdout | quarantine",
         "38,595",
@@ -31,15 +43,26 @@ def test_assignment_breakdown_uses_canonical_data_contract():
         "27,009 family units",
         "18 have only one",
         "real-world similarity ground truth",
+        "Owner TODO after baseline evidence",
+        "The Task 4 owner must choose the final cutoff",
     ):
         assert current_claim in document
 
 
 def test_task4_documentation_has_one_isolated_development_contract():
     document = (ROOT / "docs/assignment-breakdown.html").read_text(encoding="utf-8")
+    decision = (ROOT / "docs/decisions/0009-task4-retrieval-isolation.md").read_text(
+        encoding="utf-8"
+    )
     assert "same images used for evaluation" not in document
     assert "validation queries against a train-only" in document
     assert "ID, SHA, and family isolation" in document
+    assert "gallery-coverage diagnostics only" in document
+    assert "must select\nand freeze the exact ranking-quality" in decision
+    assert "not the final\nmetric or image-view fusion choice" in decision
+    for fixed_metric in ("nDCG@5", "Recall@5"):
+        assert fixed_metric not in document
+        assert fixed_metric not in decision
 
 
 def test_locked_setup_and_single_split_rule_are_documented():
@@ -51,7 +74,7 @@ def test_locked_setup_and_single_split_rule_are_documented():
         *sorted((ROOT / "src").rglob("*.py")),
         *sorted((ROOT / "scripts").glob("*.py")),
     ]
-    searched_files.append(ROOT / "notebooks/00_eda.ipynb")
+    searched_files.append(ROOT / "notebooks/01_data_preparation.ipynb")
     offenders = [
         path.relative_to(ROOT).as_posix()
         for path in searched_files
@@ -64,7 +87,6 @@ def test_locked_setup_and_single_split_rule_are_documented():
 def test_delivered_prepared_cache_is_not_ignored():
     required = {
         *_BASE_ARTIFACTS,
-        *_HIGH_RESOLUTION_ARTIFACTS,
         "data/processed/splits.csv",
         f"data/processed/{CACHE_FILENAME}",
     }

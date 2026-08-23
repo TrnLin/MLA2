@@ -7,7 +7,7 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 
-# Supplied raw datasets stay local. Only the exact lean protected-safe EDA pack is
+# Supplied raw datasets stay local. Only the exact lean protected-safe preparation pack is
 # deliverable so normal Run All does not need the slow forensic rebuild.
 /data/*
 !/data/README.md
@@ -20,14 +20,12 @@ __pycache__/
 !/data/processed/preparation_cache.json
 !/data/processed/splits.csv
 !/data/processed/split_summary.json
+!/data/processed/cv_fold_summary.json
 !/data/processed/taxonomy.json
 !/data/processed/development_class_summary.csv
+!/data/processed/development_image_profile.json
 !/data/processed/label_maps.json
-!/data/processed/normalization_original_only.json
-!/data/processed/paired_normalization.json
 !/data/processed/prediction_manifest.csv
-!/data/processed/training_image_variants.csv.gz
-!/data/processed/training_image_variants_summary.json
 !/data/processed/audit/
 /data/processed/audit/*
 !/data/processed/audit/csv_summary.json
@@ -41,12 +39,6 @@ __pycache__/
 !/data/processed/audit/product_family_groups.csv.gz
 !/data/processed/audit/product_family_summary.json
 !/data/processed/audit/target_class_counts.csv
-!/data/processed/high_resolution/
-/data/processed/high_resolution/*
-!/data/processed/high_resolution/alignment_summary.json
-!/data/processed/high_resolution/all_alignment_pairs.csv.gz
-!/data/processed/high_resolution/catalogue.json
-!/data/processed/high_resolution/image_catalogue.csv.gz
 
 # Local scratch material and generated model weights.
 tmp/

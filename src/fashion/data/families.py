@@ -104,6 +104,7 @@ def build_product_families(
     output_csv: str | Path = PRODUCT_FAMILIES_CSV,
     summary_output: str | Path = AUDIT_DIR / "product_family_summary.json",
     targets: Sequence[str] = TARGET_COLUMNS,
+    sealed_splits_csv: str | Path | None = None,
 ) -> pd.DataFrame:
     """Build family blocks after conservatively removing cross-role visual matches."""
     if train_manifest_csv is None:
@@ -228,6 +229,21 @@ def build_product_families(
         "pre_quarantine_reason",
     ]
     result = manifest[output_columns].copy()
+    if sealed_splits_csv is not None and Path(sealed_splits_csv).is_file():
+        sealed = pd.read_csv(sealed_splits_csv, keep_default_na=False)
+        protected = sealed[sealed["partition"].isin({"holdout", "quarantine"})].set_index("id")
+        protected_columns = [
+            "product_family_group",
+            "family_group_basis",
+            "has_conflicting_target_labels",
+            "conflicting_targets",
+            "pre_quarantine_reason",
+        ]
+        protected_ids = result["id"].isin(protected.index)
+        for column in protected_columns:
+            result.loc[protected_ids, column] = result.loc[protected_ids, "id"].map(
+                protected[column]
+            )
     output_csv = Path(output_csv)
     output_csv.parent.mkdir(parents=True, exist_ok=True)
     write_deterministic_csv(
@@ -268,7 +284,7 @@ def build_product_families(
         "policy": (
             "First quarantine every cross-role visual component and conflicting exact hash. "
             "Then block each remaining normalized name, exact hash, and accepted automatic "
-            "visual component for train/validation/holdout allocation. Human input is not "
+            "visual component for development/holdout allocation. Human input is not "
             "part of preparation or split validation."
         ),
     }

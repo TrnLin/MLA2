@@ -1,6 +1,6 @@
 # 0010 — Official outputs and supported metrics
 
-- Status: Accepted
+- Status: Superseded by 0016
 - Date: 2026-08-21
 
 ## Context

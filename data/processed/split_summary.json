@@ -1,57 +1,238 @@
 {
-  "schema_version": "7.0.0",
-  "seed": 2753,
-  "split_file": "data/processed/splits.csv",
-  "persisted_protected_targets": "redacted",
-  "total_image_backed_rows": 38612,
-  "partitions": {
-    "train": {
-      "count": 26992,
-      "percentage": 69.90572878897751
+  "cv_fold_file": "data/processed/splits.csv",
+  "development_union_policy": "preserved legacy train plus validation IDs",
+  "fold_policy": {
+    "allocation_unit": "product_family_group",
+    "fold_count": 5,
+    "folds": {
+      "0": {
+        "target_coverage": {
+          "articleType": {
+            "training_class_count": 123,
+            "validation_class_count": 102,
+            "validation_classes_absent_from_training": [
+              "Ties and Cufflinks"
+            ]
+          },
+          "gender": {
+            "training_class_count": 5,
+            "validation_class_count": 5,
+            "validation_classes_absent_from_training": []
+          },
+          "season": {
+            "training_class_count": 4,
+            "validation_class_count": 4,
+            "validation_classes_absent_from_training": []
+          },
+          "usage": {
+            "training_class_count": 9,
+            "validation_class_count": 8,
+            "validation_classes_absent_from_training": []
+          }
+        },
+        "training_families": 18334,
+        "training_products": 26218,
+        "validation_families": 4565,
+        "validation_products": 6555
+      },
+      "1": {
+        "target_coverage": {
+          "articleType": {
+            "training_class_count": 120,
+            "validation_class_count": 108,
+            "validation_classes_absent_from_training": [
+              "Body Wash and Scrub",
+              "Cushion Covers",
+              "Ipad",
+              "Lounge Tshirts"
+            ]
+          },
+          "gender": {
+            "training_class_count": 5,
+            "validation_class_count": 5,
+            "validation_classes_absent_from_training": []
+          },
+          "season": {
+            "training_class_count": 4,
+            "validation_class_count": 4,
+            "validation_classes_absent_from_training": []
+          },
+          "usage": {
+            "training_class_count": 8,
+            "validation_class_count": 9,
+            "validation_classes_absent_from_training": [
+              "Home"
+            ]
+          }
+        },
+        "training_families": 18314,
+        "training_products": 26218,
+        "validation_families": 4585,
+        "validation_products": 6555
+      },
+      "2": {
+        "target_coverage": {
+          "articleType": {
+            "training_class_count": 122,
+            "validation_class_count": 111,
+            "validation_classes_absent_from_training": [
+              "Compact",
+              "Key chain"
+            ]
+          },
+          "gender": {
+            "training_class_count": 5,
+            "validation_class_count": 5,
+            "validation_classes_absent_from_training": []
+          },
+          "season": {
+            "training_class_count": 4,
+            "validation_class_count": 4,
+            "validation_classes_absent_from_training": []
+          },
+          "usage": {
+            "training_class_count": 9,
+            "validation_class_count": 8,
+            "validation_classes_absent_from_training": []
+          }
+        },
+        "training_families": 18303,
+        "training_products": 26219,
+        "validation_families": 4596,
+        "validation_products": 6554
+      },
+      "3": {
+        "target_coverage": {
+          "articleType": {
+            "training_class_count": 122,
+            "validation_class_count": 109,
+            "validation_classes_absent_from_training": [
+              "Highlighter and Blush",
+              "Shoe Laces"
+            ]
+          },
+          "gender": {
+            "training_class_count": 5,
+            "validation_class_count": 5,
+            "validation_classes_absent_from_training": []
+          },
+          "season": {
+            "training_class_count": 4,
+            "validation_class_count": 4,
+            "validation_classes_absent_from_training": []
+          },
+          "usage": {
+            "training_class_count": 9,
+            "validation_class_count": 8,
+            "validation_classes_absent_from_training": []
+          }
+        },
+        "training_families": 18346,
+        "training_products": 26217,
+        "validation_families": 4553,
+        "validation_products": 6556
+      },
+      "4": {
+        "target_coverage": {
+          "articleType": {
+            "training_class_count": 121,
+            "validation_class_count": 107,
+            "validation_classes_absent_from_training": [
+              "Concealer",
+              "Rain Jacket",
+              "Rain Trousers"
+            ]
+          },
+          "gender": {
+            "training_class_count": 5,
+            "validation_class_count": 5,
+            "validation_classes_absent_from_training": []
+          },
+          "season": {
+            "training_class_count": 4,
+            "validation_class_count": 4,
+            "validation_classes_absent_from_training": []
+          },
+          "usage": {
+            "training_class_count": 9,
+            "validation_class_count": 8,
+            "validation_classes_absent_from_training": []
+          }
+        },
+        "training_families": 18299,
+        "training_products": 26220,
+        "validation_families": 4600,
+        "validation_products": 6553
+      }
     },
-    "val": {
-      "count": 5781,
-      "percentage": 14.972029420905416
+    "ideal_validation_products": 6554.6,
+    "maximum_allowed_size_deviation": 80,
+    "rare_class_policy": "report_missing_training_support_without_dropping_rows",
+    "schema_version": "1.0.0",
+    "seed": 2753,
+    "source_scope": "development"
+  },
+  "group_safety": {
+    "active_family_groups": 27009,
+    "cv_fold_crossings": 0,
+    "largest_development_family": 80,
+    "partition_crossings": 0
+  },
+  "id_set_sha256": {
+    "development": "2639d731f89942fd9598f9552bb092dd634830c3e6a63d0b569cfc2aa4362d01",
+    "holdout": "48a9e2e389657744d2771a3ab5ca34e85e015b21b18ef4d0ed29c2e648cf8fc0",
+    "quarantine": "5a672e34e485c8ddad0cef37c2dc37d99f8774f8874279a5d0ed69aff7022f43"
+  },
+  "ideal_one_fold_round": {
+    "holdout_products": 5778,
+    "note": "group allocation makes fold counts close to, not exactly equal to, the ideal",
+    "training_products": 26218.4,
+    "validation_products": 6554.6
+  },
+  "partitions": {
+    "development": {
+      "count": 32773,
+      "percentage_of_image_backed_rows": 84.87775820988294
     },
     "holdout": {
       "count": 5778,
-      "percentage": 14.964259815601366
+      "percentage_of_image_backed_rows": 14.964259815601366
     },
     "quarantine": {
       "count": 61,
-      "percentage": 0.1579819745156946
+      "percentage_of_image_backed_rows": 0.1579819745156946
     }
   },
-  "product_family_policy": {
-    "active_family_groups": 27009,
-    "largest_active_family_group": 80,
-    "family_groups_crossing_model_partitions": 0,
-    "normalized_name_keys_crossing_model_partitions": 0,
-    "exact_sha_groups_crossing_partitions": 0,
-    "approved_for_model_comparison": true,
-    "predeclared_train_only_evidence": {
-      "requested_ids": [
-        41303,
-        43587
-      ],
-      "applied_ids": [
-        41303,
-        43587
-      ],
-      "selection_basis": "IDs fixed before allocation for required train-only visual evidence; no validation or holdout outcome selects examples"
-    }
+  "persisted_protected_targets": "blank_with_false_masks",
+  "protected_target_policy": {
+    "partitions": [
+      "holdout",
+      "quarantine"
+    ],
+    "public_target_aggregates": 0,
+    "unlock_stage": "notebook_06_after_method_freeze"
   },
-  "deployment_taxonomy": {
-    "schema_version": "3.0.0",
-    "fit_partition": "train",
-    "fit_group_column": "product_family_group",
-    "minimum_independent_family_groups": 3,
-    "action": "fit model/output classes and the primary comparative slice from training data; mask validation or protected labels unknown to the frozen training mapping",
+  "quarantine": {
+    "allowed_reasons": [
+      "conflicting_labels_exact_sha",
+      "cross_role_exact_duplicate",
+      "cross_role_near_duplicate_conservative_quarantine"
+    ],
+    "total_rows": 61
+  },
+  "schema_version": "8.0.0",
+  "seed": 2753,
+  "split_file": "data/processed/splits.csv",
+  "taxonomy": {
+    "class_policy": "preserve_every_nonblank_development_observed_label",
+    "group_column": "product_family_group",
+    "schema_version": "4.0.0",
     "semantic_merges": {},
+    "source_partition": "development",
+    "source_scope": "development",
     "targets": {
       "articleType": {
-        "fit_partition": "train",
-        "official_output_classes": [
+        "classes": [
           "Accessory Gift Set",
           "Baby Dolls",
           "Backpacks",
@@ -177,268 +358,316 @@
           "Water Bottle",
           "Wristbands"
         ],
-        "official_output_class_count": 124,
-        "supported_classes": [
-          "Accessory Gift Set",
-          "Backpacks",
-          "Bangle",
-          "Basketballs",
-          "Belts",
-          "Blazers",
-          "Booties",
-          "Boxers",
-          "Bra",
-          "Bracelet",
-          "Briefs",
-          "Camisoles",
-          "Capris",
-          "Caps",
-          "Casual Shoes",
-          "Churidar",
-          "Clothing Set",
-          "Clutches",
-          "Cufflinks",
-          "Deodorant",
-          "Dresses",
-          "Duffel Bag",
-          "Dupatta",
-          "Earrings",
-          "Flats",
-          "Flip Flops",
-          "Footballs",
-          "Formal Shoes",
-          "Foundation and Primer",
-          "Fragrance Gift Set",
-          "Free Gifts",
-          "Gloves",
-          "Handbags",
-          "Headband",
-          "Heels",
-          "Innerwear Vests",
-          "Jackets",
-          "Jeans",
-          "Jeggings",
-          "Jewellery Set",
-          "Jumpsuit",
-          "Kajal and Eyeliner",
-          "Kurta Sets",
-          "Kurtas",
-          "Kurtis",
-          "Laptop Bag",
-          "Leggings",
-          "Lip Gloss",
-          "Lip Liner",
-          "Lounge Pants",
-          "Lounge Shorts",
-          "Messenger Bag",
-          "Mobile Pouch",
-          "Mufflers",
-          "Nail Polish",
-          "Necklace and Chains",
-          "Night suits",
-          "Nightdress",
-          "Patiala",
-          "Pendant",
-          "Perfume and Body Mist",
-          "Ring",
-          "Rompers",
-          "Rucksacks",
-          "Salwar",
-          "Salwar and Dupatta",
-          "Sandals",
-          "Sarees",
-          "Scarves",
-          "Shirts",
-          "Shoe Accessories",
-          "Shorts",
-          "Skirts",
-          "Socks",
-          "Sports Sandals",
-          "Sports Shoes",
-          "Stockings",
-          "Stoles",
-          "Sunglasses",
-          "Suspenders",
-          "Sweaters",
-          "Sweatshirts",
-          "Swimwear",
-          "Ties",
-          "Tights",
-          "Tops",
-          "Track Pants",
-          "Tracksuits",
-          "Travel Accessory",
-          "Trousers",
-          "Trunk",
-          "Tshirts",
-          "Tunics",
-          "Umbrellas",
-          "Waist Pouch",
-          "Waistcoat",
-          "Wallets",
-          "Watches",
-          "Water Bottle",
-          "Wristbands"
-        ],
-        "supported_class_count": 100,
-        "primary_metric_limited_classes": [
-          {
-            "class": "Baby Dolls",
-            "independent_family_groups": 2
-          },
-          {
-            "class": "Body Wash and Scrub",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Compact",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Concealer",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Cushion Covers",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Eyeshadow",
-            "independent_family_groups": 2
-          },
-          {
-            "class": "Hat",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Highlighter and Blush",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Ipad",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Key chain",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Lehenga Choli",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Lip Plumper",
-            "independent_family_groups": 2
-          },
-          {
-            "class": "Lipstick",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Lounge Tshirts",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Nehru Jackets",
-            "independent_family_groups": 2
-          },
-          {
-            "class": "Rain Jacket",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Rain Trousers",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Robe",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Shapewear",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Shoe Laces",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Shrug",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Tablet Sleeve",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Ties and Cufflinks",
-            "independent_family_groups": 1
-          },
-          {
-            "class": "Trolley Bag",
-            "independent_family_groups": 2
-          }
-        ],
-        "primary_metric_limited_class_count": 24,
-        "raw_class_count": 124,
-        "official_output_label_column": "articleType_deployed",
-        "official_output_validity_column": "has_articleType_deployed_label",
-        "supported_metric_label_column": "articleType_supported",
-        "supported_metric_validity_column": "has_articleType_supported_label"
-      },
-      "season": {
-        "fit_partition": "train",
-        "official_output_classes": [
-          "Fall",
-          "Spring",
-          "Summer",
-          "Winter"
-        ],
-        "official_output_class_count": 4,
-        "supported_classes": [
-          "Fall",
-          "Spring",
-          "Summer",
-          "Winter"
-        ],
-        "supported_class_count": 4,
-        "primary_metric_limited_classes": [],
-        "primary_metric_limited_class_count": 0,
-        "raw_class_count": 4,
-        "official_output_label_column": "season_deployed",
-        "official_output_validity_column": "has_season_deployed_label",
-        "supported_metric_label_column": "season_supported",
-        "supported_metric_validity_column": "has_season_supported_label"
+        "family_counts": {
+          "Accessory Gift Set": 33,
+          "Baby Dolls": 2,
+          "Backpacks": 428,
+          "Bangle": 18,
+          "Basketballs": 12,
+          "Belts": 410,
+          "Blazers": 7,
+          "Body Wash and Scrub": 1,
+          "Booties": 5,
+          "Boxers": 27,
+          "Bra": 196,
+          "Bracelet": 16,
+          "Briefs": 402,
+          "Camisoles": 13,
+          "Capris": 100,
+          "Caps": 201,
+          "Casual Shoes": 1759,
+          "Churidar": 24,
+          "Clothing Set": 7,
+          "Clutches": 153,
+          "Compact": 1,
+          "Concealer": 1,
+          "Cufflinks": 17,
+          "Cushion Covers": 1,
+          "Deodorant": 223,
+          "Dresses": 227,
+          "Duffel Bag": 57,
+          "Dupatta": 73,
+          "Earrings": 33,
+          "Eyeshadow": 3,
+          "Flats": 234,
+          "Flip Flops": 610,
+          "Footballs": 7,
+          "Formal Shoes": 223,
+          "Foundation and Primer": 5,
+          "Fragrance Gift Set": 46,
+          "Free Gifts": 40,
+          "Gloves": 12,
+          "Handbags": 793,
+          "Hat": 2,
+          "Headband": 6,
+          "Heels": 472,
+          "Highlighter and Blush": 1,
+          "Innerwear Vests": 161,
+          "Ipad": 1,
+          "Jackets": 170,
+          "Jeans": 226,
+          "Jeggings": 14,
+          "Jewellery Set": 16,
+          "Jumpsuit": 10,
+          "Kajal and Eyeliner": 9,
+          "Key chain": 1,
+          "Kurta Sets": 59,
+          "Kurtas": 699,
+          "Kurtis": 134,
+          "Laptop Bag": 49,
+          "Leggings": 114,
+          "Lehenga Choli": 2,
+          "Lip Gloss": 5,
+          "Lip Liner": 7,
+          "Lip Plumper": 3,
+          "Lipstick": 2,
+          "Lounge Pants": 42,
+          "Lounge Shorts": 23,
+          "Lounge Tshirts": 1,
+          "Messenger Bag": 36,
+          "Mobile Pouch": 39,
+          "Mufflers": 27,
+          "Nail Polish": 15,
+          "Necklace and Chains": 37,
+          "Nehru Jackets": 3,
+          "Night suits": 35,
+          "Nightdress": 26,
+          "Patiala": 19,
+          "Pendant": 10,
+          "Perfume and Body Mist": 401,
+          "Rain Jacket": 1,
+          "Rain Trousers": 1,
+          "Ring": 4,
+          "Robe": 2,
+          "Rompers": 7,
+          "Rucksacks": 10,
+          "Salwar": 24,
+          "Salwar and Dupatta": 6,
+          "Sandals": 494,
+          "Sarees": 106,
+          "Scarves": 74,
+          "Shapewear": 2,
+          "Shirts": 1527,
+          "Shoe Accessories": 17,
+          "Shoe Laces": 1,
+          "Shorts": 347,
+          "Shrug": 2,
+          "Skirts": 81,
+          "Socks": 295,
+          "Sports Sandals": 53,
+          "Sports Shoes": 1544,
+          "Stockings": 10,
+          "Stoles": 52,
+          "Sunglasses": 425,
+          "Suspenders": 19,
+          "Sweaters": 199,
+          "Sweatshirts": 203,
+          "Swimwear": 14,
+          "Tablet Sleeve": 2,
+          "Ties": 85,
+          "Ties and Cufflinks": 1,
+          "Tights": 7,
+          "Tops": 967,
+          "Track Pants": 200,
+          "Tracksuits": 20,
+          "Travel Accessory": 11,
+          "Trolley Bag": 2,
+          "Trousers": 279,
+          "Trunk": 86,
+          "Tshirts": 4603,
+          "Tunics": 132,
+          "Umbrellas": 4,
+          "Waist Pouch": 14,
+          "Waistcoat": 10,
+          "Wallets": 422,
+          "Watches": 1304,
+          "Water Bottle": 10,
+          "Wristbands": 5
+        },
+        "label_column": "articleType",
+        "num_classes": 124,
+        "product_counts": {
+          "Accessory Gift Set": 91,
+          "Baby Dolls": 2,
+          "Backpacks": 604,
+          "Bangle": 50,
+          "Basketballs": 12,
+          "Belts": 676,
+          "Blazers": 7,
+          "Body Wash and Scrub": 1,
+          "Booties": 9,
+          "Boxers": 34,
+          "Bra": 251,
+          "Bracelet": 44,
+          "Briefs": 568,
+          "Camisoles": 13,
+          "Capris": 136,
+          "Caps": 230,
+          "Casual Shoes": 2276,
+          "Churidar": 26,
+          "Clothing Set": 7,
+          "Clutches": 189,
+          "Compact": 4,
+          "Concealer": 2,
+          "Cufflinks": 38,
+          "Cushion Covers": 1,
+          "Deodorant": 248,
+          "Dresses": 289,
+          "Duffel Bag": 73,
+          "Dupatta": 99,
+          "Earrings": 206,
+          "Eyeshadow": 4,
+          "Flats": 356,
+          "Flip Flops": 734,
+          "Footballs": 7,
+          "Formal Shoes": 517,
+          "Foundation and Primer": 11,
+          "Fragrance Gift Set": 47,
+          "Free Gifts": 57,
+          "Gloves": 18,
+          "Handbags": 1222,
+          "Hat": 2,
+          "Headband": 6,
+          "Heels": 890,
+          "Highlighter and Blush": 4,
+          "Innerwear Vests": 205,
+          "Ipad": 1,
+          "Jackets": 193,
+          "Jeans": 472,
+          "Jeggings": 22,
+          "Jewellery Set": 38,
+          "Jumpsuit": 10,
+          "Kajal and Eyeliner": 11,
+          "Key chain": 1,
+          "Kurta Sets": 64,
+          "Kurtas": 1322,
+          "Kurtis": 172,
+          "Laptop Bag": 67,
+          "Leggings": 135,
+          "Lehenga Choli": 2,
+          "Lip Gloss": 5,
+          "Lip Liner": 11,
+          "Lip Plumper": 3,
+          "Lipstick": 10,
+          "Lounge Pants": 45,
+          "Lounge Shorts": 29,
+          "Lounge Tshirts": 1,
+          "Messenger Bag": 37,
+          "Mobile Pouch": 40,
+          "Mufflers": 33,
+          "Nail Polish": 16,
+          "Necklace and Chains": 53,
+          "Nehru Jackets": 4,
+          "Night suits": 59,
+          "Nightdress": 34,
+          "Patiala": 23,
+          "Pendant": 105,
+          "Perfume and Body Mist": 474,
+          "Rain Jacket": 1,
+          "Rain Trousers": 1,
+          "Ring": 79,
+          "Robe": 2,
+          "Rompers": 11,
+          "Rucksacks": 10,
+          "Salwar": 28,
+          "Salwar and Dupatta": 6,
+          "Sandals": 735,
+          "Sarees": 129,
+          "Scarves": 93,
+          "Shapewear": 2,
+          "Shirts": 2619,
+          "Shoe Accessories": 20,
+          "Shoe Laces": 1,
+          "Shorts": 447,
+          "Shrug": 2,
+          "Skirts": 99,
+          "Socks": 521,
+          "Sports Sandals": 54,
+          "Sports Shoes": 1691,
+          "Stockings": 22,
+          "Stoles": 77,
+          "Sunglasses": 886,
+          "Suspenders": 34,
+          "Sweaters": 234,
+          "Sweatshirts": 237,
+          "Swimwear": 15,
+          "Tablet Sleeve": 2,
+          "Ties": 179,
+          "Ties and Cufflinks": 1,
+          "Tights": 8,
+          "Tops": 1369,
+          "Track Pants": 249,
+          "Tracksuits": 24,
+          "Travel Accessory": 12,
+          "Trolley Bag": 3,
+          "Trousers": 435,
+          "Trunk": 119,
+          "Tshirts": 5748,
+          "Tunics": 148,
+          "Umbrellas": 5,
+          "Waist Pouch": 15,
+          "Waistcoat": 12,
+          "Wallets": 704,
+          "Watches": 1911,
+          "Water Bottle": 10,
+          "Wristbands": 5
+        },
+        "source_scope": "development",
+        "validity_column": "has_articleType_label"
       },
       "gender": {
-        "fit_partition": "train",
-        "official_output_classes": [
+        "classes": [
           "Boys",
           "Girls",
           "Men",
           "Unisex",
           "Women"
         ],
-        "official_output_class_count": 5,
-        "supported_classes": [
-          "Boys",
-          "Girls",
-          "Men",
-          "Unisex",
-          "Women"
+        "family_counts": {
+          "Boys": 397,
+          "Girls": 336,
+          "Men": 12343,
+          "Unisex": 1428,
+          "Women": 8398
+        },
+        "label_column": "gender",
+        "num_classes": 5,
+        "product_counts": {
+          "Boys": 684,
+          "Girls": 543,
+          "Men": 17753,
+          "Unisex": 1766,
+          "Women": 12027
+        },
+        "source_scope": "development",
+        "validity_column": "has_gender_label"
+      },
+      "season": {
+        "classes": [
+          "Fall",
+          "Spring",
+          "Summer",
+          "Winter"
         ],
-        "supported_class_count": 5,
-        "primary_metric_limited_classes": [],
-        "primary_metric_limited_class_count": 0,
-        "raw_class_count": 5,
-        "official_output_label_column": "gender_deployed",
-        "official_output_validity_column": "has_gender_deployed_label",
-        "supported_metric_label_column": "gender_supported",
-        "supported_metric_validity_column": "has_gender_supported_label"
+        "family_counts": {
+          "Fall": 6876,
+          "Spring": 1161,
+          "Summer": 11644,
+          "Winter": 3987
+        },
+        "label_column": "season",
+        "num_classes": 4,
+        "product_counts": {
+          "Fall": 8928,
+          "Spring": 1329,
+          "Summer": 16235,
+          "Winter": 6261
+        },
+        "source_scope": "development",
+        "validity_column": "has_season_label"
       },
       "usage": {
-        "fit_partition": "train",
-        "official_output_classes": [
+        "classes": [
           "Casual",
           "Ethnic",
           "Formal",
@@ -449,206 +678,34 @@
           "Sports",
           "Travel"
         ],
-        "official_output_class_count": 9,
-        "supported_classes": [
-          "Casual",
-          "Ethnic",
-          "Formal",
-          "NA",
-          "Party",
-          "Smart Casual",
-          "Sports",
-          "Travel"
-        ],
-        "supported_class_count": 8,
-        "primary_metric_limited_classes": [
-          {
-            "class": "Home",
-            "independent_family_groups": 1
-          }
-        ],
-        "primary_metric_limited_class_count": 1,
-        "raw_class_count": 9,
-        "official_output_label_column": "usage_deployed",
-        "official_output_validity_column": "has_usage_deployed_label",
-        "supported_metric_label_column": "usage_supported",
-        "supported_metric_validity_column": "has_usage_supported_label"
+        "family_counts": {
+          "Casual": 17636,
+          "Ethnic": 1351,
+          "Formal": 1016,
+          "Home": 1,
+          "NA": 45,
+          "Party": 10,
+          "Smart Casual": 37,
+          "Sports": 3020,
+          "Travel": 22
+        },
+        "label_column": "usage",
+        "num_classes": 9,
+        "product_counts": {
+          "Casual": 25151,
+          "Ethnic": 2183,
+          "Formal": 1949,
+          "Home": 1,
+          "NA": 61,
+          "Party": 12,
+          "Smart Casual": 47,
+          "Sports": 3346,
+          "Travel": 22
+        },
+        "source_scope": "development",
+        "validity_column": "has_usage_label"
       }
     }
   },
-  "taxonomy_sensitivity": {
-    "fit_scope": "train_only",
-    "fit_partition": "train",
-    "support_unit": "distinct_product_family_group",
-    "targets": {
-      "articleType": {
-        "2": {
-          "kept_classes": 105,
-          "excluded_classes": 19
-        },
-        "3": {
-          "kept_classes": 100,
-          "excluded_classes": 24
-        },
-        "4": {
-          "kept_classes": 98,
-          "excluded_classes": 26
-        },
-        "5": {
-          "kept_classes": 94,
-          "excluded_classes": 30
-        }
-      },
-      "season": {
-        "2": {
-          "kept_classes": 4,
-          "excluded_classes": 0
-        },
-        "3": {
-          "kept_classes": 4,
-          "excluded_classes": 0
-        },
-        "4": {
-          "kept_classes": 4,
-          "excluded_classes": 0
-        },
-        "5": {
-          "kept_classes": 4,
-          "excluded_classes": 0
-        }
-      },
-      "gender": {
-        "2": {
-          "kept_classes": 5,
-          "excluded_classes": 0
-        },
-        "3": {
-          "kept_classes": 5,
-          "excluded_classes": 0
-        },
-        "4": {
-          "kept_classes": 5,
-          "excluded_classes": 0
-        },
-        "5": {
-          "kept_classes": 5,
-          "excluded_classes": 0
-        }
-      },
-      "usage": {
-        "2": {
-          "kept_classes": 8,
-          "excluded_classes": 1
-        },
-        "3": {
-          "kept_classes": 8,
-          "excluded_classes": 1
-        },
-        "4": {
-          "kept_classes": 8,
-          "excluded_classes": 1
-        },
-        "5": {
-          "kept_classes": 8,
-          "excluded_classes": 1
-        }
-      }
-    }
-  },
-  "taxonomy_fit": {
-    "partition": "train",
-    "minimum_independent_family_groups": 3,
-    "sensitivity_scope": "train_only",
-    "holdout_target_coverage_audited": false
-  },
-  "quarantine": {
-    "total_rows": 61,
-    "cross_role_exact_rows": 11,
-    "cross_role_near_rows_conservatively_quarantined": 9,
-    "conflicting_exact_sha_groups": 20,
-    "conflicting_exact_sha_rows": 41,
-    "allowed_reasons": [
-      "cross_role_exact_duplicate",
-      "cross_role_near_duplicate_conservative_quarantine",
-      "conflicting_labels_exact_sha"
-    ]
-  },
-  "development_target_distributions": {
-    "articleType": {
-      "train": {
-        "valid_count": 26948,
-        "num_classes": 100,
-        "missing_supported_classes": []
-      },
-      "val": {
-        "valid_count": 5768,
-        "num_classes": 100,
-        "missing_supported_classes": []
-      },
-      "protected_partitions": {
-        "partitions": [
-          "holdout",
-          "quarantine"
-        ],
-        "status": "target outcomes are not aggregated before final evaluation"
-      }
-    },
-    "season": {
-      "train": {
-        "valid_count": 26975,
-        "num_classes": 4,
-        "missing_supported_classes": []
-      },
-      "val": {
-        "valid_count": 5778,
-        "num_classes": 4,
-        "missing_supported_classes": []
-      },
-      "protected_partitions": {
-        "partitions": [
-          "holdout",
-          "quarantine"
-        ],
-        "status": "target outcomes are not aggregated before final evaluation"
-      }
-    },
-    "gender": {
-      "train": {
-        "valid_count": 26992,
-        "num_classes": 5,
-        "missing_supported_classes": []
-      },
-      "val": {
-        "valid_count": 5781,
-        "num_classes": 5,
-        "missing_supported_classes": []
-      },
-      "protected_partitions": {
-        "partitions": [
-          "holdout",
-          "quarantine"
-        ],
-        "status": "target outcomes are not aggregated before final evaluation"
-      }
-    },
-    "usage": {
-      "train": {
-        "valid_count": 26990,
-        "num_classes": 8,
-        "missing_supported_classes": []
-      },
-      "val": {
-        "valid_count": 5781,
-        "num_classes": 8,
-        "missing_supported_classes": []
-      },
-      "protected_partitions": {
-        "partitions": [
-          "holdout",
-          "quarantine"
-        ],
-        "status": "target outcomes are not aggregated before final evaluation"
-      }
-    }
-  }
+  "total_image_backed_rows": 38612
 }

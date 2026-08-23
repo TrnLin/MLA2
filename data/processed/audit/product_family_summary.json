@@ -13,5 +13,5 @@
   "largest_active_family_group": 80,
   "active_normalized_name_keys": 27311,
   "active_name_keys_crossing_family_groups": 0,
-  "policy": "First quarantine every cross-role visual component and conflicting exact hash. Then block each remaining normalized name, exact hash, and accepted automatic visual component for train/validation/holdout allocation. Human input is not part of preparation or split validation."
+  "policy": "First quarantine every cross-role visual component and conflicting exact hash. Then block each remaining normalized name, exact hash, and accepted automatic visual component for development/holdout allocation. Human input is not part of preparation or split validation."
 }

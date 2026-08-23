@@ -1,5 +1,8 @@
 # 0013 - Every model product has both resolution variants
 
+- Status: Superseded by 0015
+- Date: 2026-08-22
+
 ## Decision
 
 The low- and high-resolution files are two image variants of the same Fashion Product Images
@@ -42,7 +45,7 @@ pairs are non-blocking items in `docs/reviews/open_decisions.md`.
 
 ## Rebuild
 
-Run the catalogue and merge functions from `notebooks/00_eda.ipynb`. They are reusable library
+Run the catalogue and merge functions from `notebooks/01_data_preparation.ipynb`. They are reusable library
 code, not standalone EDA scripts:
 
 ```python

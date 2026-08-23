@@ -1,7 +1,0 @@
-block_basis,family_units,product_rows,multirow_families,largest_family
-accepted_near_duplicate,42,103,42,6
-exact_sha256+accepted_near_duplicate,94,188,94,2
-exact_sha256+normalized_product_name+accepted_near_duplicate,364,1554,364,51
-normalized_product_name,4012,13786,4012,80
-normalized_product_name+accepted_near_duplicate,55,478,55,33
-singleton,22442,22442,0,1

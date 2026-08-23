@@ -1,6 +1,6 @@
 # 0011 - Automatic family safety boundary
 
-- Status: Accepted
+- Status: Superseded in part by 0014
 - Date: 2026-08-22
 
 ## Context

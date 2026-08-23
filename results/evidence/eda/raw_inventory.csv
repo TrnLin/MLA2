@@ -1,5 +1,0 @@
-source,rows,unique_ids,columns,read_scope
-teacher training metadata,38617,38617,12,header and ID only; target columns never loaded
-official prediction metadata,5829,5829,5,fixed header and ID only; never labelled data
-candidate training image files,38612,38612,n/a,label-free structural image audit
-candidate prediction image files,5829,5829,n/a,label-free duplicate audit only

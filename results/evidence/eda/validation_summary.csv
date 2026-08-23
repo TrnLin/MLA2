@@ -1,5 +1,0 @@
-target,train_valid,val_valid,train_classes,classes_seen_in_val,coverage_percent,missing_classes,max_gap_percentage_points,mean_gap_percentage_points,classes_with_one_val_family,classes_with_two_val_families,classes_with_fewer_than_three_val_families
-articleType,26948,5768,100,100,100.00000000,None,0.25106143,0.01694129,18,8,26
-season,26975,5778,4,4,100.00000000,None,0.03128417,0.01564209,0,0,0
-gender,26992,5781,5,5,100.00000000,None,0.02556896,0.01313170,0,0,0
-usage,26990,5781,8,8,100.00000000,None,0.10113492,0.02792058,0,1,1

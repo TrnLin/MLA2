@@ -216,17 +216,17 @@ def write_development_target_audit(
     issues_path: str | Path,
     targets: tuple[str, ...] = TARGET_COLUMNS,
 ) -> None:
-    """Add target evidence from train and validation only; protected values stay unused."""
+    """Add target evidence from development only; protected values stay unused."""
     frame = pd.read_csv(splits_csv, keep_default_na=False)
-    development = frame[frame["partition"].isin({"train", "val"})].copy()
+    development = frame[frame["partition"].eq("development")].copy()
     summary_file = Path(summary_path)
     summary = json.loads(summary_file.read_text(encoding="utf-8"))
     missing_rows: list[dict[str, Any]] = []
     target_rows: list[dict[str, Any]] = []
     missing_issues: list[dict[str, Any]] = []
     audit_summary: dict[str, Any] = {
-        "scope": "train_and_validation_only",
-        "included_partitions": ["train", "val"],
+        "scope": "development_only",
+        "included_partitions": ["development"],
         "excluded_partitions": ["holdout", "quarantine"],
         "protected_target_values_hashed": 0,
         "rows": int(len(development)),
@@ -235,7 +235,7 @@ def write_development_target_audit(
     for target in targets:
         audit_summary["targets"][target] = {}
         mask_column = f"has_{target}_label"
-        for partition in ("train", "val"):
+        for partition in ("development",):
             rows = development[development["partition"].eq(partition)]
             valid = _as_bool(rows[mask_column])
             missing = ~valid
@@ -270,7 +270,7 @@ def write_development_target_audit(
             for item_id in rows.loc[missing, "id"].astype(int):
                 missing_issues.append(
                     {
-                        "role": "train",
+                        "role": "development",
                         "id": item_id,
                         "field": target,
                         "issue_code": "missing_target_label",

@@ -25,9 +25,10 @@ analysis of the runs already done, choose the analysis.
 
 ## Conventions
 
-- `notebooks/00_eda.ipynb` is the official EDA exception: its analysis and plot code stays
-  visible in the notebook so one Run All tells the whole story. Reusable dataset, split,
-  image-variant, training, and evaluation contracts stay in `src/fashion/`.
+- `notebooks/01_data_preparation.ipynb` is the official data-preparation exception: its
+  audits, analysis, and plot code stay visible so one Run All tells the whole shared-data
+  story. Reusable dataset, split, image-variant, training, and evaluation contracts stay
+  in `src/fashion/`.
 - Later notebooks stay narrative and import reusable logic from `src/fashion/`.
 - Write a figure to `results/figures/` when the report will cite it.
 - Use `./.venv/bin/python`.

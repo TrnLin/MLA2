@@ -1,0 +1,6 @@
+order,stage,implementation_evidence
+1,discover files,directory inventory
+2,SHA-256 raw bytes,compute_sha256(path)
+3,decode and verify,Pillow verify/load
+4,exact ID reconciliation,set comparison
+5,duplicate analysis,exact and perceptual evidence

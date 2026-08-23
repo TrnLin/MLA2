@@ -1,0 +1,6 @@
+id,reason,path
+33272,exact duplicate,data/raw/teacher/train/images_train/33272.jpg
+39337,exact duplicate,data/raw/teacher/train/images_train/39337.jpg
+2187,lowest sampled brightness,data/raw/teacher/train/images_train/2187.jpg
+48634,highest sampled brightness,data/raw/teacher/train/images_train/48634.jpg
+28150,lowest sampled edge strength,data/raw/teacher/train/images_train/28150.jpg

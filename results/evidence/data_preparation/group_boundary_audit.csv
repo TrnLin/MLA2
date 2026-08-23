@@ -1,0 +1,6 @@
+relationship,quarantine_relationship_unit,active_partition_crossings,development_fold_crossings,relationships_to_quarantine
+sha256,group,0,0,0
+duplicate_group,group,0,0,0
+product_family_group,group,0,0,0
+product_name_key,group,0,0,13
+accepted_perceptual_pair,pair,0,0,6

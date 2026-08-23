@@ -1,0 +1,5 @@
+target,classes,classes_in_all_folds,classes_with_warning,classes_untrainable_in_any_fold,minimum_class_products
+articleType,124,98,26,12,1
+gender,5,5,0,0,543
+season,4,4,0,0,1329
+usage,9,8,1,1,1

@@ -60,10 +60,9 @@
     }
   },
   "development_target_audit": {
-    "scope": "train_and_validation_only",
+    "scope": "development_only",
     "included_partitions": [
-      "train",
-      "val"
+      "development"
     ],
     "excluded_partitions": [
       "holdout",
@@ -73,59 +72,35 @@
     "rows": 32773,
     "targets": {
       "articleType": {
-        "train": {
-          "rows": 26992,
-          "valid_count": 26992,
+        "development": {
+          "rows": 32773,
+          "valid_count": 32773,
           "missing_count": 0,
           "class_count": 124
-        },
-        "val": {
-          "rows": 5781,
-          "valid_count": 5781,
-          "missing_count": 0,
-          "class_count": 110
         }
       },
       "season": {
-        "train": {
-          "rows": 26992,
-          "valid_count": 26975,
-          "missing_count": 17,
-          "class_count": 4
-        },
-        "val": {
-          "rows": 5781,
-          "valid_count": 5778,
-          "missing_count": 3,
+        "development": {
+          "rows": 32773,
+          "valid_count": 32753,
+          "missing_count": 20,
           "class_count": 4
         }
       },
       "gender": {
-        "train": {
-          "rows": 26992,
-          "valid_count": 26992,
-          "missing_count": 0,
-          "class_count": 5
-        },
-        "val": {
-          "rows": 5781,
-          "valid_count": 5781,
+        "development": {
+          "rows": 32773,
+          "valid_count": 32773,
           "missing_count": 0,
           "class_count": 5
         }
       },
       "usage": {
-        "train": {
-          "rows": 26992,
-          "valid_count": 26991,
+        "development": {
+          "rows": 32773,
+          "valid_count": 32772,
           "missing_count": 1,
           "class_count": 9
-        },
-        "val": {
-          "rows": 5781,
-          "valid_count": 5781,
-          "missing_count": 0,
-          "class_count": 8
         }
       }
     }

@@ -1,29 +1,59 @@
 # Notebooks
 
-Use notebooks to tell the project story and show results.
+Use notebooks to tell the investigation story and show evidence. Reusable logic stays in
+`src/fashion/`.
 
-`00_eda.ipynb` is the one official EDA workflow. It is intentionally
-self-contained: a fresh-kernel **Run All** validates and reuses the unchanged shared
-data contract, performs every EDA calculation, saves all report evidence and figures,
-and ends with the modelling decisions. It follows the ML EDA lifecycle: scope,
-provenance, data quality, leakage controls, target analysis, image-feature analysis,
-evaluation design, and modelling recommendations. Each analysis block presents its
-purpose, focused evidence, finding, and modelling consequence. Code stays in the
-notebook for auditability but is collapsed by default. Small technical cells sit
-beside the analysis they support instead of forming a helper-code wall at the start.
-Every code cell has an immediately preceding markdown guide that explains its role,
-and long implementation blocks are split into focused steps. These code guides are
-kept in the notebook but removed from the code-free HTML report. The notebook must
-not import a project EDA helper module.
+## Reading order and status
 
-Every count names its unit. Product IDs are used for label distributions and final
-metrics. The paired loader uses two image-input rows per active product, so train,
-validation, and holdout input counts are twice their product counts.
+| # | Notebook | Owner | Status | Purpose |
+|---|---|---|---|---|
+| 00 | `00_problem_definition.ipynb` | shared | complete | users, task contracts, boundaries, success criteria, and risks |
+| 01 | `01_data_preparation.ipynb` | shared data owner | complete and executed | raw audit through the shared model-ready data contract |
+| 02 | `02_task1_article_type.ipynb` | Task 1 teammate | planning scaffold | article-type experiments and provisional judgement |
+| 03 | `03_task2_season.ipynb` | Task 2 teammate | planning scaffold | season experiments, ambiguity, and shortcut analysis |
+| 04 | `04_task3_gender_usage.ipynb` | Task 3 teammate | planning scaffold | separate gender and usage decisions plus shared-model comparison |
+| 05 | `05_task4_visual_search.ipynb` | Task 4 teammate | planning scaffold | retrieval experiments, coverage, cost, and provisional judgement |
+| 06 | `06_final_evaluation.ipynb` | group evaluation owner | locked scaffold | one independent holdout evaluation and ultimate judgement |
 
-Cached validation is the default. It fully hashes the lean protected-safe prepared
-pack and checks raw path/size inventory plus a fixed content sample. Use
-`FASHION_EDA_MODE=full` for the slow forensic rebuild after raw inputs change.
+The five scaffold notebooks contain Markdown only. They contain no completed training code,
+result, exact metric choice, model choice, transform choice, or fake claim. Their
+`TODO(owner)` fields show what the assigned teammate must decide and justify.
 
-Keep reusable loading, split, image-variant, training, retrieval-metric, and
-evaluation contracts in `src/fashion/`. Both image variants share one product ID
-and never count as independent evidence. Number later notebooks in reading order.
+## Shared rules for every task
+
+- `data/processed/splits.csv` is the only split and must be read through protected loaders.
+- `development` contains five precomputed folds. The task owner records one fixed fold or all five
+  before running experiments.
+- Holdout and quarantine targets stay sealed until Notebook 06. Holdout is opened once after all
+  choices are frozen.
+- Submitted models are trained from scratch. Pretrained systems are separate benchmarks only.
+- Tasks 1–3 use teacher images. Task 4 owns any decision about another image collection.
+- Task-specific preprocessing and exact metrics are chosen and frozen inside the task notebook.
+- Learned preprocessing values are fitted on the training folds of each round, not all development.
+- Every training run appends to `results/runs.csv` through the shared registry.
+- Figures and tables used by the report trace to run IDs instead of hand-written numbers.
+
+## Notebook 01 contract
+
+`01_data_preparation.ipynb` is the one official shared data-preparation workflow. It is intentionally
+self-contained: a fresh-kernel **Run All** validates or rebuilds the shared data contract, performs
+development-only analysis, and saves report evidence and figures. Its job includes raw SHA-256
+hashing before decode, exact ID reconciliation, duplicate/family/quarantine control, the sole split,
+five CV folds, protected-label checks, class-support evidence, NMI, image-quality descriptions, and
+transform-risk examples.
+
+Code stays visible for auditability. Every code cell displays its result immediately and is followed
+by a short finding or definition-only note. Cached validation is the default. Set
+`FASHION_PREPARATION_MODE=full` for the slow child-process rebuild after teacher inputs change.
+
+Notebook 01 does not fit model statistics or select image size, crop, padding, loss, sampler, model,
+metric, or retrieval protocol. `development_image_profile.json` is descriptive and has
+`allowed_for_model_fit: false`.
+
+## Task and final-evaluation boundary
+
+Notebooks 02–05 reuse shared preparation and add only task-specific hypotheses, preprocessing
+comparisons, metric decisions, registered experiments, validation error analysis, efficiency evidence,
+and provisional judgements. Notebook 05 also owns query size, query/gallery, relevance, Top-K, index,
+and ranking-evaluation decisions. Notebook 06 receives frozen run IDs and opens protected evaluation
+exactly once. It reports the result honestly and never tunes after the unlock.

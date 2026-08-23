@@ -1,0 +1,17 @@
+role,check,count,details
+train,duplicate IDs in CSV,0,
+train,non-numeric filename stems,1,
+train,numeric stems with multiple files,0,
+train,IDs with multiple extensions,0,
+train,metadata IDs without valid image,5,"12347,39401,39403,39410,39425"
+train,extra valid image IDs,0,
+train,unsupported extensions,1,
+train,corrupt supported images,0,
+prediction,duplicate IDs in CSV,0,
+prediction,non-numeric filename stems,0,
+prediction,numeric stems with multiple files,0,
+prediction,IDs with multiple extensions,0,
+prediction,metadata IDs without valid image,0,
+prediction,extra valid image IDs,0,
+prediction,unsupported extensions,0,
+prediction,corrupt supported images,0,

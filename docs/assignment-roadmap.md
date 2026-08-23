@@ -76,5 +76,5 @@ environment.
 - Record every training run.
 - Keep raw data unchanged.
 - Keep shared training/evaluation logic in `src/fashion/`; keep the official EDA
-  calculations and plots inside `notebooks/00_eda.ipynb`.
+  calculations and plots inside `notebooks/01_data_preparation.ipynb`.
 - Prefer useful comparisons and honest failure analysis over one extra run.

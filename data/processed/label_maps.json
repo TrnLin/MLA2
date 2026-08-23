@@ -1,9 +1,10 @@
 {
   "articleType": {
-    "source_partition": "train",
-    "label_column": "articleType_deployed",
-    "validity_column": "has_articleType_deployed_label",
-    "unknown_policy": "mask_and_report",
+    "source_scope": "development",
+    "source_partition": "development",
+    "label_column": "articleType",
+    "validity_column": "has_articleType_label",
+    "unknown_policy": "report_without_expanding_during_development",
     "unknown_index": -1,
     "num_classes": 124,
     "classes": [
@@ -386,10 +387,11 @@
     }
   },
   "season": {
-    "source_partition": "train",
-    "label_column": "season_deployed",
-    "validity_column": "has_season_deployed_label",
-    "unknown_policy": "mask_and_report",
+    "source_scope": "development",
+    "source_partition": "development",
+    "label_column": "season",
+    "validity_column": "has_season_label",
+    "unknown_policy": "report_without_expanding_during_development",
     "unknown_index": -1,
     "num_classes": 4,
     "classes": [
@@ -412,10 +414,11 @@
     }
   },
   "gender": {
-    "source_partition": "train",
-    "label_column": "gender_deployed",
-    "validity_column": "has_gender_deployed_label",
-    "unknown_policy": "mask_and_report",
+    "source_scope": "development",
+    "source_partition": "development",
+    "label_column": "gender",
+    "validity_column": "has_gender_label",
+    "unknown_policy": "report_without_expanding_during_development",
     "unknown_index": -1,
     "num_classes": 5,
     "classes": [
@@ -441,10 +444,11 @@
     }
   },
   "usage": {
-    "source_partition": "train",
-    "label_column": "usage_deployed",
-    "validity_column": "has_usage_deployed_label",
-    "unknown_policy": "mask_and_report",
+    "source_scope": "development",
+    "source_partition": "development",
+    "label_column": "usage",
+    "validity_column": "has_usage_label",
+    "unknown_policy": "report_without_expanding_during_development",
     "unknown_index": -1,
     "num_classes": 9,
     "classes": [

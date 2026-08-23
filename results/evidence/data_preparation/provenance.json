@@ -1,0 +1,10 @@
+{
+  "cv_folds": 5,
+  "cv_seed": 2753,
+  "development_eda_only": true,
+  "lineage_file": "results/evidence/data_preparation/lineage.csv",
+  "model_fit_allowed": false,
+  "protected_target_values_used": 0,
+  "schema_version": "1.0.0",
+  "shared_source_policy": "teacher_only"
+}

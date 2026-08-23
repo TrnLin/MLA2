@@ -1,0 +1,30 @@
+{
+  "allowed_for_model_fit": false,
+  "aspect_ratio": {
+    "maximum": 1.0,
+    "median": 0.75,
+    "minimum": 0.6625
+  },
+  "format_counts": {
+    "JPEG": 32773
+  },
+  "height": {
+    "maximum": 80.0,
+    "median": 80.0,
+    "minimum": 60.0
+  },
+  "limitation": "task owners must fit normalization and choose resize/crop/padding inside their own training-fold workflow",
+  "mode_counts": {
+    "L": 294,
+    "RGB": 32479
+  },
+  "purpose": "descriptive image audit only",
+  "rows": 32773,
+  "schema_version": "1.0.0",
+  "source_scope": "development",
+  "width": {
+    "maximum": 60.0,
+    "median": 60.0,
+    "minimum": 53.0
+  }
+}

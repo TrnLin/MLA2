@@ -39,9 +39,9 @@ def has_valid_label(value: Any) -> bool:
 def build_label_maps(
     manifest: pd.DataFrame,
     targets: Sequence[str],
-    source_partition: str = "train",
+    source_partition: str = "development",
 ) -> dict[str, dict[str, object]]:
-    """Build stable mappings from one explicit partition's deployed labels."""
+    """Build stable mappings from every nonblank development-observed label."""
     source = manifest
     if "partition" in manifest:
         source = manifest[manifest["partition"].eq(source_partition)]
@@ -49,19 +49,18 @@ def build_label_maps(
         raise ValueError(f"label-map source partition {source_partition!r} is empty")
     maps: dict[str, dict[str, object]] = {}
     for target in targets:
-        deployed_column = f"{target}_deployed"
-        deployed_mask = f"has_{target}_deployed_label"
-        label_column = deployed_column if deployed_column in source else target
-        mask_column = deployed_mask if deployed_mask in source else f"has_{target}_label"
+        label_column = target
+        mask_column = f"has_{target}_label"
         labels = sorted(
             source.loc[_as_bool(source[mask_column]), label_column].astype(str).unique()
         )
         label_to_index = {label: index for index, label in enumerate(labels)}
         maps[target] = {
+            "source_scope": source_partition,
             "source_partition": source_partition,
             "label_column": label_column,
             "validity_column": mask_column,
-            "unknown_policy": "mask_and_report",
+            "unknown_policy": "report_without_expanding_during_development",
             "unknown_index": -1,
             "num_classes": len(labels),
             "classes": labels,
@@ -76,13 +75,13 @@ def write_label_maps_from_splits(
     output_path: str | Path,
     targets: Sequence[str],
 ) -> dict[str, dict[str, object]]:
-    """Fit label maps after splitting, using the training partition only."""
+    """Fit stable label maps on image-backed development rows."""
     frame = (
         pd.read_csv(splits, keep_default_na=False)
         if isinstance(splits, (str, Path))
         else splits.copy()
     )
-    maps = build_label_maps(frame, targets, source_partition="train")
+    maps = build_label_maps(frame, targets, source_partition="development")
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(maps, indent=2), encoding="utf-8")
@@ -94,7 +93,7 @@ def encode_target_labels(
     target: str,
     mapping: dict[str, object],
 ) -> tuple[np.ndarray, np.ndarray, list[str]]:
-    """Encode known labels and mask labels absent from the train-fitted mapping."""
+    """Encode known labels and report labels absent from the development mapping."""
     label_column = str(mapping.get("label_column", target))
     mask_column = str(mapping.get("validity_column", f"has_{target}_label"))
     label_to_index = {

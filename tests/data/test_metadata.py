@@ -34,22 +34,22 @@ def test_label_maps_are_sorted_and_bijective():
     assert mapping["index_to_label"] == {"0": "A", "1": "B"}
 
 
-def test_label_maps_fit_train_and_mask_holdout_or_quarantine_only_classes():
+def test_label_maps_fit_development_and_report_protected_only_classes():
     frame = pd.DataFrame(
         {
-            "partition": ["train", "train", "holdout", "quarantine"],
-            "usage_deployed": ["Casual", "NA", "Future", "Hidden"],
-            "has_usage_deployed_label": [True, True, True, True],
+            "partition": ["development", "development", "holdout", "quarantine"],
+            "usage": ["Casual", "NA", "Future", "Hidden"],
+            "has_usage_label": [True, True, True, True],
         }
     )
     mapping = build_label_maps(frame, ("usage",))["usage"]
     values, known, unknown = encode_target_labels(frame, "usage", mapping)
 
-    assert mapping["source_partition"] == "train"
+    assert mapping["source_scope"] == "development"
     assert mapping["classes"] == ["Casual", "NA"]
     assert values.tolist() == [0, 1, -1, -1]
     assert known.tolist() == [True, True, False, False]
     assert unknown == ["Future", "Hidden"]
-    assert mapping["unknown_policy"] == "mask_and_report"
+    assert mapping["unknown_policy"] == "report_without_expanding_during_development"
     assert mapping["unknown_index"] == -1
     assert values[1] == pytest.approx(1)

@@ -1,0 +1,171 @@
+{
+  "allocation_unit": "product_family_group",
+  "fold_count": 5,
+  "folds": {
+    "0": {
+      "target_coverage": {
+        "articleType": {
+          "training_class_count": 123,
+          "validation_class_count": 102,
+          "validation_classes_absent_from_training": [
+            "Ties and Cufflinks"
+          ]
+        },
+        "gender": {
+          "training_class_count": 5,
+          "validation_class_count": 5,
+          "validation_classes_absent_from_training": []
+        },
+        "season": {
+          "training_class_count": 4,
+          "validation_class_count": 4,
+          "validation_classes_absent_from_training": []
+        },
+        "usage": {
+          "training_class_count": 9,
+          "validation_class_count": 8,
+          "validation_classes_absent_from_training": []
+        }
+      },
+      "training_families": 18334,
+      "training_products": 26218,
+      "validation_families": 4565,
+      "validation_products": 6555
+    },
+    "1": {
+      "target_coverage": {
+        "articleType": {
+          "training_class_count": 120,
+          "validation_class_count": 108,
+          "validation_classes_absent_from_training": [
+            "Body Wash and Scrub",
+            "Cushion Covers",
+            "Ipad",
+            "Lounge Tshirts"
+          ]
+        },
+        "gender": {
+          "training_class_count": 5,
+          "validation_class_count": 5,
+          "validation_classes_absent_from_training": []
+        },
+        "season": {
+          "training_class_count": 4,
+          "validation_class_count": 4,
+          "validation_classes_absent_from_training": []
+        },
+        "usage": {
+          "training_class_count": 8,
+          "validation_class_count": 9,
+          "validation_classes_absent_from_training": [
+            "Home"
+          ]
+        }
+      },
+      "training_families": 18314,
+      "training_products": 26218,
+      "validation_families": 4585,
+      "validation_products": 6555
+    },
+    "2": {
+      "target_coverage": {
+        "articleType": {
+          "training_class_count": 122,
+          "validation_class_count": 111,
+          "validation_classes_absent_from_training": [
+            "Compact",
+            "Key chain"
+          ]
+        },
+        "gender": {
+          "training_class_count": 5,
+          "validation_class_count": 5,
+          "validation_classes_absent_from_training": []
+        },
+        "season": {
+          "training_class_count": 4,
+          "validation_class_count": 4,
+          "validation_classes_absent_from_training": []
+        },
+        "usage": {
+          "training_class_count": 9,
+          "validation_class_count": 8,
+          "validation_classes_absent_from_training": []
+        }
+      },
+      "training_families": 18303,
+      "training_products": 26219,
+      "validation_families": 4596,
+      "validation_products": 6554
+    },
+    "3": {
+      "target_coverage": {
+        "articleType": {
+          "training_class_count": 122,
+          "validation_class_count": 109,
+          "validation_classes_absent_from_training": [
+            "Highlighter and Blush",
+            "Shoe Laces"
+          ]
+        },
+        "gender": {
+          "training_class_count": 5,
+          "validation_class_count": 5,
+          "validation_classes_absent_from_training": []
+        },
+        "season": {
+          "training_class_count": 4,
+          "validation_class_count": 4,
+          "validation_classes_absent_from_training": []
+        },
+        "usage": {
+          "training_class_count": 9,
+          "validation_class_count": 8,
+          "validation_classes_absent_from_training": []
+        }
+      },
+      "training_families": 18346,
+      "training_products": 26217,
+      "validation_families": 4553,
+      "validation_products": 6556
+    },
+    "4": {
+      "target_coverage": {
+        "articleType": {
+          "training_class_count": 121,
+          "validation_class_count": 107,
+          "validation_classes_absent_from_training": [
+            "Concealer",
+            "Rain Jacket",
+            "Rain Trousers"
+          ]
+        },
+        "gender": {
+          "training_class_count": 5,
+          "validation_class_count": 5,
+          "validation_classes_absent_from_training": []
+        },
+        "season": {
+          "training_class_count": 4,
+          "validation_class_count": 4,
+          "validation_classes_absent_from_training": []
+        },
+        "usage": {
+          "training_class_count": 9,
+          "validation_class_count": 8,
+          "validation_classes_absent_from_training": []
+        }
+      },
+      "training_families": 18299,
+      "training_products": 26220,
+      "validation_families": 4600,
+      "validation_products": 6553
+    }
+  },
+  "ideal_validation_products": 6554.6,
+  "maximum_allowed_size_deviation": 80,
+  "rare_class_policy": "report_missing_training_support_without_dropping_rows",
+  "schema_version": "1.0.0",
+  "seed": 2753,
+  "source_scope": "development"
+}
