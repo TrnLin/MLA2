@@ -2,11 +2,7 @@ import ast
 import subprocess
 
 from fashion.config import ROOT
-from fashion.data.pipeline import (
-    _BASE_ARTIFACTS,
-    _HIGH_RESOLUTION_ARTIFACTS,
-    CACHE_FILENAME,
-)
+from fashion.data.pipeline import _BASE_ARTIFACTS, CACHE_FILENAME
 
 
 def test_assignment_breakdown_uses_canonical_data_contract():
@@ -91,7 +87,6 @@ def test_locked_setup_and_single_split_rule_are_documented():
 def test_delivered_prepared_cache_is_not_ignored():
     required = {
         *_BASE_ARTIFACTS,
-        *_HIGH_RESOLUTION_ARTIFACTS,
         "data/processed/splits.csv",
         f"data/processed/{CACHE_FILENAME}",
     }

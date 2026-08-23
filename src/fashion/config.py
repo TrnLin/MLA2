@@ -28,12 +28,6 @@ ROOT = _resolve_project_root()
 RAW_DATA_DIR = ROOT / "data/raw"
 PROCESSED_DATA_DIR = ROOT / "data/processed"
 
-ORIGINAL_DATA_DIR = RAW_DATA_DIR / "original"
-ORIGINAL_CSV = ORIGINAL_DATA_DIR / "styles.csv"
-ORIGINAL_IMAGE_LINKS_CSV = ORIGINAL_DATA_DIR / "images.csv"
-ORIGINAL_IMAGE_DIR = ORIGINAL_DATA_DIR / "images"
-ORIGINAL_STYLE_JSON_DIR = ORIGINAL_DATA_DIR / "styles"
-
 TEACHER_DATA_DIR = RAW_DATA_DIR / "teacher"
 TEACHER_TRAIN_DIR = TEACHER_DATA_DIR / "train"
 TEACHER_TRAIN_CSV = TEACHER_TRAIN_DIR / "styles_train.csv"
@@ -52,10 +46,6 @@ CV_FOLD_SUMMARY_JSON = PROCESSED_DATA_DIR / "cv_fold_summary.json"
 DEVELOPMENT_CLASS_SUMMARY_CSV = PROCESSED_DATA_DIR / "development_class_summary.csv"
 DEVELOPMENT_IMAGE_PROFILE_JSON = PROCESSED_DATA_DIR / "development_image_profile.json"
 TAXONOMY_JSON = PROCESSED_DATA_DIR / "taxonomy.json"
-ORIGINAL_ONLY_NORMALIZATION_JSON = PROCESSED_DATA_DIR / "normalization_original_only.json"
-PAIRED_NORMALIZATION_JSON = PROCESSED_DATA_DIR / "paired_normalization.json"
-# The doubled original/high-resolution policy is the main training path.
-NORMALIZATION_JSON = PAIRED_NORMALIZATION_JSON
 
 RESULTS_DIR = ROOT / "results"
 FIGURE_DIR = RESULTS_DIR / "figures"
@@ -65,10 +55,6 @@ DATA_PREPARATION_EVIDENCE_DIR = EVIDENCE_DIR / "data_preparation"
 
 TARGET_COLUMNS = ("articleType", "season", "gender", "usage")
 RANDOM_SEED = 2753
-# Numpy shape order: height, width. The native 60x80 images fill 96x128 exactly.
-IMAGE_SIZE = (128, 96)
-LEGACY_IMAGE_SIZE = (128, 128)
-PAD_COLOR = (255, 255, 255)
 DEVELOPMENT_RATIO = 0.85
 HOLDOUT_RATIO = 0.15
 CV_FOLD_COUNT = 5

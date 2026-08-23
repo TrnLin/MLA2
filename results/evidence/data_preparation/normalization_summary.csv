@@ -1,3 +1,0 @@
-policy,source_partition,product_ids,image_inputs,mean_rgb,std_rgb,weighting
-main paired,train,26992,53984,0.850714 / 0.833706 / 0.828260,0.271851 / 0.283558 / 0.287189,two images; pair weights sum to one
-original-only baseline,train,26992,26992,0.849930 / 0.833085 / 0.827470,0.270126 / 0.281899 / 0.285457,one image per product

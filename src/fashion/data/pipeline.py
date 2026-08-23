@@ -51,10 +51,6 @@ _BASE_ARTIFACTS = (
     "data/processed/taxonomy.json",
 )
 
-# Kept temporarily as an empty compatibility symbol for downstream imports during migration.
-_HIGH_RESOLUTION_ARTIFACTS: tuple[str, ...] = ()
-
-
 def _json_digest(value: Any) -> str:
     payload = json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
