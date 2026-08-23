@@ -1,5 +1,8 @@
 # 0013 - Every model product has both resolution variants
 
+- Status: Superseded by 0015
+- Date: 2026-08-22
+
 ## Decision
 
 The low- and high-resolution files are two image variants of the same Fashion Product Images

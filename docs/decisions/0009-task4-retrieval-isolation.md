@@ -1,6 +1,6 @@
 # 0009 — Task 4 retrieval isolation
 
-- Status: Accepted
+- Status: Superseded in part by 0015
 - Date: 2026-08-21
 
 ## Context

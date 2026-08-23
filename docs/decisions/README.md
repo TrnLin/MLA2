@@ -21,16 +21,17 @@ mark the old one as superseded, and link both records.
 - `0001-data-roles-and-raw-immutability.md`
 - `0005-conflicting-exact-duplicate-quarantine.md`
 - `0006-python-constraints-workflow.md`
-- `0008-aspect-preserving-image-contract.md`
-- `0009-task4-retrieval-isolation.md`
 - `0010-official-output-and-supported-metrics.md`
 - `0014-development-holdout-cv-boundary.md`
+- `0015-teacher-only-shared-image-preparation.md`
 
 ## Superseded decisions
 
 - `0004-product-group-leakage-check.md` — superseded by 0011.
 - `0007-supported-deployment-taxonomy.md` — superseded by 0010.
 - `0003-protected-eda-and-train-only-statistics.md` — superseded by 0014.
+- `0008-aspect-preserving-image-contract.md` — superseded by 0015.
+- `0013-high-resolution-training-variants.md` — superseded by 0015.
 
 ## Accepted with later amendments
 
@@ -40,6 +41,8 @@ mark the old one as superseded, and link both records.
   the automatic family safety rule remains active.
 - `0012-protected-target-runtime-boundary.md` — partition wording superseded by 0014;
   the protected runtime boundary remains active.
+- `0009-task4-retrieval-isolation.md` — the fixed shared query/gallery and image-variant protocol is
+  superseded by 0015; the rule against retrieval self-match leakage remains active.
 
 ## Proposed decisions and open gates
 

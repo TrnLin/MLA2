@@ -1,6 +1,6 @@
 # 0008 — Aspect-preserving image contract
 
-- Status: Accepted
+- Status: Superseded by 0015
 - Date: 2026-08-21
 
 ## Context
