@@ -1,6 +1,0 @@
-measure,value,meaning,modelling_action
-active product rows,38551,loader/reporting rows,do not treat rows as independent
-independent family units,27009,split/uncertainty units,bootstrap by family
-units removed by blocking,11542,29.9% fewer units,accept cost to stop leakage
-multi-row families,4567,kept whole,never split their rows
-largest family,80,largest over-block risk,report support sensitivity

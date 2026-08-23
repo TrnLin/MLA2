@@ -1,3 +1,0 @@
-alternative,output_width_height,padding_percent_for_60x80,output_pixels,float32_rgb_kib,median_images_per_second,validation_macro_f1
-old_128x128,128x128,25.00000000,16384,192.00000000,987.37000000,not available; no registered training run
-chosen_96x128,96x128,0.00000000,12288,144.00000000,1005.72000000,not available; no registered training run

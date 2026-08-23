@@ -1,0 +1,13 @@
+id,path,articleType,season,gender,usage
+5220,data/raw/teacher/train/images_train/5220.jpg,Backpacks,Winter,Unisex,Casual
+11255,data/raw/teacher/train/images_train/11255.jpg,Tshirts,Fall,Men,Casual
+14885,data/raw/teacher/train/images_train/14885.jpg,Handbags,Summer,Women,Casual
+23104,data/raw/teacher/train/images_train/23104.jpg,Accessory Gift Set,Winter,Men,Formal
+27036,data/raw/teacher/train/images_train/27036.jpg,Shirts,Summer,Men,Formal
+27282,data/raw/teacher/train/images_train/27282.jpg,Kurtas,Fall,Women,Ethnic
+32600,data/raw/teacher/train/images_train/32600.jpg,Tops,Summer,Women,Casual
+32719,data/raw/teacher/train/images_train/32719.jpg,Briefs,Summer,Men,NA
+35589,data/raw/teacher/train/images_train/35589.jpg,Sandals,Fall,Men,Casual
+39496,data/raw/teacher/train/images_train/39496.jpg,Jackets,Summer,Men,Casual
+42883,data/raw/teacher/train/images_train/42883.jpg,Handbags,Summer,Women,Casual
+50602,data/raw/teacher/train/images_train/50602.jpg,Trunk,Summer,Men,Casual

@@ -1,5 +1,5 @@
-target,train_products,official_outputs,supported_comparison_classes,limited_official_classes,classes_below_10_products,dominant_class_share_percent,imbalance_signal,candidate_train_only_options,task_owner_decision,validation_holdout_policy,paired_variant_rule,raw_pixel_smote
-articleType,26948,124,100,24,13,17.60000000,strong long tail,unmodified baseline; class-aware loss; focal-style loss; logit adjustment; class-aware train sampler,TODO in task notebook after baseline evidence,never resample or rebalance,two image rows keep one total product weight,not used
-season,26975,4,4,0,0,49.60000000,moderate head-class concentration,unmodified baseline first; class-aware loss or train sampler only if minority errors justify it,TODO in task notebook after baseline evidence,never resample or rebalance,two image rows keep one total product weight,not used
-gender,26992,5,5,0,0,54.20000000,moderate head-class concentration,unmodified baseline first; class-aware loss or train sampler only if minority errors justify it,TODO in task notebook after baseline evidence,never resample or rebalance,two image rows keep one total product weight,not used
-usage,26990,9,8,1,0,76.70000000,high head-class concentration,unmodified baseline; class-aware loss; focal-style loss; logit adjustment; class-aware train sampler,TODO in task notebook after baseline evidence,never resample or rebalance,two image rows keep one total product weight,not used
+target,classes,classes_in_all_folds,classes_with_warning,classes_untrainable_in_any_fold,minimum_class_products
+articleType,124,98,26,12,1
+gender,5,5,0,0,543
+season,4,4,0,0,1329
+usage,9,8,1,1,1

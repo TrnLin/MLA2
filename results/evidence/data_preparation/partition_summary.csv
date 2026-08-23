@@ -1,5 +1,4 @@
-partition,product_ids,family_units,image_inputs,target_access,counting_rule
-train,26992,18783,53984,targets available,two image samples; pair weights sum to one
-val,5781,4116,11562,development only,two forward passes; one product-level score
-holdout,5778,4110,11556,sealed,two forward passes; one product-level score
-quarantine,61,61,0,sealed,excluded from model input
+partition,products,percent_of_image_backed,id_set_sha256
+development,32773,84.87775820988294,2639d731f89942fd9598f9552bb092dd634830c3e6a63d0b569cfc2aa4362d01
+holdout,5778,14.964259815601366,48a9e2e389657744d2771a3ab5ca34e85e015b21b18ef4d0ed29c2e648cf8fc0
+quarantine,61,0.1579819745156946,5a672e34e485c8ddad0cef37c2dc37d99f8774f8874279a5d0ed69aff7022f43

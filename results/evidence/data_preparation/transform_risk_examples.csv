@@ -1,0 +1,5 @@
+id,method,risk
+25299,source,reference geometry
+25299,stretch,changes aspect ratio
+25299,centre_crop,may remove edge content
+25299,pad,adds border pixels
