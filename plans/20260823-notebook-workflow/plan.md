@@ -1,7 +1,7 @@
 ---
 title: "Notebook workflow restructuring"
 description: "Split the current EDA into a clear problem definition, an auditable data-preparation workflow, and task handoff notebooks."
-status: in-progress
+status: completed
 priority: P1
 effort: 10h
 branch: data-processing
@@ -33,7 +33,7 @@ shared preprocessing in the correct order.
 | 1 | Complete problem definition | Completed | `docs(notebooks): add problem definition workflow` | [phase 01](./phase-01-problem-definition.md) |
 | 2 | Restructure data preparation | Completed | rename, workflow, evidence, and title commits | [phase 02](./phase-02-data-preparation.md) |
 | 3 | Add future task handoffs | Completed | one scaffold commit per notebook | [phase 03](./phase-03-task-scaffolds.md) |
-| 4 | Verify and reconcile project contracts | In progress | amend only the phase that owns a required correction | [phase 04](./phase-04-verification.md) |
+| 4 | Verify and reconcile project contracts | Completed | amend only the phase that owns a required correction | [phase 04](./phase-04-verification.md) |
 
 ## Notebook reading order
 

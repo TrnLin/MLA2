@@ -19,14 +19,13 @@
 
 ## Todo
 
-- [ ] Run notebook structure checks.
-- [ ] Run targeted pytest and Ruff checks.
-- [ ] Run independent code review.
-- [ ] Fix critical findings and repeat verification.
-- [ ] Mark all completed plan items and set final plan status.
+- [x] Run notebook structure checks.
+- [x] Run targeted pytest and Ruff checks.
+- [x] Run independent code review.
+- [x] Fix critical findings and repeat verification.
+- [x] Mark all completed plan items and set final plan status.
 
 ## Success criteria
 
 - Relevant checks pass or a documented platform-only limitation is reported with evidence.
 - Git history shows separate reviewable commits for the requested work boundaries.
-
