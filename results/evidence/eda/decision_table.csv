@@ -5,7 +5,7 @@ official outputs,train the frozen train-observed output vocabulary,train-fitted 
 primary comparison,rank on supported classes,at least three independent train families,also report rare official outputs
 image input,"RGB, 96x128, aspect preserving",zero common padding and 25% fewer tensor pixels,use paired train-only mean/std by default
 image variants,use low and high resolution for every model product,"77,102 image inputs from 38,551 products",pair-weight training; aggregate evaluation pairs to one score
-Task 1,macro-F1 plus per-class and support slices,strong articleType long tail,show rare-class failures
+Task 1,task owner selects class-aware metrics and imbalance comparison,strong articleType long tail,"record the chosen metrics, baseline, option, and rare-class trade-offs"
 Tasks 2 and 3,separate targets with bias slices,mixed season signal and catalogue shortcuts,do not treat gender as identity
 Task 4,"metadata-proxy relevance; validation queries, train-only gallery",zero ID/SHA/family overlap; not similarity ground truth,"validate proxy later; report nDCG, Recall, coverage, latency"
 family uncertainty,report product rows and independent family units,"27,009 families from 38,551 active product rows",slice classes with fewer than three validation families
