@@ -47,6 +47,7 @@ def write_deterministic_csv(frame: Any, path: str | Path, **kwargs: Any) -> Path
     """Write CSV, using path-independent gzip bytes with ``mtime=0`` for ``.gz``."""
     output = Path(path)
     output.parent.mkdir(parents=True, exist_ok=True)
+    kwargs.setdefault("lineterminator", "\n")
     if output.suffix != ".gz":
         frame.to_csv(output, **kwargs)
         return output

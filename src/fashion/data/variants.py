@@ -8,7 +8,7 @@ import json
 import random
 import time
 from concurrent.futures import ThreadPoolExecutor
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any, Literal
 
 import numpy as np
@@ -719,8 +719,17 @@ def build_training_variant_manifest(
 
 
 def _safe_existing_project_path(value: Any, root: Path) -> Path:
-    path = Path(str(value))
-    if path.is_absolute() or ".." in path.parts:
+    text = str(value)
+    path = Path(text)
+    posix_path = PurePosixPath(text)
+    windows_path = PureWindowsPath(text)
+    if (
+        posix_path.is_absolute()
+        or windows_path.is_absolute()
+        or bool(windows_path.drive)
+        or ".." in posix_path.parts
+        or ".." in windows_path.parts
+    ):
         raise ValueError(f"variant path must be project-relative without traversal: {value}")
     full_path = root / path
     if not full_path.is_file():

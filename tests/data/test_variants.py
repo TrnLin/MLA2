@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import builtins
+import errno
 import json
 import os
 import shutil
@@ -21,6 +22,15 @@ from fashion.data.variants import (
     discover_high_resolution_root,
     load_image_variants,
 )
+
+
+def _symlink_directory_or_skip(source: Path, target: Path) -> None:
+    try:
+        os.symlink(source, target, target_is_directory=True)
+    except OSError as error:
+        if error.errno in {errno.EACCES, errno.EPERM} or getattr(error, "winerror", None) == 1314:
+            pytest.skip("directory symlink privilege is unavailable on this platform")
+        raise
 
 
 def _high_resolution_tree(root: Path, ids: list[int], *, images_csv: bool = True) -> Path:
@@ -116,7 +126,7 @@ def test_discovery_rejects_mismatched_symlink_tree(tmp_path):
     Image.new("RGB", (601, 800), (9, 9, 9)).save(other / "1.jpg")
     nested = dataset / "fashion-dataset"
     nested.mkdir()
-    os.symlink(other, nested / "images")
+    _symlink_directory_or_skip(other, nested / "images")
     with pytest.raises(ValueError, match="do not match"):
         discover_high_resolution_root(dataset, root=tmp_path, duplicate_sample_size=1)
 
@@ -165,7 +175,7 @@ def test_catalogue_keeps_lexical_project_paths_through_symlink(prepared_project)
     external = _high_resolution_tree(prepared_project.root / "external", ids, images_csv=False)
     dataset = prepared_project.root / "data/fashion-dataset"
     dataset.mkdir(parents=True)
-    os.symlink(external / "images", dataset / "images")
+    _symlink_directory_or_skip(external / "images", dataset / "images")
     paths = catalogue_high_resolution_dataset(
         dataset_dir=dataset,
         splits_csv=prepared_project.splits,
