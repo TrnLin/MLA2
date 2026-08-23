@@ -10,7 +10,11 @@
 
 - Notebook JSON validates under `nbformat`.
 - `00_problem_definition.ipynb` and scaffolds have no stale execution outputs.
-- `01_data_preparation.ipynb` executes from a fresh kernel in cached mode.
+- `01_data_preparation.ipynb` executes from a fresh kernel in cached mode twice with stable hashes.
+- A full build runs in a child process and never exposes protected targets to the notebook kernel.
+- Development IDs equal the old train/validation union; holdout and quarantine ID digests stay fixed.
+- Every development row has one fold and no family, SHA, duplicate, or normalized-name block crosses.
+- Shared preparation passes when the external image folder is absent and never parses its `images.csv`.
 - Relevant notebook tests pass, including the clean-package/full-build path where practical.
 - All tracked references use the new notebook names.
 - Figures and HTML contain the required headings and no visible helper-code guides.
@@ -19,11 +23,11 @@
 
 ## Todo
 
-- [x] Run notebook structure checks.
-- [x] Run targeted pytest and Ruff checks.
-- [x] Run independent code review.
-- [x] Fix critical findings and repeat verification.
-- [x] Mark all completed plan items and set final plan status.
+- [ ] Run split migration, leakage, deterministic-fold, and external-isolation tests.
+- [ ] Run notebook structure, execution, provenance, and output-adjacency checks.
+- [ ] Run targeted pytest, full pytest, Ruff, dependency, and secret checks.
+- [ ] Run independent code review and fix critical findings.
+- [ ] Mark all completed plan items and set final plan status.
 
 ## Success criteria
 

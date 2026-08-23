@@ -1,7 +1,7 @@
 ---
 title: "Notebook workflow restructuring"
-description: "Split the current EDA into a clear problem definition, an auditable data-preparation workflow, and task handoff notebooks."
-status: completed
+description: "Build a protected development/holdout workflow with five reusable CV folds and teacher-only shared preparation."
+status: in-progress
 priority: P1
 effort: 10h
 branch: data-processing
@@ -13,9 +13,9 @@ created: 2026-08-23
 
 ## Goal
 
-Keep the trusted preparation code and evidence. Rebuild the notebook story so a new reader sees the
-problem, raw hashing, image/tag reconciliation, duplicate controls, split, train-only analysis, and
-shared preprocessing in the correct order.
+Preserve the sealed holdout and quarantine IDs. Merge the old train and validation rows into one
+development set, add five group-safe folds, and rebuild the notebooks so another teammate can use the
+prepared data without guessing or leaking protected outcomes.
 
 ## Sources of truth
 
@@ -30,10 +30,10 @@ shared preprocessing in the correct order.
 
 | # | Phase | Status | Commit boundary | Link |
 |---|---|---|---|---|
-| 1 | Complete problem definition | Completed | `docs(notebooks): add problem definition workflow` | [phase 01](./phase-01-problem-definition.md) |
-| 2 | Restructure data preparation | Completed | rename, workflow, evidence, and title commits | [phase 02](./phase-02-data-preparation.md) |
-| 3 | Add future task handoffs | Completed | one scaffold commit per notebook | [phase 03](./phase-03-task-scaffolds.md) |
-| 4 | Verify and reconcile project contracts | Completed | amend only the phase that owns a required correction | [phase 04](./phase-04-verification.md) |
+| 1 | Correct problem definition | Pending | `docs(notebooks): correct problem definition scope` | [phase 01](./phase-01-problem-definition.md) |
+| 2 | Rebuild shared data preparation | In progress | data contracts, teacher-only workflow, then notebook | [phase 02](./phase-02-data-preparation.md) |
+| 3 | Refresh future task handoffs | Pending | `docs(notebooks): refresh task workflow scaffolds` | [phase 03](./phase-03-task-scaffolds.md) |
+| 4 | Verify and reconcile project contracts | Pending | tests, handoff, and final plan sync | [phase 04](./phase-04-verification.md) |
 
 ## Notebook reading order
 
@@ -52,13 +52,17 @@ shared preprocessing in the correct order.
 - Holdout and quarantine targets stay sealed during development.
 - Raw files remain unchanged.
 - Reusable logic stays in `src/fashion/`; notebooks explain, call, and audit it.
-- Two image variants remain one product-level unit.
+- The canonical partitions are `development`, `holdout`, and `quarantine`.
+- Every development row has one group-safe `cv_fold` from 0 to 4.
+- Descriptive EDA may use development; learned preprocessing must fit on fold-training rows only.
+- Shared preparation reads teacher data only. External images are an optional Task 4 decision.
+- No shared resize, crop, padding, augmentation, or normalization policy is selected here.
 - Every future training run writes through the shared run registry.
 - Task notebooks may add only evidence-justified preprocessing differences.
 
 ## Dependencies
 
-- Phase 1 can be completed independently.
-- Phase 2 owns the data-preparation name and all direct path, test, and documentation updates.
-- Phase 3 starts after Phase 2 fixes the notebook contract and reading order.
-- Phase 4 runs after all notebook files exist.
+- Phase 1 can be completed before the data migration.
+- Phase 2 owns split migration, protected loaders, teacher-only preparation, artifacts, and Notebook 01.
+- Phase 3 starts after the new `development` and `cv_fold` contract is stable.
+- Phase 4 runs after all files and generated evidence are current.

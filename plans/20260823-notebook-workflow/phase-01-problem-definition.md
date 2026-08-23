@@ -12,7 +12,7 @@
 - Real-world context, users, and decisions supported.
 - Prediction unit, model input, and four assignment tasks.
 - Data roles and protected evaluation boundary.
-- Success criteria and metrics per target.
+- Success dimensions and a task-owner metric freeze rule, without selecting a metric.
 - Constraints, non-goals, assumptions, and risks.
 - End-to-end system flow and assignment deliverables.
 - Readiness gate for data preparation.
@@ -26,13 +26,16 @@
 - Describe the properties classification and retrieval metrics must cover without freezing exact choices.
 - Include model size, latency, robustness, and failure analysis in the final judgement criteria.
 - Keep the notebook narrative and runnable from a fresh kernel without prepared data.
+- Keep empirical row counts, split ratios, EDA findings, image policies, and Task 4 protocol choices
+  out of problem definition. Notebook 01 owns observed data facts.
 
 ## Todo
 
-- [x] Create the notebook with complete headers and subheaders.
-- [x] Validate notebook JSON and heading hierarchy.
-- [x] Check every statement against the assignment, rubric, and accepted decisions.
-- [x] Commit the completed phase separately.
+- [ ] Remove empirical data findings and premature technical choices.
+- [ ] Add the complete conceptual header and subheader sequence.
+- [ ] Validate notebook JSON, zero-code status, and heading hierarchy.
+- [ ] Check every statement against the assignment, rubric, and active decisions.
+- [ ] Commit the completed phase separately.
 
 ## Success criteria
 
