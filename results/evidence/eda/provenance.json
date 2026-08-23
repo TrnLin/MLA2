@@ -7,8 +7,8 @@
     },
     {
       "path": "results/evidence/eda/decision_table.csv",
-      "sha256": "bb8bf2795afd96894af9971b2b64370cc0caeb855ab210c819f78adbcca72ea1",
-      "size_bytes": 1483
+      "sha256": "8c24bf82e7c3106fe161c712fb10654c199ad3399117685c895976f996fcb520",
+      "size_bytes": 1552
     },
     {
       "path": "results/evidence/eda/duplicate_summary.csv",
@@ -54,6 +54,11 @@
       "path": "results/evidence/eda/image_summary.csv",
       "sha256": "e3e911145dfa2d93be878571ef219b35dab3b00b2d8c0d5beab793da6325d37f",
       "size_bytes": 338
+    },
+    {
+      "path": "results/evidence/eda/imbalance_handoff.csv",
+      "sha256": "4a1e910b8355ae7b5f836164e8c0ded44d0ea69fce75acb509d4a111bf3adca5",
+      "size_bytes": 1439
     },
     {
       "path": "results/evidence/eda/joint_target_nmi.csv",
@@ -256,10 +261,10 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_EDA_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 13.614
+    "preparation_seconds": 10.886
   },
   "git": {
-    "commit": "bd262b447b72a72d6ccbb4f21c94d1ce8c4e4705",
+    "commit": "0e095027b2348fa296f5a3f889f60aa470aded68",
     "dirty": true
   },
   "image_variants": {
@@ -432,7 +437,7 @@
   ],
   "note": "Wall-time benchmark hashes may change; report figures and other evidence are deterministic for the locked runtime.",
   "notebook": {
-    "code_digest": "85dd0ae48235aa0ed677423c25f557412d74ed14dd63f87e95762ab43167b615",
+    "code_digest": "8e9c84e2ad0393f600c97386ec1e2e023e2f5e7bb1579ae59f9572ec6ddf973d",
     "path": "notebooks/00_eda.ipynb"
   },
   "runtime": {
@@ -446,13 +451,13 @@
   "volatile_outputs": [
     {
       "path": "results/evidence/eda/transform_benchmark.json",
-      "sha256": "bf0a62453b42f6b8ddea6935ea047acd6aa9f938b7b601ce274e1ae419719761",
-      "size_bytes": 6831
+      "sha256": "8cfd641ef8030a95f0687253024f152b4ba2eb0d5f5dc51f9b3d56d1d13f86a7",
+      "size_bytes": 6832
     },
     {
       "path": "results/evidence/eda/transform_summary.csv",
-      "sha256": "fac5fc9e15366cfd16d5930d0826fc85347451c09e7f287e96a6763e0e13d667",
-      "size_bytes": 347
+      "sha256": "6ea7d2e8deb44f4fd8b375f35f0c99290f2d9d9cf03cd3179a9f8152b72c179e",
+      "size_bytes": 346
     }
   ]
 }

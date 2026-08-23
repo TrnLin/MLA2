@@ -7830,7 +7830,7 @@ products respectively. Target distributions count products once; model loading p
 <tr>
 <td>Target difficulty</td>
 <td><code>articleType</code> has 124 official outputs; 18/100 supported classes have one validation family and 26/100 have fewer than three</td>
-<td>Rank with macro-F1, per-class recall, family support, and honest uncertainty</td>
+<td>Task owners choose class-aware primary and supporting metrics, then report family support and honest uncertainty</td>
 </tr>
 <tr>
 <td>Image representation</td>
@@ -7931,7 +7931,7 @@ performs the slow forensic rebuild in a separate process.</p>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><strong>Prepared-data cached mode complete.</strong> Checked 17 required files in 13.6 seconds. Validation or rebuilding ran outside the EDA kernel, so protected target values were not materialised in notebook state. Human decisions are not preparation inputs.</p>
+<p><strong>Prepared-data cached mode complete.</strong> Checked 17 required files in 10.9 seconds. Validation or rebuilding ran outside the EDA kernel, so protected target values were not materialised in notebook state. Human decisions are not preparation inputs.</p>
 </div>
 </div>
 </div>
@@ -8925,6 +8925,7 @@ experiments.</p>
 <p>The univariate analysis measures support once per unique product ID and compares train and
 validation product shares. The paired image rows are deliberately not double-counted here. This
 exposes rare classes and dominant labels that plain accuracy would hide.</p>
+<h3 id="4.1-Product-level-support-and-development-balance">4.1 Product-level support and development balance<a class="anchor-link" href="#4.1-Product-level-support-and-development-balance">¶</a></h3><p>The first pass measures class support and development coverage without changing the training distribution.</p>
 </div>
 </div>
 </div>
@@ -9073,10 +9074,127 @@ official classes are counted separately. The largest product-share gap is 0.251 
 These are product-level statistics; the paired training loader
 still contains 53,984 image inputs. Figures 4–6 show the long tail, imbalance, and close development
 balance.</p>
-<p><strong>Modelling consequence.</strong> Accuracy is not a ranking metric. The main score is macro-F1, supported
-by per-class recall, confusion matrices, explicit limited-output results, and family-unit support.
-Thin validation classes carry wide uncertainty rather than strong claims.
-Ordinary loss must be compared with an imbalance-aware alternative under the same training budget.</p>
+<p><strong>Modelling consequence.</strong> Accuracy alone hides minority-class behaviour. Each task owner must choose and justify a
+class-aware primary and supporting metric set, including per-class errors and family support where
+useful. Thin validation classes carry wide uncertainty rather than strong claims. The owner compares
+an unmodified baseline with only the train-side imbalance options justified by task evidence.</p>
+</blockquote>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7a807113">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="4.2-Imbalance-handoff-to-task-owners">4.2 Imbalance handoff to task owners<a class="anchor-link" href="#4.2-Imbalance-handoff-to-task-owners">¶</a></h3><p>Shared data preparation diagnoses imbalance but does not apply one global treatment to four
+different prediction targets. The common rules are fixed: calculate support on unique products,
+keep both image variants at one total product weight, and never rebalance validation or holdout.</p>
+<p>Each task notebook must compare an unmodified baseline with a small evidence-chosen set of
+train-only options. Candidate options include a class-aware loss, a class-aware sampler, or another
+documented method. The teammate records the final choice and its trade-offs after seeing baseline
+errors. Table-data SMOTE is not applied to raw image pixels.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noInput celltag_hide-input" id="cell-id=637e3b25">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<style type="text/css">
+#T_eda_be18023ebb caption {
+  font-weight: 600;
+  text-align: left;
+}
+#T_eda_be18023ebb th {
+  background: #E8EEF2;
+  text-align: left;
+}
+#T_eda_be18023ebb td {
+  text-align: left;
+  vertical-align: top;
+}
+</style>
+<table id="T_eda_be18023ebb">
+<caption>Imbalance evidence, candidate options, and task-owner TODOs</caption>
+<thead>
+<tr>
+<th class="blank level0"> </th>
+<th class="col_heading level0 col0" id="T_eda_be18023ebb_level0_col0">target</th>
+<th class="col_heading level0 col1" id="T_eda_be18023ebb_level0_col1">official_outputs</th>
+<th class="col_heading level0 col2" id="T_eda_be18023ebb_level0_col2">classes_below_10_products</th>
+<th class="col_heading level0 col3" id="T_eda_be18023ebb_level0_col3">dominant_class_share_percent</th>
+<th class="col_heading level0 col4" id="T_eda_be18023ebb_level0_col4">imbalance_signal</th>
+<th class="col_heading level0 col5" id="T_eda_be18023ebb_level0_col5">candidate_train_only_options</th>
+<th class="col_heading level0 col6" id="T_eda_be18023ebb_level0_col6">task_owner_decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="row_heading level0 row0" id="T_eda_be18023ebb_level0_row0">0</th>
+<td class="data row0 col0" id="T_eda_be18023ebb_row0_col0">articleType</td>
+<td class="data row0 col1" id="T_eda_be18023ebb_row0_col1">124</td>
+<td class="data row0 col2" id="T_eda_be18023ebb_row0_col2">13</td>
+<td class="data row0 col3" id="T_eda_be18023ebb_row0_col3">17.600</td>
+<td class="data row0 col4" id="T_eda_be18023ebb_row0_col4">strong long tail</td>
+<td class="data row0 col5" id="T_eda_be18023ebb_row0_col5">unmodified baseline; class-aware loss; focal-style loss; logit adjustment; class-aware train sampler</td>
+<td class="data row0 col6" id="T_eda_be18023ebb_row0_col6">TODO in task notebook after baseline evidence</td>
+</tr>
+<tr>
+<th class="row_heading level0 row1" id="T_eda_be18023ebb_level0_row1">1</th>
+<td class="data row1 col0" id="T_eda_be18023ebb_row1_col0">season</td>
+<td class="data row1 col1" id="T_eda_be18023ebb_row1_col1">4</td>
+<td class="data row1 col2" id="T_eda_be18023ebb_row1_col2">0</td>
+<td class="data row1 col3" id="T_eda_be18023ebb_row1_col3">49.600</td>
+<td class="data row1 col4" id="T_eda_be18023ebb_row1_col4">moderate head-class concentration</td>
+<td class="data row1 col5" id="T_eda_be18023ebb_row1_col5">unmodified baseline first; class-aware loss or train sampler only if minority errors justify it</td>
+<td class="data row1 col6" id="T_eda_be18023ebb_row1_col6">TODO in task notebook after baseline evidence</td>
+</tr>
+<tr>
+<th class="row_heading level0 row2" id="T_eda_be18023ebb_level0_row2">2</th>
+<td class="data row2 col0" id="T_eda_be18023ebb_row2_col0">gender</td>
+<td class="data row2 col1" id="T_eda_be18023ebb_row2_col1">5</td>
+<td class="data row2 col2" id="T_eda_be18023ebb_row2_col2">0</td>
+<td class="data row2 col3" id="T_eda_be18023ebb_row2_col3">54.200</td>
+<td class="data row2 col4" id="T_eda_be18023ebb_row2_col4">moderate head-class concentration</td>
+<td class="data row2 col5" id="T_eda_be18023ebb_row2_col5">unmodified baseline first; class-aware loss or train sampler only if minority errors justify it</td>
+<td class="data row2 col6" id="T_eda_be18023ebb_row2_col6">TODO in task notebook after baseline evidence</td>
+</tr>
+<tr>
+<th class="row_heading level0 row3" id="T_eda_be18023ebb_level0_row3">3</th>
+<td class="data row3 col0" id="T_eda_be18023ebb_row3_col0">usage</td>
+<td class="data row3 col1" id="T_eda_be18023ebb_row3_col1">9</td>
+<td class="data row3 col2" id="T_eda_be18023ebb_row3_col2">0</td>
+<td class="data row3 col3" id="T_eda_be18023ebb_row3_col3">76.700</td>
+<td class="data row3 col4" id="T_eda_be18023ebb_row3_col4">high head-class concentration</td>
+<td class="data row3 col5" id="T_eda_be18023ebb_row3_col5">unmodified baseline; class-aware loss; focal-style loss; logit adjustment; class-aware train sampler</td>
+<td class="data row3 col6" id="T_eda_be18023ebb_row3_col6">TODO in task notebook after baseline evidence</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0fd92ceb">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<blockquote>
+<p><strong>Finding.</strong> Imbalance is not one shared problem with one shared fix. <code>articleType</code> has a
+long tail, while <code>usage</code> is dominated by one head class. Season and gender require their own
+per-class error evidence before adding treatment complexity. The handoff table keeps diagnosis,
+candidate options, and the unanswered teammate decision separate.</p>
+<p><strong>Modelling consequence.</strong> No common preprocessing step resamples products or manufactures image
+pixels. Each task owner first records a baseline, chooses the metric set, compares only justified
+train-side options under the same budget, and explains both minority gains and head-class losses.
+Validation and holdout remain untouched.</p>
 </blockquote>
 </div>
 </div>
@@ -9518,7 +9636,7 @@ quality remains an open experimental result rather than an EDA claim.</p>
 <td class="data row0 col2" id="T_eda_7c0cb8d233_row0_col2">25.000</td>
 <td class="data row0 col3" id="T_eda_7c0cb8d233_row0_col3">16,384</td>
 <td class="data row0 col4" id="T_eda_7c0cb8d233_row0_col4">192.000</td>
-<td class="data row0 col5" id="T_eda_7c0cb8d233_row0_col5">1,054.800</td>
+<td class="data row0 col5" id="T_eda_7c0cb8d233_row0_col5">977.400</td>
 </tr>
 <tr>
 <th class="row_heading level0 row1" id="T_eda_7c0cb8d233_level0_row1">1</th>
@@ -9527,7 +9645,7 @@ quality remains an open experimental result rather than an EDA claim.</p>
 <td class="data row1 col2" id="T_eda_7c0cb8d233_row1_col2">0.000</td>
 <td class="data row1 col3" id="T_eda_7c0cb8d233_row1_col3">12,288</td>
 <td class="data row1 col4" id="T_eda_7c0cb8d233_row1_col4">144.000</td>
-<td class="data row1 col5" id="T_eda_7c0cb8d233_row1_col5">1,154.800</td>
+<td class="data row1 col5" id="T_eda_7c0cb8d233_row1_col5">1,041.200</td>
 </tr>
 </tbody>
 </table>
@@ -9552,7 +9670,7 @@ quality remains an open experimental result rather than an EDA claim.</p>
 memory from 144 KiB to 192 KiB per image. Local decoding speeds are close and hardware dependent.
 Figure 16 shows that the selected transform preserves product shape with less empty space.</p>
 <p><strong>Modelling consequence.</strong> RGB 96x128 is the default candidate because its geometry and memory
-cost are better justified. RGB 128x128 remains a controlled baseline, and validation macro-F1
+cost are better justified. RGB 128x128 remains a controlled baseline, and the task owner's chosen validation metric
 determines whether the cheaper transform also preserves predictive signal.</p>
 </blockquote>
 </div>
@@ -9747,9 +9865,9 @@ records the unresolved limits that later experiments must preserve or close.</p>
 <tbody>
 <tr>
 <th class="row_heading level0 row0" id="T_eda_eab3fb8d4d_level0_row0">0</th>
-<td class="data row0 col0" id="T_eda_eab3fb8d4d_row0_col0">48</td>
+<td class="data row0 col0" id="T_eda_eab3fb8d4d_row0_col0">49</td>
 <td class="data row0 col1" id="T_eda_eab3fb8d4d_row0_col1">17</td>
-<td class="data row0 col2" id="T_eda_eab3fb8d4d_row0_col2">85dd0ae48235aa0e...</td>
+<td class="data row0 col2" id="T_eda_eab3fb8d4d_row0_col2">8e9c84e2ad0393f6...</td>
 <td class="data row0 col3" id="T_eda_eab3fb8d4d_row0_col3">False</td>
 </tr>
 </tbody>
@@ -9765,7 +9883,7 @@ records the unresolved limits that later experiments must preserve or close.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <blockquote>
-<p><strong>Finding.</strong> The notebook records 48 stable evidence files, including all 17 report figures,
+<p><strong>Finding.</strong> The notebook records 49 stable evidence files, including all 17 report figures,
 with project-relative paths and hashes. Raw target files are represented only by permitted ID-level
 fingerprints. Wall-time benchmarks remain outside the stable set because hardware and cache state
 change them.</p>
@@ -9865,9 +9983,9 @@ policy, its supporting evidence, and the result that later model work must still
 <tr>
 <th class="row_heading level0 row6" id="T_eda_09acf4bca1_level0_row6">6</th>
 <td class="data row6 col0" id="T_eda_09acf4bca1_row6_col0">Task 1</td>
-<td class="data row6 col1" id="T_eda_09acf4bca1_row6_col1">macro-F1 plus per-class and support slices</td>
+<td class="data row6 col1" id="T_eda_09acf4bca1_row6_col1">task owner selects class-aware metrics and imbalance comparison</td>
 <td class="data row6 col2" id="T_eda_09acf4bca1_row6_col2">strong articleType long tail</td>
-<td class="data row6 col3" id="T_eda_09acf4bca1_row6_col3">show rare-class failures</td>
+<td class="data row6 col3" id="T_eda_09acf4bca1_row6_col3">record the chosen metrics, baseline, option, and rare-class trade-offs</td>
 </tr>
 <tr>
 <th class="row_heading level0 row7" id="T_eda_09acf4bca1_level0_row7">7</th>
@@ -9896,12 +10014,12 @@ policy, its supporting evidence, and the result that later model work must still
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><strong>Open limits:</strong> The visual duplicate rule favours precision and does not prove recall. Normalized names can group different designs and reduce effective sample size. Tiny original images can hide fine product details. Season, gender, and usage are catalogue labels, not always visible facts. Task 4 grades are a metadata proxy, not human visual-similarity ground truth. Perceptual same-ID alignment is strong automatic evidence, not human proof. Doubled inputs add storage and decoding cost; the planned three-way ablation is not run yet. Queries with no grade-2 positives are excluded from mean Recall@5 and reported. No registered model run yet compares transform macro-F1. Cached mode checks every image path and size but content-hashes only a fixed sample; use full mode after any deliberate raw-image replacement. Full forensic mode is I/O-bound and is not the normal reader path.</p>
+<p><strong>Open limits:</strong> The visual duplicate rule favours precision and does not prove recall. Normalized names can group different designs and reduce effective sample size. Tiny original images can hide fine product details. Season, gender, and usage are catalogue labels, not always visible facts. Task 4 grades are a metadata proxy, not human visual-similarity ground truth. Perceptual same-ID alignment is strong automatic evidence, not human proof. Doubled inputs add storage and decoding cost; the planned three-way ablation is not run yet. Queries with no grade-2 positives are excluded from mean Recall@5 and reported. No registered model run yet compares transform choices under a task-owned metric. Cached mode checks every image path and size but content-hashes only a fixed sample; use full mode after any deliberate raw-image replacement. Full forensic mode is I/O-bound and is not the normal reader path.</p>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><strong>Run All complete in cached mode.</strong> Prepared data in 13.6 seconds and saved 17 figures. Actual paired inputs: 53,984 train, 11,562 validation, and 11,556 holdout images. These represent 26,992, 5,781, and 5,778 product-level reporting units. Protected target values materialised by EDA: 0.</p>
+<p><strong>Run All complete in cached mode.</strong> Prepared data in 10.9 seconds and saved 17 figures. Actual paired inputs: 53,984 train, 11,562 validation, and 11,556 holdout images. These represent 26,992, 5,781, and 5,778 product-level reporting units. Protected target values materialised by EDA: 0.</p>
 </div>
 </div>
 </div>
@@ -9918,7 +10036,7 @@ retrieval contracts are fixed. The next work follows this order:</p>
 <ol>
 <li>Train the same from-scratch baseline with original-only, high-only, and paired images under one
 seed, budget, split, and metric suite.</li>
-<li>For <code>articleType</code> and <code>usage</code>, compare ordinary loss with at least one imbalance-aware method and
+<li>For <code>articleType</code> and <code>usage</code>, compare an unmodified baseline with at least one evidence-chosen train-side option and
 explain rare-class gains and losses.</li>
 <li>Compare separate prediction models with a shared-representation alternative while retaining one
 score and failure analysis for each official target.</li>

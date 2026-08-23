@@ -38,9 +38,9 @@
     },
     {
       "area": "Task 1",
-      "decision": "macro-F1 plus per-class and support slices",
+      "decision": "task owner selects class-aware metrics and imbalance comparison",
       "evidence": "strong articleType long tail",
-      "later_check": "show rare-class failures"
+      "later_check": "record the chosen metrics, baseline, option, and rare-class trade-offs"
     },
     {
       "area": "Tasks 2 and 3",
@@ -69,8 +69,8 @@
     },
     {
       "path": "results/evidence/eda/decision_table.csv",
-      "sha256": "bb8bf2795afd96894af9971b2b64370cc0caeb855ab210c819f78adbcca72ea1",
-      "size_bytes": 1483
+      "sha256": "8c24bf82e7c3106fe161c712fb10654c199ad3399117685c895976f996fcb520",
+      "size_bytes": 1552
     },
     {
       "path": "results/evidence/eda/duplicate_summary.csv",
@@ -116,6 +116,11 @@
       "path": "results/evidence/eda/image_summary.csv",
       "sha256": "e3e911145dfa2d93be878571ef219b35dab3b00b2d8c0d5beab793da6325d37f",
       "size_bytes": 338
+    },
+    {
+      "path": "results/evidence/eda/imbalance_handoff.csv",
+      "sha256": "4a1e910b8355ae7b5f836164e8c0ded44d0ea69fce75acb509d4a111bf3adca5",
+      "size_bytes": 1439
     },
     {
       "path": "results/evidence/eda/joint_target_nmi.csv",
@@ -318,7 +323,7 @@
     "default_mode": "cached",
     "full_mode_environment": "FASHION_EDA_MODE=full",
     "preparation_mode": "cached",
-    "preparation_seconds": 13.614
+    "preparation_seconds": 10.886
   },
   "family_policy": {
     "block_basis": [
@@ -763,6 +768,76 @@
     "same_product_variants_are_independent_evidence": false,
     "target_columns_in_variant_manifest": 0
   },
+  "imbalance_handoff": {
+    "fixed_method": false,
+    "raw_pixel_smote": false,
+    "records": [
+      {
+        "candidate_train_only_options": "unmodified baseline; class-aware loss; focal-style loss; logit adjustment; class-aware train sampler",
+        "classes_below_10_products": 13,
+        "dominant_class_share_percent": 17.6,
+        "imbalance_signal": "strong long tail",
+        "limited_official_classes": 24,
+        "official_outputs": 124,
+        "paired_variant_rule": "two image rows keep one total product weight",
+        "raw_pixel_smote": "not used",
+        "supported_comparison_classes": 100,
+        "target": "articleType",
+        "task_owner_decision": "TODO in task notebook after baseline evidence",
+        "train_products": 26948,
+        "validation_holdout_policy": "never resample or rebalance"
+      },
+      {
+        "candidate_train_only_options": "unmodified baseline first; class-aware loss or train sampler only if minority errors justify it",
+        "classes_below_10_products": 0,
+        "dominant_class_share_percent": 49.6,
+        "imbalance_signal": "moderate head-class concentration",
+        "limited_official_classes": 0,
+        "official_outputs": 4,
+        "paired_variant_rule": "two image rows keep one total product weight",
+        "raw_pixel_smote": "not used",
+        "supported_comparison_classes": 4,
+        "target": "season",
+        "task_owner_decision": "TODO in task notebook after baseline evidence",
+        "train_products": 26975,
+        "validation_holdout_policy": "never resample or rebalance"
+      },
+      {
+        "candidate_train_only_options": "unmodified baseline first; class-aware loss or train sampler only if minority errors justify it",
+        "classes_below_10_products": 0,
+        "dominant_class_share_percent": 54.2,
+        "imbalance_signal": "moderate head-class concentration",
+        "limited_official_classes": 0,
+        "official_outputs": 5,
+        "paired_variant_rule": "two image rows keep one total product weight",
+        "raw_pixel_smote": "not used",
+        "supported_comparison_classes": 5,
+        "target": "gender",
+        "task_owner_decision": "TODO in task notebook after baseline evidence",
+        "train_products": 26992,
+        "validation_holdout_policy": "never resample or rebalance"
+      },
+      {
+        "candidate_train_only_options": "unmodified baseline; class-aware loss; focal-style loss; logit adjustment; class-aware train sampler",
+        "classes_below_10_products": 0,
+        "dominant_class_share_percent": 76.7,
+        "imbalance_signal": "high head-class concentration",
+        "limited_official_classes": 1,
+        "official_outputs": 9,
+        "paired_variant_rule": "two image rows keep one total product weight",
+        "raw_pixel_smote": "not used",
+        "supported_comparison_classes": 8,
+        "target": "usage",
+        "task_owner_decision": "TODO in task notebook after baseline evidence",
+        "train_products": 26990,
+        "validation_holdout_policy": "never resample or rebalance"
+      }
+    ],
+    "source_partition": "train",
+    "task_owner_choice_required": true,
+    "unit": "unique product ID",
+    "validation_holdout_rebalanced": false
+  },
   "inventory": {
     "evaluation_metric_unit": "product ID after two-variant aggregation",
     "holdout_image_inputs": 11556,
@@ -812,7 +887,7 @@
     "Perceptual same-ID alignment is strong automatic evidence, not human proof.",
     "Doubled inputs add storage and decoding cost; the planned three-way ablation is not run yet.",
     "Queries with no grade-2 positives are excluded from mean Recall@5 and reported.",
-    "No registered model run yet compares transform macro-F1.",
+    "No registered model run yet compares transform choices under a task-owned metric.",
     "Cached mode checks every image path and size but content-hashes only a fixed sample; use full mode after any deliberate raw-image replacement.",
     "Full forensic mode is I/O-bound and is not the normal reader path."
   ],

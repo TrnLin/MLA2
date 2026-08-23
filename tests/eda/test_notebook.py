@@ -58,6 +58,8 @@ REQUIRED_HEADINGS = (
     "### 3.2 Label-image sanity check",
     "### 3.3 Duplicate and entity controls",
     "## 4. Target distributions and class balance",
+    "### 4.1 Product-level support and development balance",
+    "### 4.2 Imbalance handoff to task owners",
     "## 5. Target relationships and bias",
     "## 6. Image data quality and preprocessing",
     "### 6.1 Image quality and resolution variants",
@@ -106,6 +108,7 @@ EVIDENCE_NAMES = {
     "image_reconciliation.csv",
     "image_quality_spearman.csv",
     "image_summary.csv",
+    "imbalance_handoff.csv",
     "joint_target_nmi.csv",
     "label_image_sanity.csv",
     "normalization_summary.csv",
@@ -353,7 +356,7 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
 
     assert set((ROOT / "notebooks").glob("*.ipynb")) == {PROBLEM_NOTEBOOK, NOTEBOOK}
     assert all(heading in source for heading in REQUIRED_HEADINGS)
-    assert len(code_cells) == 37
+    assert len(code_cells) == 38
     assert len(guide_cells) == len(code_cells)
     assert all(
         notebook.cells[index - 1].cell_type == "markdown"
@@ -371,8 +374,8 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert max(len(cell.source.splitlines()) for cell in code_cells) < 150
     assert "**Question.**" not in markdown
     assert "?" not in markdown
-    assert source.count("> **Finding.**") == 13
-    assert source.count("> **Modelling consequence.**") == 13
+    assert source.count("> **Finding.**") == 14
+    assert source.count("> **Modelling consequence.**") == 14
     assert all(source.count(f"Figure {number}. ") == 1 for number in range(1, 18))
     assert all(
         count in normalized_markdown
@@ -414,6 +417,9 @@ def test_the_official_notebook_contains_the_complete_workflow() -> None:
     assert "automatic_label_changes" in source
     assert 'method="spearman"' in source
     assert "Correlation alone does not" in source
+    assert "TODO in task notebook after baseline evidence" in source
+    assert "never resample or rebalance" in source
+    assert '"fixed_method": False' in source
     assert "paired_normalization.json" in source
     assert "normalization_original_only.json" in source
     assert "all_alignment_pairs.csv.gz" in source
@@ -513,6 +519,11 @@ def test_notebook_runs_twice_with_stable_outputs(prepared_project, tmp_path: Pat
     assert first_summary["image_feature_correlation"]["source_partition"] == "train"
     assert first_summary["image_feature_correlation"]["method"] == "spearman"
     assert first_summary["image_feature_correlation"]["causal_claim"] is False
+    assert first_summary["imbalance_handoff"]["source_partition"] == "train"
+    assert first_summary["imbalance_handoff"]["fixed_method"] is False
+    assert first_summary["imbalance_handoff"]["task_owner_choice_required"] is True
+    assert first_summary["imbalance_handoff"]["validation_holdout_rebalanced"] is False
+    assert first_summary["imbalance_handoff"]["raw_pixel_smote"] is False
     assert first_summary["task4"]["shared_ids"] == 0
     assert first_summary["task4"]["shared_sha256"] == 0
     assert first_summary["task4"]["shared_product_families"] == 0
@@ -838,6 +849,18 @@ def test_saved_notebook_and_html_are_report_ready() -> None:
     assert correlation_matrix.shape == (6, 6)
     assert (correlation_matrix.values.diagonal() == 1).all()
     assert correlation_matrix.equals(correlation_matrix.T)
+    imbalance_handoff = pd.read_csv(
+        ROOT / "results/evidence/eda/imbalance_handoff.csv",
+        keep_default_na=False,
+    )
+    assert set(imbalance_handoff["target"]) == {"articleType", "season", "gender", "usage"}
+    assert imbalance_handoff["task_owner_decision"].eq(
+        "TODO in task notebook after baseline evidence"
+    ).all()
+    assert imbalance_handoff["validation_holdout_policy"].eq(
+        "never resample or rebalance"
+    ).all()
+    assert imbalance_handoff["raw_pixel_smote"].eq("not used").all()
     quality = pd.read_csv(ROOT / "results/evidence/eda/train_image_quality_sample.csv")
     assert len(quality) == 2_048
     assert quality["source_partition"].eq("train").all()
