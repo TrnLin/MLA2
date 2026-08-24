@@ -1,0 +1,143 @@
+target,class,source_scope,development_product_count,development_family_count,folds_present,fold_count,fold_0_validation_products,fold_0_training_products,fold_0_training_families,fold_1_validation_products,fold_1_training_products,fold_1_training_families,fold_2_validation_products,fold_2_training_products,fold_2_training_families,fold_3_validation_products,fold_3_training_products,fold_3_training_families,fold_4_validation_products,fold_4_training_products,fold_4_training_families,minimum_fold_training_products,minimum_fold_training_families,untrainable_fold_count,rare_warning
+articleType,Accessory Gift Set,development,91,33,"0,1,2,3,4",5,17,74,26,19,72,26,18,73,27,19,72,26,18,73,27,72,26,0,
+articleType,Baby Dolls,development,2,2,"1,2",2,0,2,2,1,1,1,1,1,1,0,2,2,0,2,2,1,1,0,low_independent_family_support
+articleType,Backpacks,development,604,428,"0,1,2,3,4",5,119,485,343,120,484,341,120,484,343,119,485,343,126,478,342,478,341,0,
+articleType,Bangle,development,50,18,"0,1,2,3,4",5,18,32,17,6,44,13,7,43,12,6,44,13,13,37,17,32,12,0,
+articleType,Basketballs,development,12,12,"0,1,2,3,4",5,3,9,9,2,10,10,3,9,9,2,10,10,2,10,10,9,9,0,
+articleType,Belts,development,676,410,"0,1,2,3,4",5,134,542,329,136,540,327,135,541,327,135,541,329,136,540,328,540,327,0,
+articleType,Blazers,development,7,7,"0,1,2,3,4",5,1,6,6,2,5,5,1,6,6,1,6,6,2,5,5,5,5,0,
+articleType,Body Wash and Scrub,development,1,1,1,1,0,1,1,1,0,0,0,1,1,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Booties,development,9,5,"0,1,2,3,4",5,2,7,4,2,7,4,2,7,4,1,8,4,2,7,4,7,4,0,
+articleType,Boxers,development,34,27,"0,1,2,3,4",5,7,27,22,7,27,21,6,28,22,7,27,22,7,27,21,27,21,0,
+articleType,Bra,development,251,196,"0,1,2,3,4",5,49,202,157,51,200,157,50,201,157,51,200,156,50,201,157,200,156,0,
+articleType,Bracelet,development,44,16,"0,1,2,3,4",5,16,28,15,7,37,10,7,37,12,7,37,13,7,37,14,28,10,0,
+articleType,Briefs,development,568,402,"0,1,2,3,4",5,112,456,324,115,453,322,114,454,320,114,454,319,113,455,323,453,319,0,
+articleType,Camisoles,development,13,13,"0,1,2,3,4",5,3,10,10,2,11,11,3,10,10,2,11,11,3,10,10,10,10,0,
+articleType,Capris,development,136,100,"0,1,2,3,4",5,26,110,80,28,108,79,28,108,80,27,109,81,27,109,80,108,79,0,
+articleType,Caps,development,230,201,"0,1,2,3,4",5,45,185,160,47,183,160,46,184,162,46,184,162,46,184,160,183,160,0,
+articleType,Casual Shoes,development,2276,1759,"0,1,2,3,4",5,457,1819,1400,454,1822,1406,456,1820,1418,457,1819,1404,452,1824,1408,1819,1400,0,
+articleType,Churidar,development,26,24,"0,1,2,3,4",5,5,21,19,5,21,19,5,21,20,5,21,20,6,20,18,20,18,0,
+articleType,Clothing Set,development,7,7,"0,1,2,3,4",5,1,6,6,2,5,5,1,6,6,1,6,6,2,5,5,5,5,0,
+articleType,Clutches,development,189,154,"0,1,2,3,4",5,37,152,124,38,151,124,38,151,123,38,151,122,38,151,123,151,122,0,
+articleType,Compact,development,4,1,2,1,0,4,1,0,4,1,4,0,0,0,4,1,0,4,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Concealer,development,2,1,4,1,0,2,1,0,2,1,0,2,1,0,2,1,2,0,0,0,0,1,untrainable_in_one_or_more_folds
+articleType,Cufflinks,development,38,17,"0,1,2,3,4",5,13,25,16,6,32,11,6,32,12,6,32,14,7,31,15,25,11,0,
+articleType,Cushion Covers,development,1,1,4,1,0,1,1,0,1,1,0,1,1,0,1,1,1,0,0,0,0,1,untrainable_in_one_or_more_folds
+articleType,Deodorant,development,248,223,"0,1,2,3,4",5,49,199,179,50,198,179,50,198,178,50,198,178,49,199,178,198,178,0,
+articleType,Dresses,development,289,227,"0,1,2,3,4",5,57,232,184,58,231,182,58,231,180,58,231,180,58,231,182,231,180,0,
+articleType,Duffel Bag,development,73,57,"0,1,2,3,4",5,14,59,46,15,58,46,15,58,46,15,58,45,14,59,45,58,45,0,
+articleType,Dupatta,development,99,73,"0,1,2,3,4",5,19,80,58,20,79,59,21,78,58,20,79,59,19,80,58,78,58,0,
+articleType,Earrings,development,206,33,"0,1,2,3,4",5,80,126,32,27,179,24,27,179,23,27,179,23,45,161,30,126,23,0,
+articleType,Eyeshadow,development,4,3,"0,2,4",3,2,2,2,0,4,3,1,3,2,0,4,3,1,3,2,2,2,0,low_independent_family_support
+articleType,Flats,development,356,234,"0,1,2,3,4",5,69,287,185,73,283,187,71,285,191,71,285,187,72,284,186,283,185,0,
+articleType,Flip Flops,development,734,610,"0,1,2,3,4",5,147,587,488,146,588,487,146,588,491,146,588,486,149,585,488,585,486,0,
+articleType,Footballs,development,7,7,"0,1,2,3,4",5,2,5,5,2,5,5,1,6,6,1,6,6,1,6,6,5,5,0,
+articleType,Formal Shoes,development,517,223,"0,1,2,3,4",5,103,414,180,104,413,179,104,413,180,104,413,175,102,415,178,413,175,0,
+articleType,Foundation and Primer,development,11,5,"0,1,2,3,4",5,4,7,4,3,8,4,1,10,4,1,10,4,2,9,4,7,4,0,
+articleType,Fragrance Gift Set,development,47,46,"0,1,2,3,4",5,9,38,37,9,38,37,10,37,37,10,37,36,9,38,37,37,36,0,
+articleType,Free Gifts,development,57,40,"0,1,2,3,4",5,11,46,34,12,45,31,12,45,31,12,45,31,10,47,33,45,31,0,
+articleType,Gloves,development,18,12,"0,1,2,3,4",5,4,14,10,3,15,10,4,14,9,3,15,10,4,14,9,14,9,0,
+articleType,Handbags,development,1222,793,"0,1,2,3,4",5,244,978,635,243,979,634,245,977,634,244,978,633,246,976,636,976,633,0,
+articleType,Hat,development,2,2,"1,2",2,0,2,2,1,1,1,1,1,1,0,2,2,0,2,2,1,1,0,low_independent_family_support
+articleType,Headband,development,6,6,"0,1,2,3,4",5,2,4,4,1,5,5,1,5,5,1,5,5,1,5,5,4,4,0,
+articleType,Heels,development,890,472,"0,1,2,3,4",5,179,711,380,176,714,375,176,714,377,176,714,377,183,707,379,707,375,0,
+articleType,Highlighter and Blush,development,4,1,3,1,0,4,1,0,4,1,0,4,1,4,0,0,0,4,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Innerwear Vests,development,205,161,"0,1,2,3,4",5,40,165,129,42,163,128,41,164,129,42,163,128,40,165,130,163,128,0,
+articleType,Ipad,development,1,1,1,1,0,1,1,1,0,0,0,1,1,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Jackets,development,193,170,"0,1,2,3,4",5,38,155,135,39,154,137,39,154,136,39,154,136,38,155,136,154,135,0,
+articleType,Jeans,development,472,226,"0,1,2,3,4",5,94,378,182,95,377,180,94,378,179,94,378,185,95,377,178,377,178,0,
+articleType,Jeggings,development,22,14,"0,1,2,3,4",5,4,18,11,4,18,10,6,16,13,4,18,11,4,18,11,16,10,0,
+articleType,Jewellery Set,development,38,16,"0,1,2,3,4",5,6,32,12,5,33,12,15,23,15,6,32,12,6,32,13,23,12,0,
+articleType,Jumpsuit,development,10,10,"0,1,2,3,4",5,2,8,8,2,8,8,2,8,8,2,8,8,2,8,8,8,8,0,
+articleType,Kajal and Eyeliner,development,11,9,"0,1,2,3,4",5,3,8,7,2,9,8,2,9,7,2,9,7,2,9,7,8,7,0,
+articleType,Key chain,development,1,1,3,1,0,1,1,0,1,1,0,1,1,1,0,0,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Kurta Sets,development,64,59,"0,1,2,3,4",5,13,51,47,13,51,47,13,51,47,13,51,47,12,52,48,51,47,0,
+articleType,Kurtas,development,1322,699,"0,1,2,3,4",5,263,1059,560,264,1058,558,265,1057,561,263,1059,559,267,1055,558,1055,558,0,
+articleType,Kurtis,development,172,134,"0,1,2,3,4",5,33,139,108,35,137,108,35,137,106,35,137,107,34,138,107,137,106,0,
+articleType,Laptop Bag,development,67,49,"0,1,2,3,4",5,12,55,39,14,53,39,14,53,39,14,53,39,13,54,40,53,39,0,
+articleType,Leggings,development,135,114,"0,1,2,3,4",5,26,109,91,27,108,92,28,107,90,27,108,92,27,108,91,107,90,0,
+articleType,Lehenga Choli,development,2,2,"3,4",2,0,2,2,0,2,2,0,2,2,1,1,1,1,1,1,1,1,0,low_independent_family_support
+articleType,Lip Gloss,development,5,5,"0,1,2,3,4",5,1,4,4,1,4,4,1,4,4,1,4,4,1,4,4,4,4,0,
+articleType,Lip Liner,development,11,7,"0,1,2,3,4",5,2,9,6,2,9,5,2,9,5,1,10,6,4,7,6,7,5,0,
+articleType,Lip Plumper,development,3,3,"0,2,3",3,1,2,2,0,3,3,1,2,2,1,2,2,0,3,3,2,2,0,low_independent_family_support
+articleType,Lipstick,development,10,2,"1,4",2,0,10,2,6,4,1,0,10,2,0,10,2,4,6,1,4,1,0,low_independent_family_support
+articleType,Lounge Pants,development,45,42,"0,1,2,3,4",5,9,36,33,9,36,34,9,36,34,9,36,34,9,36,33,36,33,0,
+articleType,Lounge Shorts,development,29,23,"0,1,2,3,4",5,6,23,18,5,24,20,6,23,17,6,23,19,6,23,18,23,17,0,
+articleType,Lounge Tshirts,development,1,1,1,1,0,1,1,1,0,0,0,1,1,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Messenger Bag,development,37,36,"0,1,2,3,4",5,7,30,29,8,29,29,7,30,29,8,29,28,7,30,29,29,28,0,
+articleType,Mobile Pouch,development,40,39,"0,1,2,3,4",5,8,32,31,8,32,32,8,32,31,8,32,31,8,32,31,32,31,0,
+articleType,Mufflers,development,33,27,"0,1,2,3,4",5,7,26,22,7,26,21,6,27,22,7,26,21,6,27,22,26,21,0,
+articleType,Nail Polish,development,16,15,"0,1,2,3,4",5,4,12,11,3,13,13,3,13,12,3,13,12,3,13,12,12,11,0,
+articleType,Necklace and Chains,development,53,37,"0,1,2,3,4",5,10,43,29,10,43,31,11,42,30,11,42,29,11,42,29,42,29,0,
+articleType,Nehru Jackets,development,4,3,"1,2,4",3,0,4,3,1,3,2,2,2,2,0,4,3,1,3,2,2,2,0,low_independent_family_support
+articleType,Night suits,development,59,35,"0,1,2,3,4",5,11,48,26,12,47,27,12,47,31,12,47,29,12,47,27,47,26,0,
+articleType,Nightdress,development,34,26,"0,1,2,3,4",5,7,27,21,6,28,21,7,27,21,7,27,21,7,27,20,27,20,0,
+articleType,Patiala,development,23,19,"0,1,2,3,4",5,4,19,16,4,19,15,5,18,15,5,18,14,5,18,16,18,14,0,
+articleType,Pendant,development,105,10,"0,1,2,3,4",5,5,100,7,56,49,9,11,94,9,5,100,6,28,77,9,49,6,0,
+articleType,Perfume and Body Mist,development,474,405,"0,1,2,3,4",5,95,379,323,95,379,325,94,380,326,95,379,322,95,379,324,379,322,0,
+articleType,Rain Jacket,development,1,1,2,1,0,1,1,0,1,1,1,0,0,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Rain Trousers,development,1,1,4,1,0,1,1,0,1,1,0,1,1,0,1,1,1,0,0,0,0,1,untrainable_in_one_or_more_folds
+articleType,Ring,development,79,4,"1,2,3,4",4,0,79,4,2,77,3,25,54,3,49,30,3,3,76,3,30,3,0,low_independent_family_support
+articleType,Robe,development,2,2,"2,3",2,0,2,2,0,2,2,1,1,1,1,1,1,0,2,2,1,1,0,low_independent_family_support
+articleType,Rompers,development,11,7,"0,1,2,3,4",5,3,8,6,2,9,6,2,9,5,2,9,5,2,9,6,8,5,0,
+articleType,Rucksacks,development,10,10,"0,1,2,3,4",5,2,8,8,2,8,8,2,8,8,2,8,8,2,8,8,8,8,0,
+articleType,Salwar,development,28,24,"0,1,2,3,4",5,5,23,20,5,23,19,6,22,18,6,22,19,6,22,20,22,18,0,
+articleType,Salwar and Dupatta,development,6,6,"0,1,2,3,4",5,1,5,5,2,4,4,1,5,5,1,5,5,1,5,5,4,4,0,
+articleType,Sandals,development,735,494,"0,1,2,3,4",5,146,589,394,146,589,394,146,589,395,146,589,395,151,584,398,584,394,0,
+articleType,Sarees,development,129,106,"0,1,2,3,4",5,25,104,84,26,103,84,27,102,86,26,103,86,25,104,84,102,84,0,
+articleType,Scarves,development,93,74,"0,1,2,3,4",5,18,75,59,19,74,59,19,74,60,19,74,59,18,75,59,74,59,0,
+articleType,Shapewear,development,2,2,"2,3",2,0,2,2,0,2,2,1,1,1,1,1,1,0,2,2,1,1,0,low_independent_family_support
+articleType,Shirts,development,2619,1527,"0,1,2,3,4",5,528,2091,1223,521,2098,1221,524,2095,1222,527,2092,1217,519,2100,1225,2091,1217,0,
+articleType,Shoe Accessories,development,20,17,"0,1,2,3,4",5,4,16,14,4,16,13,4,16,15,4,16,13,4,16,13,16,13,0,
+articleType,Shoe Laces,development,1,1,1,1,0,1,1,1,0,0,0,1,1,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Shorts,development,447,347,"0,1,2,3,4",5,88,359,277,91,356,277,89,358,280,89,358,277,90,357,277,356,277,0,
+articleType,Shrug,development,2,2,"2,3",2,0,2,2,0,2,2,1,1,1,1,1,1,0,2,2,1,1,0,low_independent_family_support
+articleType,Skirts,development,99,81,"0,1,2,3,4",5,19,80,65,20,79,65,21,78,64,20,79,65,19,80,65,78,64,0,
+articleType,Socks,development,521,295,"0,1,2,3,4",5,103,418,238,106,415,236,104,417,235,104,417,235,104,417,236,415,235,0,
+articleType,Sports Sandals,development,54,53,"0,1,2,3,4",5,10,44,43,11,43,42,11,43,43,11,43,42,11,43,42,43,42,0,
+articleType,Sports Shoes,development,1691,1544,"0,1,2,3,4",5,339,1352,1233,338,1353,1245,338,1353,1233,340,1351,1232,336,1355,1233,1351,1232,0,
+articleType,Stockings,development,22,10,"0,1,2,3,4",5,8,14,9,3,19,7,4,18,9,3,19,7,4,18,8,14,7,0,
+articleType,Stoles,development,77,52,"0,1,2,3,4",5,15,62,41,16,61,42,16,61,42,16,61,41,14,63,42,61,41,0,
+articleType,Sunglasses,development,886,425,"0,1,2,3,4",5,175,711,340,176,710,340,176,710,339,173,713,340,186,700,341,700,339,0,
+articleType,Suspenders,development,34,19,"0,1,2,3,4",5,6,28,14,6,28,14,6,28,15,9,25,18,7,27,15,25,14,0,
+articleType,Sweaters,development,234,199,"0,1,2,3,4",5,46,188,159,48,186,159,47,187,159,47,187,159,46,188,160,186,159,0,
+articleType,Sweatshirts,development,237,203,"0,1,2,3,4",5,46,191,163,48,189,163,48,189,162,48,189,162,47,190,162,189,162,0,
+articleType,Swimwear,development,15,14,"0,1,2,3,4",5,3,12,12,3,12,11,3,12,11,3,12,11,3,12,11,12,11,0,
+articleType,Tablet Sleeve,development,2,2,"2,4",2,0,2,2,0,2,2,1,1,1,0,2,2,1,1,1,1,1,0,low_independent_family_support
+articleType,Ties,development,179,85,"0,1,2,3,4",5,34,145,68,37,142,66,37,142,69,36,143,69,35,144,68,142,66,0,
+articleType,Ties and Cufflinks,development,1,1,0,1,1,0,0,0,1,1,0,1,1,0,1,1,0,1,1,0,0,1,untrainable_in_one_or_more_folds
+articleType,Tights,development,8,7,"0,1,2,3,4",5,2,6,5,2,6,6,1,7,6,1,7,6,2,6,5,6,5,0,
+articleType,Tops,development,1369,967,"0,1,2,3,4",5,274,1095,771,273,1096,774,274,1095,772,273,1096,777,275,1094,774,1094,771,0,
+articleType,Track Pants,development,249,200,"0,1,2,3,4",5,49,200,161,51,198,159,50,199,159,50,199,160,49,200,161,198,159,0,
+articleType,Tracksuits,development,24,20,"0,1,2,3,4",5,5,19,15,4,20,17,5,19,16,5,19,16,5,19,16,19,15,0,
+articleType,Travel Accessory,development,12,11,"0,1,2,3,4",5,3,9,9,2,10,9,3,9,8,2,10,9,2,10,9,9,8,0,
+articleType,Trolley Bag,development,3,2,"3,4",2,0,3,2,0,3,2,0,3,2,2,1,1,1,2,1,1,1,0,low_independent_family_support
+articleType,Trousers,development,435,279,"0,1,2,3,4",5,85,350,224,89,346,225,87,348,223,87,348,222,87,348,222,346,222,0,
+articleType,Trunk,development,119,86,"0,1,2,3,4",5,23,96,69,24,95,69,25,94,70,24,95,67,23,96,69,94,67,0,
+articleType,Tshirts,development,5748,4603,"0,1,2,3,4",5,1151,4597,3677,1147,4601,3684,1151,4597,3680,1152,4596,3689,1147,4601,3682,4596,3677,0,
+articleType,Tunics,development,148,132,"0,1,2,3,4",5,28,120,106,30,118,106,31,117,105,30,118,105,29,119,106,117,105,0,
+articleType,Umbrellas,development,5,4,"0,1,2,4",4,1,4,3,1,4,3,1,4,3,0,5,4,2,3,3,3,3,0,low_independent_family_support
+articleType,Waist Pouch,development,15,14,"0,1,2,3,4",5,3,12,12,3,12,11,3,12,11,3,12,11,3,12,11,12,11,0,
+articleType,Waistcoat,development,12,10,"0,1,2,3,4",5,3,9,8,2,10,8,3,9,7,2,10,8,2,10,9,9,7,0,
+articleType,Wallets,development,704,422,"0,1,2,3,4",5,139,565,339,142,562,336,141,563,336,141,563,336,141,563,341,562,336,0,
+articleType,Watches,development,1911,1304,"0,1,2,3,4",5,388,1523,1050,379,1532,1038,380,1531,1046,386,1525,1046,378,1533,1036,1523,1036,0,
+articleType,Water Bottle,development,10,10,"0,1,2,3,4",5,2,8,8,2,8,8,2,8,8,2,8,8,2,8,8,8,8,0,
+articleType,Wristbands,development,5,5,"0,1,2,3,4",5,1,4,4,1,4,4,1,4,4,1,4,4,1,4,4,4,4,0,
+gender,Boys,development,684,397,"0,1,2,3,4",5,136,548,318,138,546,316,136,548,321,136,548,318,138,546,315,546,315,0,
+gender,Girls,development,543,336,"0,1,2,3,4",5,107,436,266,110,433,271,109,434,268,108,435,267,109,434,272,433,266,0,
+gender,Men,development,17753,12345,"0,1,2,3,4",5,3550,14203,9883,3551,14202,9852,3550,14203,9872,3550,14203,9897,3552,14201,9876,14201,9852,0,
+gender,Unisex,development,1766,1428,"0,1,2,3,4",5,355,1411,1141,352,1414,1147,352,1414,1143,354,1412,1144,353,1413,1137,1411,1137,0,
+gender,Women,development,12027,8401,"0,1,2,3,4",5,2405,9622,6734,2405,9622,6728,2406,9621,6726,2406,9621,6679,2405,9622,6737,9621,6679,0,
+season,Fall,development,8928,6876,"0,1,2,3,4",5,1786,7142,5520,1786,7142,5509,1786,7142,5477,1785,7143,5514,1785,7143,5484,7142,5477,0,
+season,Spring,development,1329,1165,"0,1,2,3,4",5,266,1063,928,265,1064,940,265,1064,931,267,1062,925,266,1063,936,1062,925,0,
+season,Summer,development,16235,11645,"0,1,2,3,4",5,3246,12989,9322,3247,12988,9330,3246,12989,9333,3248,12987,9295,3248,12987,9300,12987,9295,0,
+season,Winter,development,6261,3987,"0,1,2,3,4",5,1252,5009,3185,1253,5008,3147,1253,5008,3203,1250,5011,3176,1253,5008,3237,5008,3147,0,
+usage,Casual,development,25151,17637,"0,1,2,3,4",5,5037,20114,14140,5031,20120,14101,5031,20120,14107,5024,20127,14094,5028,20123,14106,20114,14094,0,
+usage,Ethnic,development,2183,1351,"0,1,2,3,4",5,438,1745,1066,436,1747,1071,436,1747,1087,438,1745,1072,435,1748,1108,1745,1066,0,
+usage,Formal,development,1949,1016,"0,1,2,3,4",5,383,1566,819,387,1562,807,390,1559,812,393,1556,807,396,1553,819,1553,807,0,
+usage,Home,development,1,1,4,1,0,1,1,0,1,1,0,1,1,0,1,1,1,0,0,0,0,1,untrainable_in_one_or_more_folds
+usage,NA,development,61,49,"0,1,2,3,4",5,11,50,39,14,47,41,13,48,38,12,49,40,11,50,38,47,38,0,
+usage,Party,development,12,10,"0,1,2,3,4",5,3,9,7,2,10,8,2,10,8,2,10,8,3,9,9,9,7,0,
+usage,Smart Casual,development,47,37,"0,1,2,3,4",5,9,38,31,10,37,28,9,38,30,10,37,29,9,38,30,37,28,0,
+usage,Sports,development,3346,3020,"0,1,2,3,4",5,668,2678,2414,671,2675,2424,668,2678,2417,669,2677,2424,670,2676,2401,2675,2401,0,
+usage,Travel,development,22,22,"0,1,2,3,4",5,4,18,18,5,17,17,4,18,18,5,17,17,4,18,18,17,17,0,

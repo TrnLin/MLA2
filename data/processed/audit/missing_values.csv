@@ -1,0 +1,5 @@
+dataset,partition,column,null_count,null_percent,scope
+styles_train_image_backed,development,articleType,0,0.0,development_targets_only
+styles_train_image_backed,development,season,20,0.06102584444512251,development_targets_only
+styles_train_image_backed,development,gender,0,0.0,development_targets_only
+styles_train_image_backed,development,usage,1,0.0030512922222561255,development_targets_only

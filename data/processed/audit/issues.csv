@@ -1,0 +1,28 @@
+role,id,field,issue_code,severity,action,details
+development,5354,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5355,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5360,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5361,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5365,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5368,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5370,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5376,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5377,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5380,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5385,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5389,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5390,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5391,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5392,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5398,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5401,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5402,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5406,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,5407,season,missing_target_label,warning,masked,development has_season_label is false; target is not imputed
+development,28319,usage,missing_target_label,warning,masked,development has_usage_label is false; target is not imputed
+train,-1,file,non_image_file,warning,ignored,non_image_extension
+train,12347,image,missing_image,error,excluded_from_manifest,metadata row has no valid training image
+train,39401,image,missing_image,error,excluded_from_manifest,metadata row has no valid training image
+train,39403,image,missing_image,error,excluded_from_manifest,metadata row has no valid training image
+train,39410,image,missing_image,error,excluded_from_manifest,metadata row has no valid training image
+train,39425,image,missing_image,error,excluded_from_manifest,metadata row has no valid training image

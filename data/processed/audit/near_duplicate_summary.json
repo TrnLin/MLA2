@@ -1,0 +1,32 @@
+{
+  "schema_version": "5.0.0",
+  "scope": "label-free audit over labelled and official prediction images before splitting",
+  "total_images": 44441,
+  "candidate_counts_by_dhash_distance": {
+    "0": 14849,
+    "1": 28410,
+    "2": 70334
+  },
+  "candidate_pairs": 113593,
+  "pixel_metric_size": 64,
+  "foreground_white_threshold": 245,
+  "automatic_rule": {
+    "maximum_dhash_distance": 2,
+    "maximum_ahash_distance": 1,
+    "maximum_canvas_mse": 0.0005,
+    "maximum_canvas_mae": 0.01,
+    "maximum_crop_mse": 0.005,
+    "maximum_crop_mae": 0.05,
+    "minimum_foreground_ratio": 0.8
+  },
+  "accepted_pairs": 2080,
+  "accepted_non_exact_pairs": 1171,
+  "accepted_cross_role_pairs": 21,
+  "cross_role_automatic_matches": {
+    "pair_count": 10,
+    "labelled_ids_conservatively_quarantined": 9,
+    "prediction_ids_never_entering_development": 8,
+    "safety_policy": "Every non-exact cross-role automatic match is quarantined. Human input is not read and cannot block preparation, cache validation, or testing."
+  },
+  "warning": "The automatic rule favours precision over recall. Rejected candidates remain triage signals, not proof that two products differ."
+}

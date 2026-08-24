@@ -1,0 +1,5 @@
+target,development_products,labelled_products,missing_products,classes,largest_class_products,smallest_class_products,largest_to_smallest_ratio
+articleType,32773,32773,0,124,5748,1,5748.0
+season,32773,32753,20,4,16235,1329,12.215951843491347
+gender,32773,32773,0,5,17753,543,32.69429097605893
+usage,32773,32772,1,9,25151,1,25151.0

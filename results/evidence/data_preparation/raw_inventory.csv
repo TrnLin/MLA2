@@ -1,0 +1,3 @@
+role,csv_path,csv_rows,csv_unique_ids,csv_duplicate_ids,csv_columns,public_header_and_ordered_id_sha256,protected_target_values_hashed,image_dir,image_files
+train,data/raw/teacher/train/styles_train.csv,38617,38617,0,id | gender | masterCategory | subCategory | articleType | baseColour | season | year | usage | productDisplayName | Unnamed: 10 | Unnamed: 11,51d54a0bc077408b488cf006ec083f1c3569e7314a773ef9be72367c9cacdd87,0,data/raw/teacher/train/images_train,38613
+prediction,data/raw/teacher/test/styles_prediction.csv,5829,5829,0,id | gender | articleType | season | usage,6de303f54b8c43737fe284e8c43db3151f0874f083c9280c73b114ff102c22ea,0,data/raw/teacher/test/images_test,5829

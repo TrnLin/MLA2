@@ -1,0 +1,143 @@
+target,class,partition,count,percentage,scope
+articleType,Accessory Gift Set,development,91,0.2776675922253074,development_targets_only
+articleType,Baby Dolls,development,2,0.006102584444512251,development_targets_only
+articleType,Backpacks,development,604,1.8429805022426997,development_targets_only
+articleType,Bangle,development,50,0.15256461111280628,development_targets_only
+articleType,Basketballs,development,12,0.03661550666707351,development_targets_only
+articleType,Belts,development,676,2.0626735422451405,development_targets_only
+articleType,Blazers,development,7,0.021359045555792877,development_targets_only
+articleType,Body Wash and Scrub,development,1,0.0030512922222561255,development_targets_only
+articleType,Booties,development,9,0.02746163000030513,development_targets_only
+articleType,Boxers,development,34,0.10374393555670827,development_targets_only
+articleType,Bra,development,251,0.7658743477862875,development_targets_only
+articleType,Bracelet,development,44,0.13425685777926952,development_targets_only
+articleType,Briefs,development,568,1.7331339822414793,development_targets_only
+articleType,Camisoles,development,13,0.039666798889329634,development_targets_only
+articleType,Capris,development,136,0.4149757422268331,development_targets_only
+articleType,Caps,development,230,0.7017972111189088,development_targets_only
+articleType,Casual Shoes,development,2276,6.944741097854941,development_targets_only
+articleType,Churidar,development,26,0.07933359777865927,development_targets_only
+articleType,Clothing Set,development,7,0.021359045555792877,development_targets_only
+articleType,Clutches,development,189,0.5766942300064077,development_targets_only
+articleType,Compact,development,4,0.012205168889024502,development_targets_only
+articleType,Concealer,development,2,0.006102584444512251,development_targets_only
+articleType,Cufflinks,development,38,0.11594910444573277,development_targets_only
+articleType,Cushion Covers,development,1,0.0030512922222561255,development_targets_only
+articleType,Deodorant,development,248,0.7567204711195191,development_targets_only
+articleType,Dresses,development,289,0.8818234522320202,development_targets_only
+articleType,Duffel Bag,development,73,0.22274433222469717,development_targets_only
+articleType,Dupatta,development,99,0.3020779300033564,development_targets_only
+articleType,Earrings,development,206,0.6285661977847619,development_targets_only
+articleType,Eyeshadow,development,4,0.012205168889024502,development_targets_only
+articleType,Flats,development,356,1.0862600311231807,development_targets_only
+articleType,Flip Flops,development,734,2.239648491135996,development_targets_only
+articleType,Footballs,development,7,0.021359045555792877,development_targets_only
+articleType,Formal Shoes,development,517,1.5775180789064167,development_targets_only
+articleType,Foundation and Primer,development,11,0.03356421444481738,development_targets_only
+articleType,Fragrance Gift Set,development,47,0.1434107344460379,development_targets_only
+articleType,Free Gifts,development,57,0.17392365666859916,development_targets_only
+articleType,Gloves,development,18,0.05492326000061026,development_targets_only
+articleType,Handbags,development,1222,3.728679095596985,development_targets_only
+articleType,Hat,development,2,0.006102584444512251,development_targets_only
+articleType,Headband,development,6,0.018307753333536753,development_targets_only
+articleType,Heels,development,890,2.7156500778079518,development_targets_only
+articleType,Highlighter and Blush,development,4,0.012205168889024502,development_targets_only
+articleType,Innerwear Vests,development,205,0.6255149055625058,development_targets_only
+articleType,Ipad,development,1,0.0030512922222561255,development_targets_only
+articleType,Jackets,development,193,0.5888993988954322,development_targets_only
+articleType,Jeans,development,472,1.4402099289048913,development_targets_only
+articleType,Jeggings,development,22,0.06712842888963476,development_targets_only
+articleType,Jewellery Set,development,38,0.11594910444573277,development_targets_only
+articleType,Jumpsuit,development,10,0.030512922222561255,development_targets_only
+articleType,Kajal and Eyeliner,development,11,0.03356421444481738,development_targets_only
+articleType,Key chain,development,1,0.0030512922222561255,development_targets_only
+articleType,Kurta Sets,development,64,0.19528270222439204,development_targets_only
+articleType,Kurtas,development,1322,4.033808317822598,development_targets_only
+articleType,Kurtis,development,172,0.5248222622280535,development_targets_only
+articleType,Laptop Bag,development,67,0.20443657889116043,development_targets_only
+articleType,Leggings,development,135,0.411924450004577,development_targets_only
+articleType,Lehenga Choli,development,2,0.006102584444512251,development_targets_only
+articleType,Lip Gloss,development,5,0.015256461111280628,development_targets_only
+articleType,Lip Liner,development,11,0.03356421444481738,development_targets_only
+articleType,Lip Plumper,development,3,0.009153876666768377,development_targets_only
+articleType,Lipstick,development,10,0.030512922222561255,development_targets_only
+articleType,Lounge Pants,development,45,0.13730815000152563,development_targets_only
+articleType,Lounge Shorts,development,29,0.08848747444542764,development_targets_only
+articleType,Lounge Tshirts,development,1,0.0030512922222561255,development_targets_only
+articleType,Messenger Bag,development,37,0.11289781222347664,development_targets_only
+articleType,Mobile Pouch,development,40,0.12205168889024502,development_targets_only
+articleType,Mufflers,development,33,0.10069264333445214,development_targets_only
+articleType,Nail Polish,development,16,0.04882067555609801,development_targets_only
+articleType,Necklace and Chains,development,53,0.16171848777957465,development_targets_only
+articleType,Nehru Jackets,development,4,0.012205168889024502,development_targets_only
+articleType,Night suits,development,59,0.1800262411131114,development_targets_only
+articleType,Nightdress,development,34,0.10374393555670827,development_targets_only
+articleType,Patiala,development,23,0.07017972111189089,development_targets_only
+articleType,Pendant,development,105,0.32038568333689316,development_targets_only
+articleType,Perfume and Body Mist,development,474,1.4463125133494035,development_targets_only
+articleType,Rain Jacket,development,1,0.0030512922222561255,development_targets_only
+articleType,Rain Trousers,development,1,0.0030512922222561255,development_targets_only
+articleType,Ring,development,79,0.2410520855582339,development_targets_only
+articleType,Robe,development,2,0.006102584444512251,development_targets_only
+articleType,Rompers,development,11,0.03356421444481738,development_targets_only
+articleType,Rucksacks,development,10,0.030512922222561255,development_targets_only
+articleType,Salwar,development,28,0.08543618222317151,development_targets_only
+articleType,Salwar and Dupatta,development,6,0.018307753333536753,development_targets_only
+articleType,Sandals,development,735,2.2426997833582525,development_targets_only
+articleType,Sarees,development,129,0.39361669667104016,development_targets_only
+articleType,Scarves,development,93,0.2837701766698197,development_targets_only
+articleType,Shapewear,development,2,0.006102584444512251,development_targets_only
+articleType,Shirts,development,2619,7.991334330088792,development_targets_only
+articleType,Shoe Accessories,development,20,0.06102584444512251,development_targets_only
+articleType,Shoe Laces,development,1,0.0030512922222561255,development_targets_only
+articleType,Shorts,development,447,1.363927623348488,development_targets_only
+articleType,Shrug,development,2,0.006102584444512251,development_targets_only
+articleType,Skirts,development,99,0.3020779300033564,development_targets_only
+articleType,Socks,development,521,1.5897232477954413,development_targets_only
+articleType,Sports Sandals,development,54,0.16476978000183076,development_targets_only
+articleType,Sports Shoes,development,1691,5.159735147835108,development_targets_only
+articleType,Stockings,development,22,0.06712842888963476,development_targets_only
+articleType,Stoles,development,77,0.23494950111372168,development_targets_only
+articleType,Sunglasses,development,886,2.7034449089189274,development_targets_only
+articleType,Suspenders,development,34,0.10374393555670827,development_targets_only
+articleType,Sweaters,development,234,0.7140023800079334,development_targets_only
+articleType,Sweatshirts,development,237,0.7231562566747017,development_targets_only
+articleType,Swimwear,development,15,0.04576938333384188,development_targets_only
+articleType,Tablet Sleeve,development,2,0.006102584444512251,development_targets_only
+articleType,Ties,development,179,0.5461813077838464,development_targets_only
+articleType,Ties and Cufflinks,development,1,0.0030512922222561255,development_targets_only
+articleType,Tights,development,8,0.024410337778049004,development_targets_only
+articleType,Tops,development,1369,4.177219052268636,development_targets_only
+articleType,Track Pants,development,249,0.7597717633417753,development_targets_only
+articleType,Tracksuits,development,24,0.07323101333414701,development_targets_only
+articleType,Travel Accessory,development,12,0.03661550666707351,development_targets_only
+articleType,Trolley Bag,development,3,0.009153876666768377,development_targets_only
+articleType,Trousers,development,435,1.3273121166814146,development_targets_only
+articleType,Trunk,development,119,0.36310377444847897,development_targets_only
+articleType,Tshirts,development,5748,17.53882769352821,development_targets_only
+articleType,Tunics,development,148,0.45159124889390656,development_targets_only
+articleType,Umbrellas,development,5,0.015256461111280628,development_targets_only
+articleType,Waist Pouch,development,15,0.04576938333384188,development_targets_only
+articleType,Waistcoat,development,12,0.03661550666707351,development_targets_only
+articleType,Wallets,development,704,2.1481097244683123,development_targets_only
+articleType,Watches,development,1911,5.831019436731456,development_targets_only
+articleType,Water Bottle,development,10,0.030512922222561255,development_targets_only
+articleType,Wristbands,development,5,0.015256461111280628,development_targets_only
+season,Fall,development,8928,27.25857173388697,development_targets_only
+season,Spring,development,1329,4.057643574634385,development_targets_only
+season,Summer,development,16235,49.56797850578573,development_targets_only
+season,Winter,development,6261,19.115806185692914,development_targets_only
+gender,Boys,development,684,2.0870838800231897,development_targets_only
+gender,Girls,development,543,1.6568516766850763,development_targets_only
+gender,Men,development,17753,54.169590821713,development_targets_only
+gender,Unisex,development,1766,5.388582064504317,development_targets_only
+gender,Women,development,12027,36.69789155707442,development_targets_only
+usage,Casual,development,25151,76.74539240815331,development_targets_only
+usage,Ethnic,development,2183,6.661174173074576,development_targets_only
+usage,Formal,development,1949,5.9471500061027704,development_targets_only
+usage,Home,development,1,0.0030513853289393386,development_targets_only
+usage,NA,development,61,0.18613450506529966,development_targets_only
+usage,Party,development,12,0.03661662394727206,development_targets_only
+usage,Smart Casual,development,47,0.1434151104601489,development_targets_only
+usage,Sports,development,3346,10.209935310631026,development_targets_only
+usage,Travel,development,22,0.06713047723666545,development_targets_only

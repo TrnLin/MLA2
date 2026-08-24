@@ -7,8 +7,8 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 
-# Supplied dataset and generated processed data must never enter Git.
-# Track only the small guides that preserve the starter folder structure.
+# Supplied raw datasets stay local. Only the exact lean protected-safe preparation pack is
+# deliverable so normal Run All does not need the slow forensic rebuild.
 /data/*
 !/data/README.md
 !/data/raw/
@@ -17,6 +17,28 @@ __pycache__/
 !/data/processed/
 /data/processed/*
 !/data/processed/README.md
+!/data/processed/preparation_cache.json
+!/data/processed/splits.csv
+!/data/processed/split_summary.json
+!/data/processed/cv_fold_summary.json
+!/data/processed/taxonomy.json
+!/data/processed/development_class_summary.csv
+!/data/processed/development_image_profile.json
+!/data/processed/label_maps.json
+!/data/processed/prediction_manifest.csv
+!/data/processed/audit/
+/data/processed/audit/*
+!/data/processed/audit/csv_summary.json
+!/data/processed/audit/exact_duplicate_groups.csv
+!/data/processed/audit/image_audit.csv.gz
+!/data/processed/audit/issues.csv
+!/data/processed/audit/missing_values.csv
+!/data/processed/audit/near_duplicate_candidates.csv.gz
+!/data/processed/audit/near_duplicate_summary.json
+!/data/processed/audit/perceptual_hashes.csv.gz
+!/data/processed/audit/product_family_groups.csv.gz
+!/data/processed/audit/product_family_summary.json
+!/data/processed/audit/target_class_counts.csv
 
 # Local scratch material and generated model weights.
 tmp/

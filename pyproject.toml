@@ -1,22 +1,33 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools==80.9.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "fashion-intelligence"
 version = "0.1.0"
 description = "COSC2753 Assignment 2 fashion classification and visual search"
-requires-python = ">=3.11"
+requires-python = ">=3.12,<3.15"
 dependencies = [
-    "pandas",
-    "numpy",
-    "matplotlib",
-    "pillow",
-    "jupyter",
+    "jupyter==1.1.1",
+    "matplotlib==3.11.1",
+    "numpy==2.5.2",
+    "pandas==3.0.5",
+    "pillow==12.3.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest==9.1.1", "ruff==0.16.3"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+extend-exclude = [".agents", ".claude"]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]

@@ -1,6 +1,6 @@
 # MLA2 Assignment Roadmap
 
-**Status:** Not started
+**Status:** In progress - leakage-safe EDA complete; non-blocking human decisions listed
 **Due:** 12 September 2026 at 23:59
 
 This file gives the work order only. It does not choose methods. Record choices
@@ -15,8 +15,8 @@ and their evidence in `docs/decisions/`.
 
 ## Progress
 
-- [ ] Phase 0 — Inspect the data and record data decisions
-- [ ] Phase 1 — Build trusted training data and one shared split
+- [x] Phase 0 — Inspect the data and record data decisions
+- [x] Phase 1 — Build trusted training data and one shared split
 - [ ] Phase 2 — Build shared training and evaluation tools
 - [ ] Phase 3 — Compare classification approaches
 - [ ] Phase 4 — Compare visual search approaches
@@ -33,8 +33,11 @@ possible leakage. Save useful evidence and record decisions before cleaning data
 
 ### Phase 1 — Prepare trusted data
 
-Build rebuildable manifests and one shared split under `data/processed/`. Add
-checks that protect the official test set and keep related images together.
+Build rebuildable manifests and one shared split under `data/processed/`. The
+accepted family rule blocks exact hashes, automatic visual matches, and normalized
+product-name groups. Every cross-role automatic match and every conflicting exact hash is
+quarantined. Decision `0011` records the automatic safety rule. Open human questions live only in
+`docs/reviews/open_decisions.md` and never block preparation or testing.
 
 ### Phase 2 — Build shared experiment tools
 
@@ -72,5 +75,6 @@ environment.
 - Use one shared split for every task.
 - Record every training run.
 - Keep raw data unchanged.
-- Keep reusable logic out of notebooks.
+- Keep shared training/evaluation logic in `src/fashion/`; keep the official EDA
+  calculations and plots inside `notebooks/01_data_preparation.ipynb`.
 - Prefer useful comparisons and honest failure analysis over one extra run.

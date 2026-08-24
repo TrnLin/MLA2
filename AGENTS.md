@@ -25,7 +25,11 @@ analysis of the runs already done, choose the analysis.
 
 ## Conventions
 
-- Notebooks stay narrative — import from `src/fashion/`, keep logic out of cells.
+- `notebooks/01_data_preparation.ipynb` is the official data-preparation exception: its
+  audits, analysis, and plot code stay visible so one Run All tells the whole shared-data
+  story. Reusable dataset, split, image-variant, training, and evaluation contracts stay
+  in `src/fashion/`.
+- Later notebooks stay narrative and import reusable logic from `src/fashion/`.
 - Write a figure to `results/figures/` when the report will cite it.
 - Use `./.venv/bin/python`.
 

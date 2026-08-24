@@ -1,0 +1,41 @@
+{
+  "acquisition_shortcut": {
+    "global_majority_agreement": 0.4956797850578573,
+    "share_in_2011_2012": 0.6990504686593595,
+    "valid_season_rows": 32753,
+    "year_majority_agreement": 0.7445730162122554
+  },
+  "active_group_crossings": 0,
+  "broad_name_family_review": {
+    "groups": 4,
+    "largest_group_name": "Lucera Women Silver Earrings",
+    "largest_group_rows": 80,
+    "samples_per_group": 6
+  },
+  "cv_assignment_sha256": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd",
+  "cv_fold_counts": {
+    "0": 6553,
+    "1": 6556,
+    "2": 6553,
+    "3": 6554,
+    "4": 6557
+  },
+  "development_conservative_split_groups": 22905,
+  "known_labelled_ids_without_valid_image": [
+    12347,
+    39401,
+    39403,
+    39410,
+    39425
+  ],
+  "model_training_runs": 0,
+  "official_prediction_rows": 5829,
+  "partition_counts": {
+    "development": 32773,
+    "holdout": 5778,
+    "quarantine": 61
+  },
+  "protected_target_values_used": 0,
+  "schema_version": "1.0.0",
+  "status": "ready"
+}

@@ -1,0 +1,34 @@
+{
+  "canonical": {
+    "file_count": 44442,
+    "full_manifest_sha256": "5d22d856f2e8f9a17ae361837d8c4eaaf49dcf00b5f1839b14b84401867401ea",
+    "image_bytes": 14919662043,
+    "image_count": 44441,
+    "images_csv_bytes": 5229098,
+    "images_csv_sha256": "64dfd2449f22e39120e2ab4b0230a4521f27a3b3513e5eee5cc000ad865df831",
+    "root": "data/raw/external/fashion_product_images_v1"
+  },
+  "git_tracked": false,
+  "legacy_extras": {
+    "bytes": 16497667123,
+    "file_count": 133336,
+    "preserved_root": "data/raw/external/fashion_product_images_v1_legacy_extras"
+  },
+  "migration": {
+    "combined_bytes_after": 31422558264,
+    "combined_bytes_before": 31422558264,
+    "combined_file_count_after": 177778,
+    "combined_file_count_before": 177778,
+    "full_manifest_match": true,
+    "verified_on": "2026-08-23"
+  },
+  "schema_version": "2.0.0",
+  "shared_preparation_reads": false,
+  "source": {
+    "dataset_id": 139630,
+    "kaggle_reference": "paramaggarwal/fashion-product-images-dataset",
+    "license": "MIT",
+    "version": 1
+  },
+  "task_scope": "optional_task4_only"
+}

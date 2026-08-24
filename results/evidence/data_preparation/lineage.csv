@@ -1,0 +1,7 @@
+input_scope,producer,artifact,consumer_or_limit
+teacher CSV header + ordered IDs,audit_raw_data,audit/csv_summary.json,structure and reconciliation
+teacher image raw bytes,audit_raw_data,audit/image_audit.csv.gz,integrity and exact hashes
+image hashes + perceptual candidates + names,build_product_families,audit/product_family_groups.csv.gz,group boundary
+fixed IDs + family groups,make_splits,splits.csv,all task notebooks
+development labels only,write_label_maps_from_splits,label_maps.json,task-local encoders
+development image facts,write_development_image_profile,development_image_profile.json,description only
