@@ -27,7 +27,7 @@ def family_profile(
     *,
     partition: str = "development",
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Return family sizes, a one-row profile, and overlapping source counts."""
+    """Return conservative split-group sizes, one profile, and overlapping source counts."""
     required = {
         "id",
         "partition",
@@ -63,7 +63,7 @@ def family_profile(
             {
                 "partition": partition,
                 "product_rows": int(len(rows)),
-                "independent_families": int(len(family_sizes)),
+                "conservative_split_groups": int(len(family_sizes)),
                 "singleton_family_percent": float(family_sizes["family_size"].eq(1).mean() * 100),
                 "products_in_multirow_family_percent": float(
                     products_in_multirow / len(rows) * 100
@@ -75,7 +75,7 @@ def family_profile(
         ]
     )
     source_tokens = {
-        "same normalized real name": "normalized_product_name",
+        "same normalized product name": "normalized_product_name",
         "same SHA-256": "exact_sha256",
         "accepted near-duplicate": "accepted_near_duplicate",
     }

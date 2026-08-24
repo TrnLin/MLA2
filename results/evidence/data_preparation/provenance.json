@@ -1,4 +1,6 @@
 {
+  "acquisition_shortcut_scope": "development_rows_with_valid_season_only",
+  "broad_name_review_scope": "development_only_evidence_no_pipeline_feedback",
   "cv_assignment_sha256": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd",
   "cv_folds": 5,
   "cv_seed": 2753,

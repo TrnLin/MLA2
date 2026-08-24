@@ -45,10 +45,12 @@ def test_family_profile_and_fold_support_report_zero_crossings():
     )
     sizes, profile, sources = family_profile(splits)
     assert sizes["family_size"].tolist() == [2, 1]
-    assert profile.loc[0, "independent_families"] == 2
+    assert profile.loc[0, "conservative_split_groups"] == 2
     assert profile.loc[0, "development_fold_crossings"] == 0
     assert (
-        sources.set_index("family_source").loc["same normalized real name", "multirow_families"]
+        sources.set_index("family_source").loc[
+            "same normalized product name", "multirow_families"
+        ]
         == 1
     )
 

@@ -29,7 +29,7 @@ DATA_HEADINGS = (
     "## 8. Development, internal holdout, quarantine, and five CV folds",
     "## 9. Development-only target analysis",
     "## 10. Imbalance and class support by fold",
-    "## 11. Shortcut risk and categorical association",
+    "## 11. Shortcut risks and categorical association",
     "## 12. Development image profile and pixel diagnostics",
     "## 13. Labelled development contact sheet",
     "## 14. Duplicate, missing-image, and quality-extreme examples",
@@ -142,7 +142,7 @@ def test_data_preparation_notebook_is_valid_executed_and_narrative() -> None:
     assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
 
     code_indexes = [i for i, cell in enumerate(notebook.cells) if cell.cell_type == "code"]
-    assert len(code_indexes) == 28
+    assert len(code_indexes) == 30
     for index in code_indexes:
         cell = notebook.cells[index]
         assert cell.execution_count is not None
@@ -214,6 +214,9 @@ def test_hashing_reconciliation_and_analysis_contracts_are_visible() -> None:
     assert "fold_support_tables" in source
     assert "shortcut_benchmarks" in source
     assert "near_threshold_review" in source
+    assert "acquisition shortcut" in lowered
+    assert "no universal" in lowered
+    assert "five independent kinds of image quality" in lowered
 
 
 def test_outside_helper_files_are_named_at_each_call_site() -> None:
@@ -271,7 +274,7 @@ def test_computed_data_preparation_figures_and_statistics_are_complete() -> None
     _, profile_table, _ = family_profile(splits)
     profile = profile_table.iloc[0]
     assert profile["product_rows"] == 32773
-    assert profile["independent_families"] == 22905
+    assert profile["conservative_split_groups"] == 22905
     assert profile["active_partition_crossings"] == 0
     assert profile["development_fold_crossings"] == 0
     assert profile["largest_family_products"] == 80
@@ -292,14 +295,70 @@ def test_computed_data_preparation_figures_and_statistics_are_complete() -> None
     assert shortcut.loc["usage", "group_majority_accuracy"] == pytest.approx(0.9004, abs=0.0001)
     assert shortcut.loc["gender", "group_majority_accuracy"] == pytest.approx(0.7854, abs=0.0001)
 
+    season_development = development[
+        development["has_season_label"].astype(str).str.lower().eq("true")
+    ].copy()
+    season_development["year"] = pd.to_numeric(season_development["year"])
+    assert len(season_development) == 32753
+    assert season_development["year"].isin([2011, 2012]).mean() == pytest.approx(
+        0.6990505, abs=0.0000001
+    )
+    global_label = season_development["season"].value_counts().sort_index().idxmax()
+    year_labels = season_development.groupby("year")["season"].agg(
+        lambda values: values.value_counts().sort_index().idxmax()
+    )
+    assert global_label == "Summer"
+    assert season_development["season"].eq(global_label).mean() == pytest.approx(
+        0.4956798, abs=0.0000001
+    )
+    assert season_development["season"].eq(
+        season_development["year"].map(year_labels)
+    ).mean() == pytest.approx(0.7445730, abs=0.0000001)
+    median_kib = season_development.groupby("season")["file_size_bytes"].median() / 1024
+    assert median_kib.to_dict() == pytest.approx(
+        {"Fall": 2.174805, "Spring": 17.741211, "Summer": 14.994141, "Winter": 18.053711},
+        abs=0.000001,
+    )
+
+    nmi = pd.read_csv(evidence / "joint_target_nmi.csv")
+    largest_nmi = nmi.loc[nmi["nmi"].idxmax()]
+    assert (largest_nmi["target_1"], largest_nmi["target_2"]) == ("articleType", "usage")
+    assert largest_nmi["nmi"] == pytest.approx(0.2537829, abs=0.0000001)
+
     spearman = pd.read_csv(evidence / "image_quality_spearman.csv")
     assert not {"width", "height", "aspect_ratio"}.intersection(spearman["feature_1"])
+    spearman_lookup = spearman.set_index(["feature_1", "feature_2"])["spearman_rho"]
+    assert spearman_lookup.loc[("brightness", "contrast")] == pytest.approx(
+        -0.8617457, abs=0.0000001
+    )
+    assert spearman_lookup.loc[("brightness", "near_white_fraction")] == pytest.approx(
+        0.7916549, abs=0.0000001
+    )
+
+    family_review = pd.read_csv(evidence / "broad_name_family_review_index.csv")
+    reviewed_groups = family_review[
+        ["family_rank", "product_name_key", "product_family_group", "group_size"]
+    ].drop_duplicates()
+    assert reviewed_groups["product_name_key"].tolist() == [
+        "lucera women silver earrings",
+        "lucera women silver pendant",
+        "lucera women silver ring",
+        "catwalk women black heels",
+    ]
+    assert reviewed_groups["group_size"].tolist() == [80, 56, 49, 44]
+    assert family_review.groupby("family_rank").size().eq(6).all()
+    lucera = family_review[family_review["product_name_key"].eq("lucera women silver earrings")]
+    assert lucera["product_family_group"].eq("family_3a8dd25529104cb0").all()
+    assert lucera["sha256"].nunique() == 6
+
     assert not any((evidence / filename).exists() for filename in REDUNDANT_GRAPH_TABLES)
     for filename in (
         "family_duplicate_profile.png",
+        "broad_name_family_review.png",
         "near_duplicate_threshold_review.png",
         "class_support_by_fold.png",
         "shortcut_risk_heatmaps.png",
+        "acquisition_shortcut_risk.png",
         "target_distributions.png",
         "image_quality_and_spearman.png",
         "development_contact_sheet.png",
@@ -315,7 +374,7 @@ def test_delivered_cache_and_artifact_registry_match_bytes() -> None:
     assert result["protected_target_values_hashed"] == 0
 
     registry = pd.read_csv(ROOT / "results/evidence/data_preparation/artifact_registry.csv")
-    assert len(registry) == 44
+    assert len(registry) == 48
     for row in registry.itertuples(index=False):
         path = ROOT / row.repository_path
         assert path.is_file(), row.repository_path
@@ -328,6 +387,11 @@ def test_delivered_cache_and_artifact_registry_match_bytes() -> None:
     assert summary["status"] == "ready"
     assert summary["model_training_runs"] == 0
     assert summary["protected_target_values_used"] == 0
+    assert summary["development_conservative_split_groups"] == 22905
+    assert summary["acquisition_shortcut"]["year_majority_agreement"] == pytest.approx(
+        0.7445730, abs=0.0000001
+    )
+    assert summary["broad_name_family_review"]["largest_group_rows"] == 80
 
 
 def test_saved_html_is_current_portable_and_hides_inputs() -> None:
@@ -336,7 +400,7 @@ def test_saved_html_is_current_portable_and_hides_inputs() -> None:
 
     assert "DATA PREPARATION READY" in html
     assert "Shared Data Preparation" in html
-    assert html.count("jp-mod-noInput") >= 28
+    assert html.count("jp-mod-noInput") >= 30
     assert "from __future__ import annotations" not in html
     assert len(re.findall(r"<h2[ >]", html)) == 18
     assert "/home/" not in html

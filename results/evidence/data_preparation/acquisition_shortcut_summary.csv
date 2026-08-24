@@ -1,0 +1,9 @@
+metric,group,n,value,unit,note
+development rows with valid Season,all,32753,32753.0,rows,development only; holdout and quarantine excluded
+year concentration,2011-2012,32753,0.6990504686593595,share,22896 rows
+global majority agreement,Summer,32753,0.4956797850578573,agreement share,descriptive baseline; not model accuracy
+year-majority agreement,year,32753,0.7445730162122554,agreement share,same-row descriptive lookup; not model evaluation
+median file size,Fall,8928,2.1748046875,KiB,1 KiB = 1024 bytes
+median file size,Spring,1329,17.7412109375,KiB,1 KiB = 1024 bytes
+median file size,Summer,16235,14.994140625,KiB,1 KiB = 1024 bytes
+median file size,Winter,6261,18.0537109375,KiB,1 KiB = 1024 bytes

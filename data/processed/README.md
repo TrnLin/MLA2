@@ -10,6 +10,7 @@ from `data/raw/teacher/` by Notebook 01.
 - `quarantine`: 61 rows with blank protected targets and false label masks.
 
 Families and accepted duplicate groups do not cross partitions or development folds.
+These are conservative split groups for leakage safety, not verified independent products.
 The current development ID/fold assignment SHA-256 is
 `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`; ADR 0017 records
 the one-time refreeze after fixing missing product-name `NA` values.

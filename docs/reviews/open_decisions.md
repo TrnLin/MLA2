@@ -18,6 +18,13 @@ whole prevents leakage but reduces the number of independent units. The largest 
 development family is `family_3a8dd25529104cb0`, with 80 products. Full membership is in
 `data/processed/splits.csv`.
 
+The deterministic development-only review in
+`results/figures/data_preparation/broad_name_family_review.png` shows that this
+`Lucera Women Silver Earrings` group contains several earring designs. Keep the broad
+group whole for assignment split safety. Treat 22,905 as conservative split groups, not
+verified independent products. An industry rebuild would need real SKU identifiers or a
+human family-review step.
+
 ## 3. Task-owner experiment choices
 
 Each owner must choose and justify one fixed `cv_fold` or all five folds, task-specific
