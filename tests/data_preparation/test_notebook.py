@@ -39,6 +39,7 @@ DATA_HEADINGS = (
     "## 18. Completion gate",
 )
 
+EXPECTED_DATA_CODE_CELLS = 64
 EXPECTED_COUNTS = {"development": 32773, "holdout": 5778, "quarantine": 61}
 EXPECTED_DIGESTS = {
     "development": "2639d731f89942fd9598f9552bb092dd634830c3e6a63d0b569cfc2aa4362d01",
@@ -138,22 +139,39 @@ def test_data_preparation_notebook_is_valid_executed_and_narrative() -> None:
     nbformat.validate(notebook)
 
     assert notebook.metadata["title"] == "Shared Data Preparation"
-    assert _headings(notebook) == list(DATA_HEADINGS)
+    headings = _headings(notebook)
+    assert [heading for heading in headings if re.match(r"^#{1,2} ", heading)] == list(
+        DATA_HEADINGS
+    )
+    subheadings = [heading for heading in headings if heading.startswith("### ")]
+    assert len(subheadings) == EXPECTED_DATA_CODE_CELLS
+    assert all(re.match(r"^### \d+\.\d+ ", heading) for heading in subheadings)
     assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
 
     code_indexes = [i for i, cell in enumerate(notebook.cells) if cell.cell_type == "code"]
-    assert len(code_indexes) == 30
+    assert len(code_indexes) == EXPECTED_DATA_CODE_CELLS
     for index in code_indexes:
         cell = notebook.cells[index]
         assert cell.execution_count is not None
         assert cell.outputs
         assert not any(output.output_type == "error" for output in cell.outputs)
+        assert index > 0
+        assert notebook.cells[index - 1].cell_type == "markdown"
+        assert notebook.cells[index - 1].source.startswith("### ")
         assert index + 1 < len(notebook.cells)
         assert notebook.cells[index + 1].cell_type == "markdown"
         assert re.match(
             r"\*\*(Finding|Definition only|Completion result)\.",
             notebook.cells[index + 1].source,
         )
+        html_outputs = [output for output in cell.outputs if "text/html" in output.get("data", {})]
+        image_outputs = [output for output in cell.outputs if "image/png" in output.get("data", {})]
+        assert len(html_outputs) <= 2
+        assert len(image_outputs) <= 1
+
+    source = _source(notebook)
+    assert "display(pd.DataFrame([figure_record]))" not in source
+    assert not re.search(r"(?m)^write_table\(", source)
 
 
 def test_notebook_keeps_shared_scope_teacher_only_and_holdout_sealed() -> None:
@@ -230,9 +248,14 @@ def test_outside_helper_files_are_named_at_each_call_site() -> None:
         assert matching_indexes, fragment
         for index in matching_indexes:
             assert index > 0
-            previous = notebook.cells[index - 1]
-            assert previous.cell_type == "markdown"
-            assert helper_path in previous.source, (fragment, helper_path)
+            section_context = []
+            for previous in reversed(notebook.cells[:index]):
+                if previous.cell_type != "markdown":
+                    continue
+                section_context.append(previous.source)
+                if any(line.startswith("## ") for line in previous.source.splitlines()):
+                    break
+            assert helper_path in "\n".join(reversed(section_context)), (fragment, helper_path)
 
 
 def test_split_membership_digests_folds_and_protected_cells_are_frozen() -> None:
@@ -353,15 +376,22 @@ def test_computed_data_preparation_figures_and_statistics_are_complete() -> None
 
     assert not any((evidence / filename).exists() for filename in REDUNDANT_GRAPH_TABLES)
     for filename in (
-        "family_duplicate_profile.png",
+        "family_size_profile.png",
+        "family_group_evidence.png",
         "broad_name_family_review.png",
         "near_duplicate_threshold_review.png",
-        "class_support_by_fold.png",
+        "class_support_products_vs_groups.png",
+        "rare_class_fold_support.png",
         "shortcut_risk_heatmaps.png",
+        "shortcut_majority_benchmark.png",
         "acquisition_shortcut_risk.png",
+        "season_file_size_shortcut.png",
         "target_distributions.png",
-        "image_quality_and_spearman.png",
+        "image_quality_distributions.png",
+        "image_quality_spearman.png",
         "development_contact_sheet.png",
+        "exact_duplicate_examples.png",
+        "quality_extreme_examples.png",
         "transform_risk.png",
     ):
         assert (figures / filename).is_file()
@@ -374,7 +404,7 @@ def test_delivered_cache_and_artifact_registry_match_bytes() -> None:
     assert result["protected_target_values_hashed"] == 0
 
     registry = pd.read_csv(ROOT / "results/evidence/data_preparation/artifact_registry.csv")
-    assert len(registry) == 48
+    assert len(registry) == 54
     for row in registry.itertuples(index=False):
         path = ROOT / row.repository_path
         assert path.is_file(), row.repository_path
@@ -397,12 +427,15 @@ def test_delivered_cache_and_artifact_registry_match_bytes() -> None:
 def test_saved_html_is_current_portable_and_hides_inputs() -> None:
     html = HTML.read_text(encoding="utf-8")
     lowered = html.lower()
+    notebook = nbformat.read(NOTEBOOK, as_version=4)
+    code_cell_count = sum(cell.cell_type == "code" for cell in notebook.cells)
 
     assert "DATA PREPARATION READY" in html
     assert "Shared Data Preparation" in html
-    assert html.count("jp-mod-noInput") >= 30
+    assert html.count("jp-mod-noInput") >= code_cell_count
     assert "from __future__ import annotations" not in html
     assert len(re.findall(r"<h2[ >]", html)) == 18
+    assert len(re.findall(r"<h3[ >]", html)) == EXPECTED_DATA_CODE_CELLS
     assert "/home/" not in html
     assert "c:\\" not in lowered
     for retired in (
