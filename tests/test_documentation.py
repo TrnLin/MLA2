@@ -44,6 +44,12 @@ def test_active_handoff_docs_use_the_current_contract() -> None:
     ):
         assert stale not in lowered
 
+    assert "22,905 conservative split groups" in combined
+    assert "not verified independent products" in lowered
+    assert "22,905 independent families" not in lowered
+    assert "acquisition_shortcut_risk.png" in combined
+    assert "broad_name_family_review.png" in combined
+
 
 def test_assignment_breakdown_lists_the_canonical_notebooks() -> None:
     document = (ROOT / "docs/assignment-breakdown.html").read_text(encoding="utf-8")
