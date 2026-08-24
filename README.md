@@ -41,10 +41,37 @@ FASHION_DATA_PREPARATION_MODE=full ./.venv/bin/python -m jupyter lab
 
 Full mode rebuilds in a child process. This keeps protected target values out of the
 notebook kernel. It hashes raw teacher image bytes before decoding them, rebuilds all
-shared artifacts, and then runs development-only analysis. It does not read optional
-external images and does not fit a model or any learned image statistics.
+shared artifacts, and then runs development-only analysis. It does not read the
+Task 4 external images and does not fit a model or any learned image statistics.
 
 The saved code-free report is `results/notebooks/01_data_preparation.html`.
+
+## Task 4 external high-resolution images
+
+1. Download version 1 of the
+   [Fashion Product Images Dataset](https://www.kaggle.com/datasets/paramaggarwal/fashion-product-images-dataset/data).
+2. Extract the download outside Git. The Kaggle archive contains repeated/nested
+   folders; this project needs only one `images/` directory and its `images.csv`.
+   The `styles/` directories and `styles.csv` are not required.
+3. Put the required files in this exact local layout:
+```text
+data/raw/external/fashion_product_images_v1/
+├── images.csv
+└── images/        # 44,441 JPEG files
+```
+
+4. From the repository root, verify the local copy:
+
+```bash
+test -f data/raw/external/fashion_product_images_v1/images.csv
+test "$(find data/raw/external/fashion_product_images_v1/images \
+  -maxdepth 1 -type f -name '*.jpg' | wc -l)" -eq 44441
+printf '%s  %s\n' \
+  '64dfd2449f22e39120e2ab4b0230a4521f27a3b3513e5eee5cc000ad865df831' \
+  'data/raw/external/fashion_product_images_v1/images.csv' | sha256sum --check
+```
+The expected image data is about 14 GB. Raw images are ignored by Git and must not
+be committed.
 
 ## One split, five folds
 
@@ -58,9 +85,9 @@ Task owners use `fashion.data.dataset.get_cv_split` or `iter_cv_folds`. Any valu
 learned from data is fitted on that round's training folds only. Notebook 06 may open
 the holdout once, after every choice is frozen.
 
-Tasks 1–3 use teacher images. Task 4 decides later whether to use the optional local
-collection at `data/raw/external/fashion_product_images_v1/`. Binary external data is
-outside Git and is never required by shared preparation.
+Tasks 1–3 use teacher images. Task 4 uses the required local collection at
+`data/raw/external/fashion_product_images_v1/`. Binary external data is outside Git
+and is not read by shared preparation.
 
 ## Permanent project rules
 
