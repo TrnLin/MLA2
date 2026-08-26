@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from pathlib import Path
 
 import pytest
 import torch
@@ -65,6 +66,48 @@ def test_train_shuffle_is_repeatable_for_same_seed(prepared_project) -> None:
     second_ids = torch.cat([batch["id"] for batch in second.train]).tolist()
 
     assert first_ids == second_ids
+
+
+def test_fold_stats_cache_reuses_scope_and_invalidates_on_split_hash(
+    prepared_project,
+    monkeypatch,
+) -> None:
+    from fashion.data import torch as torch_data
+
+    calls = 0
+    original = torch_data.fit_fold_stats
+
+    def counted(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original(*args, **kwargs)
+
+    cache_directory = prepared_project.root / "tmp/task2/test-fold-stats"
+    monkeypatch.setattr(torch_data, "fit_fold_stats", counted)
+    common = {
+        "validation_fold": 0,
+        "image_size": (80, 60),
+        "batch_size": 2,
+        "num_workers": 0,
+        "pin_memory": False,
+        "root": prepared_project.root,
+        "splits_path": prepared_project.splits,
+        "label_map_path": prepared_project.label_maps,
+        "stats_cache_directory": cache_directory,
+    }
+
+    first = build_task_loaders(seed=2753, **common)
+    second = build_task_loaders(seed=2026, **common)
+    prepared_project.splits.write_text(
+        prepared_project.splits.read_text(encoding="utf-8") + "\n",
+        encoding="utf-8",
+    )
+    third = build_task_loaders(seed=2753, **common)
+
+    assert tuple(first.stats.mean) == tuple(second.stats.mean) == tuple(third.stats.mean)
+    assert tuple(first.stats.std) == tuple(second.stats.std) == tuple(third.stats.std)
+    assert calls == 2
+    assert len(list(Path(cache_directory).glob("*.json"))) == 2
 
 
 def test_loader_rejects_stats_from_another_fold(prepared_project) -> None:

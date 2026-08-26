@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Literal
@@ -22,11 +23,13 @@ from fashion.data.dataset import (
     load_label_maps,
     load_splits,
 )
+from fashion.data.hashing import compute_sha256
 from fashion.data.images import StreamingStats, resolve_image_size, transform_image_with_mask
-from fashion.train.artifacts import canonical_sha256
+from fashion.train.artifacts import atomic_write_json, canonical_sha256
 from fashion.train.reproducibility import make_torch_generator, seed_worker
 
 AugmentationPolicy = Literal["none", "a0", "a1"]
+FOLD_STATS_CACHE_SCHEMA_VERSION = "1.0.0"
 
 
 @dataclass(frozen=True)
@@ -254,6 +257,101 @@ def fit_fold_stats(
     )
 
 
+def _fold_stats_implementation_sha256() -> str:
+    return canonical_sha256(
+        {
+            "fashion.data.torch": compute_sha256(Path(__file__)),
+            "fashion.data.images": compute_sha256(
+                Path(__file__).with_name("images.py")
+            ),
+        }
+    )
+
+
+def _fold_stats_cache_key(
+    training_frame: pd.DataFrame,
+    *,
+    validation_fold: int,
+    image_size: tuple[int, int],
+    split_sha256: str,
+) -> str:
+    if len(split_sha256) != 64:
+        raise ValueError("split_sha256 must be a 64-character digest")
+    return canonical_sha256(
+        {
+            "schema_version": FOLD_STATS_CACHE_SCHEMA_VERSION,
+            "validation_fold": validation_fold,
+            "image_size": image_size,
+            "training_id_sha256": canonical_sha256(
+                sorted(int(value) for value in training_frame["id"])
+            ),
+            "split_sha256": split_sha256,
+            "implementation_sha256": _fold_stats_implementation_sha256(),
+        }
+    )
+
+
+def load_or_fit_fold_stats(
+    training_frame: pd.DataFrame,
+    *,
+    validation_fold: int,
+    image_size: int | tuple[int, int],
+    split_sha256: str,
+    cache_directory: str | Path,
+    root: str | Path = ROOT,
+) -> FoldImageStats:
+    """Reuse only a hash-matched fold statistic record; otherwise fit and replace it."""
+    resolved_size = resolve_image_size(image_size)
+    cache_key = _fold_stats_cache_key(
+        training_frame,
+        validation_fold=validation_fold,
+        image_size=resolved_size,
+        split_sha256=split_sha256,
+    )
+    cache_path = Path(cache_directory) / f"{cache_key}.json"
+    expected_training_hash = canonical_sha256(
+        sorted(int(value) for value in training_frame["id"])
+    )
+    if cache_path.is_file():
+        try:
+            with cache_path.open(encoding="utf-8") as handle:
+                cached = json.load(handle)
+            cached_stats = dict(cached["stats"])
+            cached_stats["image_size"] = tuple(cached_stats["image_size"])
+            stats = FoldImageStats(**cached_stats)
+            valid = (
+                cached.get("schema_version") == FOLD_STATS_CACHE_SCHEMA_VERSION
+                and cached.get("cache_key") == cache_key
+                and cached.get("stats_sha256") == canonical_sha256(stats.to_dict())
+                and stats.validation_fold == validation_fold
+                and stats.image_size == resolved_size
+                and stats.image_count == len(training_frame)
+                and stats.training_id_sha256 == expected_training_hash
+                and all(value > 0 for value in stats.std)
+            )
+            if valid:
+                return stats
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+            pass
+
+    stats = fit_fold_stats(
+        training_frame,
+        validation_fold=validation_fold,
+        image_size=resolved_size,
+        root=root,
+    )
+    atomic_write_json(
+        cache_path,
+        {
+            "schema_version": FOLD_STATS_CACHE_SCHEMA_VERSION,
+            "cache_key": cache_key,
+            "stats": stats.to_dict(),
+            "stats_sha256": canonical_sha256(stats.to_dict()),
+        },
+    )
+    return stats
+
+
 def build_image_transform(
     stats: FoldImageStats,
     *,
@@ -306,6 +404,7 @@ def build_task_loaders(
     splits_path: str | Path = SPLITS_CSV,
     label_map_path: str | Path = LABEL_MAPS_JSON,
     stats: FoldImageStats | None = None,
+    stats_cache_directory: str | Path | None = None,
 ) -> TaskLoaders:
     """Build one leakage-safe fold exclusively from the canonical split and label map."""
     if batch_size < 1:
@@ -346,12 +445,21 @@ def build_task_loaders(
         raise ValueError(f"fold contains {target} labels absent from the canonical map: {unknown}")
 
     resolved_size = resolve_image_size(image_size)
-    fitted_stats = stats or fit_fold_stats(
-        training_frame,
-        validation_fold=validation_fold,
-        image_size=resolved_size,
-        root=root,
-    )
+    fitted_stats = stats
+    if fitted_stats is None:
+        cache_directory = (
+            Path(stats_cache_directory)
+            if stats_cache_directory is not None
+            else Path(root) / "tmp/task2/fold_stats"
+        )
+        fitted_stats = load_or_fit_fold_stats(
+            training_frame,
+            validation_fold=validation_fold,
+            image_size=resolved_size,
+            split_sha256=compute_sha256(splits_path),
+            cache_directory=cache_directory,
+            root=root,
+        )
     if fitted_stats.validation_fold != validation_fold:
         raise ValueError("supplied normalization stats were fitted for a different fold")
     if fitted_stats.image_size != resolved_size:
