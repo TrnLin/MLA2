@@ -14,3 +14,8 @@ must not be described as calibrated probabilities.
 The three `g1_*.json` files form one matched scratch-family screen. Only
 `experiment_id` and `model_family` may differ. Every family receives P0/A0, seed 2753,
 five folds, AdamW, effective batch 128, and exactly eight epochs of opportunity.
+
+`g1_c2_resnet18.json` is the measured P0 reference for the G2 input-size question.
+`g2_p1_c2_resnet18.json` changes only the experiment identity, stage, and image size
+from P0 `(80, 60)` to P1 `(128, 96)`. It keeps C2, A0, seed, folds, optimiser, batch
+sizes, loss, and eight-epoch budget fixed. Do not rerun P0 under a new experiment ID.

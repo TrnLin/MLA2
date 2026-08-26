@@ -269,3 +269,23 @@ def test_repository_g1_configs_differ_only_by_family_and_experiment_id() -> None
         candidate.pop("experiment_id")
         candidate.pop("model_family")
         assert candidate == reference
+
+
+def test_repository_g2_p1_changes_only_identity_stage_and_input_size() -> None:
+    p0 = load_experiment_config(ROOT / "configs/task2/g1_c2_resnet18.json")
+    p1 = load_experiment_config(ROOT / "configs/task2/g2_p1_c2_resnet18.json")
+
+    assert p0.experiment_id == "g1-c2-resnet18"
+    assert p0.stage == "g1_family_screen"
+    assert p0.data.image_size == (80, 60)
+    assert p1.experiment_id == "g2-p1-c2-resnet18"
+    assert p1.stage == "g2_input_size_ablation"
+    assert p1.data.image_size == (128, 96)
+
+    p0_matched = p0.to_dict()
+    p1_matched = p1.to_dict()
+    for config in (p0_matched, p1_matched):
+        config.pop("experiment_id")
+        config.pop("stage")
+        config["data"].pop("image_size")
+    assert p1_matched == p0_matched
