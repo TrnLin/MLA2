@@ -146,8 +146,8 @@ threadpoolctl==3.6.0
 tifffile==2026.8.23
 tinycss2==1.5.1
 toml==0.10.2
-torch==2.13.0+cu126
-torchvision==0.28.0+cu126
+torch==2.13.0
+torchvision==0.28.0
 tornado==6.5.8
 traitlets==5.16.1
 triton==3.7.1 ; python_full_version < '3.15' and sys_platform == 'linux'
