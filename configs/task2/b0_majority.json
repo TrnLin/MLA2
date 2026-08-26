@@ -1,0 +1,19 @@
+{
+  "experiment_id": "b0-majority",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "loss_id": "training_fold_prior",
+  "method": "majority",
+  "model_family": "majority",
+  "schema_version": "1.0.0",
+  "seeds": [
+    2753
+  ],
+  "stage": "b0_baseline",
+  "target": "season"
+}

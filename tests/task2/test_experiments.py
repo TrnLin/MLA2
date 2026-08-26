@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from fashion.config import ROOT
 from fashion.task2.experiments import (
     DataRunConfig,
     ExperimentConfig,
@@ -188,3 +189,15 @@ def test_config_rejects_pretrained_family_on_final_method_boundary() -> None:
     )
     with pytest.raises(ValueError, match="invalid for method"):
         config.validate()
+
+
+def test_repository_b0_config_declares_all_canonical_folds_before_execution() -> None:
+    config = load_experiment_config(ROOT / "configs/task2/b0_majority.json")
+
+    assert config.experiment_id == "b0-majority"
+    assert config.method == "majority"
+    assert config.model_family == "majority"
+    assert config.stage == "b0_baseline"
+    assert config.folds == (0, 1, 2, 3, 4)
+    assert config.seeds == (2753,)
+    assert config.loss_id == "training_fold_prior"
