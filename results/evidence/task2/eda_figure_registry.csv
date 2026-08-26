@@ -1,0 +1,5 @@
+evidence,path,sha256,claim_boundary
+acquisition shortcut,results/figures/data_preparation/acquisition_shortcut_risk.png,6275b416101b809abddf465c40fbb7ad7cb5eaa13f80613b27db34890d79ab30,development-only description; not model accuracy or causality
+file-size shortcut,results/figures/data_preparation/season_file_size_shortcut.png,c45e6763d560b62d430ac40b11255e4908ce01105f2c4c27811ad785e2a1d611,development-only description; not model accuracy or causality
+ArticleType shortcut,results/figures/data_preparation/shortcut_risk_heatmaps.png,ec200dc8cd94257a747528628fc49bf498a7c6b50282e37264a9b45574f64b52,development-only description; not model accuracy or causality
+transform risk,results/figures/data_preparation/transform_risk.png,c5b984b59a846558ef0549381116a52658046d8c7630008f2bc17c3e23a9bbef,development-only description; not model accuracy or causality
