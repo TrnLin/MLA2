@@ -10,6 +10,13 @@ from fashion.train.artifacts import (
     canonical_sha256,
     verify_artifact,
 )
+from fashion.train.cache import (
+    CachedRun,
+    RunCacheKey,
+    build_run_cache_key,
+    find_cached_run,
+    implementation_sha256,
+)
 from fashion.train.engine import FoldResult, TrainConfig, train_fold
 from fashion.train.metrics import (
     OOFValidationError,
@@ -31,17 +38,22 @@ __all__ = [
     "atomic_write_csv",
     "atomic_write_json",
     "atomic_write_text",
+    "build_run_cache_key",
+    "CachedRun",
     "canonical_json_bytes",
     "canonical_sha256",
     "capture_git_state",
     "capture_runtime",
     "FoldResult",
+    "find_cached_run",
+    "implementation_sha256",
     "make_torch_generator",
     "multiclass_metrics",
     "new_run_id",
     "OOFValidationError",
     "RunRecord",
     "RunRegistry",
+    "RunCacheKey",
     "seed_everything",
     "seed_worker",
     "tracked_run",
