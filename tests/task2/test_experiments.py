@@ -201,3 +201,22 @@ def test_repository_b0_config_declares_all_canonical_folds_before_execution() ->
     assert config.folds == (0, 1, 2, 3, 4)
     assert config.seeds == (2753,)
     assert config.loss_id == "training_fold_prior"
+
+
+def test_repository_b1_config_freezes_unweighted_hog_hsv_svm_before_execution() -> None:
+    config = load_experiment_config(ROOT / "configs/task2/b1_hog_hsv_svm.json")
+
+    assert config.experiment_id == "b1-hog-hsv-svm"
+    assert config.method == "hog_hsv_svm"
+    assert config.model_family == "hog_hsv_svm"
+    assert config.stage == "b1_baseline"
+    assert config.folds == (0, 1, 2, 3, 4)
+    assert config.seeds == (2753,)
+    assert config.loss_id == "linear_svc_hinge_unweighted"
+    assert config.hog_hsv.image_size == (80, 60)
+    assert config.hog_hsv.hog_orientations == 9
+    assert config.hog_hsv.hog_pixels_per_cell == (8, 8)
+    assert config.hog_hsv.hog_cells_per_block == (2, 2)
+    assert config.hog_hsv.hsv_bins == (18, 8, 8)
+    assert config.hog_hsv.svm_c == 1.0
+    assert config.hog_hsv.max_iterations == 5_000
