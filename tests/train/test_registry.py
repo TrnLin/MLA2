@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from fashion.train.recovery import interrupt_orphaned_run
 from fashion.train.registry import (
     RUN_COLUMNS,
     DuplicateRunError,
@@ -72,7 +73,8 @@ def test_orphaned_running_run_can_be_marked_interrupted(tmp_path: Path) -> None:
     record.started_at_utc = "2026-08-26T17:42:28Z"
     registry.append(record)
 
-    registry.interrupt_orphaned(
+    interrupt_orphaned_run(
+        registry,
         record.run_id,
         reason="training host process exited before Python cleanup",
     )
