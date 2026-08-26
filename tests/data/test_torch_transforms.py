@@ -44,7 +44,15 @@ def test_fit_fold_stats_uses_training_content_not_padding(tmp_path: Path) -> Non
 
     assert stats.image_count == 2
     assert stats.content_pixel_count == (80 * 60) + (80 * 30)
-    assert stats.mean == pytest.approx((0.5, 128 / 255, 96 / 255), abs=2e-3)
+    expected_mean = tuple(
+        ((2 * first_channel) + second_channel) / (3 * 255)
+        for first_channel, second_channel in zip(
+            (0, 64, 128),
+            (255, 192, 64),
+            strict=True,
+        )
+    )
+    assert stats.mean == pytest.approx(expected_mean, abs=2e-3)
     assert all(value > 0 for value in stats.std)
     assert len(stats.training_id_sha256) == 64
 
