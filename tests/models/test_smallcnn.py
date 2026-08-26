@@ -26,7 +26,7 @@ def test_smallcnn_is_scratch_final_eligible_and_has_gradcam_layer() -> None:
     assert model.final_eligible
     assert not model.benchmark_only
     assert isinstance(model.gradcam_target_layer, nn.Conv2d)
-    assert sum(parameter.numel() for parameter in model.parameters()) == 1_171_620
+    assert sum(parameter.numel() for parameter in model.parameters()) == 1_174_244
 
 
 def test_smallcnn_initialization_is_repeatable_after_shared_seed() -> None:
