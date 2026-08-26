@@ -289,3 +289,29 @@ def test_repository_g2_p1_changes_only_identity_stage_and_input_size() -> None:
         config.pop("stage")
         config["data"].pop("image_size")
     assert p1_matched == p0_matched
+
+
+def test_repository_g2_a1_changes_only_identity_stage_and_augmentation() -> None:
+    decision = json.loads(
+        (ROOT / "results/evidence/task2/g2_input_size_ablation/decision.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    a0 = load_experiment_config(ROOT / "configs/task2/g1_c2_resnet18.json")
+    a1 = load_experiment_config(ROOT / "configs/task2/g2_a1_c2_resnet18.json")
+
+    assert decision["selected_variant"] == "P0"
+    assert decision["selected_experiment_id"] == a0.experiment_id
+    assert a0.data.image_size == a1.data.image_size == (80, 60)
+    assert a0.data.augmentation == "a0"
+    assert a1.data.augmentation == "a1"
+    assert a1.experiment_id == "g2-a1-c2-resnet18"
+    assert a1.stage == "g2_augmentation_ablation"
+
+    a0_matched = a0.to_dict()
+    a1_matched = a1.to_dict()
+    for config in (a0_matched, a1_matched):
+        config.pop("experiment_id")
+        config.pop("stage")
+        config["data"].pop("augmentation")
+    assert a1_matched == a0_matched

@@ -19,3 +19,8 @@ five folds, AdamW, effective batch 128, and exactly eight epochs of opportunity.
 `g2_p1_c2_resnet18.json` changes only the experiment identity, stage, and image size
 from P0 `(80, 60)` to P1 `(128, 96)`. It keeps C2, A0, seed, folds, optimiser, batch
 sizes, loss, and eight-epoch budget fixed. Do not rerun P0 under a new experiment ID.
+
+The audited G2-P decision retains P0. `g2_a1_c2_resnet18.json` therefore uses the
+existing P0/A0 run as its reference and changes only experiment identity, stage, and
+augmentation from A0 to A1. A1 adds mild colour jitter to A0 at `(80, 60)`. Do not
+rerun A0 under a new experiment ID.
