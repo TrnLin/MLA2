@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import json
 import os
 import re
 from collections.abc import Collection, Sequence
@@ -83,6 +84,14 @@ SCALAR_METRICS = (
     "brier",
     "ece",
 )
+G1_FAMILY_EXPERIMENTS = frozenset(
+    {
+        "g1-c1-smallcnn",
+        "g1-c2-resnet18",
+        "g1-c3-mobilenetv3",
+    }
+)
+G1_EXPECTED_FOLDS = (0, 1, 2, 3, 4)
 
 
 def build_file_impact_edges() -> pd.DataFrame:
@@ -701,6 +710,330 @@ def build_experiment_evidence(
         "artifacts": artifact_manifest,
     }
     manifest_path = evidence_root / "manifest.json"
+    atomic_write_json(manifest_path, manifest)
+    manifest["manifest_path"] = str(manifest_path)
+    manifest["manifest_sha256"] = compute_sha256(manifest_path)
+    return manifest
+
+
+def _resolve_evidence_path(path: str | Path, *, project_root: Path) -> Path:
+    candidate = Path(path)
+    return candidate if candidate.is_absolute() else project_root / candidate
+
+
+def _load_verified_experiment_manifest(
+    manifest_path: str | Path,
+    *,
+    project_root: Path,
+) -> tuple[dict[str, Any], Path]:
+    resolved_manifest = _resolve_evidence_path(manifest_path, project_root=project_root)
+    with resolved_manifest.open(encoding="utf-8") as handle:
+        manifest = json.load(handle)
+    required_artifacts = {"pooled_metrics", "fold_summary", "registry_snapshot"}
+    artifacts = manifest.get("artifacts", {})
+    missing = required_artifacts - set(artifacts)
+    if missing:
+        raise ValueError(
+            f"experiment manifest is missing G1 artifacts: {sorted(missing)}"
+        )
+    for name in required_artifacts:
+        declaration = artifacts[name]
+        artifact_path = _resolve_evidence_path(
+            declaration["path"], project_root=project_root
+        )
+        if not artifact_path.is_file():
+            raise ValueError(f"declared {name} artifact does not exist: {artifact_path}")
+        if compute_sha256(artifact_path) != declaration["sha256"]:
+            raise ValueError(f"declared {name} artifact hash does not match its bytes")
+    return manifest, resolved_manifest
+
+
+def _g1_family_row(
+    manifest: dict[str, Any],
+    *,
+    project_root: Path,
+    expected_coverage_sha256: str | None,
+) -> tuple[dict[str, Any], str]:
+    experiment_id = str(manifest.get("experiment_id", ""))
+    if experiment_id not in G1_FAMILY_EXPERIMENTS:
+        raise ValueError(f"unexpected G1 family experiment: {experiment_id}")
+    if tuple(manifest.get("folds", ())) != G1_EXPECTED_FOLDS:
+        raise ValueError(f"{experiment_id} must contain canonical folds 0-4")
+    if int(manifest.get("seed", -1)) != 2753:
+        raise ValueError(f"{experiment_id} must use the primary seed 2753")
+    coverage = manifest.get("coverage", {})
+    if not (
+        coverage.get("row_count")
+        == coverage.get("unique_id_count")
+        == coverage.get("expected_row_count")
+    ):
+        raise ValueError(f"{experiment_id} has incomplete OOF coverage")
+    if int(coverage.get("protected_id_count", -1)) != 0:
+        raise ValueError(f"{experiment_id} includes protected IDs")
+    coverage_sha256 = canonical_sha256(
+        {
+            "row_count": coverage.get("row_count"),
+            "id_set_sha256": coverage.get("id_set_sha256"),
+            "labels": coverage.get("labels"),
+        }
+    )
+    if expected_coverage_sha256 and coverage_sha256 != expected_coverage_sha256:
+        raise ValueError("G1 manifests do not describe the same OOF products and labels")
+
+    artifacts = manifest["artifacts"]
+    with _resolve_evidence_path(
+        artifacts["pooled_metrics"]["path"], project_root=project_root
+    ).open(encoding="utf-8") as handle:
+        pooled = json.load(handle)
+    fold_summary = pd.read_csv(
+        _resolve_evidence_path(
+            artifacts["fold_summary"]["path"], project_root=project_root
+        )
+    )
+    registry = pd.read_csv(
+        _resolve_evidence_path(
+            artifacts["registry_snapshot"]["path"], project_root=project_root
+        ),
+        dtype=str,
+        keep_default_na=False,
+    )
+    run_ids = [str(run_id) for run_id in manifest.get("run_ids", ())]
+    if len(registry) != 5 or set(registry["run_id"]) != set(run_ids):
+        raise ValueError(f"{experiment_id} registry snapshot must match five run IDs")
+    if set(pd.to_numeric(registry["fold"], errors="raise")) != set(G1_EXPECTED_FOLDS):
+        raise ValueError(f"{experiment_id} registry snapshot has invalid folds")
+    required_registry_values = {
+        "experiment_id": experiment_id,
+        "benchmark_only": "false",
+        "final_eligible": "true",
+        "scratch": "true",
+        "status": "completed",
+    }
+    for column, expected in required_registry_values.items():
+        observed = set(registry[column].astype(str).str.lower())
+        if observed != {expected}:
+            raise ValueError(
+                f"{experiment_id} registry {column} must be {expected}: {observed}"
+            )
+    model_families = set(registry["model_family"].astype(str))
+    parameter_counts = set(
+        pd.to_numeric(registry["parameter_count"], errors="raise").astype(int)
+    )
+    if len(model_families) != 1 or len(parameter_counts) != 1:
+        raise ValueError(f"{experiment_id} changed model identity across folds")
+    macro_summary = fold_summary.loc[fold_summary["metric"].eq("macro_f1")]
+    if len(macro_summary) != 1:
+        raise ValueError(f"{experiment_id} requires one macro-F1 fold summary row")
+    pooled_macro_f1 = float(pooled["macro_f1"])
+    if not np.isclose(pooled_macro_f1, float(manifest["pooled_macro_f1"])):
+        raise ValueError(f"{experiment_id} pooled macro-F1 disagrees with its manifest")
+    spring_f1 = float(pooled["per_class"]["Spring"]["f1"])
+    summary = macro_summary.iloc[0]
+    return (
+        {
+            "experiment_id": experiment_id,
+            "model_family": model_families.pop(),
+            "pooled_macro_f1": pooled_macro_f1,
+            "fold_mean_macro_f1": float(summary["fold_mean"]),
+            "fold_sd_macro_f1": float(summary["fold_sd"]),
+            "spring_f1": spring_f1,
+            "parameter_count": parameter_counts.pop(),
+            "five_fold_runtime_minutes": float(
+                pd.to_numeric(registry["runtime_seconds"], errors="raise").sum() / 60.0
+            ),
+            "peak_vram_mb": float(
+                pd.to_numeric(registry["peak_vram_mb"], errors="raise").max()
+            ),
+        },
+        coverage_sha256,
+    )
+
+
+def _plot_g1_family_screen(
+    leaderboard: pd.DataFrame,
+    *,
+    reference_macro_f1: float | None,
+    output_path: Path,
+) -> None:
+    figure = Figure(figsize=(10.5, 6.2), constrained_layout=True)
+    FigureCanvasAgg(figure)
+    axis = figure.subplots()
+    colours = [
+        "#16A34A" if value else "#94A3B8" for value in leaderboard["shortlisted"]
+    ]
+    sizes = 100.0 + 12.0 * leaderboard["five_fold_runtime_minutes"].to_numpy()
+    axis.scatter(
+        leaderboard["parameter_count"],
+        leaderboard["pooled_macro_f1"],
+        s=sizes,
+        c=colours,
+        edgecolor="#0F172A",
+        linewidth=0.8,
+        alpha=0.9,
+    )
+    for row in leaderboard.itertuples(index=False):
+        axis.annotate(
+            f"{row.experiment_id}\n{row.pooled_macro_f1:.3f}",
+            (row.parameter_count, row.pooled_macro_f1),
+            xytext=(7, 7),
+            textcoords="offset points",
+            fontsize=9,
+        )
+    if reference_macro_f1 is not None:
+        axis.axhline(
+            reference_macro_f1,
+            color="#DC2626",
+            linestyle="--",
+            linewidth=1.3,
+            label=f"B1 pooled macro-F1 = {reference_macro_f1:.3f}",
+        )
+        axis.legend(loc="lower right")
+    axis.set_xscale("log")
+    axis.set_xlabel("Trainable parameters (log scale)")
+    axis.set_ylabel("Pooled five-fold OOF macro-F1")
+    axis.set_title("G1 scratch family screen: quality, size, and training cost")
+    axis.grid(alpha=0.2)
+    buffer = io.BytesIO()
+    figure.savefig(buffer, format="png", dpi=180, bbox_inches="tight")
+    atomic_write_bytes(output_path, buffer.getvalue())
+    figure.clear()
+
+
+def build_g1_family_screen_evidence(
+    experiment_manifest_paths: Sequence[str | Path],
+    *,
+    reference_manifest_path: str | Path | None = None,
+    project_root: str | Path = ROOT,
+    evidence_directory: str | Path = TASK2_EVIDENCE_DIR / "g1_family_screen",
+    figure_directory: str | Path = TASK2_FIGURE_DIR,
+) -> dict[str, Any]:
+    """Build the G1 leaderboard and select the top two deep families by pooled OOF F1."""
+    root = Path(project_root)
+    loaded: list[tuple[dict[str, Any], Path]] = [
+        _load_verified_experiment_manifest(path, project_root=root)
+        for path in experiment_manifest_paths
+    ]
+    experiment_ids = [str(manifest.get("experiment_id", "")) for manifest, _ in loaded]
+    if len(experiment_ids) != len(set(experiment_ids)):
+        raise ValueError("G1 family manifest paths must be unique")
+    if set(experiment_ids) != set(G1_FAMILY_EXPERIMENTS):
+        raise ValueError(
+            "G1 family screen requires exactly C1 SmallCNN, C2 ResNet18, and "
+            "C3 MobileNetV3-Small"
+        )
+
+    rows: list[dict[str, Any]] = []
+    coverage_sha256: str | None = None
+    for manifest, _ in loaded:
+        row, observed_coverage_sha256 = _g1_family_row(
+            manifest,
+            project_root=root,
+            expected_coverage_sha256=coverage_sha256,
+        )
+        coverage_sha256 = coverage_sha256 or observed_coverage_sha256
+        rows.append(row)
+    leaderboard = pd.DataFrame(rows).sort_values(
+        ["pooled_macro_f1", "parameter_count"], ascending=[False, True]
+    )
+    leaderboard = leaderboard.reset_index(drop=True)
+    leaderboard.insert(0, "rank", np.arange(1, len(leaderboard) + 1))
+    leaderboard["shortlisted"] = leaderboard["rank"].le(2)
+    best_score = float(leaderboard.loc[0, "pooled_macro_f1"])
+    leaderboard["delta_vs_best_macro_f1"] = (
+        leaderboard["pooled_macro_f1"] - best_score
+    )
+
+    reference_macro_f1: float | None = None
+    reference_manifest_sha256: str | None = None
+    if reference_manifest_path is not None:
+        reference, resolved_reference = _load_verified_experiment_manifest(
+            reference_manifest_path, project_root=root
+        )
+        if reference.get("experiment_id") != "b1-hog-hsv-svm":
+            raise ValueError("G1 reference manifest must be B1 HOG-HSV LinearSVC")
+        reference_coverage = reference.get("coverage", {})
+        reference_coverage_sha256 = canonical_sha256(
+            {
+                "row_count": reference_coverage.get("row_count"),
+                "id_set_sha256": reference_coverage.get("id_set_sha256"),
+                "labels": reference_coverage.get("labels"),
+            }
+        )
+        if reference_coverage_sha256 != coverage_sha256:
+            raise ValueError("B1 and G1 evidence do not cover the same OOF products")
+        reference_macro_f1 = float(reference["pooled_macro_f1"])
+        reference_manifest_sha256 = compute_sha256(resolved_reference)
+        leaderboard["gain_over_b1_macro_f1"] = (
+            leaderboard["pooled_macro_f1"] - reference_macro_f1
+        )
+
+    evidence_root = Path(evidence_directory)
+    figure_root = Path(figure_directory)
+    common_root = Path(
+        os.path.commonpath([evidence_root.resolve(), figure_root.resolve()])
+    )
+    leaderboard_path = evidence_root / "leaderboard.csv"
+    shortlist_path = evidence_root / "shortlist.json"
+    figure_path = figure_root / "g1_family_screen.png"
+    manifest_path = evidence_root / "manifest.json"
+    selected = leaderboard.loc[leaderboard["shortlisted"], "experiment_id"].tolist()
+    rejected = leaderboard.loc[~leaderboard["shortlisted"], "experiment_id"].tolist()
+    shortlist = {
+        "schema_version": "1.0.0",
+        "gate": "G1",
+        "decision_status": "closed",
+        "primary_metric": "pooled_five_fold_oof_macro_f1",
+        "selection_rule": (
+            "Select the two deep families with the highest pooled OOF macro-F1."
+        ),
+        "selected_experiment_ids": selected,
+        "rejected_experiment_ids": rejected,
+        "next_question": (
+            "Run matched P0-P1 input-size ablations for both shortlisted families."
+        ),
+    }
+    atomic_write_csv(leaderboard_path, leaderboard)
+    atomic_write_json(shortlist_path, shortlist)
+    _plot_g1_family_screen(
+        leaderboard,
+        reference_macro_f1=reference_macro_f1,
+        output_path=figure_path,
+    )
+    artifacts = {
+        "leaderboard": leaderboard_path,
+        "shortlist": shortlist_path,
+        "figure": figure_path,
+    }
+    artifact_manifest = {
+        name: {
+            "path": _portable_artifact_path(path, fallback_root=common_root),
+            "sha256": compute_sha256(path),
+        }
+        for name, path in artifacts.items()
+    }
+    input_manifests = {
+        str(manifest["experiment_id"]): {
+            "path": _portable_artifact_path(path, fallback_root=root),
+            "sha256": compute_sha256(path),
+        }
+        for manifest, path in loaded
+    }
+    manifest = {
+        "schema_version": "1.0.0",
+        "gate": "G1",
+        "decision_status": "closed",
+        "coverage_sha256": coverage_sha256,
+        "primary_metric": "pooled_five_fold_oof_macro_f1",
+        "selected_experiment_ids": selected,
+        "rejected_experiment_ids": rejected,
+        "input_manifests": input_manifests,
+        "reference": {
+            "experiment_id": "b1-hog-hsv-svm" if reference_manifest_path else None,
+            "pooled_macro_f1": reference_macro_f1,
+            "manifest_sha256": reference_manifest_sha256,
+        },
+        "artifacts": artifact_manifest,
+    }
     atomic_write_json(manifest_path, manifest)
     manifest["manifest_path"] = str(manifest_path)
     manifest["manifest_sha256"] = compute_sha256(manifest_path)
