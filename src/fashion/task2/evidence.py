@@ -871,12 +871,15 @@ def _plot_g1_family_screen(
         linewidth=0.8,
         alpha=0.9,
     )
+    maximum_parameters = int(leaderboard["parameter_count"].max())
     for row in leaderboard.itertuples(index=False):
+        is_rightmost = int(row.parameter_count) == maximum_parameters
         axis.annotate(
             f"{row.experiment_id}\n{row.pooled_macro_f1:.3f}",
             (row.parameter_count, row.pooled_macro_f1),
-            xytext=(7, 7),
+            xytext=(-7, 7) if is_rightmost else (7, 7),
             textcoords="offset points",
+            ha="right" if is_rightmost else "left",
             fontsize=9,
         )
     if reference_macro_f1 is not None:
