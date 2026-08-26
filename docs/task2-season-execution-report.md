@@ -513,7 +513,7 @@ Notebook presentation rules:
 - [ ] Test `load_splits()` and prohibit direct reads of `splits.csv` in training code.
 - [x] Test safe registry append, terminal immutability, and stable schema.
 - [ ] Test that final models use `weights=None` and never download weights.
-- [ ] Run `pip check`, lint, and the full test suite.
+- [x] Run `pip check`, Ruff, and the full test suite at the shared-core gate.
 
 **Gate:** do not start long GPU runs before Phase 0 passes.
 
