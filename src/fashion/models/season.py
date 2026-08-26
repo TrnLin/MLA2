@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import torch
 from torch import nn
-from torchvision.models import resnet18
+from torchvision.models import mobilenet_v3_small, resnet18
 
 
 @dataclass(frozen=True)
@@ -19,7 +19,7 @@ class SeasonModelSpec:
     dropout: float = 0.20
 
     def validate(self) -> None:
-        if self.family not in {"smallcnn", "resnet18_small_stem"}:
+        if self.family not in {"smallcnn", "resnet18_small_stem", "mobilenet_v3_small"}:
             raise ValueError(f"unknown Season model family: {self.family}")
         if self.num_classes < 2:
             raise ValueError("num_classes must be at least 2")
@@ -170,6 +170,64 @@ class ScratchSmallStemResNet18(nn.Module):
         return self.backbone.fc(torch.flatten(pooled, 1))
 
 
+class ScratchMobileNetV3Small(nn.Module):
+    """Compact TorchVision MobileNetV3-Small initialized without external weights."""
+
+    training_origin = "scratch"
+    benchmark_only = False
+    final_eligible = True
+    weights = None
+
+    def __init__(
+        self,
+        *,
+        num_classes: int = 4,
+        input_channels: int = 3,
+        dropout: float = 0.20,
+    ) -> None:
+        super().__init__()
+        self.backbone = mobilenet_v3_small(weights=None, dropout=dropout)
+        if input_channels != 3:
+            original = self.backbone.features[0][0]
+            replacement = nn.Conv2d(
+                input_channels,
+                original.out_channels,
+                kernel_size=original.kernel_size,
+                stride=original.stride,
+                padding=original.padding,
+                dilation=original.dilation,
+                groups=original.groups,
+                bias=False,
+            )
+            nn.init.kaiming_normal_(replacement.weight, mode="fan_out", nonlinearity="relu")
+            self.backbone.features[0][0] = replacement
+        input_features = self.backbone.classifier[-1].in_features
+        self.backbone.classifier[-1] = nn.Linear(input_features, num_classes)
+        nn.init.normal_(self.backbone.classifier[-1].weight, mean=0.0, std=0.01)
+        nn.init.zeros_(self.backbone.classifier[-1].bias)
+        self.num_classes = num_classes
+        self.input_channels = input_channels
+
+    @property
+    def gradcam_target_layer(self) -> nn.Module:
+        """Return the final pointwise convolution before global pooling."""
+        return self.backbone.features[-1][0]
+
+    def forward_features(self, images: torch.Tensor) -> torch.Tensor:
+        """Return the final spatial feature map before global pooling."""
+        if images.ndim != 4 or images.shape[1] != self.input_channels:
+            raise ValueError(
+                f"expected [batch, {self.input_channels}, height, width] images, "
+                f"got {tuple(images.shape)}"
+            )
+        return self.backbone.features(images)
+
+    def forward(self, images: torch.Tensor) -> torch.Tensor:
+        features = self.forward_features(images)
+        pooled = self.backbone.avgpool(features)
+        return self.backbone.classifier(torch.flatten(pooled, 1))
+
+
 def build_season_model(spec: SeasonModelSpec) -> nn.Module:
     """Build a final-eligible Season model without downloading or loading weights."""
     spec.validate()
@@ -181,6 +239,12 @@ def build_season_model(spec: SeasonModelSpec) -> nn.Module:
         )
     if spec.family == "resnet18_small_stem":
         return ScratchSmallStemResNet18(
+            num_classes=spec.num_classes,
+            input_channels=spec.input_channels,
+            dropout=spec.dropout,
+        )
+    if spec.family == "mobilenet_v3_small":
+        return ScratchMobileNetV3Small(
             num_classes=spec.num_classes,
             input_channels=spec.input_channels,
             dropout=spec.dropout,
