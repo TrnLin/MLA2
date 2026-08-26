@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
 from PIL import Image
@@ -101,7 +100,7 @@ def test_flow_figure_is_nonempty_png_with_all_node_labels(tmp_path: Path) -> Non
     with Image.open(output) as image:
         assert image.width >= 2_500
         assert image.height >= 1_200
-    plt.close(figure)
+    figure.clear()
 
 
 def test_flow_render_does_not_require_interactive_pyplot(tmp_path: Path, monkeypatch) -> None:
@@ -115,7 +114,7 @@ def test_flow_render_does_not_require_interactive_pyplot(tmp_path: Path, monkeyp
     )
 
     assert (tmp_path / "headless-file-impact.png").is_file()
-    plt.close(figure)
+    figure.clear()
 
 
 def test_build_task2_evidence_writes_hashed_table_figure_and_manifest(

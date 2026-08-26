@@ -7,9 +7,9 @@ import os
 from pathlib import Path
 from typing import Any
 
-import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.axes import Axes
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
@@ -270,7 +270,9 @@ def plot_file_impact_flow(
     if unknown:
         raise ValueError(f"file-impact layout is missing positions: {sorted(unknown)}")
 
-    figure, axis = plt.subplots(figsize=(20, 10.5), constrained_layout=True)
+    figure = Figure(figsize=(20, 10.5), constrained_layout=True)
+    FigureCanvasAgg(figure)
+    axis = figure.subplots()
     axis.set_xlim(-0.7, 20.7)
     axis.set_ylim(-0.2, 10.2)
     axis.axis("off")
@@ -350,7 +352,7 @@ def build_task2_evidence(
     edges = build_file_impact_edges()
     atomic_write_csv(edges_path, edges)
     figure, _ = plot_file_impact_flow(edges, output_path=figure_path)
-    plt.close(figure)
+    figure.clear()
     manifest = {
         "schema_version": "1.0.0",
         "scope": "task2_file_impact",
