@@ -156,6 +156,15 @@ def test_g1_evidence_ranks_and_shortlists_two_best_families(tmp_path: Path) -> N
         "g1-c1-smallcnn",
     ]
     assert manifest["reference"]["pooled_macro_f1"] == pytest.approx(0.61)
+    shortlist = json.loads(
+        (result_root / manifest["artifacts"]["shortlist"]["path"]).read_text(
+            encoding="utf-8"
+        )
+    )
+    assert shortlist["next_question"] == (
+        "Run P0-P1 and A0-A1 transform ablations on leading C2 while retaining "
+        "C1 for the full-budget G3 comparison."
+    )
     figure = result_root / manifest["artifacts"]["figure"]["path"]
     assert figure.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
 
