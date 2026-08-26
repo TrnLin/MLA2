@@ -209,6 +209,13 @@ def test_task2_data_protocol_cells_are_executable_orchestration() -> None:
         assert required in combined
 
 
+def test_task2_environment_table_uses_dataframe_compatible_reset_index() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    environment_cell = next(cell for cell in notebook.cells if cell.id == "s01-02-code")
+
+    assert ".reset_index(name=" not in environment_cell.source
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
