@@ -10,6 +10,11 @@ from fashion.train.artifacts import (
     canonical_sha256,
     verify_artifact,
 )
+from fashion.train.metrics import (
+    OOFValidationError,
+    multiclass_metrics,
+    validate_oof,
+)
 from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
 from fashion.train.reproducibility import (
     capture_git_state,
@@ -30,11 +35,14 @@ __all__ = [
     "capture_git_state",
     "capture_runtime",
     "make_torch_generator",
+    "multiclass_metrics",
     "new_run_id",
+    "OOFValidationError",
     "RunRecord",
     "RunRegistry",
     "seed_everything",
     "seed_worker",
     "tracked_run",
+    "validate_oof",
     "verify_artifact",
 ]
