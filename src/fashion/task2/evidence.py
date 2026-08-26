@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import os
 from pathlib import Path
 from typing import Any
 
@@ -12,7 +13,7 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
-from fashion.config import TASK2_EVIDENCE_DIR, TASK2_FIGURE_DIR
+from fashion.config import ROOT, TASK2_EVIDENCE_DIR, TASK2_FIGURE_DIR
 from fashion.data.hashing import compute_sha256
 from fashion.train.artifacts import atomic_write_bytes, atomic_write_csv, atomic_write_json
 
@@ -246,6 +247,16 @@ def _node_colour(node: str) -> str:
     return "#E2E8F0"
 
 
+def _portable_artifact_path(path: Path, *, fallback_root: Path) -> str:
+    resolved = path.resolve()
+    for anchor in (ROOT.resolve(), fallback_root.resolve()):
+        try:
+            return resolved.relative_to(anchor).as_posix()
+        except ValueError:
+            continue
+    return path.name
+
+
 def plot_file_impact_flow(
     edges: pd.DataFrame | None = None,
     *,
@@ -333,6 +344,9 @@ def build_task2_evidence(
     edges_path = evidence_root / "file_impact_edges.csv"
     figure_path = figure_root / "file_impact_flow.png"
     manifest_path = evidence_root / "file_impact_manifest.json"
+    common_root = Path(
+        os.path.commonpath([evidence_root.resolve(), figure_root.resolve()])
+    )
     edges = build_file_impact_edges()
     atomic_write_csv(edges_path, edges)
     figure, _ = plot_file_impact_flow(edges, output_path=figure_path)
@@ -342,9 +356,9 @@ def build_task2_evidence(
         "scope": "task2_file_impact",
         "edge_count": len(edges),
         "node_count": len(set(edges["producer"]) | set(edges["consumer"])),
-        "edges_path": str(edges_path),
+        "edges_path": _portable_artifact_path(edges_path, fallback_root=common_root),
         "edges_sha256": compute_sha256(edges_path),
-        "figure_path": str(figure_path),
+        "figure_path": _portable_artifact_path(figure_path, fallback_root=common_root),
         "figure_sha256": compute_sha256(figure_path),
         "holdout_to_training_edges": 0,
         "deployment_input": FROZEN_BUNDLE,
