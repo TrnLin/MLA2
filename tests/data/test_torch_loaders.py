@@ -110,6 +110,15 @@ def test_fold_stats_cache_reuses_scope_and_invalidates_on_split_hash(
     assert len(list(Path(cache_directory).glob("*.json"))) == 2
 
 
+def test_cached_fold_stats_preserve_immutable_tuple_contract(prepared_project) -> None:
+    fitted = _build(prepared_project)
+    cached = _build(prepared_project)
+
+    assert isinstance(cached.stats.mean, tuple)
+    assert isinstance(cached.stats.std, tuple)
+    assert cached.stats == fitted.stats
+
+
 def test_loader_rejects_stats_from_another_fold(prepared_project) -> None:
     loaders = _build(prepared_project, validation_fold=0)
     wrong_stats = replace(loaders.stats, validation_fold=1)
