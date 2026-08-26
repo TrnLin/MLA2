@@ -381,6 +381,46 @@ def test_task2_g1_cell_records_equal_budget_family_screen() -> None:
         assert required in finding
 
 
+def test_task2_g2_size_cell_records_audited_selection() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    code = cells["s08-02-01-code"].source
+    finding = cells["s08-02-01-finding"].source
+
+    assert not code.startswith("# TODO:")
+    compile(code, "03_task2_season.ipynb:s08-02-01-code", "exec")
+    for required in (
+        "g2_p1_c2_resnet18.json",
+        "run_or_load_experiment",
+        "build_experiment_evidence",
+        "build_g2_input_size_evidence",
+        "g2_input_size_ablation",
+        "protected_ids",
+        "calibration_claim_allowed=False",
+        'g2_size_decision["selected_variant"] == "P0"',
+        "RunRegistry(RUNS_CSV)",
+        '["status"].eq("running")',
+    ):
+        assert required in code
+    for required in (
+        "0.707099",
+        "0.705312",
+        "-0.001787",
+        "58.18",
+        "29.21",
+        "1.992",
+        "2.180",
+        "retain P0",
+        "four of five",
+        "interrupted",
+        "failed",
+        "g2-p1-c2-resnet18-f0-s2753-67217738d381",
+        "g2-p1-c2-resnet18-f4-s2753-9294db7bbaf4",
+        "results/evidence/task2/g2_input_size_ablation/manifest.json",
+    ):
+        assert required in finding
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
