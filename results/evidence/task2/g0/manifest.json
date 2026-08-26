@@ -1,0 +1,52 @@
+{
+  "artifact_sha256": {
+    "checkpoint": "154dc1a91c428001b4c6c261e756311a195ddd55d76bfbefc050659df0dd5d71",
+    "history": "d0ce46bb23723fcce2ee359f5d4d901f92780d970e2e3c87939b44a3abe4675b",
+    "prediction": "e120aee81a78821610635c177ea115b7ab8a90d349e18be95a4339993c5865cf"
+  },
+  "cache_key": {
+    "config_sha256": "7d87f50206caf2bfd83f800dd128db56e6e9269eb513ce583e39f83ec73a12de",
+    "fold": 0,
+    "implementation_sha256": "da0272cf032714e6ddae6e722750fbc946b8bb22c234520cf247f3da992a4059",
+    "label_map_sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
+    "seed": 2753,
+    "split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
+  },
+  "comparison_eligible": false,
+  "figure_path": "results/figures/task2/g0_pipeline_smoke.png",
+  "figure_sha256": "3cb4e4923cea8d82ba2296aa9df41ef617f35b98b7570ffc680102454d1dd845",
+  "gate": "G0",
+  "integration": {
+    "best_epoch": 2,
+    "device": "cuda",
+    "epochs_completed": 2,
+    "peak_vram_mb": 137.05322265625,
+    "runtime_seconds": 9.048259000002872,
+    "training_products": 512,
+    "validation_products": 128
+  },
+  "integration_history_path": "results/evidence/task2/g0/integration_history.csv",
+  "integration_history_sha256": "83f9cefe15ddafde890b5e7fbd4778e7071362e571c3641b17c9917fb7e2cd10",
+  "integration_macro_f1": 0.34326178279322417,
+  "passed": true,
+  "registry_snapshot_path": "results/evidence/task2/g0/registry_snapshot.csv",
+  "registry_snapshot_sha256": "18f8d7db86951547ef48c9d8130195d81ea991e87a0bad4db7335e587b4ef8cb",
+  "run_id": "g0-pipeline-smoke-f0-s2753-a5a6902f6fd0",
+  "schema_version": "1.0.0",
+  "source": "cache",
+  "tiny_overfit": {
+    "device": "cuda",
+    "final_accuracy": 1.0,
+    "final_loss": 2.0097653759876266e-05,
+    "gradients_finite": true,
+    "initial_loss": 1.385862112045288,
+    "loss_ratio": 1.4501914429434595e-05,
+    "maximum_loss_ratio": 0.2,
+    "minimum_accuracy": 0.95,
+    "passed": true,
+    "products": 64,
+    "steps": 100
+  },
+  "tiny_trace_path": "results/evidence/task2/g0/tiny_loss_trace.csv",
+  "tiny_trace_sha256": "e24bdeabb5f6d9a31fc8f38d422390ccc1cf34a90d54cfab6be143eb723e3a91"
+}

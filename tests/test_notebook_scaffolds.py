@@ -258,6 +258,26 @@ def test_task2_model_and_registry_cells_use_shared_interfaces() -> None:
         assert required in combined
 
 
+def test_task2_g0_cell_records_a_non_comparison_pass() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    code = cells["s07-01-code"].source
+    finding = cells["s07-01-finding"].source
+
+    assert not code.startswith("# TODO:")
+    compile(code, "03_task2_season.ipynb:s07-01-code", "exec")
+    for required in (
+        "g0_pipeline_smoke.json",
+        "run_or_load_g0_smoke",
+        "build_g0_evidence",
+        "integration_macro_f1_non_comparison",
+    ):
+        assert required in code
+    assert "passed" in finding
+    assert "excluded from every leaderboard" in finding
+    assert "g0-pipeline-smoke-f0-s2753-a5a6902f6fd0" in finding
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
