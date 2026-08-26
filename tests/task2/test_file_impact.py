@@ -104,6 +104,20 @@ def test_flow_figure_is_nonempty_png_with_all_node_labels(tmp_path: Path) -> Non
     plt.close(figure)
 
 
+def test_flow_render_does_not_require_interactive_pyplot(tmp_path: Path, monkeypatch) -> None:
+    def reject_interactive_manager(*args, **kwargs):
+        raise AssertionError("file-impact render requested an interactive figure manager")
+
+    monkeypatch.setattr("matplotlib.pyplot.subplots", reject_interactive_manager)
+
+    figure, _ = plot_file_impact_flow(
+        output_path=tmp_path / "headless-file-impact.png"
+    )
+
+    assert (tmp_path / "headless-file-impact.png").is_file()
+    plt.close(figure)
+
+
 def test_build_task2_evidence_writes_hashed_table_figure_and_manifest(
     tmp_path: Path,
 ) -> None:
