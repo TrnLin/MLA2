@@ -301,6 +301,30 @@ def test_task2_b0_cell_records_complete_five_fold_evidence() -> None:
     assert "results/evidence/task2/b0_majority/manifest.json" in finding
 
 
+def test_task2_b1_cell_records_uncalibrated_five_fold_evidence() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    code = cells["s05-02-code"].source
+    finding = cells["s05-02-finding"].source
+
+    assert not code.startswith("# TODO:")
+    compile(code, "03_task2_season.ipynb:s05-02-code", "exec")
+    for required in (
+        "b1_hog_hsv_svm.json",
+        "run_or_load_experiment",
+        "build_experiment_evidence",
+        "calibration_claim_allowed=False",
+        "macro_f1_gain_over_B0",
+    ):
+        assert required in code
+    assert "32,753" in finding
+    assert "0.609561" in finding
+    assert "0.486901" in finding
+    assert "not calibrated probabilities" in finding
+    assert "b1-hog-hsv-svm-f0-s2753-b23d1eafe35f" in finding
+    assert "results/evidence/task2/b1_hog_hsv_svm/manifest.json" in finding
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1

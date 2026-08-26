@@ -76,10 +76,10 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | 55-code-cell final scaffold; G0 and B0 now have measured interpretations | B1 and learned-model experiment outputs remain |
+| Notebook 03 | 55-code-cell final scaffold; G0, B0, and B1 now have measured interpretations | Learned-model experiment outputs remain |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, runner, cache, and audited evidence packs are implemented | Continue with B1, then the equal-budget family screen |
-| `results/runs.csv` | Six completed rows: one G0 integration run and five B0 folds | Cache reuse adds no duplicate rows |
+| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, runner, cache, and audited evidence packs are implemented | Continue with the equal-budget family screen |
+| `results/runs.csv` | Eleven completed rows: one G0 run, five B0 folds, and five B1 folds | Cache reuse adds no duplicate rows |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 
@@ -177,12 +177,19 @@ what actually failed:
 |---|---|---|---|
 | G0 pipeline smoke | The balanced 64-image batch reached 100% accuracy after 100 steps; final loss was `0.0000145` of initial loss; the 512/128 integration run completed two epochs | Pipeline passed; its macro-F1 is excluded from model comparison | `results/evidence/task2/g0/manifest.json`; run `g0-pipeline-smoke-f0-s2753-a5a6902f6fd0` |
 | B0 majority | 32,753 OOF products; accuracy `0.495680`; pooled macro-F1 `0.165704`; balanced accuracy `0.250000`; Spring F1 `0.000000` | All learned models must beat this macro-F1 and recover minority-class recall | `results/evidence/task2/b0_majority/manifest.json`; five run IDs recorded there |
+| B1 HOG + HSV + LinearSVC | 32,753 OOF products; accuracy `0.657405`; pooled macro-F1 `0.609561`; balanced accuracy `0.620671`; Spring F1 `0.486901` | Treat B1 as the serious model-family threshold, not a token baseline | `results/evidence/task2/b1_hog_hsv_svm/manifest.json`; five run IDs recorded there |
 
 B0 predicted Summer for every product. Its Summer F1 was `0.662815`; Fall, Spring,
 and Winter F1 were zero. This is the concrete reason accuracy is not the primary metric.
 The five fold macro-F1 values were stable with SD `0.000029`, so the poor result is not
 caused by one unusual validation fold. The near-zero ECE only says that the training-fold
 class prior matches the pooled class frequency; it does not show image discrimination.
+
+B1 improved macro-F1 by `0.443857` over B0. Its fold macro-F1 mean and SD were
+`0.609586 ± 0.006962`. Fall-to-Summer (3,664 products) and Winter-to-Summer (1,589)
+were the largest named confusions. The five CPU runs took `36.14` minutes in total.
+LinearSVC decision scores were softmax-transformed only for the shared OOF schema; B1
+NLL, Brier, and ECE are not calibration evidence.
 
 ## 3. Task 2 contract
 
@@ -575,14 +582,14 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** execute B1 over the same five folds. Keep its transformed linear-SVM
-scores explicitly marked as uncalibrated; then run the equal-budget C1/C2/C3 screen.
+**Next safe action:** declare and run the equal-budget C1/C2/C3 screen. Use the same
+folds, seed, transform, optimiser budget, and selection table for all three families.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
 - [x] Overfit a tiny batch to detect label/image-ordering errors.
 - [x] Run B0 over five folds and record its complete OOF evidence.
-- [ ] Run B1 over five folds.
+- [x] Run B1 over five folds and mark its decision-score softmax as uncalibrated.
 - [ ] Run a C1 smoke test and equal-budget screen.
 - [x] Verify that every valid development ID appears once in B0 OOF predictions and that
   holdout and quarantine are absent.
