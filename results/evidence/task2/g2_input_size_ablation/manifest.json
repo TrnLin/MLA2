@@ -1,0 +1,51 @@
+{
+  "artifacts": {
+    "comparison": {
+      "path": "results/evidence/task2/g2_input_size_ablation/comparison.csv",
+      "sha256": "df1d4e79a5d50b21875dc6552b0ec96a12d0be8ade9f363e23be5cda6b77d679"
+    },
+    "decision": {
+      "path": "results/evidence/task2/g2_input_size_ablation/decision.json",
+      "sha256": "1d0b6c006449fa1212efa1322377348c1017cc9e3ef2ceaab9e5fb336e539fca"
+    },
+    "figure": {
+      "path": "results/figures/task2/g2_input_size_ablation.png",
+      "sha256": "c3a3b617970045b3addb5cf8620e718981eacdfb0860acae13c587c0517fa439"
+    },
+    "paired_fold_metrics": {
+      "path": "results/evidence/task2/g2_input_size_ablation/paired_fold_metrics.csv",
+      "sha256": "d10068f0e88d40e9f49bbab4d5a719c9dd9bc7c76d66b95ffb07bf839c5b2d9c"
+    }
+  },
+  "coverage_sha256": "5abf2d57d9959d9eea327149a70503b222ec98a487bc8de75d8bdc7ee8b47272",
+  "decision_status": "closed",
+  "gate": "G2-P",
+  "input_configs": {
+    "P0": {
+      "path": "configs/task2/g1_c2_resnet18.json",
+      "sha256": "f4bbaf32f0742613afb1b7c8f4d10ce760722137cd311c5c32a7f1d0f3c534b1"
+    },
+    "P1": {
+      "path": "configs/task2/g2_p1_c2_resnet18.json",
+      "sha256": "feef2d136b7699df47737a8b166eaa9267cea256fa0b15d109a282b5ff935a1e"
+    }
+  },
+  "input_manifests": {
+    "P0": {
+      "experiment_id": "g1-c2-resnet18",
+      "path": "results/evidence/task2/g1_c2_resnet18/manifest.json",
+      "sha256": "8c242353243d1cb821eae183d1b6eaaaee39d510bb614c7c2e27f8af8ed344c1"
+    },
+    "P1": {
+      "experiment_id": "g2-p1-c2-resnet18",
+      "path": "results/evidence/task2/g2_p1_c2_resnet18/manifest.json",
+      "sha256": "4d742379ababa4bb0bbbf3b24ad302821b917f2f5d2f1b2c984f7a13ce2e4c49"
+    }
+  },
+  "matched_config_sha256": "e3bc84c0d8f1b245389acd7f0c51f04638a5f572128aff88b2a23a49bdbcbb4e",
+  "minimum_gain": 0.005,
+  "observed_p1_minus_p0_macro_f1": -0.0017872656189023006,
+  "schema_version": "1.0.0",
+  "selected_experiment_id": "g1-c2-resnet18",
+  "selected_variant": "P0"
+}
