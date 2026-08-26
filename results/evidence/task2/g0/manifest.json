@@ -26,14 +26,14 @@
     "validation_products": 128
   },
   "integration_history_path": "results/evidence/task2/g0/integration_history.csv",
-  "integration_history_sha256": "2c97d81ed2eb73a30ae53a5f48f6445ad9070929a20407d14b58e332043177c2",
+  "integration_history_sha256": "83f9cefe15ddafde890b5e7fbd4778e7071362e571c3641b17c9917fb7e2cd10",
   "integration_macro_f1": 0.34326178279322417,
   "passed": true,
   "registry_snapshot_path": "results/evidence/task2/g0/registry_snapshot.csv",
   "registry_snapshot_sha256": "5b3c6303fefc8f6b0edc3e3faef5ca94a86bf251e68733600048dfbbac9b94d1",
   "run_id": "g0-pipeline-smoke-f0-s2753-5ad5ee9d433c",
   "schema_version": "1.0.0",
-  "source": "run",
+  "source": "cache",
   "tiny_overfit": {
     "device": "cuda",
     "final_accuracy": 1.0,
