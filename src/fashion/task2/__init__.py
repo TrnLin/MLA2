@@ -27,6 +27,14 @@ from fashion.task2.experiments import (
     run_matrix,
     run_or_load_experiment,
 )
+from fashion.task2.smoke import (
+    G0SmokeConfig,
+    G0SmokeResult,
+    SmokeGateError,
+    load_g0_config,
+    run_or_load_g0_smoke,
+    select_balanced_smoke_rows,
+)
 
 __all__ = [
     "MajorityBaselineModel",
@@ -36,6 +44,8 @@ __all__ = [
     "extract_hog_hsv",
     "ExperimentConfig",
     "ExperimentFoldOutput",
+    "G0SmokeConfig",
+    "G0SmokeResult",
     "fit_training_fold_majority",
     "fit_hog_hsv_svm",
     "build_file_impact_edges",
@@ -47,5 +57,9 @@ __all__ = [
     "plot_file_impact_flow",
     "run_matrix",
     "run_or_load_experiment",
+    "run_or_load_g0_smoke",
+    "select_balanced_smoke_rows",
+    "SmokeGateError",
+    "load_g0_config",
     "validate_file_impact_edges",
 ]
