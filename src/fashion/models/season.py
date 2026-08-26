@@ -244,7 +244,7 @@ class ScratchMobileNetV3Small(nn.Module):
         nn.init.zeros_(self.backbone.classifier[-1].bias)
         self.num_classes = num_classes
         self.input_channels = input_channels
-        self.embedding_dimension = input_features
+        self.embedding_dimension = self.backbone.classifier[0].in_features
 
     @property
     def gradcam_target_layer(self) -> nn.Module:
