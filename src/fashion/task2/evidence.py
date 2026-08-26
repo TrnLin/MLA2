@@ -92,6 +92,15 @@ G1_FAMILY_EXPERIMENTS = frozenset(
     }
 )
 G1_EXPECTED_FOLDS = (0, 1, 2, 3, 4)
+G2_SIZE_EXPERIMENTS = {
+    "P0": "g1-c2-resnet18",
+    "P1": "g2-p1-c2-resnet18",
+}
+G2_SIZE_EXPECTED_PIXELS = {
+    "P0": (80, 60),
+    "P1": (128, 96),
+}
+G2_SIZE_MINIMUM_GAIN = 0.005
 
 
 def build_file_impact_edges() -> pd.DataFrame:
@@ -721,6 +730,26 @@ def _resolve_evidence_path(path: str | Path, *, project_root: Path) -> Path:
     return candidate if candidate.is_absolute() else project_root / candidate
 
 
+def _verified_manifest_artifact(
+    manifest: dict[str, Any],
+    name: str,
+    *,
+    project_root: Path,
+) -> Path:
+    artifacts = manifest.get("artifacts", {})
+    if name not in artifacts:
+        raise ValueError(f"experiment manifest is missing required artifact: {name}")
+    declaration = artifacts[name]
+    artifact_path = _resolve_evidence_path(
+        declaration["path"], project_root=project_root
+    )
+    if not artifact_path.is_file():
+        raise ValueError(f"declared {name} artifact does not exist: {artifact_path}")
+    if compute_sha256(artifact_path) != declaration["sha256"]:
+        raise ValueError(f"declared {name} artifact hash does not match its bytes")
+    return artifact_path
+
+
 def _load_verified_experiment_manifest(
     manifest_path: str | Path,
     *,
@@ -734,17 +763,10 @@ def _load_verified_experiment_manifest(
     missing = required_artifacts - set(artifacts)
     if missing:
         raise ValueError(
-            f"experiment manifest is missing G1 artifacts: {sorted(missing)}"
+            f"experiment manifest is missing required artifacts: {sorted(missing)}"
         )
     for name in required_artifacts:
-        declaration = artifacts[name]
-        artifact_path = _resolve_evidence_path(
-            declaration["path"], project_root=project_root
-        )
-        if not artifact_path.is_file():
-            raise ValueError(f"declared {name} artifact does not exist: {artifact_path}")
-        if compute_sha256(artifact_path) != declaration["sha256"]:
-            raise ValueError(f"declared {name} artifact hash does not match its bytes")
+        _verified_manifest_artifact(manifest, name, project_root=project_root)
     return manifest, resolved_manifest
 
 
@@ -1036,6 +1058,474 @@ def build_g1_family_screen_evidence(
             "pooled_macro_f1": reference_macro_f1,
             "manifest_sha256": reference_manifest_sha256,
         },
+        "artifacts": artifact_manifest,
+    }
+    atomic_write_json(manifest_path, manifest)
+    manifest["manifest_path"] = str(manifest_path)
+    manifest["manifest_sha256"] = compute_sha256(manifest_path)
+    return manifest
+
+
+def _g2_size_row(
+    manifest: dict[str, Any],
+    *,
+    variant: str,
+    config_path: str | Path,
+    project_root: Path,
+    expected_coverage_sha256: str | None,
+) -> tuple[dict[str, Any], pd.DataFrame, str, str, Path]:
+    from fashion.task2.experiments import load_experiment_config
+
+    if variant not in G2_SIZE_EXPERIMENTS:
+        raise ValueError(f"unknown G2 size variant: {variant}")
+    experiment_id = str(manifest.get("experiment_id", ""))
+    expected_experiment_id = G2_SIZE_EXPERIMENTS[variant]
+    if experiment_id != expected_experiment_id:
+        raise ValueError(
+            f"{variant} manifest must be {expected_experiment_id}: {experiment_id}"
+        )
+    if tuple(manifest.get("folds", ())) != G1_EXPECTED_FOLDS:
+        raise ValueError(f"{experiment_id} must contain canonical folds 0-4")
+    if int(manifest.get("seed", -1)) != 2753:
+        raise ValueError(f"{experiment_id} must use the primary seed 2753")
+
+    coverage = manifest.get("coverage", {})
+    if not (
+        coverage.get("row_count")
+        == coverage.get("unique_id_count")
+        == coverage.get("expected_row_count")
+    ):
+        raise ValueError(f"{experiment_id} has incomplete OOF coverage")
+    if int(coverage.get("protected_id_count", -1)) != 0:
+        raise ValueError(f"{experiment_id} includes protected IDs")
+    coverage_sha256 = canonical_sha256(
+        {
+            "row_count": coverage.get("row_count"),
+            "id_set_sha256": coverage.get("id_set_sha256"),
+            "labels": coverage.get("labels"),
+        }
+    )
+    if expected_coverage_sha256 and coverage_sha256 != expected_coverage_sha256:
+        raise ValueError("P0 and P1 do not cover the same OOF products and labels")
+
+    resolved_config_path = _resolve_evidence_path(
+        config_path, project_root=project_root
+    )
+    config = load_experiment_config(resolved_config_path)
+    if config.experiment_id != experiment_id:
+        raise ValueError(f"{variant} config and evidence experiment IDs do not match")
+    if config.model_family != "resnet18_small_stem" or config.loss_id != "cross_entropy":
+        raise ValueError("P0/P1 must use scratch small-stem ResNet18 and cross-entropy")
+    if config.data.augmentation != "a0":
+        raise ValueError("P0/P1 must hold augmentation fixed at A0")
+    expected_pixels = G2_SIZE_EXPECTED_PIXELS[variant]
+    if config.data.image_size != expected_pixels:
+        raise ValueError(f"{variant} image size must be {expected_pixels}")
+    comparison_payload = config.to_dict()
+    comparison_payload.pop("experiment_id")
+    comparison_payload.pop("stage")
+    comparison_payload["data"].pop("image_size")
+    matched_config_sha256 = canonical_sha256(comparison_payload)
+    config_sha256 = canonical_sha256(config.to_dict())
+
+    pooled_path = _verified_manifest_artifact(
+        manifest, "pooled_metrics", project_root=project_root
+    )
+    fold_summary_path = _verified_manifest_artifact(
+        manifest, "fold_summary", project_root=project_root
+    )
+    fold_metrics_path = _verified_manifest_artifact(
+        manifest, "fold_metrics", project_root=project_root
+    )
+    registry_path = _verified_manifest_artifact(
+        manifest, "registry_snapshot", project_root=project_root
+    )
+    with pooled_path.open(encoding="utf-8") as handle:
+        pooled = json.load(handle)
+    fold_summary = pd.read_csv(fold_summary_path)
+    fold_metrics = pd.read_csv(fold_metrics_path, dtype={"run_id": str})
+    registry = pd.read_csv(registry_path, dtype=str, keep_default_na=False)
+
+    run_ids = [str(run_id) for run_id in manifest.get("run_ids", ())]
+    if len(registry) != 5 or set(registry["run_id"]) != set(run_ids):
+        raise ValueError(f"{experiment_id} registry snapshot must match five run IDs")
+    observed_folds = set(pd.to_numeric(registry["fold"], errors="raise").astype(int))
+    if observed_folds != set(G1_EXPECTED_FOLDS):
+        raise ValueError(f"{experiment_id} registry snapshot has invalid folds")
+    required_registry_values = {
+        "experiment_id": experiment_id,
+        "model_family": "resnet18_small_stem",
+        "benchmark_only": "false",
+        "final_eligible": "true",
+        "scratch": "true",
+        "seed": "2753",
+        "loss_id": "cross_entropy",
+        "git_dirty": "false",
+        "status": "completed",
+    }
+    for column, expected in required_registry_values.items():
+        observed = set(registry[column].astype(str).str.lower())
+        if observed != {expected}:
+            raise ValueError(
+                f"{experiment_id} registry {column} must be {expected}: {observed}"
+            )
+    unique_registry_fields: dict[str, str] = {}
+    for column in (
+        "config_sha256",
+        "split_sha256",
+        "label_map_sha256",
+        "implementation_sha256",
+        "transform_id",
+        "parameter_count",
+    ):
+        observed = set(registry[column].astype(str))
+        if len(observed) != 1:
+            raise ValueError(f"{experiment_id} changed {column} across folds")
+        unique_registry_fields[column] = observed.pop()
+    if unique_registry_fields["config_sha256"] != config_sha256:
+        raise ValueError(f"{experiment_id} config hash does not match its registry rows")
+
+    if len(fold_metrics) != 5 or set(fold_metrics["run_id"].astype(str)) != set(run_ids):
+        raise ValueError(f"{experiment_id} fold metrics must match five run IDs")
+    fold_metrics["fold"] = pd.to_numeric(fold_metrics["fold"], errors="raise").astype(int)
+    if set(fold_metrics["fold"]) != set(G1_EXPECTED_FOLDS):
+        raise ValueError(f"{experiment_id} fold metrics have invalid folds")
+    registry_cost = registry.loc[
+        :, ["run_id", "runtime_seconds", "peak_vram_mb", "best_epoch"]
+    ].copy()
+    registry_cost["runtime_seconds"] = pd.to_numeric(
+        registry_cost["runtime_seconds"], errors="raise"
+    )
+    registry_cost["peak_vram_mb"] = pd.to_numeric(
+        registry_cost["peak_vram_mb"], errors="raise"
+    )
+    registry_cost["best_epoch"] = pd.to_numeric(
+        registry_cost["best_epoch"], errors="raise"
+    ).astype(int)
+    fold_detail = fold_metrics.loc[:, ["run_id", "fold", "macro_f1"]].merge(
+        registry_cost,
+        on="run_id",
+        how="inner",
+        validate="one_to_one",
+    )
+    fold_detail["macro_f1"] = pd.to_numeric(
+        fold_detail["macro_f1"], errors="raise"
+    )
+    macro_summary = fold_summary.loc[fold_summary["metric"].eq("macro_f1")]
+    if len(macro_summary) != 1:
+        raise ValueError(f"{experiment_id} requires one macro-F1 fold summary row")
+    pooled_macro_f1 = float(pooled["macro_f1"])
+    if not np.isclose(pooled_macro_f1, float(manifest["pooled_macro_f1"])):
+        raise ValueError(f"{experiment_id} pooled macro-F1 disagrees with its manifest")
+    summary = macro_summary.iloc[0]
+    row = {
+        "variant": variant,
+        "experiment_id": experiment_id,
+        "image_height": expected_pixels[0],
+        "image_width": expected_pixels[1],
+        "pooled_macro_f1": pooled_macro_f1,
+        "fold_mean_macro_f1": float(summary["fold_mean"]),
+        "fold_sd_macro_f1": float(summary["fold_sd"]),
+        "spring_f1": float(pooled["per_class"]["Spring"]["f1"]),
+        "five_fold_runtime_minutes": float(
+            pd.to_numeric(registry["runtime_seconds"], errors="raise").sum() / 60.0
+        ),
+        "peak_vram_mb": float(
+            pd.to_numeric(registry["peak_vram_mb"], errors="raise").max()
+        ),
+        "parameter_count": int(unique_registry_fields["parameter_count"]),
+        "config_sha256": config_sha256,
+        "split_sha256": unique_registry_fields["split_sha256"],
+        "label_map_sha256": unique_registry_fields["label_map_sha256"],
+        "implementation_sha256": unique_registry_fields["implementation_sha256"],
+        "transform_id": unique_registry_fields["transform_id"],
+    }
+    return (
+        row,
+        fold_detail,
+        coverage_sha256,
+        matched_config_sha256,
+        resolved_config_path,
+    )
+
+
+def _plot_g2_input_size_ablation(
+    comparison: pd.DataFrame,
+    paired_folds: pd.DataFrame,
+    *,
+    minimum_gain: float,
+    selected_variant: str,
+    output_path: Path,
+) -> None:
+    figure = Figure(figsize=(12, 5.5), constrained_layout=True)
+    FigureCanvasAgg(figure)
+    quality_axis, fold_axis = figure.subplots(1, 2)
+    variants = comparison["variant"].tolist()
+    positions = np.arange(len(variants))
+    width = 0.36
+    quality_axis.bar(
+        positions - width / 2,
+        comparison["pooled_macro_f1"],
+        width,
+        label="Pooled macro-F1",
+        color="#2563EB",
+    )
+    quality_axis.bar(
+        positions + width / 2,
+        comparison["spring_f1"],
+        width,
+        label="Spring F1",
+        color="#F59E0B",
+    )
+    p0_score = float(
+        comparison.loc[comparison["variant"].eq("P0"), "pooled_macro_f1"].iloc[0]
+    )
+    quality_axis.axhline(
+        p0_score + minimum_gain,
+        color="#DC2626",
+        linestyle="--",
+        label=f"P1 selection threshold = P0 + {minimum_gain:.3f}",
+    )
+    quality_axis.set_xticks(positions, labels=variants)
+    quality_axis.set_ylim(0.60, 0.78)
+    quality_axis.set_ylabel("OOF F1")
+    quality_axis.set_title(f"Pooled quality; selected {selected_variant}")
+    quality_axis.legend(loc="lower right", fontsize=8)
+    for container in quality_axis.containers:
+        quality_axis.bar_label(container, fmt="%.4f", padding=3, fontsize=8)
+
+    fold_colours = [
+        "#16A34A" if value >= 0.0 else "#DC2626"
+        for value in paired_folds["delta_p1_minus_p0_macro_f1"]
+    ]
+    fold_axis.bar(
+        paired_folds["fold"].astype(int),
+        paired_folds["delta_p1_minus_p0_macro_f1"],
+        color=fold_colours,
+    )
+    pooled_delta = float(
+        comparison.loc[
+            comparison["variant"].eq("P1"), "delta_vs_p0_macro_f1"
+        ].iloc[0]
+    )
+    fold_axis.axhline(0.0, color="#0F172A", linewidth=1.0)
+    fold_axis.axhline(
+        pooled_delta,
+        color="#7C3AED",
+        linestyle="--",
+        label=f"pooled delta = {pooled_delta:+.4f}",
+    )
+    fold_axis.set_xticks(G1_EXPECTED_FOLDS)
+    fold_axis.set_xlabel("Canonical validation fold")
+    fold_axis.set_ylabel("P1 - P0 macro-F1")
+    fold_axis.set_title("Paired fold direction")
+    fold_axis.legend(loc="best")
+    fold_axis.grid(axis="y", alpha=0.2)
+    figure.suptitle(
+        "G2-P input-size ablation: moderate upscaling versus source-like resolution",
+        fontweight="bold",
+    )
+    buffer = io.BytesIO()
+    figure.savefig(buffer, format="png", dpi=180, bbox_inches="tight")
+    atomic_write_bytes(output_path, buffer.getvalue())
+    figure.clear()
+
+
+def build_g2_input_size_evidence(
+    *,
+    p0_manifest_path: str | Path,
+    p1_manifest_path: str | Path,
+    p0_config_path: str | Path,
+    p1_config_path: str | Path,
+    project_root: str | Path = ROOT,
+    evidence_directory: str | Path = TASK2_EVIDENCE_DIR / "g2_input_size_ablation",
+    figure_directory: str | Path = TASK2_FIGURE_DIR,
+    minimum_gain: float = G2_SIZE_MINIMUM_GAIN,
+) -> dict[str, Any]:
+    """Audit P0/P1 matching and apply the frozen pooled OOF size-selection rule."""
+    if minimum_gain < 0.0:
+        raise ValueError("minimum_gain must be non-negative")
+    root = Path(project_root)
+    manifest_paths = {"P0": p0_manifest_path, "P1": p1_manifest_path}
+    config_paths = {"P0": p0_config_path, "P1": p1_config_path}
+    loaded = {
+        variant: _load_verified_experiment_manifest(path, project_root=root)
+        for variant, path in manifest_paths.items()
+    }
+    rows: list[dict[str, Any]] = []
+    details: dict[str, pd.DataFrame] = {}
+    coverage_sha256: str | None = None
+    matched_config_sha256: str | None = None
+    resolved_configs: dict[str, Path] = {}
+    for variant in ("P0", "P1"):
+        row, fold_detail, observed_coverage, observed_config, resolved_config = (
+            _g2_size_row(
+                loaded[variant][0],
+                variant=variant,
+                config_path=config_paths[variant],
+                project_root=root,
+                expected_coverage_sha256=coverage_sha256,
+            )
+        )
+        coverage_sha256 = coverage_sha256 or observed_coverage
+        matched_config_sha256 = matched_config_sha256 or observed_config
+        if observed_config != matched_config_sha256:
+            raise ValueError(
+                "P0 and P1 configs differ outside experiment ID, stage, and image size"
+            )
+        rows.append(row)
+        details[variant] = fold_detail
+        resolved_configs[variant] = resolved_config
+
+    comparison = pd.DataFrame(rows)
+    for column in (
+        "split_sha256",
+        "label_map_sha256",
+        "implementation_sha256",
+        "parameter_count",
+    ):
+        if comparison[column].nunique() != 1:
+            raise ValueError(f"P0 and P1 must share the same {column}")
+    p0_score = float(
+        comparison.loc[comparison["variant"].eq("P0"), "pooled_macro_f1"].iloc[0]
+    )
+    p0_spring = float(
+        comparison.loc[comparison["variant"].eq("P0"), "spring_f1"].iloc[0]
+    )
+    comparison["delta_vs_p0_macro_f1"] = comparison["pooled_macro_f1"] - p0_score
+    comparison["delta_vs_p0_spring_f1"] = comparison["spring_f1"] - p0_spring
+    p0_runtime = float(
+        comparison.loc[
+            comparison["variant"].eq("P0"), "five_fold_runtime_minutes"
+        ].iloc[0]
+    )
+    p0_vram = float(
+        comparison.loc[comparison["variant"].eq("P0"), "peak_vram_mb"].iloc[0]
+    )
+    comparison["runtime_ratio_vs_p0"] = (
+        comparison["five_fold_runtime_minutes"] / p0_runtime
+    )
+    comparison["peak_vram_ratio_vs_p0"] = comparison["peak_vram_mb"] / p0_vram
+
+    paired_folds = details["P0"].rename(
+        columns={
+            "run_id": "p0_run_id",
+            "macro_f1": "p0_macro_f1",
+            "runtime_seconds": "p0_runtime_seconds",
+            "peak_vram_mb": "p0_peak_vram_mb",
+            "best_epoch": "p0_best_epoch",
+        }
+    ).merge(
+        details["P1"].rename(
+            columns={
+                "run_id": "p1_run_id",
+                "macro_f1": "p1_macro_f1",
+                "runtime_seconds": "p1_runtime_seconds",
+                "peak_vram_mb": "p1_peak_vram_mb",
+                "best_epoch": "p1_best_epoch",
+            }
+        ),
+        on="fold",
+        how="inner",
+        validate="one_to_one",
+    )
+    if len(paired_folds) != 5:
+        raise ValueError("P0/P1 paired comparison requires exactly five folds")
+    paired_folds["delta_p1_minus_p0_macro_f1"] = (
+        paired_folds["p1_macro_f1"] - paired_folds["p0_macro_f1"]
+    )
+    paired_folds["runtime_ratio_p1_vs_p0"] = (
+        paired_folds["p1_runtime_seconds"] / paired_folds["p0_runtime_seconds"]
+    )
+
+    p1_delta = float(
+        comparison.loc[
+            comparison["variant"].eq("P1"), "delta_vs_p0_macro_f1"
+        ].iloc[0]
+    )
+    selected_variant = "P1" if p1_delta >= minimum_gain else "P0"
+    rejected_variant = "P0" if selected_variant == "P1" else "P1"
+    selected_experiment_id = G2_SIZE_EXPERIMENTS[selected_variant]
+    decision = {
+        "schema_version": "1.0.0",
+        "gate": "G2-P",
+        "decision_status": "closed",
+        "primary_metric": "pooled_five_fold_oof_macro_f1",
+        "selection_rule": (
+            f"Select P1 only when P1 minus P0 is at least {minimum_gain:.3f} "
+            "absolute macro-F1; otherwise retain P0."
+        ),
+        "minimum_gain": minimum_gain,
+        "observed_p1_minus_p0_macro_f1": p1_delta,
+        "selected_variant": selected_variant,
+        "selected_experiment_id": selected_experiment_id,
+        "rejected_variant": rejected_variant,
+        "next_question": (
+            f"Compare A0 with A1 on {selected_variant} while holding the selected "
+            "image size, C2, folds, seed, optimiser, and budget fixed."
+        ),
+    }
+
+    evidence_root = Path(evidence_directory)
+    figure_root = Path(figure_directory)
+    common_root = Path(
+        os.path.commonpath([evidence_root.resolve(), figure_root.resolve()])
+    )
+    comparison_path = evidence_root / "comparison.csv"
+    paired_folds_path = evidence_root / "paired_fold_metrics.csv"
+    decision_path = evidence_root / "decision.json"
+    figure_path = figure_root / "g2_input_size_ablation.png"
+    manifest_path = evidence_root / "manifest.json"
+    atomic_write_csv(comparison_path, comparison)
+    atomic_write_csv(paired_folds_path, paired_folds.sort_values("fold"))
+    atomic_write_json(decision_path, decision)
+    _plot_g2_input_size_ablation(
+        comparison,
+        paired_folds,
+        minimum_gain=minimum_gain,
+        selected_variant=selected_variant,
+        output_path=figure_path,
+    )
+    artifacts = {
+        "comparison": comparison_path,
+        "paired_fold_metrics": paired_folds_path,
+        "decision": decision_path,
+        "figure": figure_path,
+    }
+    artifact_manifest = {
+        name: {
+            "path": _portable_artifact_path(path, fallback_root=common_root),
+            "sha256": compute_sha256(path),
+        }
+        for name, path in artifacts.items()
+    }
+    input_manifests = {
+        variant: {
+            "experiment_id": loaded[variant][0]["experiment_id"],
+            "path": _portable_artifact_path(loaded[variant][1], fallback_root=root),
+            "sha256": compute_sha256(loaded[variant][1]),
+        }
+        for variant in ("P0", "P1")
+    }
+    input_configs = {
+        variant: {
+            "path": _portable_artifact_path(resolved_configs[variant], fallback_root=root),
+            "sha256": compute_sha256(resolved_configs[variant]),
+        }
+        for variant in ("P0", "P1")
+    }
+    manifest = {
+        "schema_version": "1.0.0",
+        "gate": "G2-P",
+        "decision_status": "closed",
+        "coverage_sha256": coverage_sha256,
+        "matched_config_sha256": matched_config_sha256,
+        "minimum_gain": minimum_gain,
+        "observed_p1_minus_p0_macro_f1": p1_delta,
+        "selected_variant": selected_variant,
+        "selected_experiment_id": selected_experiment_id,
+        "input_manifests": input_manifests,
+        "input_configs": input_configs,
         "artifacts": artifact_manifest,
     }
     atomic_write_json(manifest_path, manifest)
