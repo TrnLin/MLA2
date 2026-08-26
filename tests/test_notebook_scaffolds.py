@@ -225,6 +225,39 @@ def test_task2_preprocessing_mask_uses_an_informative_padding_example() -> None:
     assert 'cmap="gray", vmin=0, vmax=1' in preprocessing_cell.source
 
 
+def test_task2_model_and_registry_cells_use_shared_interfaces() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    wired_cell_ids = (
+        "s06-01-01-code",
+        "s06-01-02-code",
+        "s06-01-03-code",
+        "s06-02-code",
+        "s06-03-code",
+        "s07-02-code",
+    )
+
+    for cell_id in wired_cell_ids:
+        cell = cells[cell_id]
+        assert cell.cell_type == "code"
+        assert not cell.source.startswith("# TODO:")
+        compile(cell.source, f"03_task2_season.ipynb:{cell_id}", "exec")
+
+    combined = "\n".join(cells[cell_id].source for cell_id in wired_cell_ids)
+    for required in (
+        "build_season_model(",
+        "assert_final_model(",
+        "weights",
+        "benchmark_only",
+        "state_dict_sha256",
+        "RunRegistry(RUNS_CSV)",
+        "RUN_COLUMNS",
+        "scratch_model_audit.csv",
+        "benchmark_boundary.csv",
+    ):
+        assert required in combined
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
