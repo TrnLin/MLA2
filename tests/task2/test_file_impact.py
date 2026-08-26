@@ -116,4 +116,6 @@ def test_build_task2_evidence_writes_hashed_table_figure_and_manifest(
     assert manifest["holdout_to_training_edges"] == 0
     assert len(manifest["edges_sha256"]) == 64
     assert len(manifest["figure_sha256"]) == 64
+    assert not Path(manifest["edges_path"]).is_absolute()
+    assert not Path(manifest["figure_path"]).is_absolute()
     assert Path(manifest["manifest_path"]).is_file()
