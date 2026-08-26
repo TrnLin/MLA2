@@ -71,6 +71,20 @@ def test_g0_config_parser_is_strict(tmp_path: Path) -> None:
         G0SmokeConfig(tiny_per_class=3, integration_train_per_class=2).validate()
 
 
+def test_repository_g0_config_matches_the_declared_gate() -> None:
+    config = load_g0_config(ROOT / "configs/task2/g0_pipeline_smoke.json")
+
+    assert config.validation_fold == 0
+    assert config.seed == 2753
+    assert config.tiny_per_class == 16
+    assert config.tiny_steps == 100
+    assert config.minimum_tiny_accuracy == 0.95
+    assert config.maximum_tiny_loss_ratio == 0.20
+    assert config.integration_train_per_class * 4 == 512
+    assert config.integration_epochs == 2
+    assert config.stage == "g0_smoke"
+
+
 def _prepare_four_class_smoke_project(prepared_project) -> dict[str, Path]:
     root = prepared_project.root
     frame = pd.read_csv(prepared_project.splits, keep_default_na=False)
