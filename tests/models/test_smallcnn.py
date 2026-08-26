@@ -4,7 +4,7 @@ import pytest
 import torch
 from torch import nn
 
-from fashion.models.season import SmallSeasonCNN, SeasonModelSpec, build_season_model
+from fashion.models.season import SeasonModelSpec, SmallSeasonCNN, build_season_model
 from fashion.train.reproducibility import seed_everything
 
 

@@ -86,7 +86,7 @@ class SmallSeasonCNN(nn.Module):
     @property
     def gradcam_target_layer(self) -> nn.Module:
         """Return the last spatial convolution for deterministic Grad-CAM review."""
-        return self.features[-1][-3]
+        return self.features[-1][-4]
 
     def forward_features(self, images: torch.Tensor) -> torch.Tensor:
         """Return the final spatial feature map before global pooling."""
