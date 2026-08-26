@@ -1,0 +1,78 @@
+{
+  "accuracy": 0.4956797850578573,
+  "balanced_accuracy": 0.25,
+  "brier": 0.6418107610680759,
+  "confusion_matrix": [
+    [
+      0,
+      0,
+      8928,
+      0
+    ],
+    [
+      0,
+      0,
+      1329,
+      0
+    ],
+    [
+      0,
+      0,
+      16235,
+      0
+    ],
+    [
+      0,
+      0,
+      6261,
+      0
+    ]
+  ],
+  "ece": 6.027753296500293e-10,
+  "ece_bins": [
+    {
+      "accuracy": 0.4956797850578573,
+      "bin": 7,
+      "count": 32753,
+      "mean_confidence": 0.495679784455082
+    }
+  ],
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "macro_f1": 0.1657038458397975,
+  "macro_precision": 0.12391994626446433,
+  "macro_recall": 0.25,
+  "n_samples": 32753,
+  "nll": 1.148518707810574,
+  "per_class": {
+    "Fall": {
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "support": 8928
+    },
+    "Spring": {
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "support": 1329
+    },
+    "Summer": {
+      "f1": 0.66281538335919,
+      "precision": 0.4956797850578573,
+      "recall": 1.0,
+      "support": 16235
+    },
+    "Winter": {
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "support": 6261
+    }
+  },
+  "weighted_f1": 0.3285441867565246
+}

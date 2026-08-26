@@ -278,6 +278,29 @@ def test_task2_g0_cell_records_a_non_comparison_pass() -> None:
     assert "g0-pipeline-smoke-f0-s2753-a5a6902f6fd0" in finding
 
 
+def test_task2_b0_cell_records_complete_five_fold_evidence() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    code = cells["s05-01-code"].source
+    finding = cells["s05-01-finding"].source
+
+    assert not code.startswith("# TODO:")
+    compile(code, "03_task2_season.ipynb:s05-01-code", "exec")
+    for required in (
+        "b0_majority.json",
+        "run_or_load_experiment",
+        "build_experiment_evidence",
+        "protected_ids",
+        'b0_manifest["run_ids"]',
+    ):
+        assert required in code
+    assert "32,753" in finding
+    assert "0.165704" in finding
+    assert "Spring" in finding
+    assert "b0-majority-f0-s2753-8200c51534e3" in finding
+    assert "results/evidence/task2/b0_majority/manifest.json" in finding
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1

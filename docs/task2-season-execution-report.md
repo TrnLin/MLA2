@@ -76,12 +76,12 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | 55-code-cell final scaffold; protocol, file flow, models, and registry are executable | Experiment outputs and measured interpretations remain |
+| Notebook 03 | 55-code-cell final scaffold; G0 and B0 now have measured interpretations | B1 and learned-model experiment outputs remain |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, runner, cache, and evidence are implemented | Start with G0; do not skip to long training |
-| `results/runs.csv` | Not created yet | Expected before G0 because no physical run has occurred |
+| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, runner, cache, and audited evidence packs are implemented | Continue with B1, then the equal-budget family screen |
+| `results/runs.csv` | Six completed rows: one G0 integration run and five B0 folds | Cache reuse adds no duplicate rows |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
-| Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation is green at commit `a702bfc` |
+| Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -147,7 +147,7 @@ recorded as provenance, but it is not used as a proxy for implementation content
 | `fashion.task2.classical` | B1 HOG plus content-only HSV features and a fold-fitted linear SVM |
 | `fashion.models.season` | Scratch C1/C2/C3, benchmark-only P0S/P*, and image-only multi-task boundaries |
 | `fashion.task2.experiments` | Immutable JSON configs, run-or-load cache, registry lifecycle, and atomic artifacts |
-| `fashion.task2.evidence` | Audited file-impact table and headless Matplotlib flow figure |
+| `fashion.task2.evidence` | File-impact flow plus complete-fold, registry-linked OOF evidence packs |
 | Notebook 03 sections 1-4 | Frozen contract, runtime, EDA handoff, folds, OOF, metrics, transforms, and leakage audit |
 | Notebook 03 sections 6 and 7.2 | Scratch forward audits, benchmark rejection, state hashes, and registry health |
 
@@ -170,6 +170,19 @@ what actually failed:
   selects a real letterbox example.
 - `84f3faf` then `9d2a827` preserve the interactive Matplotlib dependency and the
   headless Agg fix. `2c211f5` then `dff0c80` preserve the absolute-path manifest fix.
+
+### 2.5 Measured execution status
+
+| Gate | Measured result | Decision | Trace |
+|---|---|---|---|
+| G0 pipeline smoke | The balanced 64-image batch reached 100% accuracy after 100 steps; final loss was `0.0000145` of initial loss; the 512/128 integration run completed two epochs | Pipeline passed; its macro-F1 is excluded from model comparison | `results/evidence/task2/g0/manifest.json`; run `g0-pipeline-smoke-f0-s2753-a5a6902f6fd0` |
+| B0 majority | 32,753 OOF products; accuracy `0.495680`; pooled macro-F1 `0.165704`; balanced accuracy `0.250000`; Spring F1 `0.000000` | All learned models must beat this macro-F1 and recover minority-class recall | `results/evidence/task2/b0_majority/manifest.json`; five run IDs recorded there |
+
+B0 predicted Summer for every product. Its Summer F1 was `0.662815`; Fall, Spring,
+and Winter F1 were zero. This is the concrete reason accuracy is not the primary metric.
+The five fold macro-F1 values were stable with SD `0.000029`, so the poor result is not
+caused by one unusual validation fold. The near-zero ECE only says that the training-fold
+class prior matches the pooled class frequency; it does not show image discrimination.
 
 ## 3. Task 2 contract
 
@@ -562,17 +575,18 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** execute Phase 2 in order, beginning with the declared G0 smoke
-gate. Do not start B0, B1, or the model-family screen until G0 proves checkpoint and
-registry recovery.
+**Next safe action:** execute B1 over the same five folds. Keep its transformed linear-SVM
+scores explicitly marked as uncalibrated; then run the equal-budget C1/C2/C3 screen.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
-- [ ] Overfit a tiny batch to detect label/image-ordering errors.
-- [ ] Run B0 and B1 over five folds.
+- [x] Overfit a tiny batch to detect label/image-ordering errors.
+- [x] Run B0 over five folds and record its complete OOF evidence.
+- [ ] Run B1 over five folds.
 - [ ] Run a C1 smoke test and equal-budget screen.
-- [ ] Verify that every valid development ID appears once in OOF predictions and that
+- [x] Verify that every valid development ID appears once in B0 OOF predictions and that
   holdout and quarantine are absent.
+- [ ] Repeat the exactly-once OOF audit for B1 and every learned-model experiment.
 
 ### Phase 3 - Comparison and tuning, 3-5 days
 

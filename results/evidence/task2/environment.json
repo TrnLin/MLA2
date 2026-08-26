@@ -1,8 +1,8 @@
 {
   "deterministic_algorithms": true,
   "git": {
-    "commit": "1bdded8cdab25f303ebe3313fcf48a2a25415f53",
-    "dirty": false
+    "commit": "7c17d001932829a4c7a4328386fa4d6a178cb6a5",
+    "dirty": true
   },
   "mixed_precision_policy": "torch.amp on CUDA; disabled on CPU",
   "runtime": {
