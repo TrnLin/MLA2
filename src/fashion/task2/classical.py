@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -118,6 +119,32 @@ def extract_hog_hsv(path: str | Path, spec: HogHsvSpec = HogHsvSpec()) -> np.nda
     return np.concatenate([shape, *colour_parts]).astype(np.float32, copy=False)
 
 
+@lru_cache(maxsize=None)
+def _cached_hog_hsv(
+    resolved_path: str,
+    spec: HogHsvSpec,
+    image_identity: str,
+) -> np.ndarray:
+    """Cache deterministic raw features; the identity prevents stale within-run reuse."""
+    del image_identity
+    values = extract_hog_hsv(resolved_path, spec)
+    values.setflags(write=False)
+    return values
+
+
+def clear_hog_hsv_feature_cache() -> None:
+    """Release cached raw features between independent matrices or tests when needed."""
+    _cached_hog_hsv.cache_clear()
+
+
+def _image_identity(row: Any, path: Path) -> str:
+    declared_sha256 = str(getattr(row, "sha256", "")).strip().lower()
+    if len(declared_sha256) == 64:
+        return declared_sha256
+    stat = path.stat()
+    return f"{stat.st_size}:{stat.st_mtime_ns}"
+
+
 def extract_feature_matrix(
     frame: pd.DataFrame,
     *,
@@ -128,10 +155,16 @@ def extract_feature_matrix(
     if "path" not in frame:
         raise ValueError("fold frame is missing the image path column")
     project_root = Path(root).resolve()
-    features = [
-        extract_hog_hsv(_resolve_image_path(project_root, path), spec)
-        for path in frame["path"]
-    ]
+    features = []
+    for row in frame.itertuples(index=False):
+        path = _resolve_image_path(project_root, row.path)
+        features.append(
+            _cached_hog_hsv(
+                str(path),
+                spec,
+                _image_identity(row, path),
+            )
+        )
     if not features:
         raise ValueError("cannot extract features from an empty frame")
     feature_count = len(features[0])

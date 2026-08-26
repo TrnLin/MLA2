@@ -9,7 +9,9 @@ from PIL import Image
 
 from fashion.task2.classical import (
     HogHsvSpec,
+    clear_hog_hsv_feature_cache,
     evaluate_hog_hsv_svm_fold,
+    extract_feature_matrix,
     extract_hog_hsv,
     fit_hog_hsv_svm,
 )
@@ -115,6 +117,29 @@ def test_validation_labels_do_not_change_fitted_svm(tmp_path: Path) -> None:
         original.oof[[f"prob_{label}" for label in LABELS]],
         changed.oof[[f"prob_{label}" for label in LABELS]],
     )
+
+
+def test_raw_feature_cache_reuses_images_without_caching_fold_fits(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    training, _ = _fold_frames(tmp_path)
+    spec = HogHsvSpec()
+    calls: list[Path] = []
+    original = extract_hog_hsv
+
+    def counted(path: str | Path, selected_spec: HogHsvSpec) -> np.ndarray:
+        calls.append(Path(path))
+        return original(path, selected_spec)
+
+    clear_hog_hsv_feature_cache()
+    monkeypatch.setattr("fashion.task2.classical.extract_hog_hsv", counted)
+    first = extract_feature_matrix(training, spec=spec, root=tmp_path)
+    second = extract_feature_matrix(training, spec=spec, root=tmp_path)
+
+    assert np.array_equal(first, second)
+    assert len(calls) == len(training)
+    clear_hog_hsv_feature_cache()
 
 
 def test_svm_rejects_single_observed_training_class(tmp_path: Path) -> None:
