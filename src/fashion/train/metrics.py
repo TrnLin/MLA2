@@ -132,8 +132,10 @@ def multiclass_metrics(
         raise ValueError("probabilities must all be finite")
     if ((probability_array < 0.0) | (probability_array > 1.0)).any():
         raise ValueError("probabilities must be in [0, 1]")
-    if not np.allclose(probability_array.sum(axis=1), 1.0, rtol=0.0, atol=1e-5):
+    probability_sums = probability_array.sum(axis=1)
+    if not np.allclose(probability_sums, 1.0, rtol=0.0, atol=1e-5):
         raise ValueError("each probability row must sum to one")
+    probability_array = probability_array / probability_sums[:, np.newaxis]
 
     allowed = set(ordered_labels)
     unknown_true = sorted(set(true.astype(str)) - allowed)
