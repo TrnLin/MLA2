@@ -76,13 +76,13 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | 55-code-cell final scaffold; 23 implemented cells execute cleanly; G0, B0, B1, and G1 have measured interpretations | Continue filling the remaining 32 leaf cells without changing the structure |
+| Notebook 03 | 55-code-cell final scaffold; 24 implemented cells execute cleanly; G0, B0, B1, G1, and G2-P have measured interpretations | Continue filling the remaining 31 leaf cells without changing the structure |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, runner, cache, audited evidence packs, and the G1 shortlist builder are implemented | Continue with the controlled C2 transform gate |
-| `results/runs.csv` | 28 completed rows: three retained G0 attempts, five B0 folds, five B1 folds, and 15 G1 folds | No running or duplicate run IDs; tracked G0 evidence selects the clean current-hash run |
+| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, Windows-safe runner, cache, audited evidence packs, G1 shortlist, and G2-P decision gate are implemented | Continue with A0/A1 at the retained P0 size |
+| `results/runs.csv` | 36 append-only rows: 33 completed, one failed, and two interrupted | No running or duplicate run IDs; only five completed P1 rows enter OOF evidence |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
-| Current G1 gate | Ruff and 49 Task 2/notebook tests pass; all 23 implemented cells have outputs and zero errors | C2 and C1 advance; C3 stops |
+| Current G2-P gate | Audited P0/P1 artifacts and Notebook Run All pass; all 24 implemented cells have outputs and zero errors | Retain P0; test A1 next without changing any other factor |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -95,6 +95,7 @@ Notebook 03 should orchestrate those functions and tell the evidence-backed stor
 | `fashion.train.reproducibility` | Seeds and runtime/Git provenance | Data splitting |
 | `fashion.train.artifacts` | Atomic writes and SHA-256 verification | Model selection |
 | `fashion.train.registry` | One immutable lifecycle row per physical run | Rewriting failed runs |
+| `fashion.train.recovery` | Explicitly close an externally killed process as interrupted | Changing model-cache identity |
 | `fashion.train.metrics` | OOF validation and fixed-label metrics | Opening the holdout |
 | `fashion.train.engine` | One fold's optimisation and best checkpoint | Experiment comparison |
 | `fashion.train.cache` | Exact run-or-load identity and artifact checks | Trusting Git commit alone |
@@ -148,7 +149,8 @@ recorded as provenance, but it is not used as a proxy for implementation content
 | `fashion.task2.classical` | B1 HOG plus content-only HSV features and a fold-fitted linear SVM |
 | `fashion.models.season` | Scratch C1/C2/C3, benchmark-only P0S/P*, and image-only multi-task boundaries |
 | `fashion.task2.experiments` | Immutable JSON configs, run-or-load cache, registry lifecycle, and atomic artifacts |
-| `fashion.task2.evidence` | File-impact flow, complete-fold OOF packs, verified G1 ranking, and shortlist artifacts |
+| `fashion.task2.evidence` | File-impact flow, complete-fold OOF packs, verified G1 ranking, and audited G2-P selection artifacts |
+| `scripts/run_task2_experiment.py` | Windows-safe config launcher with a guarded `main()` | Training or model-selection logic |
 | Notebook 03 sections 1-4 | Frozen contract, runtime, EDA handoff, folds, OOF, metrics, transforms, and leakage audit |
 | Notebook 03 sections 6 and 7.2 | Scratch forward audits, benchmark rejection, state hashes, and registry health |
 
@@ -156,7 +158,8 @@ Measured evidence is stored under `results/evidence/task2/` and
 `results/figures/task2/`. The G1 screen links capacity, training cost, and pooled OOF
 quality for `1,174,244`-parameter C1, `11,170,884`-parameter C2, and
 `1,521,956`-parameter C3. These values are now measured comparison evidence, not only
-forward-pass capacity facts.
+forward-pass capacity facts. The G2-P pack then verifies the two configs differ only in
+identity, stage, and image size before applying the frozen `+0.005` selection threshold.
 
 ### 2.4 Trace corrections kept in Git history
 
@@ -182,6 +185,17 @@ what actually failed:
 - `11dda77`, `7d70e3f`, `9d18996`, and `4407755` preserve the dirty G0 provenance
   discovery, addition of `git_dirty` to tracked evidence, clean external rerun, and
   final clean-cache Notebook handoff. The dirty physical row remains append-only.
+- `22b94e1` then `e4ce303` preserve the orphaned `running`-row regression and the
+  explicit external-termination recovery. `e7946eb` then `f4992e8` preserve the
+  follow-up cache-boundary regression and move recovery outside model implementation
+  hashing, so operational recovery cannot invalidate scientifically identical weights.
+- P1 run `g2-p1-c2-resnet18-f1-s2753-7327d09ce2cf` was externally interrupted. The
+  first background retry lacked a Windows `__main__` guard, leaving parent run
+  `g2-p1-c2-resnet18-f1-s2753-dce57b0c7883` interrupted and worker run
+  `g2-p1-c2-resnet18-f1-s2753-48ece6ab6852` failed. Commits `cf1184f` and `1fe31d4`
+  add and document the guarded launcher; the five evidence runs are separate and clean.
+- `358549a` then `6db73de` preserve the misleading truncated quality-bar regression and
+  the point-plot fix. Signed paired-fold deltas still use a zero-centred bar chart.
 
 ### 2.5 Measured execution status
 
@@ -193,6 +207,8 @@ what actually failed:
 | G1 C1 SmallCNN | Pooled macro-F1 `0.699902`; fold SD `0.010936`; Spring F1 `0.726168`; 1,174,244 parameters; 19.11 training minutes | Retain as the compact efficiency finalist | `results/evidence/task2/g1_c1_smallcnn/manifest.json`; five run IDs recorded there |
 | G1 C2 ResNet18 | Pooled macro-F1 `0.707099`; fold SD `0.003872`; Spring F1 `0.738433`; 11,170,884 parameters; 29.21 training minutes | Rank first and use for the G2 transform gate | `results/evidence/task2/g1_c2_resnet18/manifest.json`; five run IDs recorded there |
 | G1 C3 MobileNetV3-Small | Pooled macro-F1 `0.638495`; fold SD `0.008339`; Spring F1 `0.668816`; 1,521,956 parameters; 16.66 training minutes | Stop: deployment savings do not offset the quality loss | `results/evidence/task2/g1_c3_mobilenetv3/manifest.json`; five run IDs recorded there |
+| G2-P P1 ResNet18 | Pooled macro-F1 `0.705312`; fold SD `0.006467`; Spring F1 `0.738673`; 58.18 training minutes; 1,321.9 MB peak VRAM | Do not select P1: quality did not improve and measured cost increased | `results/evidence/task2/g2_p1_c2_resnet18/manifest.json`; five clean run IDs recorded there |
+| G2-P size decision | P1 minus P0 macro-F1 `-0.001787`; four of five paired folds favoured P0; runtime ratio `1.992`; peak-VRAM ratio `2.180` | Retain P0 `(80, 60)` under the frozen `+0.005` rule; run A0/A1 next | `results/evidence/task2/g2_input_size_ablation/manifest.json` |
 
 B0 predicted Summer for every product. Its Summer F1 was `0.662815`; Fall, Spring,
 and Winter F1 were zero. This is the concrete reason accuracy is not the primary metric.
@@ -216,8 +232,13 @@ this is a useful negative result, not a reason to hide the family.
 G1 closes only the family-screen question. It does not freeze a final winner. The
 hash-linked leaderboard, figure, shortlist, and all 15 run IDs are in
 `results/evidence/task2/g1_family_screen/manifest.json` and Notebook 03 section 8.1.1.
-The next controlled question is P0 versus P1 on C2, followed by A0 versus A1 on the
-selected size. C1 remains untouched for the later equal-budget G3 comparison.
+G2-P held C2, A0, folds, seed, optimiser, effective batch size, and eight-epoch budget
+fixed. Upscaling to P1 changed pooled macro-F1 from `0.707099` to `0.705312` while
+training time rose from `29.21` to `58.18` minutes and peak VRAM from `606.4` to
+`1,321.9` MB. Spring F1 changed by only `+0.000239`. P1 therefore adds interpolation
+and cost without meeting the predeclared quality threshold. The next controlled question
+is A0 versus A1 on P0 `(80, 60)`. C1 remains untouched for the later equal-budget G3
+comparison.
 
 ## 3. Task 2 contract
 
@@ -610,9 +631,10 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** declare and run P0 versus P1 on C2. Keep A0, seed 2753, all five
-folds, optimiser, effective batch size, and eight-epoch budget fixed. Apply the frozen
-0.5-point selection threshold before declaring the A0/A1 experiment.
+**Next safe action:** declare A1 on C2 at the retained P0 `(80, 60)` size. Reuse existing
+P0/A0 evidence; do not rerun it under a new ID. Keep seed 2753, all five folds,
+optimiser, effective batch size, and eight-epoch budget fixed. Select A1 only for at
+least `+0.003` macro-F1 with no later robustness loss greater than `0.010`.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
@@ -627,7 +649,8 @@ folds, optimiser, effective batch size, and eight-epoch budget fixed. Apply the 
 ### Phase 3 - Comparison and tuning, 3-5 days
 
 - [x] Screen C1, C2, and C3 under the same budget and shortlist C2 plus C1.
-- [ ] Run P0/P1 and A0/A1 transform ablations.
+- [x] Run P0/P1, apply the frozen threshold, and retain P0 `(80, 60)`.
+- [ ] Run A0/A1 at P0 while holding every other factor fixed.
 - [ ] Fully train the best two families.
 - [ ] Run three small, predeclared tuning configurations on finalists.
 - [ ] Run I1 and I2.
