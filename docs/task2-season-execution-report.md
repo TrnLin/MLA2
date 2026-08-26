@@ -76,12 +76,13 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | 55-code-cell final scaffold; G0, B0, and B1 now have measured interpretations | Learned-model experiment outputs remain |
+| Notebook 03 | 55-code-cell final scaffold; 23 implemented cells execute cleanly; G0, B0, B1, and G1 have measured interpretations | Continue filling the remaining 32 leaf cells without changing the structure |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, runner, cache, and audited evidence packs are implemented | Continue with the equal-budget family screen |
-| `results/runs.csv` | Eleven completed rows: one G0 run, five B0 folds, and five B1 folds | Cache reuse adds no duplicate rows |
+| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, runner, cache, audited evidence packs, and the G1 shortlist builder are implemented | Continue with the controlled C2 transform gate |
+| `results/runs.csv` | 28 completed rows: three retained G0 attempts, five B0 folds, five B1 folds, and 15 G1 folds | No running or duplicate run IDs; tracked G0 evidence selects the clean current-hash run |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
+| Current G1 gate | Ruff and 49 Task 2/notebook tests pass; all 23 implemented cells have outputs and zero errors | C2 and C1 advance; C3 stops |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -147,14 +148,15 @@ recorded as provenance, but it is not used as a proxy for implementation content
 | `fashion.task2.classical` | B1 HOG plus content-only HSV features and a fold-fitted linear SVM |
 | `fashion.models.season` | Scratch C1/C2/C3, benchmark-only P0S/P*, and image-only multi-task boundaries |
 | `fashion.task2.experiments` | Immutable JSON configs, run-or-load cache, registry lifecycle, and atomic artifacts |
-| `fashion.task2.evidence` | File-impact flow plus complete-fold, registry-linked OOF evidence packs |
+| `fashion.task2.evidence` | File-impact flow, complete-fold OOF packs, verified G1 ranking, and shortlist artifacts |
 | Notebook 03 sections 1-4 | Frozen contract, runtime, EDA handoff, folds, OOF, metrics, transforms, and leakage audit |
 | Notebook 03 sections 6 and 7.2 | Scratch forward audits, benchmark rejection, state hashes, and registry health |
 
-Measured foundation evidence is stored under `results/evidence/task2/` and
-`results/figures/task2/`. The current audit records `1,174,244` C1 parameters,
-`11,170,884` C2 parameters, and `1,521,956` C3 parameters. These are capacity facts,
-not performance results.
+Measured evidence is stored under `results/evidence/task2/` and
+`results/figures/task2/`. The G1 screen links capacity, training cost, and pooled OOF
+quality for `1,174,244`-parameter C1, `11,170,884`-parameter C2, and
+`1,521,956`-parameter C3. These values are now measured comparison evidence, not only
+forward-pass capacity facts.
 
 ### 2.4 Trace corrections kept in Git history
 
@@ -170,14 +172,27 @@ what actually failed:
   selects a real letterbox example.
 - `84f3faf` then `9d2a827` preserve the interactive Matplotlib dependency and the
   headless Agg fix. `2c211f5` then `dff0c80` preserve the absolute-path manifest fix.
+- `3cbe0c1` then `f854db5` preserve the cached fold-stat tuple regression and fix.
+- `1dd96c3` then `b12e38e` preserve the clipped rightmost G1 label and Matplotlib layout
+  fix.
+- `9d4e8e7` then `ba6c0f1` preserve the G1-to-G2 handoff mismatch and the correction
+  that keeps transform ablations on leading C2 while retaining C1 for G3.
+- `60264b9` then `6fc6568` preserve misleading execution counts on unfinished TODO
+  cells and the fix that leaves only implemented cells visibly executed.
+- `11dda77`, `7d70e3f`, `9d18996`, and `4407755` preserve the dirty G0 provenance
+  discovery, addition of `git_dirty` to tracked evidence, clean external rerun, and
+  final clean-cache Notebook handoff. The dirty physical row remains append-only.
 
 ### 2.5 Measured execution status
 
 | Gate | Measured result | Decision | Trace |
 |---|---|---|---|
-| G0 pipeline smoke | The balanced 64-image batch reached 100% accuracy after 100 steps; final loss was `0.0000145` of initial loss; the 512/128 integration run completed two epochs | Pipeline passed; its macro-F1 is excluded from model comparison | `results/evidence/task2/g0/manifest.json`; run `g0-pipeline-smoke-f0-s2753-a5a6902f6fd0` |
+| G0 pipeline smoke | The balanced 64-image batch reached 100% accuracy after 100 steps; final loss was `0.0000145` of initial loss; the 512/128 integration run completed two epochs | Pipeline passed; its macro-F1 is excluded from model comparison | `results/evidence/task2/g0/manifest.json`; clean run `g0-pipeline-smoke-f0-s2753-5ad5ee9d433c` |
 | B0 majority | 32,753 OOF products; accuracy `0.495680`; pooled macro-F1 `0.165704`; balanced accuracy `0.250000`; Spring F1 `0.000000` | All learned models must beat this macro-F1 and recover minority-class recall | `results/evidence/task2/b0_majority/manifest.json`; five run IDs recorded there |
 | B1 HOG + HSV + LinearSVC | 32,753 OOF products; accuracy `0.657405`; pooled macro-F1 `0.609561`; balanced accuracy `0.620671`; Spring F1 `0.486901` | Treat B1 as the serious model-family threshold, not a token baseline | `results/evidence/task2/b1_hog_hsv_svm/manifest.json`; five run IDs recorded there |
+| G1 C1 SmallCNN | Pooled macro-F1 `0.699902`; fold SD `0.010936`; Spring F1 `0.726168`; 1,174,244 parameters; 19.11 training minutes | Retain as the compact efficiency finalist | `results/evidence/task2/g1_c1_smallcnn/manifest.json`; five run IDs recorded there |
+| G1 C2 ResNet18 | Pooled macro-F1 `0.707099`; fold SD `0.003872`; Spring F1 `0.738433`; 11,170,884 parameters; 29.21 training minutes | Rank first and use for the G2 transform gate | `results/evidence/task2/g1_c2_resnet18/manifest.json`; five run IDs recorded there |
+| G1 C3 MobileNetV3-Small | Pooled macro-F1 `0.638495`; fold SD `0.008339`; Spring F1 `0.668816`; 1,521,956 parameters; 16.66 training minutes | Stop: deployment savings do not offset the quality loss | `results/evidence/task2/g1_c3_mobilenetv3/manifest.json`; five run IDs recorded there |
 
 B0 predicted Summer for every product. Its Summer F1 was `0.662815`; Fall, Spring,
 and Winter F1 were zero. This is the concrete reason accuracy is not the primary metric.
@@ -190,6 +205,19 @@ B1 improved macro-F1 by `0.443857` over B0. Its fold macro-F1 mean and SD were
 were the largest named confusions. The five CPU runs took `36.14` minutes in total.
 LinearSVC decision scores were softmax-transformed only for the shared OOF schema; B1
 NLL, Brier, and ECE are not calibration evidence.
+
+Every G1 family covered the same 32,753 valid products exactly once, used no protected
+ID, and ran under the same P0/A0, seed 2753, five-fold, eight-epoch screen. C2 beat C1
+by only `0.007197` macro-F1 while using about 9.51 times as many parameters and 10.10
+more training minutes. C1 therefore remains a justified efficiency finalist rather than
+being rejected by rank alone. C3 beat B1 by `0.028934`, but it trailed C2 by `0.068604`;
+this is a useful negative result, not a reason to hide the family.
+
+G1 closes only the family-screen question. It does not freeze a final winner. The
+hash-linked leaderboard, figure, shortlist, and all 15 run IDs are in
+`results/evidence/task2/g1_family_screen/manifest.json` and Notebook 03 section 8.1.1.
+The next controlled question is P0 versus P1 on C2, followed by A0 versus A1 on the
+selected size. C1 remains untouched for the later equal-budget G3 comparison.
 
 ## 3. Task 2 contract
 
@@ -582,22 +610,23 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** declare and run the equal-budget C1/C2/C3 screen. Use the same
-folds, seed, transform, optimiser budget, and selection table for all three families.
+**Next safe action:** declare and run P0 versus P1 on C2. Keep A0, seed 2753, all five
+folds, optimiser, effective batch size, and eight-epoch budget fixed. Apply the frozen
+0.5-point selection threshold before declaring the A0/A1 experiment.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
 - [x] Overfit a tiny batch to detect label/image-ordering errors.
 - [x] Run B0 over five folds and record its complete OOF evidence.
 - [x] Run B1 over five folds and mark its decision-score softmax as uncalibrated.
-- [ ] Run a C1 smoke test and equal-budget screen.
+- [x] Run a C1 smoke test and the equal-budget C1/C2/C3 screen.
 - [x] Verify that every valid development ID appears once in B0 OOF predictions and that
   holdout and quarantine are absent.
-- [ ] Repeat the exactly-once OOF audit for B1 and every learned-model experiment.
+- [x] Repeat the exactly-once OOF audit for B1 and every G1 learned-model experiment.
 
 ### Phase 3 - Comparison and tuning, 3-5 days
 
-- [ ] Screen C1, C2, and C3 under the same budget.
+- [x] Screen C1, C2, and C3 under the same budget and shortlist C2 plus C1.
 - [ ] Run P0/P1 and A0/A1 transform ablations.
 - [ ] Fully train the best two families.
 - [ ] Run three small, predeclared tuning configurations on finalists.
@@ -636,8 +665,8 @@ folds, seed, transform, optimiser budget, and selection table for all three fami
 Task 2 is complete only when all of the following exist:
 
 - [ ] `results/runs.csv` contains every run and hash;
-- [ ] OOF predictions cover all 32,753 valid development rows;
-- [ ] at least three genuinely different algorithm families were evaluated;
+- [x] Current B0, B1, C1, C2, and C3 OOF predictions each cover all 32,753 valid development rows;
+- [x] At least three genuinely different algorithm families were evaluated;
 - [ ] at least one improvement was implemented and evaluated;
 - [ ] error, shortcut, robustness, calibration, and cost evidence is complete;
 - [ ] the winner was frozen before holdout access;
