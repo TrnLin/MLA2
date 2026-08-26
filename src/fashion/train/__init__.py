@@ -10,6 +10,7 @@ from fashion.train.artifacts import (
     canonical_sha256,
     verify_artifact,
 )
+from fashion.train.engine import FoldResult, TrainConfig, train_fold
 from fashion.train.metrics import (
     OOFValidationError,
     multiclass_metrics,
@@ -34,6 +35,7 @@ __all__ = [
     "canonical_sha256",
     "capture_git_state",
     "capture_runtime",
+    "FoldResult",
     "make_torch_generator",
     "multiclass_metrics",
     "new_run_id",
@@ -43,6 +45,8 @@ __all__ = [
     "seed_everything",
     "seed_worker",
     "tracked_run",
+    "TrainConfig",
+    "train_fold",
     "validate_oof",
     "verify_artifact",
 ]
