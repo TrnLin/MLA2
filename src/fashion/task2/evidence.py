@@ -1262,37 +1262,52 @@ def _plot_g2_input_size_ablation(
     quality_axis, fold_axis = figure.subplots(1, 2)
     variants = comparison["variant"].tolist()
     positions = np.arange(len(variants))
-    width = 0.36
-    quality_axis.bar(
-        positions - width / 2,
-        comparison["pooled_macro_f1"],
-        width,
-        label="Pooled macro-F1",
-        color="#2563EB",
-    )
-    quality_axis.bar(
-        positions + width / 2,
-        comparison["spring_f1"],
-        width,
-        label="Spring F1",
-        color="#F59E0B",
-    )
+    quality_values: list[float] = []
+    for column, label, colour, offset in (
+        ("pooled_macro_f1", "Pooled macro-F1", "#2563EB", -0.04),
+        ("spring_f1", "Spring F1", "#F59E0B", 0.04),
+    ):
+        values = comparison[column].to_numpy(dtype=float)
+        quality_values.extend(values.tolist())
+        metric_positions = positions + offset
+        quality_axis.plot(
+            metric_positions,
+            values,
+            marker="o",
+            markersize=8,
+            linewidth=1.8,
+            label=label,
+            color=colour,
+        )
+        for position, value in zip(metric_positions, values, strict=True):
+            quality_axis.annotate(
+                f"{value:.4f}",
+                (position, value),
+                xytext=(0, 8),
+                textcoords="offset points",
+                ha="center",
+                fontsize=8,
+            )
     p0_score = float(
         comparison.loc[comparison["variant"].eq("P0"), "pooled_macro_f1"].iloc[0]
     )
+    threshold = p0_score + minimum_gain
     quality_axis.axhline(
-        p0_score + minimum_gain,
+        threshold,
         color="#DC2626",
         linestyle="--",
         label=f"P1 selection threshold = P0 + {minimum_gain:.3f}",
     )
     quality_axis.set_xticks(positions, labels=variants)
-    quality_axis.set_ylim(0.60, 0.78)
+    quality_axis.set_xlim(-0.25, len(variants) - 0.75)
+    quality_axis.set_ylim(
+        max(0.0, min(quality_values + [threshold]) - 0.01),
+        min(1.0, max(quality_values + [threshold]) + 0.01),
+    )
     quality_axis.set_ylabel("OOF F1")
     quality_axis.set_title(f"Pooled quality; selected {selected_variant}")
     quality_axis.legend(loc="lower right", fontsize=8)
-    for container in quality_axis.containers:
-        quality_axis.bar_label(container, fmt="%.4f", padding=3, fontsize=8)
+    quality_axis.grid(axis="y", alpha=0.2)
 
     fold_colours = [
         "#16A34A" if value >= 0.0 else "#DC2626"
