@@ -216,6 +216,15 @@ def test_task2_environment_table_uses_dataframe_compatible_reset_index() -> None
     assert ".reset_index(name=" not in environment_cell.source
 
 
+def test_task2_preprocessing_mask_uses_an_informative_padding_example() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    preprocessing_cell = next(cell for cell in notebook.cells if cell.id == "s04-01-code")
+
+    assert "nonstandard_aspect" in preprocessing_cell.source
+    assert "first_content_mask.any() and (~first_content_mask).any()" in preprocessing_cell.source
+    assert 'cmap="gray", vmin=0, vmax=1' in preprocessing_cell.source
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
