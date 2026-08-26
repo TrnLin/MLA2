@@ -1,6 +1,6 @@
 ---
 title: "Task 2 - Fashion Season Classification: execution report and plan"
-status: shared-training-core-ready
+status: task2-foundation-ready
 created: 2026-08-25
 updated: 2026-08-26
 scope: task2-season
@@ -76,10 +76,12 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | Execution-ready scaffold | Code, outputs, and findings still need to be filled |
-| Shared training core | Implemented and unit-tested | Loaders and model families are the next boundary |
-| `results/runs.csv` | Not created yet | Correct before the first physical experiment |
+| Notebook 03 | 55-code-cell final scaffold; protocol, file flow, models, and registry are executable | Experiment outputs and measured interpretations remain |
+| Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
+| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, runner, cache, and evidence are implemented | Start with G0; do not skip to long training |
+| `results/runs.csv` | Not created yet | Expected before G0 because no physical run has occurred |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
+| Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation is green at commit `a702bfc` |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -135,6 +137,39 @@ The real execution order is:
 Changing training code, config, split assignment, label order, fold, or seed creates a
 new cache identity. Changing this Markdown report does not. The Git commit is still
 recorded as provenance, but it is not used as a proxy for implementation content.
+
+### 2.3 Implemented Task 2 foundation
+
+| Module or artifact | Implemented responsibility |
+|---|---|
+| `fashion.data.torch` | Training-fold statistics, aspect-preserving P0/P1 transforms, A0/A1, and canonical loaders |
+| `fashion.task2.baselines` | B0 training-fold majority with fixed four-label OOF output |
+| `fashion.task2.classical` | B1 HOG plus content-only HSV features and a fold-fitted linear SVM |
+| `fashion.models.season` | Scratch C1/C2/C3, benchmark-only P0S/P*, and image-only multi-task boundaries |
+| `fashion.task2.experiments` | Immutable JSON configs, run-or-load cache, registry lifecycle, and atomic artifacts |
+| `fashion.task2.evidence` | Audited file-impact table and headless Matplotlib flow figure |
+| Notebook 03 sections 1-4 | Frozen contract, runtime, EDA handoff, folds, OOF, metrics, transforms, and leakage audit |
+| Notebook 03 sections 6 and 7.2 | Scratch forward audits, benchmark rejection, state hashes, and registry health |
+
+Measured foundation evidence is stored under `results/evidence/task2/` and
+`results/figures/task2/`. The current audit records `1,174,244` C1 parameters,
+`11,170,884` C2 parameters, and `1,521,956` C3 parameters. These are capacity facts,
+not performance results.
+
+### 2.4 Trace corrections kept in Git history
+
+The history is intentionally not rewritten. These corrections help a junior understand
+what actually failed:
+
+- Commit `e9ed2c2` says 23 focused loader tests passed; the captured command actually
+  reported 22. The implementation was green; only the commit-body count was wrong.
+- Commit `1fb1107` was created after PowerShell continued past a failed parameter-count
+  assertion. Commit `577cabc` records the corrected C1 parameter expectation.
+- `63bd722` then `4cc89b3` preserve the Pandas runtime-table failure and fix.
+- `757e600` then `5f83da9` preserve the uninformative all-content mask and the fix that
+  selects a real letterbox example.
+- `84f3faf` then `9d2a827` preserve the interactive Matplotlib dependency and the
+  headless Agg fix. `2c211f5` then `dff0c80` preserve the absolute-path manifest fix.
 
 ## 3. Task 2 contract
 
@@ -509,22 +544,27 @@ Notebook presentation rules:
 - [x] Add and pin PyTorch, TorchVision, scikit-learn, and scikit-image; resolve
   `requirements/constraints-py312.txt` following decision 0006.
 - [x] Build the shared training engine, metrics, checkpointing, registry, and cache.
-- [ ] Build and test the scratch-weight audit with the model families.
-- [ ] Test `load_splits()` and prohibit direct reads of `splits.csv` in training code.
+- [x] Build and test the scratch-weight audit with the model families.
+- [x] Test `load_splits()` and keep training orchestration on the canonical loader API.
 - [x] Test safe registry append, terminal immutability, and stable schema.
-- [ ] Test that final models use `weights=None` and never download weights.
-- [x] Run `pip check`, Ruff, and the full test suite at the shared-core gate.
+- [x] Test that final models use `weights=None` and never download weights.
+- [x] Run `pip check`, Ruff, Notebook Run All smoke, and the full 162-test suite at the
+  Milestone C gate.
 
 **Gate:** do not start long GPU runs before Phase 0 passes.
 
 ### Phase 1 - Freeze the protocol, half a day
 
-- [ ] Record Task 2 ownership and contract.
-- [ ] Freeze five-fold CV, primary metric, labels, seed, OOF aggregation, and slices.
-- [ ] Record decisions in Notebook 03 before viewing model results.
-- [ ] Store CV digest
+- [x] Record Task 2 ownership and contract.
+- [x] Freeze five-fold CV, primary metric, labels, seed, OOF aggregation, and slices.
+- [x] Record decisions in Notebook 03 before viewing model results.
+- [x] Wire the runner to store CV digest
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
+
+**Next safe action:** execute Phase 2 in order, beginning with the declared G0 smoke
+gate. Do not start B0, B1, or the model-family screen until G0 proves checkpoint and
+registry recovery.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
