@@ -10,3 +10,7 @@ before any baseline or model-family screen starts.
 `b0_majority.json` and `b1_hog_hsv_svm.json` freeze the two five-fold comparison
 anchors. B1 uses unweighted LinearSVC decision scores; its softmax-transformed values
 must not be described as calibrated probabilities.
+
+The three `g1_*.json` files form one matched scratch-family screen. Only
+`experiment_id` and `model_family` may differ. Every family receives P0/A0, seed 2753,
+five folds, AdamW, effective batch 128, and exactly eight epochs of opportunity.

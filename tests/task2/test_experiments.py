@@ -220,3 +220,52 @@ def test_repository_b1_config_freezes_unweighted_hog_hsv_svm_before_execution() 
     assert config.hog_hsv.hsv_bins == (18, 8, 8)
     assert config.hog_hsv.svm_c == 1.0
     assert config.hog_hsv.max_iterations == 5_000
+
+
+def test_repository_g1_configs_differ_only_by_family_and_experiment_id() -> None:
+    paths = (
+        ROOT / "configs/task2/g1_c1_smallcnn.json",
+        ROOT / "configs/task2/g1_c2_resnet18.json",
+        ROOT / "configs/task2/g1_c3_mobilenetv3.json",
+    )
+    configs = [load_experiment_config(path) for path in paths]
+    expected_families = {
+        "smallcnn",
+        "resnet18_small_stem",
+        "mobilenet_v3_small",
+    }
+
+    assert {config.model_family for config in configs} == expected_families
+    assert {config.experiment_id for config in configs} == {
+        "g1-c1-smallcnn",
+        "g1-c2-resnet18",
+        "g1-c3-mobilenetv3",
+    }
+    for config in configs:
+        assert config.method == "deep"
+        assert config.stage == "g1_family_screen"
+        assert config.folds == (0, 1, 2, 3, 4)
+        assert config.seeds == (2753,)
+        assert config.loss_id == "cross_entropy"
+        assert config.data.image_size == (80, 60)
+        assert config.data.augmentation == "a0"
+        assert config.data.batch_size == 32
+        assert config.data.validation_batch_size == 128
+        assert config.data.num_workers == 4
+        assert config.optimisation.epochs == 8
+        assert config.optimisation.patience == 8
+        assert config.optimisation.learning_rate == 3e-4
+        assert config.optimisation.weight_decay == 1e-4
+        assert config.optimisation.effective_batch_size == 128
+        assert config.optimisation.gradient_clip_norm == 1.0
+        assert config.optimisation.warmup_epochs == 1.0
+        assert config.optimisation.use_amp
+
+    reference = configs[0].to_dict()
+    reference.pop("experiment_id")
+    reference.pop("model_family")
+    for config in configs[1:]:
+        candidate = config.to_dict()
+        candidate.pop("experiment_id")
+        candidate.pop("model_family")
+        assert candidate == reference
