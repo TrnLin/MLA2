@@ -172,6 +172,43 @@ def test_task2_execution_scaffold_has_one_code_cell_per_leaf() -> None:
     assert "pretrained=True" not in source
 
 
+def test_task2_data_protocol_cells_are_executable_orchestration() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    protocol_cell_ids = (
+        "s01-01-code",
+        "s01-02-code",
+        "s02-01-code",
+        "s02-02-01-code",
+        "s02-02-02-code",
+        "s03-01-code",
+        "s03-02-code",
+        "s03-03-code",
+        "s04-01-code",
+        "s04-02-code",
+        "s04-03-code",
+    )
+
+    for cell_id in protocol_cell_ids:
+        cell = cells[cell_id]
+        assert cell.cell_type == "code"
+        assert not cell.source.startswith("# TODO:")
+        compile(cell.source, f"03_task2_season.ipynb:{cell_id}", "exec")
+
+    combined = "\n".join(cells[cell_id].source for cell_id in protocol_cell_ids)
+    for required in (
+        "load_splits()",
+        "has_season_label",
+        "iter_cv_folds(splits)",
+        "build_task_loaders(",
+        "validate_oof",
+        "protected labels remain sealed",
+        "atomic_write_json",
+        "atomic_write_csv",
+    ):
+        assert required in combined
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
