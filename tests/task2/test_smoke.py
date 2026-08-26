@@ -177,3 +177,8 @@ def test_g0_run_registers_checkpoint_and_reuses_verified_cache(prepared_project)
     assert Path(evidence["manifest_path"]).is_file()
     assert len(evidence["figure_sha256"]) == 64
     assert not Path(evidence["figure_path"]).is_absolute()
+    snapshot = pd.read_csv(
+        prepared_project.root / "results/evidence/task2/g0/registry_snapshot.csv",
+        dtype=str,
+    )
+    assert snapshot.loc[0, "git_dirty"] == row["git_dirty"]

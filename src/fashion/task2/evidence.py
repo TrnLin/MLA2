@@ -1081,6 +1081,7 @@ def build_g0_evidence(
         "fold",
         "seed",
         "git_commit",
+        "git_dirty",
         "config_sha256",
         "split_sha256",
         "label_map_sha256",
