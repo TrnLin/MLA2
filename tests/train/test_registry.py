@@ -66,6 +66,25 @@ def test_tracked_run_records_failure_and_reraises(tmp_path: Path) -> None:
     assert rows.loc[0, "error_message"] == "out of memory"
 
 
+def test_orphaned_running_run_can_be_marked_interrupted(tmp_path: Path) -> None:
+    registry = RunRegistry(tmp_path / "runs.csv")
+    record = _record("p1-f1-s2753-orphaned")
+    record.started_at_utc = "2026-08-26T17:42:28Z"
+    registry.append(record)
+
+    registry.interrupt_orphaned(
+        record.run_id,
+        reason="training host process exited before Python cleanup",
+    )
+
+    row = registry.read().iloc[0]
+    assert row["status"] == "interrupted"
+    assert row["error_type"] == "ExternalProcessTermination"
+    assert row["error_message"] == "training host process exited before Python cleanup"
+    assert row["started_at_utc"] == "2026-08-26T17:42:28Z"
+    assert row["finished_at_utc"].endswith("Z")
+
+
 def test_duplicate_ids_and_final_rewrites_are_rejected(tmp_path: Path) -> None:
     registry = RunRegistry(tmp_path / "runs.csv")
     with tracked_run(registry, _record()):
