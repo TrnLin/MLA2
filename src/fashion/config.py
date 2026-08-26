@@ -50,8 +50,27 @@ TAXONOMY_JSON = PROCESSED_DATA_DIR / "taxonomy.json"
 RESULTS_DIR = ROOT / "results"
 FIGURE_DIR = RESULTS_DIR / "figures"
 DATA_PREPARATION_FIGURE_DIR = FIGURE_DIR / "data_preparation"
+TASK2_FIGURE_DIR = FIGURE_DIR / "task2"
 EVIDENCE_DIR = RESULTS_DIR / "evidence"
 DATA_PREPARATION_EVIDENCE_DIR = EVIDENCE_DIR / "data_preparation"
+TASK2_EVIDENCE_DIR = EVIDENCE_DIR / "task2"
+RUNS_CSV = RESULTS_DIR / "runs.csv"
+
+CONFIG_DIR = ROOT / "configs"
+TASK2_CONFIG_DIR = CONFIG_DIR / "task2"
+
+TMP_DIR = ROOT / "tmp"
+TASK2_TMP_DIR = TMP_DIR / "task2"
+TASK2_CHECKPOINT_DIR = TASK2_TMP_DIR / "checkpoints"
+TASK2_RUN_DIR = TASK2_TMP_DIR / "runs"
+
+MODEL_DIR = ROOT / "models"
+TASK2_MODEL_PATH = MODEL_DIR / "task2_season.pt"
+TASK2_MODEL_MANIFEST_JSON = MODEL_DIR / "task2_season.manifest.json"
+TASK2_SELECTION_FREEZE_JSON = TASK2_EVIDENCE_DIR / "selection_freeze.json"
+
+NOTEBOOK_RESULT_DIR = RESULTS_DIR / "notebooks"
+TASK2_NOTEBOOK_HTML = NOTEBOOK_RESULT_DIR / "03_task2_season.html"
 
 TARGET_COLUMNS = ("articleType", "season", "gender", "usage")
 RANDOM_SEED = 2753
