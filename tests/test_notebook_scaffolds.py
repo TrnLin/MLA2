@@ -325,6 +325,44 @@ def test_task2_b1_cell_records_uncalibrated_five_fold_evidence() -> None:
     assert "results/evidence/task2/b1_hog_hsv_svm/manifest.json" in finding
 
 
+def test_task2_g1_cell_records_equal_budget_family_screen() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    code = cells["s08-01-01-code"].source
+    finding = cells["s08-01-01-finding"].source
+
+    assert not code.startswith("# TODO:")
+    compile(code, "03_task2_season.ipynb:s08-01-01-code", "exec")
+    for required in (
+        "g1_c1_smallcnn.json",
+        "g1_c2_resnet18.json",
+        "g1_c3_mobilenetv3.json",
+        "run_or_load_experiment",
+        "build_experiment_evidence",
+        "build_g1_family_screen_evidence",
+        "calibration_claim_allowed=False",
+        "protected_ids",
+        "len(g1_trace_rows) == 15",
+        "g1_family_screen",
+    ):
+        assert required in code
+    for required in (
+        "32,753",
+        "0.707099",
+        "0.699902",
+        "0.638495",
+        "shortlist C2",
+        "Reject C3",
+        "Run P0/P1 and A0/A1 on C2",
+        "not yet calibrated",
+        "g1-c1-smallcnn-f0-s2753-59e9743d3899",
+        "g1-c2-resnet18-f0-s2753-b91662d47026",
+        "g1-c3-mobilenetv3-f0-s2753-9e07fe2a3158",
+        "results/evidence/task2/g1_family_screen/manifest.json",
+    ):
+        assert required in finding
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
