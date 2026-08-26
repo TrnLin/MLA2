@@ -5,9 +5,13 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from matplotlib.axes import Axes
 
 from fashion.data.hashing import compute_sha256
-from fashion.task2.evidence import build_g1_family_screen_evidence
+from fashion.task2.evidence import (
+    _plot_g1_family_screen,
+    build_g1_family_screen_evidence,
+)
 
 
 def _write_experiment_evidence(
@@ -169,3 +173,43 @@ def test_g1_evidence_rejects_tampered_input_artifact(tmp_path: Path) -> None:
             evidence_directory=tmp_path / "results/evidence/task2/g1_family_screen",
             figure_directory=tmp_path / "results/figures/task2",
         )
+
+
+def test_g1_figure_places_rightmost_label_inside_plot(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    leaderboard = pd.DataFrame(
+        [
+            {
+                "experiment_id": "g1-c1-smallcnn",
+                "parameter_count": 1_100_000,
+                "pooled_macro_f1": 0.70,
+                "five_fold_runtime_minutes": 19.0,
+                "shortlisted": True,
+            },
+            {
+                "experiment_id": "g1-c2-resnet18",
+                "parameter_count": 11_000_000,
+                "pooled_macro_f1": 0.71,
+                "five_fold_runtime_minutes": 29.0,
+                "shortlisted": True,
+            },
+        ]
+    )
+    calls: list[dict[str, object]] = []
+    original = Axes.annotate
+
+    def capture(self, text, *args, **kwargs):
+        calls.append({"text": text, **kwargs})
+        return original(self, text, *args, **kwargs)
+
+    monkeypatch.setattr(Axes, "annotate", capture)
+    _plot_g1_family_screen(
+        leaderboard,
+        reference_macro_f1=0.61,
+        output_path=tmp_path / "g1.png",
+    )
+
+    rightmost = next(call for call in calls if "resnet18" in str(call["text"]))
+    assert rightmost["ha"] == "right"
+    assert rightmost["xytext"][0] < 0
