@@ -1,13 +1,13 @@
 {
   "artifact_sha256": {
     "checkpoint": "154dc1a91c428001b4c6c261e756311a195ddd55d76bfbefc050659df0dd5d71",
-    "history": "d0ce46bb23723fcce2ee359f5d4d901f92780d970e2e3c87939b44a3abe4675b",
-    "prediction": "e120aee81a78821610635c177ea115b7ab8a90d349e18be95a4339993c5865cf"
+    "history": "4bd063851bda4d7da49f0520d5e5c0011f8ab88879e8fbd2f2f26062b31bbcf4",
+    "prediction": "599aaf522eed614c4b01143928d86d77b9de36c27ec10df02b265613ad6c9168"
   },
   "cache_key": {
     "config_sha256": "7d87f50206caf2bfd83f800dd128db56e6e9269eb513ce583e39f83ec73a12de",
     "fold": 0,
-    "implementation_sha256": "da0272cf032714e6ddae6e722750fbc946b8bb22c234520cf247f3da992a4059",
+    "implementation_sha256": "6346eb33ea704593ca71aa48a975aac8f0169a76a41a8a4113a9c2141f7bb2a4",
     "label_map_sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
     "seed": 2753,
     "split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
@@ -21,19 +21,19 @@
     "device": "cuda",
     "epochs_completed": 2,
     "peak_vram_mb": 137.05322265625,
-    "runtime_seconds": 9.048259000002872,
+    "runtime_seconds": 2.43622360000154,
     "training_products": 512,
     "validation_products": 128
   },
   "integration_history_path": "results/evidence/task2/g0/integration_history.csv",
-  "integration_history_sha256": "83f9cefe15ddafde890b5e7fbd4778e7071362e571c3641b17c9917fb7e2cd10",
+  "integration_history_sha256": "2c97d81ed2eb73a30ae53a5f48f6445ad9070929a20407d14b58e332043177c2",
   "integration_macro_f1": 0.34326178279322417,
   "passed": true,
   "registry_snapshot_path": "results/evidence/task2/g0/registry_snapshot.csv",
-  "registry_snapshot_sha256": "18f8d7db86951547ef48c9d8130195d81ea991e87a0bad4db7335e587b4ef8cb",
-  "run_id": "g0-pipeline-smoke-f0-s2753-a5a6902f6fd0",
+  "registry_snapshot_sha256": "d8529b7aeb9ebe2ed062bcc2ba7d20551f48a238472f33c79afa2022987350fb",
+  "run_id": "g0-pipeline-smoke-f0-s2753-b921bf3b6418",
   "schema_version": "1.0.0",
-  "source": "cache",
+  "source": "run",
   "tiny_overfit": {
     "device": "cuda",
     "final_accuracy": 1.0,

@@ -275,7 +275,8 @@ def test_task2_g0_cell_records_a_non_comparison_pass() -> None:
         assert required in code
     assert "passed" in finding
     assert "excluded from every leaderboard" in finding
-    assert "g0-pipeline-smoke-f0-s2753-a5a6902f6fd0" in finding
+    assert "g0-pipeline-smoke-f0-s2753-b921bf3b6418" in finding
+    assert "git_dirty=true" in finding
 
 
 def test_task2_b0_cell_records_complete_five_fold_evidence() -> None:
