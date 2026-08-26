@@ -1,6 +1,6 @@
 ---
 title: "Task 2 - Fashion Season Classification: execution report and plan"
-status: ready-for-implementation
+status: shared-training-core-ready
 created: 2026-08-25
 updated: 2026-08-26
 scope: task2-season
@@ -64,9 +64,8 @@ strongest defensible submission path.
   shortcut, and transform evidence in Notebook 01, and the holdout lock in Notebook 06.
 - The APIs under `src/fashion/data/`, the canonical split, label maps, class summaries,
   and generated figures and evidence.
-- The current environment: Python 3.12.13 and an RTX 4070 Laptop GPU with 8 GB VRAM.
-  PyTorch, TorchVision, scikit-learn, and scikit-image are not yet pinned or installed in
-  `.venv`.
+- The verified reference environment: Python 3.12.13, PyTorch 2.13.0 with CUDA 12.6,
+  TorchVision 0.28.0, and an RTX 4070 Laptop GPU with 8 GB VRAM.
 - The original papers and official documentation listed at the end of this report.
 
 ## 2. Current project state
@@ -77,14 +76,65 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | Execution-ready scaffold after this change | Code, outputs, and findings still need to be filled |
-| `fashion.train.registry` | Does not exist | Large experiments must wait for Phase 0 |
-| `results/runs.csv` | Does not exist | There is no model evidence yet |
-| Training packages | Not pinned or installed | Phase 0 is required first |
+| Notebook 03 | Execution-ready scaffold | Code, outputs, and findings still need to be filled |
+| Shared training core | Implemented and unit-tested | Loaders and model families are the next boundary |
+| `results/runs.csv` | Not created yet | Correct before the first physical experiment |
+| Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
 Notebook 03 should orchestrate those functions and tell the evidence-backed story.
+
+### 2.1 Implemented shared training core
+
+| Module | Owns | Must not own |
+|---|---|---|
+| `fashion.train.reproducibility` | Seeds and runtime/Git provenance | Data splitting |
+| `fashion.train.artifacts` | Atomic writes and SHA-256 verification | Model selection |
+| `fashion.train.registry` | One immutable lifecycle row per physical run | Rewriting failed runs |
+| `fashion.train.metrics` | OOF validation and fixed-label metrics | Opening the holdout |
+| `fashion.train.engine` | One fold's optimisation and best checkpoint | Experiment comparison |
+| `fashion.train.cache` | Exact run-or-load identity and artifact checks | Trusting Git commit alone |
+
+The engine is deliberately lower-level than the Task 2 runner. It does not choose a
+split, model, transform, or winner. This keeps later experiment comparisons explicit and
+testable.
+
+### 2.2 Runtime call order and file effects
+
+```mermaid
+flowchart LR
+    A["splits.csv + label_maps.json"] --> K["RunCacheKey"]
+    B["immutable experiment config"] --> K
+    C["relevant src/fashion/*.py"] --> K
+    K --> Q{"valid completed run?"}
+    R["results/runs.csv"] --> Q
+    Q -->|yes| V["verify artifact SHA-256"]
+    V --> L["load existing OOF/checkpoint"]
+    Q -->|no| T["tracked_run: running"]
+    D["fold-safe loaders"] --> E["train_fold"]
+    T --> E
+    E --> P["best checkpoint + OOF + history"]
+    P --> M["validate_oof + multiclass_metrics"]
+    M --> F["tracked_run: completed/failed"]
+    F --> R
+```
+
+The real execution order is:
+
+1. Build the cache key from config, canonical data files, relevant Python source, fold,
+   and seed.
+2. Reuse only a completed registry row whose declared artifact bytes still match every
+   SHA-256 digest.
+3. On a miss, append a `running` row before optimisation starts.
+4. Train exactly one fold and write the best checkpoint atomically.
+5. Validate OOF IDs and compute metrics before attaching evidence to the run.
+6. Finalise the same row as `completed`, `failed`, or `interrupted`; a terminal row is
+   immutable.
+
+Changing training code, config, split assignment, label order, fold, or seed creates a
+new cache identity. Changing this Markdown report does not. The Git commit is still
+recorded as provenance, but it is not used as a proxy for implementation content.
 
 ## 3. Task 2 contract
 
@@ -257,25 +307,33 @@ Minimum shared modules:
 
 ```text
 src/fashion/models/season.py
+src/fashion/train/artifacts.py
+src/fashion/train/cache.py
 src/fashion/train/engine.py
 src/fashion/train/metrics.py
 src/fashion/train/registry.py
 src/fashion/train/reproducibility.py
 tests/train/test_registry.py
 tests/train/test_metrics.py
+tests/train/test_cache.py
+tests/train/test_engine.py
 tests/train/test_scratch_models.py
 ```
 
-Minimum registry fields:
+Implemented registry fields include:
 
 ```text
-run_id, task, stage, model_family, benchmark_only, scratch,
-fold, seed, split_sha256, config_sha256, transform_id, loss_id,
-epochs, best_epoch, primary_metric, runtime_seconds, params,
-checkpoint_path, status, timestamp, hardware
+run_id, experiment_id, task, stage, model_family, benchmark_only,
+final_eligible, scratch, fold, seed, git_commit, git_dirty,
+config_sha256, split_sha256, label_map_sha256, implementation_sha256,
+transform_id, loss_id, epochs_requested, epochs_completed, best_epoch,
+primary_metric_name, primary_metric_value, metrics, runtime_seconds,
+peak_vram_mb, parameter_count, checkpoint_path, checkpoint_sha256,
+prediction_path, prediction_sha256, history_path, history_sha256,
+status, error_type, error_message, started_at_utc, finished_at_utc, runtime
 ```
 
-Place candidate checkpoints under `tmp/checkpoints/task2/`. Place only the final artifact
+Place candidate checkpoints under `tmp/task2/checkpoints/`. Place only the final artifact
 at `models/task2_season.pt`, add it manually to the submission ZIP, and do not commit model
 weights to Git.
 
@@ -448,12 +506,12 @@ Notebook presentation rules:
 
 ### Phase 0 - Shared infrastructure, 1-2 days
 
-- [ ] Add and pin PyTorch, TorchVision, scikit-learn, and scikit-image; resolve
+- [x] Add and pin PyTorch, TorchVision, scikit-learn, and scikit-image; resolve
   `requirements/constraints-py312.txt` following decision 0006.
-- [ ] Build the training engine, metrics, checkpointing, registry, and scratch-weight
-  audit.
+- [x] Build the shared training engine, metrics, checkpointing, registry, and cache.
+- [ ] Build and test the scratch-weight audit with the model families.
 - [ ] Test `load_splits()` and prohibit direct reads of `splits.csv` in training code.
-- [ ] Test safe registry append and stable schema.
+- [x] Test safe registry append, terminal immutability, and stable schema.
 - [ ] Test that final models use `weights=None` and never download weights.
 - [ ] Run `pip check`, lint, and the full test suite.
 
