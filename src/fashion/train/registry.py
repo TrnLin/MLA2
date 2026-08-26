@@ -253,6 +253,25 @@ class RunRegistry:
         frame.loc[index, list(RUN_COLUMNS)] = [new_row[name] for name in RUN_COLUMNS]
         atomic_write_csv(self.path, frame)
 
+    def interrupt_orphaned(self, run_id: str, *, reason: str) -> None:
+        """Close one externally terminated run without rewriting its provenance."""
+        if not run_id.strip():
+            raise ValueError("run_id must be non-empty")
+        if not reason.strip():
+            raise ValueError("orphan interruption reason must be non-empty")
+        frame = self.read()
+        matches = frame.index[frame["run_id"] == run_id].tolist()
+        if not matches:
+            raise RegistryError(f"run_id does not exist: {run_id}")
+        index = matches[0]
+        if frame.loc[index, "status"] != "running":
+            raise ImmutableRunError(f"run is already final: {run_id}")
+        frame.loc[index, "status"] = "interrupted"
+        frame.loc[index, "error_type"] = "ExternalProcessTermination"
+        frame.loc[index, "error_message"] = reason.strip()
+        frame.loc[index, "finished_at_utc"] = _utc_now()
+        atomic_write_csv(self.path, frame)
+
     def find(self, **filters: str | int | bool | None) -> pd.DataFrame:
         """Return rows matching exact serialized field values."""
         unknown = set(filters) - set(RUN_COLUMNS)
