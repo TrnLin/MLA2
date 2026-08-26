@@ -317,7 +317,8 @@ def load_or_fit_fold_stats(
             with cache_path.open(encoding="utf-8") as handle:
                 cached = json.load(handle)
             cached_stats = dict(cached["stats"])
-            cached_stats["image_size"] = tuple(cached_stats["image_size"])
+            for tuple_field in ("image_size", "mean", "std"):
+                cached_stats[tuple_field] = tuple(cached_stats[tuple_field])
             stats = FoldImageStats(**cached_stats)
             valid = (
                 cached.get("schema_version") == FOLD_STATS_CACHE_SCHEMA_VERSION
