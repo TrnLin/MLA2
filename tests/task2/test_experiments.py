@@ -18,6 +18,24 @@ from fashion.train.registry import RunRegistry
 
 def _paths(prepared_project) -> dict[str, Path]:
     root = prepared_project.root
+    mappings = json.loads(prepared_project.label_maps.read_text(encoding="utf-8"))
+    season_labels = ["Fall", "Spring", "Summer", "Winter"]
+    mappings["season"].update(
+        {
+            "num_classes": len(season_labels),
+            "classes": season_labels,
+            "label_to_index": {
+                label: index for index, label in enumerate(season_labels)
+            },
+            "index_to_label": {
+                str(index): label for index, label in enumerate(season_labels)
+            },
+        }
+    )
+    prepared_project.label_maps.write_text(
+        json.dumps(mappings, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     return {
         "data_root": root,
         "splits_path": prepared_project.splits,
