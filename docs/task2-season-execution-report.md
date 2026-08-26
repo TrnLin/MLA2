@@ -279,19 +279,38 @@ Place candidate checkpoints under `tmp/checkpoints/task2/`. Place only the final
 at `models/task2_season.pt`, add it manually to the submission ZIP, and do not commit model
 weights to Git.
 
+### 6.6 Reproducibility, cache, and Git trace contract
+
+Notebook 03 uses `run_or_load` by default. A completed run may be reused only when its
+config, split, label-map, implementation, fold, seed, and artifact hashes all match.
+Documentation-only changes do not invalidate training artifacts. Failed, interrupted, or
+incomplete runs are never reused.
+
+The complete local registry and candidate checkpoints remain generated files. After each
+experiment gate, Git stores a compact registry snapshot, the relevant evidence tables and
+figures, and the exact run IDs used by the notebook. Final weights remain outside Git, but
+their SHA-256 digest and manifest are tracked and the weight file is added to the submission
+ZIP.
+
+Every planned code commit includes its tests. When a real defect is found, first commit a
+regression test that reproduces it, then commit the fix separately. Failed hypotheses and
+failed runs remain visible; they are not removed to make the investigation appear cleaner.
+Executed experiment configs are immutable. A correction creates a new experiment ID and a
+new run rather than silently changing the old evidence.
+
 ## 7. Experiment matrix
 
 ### 7.1 Execution order
 
 | Gate | Runs | Question answered | Pass condition |
 |---|---|---|---|
-| G0 | 2 epochs, 256-512 images, fold 0 | Are loader, loss, backpropagation, and registry correct? | A tiny batch can be overfit and the run is registered |
+| G0 | 16 images per class for 100 steps, then 512 images for 2 epochs on fold 0 | Are loader, loss, backpropagation, checkpointing, caching, and registry correct? | Tiny-batch accuracy reaches at least 95%, final loss is at most 20% of initial loss, and the integration run is registered |
 | G1 | B0, B1, C1, C2, C3; 8 epochs x 5 folds | Which families deserve full training? | Every valid row has one OOF prediction |
 | G2 | P0/P1 and A0/A1 on C2 | Which size and augmentation help? | Same model, seed, and budget |
 | G3 | Top two families; full budget x 5 folds | Which model wins fairly? | Stable learning curves and no epoch cherry-picking |
 | G4 | I1 and I2; full budget x 5 folds | Do improvements solve EDA problems? | Primary and slice evidence are both available |
 | G5 | Top two, second seed x 5 folds | Is the result stable? | Winner does not reverse without explanation |
-| G6 | Winner-only robustness, calibration, and cost | Is it usable? | Complete scorecard |
+| G6 | Both finalists: robustness, calibration, and cost | Which finalist is safer to deploy? | Complete comparable scorecards |
 
 ### 7.2 Experiment stopping rules
 
@@ -361,13 +380,21 @@ model features.
 ### 8.5 Ultimate Judgement rule
 
 1. Rank candidates by pooled OOF macro-F1.
-2. The winner must not have a much larger ArticleType-conflict or JPEG drop than its
+2. Select P1 over P0 only for a gain of at least 0.5 percentage points. Select A1 over
+   A0 only for a gain of at least 0.3 points and no robustness loss greater than one
+   point. If tuning configurations differ by less than 0.3 points, retain T0.
+3. Keep I1 only when Spring F1 improves by at least one point, overall macro-F1 falls by
+   no more than 0.2 points, and no class loses more than two points.
+4. Keep I2 only when overall macro-F1 improves by at least 0.3 points, or its
+   ArticleType-conflict score improves by at least one point while overall macro-F1 loses
+   no more than 0.2 points.
+5. The winner must not have a much larger ArticleType-conflict or JPEG drop than its
    competitor.
-3. If macro-F1 differs by less than 0.5 percentage points and the paired 95% interval
+6. If macro-F1 differs by less than 0.5 percentage points and the paired 95% interval
    contains zero, choose the smaller or faster model when its robustness is no more than
    one point worse.
-4. State which models were rejected and why.
-5. Freeze the `run_id`, config hash, metric, transform, label map, epoch rule, and
+7. State which models were rejected and why.
+8. Freeze the `run_id`, config hash, metric, transform, label map, epoch rule, and
    checkpoint rule before holdout access.
 
 After freezing:
