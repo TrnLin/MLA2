@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import os
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -15,7 +16,9 @@ from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 from fashion.config import ROOT, TASK2_EVIDENCE_DIR, TASK2_FIGURE_DIR
 from fashion.data.hashing import compute_sha256
+from fashion.task2.smoke import G0SmokeResult
 from fashion.train.artifacts import atomic_write_bytes, atomic_write_csv, atomic_write_json
+from fashion.train.registry import RunRegistry
 
 FILE_IMPACT_COLUMNS = ("producer", "artifact", "consumer", "effect", "phase")
 FROZEN_BUNDLE = "Frozen Season bundle"
@@ -364,6 +367,172 @@ def build_task2_evidence(
         "figure_sha256": compute_sha256(figure_path),
         "holdout_to_training_edges": 0,
         "deployment_input": FROZEN_BUNDLE,
+    }
+    atomic_write_json(manifest_path, manifest)
+    manifest["manifest_path"] = str(manifest_path)
+    manifest["manifest_sha256"] = compute_sha256(manifest_path)
+    return manifest
+
+
+def build_g0_evidence(
+    result: G0SmokeResult,
+    *,
+    registry_path: str | Path,
+    evidence_directory: str | Path = TASK2_EVIDENCE_DIR / "g0",
+    figure_directory: str | Path = TASK2_FIGURE_DIR,
+) -> dict[str, Any]:
+    """Write a portable, non-comparison evidence pack for one verified G0 pass."""
+    if not result.passed:
+        raise ValueError("cannot build passing G0 evidence from a failed result")
+    registry_rows = RunRegistry(registry_path).find(run_id=result.run_id)
+    if len(registry_rows) != 1:
+        raise ValueError(f"G0 run ID must map to one registry row: {result.run_id}")
+    registry_row = registry_rows.iloc[0]
+    if registry_row["status"] != "completed" or registry_row["stage"] != "g0_smoke":
+        raise ValueError("G0 evidence requires one completed g0_smoke registry row")
+
+    evidence_root = Path(evidence_directory)
+    figure_root = Path(figure_directory)
+    common_root = Path(os.path.commonpath([evidence_root.resolve(), figure_root.resolve()]))
+    registry_snapshot_path = evidence_root / "registry_snapshot.csv"
+    tiny_trace_path = evidence_root / "tiny_loss_trace.csv"
+    integration_history_path = evidence_root / "integration_history.csv"
+    figure_path = figure_root / "g0_pipeline_smoke.png"
+    manifest_path = evidence_root / "manifest.json"
+
+    snapshot_columns = [
+        "run_id",
+        "stage",
+        "experiment_id",
+        "model_family",
+        "benchmark_only",
+        "final_eligible",
+        "scratch",
+        "fold",
+        "seed",
+        "git_commit",
+        "config_sha256",
+        "split_sha256",
+        "label_map_sha256",
+        "implementation_sha256",
+        "transform_id",
+        "loss_id",
+        "epochs_requested",
+        "epochs_completed",
+        "best_epoch",
+        "primary_metric_name",
+        "primary_metric_value",
+        "runtime_seconds",
+        "peak_vram_mb",
+        "parameter_count",
+        "checkpoint_sha256",
+        "prediction_sha256",
+        "history_sha256",
+        "status",
+    ]
+    registry_snapshot = registry_rows.loc[:, snapshot_columns].copy()
+    tiny_trace = pd.DataFrame(result.tiny_overfit["loss_trace"])
+    integration_history = pd.DataFrame(result.integration["history"])
+    if tiny_trace.empty or integration_history.empty:
+        raise ValueError("G0 evidence requires non-empty tiny and integration histories")
+    atomic_write_csv(registry_snapshot_path, registry_snapshot)
+    atomic_write_csv(tiny_trace_path, tiny_trace)
+    atomic_write_csv(integration_history_path, integration_history)
+
+    figure = Figure(figsize=(12, 5), constrained_layout=True)
+    FigureCanvasAgg(figure)
+    tiny_axis, integration_axis = figure.subplots(1, 2)
+    tiny_axis.plot(tiny_trace["step"], tiny_trace["train_loss"], marker="o", color="#2563EB")
+    tiny_axis.axhline(
+        result.tiny_overfit["initial_loss"]
+        * result.tiny_overfit["maximum_loss_ratio"],
+        linestyle="--",
+        color="#DC2626",
+        label="maximum passing loss",
+    )
+    tiny_axis.set_yscale("log")
+    tiny_axis.set_title("G0 fixed-batch memorisation")
+    tiny_axis.set_xlabel("optimizer step")
+    tiny_axis.set_ylabel("cross-entropy loss (log scale)")
+    tiny_axis.legend()
+
+    integration_axis.plot(
+        integration_history["epoch"],
+        integration_history["train_loss"],
+        marker="o",
+        label="training loss",
+        color="#0F766E",
+    )
+    integration_axis.plot(
+        integration_history["epoch"],
+        integration_history["validation_loss"],
+        marker="o",
+        label="validation loss",
+        color="#D97706",
+    )
+    integration_axis.set_title("G0 shared-engine integration")
+    integration_axis.set_xlabel("epoch")
+    integration_axis.set_ylabel("cross-entropy loss")
+    integration_axis.set_xticks(integration_history["epoch"])
+    integration_axis.legend()
+    figure.suptitle("G0 is a pipeline pass, not model-comparison evidence", fontweight="bold")
+    buffer = io.BytesIO()
+    figure.savefig(buffer, format="png", dpi=180, bbox_inches="tight")
+    atomic_write_bytes(figure_path, buffer.getvalue())
+    figure.clear()
+
+    manifest = {
+        "schema_version": "1.0.0",
+        "gate": "G0",
+        "passed": True,
+        "comparison_eligible": False,
+        "run_id": result.run_id,
+        "source": result.source,
+        "cache_key": asdict(result.cache_key),
+        "tiny_overfit": {
+            key: result.tiny_overfit[key]
+            for key in (
+                "products",
+                "steps",
+                "device",
+                "initial_loss",
+                "final_loss",
+                "final_accuracy",
+                "loss_ratio",
+                "minimum_accuracy",
+                "maximum_loss_ratio",
+                "gradients_finite",
+                "passed",
+            )
+        },
+        "integration": {
+            key: result.integration[key]
+            for key in (
+                "training_products",
+                "validation_products",
+                "epochs_completed",
+                "best_epoch",
+                "device",
+                "peak_vram_mb",
+                "runtime_seconds",
+            )
+        },
+        "integration_macro_f1": result.integration["best_metrics"]["macro_f1"],
+        "artifact_sha256": dict(result.artifacts),
+        "registry_snapshot_path": _portable_artifact_path(
+            registry_snapshot_path,
+            fallback_root=common_root,
+        ),
+        "registry_snapshot_sha256": compute_sha256(registry_snapshot_path),
+        "tiny_trace_path": _portable_artifact_path(tiny_trace_path, fallback_root=common_root),
+        "tiny_trace_sha256": compute_sha256(tiny_trace_path),
+        "integration_history_path": _portable_artifact_path(
+            integration_history_path,
+            fallback_root=common_root,
+        ),
+        "integration_history_sha256": compute_sha256(integration_history_path),
+        "figure_path": _portable_artifact_path(figure_path, fallback_root=common_root),
+        "figure_sha256": compute_sha256(figure_path),
     }
     atomic_write_json(manifest_path, manifest)
     manifest["manifest_path"] = str(manifest_path)

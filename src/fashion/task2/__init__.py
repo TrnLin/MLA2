@@ -16,6 +16,7 @@ from fashion.task2.classical import (
 )
 from fashion.task2.evidence import (
     build_file_impact_edges,
+    build_g0_evidence,
     build_task2_evidence,
     plot_file_impact_flow,
     validate_file_impact_edges,
@@ -49,6 +50,7 @@ __all__ = [
     "fit_training_fold_majority",
     "fit_hog_hsv_svm",
     "build_file_impact_edges",
+    "build_g0_evidence",
     "build_task2_evidence",
     "HogHsvFoldResult",
     "HogHsvSpec",

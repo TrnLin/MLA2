@@ -7,6 +7,7 @@ import pandas as pd
 import pytest
 
 from fashion.config import ROOT
+from fashion.task2.evidence import build_g0_evidence
 from fashion.task2.smoke import (
     G0SmokeConfig,
     load_g0_config,
@@ -164,3 +165,15 @@ def test_g0_run_registers_checkpoint_and_reuses_verified_cache(prepared_project)
     assert len(rows) == 1
     assert first.oof["id"].nunique() == 4
     assert set(first.artifacts) == {"checkpoint", "prediction", "history"}
+
+    evidence = build_g0_evidence(
+        first,
+        registry_path=paths["registry_path"],
+        evidence_directory=prepared_project.root / "results/evidence/task2/g0",
+        figure_directory=prepared_project.root / "results/figures/task2",
+    )
+    assert evidence["passed"]
+    assert not evidence["comparison_eligible"]
+    assert Path(evidence["manifest_path"]).is_file()
+    assert len(evidence["figure_sha256"]) == 64
+    assert not Path(evidence["figure_path"]).is_absolute()
