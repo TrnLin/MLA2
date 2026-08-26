@@ -15,6 +15,7 @@ from fashion.task2.classical import (
     fit_hog_hsv_svm,
 )
 from fashion.task2.evidence import (
+    build_experiment_evidence,
     build_file_impact_edges,
     build_g0_evidence,
     build_task2_evidence,
@@ -49,6 +50,7 @@ __all__ = [
     "G0SmokeResult",
     "fit_training_fold_majority",
     "fit_hog_hsv_svm",
+    "build_experiment_evidence",
     "build_file_impact_edges",
     "build_g0_evidence",
     "build_task2_evidence",
