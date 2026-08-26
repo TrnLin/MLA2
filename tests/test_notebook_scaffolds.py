@@ -104,6 +104,7 @@ def test_task2_execution_scaffold_has_one_code_cell_per_leaf() -> None:
 
     assert notebook.metadata["title"] == "Task 2 — Season Classification"
     assert headings[0] == "# Task 2 — Season Classification"
+    assert len(notebook.cells) == 193
     assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
     assert [
         int(match.group(1))
@@ -131,8 +132,9 @@ def test_task2_execution_scaffold_has_one_code_cell_per_leaf() -> None:
         for index, cell in enumerate(notebook.cells)
         if _heading_level(cell) == 4
     ]
-    assert h3_indices
-    assert h4_indices
+    assert len(h3_indices) == 40
+    assert len(h4_indices) == 27
+    assert len(code_cells) == 55
 
     grouped_h3_count = 0
     for index in h3_indices:
@@ -160,6 +162,9 @@ def test_task2_execution_scaffold_has_one_code_cell_per_leaf() -> None:
         "calibration",
         "pooled out-of-fold macro-F1",
         "weights=None",
+        "How Task 2 files affect one another",
+        "build_file_impact_edges",
+        "file_impact_flow.png",
     ):
         assert required.lower() in source.lower()
     assert "TODO(owner)" not in source

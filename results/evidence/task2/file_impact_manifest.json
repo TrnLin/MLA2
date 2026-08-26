@@ -1,0 +1,12 @@
+{
+  "deployment_input": "Frozen Season bundle",
+  "edge_count": 18,
+  "edges_path": "results/evidence/task2/file_impact_edges.csv",
+  "edges_sha256": "02c3e15f9cd0ec0e0c8710fb0994a61d060ccf73ed1865b36d3ba595aa23fe87",
+  "figure_path": "results/figures/task2/file_impact_flow.png",
+  "figure_sha256": "cd234563ef08e18dd60bb982078c3f76581805d755673cb010004a84c6b65dcb",
+  "holdout_to_training_edges": 0,
+  "node_count": 18,
+  "schema_version": "1.0.0",
+  "scope": "task2_file_impact"
+}
