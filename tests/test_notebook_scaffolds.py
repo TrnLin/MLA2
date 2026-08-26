@@ -47,6 +47,8 @@ def test_only_planned_notebook_names_are_present() -> None:
 
 def test_task_scaffolds_leave_owner_decisions_open() -> None:
     for filename, spec in TASK_SPECS.items():
+        if filename == "03_task2_season.ipynb":
+            continue
         notebook = nbformat.read(ROOT / "notebooks" / filename, as_version=4)
         nbformat.validate(notebook)
         source = _source(notebook)
@@ -78,10 +80,99 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
             assert unselected not in source
 
 
+def _heading_level(cell: nbformat.NotebookNode) -> int | None:
+    if cell.cell_type != "markdown":
+        return None
+    lines = cell.source.splitlines()
+    first_line = lines[0] if lines else ""
+    match = re.match(r"^(#{1,4}) ", first_line)
+    return len(match.group(1)) if match else None
+
+
+def test_task2_execution_scaffold_has_one_code_cell_per_leaf() -> None:
+    path = ROOT / "notebooks/03_task2_season.ipynb"
+    notebook = nbformat.read(path, as_version=4)
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    headings = [
+        line
+        for cell in notebook.cells
+        if cell.cell_type == "markdown"
+        for line in cell.source.splitlines()
+        if line.startswith("#")
+    ]
+
+    assert notebook.metadata["title"] == "Task 2 — Season Classification"
+    assert headings[0] == "# Task 2 — Season Classification"
+    assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
+    assert [
+        int(match.group(1))
+        for heading in headings
+        if (match := re.fullmatch(r"## (\d+)\. .+", heading))
+    ] == list(range(1, 16))
+
+    code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
+    assert code_cells
+    assert all(cell.source.strip() for cell in code_cells)
+    placeholder_cells = [cell for cell in code_cells if cell.source.startswith("# TODO:")]
+    assert all("# Expected output:" in cell.source for cell in placeholder_cells)
+    assert all(
+        cell.execution_count is None and cell.outputs == []
+        for cell in placeholder_cells
+    )
+
+    h3_indices = [
+        index
+        for index, cell in enumerate(notebook.cells)
+        if _heading_level(cell) == 3
+    ]
+    h4_indices = [
+        index
+        for index, cell in enumerate(notebook.cells)
+        if _heading_level(cell) == 4
+    ]
+    assert h3_indices
+    assert h4_indices
+
+    grouped_h3_count = 0
+    for index in h3_indices:
+        next_level = _heading_level(notebook.cells[index + 1])
+        if next_level == 4:
+            grouped_h3_count += 1
+            continue
+        assert notebook.cells[index + 1].cell_type == "code"
+        assert notebook.cells[index + 2].cell_type == "markdown"
+        assert notebook.cells[index + 2].source.lstrip().startswith("> **Interpretation")
+
+    for index in h4_indices:
+        assert notebook.cells[index + 1].cell_type == "code"
+        assert notebook.cells[index + 2].cell_type == "markdown"
+        assert notebook.cells[index + 2].source.lstrip().startswith("> **Interpretation")
+
+    leaf_h3_count = len(h3_indices) - grouped_h3_count
+    assert len(code_cells) == leaf_h3_count + len(h4_indices)
+
+    for required in (
+        "data/processed/splits.csv",
+        "results/runs.csv",
+        "weak-visual-signal",
+        "article-type shortcut",
+        "calibration",
+        "pooled out-of-fold macro-F1",
+        "weights=None",
+    ):
+        assert required.lower() in source.lower()
+    assert "TODO(owner)" not in source
+    assert "train_test_split" not in source
+    assert "pretrained=True" not in source
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
-    for filename in ("02_task1_article_type.ipynb", "03_task2_season.ipynb"):
-        source = _source(nbformat.read(ROOT / "notebooks" / filename, as_version=4))
-        assert "Primary development metric: TODO(owner)" in source
+    task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
+    assert "Primary development metric: TODO(owner)" in task1
+
+    task2 = _source(nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4))
+    assert "Primary development metric:** pooled out-of-fold macro-F1" in task2
 
     task3 = _source(nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4))
     assert "Primary development metric for `gender`: TODO(owner)" in task3
