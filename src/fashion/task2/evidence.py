@@ -992,7 +992,8 @@ def build_g1_family_screen_evidence(
         "selected_experiment_ids": selected,
         "rejected_experiment_ids": rejected,
         "next_question": (
-            "Run matched P0-P1 input-size ablations for both shortlisted families."
+            "Run P0-P1 and A0-A1 transform ablations on leading C2 while retaining "
+            "C1 for the full-budget G3 comparison."
         ),
     }
     atomic_write_csv(leaderboard_path, leaderboard)
