@@ -5,9 +5,13 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from matplotlib.axes import Axes
 
 from fashion.data.hashing import compute_sha256
-from fashion.task2.evidence import build_g2_input_size_evidence
+from fashion.task2.evidence import (
+    _plot_g2_input_size_ablation,
+    build_g2_input_size_evidence,
+)
 from fashion.task2.experiments import load_experiment_config
 from fashion.train.artifacts import canonical_sha256
 
@@ -271,3 +275,43 @@ def test_g2_size_gate_rejects_an_optimisation_change(tmp_path: Path) -> None:
             / "results/evidence/task2/g2_input_size_ablation",
             figure_directory=tmp_path / "results/figures/task2",
         )
+
+
+def test_g2_quality_panel_does_not_use_truncated_bars(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    comparison = pd.DataFrame(
+        [
+            {"variant": "P0", "pooled_macro_f1": 0.707, "spring_f1": 0.738},
+            {
+                "variant": "P1",
+                "pooled_macro_f1": 0.705,
+                "spring_f1": 0.739,
+                "delta_vs_p0_macro_f1": -0.002,
+            },
+        ]
+    )
+    paired = pd.DataFrame(
+        {
+            "fold": list(range(5)),
+            "delta_p1_minus_p0_macro_f1": [-0.004, -0.005, -0.001, 0.005, -0.002],
+        }
+    )
+    bar_calls: list[tuple] = []
+    original = Axes.bar
+
+    def capture(self, *args, **kwargs):
+        bar_calls.append(args)
+        return original(self, *args, **kwargs)
+
+    monkeypatch.setattr(Axes, "bar", capture)
+    _plot_g2_input_size_ablation(
+        comparison,
+        paired,
+        minimum_gain=0.005,
+        selected_variant="P0",
+        output_path=tmp_path / "g2.png",
+    )
+
+    assert len(bar_calls) == 1, "only signed fold deltas should use a zero-based bar chart"
