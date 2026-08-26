@@ -14,6 +14,12 @@ from fashion.task2.classical import (
     extract_hog_hsv,
     fit_hog_hsv_svm,
 )
+from fashion.task2.evidence import (
+    build_file_impact_edges,
+    build_task2_evidence,
+    plot_file_impact_flow,
+    validate_file_impact_edges,
+)
 from fashion.task2.experiments import (
     ExperimentConfig,
     ExperimentFoldOutput,
@@ -32,10 +38,14 @@ __all__ = [
     "ExperimentFoldOutput",
     "fit_training_fold_majority",
     "fit_hog_hsv_svm",
+    "build_file_impact_edges",
+    "build_task2_evidence",
     "HogHsvFoldResult",
     "HogHsvSpec",
     "HogHsvSvmModel",
     "load_experiment_config",
+    "plot_file_impact_flow",
     "run_matrix",
     "run_or_load_experiment",
+    "validate_file_impact_edges",
 ]
