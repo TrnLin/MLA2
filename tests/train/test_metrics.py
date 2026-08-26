@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import warnings
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -90,3 +92,17 @@ def test_multiclass_metrics_keeps_absent_classes_in_macro_f1() -> None:
 def test_multiclass_metrics_rejects_wrong_probability_shape() -> None:
     with pytest.raises(ValueError, match="shape"):
         multiclass_metrics(["Fall"], probabilities=[[1.0, 0.0]])
+
+
+def test_multiclass_metrics_accepts_float32_softmax_without_warning() -> None:
+    probabilities = np.array([[0.7310586, 0.26894143]], dtype=np.float32)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", UserWarning)
+        metrics = multiclass_metrics(
+            ["Fall"],
+            probabilities=probabilities,
+            labels=("Fall", "Winter"),
+        )
+
+    assert metrics["nll"] > 0
