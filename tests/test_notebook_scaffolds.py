@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import json
 import re
 
 import nbformat
+import pandas as pd
 
 from fashion.config import ROOT
 
@@ -277,6 +279,21 @@ def test_task2_g0_cell_records_a_non_comparison_pass() -> None:
     assert "excluded from every leaderboard" in finding
     assert "g0-pipeline-smoke-f0-s2753-b921bf3b6418" in finding
     assert "git_dirty=true" in finding
+
+
+def test_task2_g0_tracked_evidence_uses_one_clean_run() -> None:
+    evidence = ROOT / "results/evidence/task2/g0"
+    manifest = json.loads((evidence / "manifest.json").read_text(encoding="utf-8"))
+    snapshot = pd.read_csv(evidence / "registry_snapshot.csv", dtype=str)
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    finding = {cell.id: cell for cell in notebook.cells}["s07-01-finding"].source
+
+    assert len(snapshot) == 1
+    assert snapshot.loc[0, "run_id"] == manifest["run_id"]
+    assert snapshot.loc[0, "status"] == "completed"
+    assert snapshot.loc[0, "git_dirty"] == "false"
+    assert manifest["run_id"] in finding
+    assert "git_dirty=true" not in finding
 
 
 def test_task2_b0_cell_records_complete_five_fold_evidence() -> None:
