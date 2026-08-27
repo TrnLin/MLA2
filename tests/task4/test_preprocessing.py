@@ -5,12 +5,12 @@ import pandas as pd
 import pytest
 from PIL import Image
 
-from fashion.retrieval.cache import (
+from fashion.task4.cache import (
     ensure_development_image_cache,
     fit_cached_fold_rgb_statistics,
     load_development_image_cache,
 )
-from fashion.retrieval.preprocessing import (
+from fashion.task4.preprocessing import (
     PreprocessingContract,
     fit_fold_rgb_statistics,
     normalize_for_model,

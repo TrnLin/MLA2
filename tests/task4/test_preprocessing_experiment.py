@@ -8,10 +8,10 @@ import pandas as pd
 import pytest
 from PIL import Image
 
-import fashion.retrieval.preprocessing_experiment as preprocessing_experiment
+import fashion.task4.preprocessing_experiment as preprocessing_experiment
 from fashion.config import ROOT
-from fashion.retrieval.preprocessing import PreprocessingContract
-from fashion.retrieval.preprocessing_experiment import (
+from fashion.task4.preprocessing import PreprocessingContract
+from fashion.task4.preprocessing_experiment import (
     FeatureIndex,
     build_odd_aspect_canvas,
     build_size_selection,
@@ -23,7 +23,7 @@ from fashion.retrieval.preprocessing_experiment import (
     source_directions,
     summarize_stability,
 )
-from fashion.retrieval.protocol import RetrievalViews
+from fashion.task4.protocol import RetrievalViews
 
 
 def test_feature_extraction_rejects_non_development_rows_before_file_access(
@@ -244,9 +244,9 @@ def test_full_experiment_runs_matrix_and_top_two_stability(tmp_path) -> None:
 
 def test_preprocessing_evidence_runner_has_a_help_entrypoint() -> None:
     completed = subprocess.run(
-        [sys.executable, "scripts/run_task4_preprocessing.py", "--help"],
+        [sys.executable, "scripts/task4/run_preprocessing.py", "--help"],
         cwd=ROOT,
-        check=False,
+        check=True,
         capture_output=True,
         text=True,
     )

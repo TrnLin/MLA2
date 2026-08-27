@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 from PIL import Image
 
-from fashion.retrieval.external import (
+from fashion.task4.external import (
     build_external_variant_index,
     ensure_external_image_audit,
     read_external_catalogue,

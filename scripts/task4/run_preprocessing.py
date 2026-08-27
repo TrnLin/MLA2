@@ -20,12 +20,12 @@ from PIL import Image
 from fashion.config import ROOT
 from fashion.data.dataset import load_splits
 from fashion.data.hashing import write_deterministic_csv
-from fashion.retrieval.cache import (
+from fashion.task4.cache import (
     ensure_development_image_cache,
     fit_cached_fold_rgb_statistics,
 )
-from fashion.retrieval.preprocessing import PreprocessingContract, preprocess_image
-from fashion.retrieval.preprocessing_experiment import (
+from fashion.task4.preprocessing import PreprocessingContract, preprocess_image
+from fashion.task4.preprocessing_experiment import (
     FeatureIndex,
     build_odd_aspect_canvas,
     ensure_feature_index,
@@ -33,8 +33,8 @@ from fashion.retrieval.preprocessing_experiment import (
     resolve_size_policy,
     run_preprocessing_experiment,
 )
-from fashion.retrieval.probe import PROBE_VERSION, extract_spatial_probe
-from fashion.retrieval.protocol import build_development_views
+from fashion.task4.probe import PROBE_VERSION, extract_spatial_probe
+from fashion.task4.protocol import build_development_views
 
 CANDIDATE_CONTRACTS = (
     PreprocessingContract(width=60, height=80),

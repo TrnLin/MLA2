@@ -4,13 +4,13 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from fashion.retrieval.probe import (
+from fashion.task4.probe import (
     COLOUR_FEATURE_DIM,
     EDGE_FEATURE_DIM,
     extract_spatial_probe,
     rank_probe_embeddings,
 )
-from fashion.retrieval.protocol import RetrievalViews
+from fashion.task4.protocol import RetrievalViews
 
 
 def test_probe_excludes_padding_from_colour_and_edges() -> None:

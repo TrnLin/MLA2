@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from fashion.retrieval import protocol
-from fashion.retrieval.protocol import (
+from fashion.task4 import protocol
+from fashion.task4.protocol import (
     RetrievalViews,
     _assert_primary_isolation,
     build_development_views,
