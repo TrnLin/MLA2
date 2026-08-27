@@ -385,6 +385,10 @@ def select_example_ids(
             selected[slice_name] = int(candidates.iloc[0]["_numeric_id"])
 
     canvas = canvas_per_query.copy()
+    if "query_source" in canvas:
+        canvas = canvas.loc[canvas["query_source"].eq("v1")]
+    if "gallery_source" in canvas:
+        canvas = canvas.loc[canvas["gallery_source"].eq("v1")]
     if "query_variant" in canvas:
         canvas = canvas.loc[~canvas["query_variant"].eq("clean")]
     canvas["_numeric_id"] = pd.to_numeric(canvas["query_id"], errors="raise").astype(int)

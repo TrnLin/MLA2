@@ -368,3 +368,40 @@ def test_example_ids_use_v1_scores_slice_rules_and_numeric_ties() -> None:
         "weak_family": 4,
         "canvas_failure": 2,
     }
+
+
+def test_example_ids_ignore_teacher_canvas_failures_when_sources_are_present() -> None:
+    query_metrics = pd.DataFrame(
+        {
+            "query_id": [9],
+            "query_source": ["v1"],
+            "gallery_source": ["v1"],
+            "protocol": ["primary"],
+            "ndcg_at_10": [0.9],
+            "recall_at_10": [np.nan],
+        }
+    )
+    membership = pd.DataFrame(
+        {
+            "query_id": [9],
+            "grayscale": [False],
+            "rare_article_type": [False],
+            "rare_type_colour": [False],
+            "unusual_geometry": [False],
+            "family_unavailable": [False],
+            "weak_family": [False],
+        }
+    )
+    canvas = pd.DataFrame(
+        {
+            "query_id": [1, 9],
+            "query_source": ["teacher", "v1"],
+            "gallery_source": ["teacher", "v1"],
+            "query_variant": ["wide", "tall"],
+            "ndcg_change_from_clean": [-0.9, -0.2],
+        }
+    )
+
+    selected = select_example_ids(query_metrics, membership, canvas)
+
+    assert selected["canvas_failure"] == 9
