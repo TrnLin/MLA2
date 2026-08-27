@@ -206,6 +206,18 @@ def test_i1_implementation_paths_extend_without_changing_legacy_deep_paths() -> 
     )
 
 
+def test_deep_cache_hash_covers_data_interpretation_dependencies() -> None:
+    required = {
+        "src/fashion/config.py",
+        "src/fashion/data/hashing.py",
+        "src/fashion/data/metadata.py",
+        "src/fashion/data/splits.py",
+    }
+
+    assert required <= set(_implementation_paths("deep"))
+    assert required <= set(I1_IMPLEMENTATION_PATHS)
+
+
 def test_i1_oof_validation_rejects_canonical_truth_mismatch() -> None:
     expected = pd.DataFrame({"id": [1], "season": ["Spring"]})
 
