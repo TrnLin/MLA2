@@ -1,0 +1,74 @@
+{
+  "artifacts": {
+    "confusion_matrix": {
+      "path": "results/evidence/task2/g2_a1_c2_resnet18/confusion_matrix.csv",
+      "sha256": "a23cca4da16c55cf65c3ca2910da50671bb8bff1199973b56af9475fbb69c5ed"
+    },
+    "figure": {
+      "path": "results/figures/task2/g2_a1_c2_resnet18.png",
+      "sha256": "a103be930d61d37ed7039360f8f866a988778da74c66d63cad1d1da2930bb9eb"
+    },
+    "fold_metrics": {
+      "path": "results/evidence/task2/g2_a1_c2_resnet18/fold_metrics.csv",
+      "sha256": "6e2119ad70d250e9061909c9ed9b5de0bf35d3015ec27ed2ebb5d0f32238a0c2"
+    },
+    "fold_summary": {
+      "path": "results/evidence/task2/g2_a1_c2_resnet18/fold_summary.csv",
+      "sha256": "81c44aee912bfe686045fa93fd00f5e1ad3ab7c519daadeb17de119ae83ad109"
+    },
+    "per_class_metrics": {
+      "path": "results/evidence/task2/g2_a1_c2_resnet18/per_class_metrics.csv",
+      "sha256": "0d1ca64289979473c8094cb96a08debeebcb442751a16608224ceea7cf1c4e9b"
+    },
+    "pooled_metrics": {
+      "path": "results/evidence/task2/g2_a1_c2_resnet18/pooled_metrics.json",
+      "sha256": "8ba5a9361f49ef36ba89dac15c3d10e82610d37c2371896c678cab68d14ed716"
+    },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/g2_a1_c2_resnet18/registry_snapshot.csv",
+      "sha256": "d394a24b5e388356a8a8c7fe6d7fa7284bff10c59521ef9d0f65662725df3cfe"
+    }
+  },
+  "calibration_claim_allowed": false,
+  "coverage": {
+    "expected_row_count": 32753,
+    "id_set_sha256": "7e278f240c9be8e59b9bf070866f725c71906f73ce910be49a752daf3e2c5b85",
+    "labels": [
+      "Fall",
+      "Spring",
+      "Summer",
+      "Winter"
+    ],
+    "probability_sum_tolerance": 1e-05,
+    "protected_id_count": 0,
+    "row_count": 32753,
+    "unique_id_count": 32753
+  },
+  "experiment_id": "g2-a1-c2-resnet18",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "oof_artifact_set_sha256": "29151357ef6518b9cebdbe8aed44f904284c2e79c54bdbdca6c28c22d004575e",
+  "pooled_macro_f1": 0.6966616867314194,
+  "probability_note": "Softmax probabilities come from each fold's best validation macro-F1 checkpoint. They are uncalibrated until the dedicated cross-fitted calibration gate, so current NLL, Brier, and ECE are diagnostics only.",
+  "run_ids": [
+    "g2-a1-c2-resnet18-f0-s2753-c4cc0669c376",
+    "g2-a1-c2-resnet18-f1-s2753-a0b2fe0bb37e",
+    "g2-a1-c2-resnet18-f2-s2753-af05d32916be",
+    "g2-a1-c2-resnet18-f3-s2753-b00dcb438d77",
+    "g2-a1-c2-resnet18-f4-s2753-170d6fa1d34a"
+  ],
+  "schema_version": "1.0.0",
+  "seed": 2753,
+  "sources": [
+    "cache",
+    "cache",
+    "cache",
+    "cache",
+    "cache"
+  ]
+}
