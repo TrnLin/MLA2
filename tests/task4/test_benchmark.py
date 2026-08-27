@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Iterator
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -45,6 +46,8 @@ def test_benchmark_api_is_exported_from_task4_package() -> None:
 def test_timing_keeps_every_query_and_reports_linear_percentiles() -> None:
     samples = pd.DataFrame(
         {
+            "query_source": ["teacher"] * 4,
+            "gallery_source": ["v1"] * 4,
             "encoding_seconds": [0.1, 0.2, 0.3, 10.0],
             "search_seconds": [0.01, 0.02, 0.03, 1.0],
             "end_to_end_seconds": [0.11, 0.22, 0.33, 11.0],
@@ -58,6 +61,8 @@ def test_timing_keeps_every_query_and_reports_linear_percentiles() -> None:
         np.quantile(samples["end_to_end_seconds"], 0.95)
     )
     assert summary["timed_queries"].unique().tolist() == [4]
+    assert summary["query_source"].unique().tolist() == ["teacher"]
+    assert summary["gallery_source"].unique().tolist() == ["v1"]
     assert summary["percentile"].tolist() == ["p50", "p95"] * 3
 
 
@@ -210,11 +215,12 @@ def test_measure_index_build_reports_payload_index_and_spawn_peak_rss(
         rows,
         source="teacher",
         path_column="path",
-        contract=PreprocessingContract(width=8, height=8),
+        contract=PreprocessingContract(width=240, height=320),
         root=tmp_path,
     )
 
     assert cost.source == "teacher"
+    assert cost.contract == PreprocessingContract(width=240, height=320)
     assert cost.rows == 2
     assert cost.dimension == 400
     assert cost.payload_bytes == 2 * 400 * np.dtype(np.float32).itemsize
@@ -223,20 +229,61 @@ def test_measure_index_build_reports_payload_index_and_spawn_peak_rss(
     assert cost.peak_rss_bytes > cost.index_bytes
 
 
-def test_cost_record_is_json_safe_and_keeps_failed_thresholds_as_evidence() -> None:
-    timing_summary = pd.DataFrame.from_records(
+def test_measure_index_build_rejects_non_frozen_contract() -> None:
+    with pytest.raises(ValueError, match="frozen 240x320"):
+        measure_index_build(
+            pd.DataFrame(),
+            source="teacher",
+            path_column="path",
+            contract=PreprocessingContract(width=8, height=8),
+        )
+
+
+_DIRECTIONS = (
+    ("teacher", "teacher"),
+    ("v1", "v1"),
+    ("teacher", "v1"),
+    ("v1", "teacher"),
+)
+_METRICS = ("encoding", "search", "end_to_end")
+_PERCENTILES = ("p50", "p95")
+_FROZEN_CONTRACT = PreprocessingContract(width=240, height=320)
+_THREAD_VARIABLES = (
+    "OMP_NUM_THREADS",
+    "OPENBLAS_NUM_THREADS",
+    "MKL_NUM_THREADS",
+    "NUMEXPR_NUM_THREADS",
+)
+
+
+def _complete_timing_summary() -> pd.DataFrame:
+    return pd.DataFrame.from_records(
         [
             {
-                "metric": "end_to_end",
-                "percentile": "p95",
-                "value_seconds": 1.25,
+                "query_source": query_source,
+                "gallery_source": gallery_source,
+                "metric": metric,
+                "percentile": percentile,
+                "value_seconds": (
+                    1.25
+                    if (query_source, gallery_source, metric, percentile)
+                    == ("teacher", "teacher", "end_to_end", "p95")
+                    else 0.25
+                ),
                 "timed_queries": 4,
             }
+            for query_source, gallery_source in _DIRECTIONS
+            for metric in _METRICS
+            for percentile in _PERCENTILES
         ]
     )
-    index_costs = {
+
+
+def _index_costs() -> dict[str, IndexCost]:
+    return {
         "teacher": IndexCost(
             source="teacher",
+            contract=_FROZEN_CONTRACT,
             rows=10,
             dimension=400,
             payload_bytes=16_000,
@@ -246,6 +293,7 @@ def test_cost_record_is_json_safe_and_keeps_failed_thresholds_as_evidence() -> N
         ),
         "v1": IndexCost(
             source="v1",
+            contract=_FROZEN_CONTRACT,
             rows=10,
             dimension=400,
             payload_bytes=16_000,
@@ -254,6 +302,19 @@ def test_cost_record_is_json_safe_and_keeps_failed_thresholds_as_evidence() -> N
             peak_rss_bytes=50_000,
         ),
     }
+
+
+def _set_single_thread(monkeypatch: pytest.MonkeyPatch) -> None:
+    for variable in _THREAD_VARIABLES:
+        monkeypatch.setenv(variable, "1")
+
+
+def test_cost_record_is_json_safe_and_keeps_failed_thresholds_as_evidence(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _set_single_thread(monkeypatch)
+    timing_summary = _complete_timing_summary()
+    index_costs = _index_costs()
 
     record = build_cost_record(timing_summary, index_costs, policy=TimingPolicy())
 
@@ -273,3 +334,89 @@ def test_cost_record_is_json_safe_and_keeps_failed_thresholds_as_evidence() -> N
         "NUMEXPR_NUM_THREADS",
     }
     json.dumps(record, allow_nan=False)
+
+
+def test_cost_record_rejects_index_with_non_frozen_contract(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _set_single_thread(monkeypatch)
+    costs = _index_costs()
+    costs["v1"] = replace(
+        costs["v1"],
+        contract=PreprocessingContract(width=8, height=8),
+    )
+
+    with pytest.raises(ValueError, match="frozen 240x320"):
+        build_cost_record(_complete_timing_summary(), costs, policy=TimingPolicy())
+
+
+@pytest.mark.parametrize("bad_value", [np.nan, np.inf, -np.inf])
+def test_cost_record_rejects_every_non_finite_timing_value(
+    monkeypatch: pytest.MonkeyPatch,
+    bad_value: float,
+) -> None:
+    _set_single_thread(monkeypatch)
+    summary = _complete_timing_summary()
+    summary.loc[0, "value_seconds"] = bad_value
+
+    with pytest.raises(ValueError, match="finite"):
+        build_cost_record(summary, _index_costs(), policy=TimingPolicy())
+
+
+@pytest.mark.parametrize("bad_value", [np.nan, np.inf, -np.inf])
+def test_cost_record_rejects_non_finite_index_build_time(
+    monkeypatch: pytest.MonkeyPatch,
+    bad_value: float,
+) -> None:
+    _set_single_thread(monkeypatch)
+    costs = _index_costs()
+    costs["teacher"] = replace(costs["teacher"], build_seconds=bad_value)
+
+    with pytest.raises(ValueError, match="finite"):
+        build_cost_record(_complete_timing_summary(), costs, policy=TimingPolicy())
+
+
+def test_cost_record_rejects_missing_timing_combination(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _set_single_thread(monkeypatch)
+    summary = _complete_timing_summary().iloc[1:].reset_index(drop=True)
+
+    with pytest.raises(ValueError, match="complete"):
+        build_cost_record(summary, _index_costs(), policy=TimingPolicy())
+
+
+def test_cost_record_rejects_duplicate_timing_combination(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _set_single_thread(monkeypatch)
+    summary = _complete_timing_summary()
+    summary = pd.concat([summary, summary.iloc[[0]]], ignore_index=True)
+
+    with pytest.raises(ValueError, match="exactly one"):
+        build_cost_record(summary, _index_costs(), policy=TimingPolicy())
+
+
+def test_cost_record_rejects_inconsistent_timed_query_counts(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _set_single_thread(monkeypatch)
+    summary = _complete_timing_summary()
+    summary.loc[0, "timed_queries"] = 3
+
+    with pytest.raises(ValueError, match="timed-query count"):
+        build_cost_record(summary, _index_costs(), policy=TimingPolicy())
+
+
+def test_cost_record_rejects_thread_environment_not_fixed_to_one(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _set_single_thread(monkeypatch)
+    monkeypatch.setenv("OPENBLAS_NUM_THREADS", "2")
+
+    with pytest.raises(ValueError, match="thread environment"):
+        build_cost_record(
+            _complete_timing_summary(),
+            _index_costs(),
+            policy=TimingPolicy(),
+        )

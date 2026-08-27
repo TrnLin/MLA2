@@ -10,6 +10,7 @@ import traceback
 from collections.abc import Callable, Mapping
 from dataclasses import asdict, dataclass
 from multiprocessing.connection import Connection
+from numbers import Integral, Real
 from pathlib import Path
 from typing import Any
 
@@ -58,6 +59,13 @@ _TIMING_COLUMNS = (
     ("search", "search_seconds"),
     ("end_to_end", "end_to_end_seconds"),
 )
+_DIRECTIONS = (
+    ("teacher", "teacher"),
+    ("v1", "v1"),
+    ("teacher", "v1"),
+    ("v1", "teacher"),
+)
+_PERCENTILES = ("p50", "p95")
 
 
 @dataclass(frozen=True)
@@ -83,6 +91,7 @@ class IndexCost:
     """Measured build and storage cost for one source gallery."""
 
     source: SourceName
+    contract: PreprocessingContract
     rows: int
     dimension: int
     payload_bytes: int
@@ -160,18 +169,30 @@ def benchmark_source_direction(
 
 def summarize_timings(samples: pd.DataFrame) -> pd.DataFrame:
     """Report linear p50 and p95 while retaining the full sample count."""
-    required = {column for _, column in _TIMING_COLUMNS}
+    required = {
+        "query_source",
+        "gallery_source",
+        *(column for _, column in _TIMING_COLUMNS),
+    }
     if missing := required.difference(samples.columns):
         raise ValueError(f"timing samples are missing columns: {sorted(missing)}")
     if samples.empty:
         raise ValueError("timing samples must not be empty")
-    numeric = samples.loc[:, list(required)].apply(pd.to_numeric, errors="coerce")
+    directions = samples.loc[:, ["query_source", "gallery_source"]].drop_duplicates()
+    if len(directions) != 1:
+        raise ValueError("timing samples must describe exactly one source direction")
+    query_source = _validate_source(str(directions["query_source"].iloc[0]))
+    gallery_source = _validate_source(str(directions["gallery_source"].iloc[0]))
+    numeric_columns = [column for _, column in _TIMING_COLUMNS]
+    numeric = samples.loc[:, numeric_columns].apply(pd.to_numeric, errors="coerce")
     if numeric.isna().any().any() or not np.isfinite(numeric.to_numpy()).all():
         raise ValueError("timing samples must contain finite numbers")
     if numeric.lt(0).any().any():
         raise ValueError("timing samples must be non-negative")
     records = [
         {
+            "query_source": query_source,
+            "gallery_source": gallery_source,
             "metric": metric,
             "percentile": percentile,
             "value_seconds": float(np.quantile(numeric[column], quantile)),
@@ -266,6 +287,7 @@ def _index_build_worker(
                 "ok",
                 IndexCost(
                     source=source,
+                    contract=contract,
                     rows=int(index.features.shape[0]),
                     dimension=int(index.features.shape[1]),
                     payload_bytes=int(index.features.nbytes),
@@ -293,6 +315,8 @@ def measure_index_build(
     from multiprocessing import get_context
 
     source = _validate_source(source)
+    if contract != _BASELINE_CONTRACT:
+        raise ValueError("index measurement requires the frozen 240x320 contract")
     context = get_context("spawn")
     receiving, sending = context.Pipe(duplex=False)
     process = context.Process(
@@ -326,7 +350,17 @@ def _cpu_text() -> str:
     return platform.processor() or "unknown"
 
 
-def _hardware_record(policy: TimingPolicy) -> dict[str, object]:
+def _thread_environment() -> dict[str, str]:
+    environment = {variable: os.environ.get(variable) for variable in _THREAD_VARIABLES}
+    if any(value != "1" for value in environment.values()):
+        raise ValueError("thread environment variables must all equal '1'")
+    return {variable: str(value) for variable, value in environment.items()}
+
+
+def _hardware_record(
+    policy: TimingPolicy,
+    thread_environment: Mapping[str, str],
+) -> dict[str, object]:
     return {
         "cpu": _cpu_text(),
         "logical_cores": os.cpu_count(),
@@ -334,9 +368,7 @@ def _hardware_record(policy: TimingPolicy) -> dict[str, object]:
         "python_version": platform.python_version(),
         "numpy_version": np.__version__,
         "thread_count": policy.thread_count,
-        "thread_environment": {
-            variable: os.environ.get(variable) for variable in _THREAD_VARIABLES
-        },
+        "thread_environment": dict(thread_environment),
     }
 
 
@@ -344,12 +376,88 @@ def _json_value(value: Any) -> Any:
     if value is pd.NA:
         return None
     if isinstance(value, np.generic):
-        return value.item()
+        return _json_value(value.item())
+    if isinstance(value, Real) and not isinstance(value, Integral):
+        if not np.isfinite(value):
+            raise ValueError("cost evidence contains a non-finite numeric value")
+        return float(value)
     if isinstance(value, dict):
         return {str(key): _json_value(item) for key, item in value.items()}
     if isinstance(value, (list, tuple)):
         return [_json_value(item) for item in value]
     return value
+
+
+def _validated_timing_summary(timing_summary: pd.DataFrame) -> pd.DataFrame:
+    required = {
+        "query_source",
+        "gallery_source",
+        "metric",
+        "percentile",
+        "value_seconds",
+        "timed_queries",
+    }
+    if missing := required.difference(timing_summary.columns):
+        raise ValueError(f"timing summary is missing columns: {sorted(missing)}")
+    key_columns = ["query_source", "gallery_source", "metric", "percentile"]
+    if timing_summary.duplicated(key_columns).any():
+        raise ValueError("timing summary requires exactly one row per combination")
+    expected = {
+        (query_source, gallery_source, metric, percentile)
+        for query_source, gallery_source in _DIRECTIONS
+        for metric, _ in _TIMING_COLUMNS
+        for percentile in _PERCENTILES
+    }
+    observed = set(timing_summary.loc[:, key_columns].itertuples(index=False, name=None))
+    if observed != expected:
+        raise ValueError("timing summary must contain the complete four-direction grid")
+
+    validated = timing_summary.copy()
+    values = pd.to_numeric(validated["value_seconds"], errors="coerce")
+    if values.isna().any() or not np.isfinite(values).all() or values.lt(0).any():
+        raise ValueError("timing summary values must be finite and non-negative")
+    counts = pd.to_numeric(validated["timed_queries"], errors="coerce")
+    valid_counts = (
+        counts.notna()
+        & np.isfinite(counts)
+        & counts.mod(1).eq(0)
+        & counts.gt(0)
+    )
+    if not valid_counts.all() or counts.nunique() != 1:
+        raise ValueError("timing summary must contain one positive timed-query count")
+    validated["value_seconds"] = values.astype(float)
+    validated["timed_queries"] = counts.astype(int)
+    return validated
+
+
+def _validate_index_cost(cost: IndexCost, source: str) -> None:
+    if cost.source != source:
+        raise ValueError("index cost source does not match its key")
+    if cost.contract != _BASELINE_CONTRACT:
+        raise ValueError("index costs must use the frozen 240x320 contract")
+    integer_values = (
+        cost.rows,
+        cost.dimension,
+        cost.payload_bytes,
+        cost.index_bytes,
+        cost.peak_rss_bytes,
+    )
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, Integral)
+        or value < 0
+        for value in integer_values
+    ):
+        raise ValueError("index cost counts and byte values must be non-negative integers")
+    if cost.rows <= 0 or cost.dimension <= 0:
+        raise ValueError("index cost rows and dimension must be positive")
+    if (
+        isinstance(cost.build_seconds, bool)
+        or not isinstance(cost.build_seconds, Real)
+        or not np.isfinite(cost.build_seconds)
+        or cost.build_seconds < 0
+    ):
+        raise ValueError("index build seconds must be a finite non-negative number")
 
 
 def build_cost_record(
@@ -359,31 +467,21 @@ def build_cost_record(
     policy: TimingPolicy,
 ) -> dict[str, object]:
     """Build JSON-safe baseline cost, hardware, and practical-threshold evidence."""
-    required = {"metric", "percentile", "value_seconds", "timed_queries"}
-    if missing := required.difference(timing_summary.columns):
-        raise ValueError(f"timing summary is missing columns: {sorted(missing)}")
-    timed_counts = pd.to_numeric(
-        timing_summary["timed_queries"], errors="coerce"
-    ).drop_duplicates()
-    if len(timed_counts) != 1 or timed_counts.isna().any() or timed_counts.iloc[0] <= 0:
-        raise ValueError("timing summary must contain one positive timed-query count")
-    p95_end_to_end = timing_summary.loc[
-        timing_summary["metric"].eq("end_to_end")
-        & timing_summary["percentile"].eq("p95"),
+    validated_timings = _validated_timing_summary(timing_summary)
+    timed_queries = int(validated_timings["timed_queries"].iloc[0])
+    p95_values = validated_timings.loc[
+        validated_timings["metric"].eq("end_to_end")
+        & validated_timings["percentile"].eq("p95"),
         "value_seconds",
     ]
-    p95_values = pd.to_numeric(p95_end_to_end, errors="coerce")
-    if p95_values.empty or p95_values.isna().any() or not np.isfinite(p95_values).all():
-        raise ValueError("timing summary must contain finite end-to-end p95 values")
-
     if set(index_costs) != {"teacher", "v1"}:
         raise ValueError("index costs must contain exactly teacher and v1")
     costs: dict[str, dict[str, object]] = {}
     for source in ("teacher", "v1"):
         cost = index_costs[source]
-        if cost.source != source:
-            raise ValueError("index cost source does not match its key")
+        _validate_index_cost(cost, source)
         costs[source] = asdict(cost)
+    thread_environment = _thread_environment()
 
     return _json_value(
         {
@@ -394,10 +492,10 @@ def build_cost_record(
             "probe_version": PROBE_VERSION,
             "parameters": 0,
             "checkpoint_bytes": 0,
-            "hardware": _hardware_record(policy),
+            "hardware": _hardware_record(policy, thread_environment),
             "warmup_queries": policy.warmup_queries,
-            "timed_queries": int(timed_counts.iloc[0]),
-            "timing_summary": timing_summary.to_dict("records"),
+            "timed_queries": timed_queries,
+            "timing_summary": validated_timings.to_dict("records"),
             "per_source_index_cost": costs,
             "p95_end_to_end_under_one_second": bool((p95_values < 1.0).all()),
             "index_under_one_gibibyte": bool(
