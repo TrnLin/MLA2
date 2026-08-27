@@ -1,8 +1,8 @@
 ---
 title: "Task 2 - Fashion Season Classification: execution report and plan"
-status: task2-foundation-ready
+status: g2-augmentation-complete
 created: 2026-08-25
-updated: 2026-08-26
+updated: 2026-08-27
 scope: task2-season
 ---
 
@@ -76,13 +76,13 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | 55-code-cell final scaffold; 24 implemented cells execute cleanly; G0, B0, B1, G1, and G2-P have measured interpretations | Continue filling the remaining 31 leaf cells without changing the structure |
+| Notebook 03 | 55-code-cell final scaffold; 25 implemented cells execute cleanly; G0, B0, B1, G1, G2-P, and G2-A have measured interpretations | Continue filling the remaining 30 leaf cells without changing the structure |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, Windows-safe runner, cache, audited evidence packs, G1 shortlist, and G2-P decision gate are implemented | Continue with A0/A1 at the retained P0 size |
-| `results/runs.csv` | 36 append-only rows: 33 completed, one failed, and two interrupted | No running or duplicate run IDs; only five completed P1 rows enter OOF evidence |
+| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, Windows-safe runner, cache, audited evidence packs, G1 shortlist, and both G2 transform gates are implemented | Continue with the frozen T0/T1/T2 compact tuning grid |
+| `results/runs.csv` | 41 append-only rows: 38 completed, one failed, and two interrupted | No running or duplicate run IDs; only five clean A1 rows enter its OOF evidence |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
-| Current G2-P gate | Audited P0/P1 artifacts and Notebook Run All pass; all 24 implemented cells have outputs and zero errors | Retain P0; test A1 next without changing any other factor |
+| Current G2-A gate | Audited A0/A1 artifacts and Notebook Run All pass; all 25 implemented cells have outputs and zero errors | Retain P0/A0; tune only the frozen finalist configurations next |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -149,7 +149,7 @@ recorded as provenance, but it is not used as a proxy for implementation content
 | `fashion.task2.classical` | B1 HOG plus content-only HSV features and a fold-fitted linear SVM |
 | `fashion.models.season` | Scratch C1/C2/C3, benchmark-only P0S/P*, and image-only multi-task boundaries |
 | `fashion.task2.experiments` | Immutable JSON configs, run-or-load cache, registry lifecycle, and atomic artifacts |
-| `fashion.task2.evidence` | File-impact flow, complete-fold OOF packs, verified G1 ranking, and audited G2-P selection artifacts |
+| `fashion.task2.evidence` | File-impact flow, complete-fold OOF packs, verified G1 ranking, and audited G2-P/G2-A selection artifacts |
 | `scripts/run_task2_experiment.py` | Windows-safe config launcher with a guarded `main()` | Training or model-selection logic |
 | Notebook 03 sections 1-4 | Frozen contract, runtime, EDA handoff, folds, OOF, metrics, transforms, and leakage audit |
 | Notebook 03 sections 6 and 7.2 | Scratch forward audits, benchmark rejection, state hashes, and registry health |
@@ -158,8 +158,9 @@ Measured evidence is stored under `results/evidence/task2/` and
 `results/figures/task2/`. The G1 screen links capacity, training cost, and pooled OOF
 quality for `1,174,244`-parameter C1, `11,170,884`-parameter C2, and
 `1,521,956`-parameter C3. These values are now measured comparison evidence, not only
-forward-pass capacity facts. The G2-P pack then verifies the two configs differ only in
-identity, stage, and image size before applying the frozen `+0.005` selection threshold.
+forward-pass capacity facts. G2-P verifies that only image size changes before applying
+the frozen `+0.005` rule. G2-A then verifies that only augmentation changes before
+applying the frozen `+0.003` quality and `0.010` robustness-loss rule.
 
 ### 2.4 Trace corrections kept in Git history
 
@@ -208,7 +209,9 @@ what actually failed:
 | G1 C2 ResNet18 | Pooled macro-F1 `0.707099`; fold SD `0.003872`; Spring F1 `0.738433`; 11,170,884 parameters; 29.21 training minutes | Rank first and use for the G2 transform gate | `results/evidence/task2/g1_c2_resnet18/manifest.json`; five run IDs recorded there |
 | G1 C3 MobileNetV3-Small | Pooled macro-F1 `0.638495`; fold SD `0.008339`; Spring F1 `0.668816`; 1,521,956 parameters; 16.66 training minutes | Stop: deployment savings do not offset the quality loss | `results/evidence/task2/g1_c3_mobilenetv3/manifest.json`; five run IDs recorded there |
 | G2-P P1 ResNet18 | Pooled macro-F1 `0.705312`; fold SD `0.006467`; Spring F1 `0.738673`; 58.18 training minutes; 1,321.9 MB peak VRAM | Do not select P1: quality did not improve and measured cost increased | `results/evidence/task2/g2_p1_c2_resnet18/manifest.json`; five clean run IDs recorded there |
-| G2-P size decision | P1 minus P0 macro-F1 `-0.001787`; four of five paired folds favoured P0; runtime ratio `1.992`; peak-VRAM ratio `2.180` | Retain P0 `(80, 60)` under the frozen `+0.005` rule; run A0/A1 next | `results/evidence/task2/g2_input_size_ablation/manifest.json` |
+| G2-P size decision | P1 minus P0 macro-F1 `-0.001787`; four of five paired folds favoured P0; runtime ratio `1.992`; peak-VRAM ratio `2.180` | Retain P0 `(80, 60)` under the frozen `+0.005` rule and pass it to G2-A | `results/evidence/task2/g2_input_size_ablation/manifest.json` |
+| G2-A A1 ResNet18 | Pooled macro-F1 `0.696662`; fold SD `0.006778`; Spring F1 `0.727354`; 24.56 training minutes; 606.4 MB peak VRAM | Reject A1: it lost overall and minority-class discrimination | `results/evidence/task2/g2_a1_c2_resnet18/manifest.json`; five clean run IDs recorded there |
+| G2-A augmentation decision | A1 minus A0 macro-F1 `-0.010438`; all five paired folds favoured A0; Fall F1 `-0.035008`; Spring F1 `-0.011079` | Retain A0 under the frozen `+0.003` rule; robustness is not required after the quality gate fails | `results/evidence/task2/g2_augmentation_ablation/manifest.json` |
 
 B0 predicted Summer for every product. Its Summer F1 was `0.662815`; Fall, Spring,
 and Winter F1 were zero. This is the concrete reason accuracy is not the primary metric.
@@ -236,9 +239,14 @@ G2-P held C2, A0, folds, seed, optimiser, effective batch size, and eight-epoch 
 fixed. Upscaling to P1 changed pooled macro-F1 from `0.707099` to `0.705312` while
 training time rose from `29.21` to `58.18` minutes and peak VRAM from `606.4` to
 `1,321.9` MB. Spring F1 changed by only `+0.000239`. P1 therefore adds interpolation
-and cost without meeting the predeclared quality threshold. The next controlled question
-is A0 versus A1 on P0 `(80, 60)`. C1 remains untouched for the later equal-budget G3
-comparison.
+and cost without meeting the predeclared quality threshold.
+
+G2-A then held C2, P0, folds, seed, optimiser, effective batch size, and budget fixed.
+Adding mild colour jitter reduced pooled macro-F1 from `0.707099` to `0.696662` and
+Spring F1 from `0.738433` to `0.727354`. Every paired fold favoured A0. A1 slightly
+improved Summer and Winter F1, but Fall fell by `0.035008` and Spring by `0.011079`.
+The quality condition failed, so the AND rule closes without extra robustness work.
+P0/A0 is retained for compact tuning; C1 remains the efficiency finalist for G3.
 
 ## 3. Task 2 contract
 
@@ -631,10 +639,10 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** declare A1 on C2 at the retained P0 `(80, 60)` size. Reuse existing
-P0/A0 evidence; do not rerun it under a new ID. Keep seed 2753, all five folds,
-optimiser, effective batch size, and eight-epoch budget fixed. Select A1 only for at
-least `+0.003` macro-F1 with no later robustness loss greater than `0.010`.
+**Next safe action:** declare the compact T0/T1/T2 grid for C1 and C2 at retained
+P0/A0. Reuse each G1 T0 result; do not rerun it under a new ID. Run only T1
+(`1e-3`, `1e-4`) and T2 (`3e-4`, `1e-3`) with seed 2753, all five folds, and the same
+eight-epoch budget. When configurations differ by less than `0.003` macro-F1, retain T0.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
@@ -650,9 +658,9 @@ least `+0.003` macro-F1 with no later robustness loss greater than `0.010`.
 
 - [x] Screen C1, C2, and C3 under the same budget and shortlist C2 plus C1.
 - [x] Run P0/P1, apply the frozen threshold, and retain P0 `(80, 60)`.
-- [ ] Run A0/A1 at P0 while holding every other factor fixed.
-- [ ] Fully train the best two families.
+- [x] Run A0/A1 at P0, apply the frozen threshold, and retain A0.
 - [ ] Run three small, predeclared tuning configurations on finalists.
+- [ ] Fully train the best two families with the selected settings.
 - [ ] Run I1 and I2.
 - [ ] Run the pretrained benchmark with `benchmark_only=true`.
 - [ ] Run a second seed for both finalists over all five folds.
