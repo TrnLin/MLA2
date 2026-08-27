@@ -315,3 +315,62 @@ def test_repository_g2_a1_changes_only_identity_stage_and_augmentation() -> None
         config.pop("stage")
         config["data"].pop("augmentation")
     assert a1_matched == a0_matched
+
+
+def test_repository_g2_tuning_changes_only_identity_stage_and_optimizer_pair() -> None:
+    decision = json.loads(
+        (ROOT / "results/evidence/task2/g2_augmentation_ablation/decision.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    expected = {
+        "smallcnn": {
+            "t0": ("g1_c1_smallcnn.json", "g1-c1-smallcnn", 3e-4, 1e-4),
+            "t1": ("g2_t1_c1_smallcnn.json", "g2-t1-c1-smallcnn", 1e-3, 1e-4),
+            "t2": ("g2_t2_c1_smallcnn.json", "g2-t2-c1-smallcnn", 3e-4, 1e-3),
+        },
+        "resnet18_small_stem": {
+            "t0": ("g1_c2_resnet18.json", "g1-c2-resnet18", 3e-4, 1e-4),
+            "t1": ("g2_t1_c2_resnet18.json", "g2-t1-c2-resnet18", 1e-3, 1e-4),
+            "t2": ("g2_t2_c2_resnet18.json", "g2-t2-c2-resnet18", 3e-4, 1e-3),
+        },
+    }
+
+    assert decision["selected_variant"] == "A0"
+
+    for family, variants in expected.items():
+        loaded: dict[str, ExperimentConfig] = {}
+        for tuning_id, (filename, experiment_id, learning_rate, weight_decay) in (
+            variants.items()
+        ):
+            config = load_experiment_config(ROOT / "configs/task2" / filename)
+            loaded[tuning_id] = config
+
+            assert config.experiment_id == experiment_id
+            assert config.model_family == family
+            assert config.method == "deep"
+            assert config.folds == (0, 1, 2, 3, 4)
+            assert config.seeds == (2753,)
+            assert config.loss_id == "cross_entropy"
+            assert config.data.image_size == (80, 60)
+            assert config.data.augmentation == "a0"
+            assert config.optimisation.epochs == 8
+            assert config.optimisation.patience == 8
+            assert config.optimisation.learning_rate == learning_rate
+            assert config.optimisation.weight_decay == weight_decay
+            assert config.stage == (
+                "g1_family_screen" if tuning_id == "t0" else "g2_compact_tuning"
+            )
+
+        reference = loaded["t0"].to_dict()
+        reference.pop("experiment_id")
+        reference.pop("stage")
+        reference["optimisation"].pop("learning_rate")
+        reference["optimisation"].pop("weight_decay")
+        for config in loaded.values():
+            candidate = config.to_dict()
+            candidate.pop("experiment_id")
+            candidate.pop("stage")
+            candidate["optimisation"].pop("learning_rate")
+            candidate["optimisation"].pop("weight_decay")
+            assert candidate == reference

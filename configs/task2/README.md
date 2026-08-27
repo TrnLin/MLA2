@@ -24,3 +24,8 @@ The audited G2-P decision retains P0. `g2_a1_c2_resnet18.json` therefore uses th
 existing P0/A0 run as its reference and changes only experiment identity, stage, and
 augmentation from A0 to A1. A1 adds mild colour jitter to A0 at `(80, 60)`. Do not
 rerun A0 under a new experiment ID.
+
+The audited G2-A decision retains P0/A0. Compact tuning reuses the G1 C1 and C2 runs as
+T0 (`3e-4`, `1e-4`). The four `g2_t*.json` declarations add only T1 (`1e-3`, `1e-4`)
+and T2 (`3e-4`, `1e-3`) for those two finalists. They keep folds, seed, transforms,
+loss, batch sizes, and the eight-epoch budget fixed. Do not rerun either T0 reference.
