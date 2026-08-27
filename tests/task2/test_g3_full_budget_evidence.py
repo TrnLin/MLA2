@@ -443,3 +443,24 @@ def test_g3_rejects_screen_score_not_backed_by_verified_leaderboard(
             tuning_manifest_path=tuning,
             project_root=tmp_path,
         )
+
+
+def test_g3_exact_tie_uses_cost_tiebreak_not_manifest_order(tmp_path: Path) -> None:
+    manifests, configs, tuning, _ = _inputs(
+        tmp_path,
+        c1_score=0.735,
+        c2_score=0.735,
+    )
+    evidence_directory = tmp_path / "results/evidence/task2/g3_full_budget"
+    manifest = build_g3_full_budget_evidence(
+        experiment_manifest_paths=list(reversed(manifests)),
+        experiment_config_paths=configs,
+        tuning_manifest_path=tuning,
+        project_root=tmp_path,
+        evidence_directory=evidence_directory,
+        figure_directory=tmp_path / "results/figures/task2",
+    )
+    leaderboard = pd.read_csv(evidence_directory / "leaderboard.csv")
+
+    assert leaderboard.set_index("family")["rank"].to_dict() == {"C1": 1, "C2": 2}
+    assert manifest["provisional_reference_family"] == "C1"
