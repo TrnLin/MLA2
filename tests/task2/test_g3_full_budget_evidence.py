@@ -401,3 +401,19 @@ def test_g3_rejects_tampered_history(tmp_path: Path) -> None:
             tuning_manifest_path=tuning,
             project_root=tmp_path,
         )
+
+
+def test_g3_rejects_duplicate_run_id_in_experiment_manifest(tmp_path: Path) -> None:
+    manifests, configs, tuning, _ = _inputs(tmp_path)
+    manifest_path = manifests[0]
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["run_ids"].append(manifest["run_ids"][0])
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="exactly five unique run IDs"):
+        build_g3_full_budget_evidence(
+            experiment_manifest_paths=manifests,
+            experiment_config_paths=configs,
+            tuning_manifest_path=tuning,
+            project_root=tmp_path,
+        )
