@@ -35,3 +35,10 @@ declarations preserve those family-specific optimiser pairs and every shared P0/
 loss, fold, seed, batch, AMP, clipping, and warm-up choice. They change only experiment
 identity, stage, maximum epochs from 8 to 30, and patience from 8 to 5. This is the
 matched full-budget finalist comparison; do not expand the architecture or tuning grid.
+
+`g4_i1_effective_number_c1.json` is the controlled minority-class intervention. It
+copies G3 C1-T1 exactly and changes only experiment identity, stage, and loss. For each
+fold, class counts come only from that fold's training rows. The loss uses Cui et al.'s
+effective-number weights with `beta=0.9999`, normalized to mean one. Retain I1 only if
+Spring F1 improves by at least 0.010 while pooled macro-F1 falls by no more than 0.002.
+Compare OOF metrics rather than weighted-loss values because the loss scales differ.
