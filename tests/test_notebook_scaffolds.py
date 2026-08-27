@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 
 import nbformat
@@ -169,6 +170,7 @@ def test_task4_preprocessing_milestone_is_frozen_and_executed() -> None:
     )[1].split("## 7. Hypotheses and baseline", maxsplit=1)[0]
 
     for required in (
+        "Frozen input contract: `240×320`",
         "60×80",
         "96×128",
         "240×320",
@@ -185,6 +187,7 @@ def test_task4_preprocessing_milestone_is_frozen_and_executed() -> None:
         "preprocessing_robustness.csv",
         "preprocessing_comparison.png",
         "does not prove learned-model quality",
+        "probe winner remained `96×128`",
     ):
         assert required in preprocessing
     assert "TODO(owner)" not in preprocessing
@@ -265,6 +268,12 @@ def test_task4_preprocessing_artifacts_are_development_only_and_complete() -> No
     }
     assert set(robustness["scope"]) == {"development"}
     assert set(robustness["query_variant"]) == {"clean", "wide", "tall"}
+    contract = json.loads(
+        (evidence / "preprocessing_contract.json").read_text(encoding="utf-8")
+    )
+    assert contract["selected_size"] == "240x320"
+    assert contract["probe_winner_size"] == "96x128"
+    assert contract["selected_probe_rank"] == 3
 
     notebook_source = _source(
         nbformat.read(_task_path("05_task4_visual_search.ipynb"), as_version=4)

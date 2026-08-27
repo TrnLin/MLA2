@@ -70,8 +70,11 @@ def test_assignment_breakdown_lists_the_canonical_notebooks() -> None:
 
 def test_task4_preprocessing_decision_and_progress_are_frozen() -> None:
     decision_index = (ROOT / "docs/decisions/README.md").read_text(encoding="utf-8")
-    decision = (
+    old_decision = (
         ROOT / "docs/decisions/0020-task4-image-preprocessing.md"
+    ).read_text(encoding="utf-8")
+    decision = (
+        ROOT / "docs/decisions/0021-task4-high-resolution-input.md"
     ).read_text(encoding="utf-8")
     progress = (ROOT / "notebooks/task-4/PROGRESS.md").read_text(encoding="utf-8")
     evidence_readme = (
@@ -84,9 +87,14 @@ def test_task4_preprocessing_decision_and_progress_are_frozen() -> None:
         encoding="utf-8"
     )
 
-    assert "0020-task4-image-preprocessing.md" in decision_index
+    assert "0021-task4-high-resolution-input.md" in decision_index
+    assert "- Status: Accepted; size choice superseded by 0021" in old_decision
     assert "- Status: Accepted" in decision
+    assert "- Supersedes: size choice in 0020" in decision
     assert "holdout" in decision.lower() and "sealed" in decision.lower()
+    assert "240×320" in decision
+    assert "96×128" in decision and "probe" in decision.lower()
+    assert "Decision: `240×320`" in progress
     for completed in (
         "- [x] Compare useful image sizes",
         "- [x] Choose resize, padding, and colour handling",
@@ -104,8 +112,10 @@ def test_task4_preprocessing_decision_and_progress_are_frozen() -> None:
     ):
         assert artifact in evidence_readme
     assert "preprocessing_comparison.png" in figure_readme
-    assert "addition to ADR 0019" in decision
-    assert "does not reopen" in decision
+    assert "scripts/run_task4_preprocessing.py" in evidence_readme
+    assert "scripts/run_task4_preprocessing.py" in figure_readme
+    assert "addition to ADR 0019" in old_decision
+    assert "does not reopen" in old_decision
     assert "arbitrary-query image policy" not in open_decisions
 
 

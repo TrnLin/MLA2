@@ -8,6 +8,7 @@ import pandas as pd
 import pytest
 from PIL import Image
 
+import fashion.retrieval.preprocessing_experiment as preprocessing_experiment
 from fashion.config import ROOT
 from fashion.retrieval.preprocessing import PreprocessingContract
 from fashion.retrieval.preprocessing_experiment import (
@@ -305,6 +306,22 @@ def test_top_size_ties_break_toward_fewer_pixels() -> None:
     selection = build_size_selection(rows)
 
     assert select_top_sizes(selection, count=2) == ("60x80", "96x128")
+
+
+def test_size_policy_keeps_probe_winner_visible_when_detail_choice_overrides_it() -> None:
+    selection = build_size_selection(_selection_rows())
+
+    decision = preprocessing_experiment.resolve_size_policy(
+        selection, selected_size="240x320"
+    )
+
+    assert decision == {
+        "selected_size": "240x320",
+        "selected_probe_rank": 2,
+        "selected_probe_ndcg_at_10": pytest.approx(0.6),
+        "probe_winner_size": "96x128",
+        "probe_winner_ndcg_at_10": pytest.approx(0.65),
+    }
 
 
 def test_stability_uses_each_fold_once_for_only_top_two_sizes() -> None:

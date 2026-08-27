@@ -59,15 +59,18 @@ Evidence: `docs/decisions/0019-task4-retrieval-evaluation.md`,
 
 Done when: teacher, V1, and user images use one clear input contract.
 
-Decision: `96×128` RGB, EXIF-corrected LANCZOS letterboxing with white
-padding and a content mask. Learned RGB values are fitted inside each round's
-training folds and never refitted on queries.
+Decision: `240×320` RGB, EXIF-corrected LANCZOS letterboxing with white
+padding and a content mask. The fixed probe ranked `96×128` first; decision
+0021 explicitly chooses `240×320` to preserve V1 detail for learned models.
+Learned RGB values are fitted inside each round's training folds and never
+refitted on queries.
 
 Important failure: letterboxing is deterministic, but wide and tall
 white-canvas queries lost most retrieval quality. Later robustness work must
 address small clothing regions and large backgrounds.
 
 Evidence: `docs/decisions/0020-task4-image-preprocessing.md`,
+`docs/decisions/0021-task4-high-resolution-input.md`,
 `results/evidence/task4/preprocessing_*.{csv,json}`, and
 `results/figures/task4/preprocessing_comparison.png`
 

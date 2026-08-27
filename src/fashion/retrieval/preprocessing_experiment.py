@@ -483,6 +483,31 @@ def select_top_sizes(selection: pd.DataFrame, count: int = 2) -> tuple[str, ...]
     return tuple(ordered["size"].astype(str).iloc[:count])
 
 
+def resolve_size_policy(
+    selection: pd.DataFrame,
+    *,
+    selected_size: str,
+) -> dict[str, object]:
+    """Record an explicit size choice without hiding the probe-ranked winner."""
+    _require_columns(
+        selection,
+        {"selection_rank", "size", "selection_ndcg_at_10"},
+    )
+    ordered = selection.sort_values("selection_rank").reset_index(drop=True)
+    selected = ordered.loc[ordered["size"].astype(str).eq(selected_size)]
+    if len(selected) != 1:
+        raise ValueError("selected_size must identify exactly one compared size")
+    chosen = selected.iloc[0]
+    probe_winner = ordered.iloc[0]
+    return {
+        "selected_size": selected_size,
+        "selected_probe_rank": int(chosen["selection_rank"]),
+        "selected_probe_ndcg_at_10": float(chosen["selection_ndcg_at_10"]),
+        "probe_winner_size": str(probe_winner["size"]),
+        "probe_winner_ndcg_at_10": float(probe_winner["selection_ndcg_at_10"]),
+    }
+
+
 def summarize_stability(
     results: pd.DataFrame,
     *,

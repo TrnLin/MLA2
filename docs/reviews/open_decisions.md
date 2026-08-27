@@ -36,7 +36,7 @@ Decision 0018 fixes one boundary: V1 is a high-resolution copy of the same teach
 catalogue, inherits `data/processed/splits.csv`, and is never split again. Its focused
 audit is in `notebooks/task-4/01_v1_eda.ipynb`.
 
-Decisions 0019 and 0020 now fix the evaluation contract, the `96×128` input size,
+Decisions 0019 and 0021 now fix the evaluation contract, the `240×320` input size,
 and the arbitrary-query letterbox policy. The Task 4 owner must still decide whether
 V1 improves learned retrieval enough to justify its cost, index construction, and the
 final learned representation. The relevance rule remains a proxy, not real-world

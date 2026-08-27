@@ -4,8 +4,8 @@
       "array_dtype": "uint8",
       "array_shape": [
         32773,
-        128,
-        96,
+        320,
+        240,
         3
       ],
       "bounds_dtype": "int32",
@@ -15,7 +15,7 @@
       ],
       "contract": {
         "colour_mode": "RGB",
-        "height": 128,
+        "height": 320,
         "pad_color": [
           255,
           255,
@@ -23,7 +23,7 @@
         ],
         "resample": "LANCZOS",
         "resize": "aspect_preserving_letterbox",
-        "width": 96
+        "width": 240
       },
       "files": {
         "content_bounds": "content_bounds.npy",
@@ -44,8 +44,8 @@
       "array_dtype": "uint8",
       "array_shape": [
         32773,
-        128,
-        96,
+        320,
+        240,
         3
       ],
       "bounds_dtype": "int32",
@@ -55,7 +55,7 @@
       ],
       "contract": {
         "colour_mode": "RGB",
-        "height": 128,
+        "height": 320,
         "pad_color": [
           255,
           255,
@@ -63,7 +63,7 @@
         ],
         "resample": "LANCZOS",
         "resize": "aspect_preserving_letterbox",
-        "width": 96
+        "width": 240
       },
       "files": {
         "content_bounds": "content_bounds.npy",
@@ -91,7 +91,7 @@
   "holdout_opened": false,
   "input_contract": {
     "colour_mode": "RGB",
-    "height": 128,
+    "height": 320,
     "pad_color": [
       255,
       255,
@@ -99,7 +99,7 @@
     ],
     "resample": "LANCZOS",
     "resize": "aspect_preserving_letterbox",
-    "width": 96
+    "width": 240
   },
   "limitation": "This fixed probe supports a preprocessing decision but does not prove learned-model quality.",
   "normalization": "fit RGB mean/std on the current round training folds only; never refit queries",
@@ -111,11 +111,15 @@
     "version": "spatial-hsv-edge-4x4-v2",
     "weights": "equal L2-normalized colour and edge blocks"
   },
+  "probe_ranking_rule": "equal mean of teacher-to-teacher and v1-to-v1 Protocol A query-mean linear nDCG@10",
+  "probe_winner_ndcg_at_10": 0.49247873036201617,
+  "probe_winner_size": "96x128",
   "schema_version": "1.0.0",
   "scope": "development",
-  "selected_height": 128,
-  "selected_size": "96x128",
-  "selected_width": 96,
-  "selection_ndcg_at_10": 0.49247873036201617,
-  "selection_rule": "equal mean of teacher-to-teacher and v1-to-v1 Protocol A query-mean linear nDCG@10"
+  "selected_height": 320,
+  "selected_probe_ndcg_at_10": 0.4898776323025791,
+  "selected_probe_rank": 3,
+  "selected_size": "240x320",
+  "selected_width": 240,
+  "selection_policy": "240x320 is frozen by ADR 0021 to preserve V1 detail for learned models; this explicitly overrides the fixed probe ranking"
 }

@@ -1,7 +1,10 @@
 # 0020 — Task 4 image preprocessing
 
-- Status: Accepted
+- Status: Accepted; size choice superseded by 0021
 - Date: 2026-08-27
+
+Decision 0021 keeps this transform contract but changes the frozen size from
+`96×128` to `240×320`. This record remains the evidence-backed probe decision.
 
 ## Context
 

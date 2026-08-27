@@ -30,6 +30,7 @@ from fashion.retrieval.preprocessing_experiment import (
     build_odd_aspect_canvas,
     ensure_feature_index,
     evaluate_source_pair,
+    resolve_size_policy,
     run_preprocessing_experiment,
 )
 from fashion.retrieval.probe import PROBE_VERSION, extract_spatial_probe
@@ -40,6 +41,7 @@ CANDIDATE_CONTRACTS = (
     PreprocessingContract(width=96, height=128),
     PreprocessingContract(width=240, height=320),
 )
+SELECTED_CONTRACT = PreprocessingContract(width=240, height=320)
 SOURCE_SPECS = {
     "teacher": ("teacher_path", "teacher_sha256"),
     "v1": ("external_path", "external_sha256"),
@@ -213,7 +215,8 @@ def _write_figure(
     selection: pd.DataFrame,
     feature_indexes: dict[tuple[str, str], FeatureIndex],
     *,
-    winner_size: str,
+    selected_size: str,
+    probe_winner_size: str,
     destination: Path,
 ) -> None:
     fold1 = comparison.loc[
@@ -293,7 +296,10 @@ def _write_figure(
     cost_axis = axes[2].twinx()
     cost_axis.plot(ordered["size"], tensor_kib, color="#E9C46A", marker="o")
     cost_axis.set_ylabel("Float32 RGB KiB per image")
-    fig.suptitle(f"Task 4 preprocessing comparison — selected {winner_size}")
+    fig.suptitle(
+        "Task 4 preprocessing comparison — "
+        f"frozen {selected_size}; probe winner {probe_winner_size}"
+    )
     fig.savefig(destination, dpi=180, bbox_inches="tight")
     plt.close(fig)
 
@@ -351,18 +357,19 @@ def main(argv: list[str] | None = None) -> int:
         float_format="%.8f",
     )
 
-    winner = experiment.selection.iloc[0]
-    winner_size = str(winner["size"])
-    winner_contract = next(
-        contract
-        for contract in CANDIDATE_CONTRACTS
-        if f"{contract.width}x{contract.height}" == winner_size
+    selected_size = f"{SELECTED_CONTRACT.width}x{SELECTED_CONTRACT.height}"
+    size_policy = resolve_size_policy(
+        experiment.selection,
+        selected_size=selected_size,
     )
+    selected = experiment.selection.loc[
+        experiment.selection["size"].eq(selected_size)
+    ].iloc[0]
     robustness = _robustness_evidence(
         splits,
         development,
-        winner_size=winner_size,
-        winner_contract=winner_contract,
+        winner_size=selected_size,
+        winner_contract=SELECTED_CONTRACT,
         feature_indexes=experiment.feature_indexes,
         workers=args.workers,
     )
@@ -377,7 +384,7 @@ def main(argv: list[str] | None = None) -> int:
         "schema_version": "1.0.0",
         "scope": "development training folds only",
         "validation_fold": 1,
-        "contract": winner_contract.to_dict(),
+        "contract": SELECTED_CONTRACT.to_dict(),
         "sources": {},
     }
     cache_manifests: dict[str, object] = {}
@@ -387,7 +394,7 @@ def main(argv: list[str] | None = None) -> int:
             path_column=path_column,
             sha_column=sha_column,
             source=source,
-            contract=winner_contract,
+            contract=SELECTED_CONTRACT,
             cache_root=local_dir / "images",
             root=ROOT,
         )
@@ -404,15 +411,18 @@ def main(argv: list[str] | None = None) -> int:
     contract_evidence = {
         "schema_version": "1.0.0",
         "scope": "development",
-        "selected_size": winner_size,
-        "selected_width": int(winner["width"]),
-        "selected_height": int(winner["height"]),
-        "selection_ndcg_at_10": float(winner["selection_ndcg_at_10"]),
+        **size_policy,
+        "selected_width": int(selected["width"]),
+        "selected_height": int(selected["height"]),
         "candidate_sizes": [
             f"{contract.width}x{contract.height}"
             for contract in CANDIDATE_CONTRACTS
         ],
-        "selection_rule": (
+        "selection_policy": (
+            "240x320 is frozen by ADR 0021 to preserve V1 detail for learned "
+            "models; this explicitly overrides the fixed probe ranking"
+        ),
+        "probe_ranking_rule": (
             "equal mean of teacher-to-teacher and v1-to-v1 Protocol A "
             "query-mean linear nDCG@10"
         ),
@@ -425,7 +435,7 @@ def main(argv: list[str] | None = None) -> int:
             "distance": "exact cosine",
             "trained": False,
         },
-        "input_contract": winner_contract.to_dict(),
+        "input_contract": SELECTED_CONTRACT.to_dict(),
         "normalization": (
             "fit RGB mean/std on the current round training folds only; "
             "never refit queries"
@@ -446,10 +456,14 @@ def main(argv: list[str] | None = None) -> int:
         experiment.comparison,
         experiment.selection,
         experiment.feature_indexes,
-        winner_size=winner_size,
+        selected_size=selected_size,
+        probe_winner_size=str(size_policy["probe_winner_size"]),
         destination=figure_dir / "preprocessing_comparison.png",
     )
-    print(f"Selected {winner_size}; development-only evidence rebuilt.")
+    print(
+        f"Frozen {selected_size}; probe winner "
+        f"{size_policy['probe_winner_size']}; development-only evidence rebuilt."
+    )
     return 0
 
 
