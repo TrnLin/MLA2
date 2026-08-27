@@ -1,5 +1,15 @@
 """Task 4 visual-search implementation."""
 
+from .baseline import (
+    BaselineEvaluation,
+    Direction,
+    build_baseline_summary,
+    build_headline_summary,
+    build_query_metrics,
+    build_random_primary_rankings,
+    evaluate_baseline,
+    verify_preprocessing_reproduction,
+)
 from .cache import (
     DevelopmentImageCache,
     ensure_development_image_cache,
@@ -62,10 +72,12 @@ from .protocol import (
 )
 
 __all__ = (
+    "BaselineEvaluation",
     "COVERAGE_COLUMNS",
     "COLOUR_FEATURE_DIM",
     "CachedFeatureIndex",
     "DevelopmentImageCache",
+    "Direction",
     "EDGE_FEATURE_DIM",
     "EXPECTED_EXTERNAL_CSV_SHA256",
     "FeatureIndex",
@@ -77,7 +89,11 @@ __all__ = (
     "PreprocessingExperiment",
     "RetrievalViews",
     "audit_external_images",
+    "build_baseline_summary",
+    "build_headline_summary",
     "build_odd_aspect_canvas",
+    "build_query_metrics",
+    "build_random_primary_rankings",
     "build_size_selection",
     "build_development_views",
     "build_external_variant_index",
@@ -87,6 +103,7 @@ __all__ = (
     "ensure_external_image_audit",
     "ensure_feature_index",
     "evaluate_family_rankings",
+    "evaluate_baseline",
     "evaluate_primary_rankings",
     "evaluate_source_pair",
     "extract_feature_index",
@@ -110,4 +127,5 @@ __all__ = (
     "select_development_pairs",
     "source_directions",
     "summarize_stability",
+    "verify_preprocessing_reproduction",
 )
