@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import json
 import re
 
@@ -428,11 +429,16 @@ def test_task2_g3_cell_records_audited_full_budget_comparison() -> None:
 def test_task2_g3_notebook_preserves_registered_probability_note() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     code = {cell.id: cell for cell in notebook.cells}["s08-01-02-code"].source
+    string_literals = {
+        node.value
+        for node in ast.walk(ast.parse(code))
+        if isinstance(node, ast.Constant) and isinstance(node.value, str)
+    }
 
     assert (
         "Uncalibrated softmax probabilities from the best validation macro-F1 "
         "checkpoint in each fold; calibration metrics are diagnostic only."
-        in code
+        in string_literals
     )
 
 

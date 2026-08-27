@@ -3,13 +3,13 @@
   "identity_hashes_valid": true,
   "known_statuses": true,
   "registry_path": "results/runs.csv",
-  "run_count": 62,
+  "run_count": 73,
   "schema_matches": true,
   "schema_version": "1.0.0",
   "status_counts": {
-    "completed": 58,
+    "completed": 68,
     "failed": 1,
-    "interrupted": 3
+    "interrupted": 4
   },
   "unique_run_ids": true
 }
