@@ -421,6 +421,109 @@ def test_task2_g2_size_cell_records_audited_selection() -> None:
         assert required in finding
 
 
+def test_task2_g2_tuning_cell_records_audited_incremental_selection() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    code = cells["s08-02-03-code"].source
+    finding = cells["s08-02-03-finding"].source
+
+    assert not code.startswith("# TODO:")
+    compile(code, "03_task2_season.ipynb:s08-02-03-code", "exec")
+    for required in (
+        "g1_c1_smallcnn.json",
+        "g1_c2_resnet18.json",
+        "g2_t1_c1_smallcnn.json",
+        "g2_t2_c1_smallcnn.json",
+        "g2_t1_c2_resnet18.json",
+        "g2_t2_c2_resnet18.json",
+        "run_or_load_experiment",
+        "build_experiment_evidence",
+        "build_g2_tuning_evidence",
+        "protected_ids",
+        'selected_tuning_id"] == "T1"',
+        'selected_tuning_id"] == "T0"',
+        'status"].eq("running")',
+        "incremental_model_selection.csv",
+        "eda_reflection.csv",
+        'artifacts"]["c1_learning_curves"]',
+        'artifacts"]["c2_learning_curves"]',
+    ):
+        assert required in code
+    for required in (
+        "0.708075",
+        "+0.008173",
+        "0.708246",
+        "+0.001146",
+        "select C1-T1",
+        "retain C2-T0",
+        "train and validation loss",
+        "validation accuracy and macro-F1",
+        "supported",
+        "contradicted",
+        "still untested",
+        "results/evidence/task2/g2_compact_tuning/manifest.json",
+        "g2-t1-c1-smallcnn-f0-s2753-b5a391a13f44",
+        "g2-t2-c2-resnet18-f2-s2753-c0de62f1594e",
+    ):
+        assert required in finding
+
+
+def test_task2_teacher_feedback_is_explicitly_connected_to_eda() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+
+    eda_handoff = "\n".join(
+        cells[cell_id].source
+        for cell_id in (
+            "s02-01-finding",
+            "s02-02-01-finding",
+            "s02-02-02-finding",
+            "s08-02-03-finding",
+        )
+    )
+    for required in (
+        "EDA hypothesis",
+        "accurate",
+        "supported",
+        "contradicted",
+        "still untested",
+        "ArticleType",
+        "file size",
+        "acquisition year",
+    ):
+        assert required in eda_handoff
+
+    b0_story = cells["s05-01-heading"].source + cells["s05-01-finding"].source
+    for required in (
+        "selected first because",
+        "Strength",
+        "Limitation",
+        "B1",
+    ):
+        assert required in b0_story
+
+    b1_story = cells["s05-02-heading"].source + cells["s05-02-finding"].source
+    for required in (
+        "selected next because",
+        "Strength",
+        "Limitation",
+        "C1",
+    ):
+        assert required in b1_story
+
+    architecture_story = "\n".join(
+        cells[cell_id].source
+        for cell_id in (
+            "s06-01-01-finding",
+            "s06-01-02-finding",
+            "s06-01-03-finding",
+        )
+    )
+    assert "Interpretation to write after running" not in architecture_story
+    for required in ("B1", "C1", "C2", "C3", "weights=None", "alternative"):
+        assert required in architecture_story
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
