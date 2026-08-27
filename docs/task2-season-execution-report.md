@@ -225,6 +225,18 @@ what actually failed:
   visibly unexecuted, and prevents a narrative-only wording change from rewriting G3
   input-manifest hashes. Commit `1e9d81b` records a second clean Run All where the G3
   manifests remained unchanged.
+- Independent review then found three reproducibility gaps. `2fdb3bc` then `420cd23`
+  scope Notebook validation to the ten run IDs returned by the current cache lookup,
+  while historical retries remain visible but cannot break Run All. `da6d431` then
+  `3baaa61` reject duplicate manifest run IDs before a fold can be double-weighted.
+  `272fd2e` then `798ba6b` verify the G2 screen score against the hash-checked
+  leaderboard instead of trusting a copied manifest scalar.
+- `810f523` then `2a33531` make an exact-score tie deterministic: smaller parameter
+  count, then lower runtime, then family name. The first local red-test attempt exposed
+  that a test using the default output directory could overwrite tracked evidence; the
+  committed test uses a temporary directory, and the real G3 evidence was regenerated
+  from its ten hash-verified runs. Commit `61c32bc` records the clean post-review Run
+  All; both learning-curve PNG hashes remained unchanged.
 
 ### 2.5 Measured execution status
 
