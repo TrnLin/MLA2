@@ -323,6 +323,103 @@ def test_fold_balance_rejects_loader_training_id_drift() -> None:
         fit_i1_fold_balance(loaders, validation_fold=0)
 
 
+def test_execute_i1_wires_fold_fitted_weights_into_training(
+    prepared_project,
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    paths = _paths(prepared_project)
+    splits = load_splits(paths["splits_path"])
+    training, _ = get_cv_split(splits, 0)
+    training = get_samples(training, target="season").reset_index(drop=True)
+    raw_splits = pd.read_csv(paths["splits_path"], keep_default_na=False)
+    for identifier, label in zip(training["id"].iloc[:4], SEASON_LABELS, strict=True):
+        raw_splits.loc[raw_splits["id"].eq(identifier), "season"] = label
+    raw_splits.to_csv(paths["splits_path"], index=False)
+
+    splits = load_splits(paths["splits_path"])
+    training, validation = get_cv_split(splits, 0)
+    training = get_samples(training, target="season").reset_index(drop=True)
+    validation = get_samples(validation, target="season").reset_index(drop=True)
+    training_ids = tuple(int(value) for value in training["id"])
+    validation_ids = tuple(int(value) for value in validation["id"])
+    loaders = SimpleNamespace(
+        train=("train-loader",),
+        validation=("validation-loader",),
+        labels=SEASON_LABELS,
+        training_ids=training_ids,
+        validation_ids=validation_ids,
+        stats=SimpleNamespace(
+            training_id_sha256=canonical_sha256(sorted(training_ids))
+        ),
+        audit=lambda: {"training_products": len(training_ids)},
+    )
+    monkeypatch.setattr(class_balance, "build_task_loaders", lambda **kwargs: loaders)
+    captured: dict[str, object] = {}
+
+    def fake_train_fold(model, train_loader, validation_loader, **kwargs):
+        captured["criterion_weights"] = (
+            kwargs["criterion"].weight.detach().cpu().numpy().copy()
+        )
+        captured["train_loader"] = train_loader
+        captured["validation_loader"] = validation_loader
+        targets = np.asarray(
+            [SEASON_LABELS.index(str(value)) for value in validation["season"]]
+        )
+        probabilities = np.full(
+            (len(validation), len(SEASON_LABELS)),
+            0.02,
+            dtype=np.float64,
+        )
+        probabilities[np.arange(len(validation)), targets] = 0.94
+        metrics = multiclass_metrics(
+            validation["season"].astype(str),
+            probabilities=probabilities,
+            labels=SEASON_LABELS,
+        )
+        return FoldResult(
+            fold=0,
+            seed=2753,
+            labels=SEASON_LABELS,
+            best_epoch=1,
+            epochs_completed=1,
+            best_macro_f1=float(metrics["macro_f1"]),
+            best_metrics=metrics,
+            history=[],
+            validation_ids=list(validation_ids),
+            targets=targets,
+            probabilities=probabilities,
+            checkpoint_path=str(kwargs["checkpoint_path"]),
+            checkpoint_sha256="a" * 64,
+            parameter_count=sum(parameter.numel() for parameter in model.parameters()),
+            runtime_seconds=0.1,
+            peak_vram_mb=None,
+            stopped_early=False,
+            device="cpu",
+        )
+
+    monkeypatch.setattr(class_balance, "train_fold", fake_train_fold)
+
+    _, history = class_balance._execute_i1(
+        config=_config(),
+        fold=0,
+        seed=2753,
+        checkpoint_path=tmp_path / "i1.pt",
+        data_root=prepared_project.root,
+        splits_path=paths["splits_path"],
+        label_map_path=paths["label_map_path"],
+    )
+
+    expected_weights = np.asarray(
+        [history["class_balance"]["class_weights"][label] for label in SEASON_LABELS]
+    )
+    assert np.asarray(captured["criterion_weights"]) == pytest.approx(expected_weights)
+    assert captured["train_loader"] is loaders.train
+    assert captured["validation_loader"] is loaders.validation
+    assert history["class_balance"]["training_product_count"] == len(training_ids)
+    assert "not loss scale" in history["loss_note"]
+
+
 def test_i1_runner_records_five_runs_and_reuses_verified_cache(
     prepared_project,
     monkeypatch,
