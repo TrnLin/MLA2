@@ -358,6 +358,13 @@ def _build(root: Path, **input_overrides) -> tuple[dict, dict[str, list[Path]]]:
     return manifest, histories
 
 
+def _temporary_outputs(root: Path) -> dict[str, Path]:
+    return {
+        "evidence_directory": root / "results/evidence/task2/g3_full_budget",
+        "figure_directory": root / "results/figures/task2",
+    }
+
+
 def test_g3_records_near_tie_without_freezing_winner(tmp_path: Path) -> None:
     manifest, _ = _build(tmp_path)
     evidence = tmp_path / "results/evidence/task2/g3_full_budget"
@@ -395,6 +402,7 @@ def test_g3_rejects_change_outside_declared_budget(tmp_path: Path) -> None:
             experiment_config_paths=configs,
             tuning_manifest_path=tuning,
             project_root=tmp_path,
+            **_temporary_outputs(tmp_path),
         )
 
 
@@ -409,6 +417,7 @@ def test_g3_rejects_tampered_history(tmp_path: Path) -> None:
             experiment_config_paths=configs,
             tuning_manifest_path=tuning,
             project_root=tmp_path,
+            **_temporary_outputs(tmp_path),
         )
 
 
@@ -425,6 +434,7 @@ def test_g3_rejects_duplicate_run_id_in_experiment_manifest(tmp_path: Path) -> N
             experiment_config_paths=configs,
             tuning_manifest_path=tuning,
             project_root=tmp_path,
+            **_temporary_outputs(tmp_path),
         )
 
 
@@ -442,6 +452,7 @@ def test_g3_rejects_screen_score_not_backed_by_verified_leaderboard(
             experiment_config_paths=configs,
             tuning_manifest_path=tuning,
             project_root=tmp_path,
+            **_temporary_outputs(tmp_path),
         )
 
 
@@ -451,16 +462,15 @@ def test_g3_exact_tie_uses_cost_tiebreak_not_manifest_order(tmp_path: Path) -> N
         c1_score=0.735,
         c2_score=0.735,
     )
-    evidence_directory = tmp_path / "results/evidence/task2/g3_full_budget"
+    outputs = _temporary_outputs(tmp_path)
     manifest = build_g3_full_budget_evidence(
         experiment_manifest_paths=list(reversed(manifests)),
         experiment_config_paths=configs,
         tuning_manifest_path=tuning,
         project_root=tmp_path,
-        evidence_directory=evidence_directory,
-        figure_directory=tmp_path / "results/figures/task2",
+        **outputs,
     )
-    leaderboard = pd.read_csv(evidence_directory / "leaderboard.csv")
+    leaderboard = pd.read_csv(outputs["evidence_directory"] / "leaderboard.csv")
 
     assert leaderboard.set_index("family")["rank"].to_dict() == {"C1": 1, "C2": 2}
     assert manifest["provisional_reference_experiment_id"] == "g3-c1-t1-smallcnn"
