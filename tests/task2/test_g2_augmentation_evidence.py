@@ -9,8 +9,8 @@ from matplotlib.axes import Axes
 
 from fashion.data.hashing import compute_sha256
 from fashion.task2.evidence import (
-    _plot_g2_input_size_ablation,
-    build_g2_input_size_evidence,
+    _plot_g2_augmentation_ablation,
+    build_g2_augmentation_evidence,
 )
 from fashion.task2.experiments import load_experiment_config
 from fashion.train.artifacts import canonical_sha256
@@ -20,16 +20,16 @@ def _write_config(
     root: Path,
     *,
     variant: str,
-    image_size: tuple[int, int],
     learning_rate: float = 3e-4,
 ) -> Path:
     experiment_id = {
-        "P0": "g1-c2-resnet18",
-        "P1": "g2-p1-c2-resnet18",
+        "A0": "g1-c2-resnet18",
+        "A1": "g2-a1-c2-resnet18",
     }[variant]
-    stage = {"P0": "g1_family_screen", "P1": "g2_input_size_ablation"}[
-        variant
-    ]
+    stage = {
+        "A0": "g1_family_screen",
+        "A1": "g2_augmentation_ablation",
+    }[variant]
     path = root / "configs/task2" / f"{variant.lower()}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -44,8 +44,8 @@ def _write_config(
                 "seeds": [2753],
                 "loss_id": "cross_entropy",
                 "data": {
-                    "image_size": list(image_size),
-                    "augmentation": "a0",
+                    "image_size": [80, 60],
+                    "augmentation": variant.lower(),
                     "batch_size": 32,
                     "validation_batch_size": 128,
                     "num_workers": 4,
@@ -79,8 +79,12 @@ def _write_experiment_evidence(
     pooled_macro_f1: float,
 ) -> Path:
     experiment_id = {
-        "P0": "g1-c2-resnet18",
-        "P1": "g2-p1-c2-resnet18",
+        "A0": "g1-c2-resnet18",
+        "A1": "g2-a1-c2-resnet18",
+    }[variant]
+    stage = {
+        "A0": "g1_family_screen",
+        "A1": "g2_augmentation_ablation",
     }[variant]
     evidence = root / "results/evidence/task2" / variant.lower()
     evidence.mkdir(parents=True, exist_ok=True)
@@ -91,18 +95,33 @@ def _write_experiment_evidence(
     fold_summary_path = evidence / "fold_summary.csv"
     fold_metrics_path = evidence / "fold_metrics.csv"
     registry_path = evidence / "registry_snapshot.csv"
+    class_offsets = {
+        "Fall": -0.02,
+        "Spring": 0.02,
+        "Summer": 0.01,
+        "Winter": -0.01,
+    }
     pooled_path.write_text(
         json.dumps(
             {
                 "macro_f1": pooled_macro_f1,
                 "per_class": {
                     label: {
-                        "precision": pooled_macro_f1,
-                        "recall": pooled_macro_f1,
-                        "f1": pooled_macro_f1 + (0.02 if label == "Spring" else 0.0),
-                        "support": 5,
+                        "precision": pooled_macro_f1 + offset,
+                        "recall": pooled_macro_f1 + offset,
+                        "f1": pooled_macro_f1 + offset,
+                        "support": support,
                     }
-                    for label in ("Fall", "Spring", "Summer", "Winter")
+                    for (label, support), offset in zip(
+                        (
+                            ("Fall", 6),
+                            ("Spring", 2),
+                            ("Summer", 8),
+                            ("Winter", 4),
+                        ),
+                        class_offsets.values(),
+                        strict=True,
+                    )
                 },
             }
         ),
@@ -130,17 +149,11 @@ def _write_experiment_evidence(
             for fold in range(5)
         ]
     ).to_csv(fold_metrics_path, index=False)
-    size_token = "80x60" if variant == "P0" else "128x96"
-    runtime = 60.0 if variant == "P0" else 120.0
-    vram = 600.0 if variant == "P0" else 1300.0
     pd.DataFrame(
         [
             {
                 "run_id": run_ids[fold],
-                "stage": {
-                    "P0": "g1_family_screen",
-                    "P1": "g2_input_size_ablation",
-                }[variant],
+                "stage": stage,
                 "experiment_id": experiment_id,
                 "model_family": "resnet18_small_stem",
                 "benchmark_only": False,
@@ -153,11 +166,11 @@ def _write_experiment_evidence(
                 "split_sha256": "a" * 64,
                 "label_map_sha256": "b" * 64,
                 "implementation_sha256": "c" * 64,
-                "transform_id": f"a0-{size_token}",
+                "transform_id": f"{variant.lower()}-transform",
                 "loss_id": "cross_entropy",
                 "primary_metric_value": fold_scores[fold],
-                "runtime_seconds": runtime + fold,
-                "peak_vram_mb": vram,
+                "runtime_seconds": (60.0 if variant == "A0" else 65.0) + fold,
+                "peak_vram_mb": 600.0,
                 "best_epoch": 7,
                 "parameter_count": 11_170_884,
                 "status": "completed",
@@ -202,112 +215,165 @@ def _write_experiment_evidence(
 def _inputs(
     root: Path,
     *,
-    p0_score: float = 0.710,
-    p1_score: float = 0.716,
-    p1_learning_rate: float = 3e-4,
+    a0_score: float = 0.710,
+    a1_score: float = 0.714,
+    a1_learning_rate: float = 3e-4,
 ) -> dict[str, Path]:
-    p0_config = _write_config(root, variant="P0", image_size=(80, 60))
-    p1_config = _write_config(
+    a0_config = _write_config(root, variant="A0")
+    a1_config = _write_config(
         root,
-        variant="P1",
-        image_size=(128, 96),
-        learning_rate=p1_learning_rate,
+        variant="A1",
+        learning_rate=a1_learning_rate,
     )
     return {
-        "p0_config_path": p0_config,
-        "p1_config_path": p1_config,
-        "p0_manifest_path": _write_experiment_evidence(
+        "a0_config_path": a0_config,
+        "a1_config_path": a1_config,
+        "a0_manifest_path": _write_experiment_evidence(
             root,
-            variant="P0",
-            config_path=p0_config,
-            pooled_macro_f1=p0_score,
+            variant="A0",
+            config_path=a0_config,
+            pooled_macro_f1=a0_score,
         ),
-        "p1_manifest_path": _write_experiment_evidence(
+        "a1_manifest_path": _write_experiment_evidence(
             root,
-            variant="P1",
-            config_path=p1_config,
-            pooled_macro_f1=p1_score,
+            variant="A1",
+            config_path=a1_config,
+            pooled_macro_f1=a1_score,
         ),
     }
 
 
 def _build(root: Path, **input_overrides) -> dict:
-    return build_g2_input_size_evidence(
+    return build_g2_augmentation_evidence(
         **_inputs(root, **input_overrides),
         project_root=root,
-        evidence_directory=root / "results/evidence/task2/g2_input_size_ablation",
+        evidence_directory=root / "results/evidence/task2/g2_augmentation_ablation",
         figure_directory=root / "results/figures/task2",
     )
 
 
-def test_g2_size_gate_selects_p1_only_at_frozen_gain(tmp_path: Path) -> None:
-    manifest = _build(tmp_path, p0_score=0.710, p1_score=0.716)
+def _read_decision(root: Path, manifest: dict) -> dict:
+    path = root / "results" / manifest["artifacts"]["decision"]["path"]
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _write_robustness(root: Path, deltas: list[float]) -> Path:
+    path = root / "results/evidence/task2/robustness.csv"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(
+        {
+            "probe": [f"probe_{index}" for index in range(len(deltas))],
+            "delta_a1_minus_a0_macro_f1": deltas,
+        }
+    ).to_csv(path, index=False)
+    return path
+
+
+def test_g2_augmentation_gate_rejects_a1_below_quality_threshold(
+    tmp_path: Path,
+) -> None:
+    manifest = _build(tmp_path, a0_score=0.710, a1_score=0.712)
     result_root = tmp_path / "results"
     comparison = pd.read_csv(
         result_root / manifest["artifacts"]["comparison"]["path"]
     )
-    paired = pd.read_csv(
-        result_root / manifest["artifacts"]["paired_fold_metrics"]["path"]
+    per_class = pd.read_csv(
+        result_root / manifest["artifacts"]["per_class_comparison"]["path"]
     )
-    decision = json.loads(
-        (result_root / manifest["artifacts"]["decision"]["path"]).read_text(
-            encoding="utf-8"
-        )
-    )
+    decision = _read_decision(tmp_path, manifest)
 
-    assert comparison["variant"].tolist() == ["P0", "P1"]
-    assert comparison.loc[1, "delta_vs_p0_macro_f1"] == pytest.approx(0.006)
-    assert comparison.loc[1, "runtime_ratio_vs_p0"] > 1.0
-    assert len(paired) == 5
-    assert decision["minimum_gain"] == pytest.approx(0.005)
-    assert decision["selected_variant"] == "P1"
-    assert manifest["selected_experiment_id"] == "g2-p1-c2-resnet18"
+    assert comparison["variant"].tolist() == ["A0", "A1"]
+    assert comparison.loc[1, "delta_vs_a0_macro_f1"] == pytest.approx(0.002)
+    assert per_class["label"].tolist() == ["Fall", "Spring", "Summer", "Winter"]
+    assert decision["quality_gate_passed"] is False
+    assert decision["robustness_evidence_status"] == "not_required"
+    assert decision["selected_variant"] == "A0"
+    assert manifest["selected_experiment_id"] == "g1-c2-resnet18"
     figure = result_root / manifest["artifacts"]["figure"]["path"]
     assert figure.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
 
 
-def test_g2_size_gate_retains_p0_below_threshold(tmp_path: Path) -> None:
-    manifest = _build(tmp_path, p0_score=0.710, p1_score=0.714)
-    decision_path = tmp_path / "results" / manifest["artifacts"]["decision"]["path"]
-    decision = json.loads(decision_path.read_text(encoding="utf-8"))
+def test_g2_augmentation_gate_stays_pending_without_robustness(
+    tmp_path: Path,
+) -> None:
+    manifest = _build(tmp_path, a0_score=0.710, a1_score=0.713)
+    decision = _read_decision(tmp_path, manifest)
 
-    assert decision["observed_p1_minus_p0_macro_f1"] == pytest.approx(0.004)
-    assert decision["selected_variant"] == "P0"
-    assert decision["selected_experiment_id"] == "g1-c2-resnet18"
+    assert decision["quality_gate_passed"] is True
+    assert decision["decision_status"] == "pending"
+    assert decision["robustness_evidence_status"] == "required"
+    assert decision["selected_variant"] is None
+    assert manifest["selected_experiment_id"] is None
 
 
-def test_g2_size_gate_rejects_an_optimisation_change(tmp_path: Path) -> None:
-    inputs = _inputs(tmp_path, p1_learning_rate=1e-3)
+def test_g2_augmentation_gate_selects_a1_with_acceptable_robustness(
+    tmp_path: Path,
+) -> None:
+    robustness_path = _write_robustness(tmp_path, [-0.004, 0.002, -0.010])
+    manifest = build_g2_augmentation_evidence(
+        **_inputs(tmp_path, a0_score=0.710, a1_score=0.714),
+        project_root=tmp_path,
+        evidence_directory=tmp_path
+        / "results/evidence/task2/g2_augmentation_ablation",
+        figure_directory=tmp_path / "results/figures/task2",
+        robustness_evidence_path=robustness_path,
+    )
+    decision = _read_decision(tmp_path, manifest)
+
+    assert decision["observed_worst_robustness_loss"] == pytest.approx(0.010)
+    assert decision["robustness_gate_passed"] is True
+    assert decision["selected_variant"] == "A1"
+    assert manifest["selected_experiment_id"] == "g2-a1-c2-resnet18"
+    assert manifest["robustness_input"]["sha256"] == compute_sha256(robustness_path)
+
+
+def test_g2_augmentation_gate_retains_a0_when_robustness_loss_is_too_large(
+    tmp_path: Path,
+) -> None:
+    robustness_path = _write_robustness(tmp_path, [-0.011, 0.002])
+    manifest = build_g2_augmentation_evidence(
+        **_inputs(tmp_path, a0_score=0.710, a1_score=0.714),
+        project_root=tmp_path,
+        evidence_directory=tmp_path
+        / "results/evidence/task2/g2_augmentation_ablation",
+        figure_directory=tmp_path / "results/figures/task2",
+        robustness_evidence_path=robustness_path,
+    )
+    decision = _read_decision(tmp_path, manifest)
+
+    assert decision["robustness_gate_passed"] is False
+    assert decision["selected_variant"] == "A0"
+
+
+def test_g2_augmentation_gate_rejects_hidden_optimisation_change(
+    tmp_path: Path,
+) -> None:
+    inputs = _inputs(tmp_path, a1_learning_rate=1e-3)
 
     with pytest.raises(ValueError, match="differ outside"):
-        build_g2_input_size_evidence(
+        build_g2_augmentation_evidence(
             **inputs,
             project_root=tmp_path,
             evidence_directory=tmp_path
-            / "results/evidence/task2/g2_input_size_ablation",
+            / "results/evidence/task2/g2_augmentation_ablation",
             figure_directory=tmp_path / "results/figures/task2",
         )
 
 
-def test_g2_quality_panel_does_not_use_truncated_bars(
+def test_g2_augmentation_quality_panel_does_not_use_truncated_bars(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     comparison = pd.DataFrame(
         [
-            {"variant": "P0", "pooled_macro_f1": 0.707, "spring_f1": 0.738},
-            {
-                "variant": "P1",
-                "pooled_macro_f1": 0.705,
-                "spring_f1": 0.739,
-                "delta_vs_p0_macro_f1": -0.002,
-            },
+            {"variant": "A0", "pooled_macro_f1": 0.707, "spring_f1": 0.738},
+            {"variant": "A1", "pooled_macro_f1": 0.697, "spring_f1": 0.727},
         ]
     )
-    paired = pd.DataFrame(
+    per_class = pd.DataFrame(
         {
-            "fold": list(range(5)),
-            "delta_p1_minus_p0_macro_f1": [-0.004, -0.005, -0.001, 0.005, -0.002],
+            "label": ["Fall", "Spring", "Summer", "Winter"],
+            "delta_a1_minus_a0_f1": [-0.035, -0.011, 0.0004, 0.004],
         }
     )
     bar_calls: list[tuple] = []
@@ -318,12 +384,13 @@ def test_g2_quality_panel_does_not_use_truncated_bars(
         return original(self, *args, **kwargs)
 
     monkeypatch.setattr(Axes, "bar", capture)
-    _plot_g2_input_size_ablation(
+    _plot_g2_augmentation_ablation(
         comparison,
-        paired,
-        minimum_gain=0.005,
-        selected_variant="P0",
-        output_path=tmp_path / "g2.png",
+        per_class,
+        minimum_gain=0.003,
+        decision_status="closed",
+        selected_variant="A0",
+        output_path=tmp_path / "g2_a.png",
     )
 
-    assert len(bar_calls) == 1, "only signed fold deltas should use a zero-based bar chart"
+    assert len(bar_calls) == 1, "only signed per-class deltas may use a bar chart"

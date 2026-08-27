@@ -101,6 +101,16 @@ G2_SIZE_EXPECTED_PIXELS = {
     "P1": (128, 96),
 }
 G2_SIZE_MINIMUM_GAIN = 0.005
+G2_AUGMENTATION_EXPERIMENTS = {
+    "A0": "g1-c2-resnet18",
+    "A1": "g2-a1-c2-resnet18",
+}
+G2_AUGMENTATION_VALUES = {
+    "A0": "a0",
+    "A1": "a1",
+}
+G2_AUGMENTATION_MINIMUM_GAIN = 0.003
+G2_AUGMENTATION_MAX_ROBUSTNESS_LOSS = 0.010
 
 
 def build_file_impact_edges() -> pd.DataFrame:
@@ -1066,20 +1076,26 @@ def build_g1_family_screen_evidence(
     return manifest
 
 
-def _g2_size_row(
+def _g2_transform_row(
     manifest: dict[str, Any],
     *,
     variant: str,
     config_path: str | Path,
     project_root: Path,
     expected_coverage_sha256: str | None,
-) -> tuple[dict[str, Any], pd.DataFrame, str, str, Path]:
+    expected_experiment_id: str,
+    expected_stage: str,
+    expected_image_size: tuple[int, int],
+    expected_augmentation: str,
+    changed_data_field: str,
+    comparison_name: str,
+) -> tuple[dict[str, Any], pd.DataFrame, pd.DataFrame, str, str, Path]:
+    """Load one matched G2 transform row and verify every reusable artifact."""
     from fashion.task2.experiments import load_experiment_config
 
-    if variant not in G2_SIZE_EXPERIMENTS:
-        raise ValueError(f"unknown G2 size variant: {variant}")
+    if changed_data_field not in {"image_size", "augmentation"}:
+        raise ValueError(f"unsupported G2 transform field: {changed_data_field}")
     experiment_id = str(manifest.get("experiment_id", ""))
-    expected_experiment_id = G2_SIZE_EXPERIMENTS[variant]
     if experiment_id != expected_experiment_id:
         raise ValueError(
             f"{variant} manifest must be {expected_experiment_id}: {experiment_id}"
@@ -1106,7 +1122,9 @@ def _g2_size_row(
         }
     )
     if expected_coverage_sha256 and coverage_sha256 != expected_coverage_sha256:
-        raise ValueError("P0 and P1 do not cover the same OOF products and labels")
+        raise ValueError(
+            f"{comparison_name} do not cover the same OOF products and labels"
+        )
 
     resolved_config_path = _resolve_evidence_path(
         config_path, project_root=project_root
@@ -1114,17 +1132,22 @@ def _g2_size_row(
     config = load_experiment_config(resolved_config_path)
     if config.experiment_id != experiment_id:
         raise ValueError(f"{variant} config and evidence experiment IDs do not match")
+    if config.stage != expected_stage:
+        raise ValueError(f"{experiment_id} config stage must be {expected_stage}")
+    if config.folds != G1_EXPECTED_FOLDS or config.seeds != (2753,):
+        raise ValueError(f"{experiment_id} config must use folds 0-4 and seed 2753")
     if config.model_family != "resnet18_small_stem" or config.loss_id != "cross_entropy":
-        raise ValueError("P0/P1 must use scratch small-stem ResNet18 and cross-entropy")
-    if config.data.augmentation != "a0":
-        raise ValueError("P0/P1 must hold augmentation fixed at A0")
-    expected_pixels = G2_SIZE_EXPECTED_PIXELS[variant]
-    if config.data.image_size != expected_pixels:
-        raise ValueError(f"{variant} image size must be {expected_pixels}")
+        raise ValueError(
+            f"{comparison_name} must use scratch small-stem ResNet18 and cross-entropy"
+        )
+    if config.data.image_size != expected_image_size:
+        raise ValueError(f"{variant} image size must be {expected_image_size}")
+    if config.data.augmentation != expected_augmentation:
+        raise ValueError(f"{variant} augmentation must be {expected_augmentation}")
     comparison_payload = config.to_dict()
     comparison_payload.pop("experiment_id")
     comparison_payload.pop("stage")
-    comparison_payload["data"].pop("image_size")
+    comparison_payload["data"].pop(changed_data_field)
     matched_config_sha256 = canonical_sha256(comparison_payload)
     config_sha256 = canonical_sha256(config.to_dict())
 
@@ -1153,6 +1176,7 @@ def _g2_size_row(
     if observed_folds != set(G1_EXPECTED_FOLDS):
         raise ValueError(f"{experiment_id} registry snapshot has invalid folds")
     required_registry_values = {
+        "stage": expected_stage,
         "experiment_id": experiment_id,
         "model_family": "resnet18_small_stem",
         "benchmark_only": "false",
@@ -1217,12 +1241,40 @@ def _g2_size_row(
     pooled_macro_f1 = float(pooled["macro_f1"])
     if not np.isclose(pooled_macro_f1, float(manifest["pooled_macro_f1"])):
         raise ValueError(f"{experiment_id} pooled macro-F1 disagrees with its manifest")
+    pooled_per_class = pooled.get("per_class", {})
+    if set(pooled_per_class) != set(SEASON_LABELS):
+        raise ValueError(f"{experiment_id} requires all four Season class metrics")
+    per_class_rows = []
+    for label in SEASON_LABELS:
+        metrics = pooled_per_class[label]
+        required_metrics = {"precision", "recall", "f1", "support"}
+        if set(metrics) < required_metrics:
+            raise ValueError(f"{experiment_id} {label} metrics are incomplete")
+        scores = {
+            name: float(metrics[name]) for name in ("precision", "recall", "f1")
+        }
+        support = int(metrics["support"])
+        if (
+            not np.isfinite(np.fromiter(scores.values(), dtype=float)).all()
+            or any(value < 0.0 or value > 1.0 for value in scores.values())
+            or support < 0
+        ):
+            raise ValueError(f"{experiment_id} {label} metrics are invalid")
+        per_class_rows.append(
+            {
+                "variant": variant,
+                "label": label,
+                **scores,
+                "support": support,
+            }
+        )
     summary = macro_summary.iloc[0]
     row = {
         "variant": variant,
         "experiment_id": experiment_id,
-        "image_height": expected_pixels[0],
-        "image_width": expected_pixels[1],
+        "image_height": expected_image_size[0],
+        "image_width": expected_image_size[1],
+        "augmentation": expected_augmentation,
         "pooled_macro_f1": pooled_macro_f1,
         "fold_mean_macro_f1": float(summary["fold_mean"]),
         "fold_sd_macro_f1": float(summary["fold_sd"]),
@@ -1243,6 +1295,7 @@ def _g2_size_row(
     return (
         row,
         fold_detail,
+        pd.DataFrame(per_class_rows),
         coverage_sha256,
         matched_config_sha256,
         resolved_config_path,
@@ -1373,13 +1426,29 @@ def build_g2_input_size_evidence(
     matched_config_sha256: str | None = None
     resolved_configs: dict[str, Path] = {}
     for variant in ("P0", "P1"):
-        row, fold_detail, observed_coverage, observed_config, resolved_config = (
-            _g2_size_row(
+        (
+            row,
+            fold_detail,
+            _,
+            observed_coverage,
+            observed_config,
+            resolved_config,
+        ) = (
+            _g2_transform_row(
                 loaded[variant][0],
                 variant=variant,
                 config_path=config_paths[variant],
                 project_root=root,
                 expected_coverage_sha256=coverage_sha256,
+                expected_experiment_id=G2_SIZE_EXPERIMENTS[variant],
+                expected_stage={
+                    "P0": "g1_family_screen",
+                    "P1": "g2_input_size_ablation",
+                }[variant],
+                expected_image_size=G2_SIZE_EXPECTED_PIXELS[variant],
+                expected_augmentation="a0",
+                changed_data_field="image_size",
+                comparison_name="P0 and P1",
             )
         )
         coverage_sha256 = coverage_sha256 or observed_coverage
@@ -1392,7 +1461,7 @@ def build_g2_input_size_evidence(
         details[variant] = fold_detail
         resolved_configs[variant] = resolved_config
 
-    comparison = pd.DataFrame(rows)
+    comparison = pd.DataFrame(rows).drop(columns="augmentation")
     for column in (
         "split_sha256",
         "label_map_sha256",
@@ -1541,6 +1610,455 @@ def build_g2_input_size_evidence(
         "selected_experiment_id": selected_experiment_id,
         "input_manifests": input_manifests,
         "input_configs": input_configs,
+        "artifacts": artifact_manifest,
+    }
+    atomic_write_json(manifest_path, manifest)
+    manifest["manifest_path"] = str(manifest_path)
+    manifest["manifest_sha256"] = compute_sha256(manifest_path)
+    return manifest
+
+
+def _load_g2_augmentation_robustness(
+    path: str | Path,
+    *,
+    project_root: Path,
+) -> tuple[pd.DataFrame, Path, float]:
+    """Load matched A1-minus-A0 robustness deltas from one auditable CSV."""
+    resolved = _resolve_evidence_path(path, project_root=project_root)
+    if not resolved.is_file():
+        raise ValueError(f"robustness evidence does not exist: {resolved}")
+    evidence = pd.read_csv(resolved)
+    required = {"probe", "delta_a1_minus_a0_macro_f1"}
+    missing = sorted(required - set(evidence.columns))
+    if missing:
+        raise ValueError(f"robustness evidence is missing columns: {missing}")
+    if evidence.empty:
+        raise ValueError("robustness evidence must contain at least one probe")
+    probes = evidence["probe"].astype(str).str.strip()
+    if probes.eq("").any() or probes.duplicated().any():
+        raise ValueError("robustness probe names must be non-empty and unique")
+    deltas = pd.to_numeric(
+        evidence["delta_a1_minus_a0_macro_f1"], errors="raise"
+    )
+    if not np.isfinite(deltas.to_numpy(dtype=float)).all():
+        raise ValueError("robustness deltas must be finite")
+    evidence = evidence.copy()
+    evidence["probe"] = probes
+    evidence["delta_a1_minus_a0_macro_f1"] = deltas
+    worst_loss = max(0.0, float((-deltas).max()))
+    return evidence, resolved, worst_loss
+
+
+def _plot_g2_augmentation_ablation(
+    comparison: pd.DataFrame,
+    per_class: pd.DataFrame,
+    *,
+    minimum_gain: float,
+    decision_status: str,
+    selected_variant: str | None,
+    output_path: Path,
+) -> None:
+    """Render quality as points and signed per-class changes as zero-based bars."""
+    figure = Figure(figsize=(12, 5.5), constrained_layout=True)
+    FigureCanvasAgg(figure)
+    quality_axis, class_axis = figure.subplots(1, 2)
+    variants = comparison["variant"].tolist()
+    positions = np.arange(len(variants))
+    quality_values: list[float] = []
+    for column, label, colour, offset in (
+        ("pooled_macro_f1", "Pooled macro-F1", "#2563EB", -0.04),
+        ("spring_f1", "Spring F1", "#F59E0B", 0.04),
+    ):
+        values = comparison[column].to_numpy(dtype=float)
+        quality_values.extend(values.tolist())
+        metric_positions = positions + offset
+        quality_axis.plot(
+            metric_positions,
+            values,
+            marker="o",
+            markersize=8,
+            linewidth=1.8,
+            label=label,
+            color=colour,
+        )
+        for position, value in zip(metric_positions, values, strict=True):
+            quality_axis.annotate(
+                f"{value:.4f}",
+                (position, value),
+                xytext=(0, 8),
+                textcoords="offset points",
+                ha="center",
+                fontsize=8,
+            )
+    a0_score = float(
+        comparison.loc[comparison["variant"].eq("A0"), "pooled_macro_f1"].iloc[0]
+    )
+    threshold = a0_score + minimum_gain
+    quality_axis.axhline(
+        threshold,
+        color="#DC2626",
+        linestyle="--",
+        label=f"A1 quality threshold = A0 + {minimum_gain:.3f}",
+    )
+    quality_axis.set_xticks(positions, labels=variants)
+    quality_axis.set_xlim(-0.25, len(variants) - 0.75)
+    quality_axis.set_ylim(
+        max(0.0, min(quality_values + [threshold]) - 0.015),
+        min(1.0, max(quality_values + [threshold]) + 0.015),
+    )
+    decision_label = (
+        f"selected {selected_variant}"
+        if selected_variant is not None
+        else "pending robustness"
+    )
+    quality_axis.set_ylabel("OOF F1")
+    quality_axis.set_title(f"Pooled quality; {decision_status}: {decision_label}")
+    quality_axis.legend(loc="best", fontsize=8)
+    quality_axis.grid(axis="y", alpha=0.2)
+
+    deltas = per_class["delta_a1_minus_a0_f1"].to_numpy(dtype=float)
+    colours = ["#16A34A" if value >= 0.0 else "#DC2626" for value in deltas]
+    class_axis.bar(per_class["label"], deltas, color=colours)
+    class_axis.axhline(0.0, color="#0F172A", linewidth=1.0)
+    for position, value in enumerate(deltas):
+        class_axis.annotate(
+            f"{value:+.4f}",
+            (position, value),
+            xytext=(0, 5 if value >= 0.0 else -12),
+            textcoords="offset points",
+            ha="center",
+            fontsize=8,
+        )
+    class_axis.set_xlabel("Season class")
+    class_axis.set_ylabel("A1 - A0 F1")
+    class_axis.set_title("Pooled OOF per-class direction")
+    class_axis.grid(axis="y", alpha=0.2)
+    figure.suptitle(
+        "G2-A augmentation ablation: A0 geometry versus A1 mild colour jitter",
+        fontweight="bold",
+    )
+    buffer = io.BytesIO()
+    figure.savefig(buffer, format="png", dpi=180, bbox_inches="tight")
+    atomic_write_bytes(output_path, buffer.getvalue())
+    figure.clear()
+
+
+def build_g2_augmentation_evidence(
+    *,
+    a0_manifest_path: str | Path,
+    a1_manifest_path: str | Path,
+    a0_config_path: str | Path,
+    a1_config_path: str | Path,
+    project_root: str | Path = ROOT,
+    evidence_directory: str | Path = TASK2_EVIDENCE_DIR
+    / "g2_augmentation_ablation",
+    figure_directory: str | Path = TASK2_FIGURE_DIR,
+    minimum_gain: float = G2_AUGMENTATION_MINIMUM_GAIN,
+    maximum_robustness_loss: float = G2_AUGMENTATION_MAX_ROBUSTNESS_LOSS,
+    robustness_evidence_path: str | Path | None = None,
+) -> dict[str, Any]:
+    """Audit A0/A1 matching and apply the frozen quality-plus-robustness rule."""
+    if (
+        not np.isfinite(minimum_gain)
+        or not np.isfinite(maximum_robustness_loss)
+        or minimum_gain < 0.0
+        or maximum_robustness_loss < 0.0
+    ):
+        raise ValueError("augmentation thresholds must be non-negative")
+    root = Path(project_root)
+    manifest_paths = {"A0": a0_manifest_path, "A1": a1_manifest_path}
+    config_paths = {"A0": a0_config_path, "A1": a1_config_path}
+    loaded = {
+        variant: _load_verified_experiment_manifest(path, project_root=root)
+        for variant, path in manifest_paths.items()
+    }
+    rows: list[dict[str, Any]] = []
+    fold_details: dict[str, pd.DataFrame] = {}
+    class_details: dict[str, pd.DataFrame] = {}
+    coverage_sha256: str | None = None
+    matched_config_sha256: str | None = None
+    resolved_configs: dict[str, Path] = {}
+    for variant in ("A0", "A1"):
+        (
+            row,
+            fold_detail,
+            per_class,
+            observed_coverage,
+            observed_config,
+            resolved_config,
+        ) = _g2_transform_row(
+            loaded[variant][0],
+            variant=variant,
+            config_path=config_paths[variant],
+            project_root=root,
+            expected_coverage_sha256=coverage_sha256,
+            expected_experiment_id=G2_AUGMENTATION_EXPERIMENTS[variant],
+            expected_stage={
+                "A0": "g1_family_screen",
+                "A1": "g2_augmentation_ablation",
+            }[variant],
+            expected_image_size=G2_SIZE_EXPECTED_PIXELS["P0"],
+            expected_augmentation=G2_AUGMENTATION_VALUES[variant],
+            changed_data_field="augmentation",
+            comparison_name="A0 and A1",
+        )
+        coverage_sha256 = coverage_sha256 or observed_coverage
+        matched_config_sha256 = matched_config_sha256 or observed_config
+        if observed_config != matched_config_sha256:
+            raise ValueError(
+                "A0 and A1 configs differ outside experiment ID, stage, and augmentation"
+            )
+        rows.append(row)
+        fold_details[variant] = fold_detail
+        class_details[variant] = per_class
+        resolved_configs[variant] = resolved_config
+
+    comparison = pd.DataFrame(rows)
+    for column in (
+        "image_height",
+        "image_width",
+        "split_sha256",
+        "label_map_sha256",
+        "implementation_sha256",
+        "parameter_count",
+    ):
+        if comparison[column].nunique() != 1:
+            raise ValueError(f"A0 and A1 must share the same {column}")
+    if comparison["transform_id"].nunique() != 2:
+        raise ValueError("A0 and A1 must produce distinct transform IDs")
+
+    a0_score = float(
+        comparison.loc[comparison["variant"].eq("A0"), "pooled_macro_f1"].iloc[0]
+    )
+    a0_spring = float(
+        comparison.loc[comparison["variant"].eq("A0"), "spring_f1"].iloc[0]
+    )
+    comparison["delta_vs_a0_macro_f1"] = comparison["pooled_macro_f1"] - a0_score
+    comparison["delta_vs_a0_spring_f1"] = comparison["spring_f1"] - a0_spring
+    a0_runtime = float(
+        comparison.loc[
+            comparison["variant"].eq("A0"), "five_fold_runtime_minutes"
+        ].iloc[0]
+    )
+    a0_vram = float(
+        comparison.loc[comparison["variant"].eq("A0"), "peak_vram_mb"].iloc[0]
+    )
+    comparison["runtime_ratio_vs_a0"] = (
+        comparison["five_fold_runtime_minutes"] / a0_runtime
+    )
+    comparison["peak_vram_ratio_vs_a0"] = comparison["peak_vram_mb"] / a0_vram
+
+    paired_folds = fold_details["A0"].rename(
+        columns={
+            "run_id": "a0_run_id",
+            "macro_f1": "a0_macro_f1",
+            "runtime_seconds": "a0_runtime_seconds",
+            "peak_vram_mb": "a0_peak_vram_mb",
+            "best_epoch": "a0_best_epoch",
+        }
+    ).merge(
+        fold_details["A1"].rename(
+            columns={
+                "run_id": "a1_run_id",
+                "macro_f1": "a1_macro_f1",
+                "runtime_seconds": "a1_runtime_seconds",
+                "peak_vram_mb": "a1_peak_vram_mb",
+                "best_epoch": "a1_best_epoch",
+            }
+        ),
+        on="fold",
+        how="inner",
+        validate="one_to_one",
+    )
+    if len(paired_folds) != 5:
+        raise ValueError("A0/A1 paired comparison requires exactly five folds")
+    paired_folds["delta_a1_minus_a0_macro_f1"] = (
+        paired_folds["a1_macro_f1"] - paired_folds["a0_macro_f1"]
+    )
+    paired_folds["runtime_ratio_a1_vs_a0"] = (
+        paired_folds["a1_runtime_seconds"] / paired_folds["a0_runtime_seconds"]
+    )
+
+    a0_classes = class_details["A0"].drop(columns="variant").rename(
+        columns={name: f"a0_{name}" for name in ("precision", "recall", "f1", "support")}
+    )
+    a1_classes = class_details["A1"].drop(columns="variant").rename(
+        columns={name: f"a1_{name}" for name in ("precision", "recall", "f1", "support")}
+    )
+    per_class = a0_classes.merge(
+        a1_classes,
+        on="label",
+        how="inner",
+        validate="one_to_one",
+    )
+    if per_class["label"].tolist() != list(SEASON_LABELS):
+        raise ValueError("A0/A1 per-class evidence must follow canonical label order")
+    if not per_class["a0_support"].equals(per_class["a1_support"]):
+        raise ValueError("A0 and A1 per-class supports must match")
+    per_class.insert(1, "support", per_class.pop("a0_support"))
+    per_class = per_class.drop(columns="a1_support")
+    for metric in ("precision", "recall", "f1"):
+        per_class[f"delta_a1_minus_a0_{metric}"] = (
+            per_class[f"a1_{metric}"] - per_class[f"a0_{metric}"]
+        )
+
+    a1_delta = float(
+        comparison.loc[
+            comparison["variant"].eq("A1"), "delta_vs_a0_macro_f1"
+        ].iloc[0]
+    )
+    quality_gate_passed = bool(
+        a1_delta > minimum_gain
+        or np.isclose(a1_delta, minimum_gain, rtol=0.0, atol=1e-12)
+    )
+    robustness_frame: pd.DataFrame | None = None
+    resolved_robustness: Path | None = None
+    worst_robustness_loss: float | None = None
+    if robustness_evidence_path is not None:
+        robustness_frame, resolved_robustness, worst_robustness_loss = (
+            _load_g2_augmentation_robustness(
+                robustness_evidence_path,
+                project_root=root,
+            )
+        )
+
+    if not quality_gate_passed:
+        decision_status = "closed"
+        robustness_status = "not_required"
+        robustness_gate_passed: bool | None = None
+        selected_variant: str | None = "A0"
+    elif robustness_frame is None:
+        decision_status = "pending"
+        robustness_status = "required"
+        robustness_gate_passed = None
+        selected_variant = None
+    else:
+        decision_status = "closed"
+        robustness_status = "available"
+        robustness_gate_passed = bool(
+            worst_robustness_loss is not None
+            and (
+                worst_robustness_loss < maximum_robustness_loss
+                or np.isclose(
+                    worst_robustness_loss,
+                    maximum_robustness_loss,
+                    rtol=0.0,
+                    atol=1e-12,
+                )
+            )
+        )
+        selected_variant = "A1" if robustness_gate_passed else "A0"
+    selected_experiment_id = (
+        G2_AUGMENTATION_EXPERIMENTS[selected_variant]
+        if selected_variant is not None
+        else None
+    )
+    rejected_variant = {"A0": "A1", "A1": "A0", None: None}[selected_variant]
+    next_question = (
+        "Generate matched A0/A1 robustness probes before selecting A1."
+        if decision_status == "pending"
+        else (
+            f"Tune T0, T1, and T2 on {selected_variant} while holding the retained "
+            "transform, folds, seed, loss, and budget fixed."
+        )
+    )
+    decision = {
+        "schema_version": "1.0.0",
+        "gate": "G2-A",
+        "decision_status": decision_status,
+        "primary_metric": "pooled_five_fold_oof_macro_f1",
+        "selection_rule": (
+            f"Select A1 only when A1 minus A0 is at least {minimum_gain:.3f} "
+            "absolute macro-F1 and its worst matched robustness loss is no more "
+            f"than {maximum_robustness_loss:.3f}; otherwise retain A0."
+        ),
+        "minimum_gain": minimum_gain,
+        "maximum_robustness_loss": maximum_robustness_loss,
+        "observed_a1_minus_a0_macro_f1": a1_delta,
+        "quality_gate_passed": quality_gate_passed,
+        "robustness_evidence_status": robustness_status,
+        "observed_worst_robustness_loss": worst_robustness_loss,
+        "robustness_gate_passed": robustness_gate_passed,
+        "selected_variant": selected_variant,
+        "selected_experiment_id": selected_experiment_id,
+        "rejected_variant": rejected_variant,
+        "next_question": next_question,
+    }
+
+    evidence_root = Path(evidence_directory)
+    figure_root = Path(figure_directory)
+    common_root = Path(
+        os.path.commonpath([evidence_root.resolve(), figure_root.resolve()])
+    )
+    comparison_path = evidence_root / "comparison.csv"
+    paired_folds_path = evidence_root / "paired_fold_metrics.csv"
+    per_class_path = evidence_root / "per_class_comparison.csv"
+    decision_path = evidence_root / "decision.json"
+    figure_path = figure_root / "g2_augmentation_ablation.png"
+    manifest_path = evidence_root / "manifest.json"
+    atomic_write_csv(comparison_path, comparison)
+    atomic_write_csv(paired_folds_path, paired_folds.sort_values("fold"))
+    atomic_write_csv(per_class_path, per_class)
+    atomic_write_json(decision_path, decision)
+    _plot_g2_augmentation_ablation(
+        comparison,
+        per_class,
+        minimum_gain=minimum_gain,
+        decision_status=decision_status,
+        selected_variant=selected_variant,
+        output_path=figure_path,
+    )
+    artifacts = {
+        "comparison": comparison_path,
+        "paired_fold_metrics": paired_folds_path,
+        "per_class_comparison": per_class_path,
+        "decision": decision_path,
+        "figure": figure_path,
+    }
+    artifact_manifest = {
+        name: {
+            "path": _portable_artifact_path(path, fallback_root=common_root),
+            "sha256": compute_sha256(path),
+        }
+        for name, path in artifacts.items()
+    }
+    input_manifests = {
+        variant: {
+            "experiment_id": loaded[variant][0]["experiment_id"],
+            "path": _portable_artifact_path(loaded[variant][1], fallback_root=root),
+            "sha256": compute_sha256(loaded[variant][1]),
+        }
+        for variant in ("A0", "A1")
+    }
+    input_configs = {
+        variant: {
+            "path": _portable_artifact_path(resolved_configs[variant], fallback_root=root),
+            "sha256": compute_sha256(resolved_configs[variant]),
+        }
+        for variant in ("A0", "A1")
+    }
+    robustness_input = (
+        {
+            "path": _portable_artifact_path(resolved_robustness, fallback_root=root),
+            "sha256": compute_sha256(resolved_robustness),
+        }
+        if resolved_robustness is not None
+        else None
+    )
+    manifest = {
+        "schema_version": "1.0.0",
+        "gate": "G2-A",
+        "decision_status": decision_status,
+        "coverage_sha256": coverage_sha256,
+        "matched_config_sha256": matched_config_sha256,
+        "minimum_gain": minimum_gain,
+        "maximum_robustness_loss": maximum_robustness_loss,
+        "observed_a1_minus_a0_macro_f1": a1_delta,
+        "selected_variant": selected_variant,
+        "selected_experiment_id": selected_experiment_id,
+        "input_manifests": input_manifests,
+        "input_configs": input_configs,
+        "robustness_input": robustness_input,
         "artifacts": artifact_manifest,
     }
     atomic_write_json(manifest_path, manifest)
