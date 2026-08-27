@@ -1,0 +1,42 @@
+{
+  "data": {
+    "augmentation": "a0",
+    "batch_size": 32,
+    "image_size": [
+      80,
+      60
+    ],
+    "num_workers": 4,
+    "pin_memory": true,
+    "validation_batch_size": 128
+  },
+  "experiment_id": "g3-c1-t1-smallcnn",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "loss_id": "cross_entropy",
+  "method": "deep",
+  "model_family": "smallcnn",
+  "optimisation": {
+    "device": "auto",
+    "effective_batch_size": 128,
+    "epochs": 30,
+    "gradient_clip_norm": 1.0,
+    "learning_rate": 0.001,
+    "min_delta": 0.0001,
+    "patience": 5,
+    "use_amp": true,
+    "warmup_epochs": 1.0,
+    "weight_decay": 0.0001
+  },
+  "schema_version": "1.0.0",
+  "seeds": [
+    2753
+  ],
+  "stage": "g3_full_budget",
+  "target": "season"
+}

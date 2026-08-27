@@ -374,3 +374,72 @@ def test_repository_g2_tuning_changes_only_identity_stage_and_optimizer_pair() -
             candidate["optimisation"].pop("learning_rate")
             candidate["optimisation"].pop("weight_decay")
             assert candidate == reference
+
+
+def test_repository_g3_full_budget_preserves_selected_g2_settings() -> None:
+    decision = json.loads(
+        (ROOT / "results/evidence/task2/g2_compact_tuning/decision.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    expected = {
+        "C1": (
+            "g2_t1_c1_smallcnn.json",
+            "g3_c1_t1_smallcnn.json",
+            "g3-c1-t1-smallcnn",
+            "smallcnn",
+            1e-3,
+        ),
+        "C2": (
+            "g1_c2_resnet18.json",
+            "g3_c2_t0_resnet18.json",
+            "g3-c2-t0-resnet18",
+            "resnet18_small_stem",
+            3e-4,
+        ),
+    }
+
+    assert decision["families"]["C1"]["selected_tuning_id"] == "T1"
+    assert decision["families"]["C2"]["selected_tuning_id"] == "T0"
+    full_configs: list[ExperimentConfig] = []
+    for family, (
+        reference_name,
+        full_name,
+        experiment_id,
+        model_family,
+        learning_rate,
+    ) in expected.items():
+        reference = load_experiment_config(ROOT / "configs/task2" / reference_name)
+        full = load_experiment_config(ROOT / "configs/task2" / full_name)
+        full_configs.append(full)
+
+        assert decision["families"][family]["selected_experiment_id"] == (
+            reference.experiment_id
+        )
+        assert full.experiment_id == experiment_id
+        assert full.stage == "g3_full_budget"
+        assert full.model_family == model_family
+        assert full.optimisation.learning_rate == learning_rate
+        assert full.optimisation.weight_decay == 1e-4
+        assert full.optimisation.epochs == 30
+        assert full.optimisation.patience == 5
+        assert full.folds == (0, 1, 2, 3, 4)
+        assert full.seeds == (2753,)
+        assert full.data.image_size == (80, 60)
+        assert full.data.augmentation == "a0"
+
+        reference_matched = reference.to_dict()
+        full_matched = full.to_dict()
+        for config in (reference_matched, full_matched):
+            config.pop("experiment_id")
+            config.pop("stage")
+            config["optimisation"].pop("epochs")
+            config["optimisation"].pop("patience")
+        assert full_matched == reference_matched
+
+    c1_matched, c2_matched = (config.to_dict() for config in full_configs)
+    for config in (c1_matched, c2_matched):
+        config.pop("experiment_id")
+        config.pop("model_family")
+        config["optimisation"].pop("learning_rate")
+    assert c1_matched == c2_matched

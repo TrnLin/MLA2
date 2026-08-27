@@ -29,3 +29,9 @@ The audited G2-A decision retains P0/A0. Compact tuning reuses the G1 C1 and C2 
 T0 (`3e-4`, `1e-4`). The four `g2_t*.json` declarations add only T1 (`1e-3`, `1e-4`)
 and T2 (`3e-4`, `1e-3`) for those two finalists. They keep folds, seed, transforms,
 loss, batch sizes, and the eight-epoch budget fixed. Do not rerun either T0 reference.
+
+The audited G2-T decision selects C1-T1 and retains C2-T0. The two `g3_*.json`
+declarations preserve those family-specific optimiser pairs and every shared P0/A0 data,
+loss, fold, seed, batch, AMP, clipping, and warm-up choice. They change only experiment
+identity, stage, maximum epochs from 8 to 30, and patience from 8 to 5. This is the
+matched full-budget finalist comparison; do not expand the architecture or tuning grid.
