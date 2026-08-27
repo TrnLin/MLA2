@@ -55,10 +55,14 @@ from fashion.train.reproducibility import seed_everything
 I1_EXPERIMENT_ID = "g4-i1-effective-number-c1"
 I1_STAGE = "g4_i1_class_balanced"
 
-# Keep the legacy deep list byte-for-byte stable. A test checks this prefix against
-# experiments._implementation_paths("deep") without editing that cache-critical file.
+# Mirror the shared deep path list exactly, then add only I1-specific implementation.
+# The prefix test prevents the two cache contracts from silently drifting apart.
 I1_IMPLEMENTATION_PATHS = (
     "src/fashion/task2/experiments.py",
+    "src/fashion/config.py",
+    "src/fashion/data/hashing.py",
+    "src/fashion/data/metadata.py",
+    "src/fashion/data/splits.py",
     "src/fashion/train/artifacts.py",
     "src/fashion/train/cache.py",
     "src/fashion/train/metrics.py",

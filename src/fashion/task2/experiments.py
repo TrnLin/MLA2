@@ -240,6 +240,10 @@ def load_experiment_config(path: str | Path) -> ExperimentConfig:
 def _implementation_paths(method: ExperimentMethod) -> tuple[str, ...]:
     common = (
         "src/fashion/task2/experiments.py",
+        "src/fashion/config.py",
+        "src/fashion/data/hashing.py",
+        "src/fashion/data/metadata.py",
+        "src/fashion/data/splits.py",
         "src/fashion/train/artifacts.py",
         "src/fashion/train/cache.py",
         "src/fashion/train/metrics.py",
