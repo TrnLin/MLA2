@@ -67,8 +67,11 @@ EXPERIMENT_REGISTRY_COLUMNS = (
     "runtime_seconds",
     "peak_vram_mb",
     "parameter_count",
+    "checkpoint_path",
     "checkpoint_sha256",
+    "prediction_path",
     "prediction_sha256",
+    "history_path",
     "history_sha256",
     "status",
 )
