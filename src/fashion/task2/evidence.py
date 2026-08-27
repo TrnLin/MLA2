@@ -2483,12 +2483,16 @@ def _plot_g2_tuning_learning_curves(
     loss_axis.legend(loc="best")
     loss_axis.grid(alpha=0.2)
 
+    score_lowers: list[float] = []
+    score_uppers: list[float] = []
     for metric, label, colour, linestyle in (
         ("validation_accuracy", "Validation accuracy", "#16A34A", "-"),
         ("validation_macro_f1", "Validation macro-F1", "#7C3AED", "--"),
     ):
         mean = selected[f"{metric}_mean"].to_numpy(dtype=float)
         sd = selected[f"{metric}_sd"].to_numpy(dtype=float)
+        score_lowers.extend((mean - sd).tolist())
+        score_uppers.extend((mean + sd).tolist())
         score_axis.plot(
             epochs,
             mean,
@@ -2508,12 +2512,17 @@ def _plot_g2_tuning_learning_curves(
         )
     score_axis.set_xlabel("Epoch")
     score_axis.set_ylabel("Validation score")
-    score_axis.set_ylim(0.0, 1.0)
+    score_span = max(score_uppers) - min(score_lowers)
+    score_padding = max(0.02, score_span * 0.08)
+    score_axis.set_ylim(
+        max(0.0, min(score_lowers) - score_padding),
+        min(1.0, max(score_uppers) + score_padding),
+    )
     score_axis.set_title("Accuracy versus the selection metric")
     score_axis.legend(loc="best")
     score_axis.grid(alpha=0.2)
     figure.suptitle(
-        f"{family} selected {tuning_id}: five-fold mean +/- SD ({experiment_id})",
+        f"{family} selected {tuning_id}: five-fold mean ± SD ({experiment_id})",
         fontweight="bold",
     )
     buffer = io.BytesIO()
