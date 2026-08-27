@@ -3095,14 +3095,19 @@ def build_g3_full_budget_evidence(
     ):
         if leaderboard[column].nunique() != 1:
             raise ValueError(f"both G3 finalists must share the same {column}")
-    leaderboard["rank"] = leaderboard["pooled_macro_f1"].rank(
-        method="first", ascending=False
-    ).astype(int)
+    leaderboard = leaderboard.sort_values(
+        [
+            "pooled_macro_f1",
+            "parameter_count",
+            "five_fold_runtime_minutes",
+            "family",
+        ],
+        ascending=[False, True, True, True],
+        kind="mergesort",
+    ).reset_index(drop=True)
+    leaderboard["rank"] = np.arange(1, len(leaderboard) + 1)
+    provisional = leaderboard.iloc[0]
     leaderboard = leaderboard.sort_values("family").reset_index(drop=True)
-    provisional = leaderboard.sort_values(
-        ["pooled_macro_f1", "parameter_count", "five_fold_runtime_minutes"],
-        ascending=[False, True, True],
-    ).iloc[0]
     leaderboard["provisional_reference"] = leaderboard["family"].eq(
         provisional["family"]
     )

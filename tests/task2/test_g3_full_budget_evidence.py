@@ -463,4 +463,4 @@ def test_g3_exact_tie_uses_cost_tiebreak_not_manifest_order(tmp_path: Path) -> N
     leaderboard = pd.read_csv(evidence_directory / "leaderboard.csv")
 
     assert leaderboard.set_index("family")["rank"].to_dict() == {"C1": 1, "C2": 2}
-    assert manifest["provisional_reference_family"] == "C1"
+    assert manifest["provisional_reference_experiment_id"] == "g3-c1-t1-smallcnn"
