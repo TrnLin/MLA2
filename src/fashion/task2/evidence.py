@@ -111,6 +111,57 @@ G2_AUGMENTATION_VALUES = {
 }
 G2_AUGMENTATION_MINIMUM_GAIN = 0.003
 G2_AUGMENTATION_MAX_ROBUSTNESS_LOSS = 0.010
+G2_TUNING_MINIMUM_GAIN = 0.003
+G2_TUNING_SPECS = {
+    "g1-c1-smallcnn": {
+        "family": "C1",
+        "tuning_id": "T0",
+        "model_family": "smallcnn",
+        "stage": "g1_family_screen",
+        "learning_rate": 3e-4,
+        "weight_decay": 1e-4,
+    },
+    "g2-t1-c1-smallcnn": {
+        "family": "C1",
+        "tuning_id": "T1",
+        "model_family": "smallcnn",
+        "stage": "g2_compact_tuning",
+        "learning_rate": 1e-3,
+        "weight_decay": 1e-4,
+    },
+    "g2-t2-c1-smallcnn": {
+        "family": "C1",
+        "tuning_id": "T2",
+        "model_family": "smallcnn",
+        "stage": "g2_compact_tuning",
+        "learning_rate": 3e-4,
+        "weight_decay": 1e-3,
+    },
+    "g1-c2-resnet18": {
+        "family": "C2",
+        "tuning_id": "T0",
+        "model_family": "resnet18_small_stem",
+        "stage": "g1_family_screen",
+        "learning_rate": 3e-4,
+        "weight_decay": 1e-4,
+    },
+    "g2-t1-c2-resnet18": {
+        "family": "C2",
+        "tuning_id": "T1",
+        "model_family": "resnet18_small_stem",
+        "stage": "g2_compact_tuning",
+        "learning_rate": 1e-3,
+        "weight_decay": 1e-4,
+    },
+    "g2-t2-c2-resnet18": {
+        "family": "C2",
+        "tuning_id": "T2",
+        "model_family": "resnet18_small_stem",
+        "stage": "g2_compact_tuning",
+        "learning_rate": 3e-4,
+        "weight_decay": 1e-3,
+    },
+}
 
 
 def build_file_impact_edges() -> pd.DataFrame:
@@ -2061,6 +2112,734 @@ def build_g2_augmentation_evidence(
         "robustness_input": robustness_input,
         "artifacts": artifact_manifest,
     }
+    atomic_write_json(manifest_path, manifest)
+    manifest["manifest_path"] = str(manifest_path)
+    manifest["manifest_sha256"] = compute_sha256(manifest_path)
+    return manifest
+
+
+def _g2_tuning_row(
+    manifest: dict[str, Any],
+    *,
+    config_path: str | Path,
+    project_root: Path,
+    expected_coverage_sha256: str | None,
+) -> tuple[
+    dict[str, Any],
+    pd.DataFrame,
+    pd.DataFrame,
+    pd.DataFrame,
+    str,
+    str,
+    Path,
+]:
+    """Verify one tuning experiment, including every hash-linked epoch history."""
+    from fashion.task2.experiments import load_experiment_config
+
+    experiment_id = str(manifest.get("experiment_id", ""))
+    if experiment_id not in G2_TUNING_SPECS:
+        raise ValueError(f"unexpected G2 tuning experiment: {experiment_id}")
+    spec = G2_TUNING_SPECS[experiment_id]
+    if tuple(manifest.get("folds", ())) != G1_EXPECTED_FOLDS:
+        raise ValueError(f"{experiment_id} must contain canonical folds 0-4")
+    if int(manifest.get("seed", -1)) != 2753:
+        raise ValueError(f"{experiment_id} must use the primary seed 2753")
+
+    coverage = manifest.get("coverage", {})
+    if not (
+        coverage.get("row_count")
+        == coverage.get("unique_id_count")
+        == coverage.get("expected_row_count")
+    ):
+        raise ValueError(f"{experiment_id} has incomplete OOF coverage")
+    if int(coverage.get("protected_id_count", -1)) != 0:
+        raise ValueError(f"{experiment_id} includes protected IDs")
+    coverage_sha256 = canonical_sha256(
+        {
+            "row_count": coverage.get("row_count"),
+            "id_set_sha256": coverage.get("id_set_sha256"),
+            "labels": coverage.get("labels"),
+        }
+    )
+    if expected_coverage_sha256 and coverage_sha256 != expected_coverage_sha256:
+        raise ValueError("tuning manifests do not cover the same OOF products and labels")
+
+    resolved_config = _resolve_evidence_path(config_path, project_root=project_root)
+    config = load_experiment_config(resolved_config)
+    if config.experiment_id != experiment_id:
+        raise ValueError(f"{experiment_id} config and manifest IDs do not match")
+    expected_fields = {
+        "model_family": spec["model_family"],
+        "stage": spec["stage"],
+        "learning_rate": spec["learning_rate"],
+        "weight_decay": spec["weight_decay"],
+    }
+    observed_fields = {
+        "model_family": config.model_family,
+        "stage": config.stage,
+        "learning_rate": config.optimisation.learning_rate,
+        "weight_decay": config.optimisation.weight_decay,
+    }
+    mismatches = [
+        name
+        for name, expected in expected_fields.items()
+        if observed_fields[name] != expected
+    ]
+    if mismatches:
+        raise ValueError(f"{experiment_id} has invalid tuning fields: {mismatches}")
+    if (
+        config.method != "deep"
+        or config.folds != G1_EXPECTED_FOLDS
+        or config.seeds != (2753,)
+        or config.loss_id != "cross_entropy"
+        or config.data.image_size != (80, 60)
+        or config.data.augmentation != "a0"
+        or config.optimisation.epochs != 8
+        or config.optimisation.patience != 8
+    ):
+        raise ValueError(f"{experiment_id} violates the frozen tuning protocol")
+    matched_payload = config.to_dict()
+    matched_payload.pop("experiment_id")
+    matched_payload.pop("stage")
+    matched_payload.pop("model_family")
+    matched_payload["optimisation"].pop("learning_rate")
+    matched_payload["optimisation"].pop("weight_decay")
+    matched_config_sha256 = canonical_sha256(matched_payload)
+    config_sha256 = canonical_sha256(config.to_dict())
+
+    pooled_path = _verified_manifest_artifact(
+        manifest, "pooled_metrics", project_root=project_root
+    )
+    fold_summary_path = _verified_manifest_artifact(
+        manifest, "fold_summary", project_root=project_root
+    )
+    fold_metrics_path = _verified_manifest_artifact(
+        manifest, "fold_metrics", project_root=project_root
+    )
+    registry_path = _verified_manifest_artifact(
+        manifest, "registry_snapshot", project_root=project_root
+    )
+    with pooled_path.open(encoding="utf-8") as handle:
+        pooled = json.load(handle)
+    fold_summary = pd.read_csv(fold_summary_path)
+    fold_metrics = pd.read_csv(fold_metrics_path, dtype={"run_id": str})
+    registry = pd.read_csv(registry_path, dtype=str, keep_default_na=False)
+
+    run_ids = [str(run_id) for run_id in manifest.get("run_ids", ())]
+    if len(registry) != 5 or set(registry["run_id"]) != set(run_ids):
+        raise ValueError(f"{experiment_id} registry snapshot must match five run IDs")
+    observed_folds = set(pd.to_numeric(registry["fold"], errors="raise").astype(int))
+    if observed_folds != set(G1_EXPECTED_FOLDS):
+        raise ValueError(f"{experiment_id} registry snapshot has invalid folds")
+    required_registry_values = {
+        "stage": str(spec["stage"]),
+        "experiment_id": experiment_id,
+        "model_family": str(spec["model_family"]),
+        "benchmark_only": "false",
+        "final_eligible": "true",
+        "scratch": "true",
+        "seed": "2753",
+        "loss_id": "cross_entropy",
+        "git_dirty": "false",
+        "status": "completed",
+    }
+    for column, expected in required_registry_values.items():
+        observed = set(registry[column].astype(str).str.lower())
+        if observed != {expected.lower()}:
+            raise ValueError(
+                f"{experiment_id} registry {column} must be {expected}: {observed}"
+            )
+    unique_registry_fields: dict[str, str] = {}
+    for column in (
+        "config_sha256",
+        "split_sha256",
+        "label_map_sha256",
+        "implementation_sha256",
+        "transform_id",
+        "parameter_count",
+    ):
+        observed = set(registry[column].astype(str))
+        if len(observed) != 1:
+            raise ValueError(f"{experiment_id} changed {column} across folds")
+        unique_registry_fields[column] = observed.pop()
+    if unique_registry_fields["config_sha256"] != config_sha256:
+        raise ValueError(f"{experiment_id} config hash does not match its registry rows")
+
+    if len(fold_metrics) != 5 or set(fold_metrics["run_id"].astype(str)) != set(run_ids):
+        raise ValueError(f"{experiment_id} fold metrics must match five run IDs")
+    fold_metrics["fold"] = pd.to_numeric(
+        fold_metrics["fold"], errors="raise"
+    ).astype(int)
+    if set(fold_metrics["fold"]) != set(G1_EXPECTED_FOLDS):
+        raise ValueError(f"{experiment_id} fold metrics have invalid folds")
+    registry_cost = registry.loc[
+        :,
+        [
+            "run_id",
+            "runtime_seconds",
+            "peak_vram_mb",
+            "best_epoch",
+            "epochs_completed",
+            "primary_metric_value",
+        ],
+    ].copy()
+    for column in (
+        "runtime_seconds",
+        "peak_vram_mb",
+        "best_epoch",
+        "epochs_completed",
+        "primary_metric_value",
+    ):
+        registry_cost[column] = pd.to_numeric(registry_cost[column], errors="raise")
+    fold_detail = fold_metrics.loc[:, ["run_id", "fold", "macro_f1"]].merge(
+        registry_cost,
+        on="run_id",
+        how="inner",
+        validate="one_to_one",
+    )
+    fold_detail["macro_f1"] = pd.to_numeric(
+        fold_detail["macro_f1"], errors="raise"
+    )
+    if not np.allclose(
+        fold_detail["macro_f1"],
+        fold_detail["primary_metric_value"],
+        rtol=0.0,
+        atol=1e-12,
+    ):
+        raise ValueError(f"{experiment_id} fold metrics disagree with registry values")
+
+    history_rows: list[dict[str, Any]] = []
+    registry_by_run = registry.set_index("run_id", drop=False)
+    history_fields = (
+        "epoch",
+        "learning_rate",
+        "train_loss",
+        "validation_loss",
+        "validation_accuracy",
+        "validation_macro_f1",
+    )
+    for run_id in run_ids:
+        registry_row = registry_by_run.loc[run_id]
+        history_path = _resolve_evidence_path(
+            registry_row["history_path"], project_root=project_root
+        )
+        if not history_path.is_file():
+            raise ValueError(f"history artifact does not exist: {history_path}")
+        if compute_sha256(history_path) != registry_row["history_sha256"]:
+            raise ValueError(f"history artifact hash does not match for {run_id}")
+        with history_path.open(encoding="utf-8") as handle:
+            history = json.load(handle)
+        expected_identity = {
+            "run_id": run_id,
+            "experiment_id": experiment_id,
+            "fold": int(registry_row["fold"]),
+            "seed": 2753,
+        }
+        if any(history.get(name) != value for name, value in expected_identity.items()):
+            raise ValueError(f"history identity does not match for {run_id}")
+        if canonical_sha256(history.get("config", {})) != config_sha256:
+            raise ValueError(f"history config does not match for {run_id}")
+        epochs = history.get("epoch_history", [])
+        if not isinstance(epochs, list) or not epochs:
+            raise ValueError(f"history epochs are missing for {run_id}")
+        if len(epochs) != int(registry_row["epochs_completed"]):
+            raise ValueError(f"history epoch count does not match for {run_id}")
+        if [entry.get("epoch") for entry in epochs] != list(range(1, len(epochs) + 1)):
+            raise ValueError(f"history epochs are not contiguous for {run_id}")
+        for entry in epochs:
+            missing = set(history_fields) - set(entry)
+            if missing:
+                raise ValueError(f"history is missing {sorted(missing)} for {run_id}")
+            numeric = np.asarray([entry[name] for name in history_fields], dtype=float)
+            if not np.isfinite(numeric).all():
+                raise ValueError(f"history contains non-finite values for {run_id}")
+            history_rows.append(
+                {
+                    "family": spec["family"],
+                    "tuning_id": spec["tuning_id"],
+                    "experiment_id": experiment_id,
+                    "run_id": run_id,
+                    "fold": int(registry_row["fold"]),
+                    "history_sha256": registry_row["history_sha256"],
+                    **{name: entry[name] for name in history_fields},
+                }
+            )
+        best_history_score = max(
+            float(entry["validation_macro_f1"]) for entry in epochs
+        )
+        if not np.isclose(
+            best_history_score,
+            float(registry_row["primary_metric_value"]),
+            rtol=0.0,
+            atol=1e-12,
+        ):
+            raise ValueError(f"history best metric does not match for {run_id}")
+
+    macro_summary = fold_summary.loc[fold_summary["metric"].eq("macro_f1")]
+    if len(macro_summary) != 1:
+        raise ValueError(f"{experiment_id} requires one macro-F1 summary row")
+    pooled_macro_f1 = float(pooled["macro_f1"])
+    if not np.isclose(pooled_macro_f1, float(manifest["pooled_macro_f1"])):
+        raise ValueError(f"{experiment_id} pooled macro-F1 disagrees with its manifest")
+    pooled_per_class = pooled.get("per_class", {})
+    if set(pooled_per_class) != set(SEASON_LABELS):
+        raise ValueError(f"{experiment_id} requires all four Season class metrics")
+    per_class_rows = []
+    for label in SEASON_LABELS:
+        metrics = pooled_per_class[label]
+        per_class_rows.append(
+            {
+                "family": spec["family"],
+                "tuning_id": spec["tuning_id"],
+                "experiment_id": experiment_id,
+                "label": label,
+                **{
+                    name: metrics[name]
+                    for name in ("precision", "recall", "f1", "support")
+                },
+            }
+        )
+    summary = macro_summary.iloc[0]
+    row = {
+        "family": spec["family"],
+        "tuning_id": spec["tuning_id"],
+        "experiment_id": experiment_id,
+        "model_family": spec["model_family"],
+        "learning_rate": config.optimisation.learning_rate,
+        "weight_decay": config.optimisation.weight_decay,
+        "pooled_macro_f1": pooled_macro_f1,
+        "fold_mean_macro_f1": float(summary["fold_mean"]),
+        "fold_sd_macro_f1": float(summary["fold_sd"]),
+        "spring_f1": float(pooled["per_class"]["Spring"]["f1"]),
+        "five_fold_runtime_minutes": float(
+            pd.to_numeric(registry["runtime_seconds"], errors="raise").sum() / 60.0
+        ),
+        "peak_vram_mb": float(
+            pd.to_numeric(registry["peak_vram_mb"], errors="raise").max()
+        ),
+        "parameter_count": int(unique_registry_fields["parameter_count"]),
+        "config_sha256": config_sha256,
+        "split_sha256": unique_registry_fields["split_sha256"],
+        "label_map_sha256": unique_registry_fields["label_map_sha256"],
+        "implementation_sha256": unique_registry_fields["implementation_sha256"],
+        "transform_id": unique_registry_fields["transform_id"],
+    }
+    fold_detail.insert(0, "experiment_id", experiment_id)
+    fold_detail.insert(0, "tuning_id", spec["tuning_id"])
+    fold_detail.insert(0, "family", spec["family"])
+    return (
+        row,
+        fold_detail,
+        pd.DataFrame(per_class_rows),
+        pd.DataFrame(history_rows),
+        coverage_sha256,
+        matched_config_sha256,
+        resolved_config,
+    )
+
+
+def _plot_g2_tuning_learning_curves(
+    summary: pd.DataFrame,
+    *,
+    family: str,
+    tuning_id: str,
+    experiment_id: str,
+    output_path: Path,
+) -> None:
+    """Plot the selected five-fold mean curves in the teacher's two-panel form."""
+    selected = summary.loc[
+        summary["family"].eq(family) & summary["tuning_id"].eq(tuning_id)
+    ].sort_values("epoch")
+    if selected.empty:
+        raise ValueError(f"learning-curve summary is missing {family} {tuning_id}")
+    epochs = selected["epoch"].to_numpy(dtype=float)
+    figure = Figure(figsize=(12, 5.2), constrained_layout=True)
+    FigureCanvasAgg(figure)
+    loss_axis, score_axis = figure.subplots(1, 2)
+
+    for metric, label, colour, linestyle in (
+        ("train_loss", "Train loss", "#2563EB", "-"),
+        ("validation_loss", "Validation loss", "#F59E0B", "--"),
+    ):
+        mean = selected[f"{metric}_mean"].to_numpy(dtype=float)
+        sd = selected[f"{metric}_sd"].to_numpy(dtype=float)
+        loss_axis.plot(
+            epochs,
+            mean,
+            color=colour,
+            linestyle=linestyle,
+            linewidth=2.0,
+            marker="o",
+            markersize=3.5,
+            label=label,
+        )
+        loss_axis.fill_between(epochs, mean - sd, mean + sd, color=colour, alpha=0.13)
+    loss_axis.set_xlabel("Epoch")
+    loss_axis.set_ylabel("Cross-entropy loss")
+    loss_axis.set_title("Loss learning curves")
+    loss_axis.legend(loc="best")
+    loss_axis.grid(alpha=0.2)
+
+    for metric, label, colour, linestyle in (
+        ("validation_accuracy", "Validation accuracy", "#16A34A", "-"),
+        ("validation_macro_f1", "Validation macro-F1", "#7C3AED", "--"),
+    ):
+        mean = selected[f"{metric}_mean"].to_numpy(dtype=float)
+        sd = selected[f"{metric}_sd"].to_numpy(dtype=float)
+        score_axis.plot(
+            epochs,
+            mean,
+            color=colour,
+            linestyle=linestyle,
+            linewidth=2.0,
+            marker="o",
+            markersize=3.5,
+            label=label,
+        )
+        score_axis.fill_between(
+            epochs,
+            np.clip(mean - sd, 0.0, 1.0),
+            np.clip(mean + sd, 0.0, 1.0),
+            color=colour,
+            alpha=0.13,
+        )
+    score_axis.set_xlabel("Epoch")
+    score_axis.set_ylabel("Validation score")
+    score_axis.set_ylim(0.0, 1.0)
+    score_axis.set_title("Accuracy versus the selection metric")
+    score_axis.legend(loc="best")
+    score_axis.grid(alpha=0.2)
+    figure.suptitle(
+        f"{family} selected {tuning_id}: five-fold mean +/- SD ({experiment_id})",
+        fontweight="bold",
+    )
+    buffer = io.BytesIO()
+    figure.savefig(buffer, format="png", dpi=180, bbox_inches="tight")
+    atomic_write_bytes(output_path, buffer.getvalue())
+    figure.clear()
+
+
+def build_g2_tuning_evidence(
+    *,
+    experiment_manifest_paths: Sequence[str | Path],
+    experiment_config_paths: Sequence[str | Path],
+    augmentation_decision_path: str | Path = TASK2_EVIDENCE_DIR
+    / "g2_augmentation_ablation/decision.json",
+    project_root: str | Path = ROOT,
+    evidence_directory: str | Path = TASK2_EVIDENCE_DIR / "g2_compact_tuning",
+    figure_directory: str | Path = TASK2_FIGURE_DIR,
+    minimum_gain: float = G2_TUNING_MINIMUM_GAIN,
+) -> dict[str, Any]:
+    """Audit T0/T1/T2 for C1/C2, select by pooled OOF, and plot learning curves."""
+    if not np.isfinite(minimum_gain) or minimum_gain < 0.0:
+        raise ValueError("tuning minimum_gain must be non-negative")
+    root = Path(project_root)
+    resolved_augmentation_decision = _resolve_evidence_path(
+        augmentation_decision_path, project_root=root
+    )
+    with resolved_augmentation_decision.open(encoding="utf-8") as handle:
+        augmentation_decision = json.load(handle)
+    if not (
+        augmentation_decision.get("decision_status") == "closed"
+        and augmentation_decision.get("selected_variant") == "A0"
+    ):
+        raise ValueError("compact tuning requires the closed A0 augmentation decision")
+
+    loaded_manifests = [
+        _load_verified_experiment_manifest(path, project_root=root)
+        for path in experiment_manifest_paths
+    ]
+    manifest_ids = [str(manifest.get("experiment_id", "")) for manifest, _ in loaded_manifests]
+    if len(manifest_ids) != len(set(manifest_ids)):
+        raise ValueError("tuning experiment manifests must be unique")
+    if set(manifest_ids) != set(G2_TUNING_SPECS):
+        raise ValueError("compact tuning requires exactly T0, T1, and T2 for C1 and C2")
+
+    from fashion.task2.experiments import load_experiment_config
+
+    resolved_configs = [
+        _resolve_evidence_path(path, project_root=root)
+        for path in experiment_config_paths
+    ]
+    configs_by_id = {
+        load_experiment_config(path).experiment_id: path for path in resolved_configs
+    }
+    if len(configs_by_id) != len(resolved_configs):
+        raise ValueError("tuning experiment configs must be unique")
+    if set(configs_by_id) != set(G2_TUNING_SPECS):
+        raise ValueError("compact tuning configs must match the six expected experiments")
+
+    rows: list[dict[str, Any]] = []
+    fold_frames: list[pd.DataFrame] = []
+    class_frames: list[pd.DataFrame] = []
+    history_frames: list[pd.DataFrame] = []
+    coverage_sha256: str | None = None
+    matched_config_sha256: str | None = None
+    for manifest, _ in loaded_manifests:
+        experiment_id = str(manifest["experiment_id"])
+        (
+            row,
+            folds,
+            classes,
+            histories,
+            observed_coverage,
+            observed_config,
+            _,
+        ) = _g2_tuning_row(
+            manifest,
+            config_path=configs_by_id[experiment_id],
+            project_root=root,
+            expected_coverage_sha256=coverage_sha256,
+        )
+        coverage_sha256 = coverage_sha256 or observed_coverage
+        matched_config_sha256 = matched_config_sha256 or observed_config
+        if observed_config != matched_config_sha256:
+            raise ValueError(
+                "tuning configs differ outside identity, stage, family, and LR/WD"
+            )
+        rows.append(row)
+        fold_frames.append(folds)
+        class_frames.append(classes)
+        history_frames.append(histories)
+
+    leaderboard = pd.DataFrame(rows)
+    for column in (
+        "split_sha256",
+        "label_map_sha256",
+        "implementation_sha256",
+        "transform_id",
+    ):
+        if leaderboard[column].nunique() != 1:
+            raise ValueError(f"all tuning runs must share the same {column}")
+    for family, frame in leaderboard.groupby("family"):
+        if frame["parameter_count"].nunique() != 1:
+            raise ValueError(f"{family} changed parameter count during tuning")
+
+    tuning_order = {"T0": 0, "T1": 1, "T2": 2}
+    leaderboard["_family_order"] = leaderboard["family"].map({"C1": 0, "C2": 1})
+    leaderboard["_tuning_order"] = leaderboard["tuning_id"].map(tuning_order)
+    leaderboard = leaderboard.sort_values(
+        ["_family_order", "_tuning_order"]
+    ).reset_index(drop=True)
+    leaderboard["rank_within_family"] = leaderboard.groupby("family")[
+        "pooled_macro_f1"
+    ].rank(method="first", ascending=False).astype(int)
+    leaderboard["delta_vs_t0_macro_f1"] = 0.0
+    leaderboard["eligible_to_replace_t0"] = False
+    leaderboard["selected"] = False
+    family_decisions: dict[str, Any] = {}
+    for family in ("C1", "C2"):
+        family_mask = leaderboard["family"].eq(family)
+        family_rows = leaderboard.loc[family_mask]
+        t0_score = float(
+            family_rows.loc[family_rows["tuning_id"].eq("T0"), "pooled_macro_f1"].iloc[0]
+        )
+        deltas = family_rows["pooled_macro_f1"] - t0_score
+        leaderboard.loc[family_mask, "delta_vs_t0_macro_f1"] = deltas
+        eligible = (deltas > minimum_gain) | np.isclose(
+            deltas,
+            minimum_gain,
+            rtol=0.0,
+            atol=1e-12,
+        )
+        leaderboard.loc[family_mask, "eligible_to_replace_t0"] = eligible
+        best = family_rows.sort_values(
+            ["pooled_macro_f1", "_tuning_order"], ascending=[False, True]
+        ).iloc[0]
+        best_gain = float(best["pooled_macro_f1"] - t0_score)
+        gain_passed = bool(
+            best_gain > minimum_gain
+            or np.isclose(best_gain, minimum_gain, rtol=0.0, atol=1e-12)
+        )
+        selected_tuning_id = (
+            str(best["tuning_id"])
+            if str(best["tuning_id"]) != "T0" and gain_passed
+            else "T0"
+        )
+        selected_row = family_rows.loc[
+            family_rows["tuning_id"].eq(selected_tuning_id)
+        ].iloc[0]
+        leaderboard.loc[
+            family_mask & leaderboard["tuning_id"].eq(selected_tuning_id), "selected"
+        ] = True
+        family_decisions[family] = {
+            "best_observed_tuning_id": str(best["tuning_id"]),
+            "best_observed_experiment_id": str(best["experiment_id"]),
+            "best_observed_macro_f1": float(best["pooled_macro_f1"]),
+            "t0_macro_f1": t0_score,
+            "best_observed_gain_over_t0": best_gain,
+            "minimum_gain": minimum_gain,
+            "gain_gate_passed": gain_passed,
+            "selected_tuning_id": selected_tuning_id,
+            "selected_experiment_id": str(selected_row["experiment_id"]),
+            "selected_learning_rate": float(selected_row["learning_rate"]),
+            "selected_weight_decay": float(selected_row["weight_decay"]),
+            "selected_macro_f1": float(selected_row["pooled_macro_f1"]),
+        }
+    leaderboard = leaderboard.drop(columns=["_family_order", "_tuning_order"])
+
+    fold_metrics = pd.concat(fold_frames, ignore_index=True)
+    paired_rows: list[pd.DataFrame] = []
+    for family in ("C1", "C2"):
+        t0 = fold_metrics.loc[
+            fold_metrics["family"].eq(family)
+            & fold_metrics["tuning_id"].eq("T0"),
+            ["fold", "run_id", "macro_f1"],
+        ].rename(columns={"run_id": "t0_run_id", "macro_f1": "t0_macro_f1"})
+        for tuning_id in ("T1", "T2"):
+            candidate = fold_metrics.loc[
+                fold_metrics["family"].eq(family)
+                & fold_metrics["tuning_id"].eq(tuning_id),
+                ["fold", "run_id", "macro_f1"],
+            ].rename(
+                columns={
+                    "run_id": "candidate_run_id",
+                    "macro_f1": "candidate_macro_f1",
+                }
+            )
+            paired = t0.merge(candidate, on="fold", validate="one_to_one")
+            if len(paired) != 5:
+                raise ValueError(f"{family} {tuning_id} requires five paired folds")
+            paired.insert(0, "tuning_id", tuning_id)
+            paired.insert(0, "family", family)
+            paired["delta_candidate_minus_t0_macro_f1"] = (
+                paired["candidate_macro_f1"] - paired["t0_macro_f1"]
+            )
+            paired_rows.append(paired)
+    paired_folds = pd.concat(paired_rows, ignore_index=True)
+
+    per_class = pd.concat(class_frames, ignore_index=True)
+    per_class["delta_vs_t0_f1"] = 0.0
+    for family in ("C1", "C2"):
+        reference = per_class.loc[
+            per_class["family"].eq(family) & per_class["tuning_id"].eq("T0"),
+            ["label", "f1", "support"],
+        ].rename(columns={"f1": "t0_f1", "support": "t0_support"})
+        family_index = per_class.index[per_class["family"].eq(family)]
+        merged = per_class.loc[family_index].merge(
+            reference,
+            on="label",
+            how="left",
+            validate="many_to_one",
+        )
+        if not merged["support"].eq(merged["t0_support"]).all():
+            raise ValueError(f"{family} per-class supports changed during tuning")
+        per_class.loc[family_index, "delta_vs_t0_f1"] = (
+            merged["f1"] - merged["t0_f1"]
+        ).to_numpy()
+
+    history_by_fold = pd.concat(history_frames, ignore_index=True)
+    metric_columns = (
+        "learning_rate",
+        "train_loss",
+        "validation_loss",
+        "validation_accuracy",
+        "validation_macro_f1",
+    )
+    aggregations: dict[str, tuple[str, str]] = {}
+    for metric in metric_columns:
+        aggregations[f"{metric}_mean"] = (metric, "mean")
+        aggregations[f"{metric}_sd"] = (metric, "std")
+    learning_curve_summary = (
+        history_by_fold.groupby(
+            ["family", "tuning_id", "experiment_id", "epoch"],
+            as_index=False,
+            sort=True,
+        )
+        .agg(**aggregations)
+        .fillna(0.0)
+    )
+
+    decision = {
+        "schema_version": "1.0.0",
+        "gate": "G2-T",
+        "decision_status": "closed",
+        "primary_metric": "pooled_five_fold_oof_macro_f1",
+        "selection_rule": (
+            f"For each family, replace T0 only when the best observed tuning improves "
+            f"pooled OOF macro-F1 by at least {minimum_gain:.3f}; otherwise retain T0."
+        ),
+        "minimum_gain": minimum_gain,
+        "retained_transform": "P0/A0",
+        "families": family_decisions,
+        "next_question": (
+            "Train C1 and C2 at the full matched budget using each family's selected "
+            "configuration; do not expand the tuning grid."
+        ),
+    }
+
+    evidence_root = Path(evidence_directory)
+    figure_root = Path(figure_directory)
+    common_root = Path(
+        os.path.commonpath([evidence_root.resolve(), figure_root.resolve()])
+    )
+    paths = {
+        "leaderboard": evidence_root / "leaderboard.csv",
+        "paired_fold_metrics": evidence_root / "paired_fold_metrics.csv",
+        "per_class_comparison": evidence_root / "per_class_comparison.csv",
+        "learning_curves_by_fold": evidence_root / "learning_curves_by_fold.csv",
+        "learning_curve_summary": evidence_root / "learning_curve_summary.csv",
+        "decision": evidence_root / "decision.json",
+        "c1_learning_curves": figure_root / "g2_tuning_c1_learning_curves.png",
+        "c2_learning_curves": figure_root / "g2_tuning_c2_learning_curves.png",
+    }
+    atomic_write_csv(paths["leaderboard"], leaderboard)
+    atomic_write_csv(paths["paired_fold_metrics"], paired_folds)
+    atomic_write_csv(paths["per_class_comparison"], per_class)
+    atomic_write_csv(paths["learning_curves_by_fold"], history_by_fold)
+    atomic_write_csv(paths["learning_curve_summary"], learning_curve_summary)
+    atomic_write_json(paths["decision"], decision)
+    for family in ("C1", "C2"):
+        family_decision = family_decisions[family]
+        _plot_g2_tuning_learning_curves(
+            learning_curve_summary,
+            family=family,
+            tuning_id=family_decision["selected_tuning_id"],
+            experiment_id=family_decision["selected_experiment_id"],
+            output_path=paths[f"{family.lower()}_learning_curves"],
+        )
+
+    artifact_manifest = {
+        name: {
+            "path": _portable_artifact_path(path, fallback_root=common_root),
+            "sha256": compute_sha256(path),
+        }
+        for name, path in paths.items()
+    }
+    input_manifests = {
+        str(manifest["experiment_id"]): {
+            "path": _portable_artifact_path(path, fallback_root=root),
+            "sha256": compute_sha256(path),
+        }
+        for manifest, path in loaded_manifests
+    }
+    input_configs = {
+        experiment_id: {
+            "path": _portable_artifact_path(path, fallback_root=root),
+            "sha256": compute_sha256(path),
+        }
+        for experiment_id, path in configs_by_id.items()
+    }
+    manifest = {
+        "schema_version": "1.0.0",
+        "gate": "G2-T",
+        "decision_status": "closed",
+        "coverage_sha256": coverage_sha256,
+        "matched_protocol_sha256": matched_config_sha256,
+        "minimum_gain": minimum_gain,
+        "families": family_decisions,
+        "augmentation_decision": {
+            "path": _portable_artifact_path(
+                resolved_augmentation_decision, fallback_root=root
+            ),
+            "sha256": compute_sha256(resolved_augmentation_decision),
+            "selected_variant": "A0",
+        },
+        "input_manifests": input_manifests,
+        "input_configs": input_configs,
+        "artifacts": artifact_manifest,
+    }
+    manifest_path = evidence_root / "manifest.json"
     atomic_write_json(manifest_path, manifest)
     manifest["manifest_path"] = str(manifest_path)
     manifest["manifest_sha256"] = compute_sha256(manifest_path)
