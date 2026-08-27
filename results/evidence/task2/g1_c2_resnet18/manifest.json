@@ -26,7 +26,7 @@
     },
     "registry_snapshot": {
       "path": "results/evidence/task2/g1_c2_resnet18/registry_snapshot.csv",
-      "sha256": "514ac001c000e0acfdbc333d4920341f4e5ad737bddd613e87c98a3b28444116"
+      "sha256": "088b8b8f9c15f28efbc7565e1ad2c6efecaa76c358004fe522d265d852311eed"
     }
   },
   "calibration_claim_allowed": false,

@@ -26,7 +26,7 @@
     },
     "registry_snapshot": {
       "path": "results/evidence/task2/g1_c1_smallcnn/registry_snapshot.csv",
-      "sha256": "5f69333e11b0bfc3175484e5fd8e13dc6a3d33b641590b2779d338065fac4932"
+      "sha256": "3d23694cf43389a81c8731894d97fc08bc0c0735ed3466dc74bbe9369e253272"
     }
   },
   "calibration_claim_allowed": false,

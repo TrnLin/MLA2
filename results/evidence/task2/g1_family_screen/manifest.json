@@ -19,11 +19,11 @@
   "input_manifests": {
     "g1-c1-smallcnn": {
       "path": "results/evidence/task2/g1_c1_smallcnn/manifest.json",
-      "sha256": "f8c7999567176482904104113924d2ba45126a27887c0235c0c1a755a307f4d4"
+      "sha256": "0bd07c367d9be97a71a2f9734465ad5b2d4731422688c028619e3cf6cab3c18f"
     },
     "g1-c2-resnet18": {
       "path": "results/evidence/task2/g1_c2_resnet18/manifest.json",
-      "sha256": "8c242353243d1cb821eae183d1b6eaaaee39d510bb614c7c2e27f8af8ed344c1"
+      "sha256": "f3bd02374fab4c91e6f013e04de3d1ba019fdb2b10d28226d89ce7c0308b69c0"
     },
     "g1-c3-mobilenetv3": {
       "path": "results/evidence/task2/g1_c3_mobilenetv3/manifest.json",
