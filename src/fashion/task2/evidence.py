@@ -2256,6 +2256,8 @@ def _audited_deep_experiment_row(
     registry = pd.read_csv(registry_path, dtype=str, keep_default_na=False)
 
     run_ids = [str(run_id) for run_id in manifest.get("run_ids", ())]
+    if len(run_ids) != 5 or len(set(run_ids)) != 5:
+        raise ValueError(f"{experiment_id} must declare exactly five unique run IDs")
     if len(registry) != 5 or set(registry["run_id"]) != set(run_ids):
         raise ValueError(f"{experiment_id} registry snapshot must match five run IDs")
     observed_folds = set(pd.to_numeric(registry["fold"], errors="raise").astype(int))
