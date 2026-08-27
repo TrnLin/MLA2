@@ -135,22 +135,60 @@ def _open_feature_indexes(
     }
 
 
-def _canvas_failure_summary(canvas_summary: pd.DataFrame) -> pd.DataFrame:
+def _canvas_failure_summary(
+    canvas_summary: pd.DataFrame,
+    canvas_per_query: pd.DataFrame,
+) -> pd.DataFrame:
+    context = [
+        "scope",
+        "fold",
+        "size",
+        "query_source",
+        "gallery_source",
+        "query_variant",
+    ]
+    required = {*context, "query_id", "canvas_ndcg_at_10"}
+    if missing := required.difference(canvas_per_query.columns):
+        raise ValueError(f"canvas per-query evidence is missing columns: {sorted(missing)}")
+    numeric = pd.to_numeric(canvas_per_query["canvas_ndcg_at_10"], errors="coerce")
+    finite = numeric.notna() & np.isfinite(numeric)
+    counted = canvas_per_query.assign(_scored=finite).groupby(
+        context,
+        sort=False,
+        observed=True,
+        dropna=False,
+    ).agg(
+        observed_queries=("query_id", "size"),
+        unique_queries=("query_id", "nunique"),
+        scored_queries=("_scored", "sum"),
+    )
+    if not counted["observed_queries"].eq(counted["unique_queries"]).all():
+        raise ValueError("canvas per-query evidence contains duplicate query IDs")
+    counted["excluded_queries"] = (
+        counted["observed_queries"] - counted["scored_queries"]
+    )
+    counted["coverage"] = counted["scored_queries"] / counted["observed_queries"]
+    counted = counted.reset_index()
+
     rows = canvas_summary.rename(
         columns={
-            "query_variant": "_query_variant",
-            "queries": "total_queries",
+            "queries": "summary_queries",
             "ndcg_at_10": "value",
         }
-    ).copy()
+    ).merge(counted, on=context, validate="one_to_one")
+    if not rows["summary_queries"].eq(rows["observed_queries"]).all():
+        raise ValueError("canvas summary and per-query counts disagree")
+    rows = rows.rename(
+        columns={
+            "query_variant": "_query_variant",
+            "observed_queries": "total_queries",
+        }
+    )
     rows["protocol"] = "primary"
     rows["slice"] = "canvas_" + rows["_query_variant"].astype(str)
     rows["metric"] = "ndcg"
     rows["k"] = 10
     rows["aggregation"] = "query_mean"
-    rows["scored_queries"] = rows["total_queries"].astype(int)
-    rows["excluded_queries"] = 0
-    rows["coverage"] = 1.0
     return rows.loc[:, FAILURE_SLICE_COLUMNS]
 
 
@@ -194,7 +232,7 @@ def _run_canvas_analysis(
     membership = mark_failure_slices(build_query_support(primary, family))
     ordinary = summarize_failure_slices(baseline.query_metrics, membership)
     slices = pd.concat(
-        [ordinary, _canvas_failure_summary(canvas.summary)],
+        [ordinary, _canvas_failure_summary(canvas.summary, canvas.per_query)],
         ignore_index=True,
     ).loc[:, FAILURE_SLICE_COLUMNS]
     return membership, slices, canvas

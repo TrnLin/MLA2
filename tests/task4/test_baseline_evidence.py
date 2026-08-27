@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import runpy
 import subprocess
 import sys
 from pathlib import Path
@@ -194,22 +195,106 @@ def _timings() -> pd.DataFrame:
 
 
 def _cost() -> dict[str, object]:
+    directions = (
+        ("teacher", "teacher"),
+        ("v1", "v1"),
+        ("teacher", "v1"),
+        ("v1", "teacher"),
+    )
+    timing_summary = [
+        {
+            "query_source": query_source,
+            "gallery_source": gallery_source,
+            "metric": metric,
+            "percentile": percentile,
+            "value_seconds": 0.1,
+            "timed_queries": 2,
+        }
+        for query_source, gallery_source in directions
+        for metric in ("encoding", "search", "end_to_end")
+        for percentile in ("p50", "p95")
+    ]
+    index_costs = {
+        source: {
+            "source": source,
+            "contract": {
+                "width": 240,
+                "height": 320,
+                "pad_color": [255, 255, 255],
+                "colour_mode": "RGB",
+                "resize": "aspect_preserving_letterbox",
+                "resample": "LANCZOS",
+            },
+            "rows": 3,
+            "dimension": 400,
+            "payload_bytes": 4_800,
+            "index_bytes": 4_824,
+            "build_seconds": 0.2,
+            "peak_rss_bytes": 10_000,
+        }
+        for source in ("teacher", "v1")
+    }
     return {
         "schema_version": 1,
         "scope": "development",
         "parameters": 0,
         "checkpoint_bytes": 0,
-        "timing_summary": [
-            {
-                "query_source": "teacher",
-                "gallery_source": "teacher",
-                "metric": "end_to_end",
-                "percentile": "p95",
-                "value_seconds": 0.11,
-                "timed_queries": 1,
-            }
-        ],
+        "timed_queries": 2,
+        "timing_summary": timing_summary,
+        "per_source_index_cost": index_costs,
     }
+
+
+def test_canvas_failure_summary_counts_only_queries_with_defined_ndcg() -> None:
+    runner = runpy.run_path(
+        Path(__file__).resolve().parents[2] / "scripts/task4/run_baseline.py",
+        run_name="task5_canvas_test",
+    )
+    summary = pd.DataFrame(
+        {
+            "scope": ["development"] * 3,
+            "fold": [1] * 3,
+            "size": ["240x320"] * 3,
+            "query_source": ["v1"] * 3,
+            "gallery_source": ["v1"] * 3,
+            "query_variant": ["clean", "wide", "tall"],
+            "queries": [3, 3, 3],
+            "ndcg_at_10": [0.7, 0.3, 0.5],
+        }
+    )
+    per_query = pd.DataFrame(
+        {
+            "scope": ["development"] * 9,
+            "fold": [1] * 9,
+            "size": ["240x320"] * 9,
+            "query_source": ["v1"] * 9,
+            "gallery_source": ["v1"] * 9,
+            "query_variant": ["clean"] * 3 + ["wide"] * 3 + ["tall"] * 3,
+            "query_id": [1, 2, 3] * 3,
+            "canvas_ndcg_at_10": [
+                0.8,
+                float("nan"),
+                0.6,
+                float("nan"),
+                float("nan"),
+                0.3,
+                0.4,
+                0.5,
+                0.6,
+            ],
+        }
+    )
+
+    result = runner["_canvas_failure_summary"](summary, per_query).set_index("slice")
+
+    assert result.loc[
+        ["canvas_clean", "canvas_wide", "canvas_tall"],
+        ["total_queries", "scored_queries", "excluded_queries", "coverage"],
+    ].values.tolist() == [
+        [3, 2, 1, pytest.approx(2 / 3)],
+        [3, 1, 2, pytest.approx(1 / 3)],
+        [3, 3, 0, pytest.approx(1.0)],
+    ]
 
 
 def _example_inputs(
@@ -372,6 +457,64 @@ def test_writer_rejects_non_frozen_example_size(tmp_path: Path) -> None:
             slice_summary=_slice_summary(),
             timings=_timings(),
             cost=_cost(),
+            examples=examples,
+            evidence_dir=tmp_path / "evidence",
+            figure_dir=tmp_path / "figures",
+            image_rows=image_rows,
+            example_rankings=rankings,
+        )
+
+
+@pytest.mark.parametrize(
+    ("case", "message"),
+    [
+        ("incomplete_timing", "complete"),
+        ("duplicate_timing", "exactly one"),
+        ("non_finite_timing", "finite"),
+        ("missing_source_cost", "teacher and v1"),
+        ("inconsistent_timed_counts", "consistent"),
+        ("mismatched_top_level_count", "must match"),
+        ("inconsistent_index_counts", "row and dimension counts"),
+    ],
+)
+def test_writer_rejects_malformed_cost_evidence(
+    tmp_path: Path,
+    case: str,
+    message: str,
+) -> None:
+    cost = _cost()
+    timing_summary = cost["timing_summary"]
+    source_costs = cost["per_source_index_cost"]
+    assert isinstance(timing_summary, list)
+    assert isinstance(source_costs, dict)
+    if case == "incomplete_timing":
+        timing_summary.pop()
+    elif case == "duplicate_timing":
+        timing_summary.append(dict(timing_summary[0]))
+    elif case == "non_finite_timing":
+        timing_summary[0]["value_seconds"] = float("nan")
+    elif case == "missing_source_cost":
+        source_costs.pop("v1")
+    elif case == "inconsistent_timed_counts":
+        timing_summary[0]["timed_queries"] = 3
+    elif case == "mismatched_top_level_count":
+        cost["timed_queries"] = 3
+    elif case == "inconsistent_index_counts":
+        v1_cost = source_costs["v1"]
+        assert isinstance(v1_cost, dict)
+        v1_cost["rows"] = 4
+        v1_cost["payload_bytes"] = 6_400
+        v1_cost["index_bytes"] = 6_432
+    else:
+        raise AssertionError(f"unknown test case: {case}")
+    image_rows, examples, rankings = _example_inputs(tmp_path)
+
+    with pytest.raises(ValueError, match=message):
+        write_baseline_artifacts(
+            baseline=_baseline(),
+            slice_summary=_slice_summary(),
+            timings=_timings(),
+            cost=cost,
             examples=examples,
             evidence_dir=tmp_path / "evidence",
             figure_dir=tmp_path / "figures",

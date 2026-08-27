@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping, Sequence
+from numbers import Integral, Real
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -469,8 +470,117 @@ def _validate_cost(cost: Mapping[str, object]) -> None:
     for key, expected in required.items():
         if cost.get(key) != expected:
             raise ValueError(f"baseline cost {key} must equal {expected!r}")
-    if "timing_summary" not in cost:
+
+    timing_records = cost.get("timing_summary")
+    if not isinstance(timing_records, list) or not timing_records:
         raise ValueError("baseline cost must contain timing percentiles")
+    timing = pd.DataFrame.from_records(timing_records)
+    timing_columns = {
+        "query_source",
+        "gallery_source",
+        "metric",
+        "percentile",
+        "value_seconds",
+        "timed_queries",
+    }
+    if missing := timing_columns.difference(timing.columns):
+        raise ValueError(f"baseline cost timing is missing columns: {sorted(missing)}")
+    key_columns = ["query_source", "gallery_source", "metric", "percentile"]
+    if timing.duplicated(key_columns).any():
+        raise ValueError("baseline cost timing requires exactly one row per combination")
+    expected_grid = {
+        (query_source, gallery_source, metric, percentile)
+        for query_source, gallery_source in (
+            ("teacher", "teacher"),
+            ("v1", "v1"),
+            ("teacher", "v1"),
+            ("v1", "teacher"),
+        )
+        for metric in ("encoding", "search", "end_to_end")
+        for percentile in ("p50", "p95")
+    }
+    observed_grid = set(
+        timing.loc[:, key_columns].itertuples(index=False, name=None)
+    )
+    if observed_grid != expected_grid:
+        raise ValueError("baseline cost timing must contain the complete grid")
+    values = pd.to_numeric(timing["value_seconds"], errors="coerce")
+    if values.isna().any() or not np.isfinite(values).all() or values.lt(0).any():
+        raise ValueError("baseline cost timing values must be finite and non-negative")
+    counts = pd.to_numeric(timing["timed_queries"], errors="coerce")
+    valid_counts = (
+        counts.notna()
+        & np.isfinite(counts)
+        & counts.mod(1).eq(0)
+        & counts.gt(0)
+    )
+    if not valid_counts.all() or counts.nunique() != 1:
+        raise ValueError("baseline cost needs one consistent positive timed-query count")
+    timed_queries = cost.get("timed_queries")
+    if (
+        isinstance(timed_queries, bool)
+        or not isinstance(timed_queries, Integral)
+        or int(timed_queries) != int(counts.iloc[0])
+    ):
+        raise ValueError("baseline cost timed_queries must match the consistent count")
+
+    source_costs = cost.get("per_source_index_cost")
+    if not isinstance(source_costs, Mapping) or set(source_costs) != {"teacher", "v1"}:
+        raise ValueError("baseline cost requires exactly teacher and v1 index costs")
+    source_shapes: set[tuple[int, int]] = set()
+    for source in ("teacher", "v1"):
+        record = source_costs[source]
+        if not isinstance(record, Mapping) or record.get("source") != source:
+            raise ValueError(f"baseline cost {source} index source is malformed")
+        contract = record.get("contract")
+        if (
+            not isinstance(contract, Mapping)
+            or contract.get("width") != 240
+            or contract.get("height") != 320
+        ):
+            raise ValueError("baseline index costs must use the frozen 240x320 contract")
+        integer_fields = (
+            "rows",
+            "dimension",
+            "payload_bytes",
+            "index_bytes",
+            "peak_rss_bytes",
+        )
+        integers: dict[str, int] = {}
+        for field in integer_fields:
+            value = record.get(field)
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, Integral)
+                or int(value) < 0
+            ):
+                raise ValueError(f"baseline cost {source} {field} must be non-negative")
+            integers[field] = int(value)
+        if integers["rows"] <= 0 or integers["dimension"] <= 0:
+            raise ValueError("baseline index rows and dimensions must be positive")
+        expected_payload = (
+            integers["rows"] * integers["dimension"] * np.dtype(np.float32).itemsize
+        )
+        expected_index = expected_payload + (
+            integers["rows"] * np.dtype(np.int64).itemsize
+        )
+        if (
+            integers["payload_bytes"] != expected_payload
+            or integers["index_bytes"] != expected_index
+        ):
+            raise ValueError("baseline index byte counts are inconsistent")
+        build_seconds = record.get("build_seconds")
+        if (
+            isinstance(build_seconds, bool)
+            or not isinstance(build_seconds, Real)
+            or not np.isfinite(build_seconds)
+            or float(build_seconds) < 0
+        ):
+            raise ValueError("baseline index build seconds must be finite and non-negative")
+        source_shapes.add((integers["rows"], integers["dimension"]))
+    if len(source_shapes) != 1:
+        raise ValueError("teacher and v1 index row and dimension counts must match")
+
     try:
         json.dumps(cost, allow_nan=False)
     except (TypeError, ValueError) as error:
