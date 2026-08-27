@@ -81,6 +81,11 @@ def test_five_fold_evidence_is_complete_portable_and_cache_stable(
     assert figure_path.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
     fold_metrics_path = result_root / manifest["artifacts"]["fold_metrics"]["path"]
     assert len(pd.read_csv(fold_metrics_path)) == 5
+    snapshot_path = result_root / manifest["artifacts"]["registry_snapshot"]["path"]
+    snapshot = pd.read_csv(snapshot_path, dtype=str, keep_default_na=False)
+    for artifact in ("prediction", "history"):
+        assert snapshot[f"{artifact}_path"].str.strip().ne("").all()
+        assert snapshot[f"{artifact}_sha256"].str.fullmatch(r"[0-9a-f]{64}").all()
 
     cached = run_or_load_experiment(config, mode="run_or_load", **paths)
     cached_manifest = build_experiment_evidence(
