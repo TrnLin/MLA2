@@ -27,6 +27,7 @@ from fashion.task4.protocol import (
 
 Direction: TypeAlias = tuple[SourceName, SourceName]
 
+BASELINE_QUALITY_CHUNK_SIZE = 256
 _BASELINE_CONTRACT = PreprocessingContract(width=240, height=320)
 _DIRECTIONS = source_directions()
 _PREFIX_COLUMNS = (
@@ -40,6 +41,7 @@ _PREFIX_COLUMNS = (
 )
 
 __all__ = (
+    "BASELINE_QUALITY_CHUNK_SIZE",
     "BaselineEvaluation",
     "Direction",
     "build_baseline_summary",
@@ -413,6 +415,7 @@ def evaluate_baseline(
             fold=fold,
             k_values=k_values,
             family_k=family_k,
+            chunk_size=BASELINE_QUALITY_CHUNK_SIZE,
         )
         for direction in _DIRECTIONS
     }
@@ -500,10 +503,34 @@ def verify_preprocessing_reproduction(
         label="preprocessing comparison",
         require_method=False,
     )
-    if not np.allclose(
-        observed.to_numpy(dtype=float),
-        expected.to_numpy(dtype=float),
-        rtol=0.0,
-        atol=float(atol),
-    ):
-        raise ValueError("baseline does not reproduce the preprocessing probe values")
+    observed_values = observed.to_numpy(dtype=float)
+    expected_values = expected.to_numpy(dtype=float)
+    deltas = np.abs(observed_values - expected_values)
+    mismatches = [
+        (
+            direction,
+            observed_value,
+            expected_value,
+            delta,
+        )
+        for direction, observed_value, expected_value, delta in zip(
+            _DIRECTIONS,
+            observed_values,
+            expected_values,
+            deltas,
+            strict=True,
+        )
+        if delta > float(atol)
+    ]
+    if mismatches:
+        details = "\n".join(
+            f"- {direction[0]}->{direction[1]}: "
+            f"observed={observed_value:.12g}, "
+            f"expected={expected_value:.12g}, "
+            f"absolute_delta={delta:.12g}"
+            for direction, observed_value, expected_value, delta in mismatches
+        )
+        raise ValueError(
+            "baseline does not reproduce the preprocessing probe values:\n"
+            f"{details}"
+        )

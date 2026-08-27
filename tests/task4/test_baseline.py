@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
+import fashion.task4.baseline as baseline_module
 from fashion.task4.baseline import (
     build_headline_summary,
     build_random_primary_rankings,
@@ -141,6 +142,30 @@ def test_baseline_runs_all_four_source_directions_and_labels_evidence() -> None:
     assert random_floor.item() is False
 
 
+def test_baseline_passes_frozen_quality_chunk_size_to_all_four_pairs(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    received_chunk_sizes: list[int | None] = []
+    real_evaluate_source_pair = baseline_module.evaluate_source_pair
+
+    def record_chunk_size(*args, **kwargs):
+        received_chunk_sizes.append(kwargs.get("chunk_size"))
+        return real_evaluate_source_pair(*args, **kwargs)
+
+    monkeypatch.setattr(
+        baseline_module,
+        "evaluate_source_pair",
+        record_chunk_size,
+    )
+
+    evaluate_baseline(
+        _baseline_splits(),
+        {"teacher": _feature_index("teacher"), "v1": _feature_index("v1")},
+    )
+
+    assert received_chunk_sizes == [256, 256, 256, 256]
+
+
 def test_baseline_rejects_non_frozen_fold_or_index_scope() -> None:
     valid_indexes = {
         "teacher": _feature_index("teacher"),
@@ -224,3 +249,33 @@ def test_reproduction_check_rejects_changed_selected_size_score() -> None:
 
     with pytest.raises(ValueError, match="preprocessing probe"):
         verify_preprocessing_reproduction(summary, _reproduction_rows(), atol=5e-8)
+
+
+def test_reproduction_failure_lists_every_mismatched_direction() -> None:
+    summary = _reproduction_rows()
+    summary.insert(0, "method", PROBE_VERSION)
+    summary.loc[
+        summary["query_source"].eq("teacher")
+        & summary["gallery_source"].eq("v1"),
+        "value",
+    ] += 1e-4
+    summary.loc[
+        summary["query_source"].eq("v1")
+        & summary["gallery_source"].eq("teacher"),
+        "value",
+    ] -= 2e-4
+
+    with pytest.raises(ValueError) as error:
+        verify_preprocessing_reproduction(summary, _reproduction_rows(), atol=5e-8)
+
+    message = str(error.value)
+    assert (
+        "teacher->v1: observed=0.46784562, expected=0.46774562, "
+        "absolute_delta=0.0001"
+    ) in message
+    assert (
+        "v1->teacher: observed=0.45548546, expected=0.45568546, "
+        "absolute_delta=0.0002"
+    ) in message
+    assert "teacher->teacher" not in message
+    assert "v1->v1" not in message

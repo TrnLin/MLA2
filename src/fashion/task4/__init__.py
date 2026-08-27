@@ -9,6 +9,7 @@ from .analysis import (
     summarize_failure_slices,
 )
 from .baseline import (
+    BASELINE_QUALITY_CHUNK_SIZE,
     BaselineEvaluation,
     Direction,
     build_baseline_summary,
@@ -100,6 +101,7 @@ from .protocol import (
 )
 
 __all__ = (
+    "BASELINE_QUALITY_CHUNK_SIZE",
     "BaselineEvaluation",
     "COVERAGE_COLUMNS",
     "COLOUR_FEATURE_DIM",
