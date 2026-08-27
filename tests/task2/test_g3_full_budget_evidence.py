@@ -110,9 +110,18 @@ def _write_tuning_manifest(
     evidence = root / "results/evidence/task2/g2_compact_tuning"
     decision_path = _write_json(evidence / "decision.json", {"gate": "G2-T"})
     leaderboard_path = evidence / "leaderboard.csv"
-    pd.DataFrame([{"family": "C1"}, {"family": "C2"}]).to_csv(
-        leaderboard_path, index=False
-    )
+    pd.DataFrame(
+        [
+            {
+                "family": spec["family"],
+                "tuning_id": spec["tuning_id"],
+                "experiment_id": spec["screen_id"],
+                "pooled_macro_f1": spec["screen_score"],
+                "selected": True,
+            }
+            for spec in G3_CASES.values()
+        ]
+    ).to_csv(leaderboard_path, index=False)
     families = {
         spec["family"]: {
             "selected_experiment_id": spec["screen_id"],
@@ -411,6 +420,23 @@ def test_g3_rejects_duplicate_run_id_in_experiment_manifest(tmp_path: Path) -> N
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
 
     with pytest.raises(ValueError, match="exactly five unique run IDs"):
+        build_g3_full_budget_evidence(
+            experiment_manifest_paths=manifests,
+            experiment_config_paths=configs,
+            tuning_manifest_path=tuning,
+            project_root=tmp_path,
+        )
+
+
+def test_g3_rejects_screen_score_not_backed_by_verified_leaderboard(
+    tmp_path: Path,
+) -> None:
+    manifests, configs, tuning, _ = _inputs(tmp_path)
+    tuning_manifest = json.loads(tuning.read_text(encoding="utf-8"))
+    tuning_manifest["families"]["C1"]["selected_macro_f1"] = 0.999
+    tuning.write_text(json.dumps(tuning_manifest), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="screen score disagrees with G2 leaderboard"):
         build_g3_full_budget_evidence(
             experiment_manifest_paths=manifests,
             experiment_config_paths=configs,
