@@ -525,7 +525,9 @@ def build_cost_record(
     for source in ("teacher", "v1"):
         cost = index_costs[source]
         _validate_index_cost(cost, source)
-        costs[source] = asdict(cost)
+        serialized = asdict(cost)
+        serialized["contract"] = cost.contract.to_dict()
+        costs[source] = serialized
     thread_environment = _thread_environment()
 
     return _json_value(

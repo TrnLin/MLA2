@@ -174,7 +174,7 @@ def test_query_encoder_reads_the_row_path_then_runs_the_frozen_probe(tmp_path: P
     assert loaded == [(tmp_path / "images/10.jpg", contract)]
 
 
-def test_protocol_a_search_adapter_runs_complete_top_20_batch_one_path() -> None:
+def test_protocol_a_search_adapter_excludes_cache_rows_and_returns_unique_products() -> None:
     gallery_ids = np.arange(20, 41, dtype=np.int64)
     cache_ids = np.array([999, *range(40, 19, -1), 5], dtype=np.int64)
     gallery_features = np.zeros((len(cache_ids), 2), dtype=np.float32)
@@ -198,7 +198,62 @@ def test_protocol_a_search_adapter_runs_complete_top_20_batch_one_path() -> None
 
     assert result["query_id"].unique().tolist() == [7]
     assert result["candidate_id"].tolist() == list(range(20, 40))
+    assert not set(result["candidate_id"]).intersection({5, 999})
+    assert result["candidate_id"].is_unique
     assert result["rank"].tolist() == list(range(1, 21))
+
+
+@pytest.mark.parametrize(
+    "gallery_ids",
+    [
+        [*range(20, 40), "not-an-id"],
+        [*range(20, 40), 20],
+    ],
+)
+def test_protocol_a_search_adapter_rejects_invalid_view_gallery_ids(
+    gallery_ids: list[object],
+) -> None:
+    views = RetrievalViews(
+        queries=pd.DataFrame({"id": [7]}),
+        gallery=pd.DataFrame({"id": gallery_ids}),
+    )
+    index_ids = np.arange(20, 41, dtype=np.int64)
+    index = FeatureIndex(
+        source="teacher",
+        contract=PreprocessingContract(width=240, height=320),
+        ids=index_ids,
+        features=np.tile(
+            np.array([[1.0, 0.0]], dtype=np.float32),
+            (len(index_ids), 1),
+        ),
+        transform_seconds=0.0,
+        source_bytes=0,
+    )
+
+    with pytest.raises(ValueError, match="integer-compatible|unique"):
+        build_protocol_a_search(views=views, gallery_index=index)
+
+
+def test_protocol_a_search_adapter_rejects_feature_row_mismatch() -> None:
+    gallery_ids = np.arange(20, 41, dtype=np.int64)
+    views = RetrievalViews(
+        queries=pd.DataFrame({"id": [7]}),
+        gallery=pd.DataFrame({"id": gallery_ids}),
+    )
+    index = FeatureIndex(
+        source="teacher",
+        contract=PreprocessingContract(width=240, height=320),
+        ids=gallery_ids,
+        features=np.tile(
+            np.array([[1.0, 0.0]], dtype=np.float32),
+            (len(gallery_ids) - 1, 1),
+        ),
+        transform_seconds=0.0,
+        source_bytes=0,
+    )
+
+    with pytest.raises(ValueError, match="feature rows must align"):
+        build_protocol_a_search(views=views, gallery_index=index)
 
 
 def test_protocol_a_search_adapter_rejects_missing_view_gallery_id() -> None:
@@ -377,6 +432,12 @@ def test_cost_record_is_json_safe_and_keeps_failed_thresholds_as_evidence(
     assert record["p95_end_to_end_under_one_second"] is False
     assert record["index_under_one_gibibyte"] is False
     assert set(record["per_source_index_cost"]) == {"teacher", "v1"}
+    for source in ("teacher", "v1"):
+        assert (
+            record["per_source_index_cost"][source]["contract"]
+            == record["contract"]
+            == _FROZEN_CONTRACT.to_dict()
+        )
     assert record["hardware"]["thread_environment"].keys() == {
         "OMP_NUM_THREADS",
         "OPENBLAS_NUM_THREADS",
@@ -463,6 +524,20 @@ def test_cost_record_rejects_thread_environment_not_fixed_to_one(
 ) -> None:
     _set_single_thread(monkeypatch)
     monkeypatch.setenv("OPENBLAS_NUM_THREADS", "2")
+
+    with pytest.raises(ValueError, match="thread environment"):
+        build_cost_record(
+            _complete_timing_summary(),
+            _index_costs(),
+            policy=TimingPolicy(),
+        )
+
+
+def test_cost_record_rejects_unset_thread_environment(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _set_single_thread(monkeypatch)
+    monkeypatch.delenv("OPENBLAS_NUM_THREADS")
 
     with pytest.raises(ValueError, match="thread environment"):
         build_cost_record(

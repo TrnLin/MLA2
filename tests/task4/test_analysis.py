@@ -405,3 +405,76 @@ def test_example_ids_ignore_teacher_canvas_failures_when_sources_are_present() -
     selected = select_example_ids(query_metrics, membership, canvas)
 
     assert selected["canvas_failure"] == 9
+
+
+def test_example_ids_omit_canvas_failure_when_source_filters_leave_no_v1_row() -> None:
+    query_metrics = pd.DataFrame(
+        {
+            "query_id": [9],
+            "query_source": ["v1"],
+            "gallery_source": ["v1"],
+            "protocol": ["primary"],
+            "ndcg_at_10": [0.9],
+            "recall_at_10": [np.nan],
+        }
+    )
+    membership = pd.DataFrame(
+        {
+            "query_id": [9],
+            "grayscale": [False],
+            "rare_article_type": [False],
+            "rare_type_colour": [False],
+            "unusual_geometry": [False],
+            "family_unavailable": [False],
+            "weak_family": [False],
+        }
+    )
+    canvas = pd.DataFrame(
+        {
+            "query_id": [1, 2],
+            "query_source": ["teacher", "v1"],
+            "gallery_source": ["v1", "teacher"],
+            "query_variant": ["wide", "tall"],
+            "ndcg_change_from_clean": [-0.9, -0.8],
+        }
+    )
+
+    selected = select_example_ids(query_metrics, membership, canvas)
+
+    assert "canvas_failure" not in selected
+
+
+def test_example_ids_filter_on_available_source_when_one_source_column_is_missing() -> None:
+    query_metrics = pd.DataFrame(
+        {
+            "query_id": [9],
+            "query_source": ["v1"],
+            "gallery_source": ["v1"],
+            "protocol": ["primary"],
+            "ndcg_at_10": [0.9],
+            "recall_at_10": [np.nan],
+        }
+    )
+    membership = pd.DataFrame(
+        {
+            "query_id": [9],
+            "grayscale": [False],
+            "rare_article_type": [False],
+            "rare_type_colour": [False],
+            "unusual_geometry": [False],
+            "family_unavailable": [False],
+            "weak_family": [False],
+        }
+    )
+    canvas = pd.DataFrame(
+        {
+            "query_id": [1, 9],
+            "gallery_source": ["teacher", "v1"],
+            "query_variant": ["wide", "tall"],
+            "ndcg_change_from_clean": [-0.9, -0.2],
+        }
+    )
+
+    selected = select_example_ids(query_metrics, membership, canvas)
+
+    assert selected["canvas_failure"] == 9

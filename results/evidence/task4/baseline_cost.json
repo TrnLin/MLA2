@@ -34,12 +34,15 @@
     "teacher": {
       "build_seconds": 430.8620660880115,
       "contract": {
+        "colour_mode": "RGB",
         "height": 320,
         "pad_color": [
           255,
           255,
           255
         ],
+        "resample": "LANCZOS",
+        "resize": "aspect_preserving_letterbox",
         "width": 240
       },
       "dimension": 400,
@@ -52,12 +55,15 @@
     "v1": {
       "build_seconds": 1648.5053693740047,
       "contract": {
+        "colour_mode": "RGB",
         "height": 320,
         "pad_color": [
           255,
           255,
           255
         ],
+        "resample": "LANCZOS",
+        "resize": "aspect_preserving_letterbox",
         "width": 240
       },
       "dimension": 400,

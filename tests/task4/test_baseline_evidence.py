@@ -312,7 +312,13 @@ def _example_inputs(
             (12, 8),
             (product_id * 10 % 255, product_id * 20 % 255, 80),
         ).save(path)
-        rows.append({"id": product_id, "external_path": str(path)})
+        rows.append(
+            {
+                "id": product_id,
+                "partition": "development",
+                "external_path": str(path),
+            }
+        )
     image_rows = pd.DataFrame(rows)
 
     examples = pd.DataFrame.from_records(
@@ -500,6 +506,86 @@ def test_writer_rejects_non_frozen_example_size(tmp_path: Path) -> None:
             slice_summary=_slice_summary(),
             timings=_timings(),
             cost=_cost(),
+            examples=examples,
+            evidence_dir=tmp_path / "evidence",
+            figure_dir=tmp_path / "figures",
+            image_rows=image_rows,
+            example_rankings=rankings,
+        )
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        ("missing", "scope or partition"),
+        ("protected", "partition must be development"),
+        ("other", "partition must be development"),
+        ("protected_scope", "scope must be development"),
+    ],
+)
+def test_writer_rejects_missing_or_non_development_image_provenance(
+    tmp_path: Path,
+    mutation: str,
+    message: str,
+) -> None:
+    image_rows, examples, rankings = _example_inputs(tmp_path)
+    if mutation == "missing":
+        image_rows = image_rows.drop(columns="partition")
+    elif mutation == "protected":
+        image_rows["partition"] = "holdout"
+    elif mutation == "other":
+        image_rows["partition"] = "training"
+    elif mutation == "protected_scope":
+        image_rows = image_rows.drop(columns="partition").assign(scope="holdout")
+    else:
+        raise AssertionError(f"unknown mutation: {mutation}")
+
+    with pytest.raises(ValueError, match=message):
+        write_baseline_artifacts(
+            baseline=_baseline(),
+            slice_summary=_slice_summary(),
+            timings=_timings(),
+            cost=_cost(),
+            examples=examples,
+            evidence_dir=tmp_path / "evidence",
+            figure_dir=tmp_path / "figures",
+            image_rows=image_rows,
+            example_rankings=rankings,
+        )
+
+
+@pytest.mark.parametrize(
+    ("field", "bad_value"),
+    [
+        ("width", 241),
+        ("height", 321),
+        ("pad_color", [0, 0, 0]),
+        ("colour_mode", "BGR"),
+        ("resize", "stretch"),
+        ("resample", "BILINEAR"),
+    ],
+)
+def test_writer_rejects_any_changed_nested_preprocessing_contract_field(
+    tmp_path: Path,
+    field: str,
+    bad_value: object,
+) -> None:
+    cost = _cost()
+    source_costs = cost["per_source_index_cost"]
+    assert isinstance(source_costs, dict)
+    teacher_cost = source_costs["teacher"]
+    assert isinstance(teacher_cost, dict)
+    contract = teacher_cost["contract"]
+    assert isinstance(contract, dict)
+    contract[field] = bad_value
+    image_rows, examples, rankings = _example_inputs(tmp_path)
+
+    with pytest.raises(ValueError, match="frozen 240x320 contract"):
+        write_baseline_artifacts(
+            baseline=_baseline(),
+            slice_summary=_slice_summary(),
+            timings=_timings(),
+            cost=cost,
             examples=examples,
             evidence_dir=tmp_path / "evidence",
             figure_dir=tmp_path / "figures",

@@ -15,6 +15,7 @@ from PIL import Image
 from fashion.config import ROOT
 from fashion.data.hashing import write_deterministic_csv
 from fashion.task4.baseline import BaselineEvaluation
+from fashion.task4.preprocessing import PreprocessingContract
 from fashion.task4.preprocessing_experiment import build_odd_aspect_canvas
 
 SUMMARY_COLUMNS = (
@@ -140,6 +141,7 @@ _EXAMPLE_ORDER = (
     "rare_type_colour",
     "family_unavailable",
 )
+_BASELINE_CONTRACT = PreprocessingContract(width=240, height=320)
 
 __all__ = (
     "EXAMPLE_COLUMNS",
@@ -167,10 +169,15 @@ def _require_exact_columns(
 def _require_development_scope(frame: pd.DataFrame, *, label: str) -> None:
     if frame.empty:
         raise ValueError(f"{label} must not be empty")
+    if "scope" not in frame and "partition" not in frame:
+        raise ValueError(f"{label} requires a scope or partition provenance column")
     if "scope" in frame and set(frame["scope"].astype(str)) != {"development"}:
         raise ValueError(f"{label} scope must be development")
-    if "partition" in frame and frame["partition"].isin({"holdout", "quarantine"}).any():
-        raise ValueError(f"{label} contains a protected partition")
+    if (
+        "partition" in frame
+        and set(frame["partition"].astype(str)) != {"development"}
+    ):
+        raise ValueError(f"{label} partition must be development")
 
 
 def _require_frozen_context(frame: pd.DataFrame, *, label: str) -> None:
@@ -537,8 +544,7 @@ def _validate_cost(cost: Mapping[str, object]) -> None:
         contract = record.get("contract")
         if (
             not isinstance(contract, Mapping)
-            or contract.get("width") != 240
-            or contract.get("height") != 320
+            or dict(contract) != _BASELINE_CONTRACT.to_dict()
         ):
             raise ValueError("baseline index costs must use the frozen 240x320 contract")
         integer_fields = (
