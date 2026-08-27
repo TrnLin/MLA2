@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from fashion.config import ROOT
+from fashion.task2.class_balance import validate_i1_config
 from fashion.task2.experiments import (
     DataRunConfig,
     ExperimentConfig,
@@ -443,3 +444,25 @@ def test_repository_g3_full_budget_preserves_selected_g2_settings() -> None:
         config.pop("model_family")
         config["optimisation"].pop("learning_rate")
     assert c1_matched == c2_matched
+
+
+def test_repository_i1_changes_only_identity_stage_and_loss_from_g3_c1() -> None:
+    reference = load_experiment_config(
+        ROOT / "configs/task2/g3_c1_t1_smallcnn.json"
+    )
+    i1 = load_experiment_config(
+        ROOT / "configs/task2/g4_i1_effective_number_c1.json"
+    )
+
+    validate_i1_config(i1)
+    assert i1.experiment_id == "g4-i1-effective-number-c1"
+    assert i1.stage == "g4_i1_class_balanced"
+    assert i1.loss_id == "effective_number_beta_0.9999"
+
+    reference_matched = reference.to_dict()
+    i1_matched = i1.to_dict()
+    for config in (reference_matched, i1_matched):
+        config.pop("experiment_id")
+        config.pop("stage")
+        config.pop("loss_id")
+    assert i1_matched == reference_matched
