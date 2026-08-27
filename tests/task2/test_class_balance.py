@@ -92,6 +92,11 @@ def _fake_execute_i1(
     targets = np.asarray([labels.index(str(value)) for value in validation["season"]])
     probabilities = np.full((len(validation), len(labels)), 0.02, dtype=np.float64)
     probabilities[np.arange(len(validation)), targets] = 0.94
+    metrics = multiclass_metrics(
+        validation["season"].astype(str),
+        probabilities=probabilities,
+        labels=labels,
+    )
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     checkpoint_path.write_bytes(f"fold={fold};seed={seed}".encode())
     result = FoldResult(
@@ -101,7 +106,7 @@ def _fake_execute_i1(
         best_epoch=1,
         epochs_completed=1,
         best_macro_f1=1.0,
-        best_metrics={"macro_f1": 1.0},
+        best_metrics=metrics,
         history=[
             {
                 "epoch": 1,

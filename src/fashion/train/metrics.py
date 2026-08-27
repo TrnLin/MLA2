@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Collection, Sequence
+import math
+from collections.abc import Collection, Mapping, Sequence
+from numbers import Real
 from typing import Any
 
 import numpy as np
@@ -36,6 +38,7 @@ def validate_oof(
     expected_ids: Collection[Any],
     labels: Sequence[str] = SEASON_LABELS,
     protected_ids: Collection[Any] = (),
+    expected_targets: Mapping[Any, str] | None = None,
     id_column: str = "id",
     true_column: str = "y_true",
     prediction_column: str = "y_pred",
@@ -74,6 +77,26 @@ def validate_oof(
     if leaked_ids:
         raise OOFValidationError(f"OOF frame contains protected IDs: {leaked_ids[:10]}")
 
+    if expected_targets is not None:
+        canonical_truth = {str(key): str(value) for key, value in expected_targets.items()}
+        if len(canonical_truth) != len(expected_targets) or set(canonical_truth) != expected:
+            raise OOFValidationError(
+                "canonical true-label IDs differ from the expected OOF IDs"
+            )
+        recorded_truth = dict(
+            zip(ids, relevant[true_column].astype(str), strict=True)
+        )
+        mismatches = sorted(
+            identifier
+            for identifier in expected
+            if recorded_truth[identifier] != canonical_truth[identifier]
+        )
+        if mismatches:
+            raise OOFValidationError(
+                "OOF y_true values disagree with canonical true labels; "
+                f"mismatched_ids={mismatches[:10]}"
+            )
+
     allowed = set(ordered_labels)
     for column in (true_column, prediction_column):
         unknown = sorted(set(relevant[column].astype(str)) - allowed)
@@ -105,6 +128,34 @@ def validate_oof(
         "protected_id_count": 0,
         "probability_sum_tolerance": 1e-5,
     }
+
+
+def validate_oof_identity(
+    frame: pd.DataFrame,
+    *,
+    run_id: str | None = None,
+    experiment_id: str | None = None,
+    fold: int | None = None,
+    seed: int | None = None,
+) -> None:
+    """Require cached OOF identity columns to match the requested run exactly."""
+    expected = {
+        "run_id": run_id,
+        "experiment_id": experiment_id,
+        "fold": fold,
+        "seed": seed,
+    }
+    for column, value in expected.items():
+        if value is None:
+            continue
+        if column not in frame:
+            raise OOFValidationError(f"OOF identity is missing column: {column}")
+        observed = set(frame[column].astype(str))
+        if observed != {str(value)}:
+            raise OOFValidationError(
+                f"OOF identity mismatch for {column}: "
+                f"expected={value!r}, observed={sorted(observed)!r}"
+            )
 
 
 def multiclass_metrics(
@@ -232,3 +283,82 @@ def multiclass_metrics(
             labels=ordered_labels,
         ).astype(int).tolist(),
     }
+
+
+def _assert_metric_payload_matches(
+    recorded: Any,
+    recomputed: Any,
+    *,
+    path: str,
+) -> None:
+    if isinstance(recomputed, Mapping):
+        if not isinstance(recorded, Mapping):
+            raise OOFValidationError(f"cached metrics type mismatch at {path}")
+        missing = sorted(set(recomputed) - set(recorded))
+        if missing:
+            raise OOFValidationError(
+                f"cached metrics are missing keys at {path}: {missing}"
+            )
+        for key, value in recomputed.items():
+            _assert_metric_payload_matches(
+                recorded[key],
+                value,
+                path=f"{path}.{key}",
+            )
+        return
+    if isinstance(recomputed, Sequence) and not isinstance(recomputed, (str, bytes)):
+        if not isinstance(recorded, Sequence) or isinstance(recorded, (str, bytes)):
+            raise OOFValidationError(f"cached metrics type mismatch at {path}")
+        if len(recorded) != len(recomputed):
+            raise OOFValidationError(f"cached metrics length mismatch at {path}")
+        for index, value in enumerate(recomputed):
+            _assert_metric_payload_matches(
+                recorded[index],
+                value,
+                path=f"{path}[{index}]",
+            )
+        return
+    if (
+        isinstance(recomputed, Real)
+        and not isinstance(recomputed, bool)
+        and isinstance(recorded, Real)
+        and not isinstance(recorded, bool)
+    ):
+        if not math.isclose(
+            float(recorded),
+            float(recomputed),
+            rel_tol=1e-9,
+            abs_tol=1e-12,
+        ):
+            raise OOFValidationError(
+                f"cached metrics disagree with OOF predictions at {path}: "
+                f"recorded={recorded!r}, recomputed={recomputed!r}"
+            )
+        return
+    if recorded != recomputed:
+        raise OOFValidationError(
+            f"cached metrics disagree with OOF predictions at {path}: "
+            f"recorded={recorded!r}, recomputed={recomputed!r}"
+        )
+
+
+def validate_metrics_match_oof(
+    frame: pd.DataFrame,
+    recorded_metrics: Mapping[str, Any],
+    *,
+    labels: Sequence[str] = SEASON_LABELS,
+    true_column: str = "y_true",
+    prediction_column: str = "y_pred",
+    probability_prefix: str = "prob_",
+) -> dict[str, Any]:
+    """Recompute metrics from cached probabilities and reject registry drift."""
+    ordered_labels = _unique_labels(labels)
+    probability_columns = [f"{probability_prefix}{label}" for label in ordered_labels]
+    recomputed = multiclass_metrics(
+        frame[true_column].astype(str),
+        probabilities=frame[probability_columns].to_numpy(dtype=np.float64),
+        labels=ordered_labels,
+        y_pred=frame[prediction_column].astype(str),
+    )
+    _assert_metric_payload_matches(recorded_metrics, recomputed, path="metrics")
+    return recomputed

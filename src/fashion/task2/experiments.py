@@ -35,7 +35,11 @@ from fashion.task2.classical import HogHsvSpec, evaluate_hog_hsv_svm_fold
 from fashion.train.artifacts import atomic_write_csv, atomic_write_json
 from fashion.train.cache import RunCacheKey, build_run_cache_key, find_cached_run
 from fashion.train.engine import FoldResult, TrainConfig, train_fold
-from fashion.train.metrics import validate_oof
+from fashion.train.metrics import (
+    validate_metrics_match_oof,
+    validate_oof,
+    validate_oof_identity,
+)
 from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
 from fashion.train.reproducibility import seed_everything
 
@@ -285,10 +289,16 @@ def _validate_output_oof(
     expected: pd.DataFrame,
     labels: tuple[str, ...],
 ) -> dict[str, Any]:
+    expected_targets = None
+    if "season" in expected:
+        expected_targets = dict(
+            zip(expected["id"], expected["season"].astype(str), strict=True)
+        )
     return validate_oof(
         oof,
         expected_ids=expected["id"],
         labels=labels,
+        expected_targets=expected_targets,
     )
 
 
@@ -309,6 +319,14 @@ def _load_cached_output(
     oof = pd.read_csv(prediction_path)
     _validate_output_oof(oof, expected=expected, labels=labels)
     metrics = json.loads(cached.row["metrics"] or "{}")
+    validate_oof_identity(
+        oof,
+        run_id=cached.run_id,
+        experiment_id=config.experiment_id,
+        fold=fold,
+        seed=seed,
+    )
+    validate_metrics_match_oof(oof, metrics, labels=labels)
     return ExperimentFoldOutput(
         experiment_id=config.experiment_id,
         fold=fold,
@@ -621,6 +639,7 @@ def _run_one(
             run.epochs_completed = 0
             run.parameter_count = parameter_count
             run.runtime_seconds = time.perf_counter() - started
+        _validate_output_oof(oof, expected=expected, labels=labels)
         artifact_fields = _write_run_artifacts(
             run_id=run_id,
             config=config,

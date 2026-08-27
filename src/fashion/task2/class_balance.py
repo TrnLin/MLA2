@@ -44,7 +44,11 @@ from fashion.train.losses import (
     build_effective_number_cross_entropy,
     fit_effective_number_weights,
 )
-from fashion.train.metrics import validate_oof
+from fashion.train.metrics import (
+    validate_metrics_match_oof,
+    validate_oof,
+    validate_oof_identity,
+)
 from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
 from fashion.train.reproducibility import seed_everything
 
@@ -147,7 +151,17 @@ def _validate_output_oof(
     expected: pd.DataFrame,
     labels: tuple[str, ...],
 ) -> dict[str, Any]:
-    return validate_oof(oof, expected_ids=expected["id"], labels=labels)
+    expected_targets = None
+    if "season" in expected:
+        expected_targets = dict(
+            zip(expected["id"], expected["season"].astype(str), strict=True)
+        )
+    return validate_oof(
+        oof,
+        expected_ids=expected["id"],
+        labels=labels,
+        expected_targets=expected_targets,
+    )
 
 
 def fit_i1_fold_balance(
@@ -192,6 +206,15 @@ def _load_cached_output(
         prediction_path = data_root / prediction_path
     oof = pd.read_csv(prediction_path)
     _validate_output_oof(oof, expected=expected, labels=labels)
+    metrics = json.loads(cached.row["metrics"] or "{}")
+    validate_oof_identity(
+        oof,
+        run_id=cached.run_id,
+        experiment_id=config.experiment_id,
+        fold=fold,
+        seed=seed,
+    )
+    validate_metrics_match_oof(oof, metrics, labels=labels)
     return ExperimentFoldOutput(
         experiment_id=config.experiment_id,
         fold=fold,
@@ -199,7 +222,7 @@ def _load_cached_output(
         run_id=cached.run_id,
         source="cache",
         oof=oof,
-        metrics=json.loads(cached.row["metrics"] or "{}"),
+        metrics=metrics,
         cache_key=key,
         artifacts=dict(cached.verified_artifacts),
     )
