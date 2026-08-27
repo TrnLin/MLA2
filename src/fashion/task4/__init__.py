@@ -18,6 +18,15 @@ from .baseline import (
     evaluate_baseline,
     verify_preprocessing_reproduction,
 )
+from .baseline_evidence import (
+    EXAMPLE_COLUMNS,
+    FAILURE_SLICE_COLUMNS,
+    QUERY_METRIC_COLUMNS,
+    SUMMARY_COLUMNS,
+    TIMING_COLUMNS,
+    render_baseline_examples,
+    write_baseline_artifacts,
+)
 from .benchmark import (
     IndexCost,
     TimingPolicy,
@@ -99,7 +108,9 @@ __all__ = (
     "DevelopmentImageCache",
     "Direction",
     "EDGE_FEATURE_DIM",
+    "EXAMPLE_COLUMNS",
     "EXPECTED_EXTERNAL_CSV_SHA256",
+    "FAILURE_SLICE_COLUMNS",
     "FeatureIndex",
     "FIXED_VALIDATION_FOLD",
     "K_VALUES",
@@ -108,7 +119,10 @@ __all__ = (
     "PreprocessedImage",
     "PreprocessingContract",
     "PreprocessingExperiment",
+    "QUERY_METRIC_COLUMNS",
     "RetrievalViews",
+    "SUMMARY_COLUMNS",
+    "TIMING_COLUMNS",
     "TimingPolicy",
     "audit_external_images",
     "benchmark_source_direction",
@@ -152,6 +166,7 @@ __all__ = (
     "rank_probe_embeddings",
     "read_external_catalogue",
     "reconcile_external_ids",
+    "render_baseline_examples",
     "resolve_size_policy",
     "run_preprocessing_experiment",
     "select_top_sizes",
@@ -162,4 +177,5 @@ __all__ = (
     "summarize_stability",
     "summarize_failure_slices",
     "verify_preprocessing_reproduction",
+    "write_baseline_artifacts",
 )
