@@ -426,6 +426,17 @@ def test_task2_g3_cell_records_audited_full_budget_comparison() -> None:
         assert required in finding
 
 
+def test_task2_g3_cell_scopes_validation_to_the_current_run_ids() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    code = {cell.id: cell for cell in notebook.cells}["s08-01-02-code"].source
+
+    assert "current_run_ids = {output.run_id for output in outputs}" in code
+    assert 'attempts["run_id"].isin(current_run_ids)' in code
+    assert 'len(current_attempts) == 5' in code
+    assert 'g3_attempts["status"].eq("completed").sum() == 10' not in code
+    assert 'g3_attempts["status"].eq("interrupted").sum() == 1' not in code
+
+
 def test_task2_g3_notebook_preserves_registered_probability_note() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     code = {cell.id: cell for cell in notebook.cells}["s08-01-02-code"].source
