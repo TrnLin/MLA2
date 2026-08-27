@@ -1,0 +1,74 @@
+{
+  "artifacts": {
+    "confusion_matrix": {
+      "path": "results/evidence/task2/g3_c2_t0_resnet18/confusion_matrix.csv",
+      "sha256": "6b24c531abaf7ec1e7e94a245b60d34c1ae15f5058549871e4a12b648c913186"
+    },
+    "figure": {
+      "path": "results/figures/task2/g3_c2_t0_resnet18.png",
+      "sha256": "6ca8e4377bbe46d47a158f67e620e32a717d0fddb27194a45efd5de696b46319"
+    },
+    "fold_metrics": {
+      "path": "results/evidence/task2/g3_c2_t0_resnet18/fold_metrics.csv",
+      "sha256": "f7730d6dcc1cb0afef7141a3f4a8669f52b8c28c6377ac4942b133fc959e2a0c"
+    },
+    "fold_summary": {
+      "path": "results/evidence/task2/g3_c2_t0_resnet18/fold_summary.csv",
+      "sha256": "2264502515546e07aec0b4d808eaaac76336cd2f4b2e16a6faf6cff95a516deb"
+    },
+    "per_class_metrics": {
+      "path": "results/evidence/task2/g3_c2_t0_resnet18/per_class_metrics.csv",
+      "sha256": "d42781d163669fb55b368d84a471ff5374c46ea9bbcdc39100a3b6ffe34d73e6"
+    },
+    "pooled_metrics": {
+      "path": "results/evidence/task2/g3_c2_t0_resnet18/pooled_metrics.json",
+      "sha256": "385c906999279e63c13fc1006dbec6c4e67f465876f7c9c24f5b82f50f588d7c"
+    },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/g3_c2_t0_resnet18/registry_snapshot.csv",
+      "sha256": "a475717554d7512600fa9c40e94a06fd9bf64d23cafff6224f17201e9fbd8ad7"
+    }
+  },
+  "calibration_claim_allowed": false,
+  "coverage": {
+    "expected_row_count": 32753,
+    "id_set_sha256": "7e278f240c9be8e59b9bf070866f725c71906f73ce910be49a752daf3e2c5b85",
+    "labels": [
+      "Fall",
+      "Spring",
+      "Summer",
+      "Winter"
+    ],
+    "probability_sum_tolerance": 1e-05,
+    "protected_id_count": 0,
+    "row_count": 32753,
+    "unique_id_count": 32753
+  },
+  "experiment_id": "g3-c2-t0-resnet18",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "oof_artifact_set_sha256": "4ec694714db393f9cd8669096e35db3dc28688cab33773213a46fb154cab0444",
+  "pooled_macro_f1": 0.7351673521014609,
+  "probability_note": "Uncalibrated softmax probabilities from the best validation macro-F1 checkpoint in each fold; calibration metrics are diagnostic only.",
+  "run_ids": [
+    "g3-c2-t0-resnet18-f0-s2753-c6cd41fd50f4",
+    "g3-c2-t0-resnet18-f1-s2753-30a5a7742c38",
+    "g3-c2-t0-resnet18-f2-s2753-aaac5fd8559b",
+    "g3-c2-t0-resnet18-f3-s2753-5e67289a4f07",
+    "g3-c2-t0-resnet18-f4-s2753-74ee05278402"
+  ],
+  "schema_version": "1.0.0",
+  "seed": 2753,
+  "sources": [
+    "cache",
+    "cache",
+    "cache",
+    "cache",
+    "cache"
+  ]
+}
