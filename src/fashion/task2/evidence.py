@@ -2937,6 +2937,24 @@ def build_g3_full_budget_evidence(
         expected_gate="G2-T",
         required_artifacts={"decision", "leaderboard"},
     )
+    tuning_leaderboard_path = _verified_manifest_artifact(
+        tuning_manifest,
+        "leaderboard",
+        project_root=root,
+    )
+    tuning_leaderboard = pd.read_csv(tuning_leaderboard_path)
+    required_tuning_columns = {
+        "family",
+        "tuning_id",
+        "experiment_id",
+        "pooled_macro_f1",
+        "selected",
+    }
+    missing_tuning_columns = required_tuning_columns - set(tuning_leaderboard)
+    if missing_tuning_columns:
+        raise ValueError(
+            f"G2 leaderboard is missing required columns: {sorted(missing_tuning_columns)}"
+        )
 
     loaded_manifests = [
         _load_verified_experiment_manifest(path, project_root=root)
@@ -2967,6 +2985,7 @@ def build_g3_full_budget_evidence(
     tuning_families = tuning_manifest.get("families", {})
     tuning_inputs = tuning_manifest.get("input_configs", {})
     screen_configs: dict[str, Path] = {}
+    screen_scores: dict[str, float] = {}
     for experiment_id, spec in G3_FULL_BUDGET_SPECS.items():
         family = str(spec["family"])
         selected = tuning_families.get(family, {})
@@ -2984,6 +3003,32 @@ def build_g3_full_budget_evidence(
         if mismatches:
             raise ValueError(f"{family} G3 config disagrees with G2: {mismatches}")
         screen_id = str(spec["screen_experiment_id"])
+        screen_rows = tuning_leaderboard.loc[
+            tuning_leaderboard["experiment_id"].astype(str).eq(screen_id)
+        ]
+        if len(screen_rows) != 1:
+            raise ValueError(f"{family} selected G2 leaderboard row must be unique")
+        screen_row = screen_rows.iloc[0]
+        if (
+            str(screen_row["family"]) != family
+            or str(screen_row["tuning_id"]) != str(spec["tuning_id"])
+            or str(screen_row["selected"]).strip().lower() != "true"
+        ):
+            raise ValueError(f"{family} selected G2 leaderboard row is inconsistent")
+        screen_score = float(screen_row["pooled_macro_f1"])
+        declared_screen_score = float(selected.get("selected_macro_f1", np.nan))
+        if (
+            not np.isfinite(screen_score)
+            or not np.isfinite(declared_screen_score)
+            or not np.isclose(
+                screen_score,
+                declared_screen_score,
+                rtol=0.0,
+                atol=1e-12,
+            )
+        ):
+            raise ValueError(f"{family} screen score disagrees with G2 leaderboard")
+        screen_scores[family] = screen_score
         screen_configs[experiment_id] = _verified_declared_input(
             tuning_inputs.get(screen_id),
             project_root=root,
@@ -3031,7 +3076,7 @@ def build_g3_full_budget_evidence(
         family = str(row["family"])
         screen = tuning_families[family]
         row["screen_experiment_id"] = screen["selected_experiment_id"]
-        row["screen_pooled_macro_f1"] = float(screen["selected_macro_f1"])
+        row["screen_pooled_macro_f1"] = screen_scores[family]
         row["full_minus_screen_macro_f1"] = (
             float(row["pooled_macro_f1"]) - row["screen_pooled_macro_f1"]
         )
