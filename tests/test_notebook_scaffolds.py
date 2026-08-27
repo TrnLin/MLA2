@@ -381,6 +381,50 @@ def test_task2_g1_cell_records_equal_budget_family_screen() -> None:
         assert required in finding
 
 
+def test_task2_g3_cell_records_audited_full_budget_comparison() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    code = cells["s08-01-02-code"].source
+    finding = cells["s08-01-02-finding"].source
+
+    assert not code.startswith("# TODO:")
+    compile(code, "03_task2_season.ipynb:s08-01-02-code", "exec")
+    for required in (
+        "g3_c1_t1_smallcnn.json",
+        "g3_c2_t0_resnet18.json",
+        "run_or_load_experiment",
+        "build_experiment_evidence",
+        "build_g3_full_budget_evidence",
+        "protected_ids",
+        'status\"].eq(\"interrupted\")',
+        'near_tie\"] is True',
+        'ultimate_winner_frozen\"] is False',
+        'artifacts\"][\"c1_learning_curves\"]',
+        'artifacts\"][\"c2_learning_curves\"]',
+    ):
+        assert required in code
+    for required in (
+        "0.737310",
+        "0.735167",
+        "0.002143",
+        "near-tie threshold",
+        "teacher-style",
+        "validation accuracy",
+        "validation macro-F1",
+        "Training accuracy is absent",
+        "9.51×",
+        "3.76×",
+        "provisional reference",
+        "not the ultimate winner",
+        "C3 remains rejected",
+        "interrupted outside Python",
+        "g3-c1-t1-smallcnn-f2-s2753-2283b6495a44",
+        "g3-c1-t1-smallcnn-f2-s2753-e46d771b6d56",
+        "results/evidence/task2/g3_full_budget/manifest.json",
+    ):
+        assert required in finding
+
+
 def test_task2_g2_size_cell_records_audited_selection() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
