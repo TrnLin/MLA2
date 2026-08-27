@@ -165,6 +165,27 @@ G2_TUNING_SPECS = {
         "weight_decay": 1e-3,
     },
 }
+G3_NEAR_TIE_THRESHOLD = 0.005
+G3_FULL_BUDGET_SPECS = {
+    "g3-c1-t1-smallcnn": {
+        "family": "C1",
+        "tuning_id": "T1",
+        "screen_experiment_id": "g2-t1-c1-smallcnn",
+        "model_family": "smallcnn",
+        "stage": "g3_full_budget",
+        "learning_rate": 1e-3,
+        "weight_decay": 1e-4,
+    },
+    "g3-c2-t0-resnet18": {
+        "family": "C2",
+        "tuning_id": "T0",
+        "screen_experiment_id": "g1-c2-resnet18",
+        "model_family": "resnet18_small_stem",
+        "stage": "g3_full_budget",
+        "learning_rate": 3e-4,
+        "weight_decay": 1e-4,
+    },
+}
 
 
 def build_file_impact_edges() -> pd.DataFrame:
@@ -2121,12 +2142,16 @@ def build_g2_augmentation_evidence(
     return manifest
 
 
-def _g2_tuning_row(
+def _audited_deep_experiment_row(
     manifest: dict[str, Any],
     *,
     config_path: str | Path,
     project_root: Path,
     expected_coverage_sha256: str | None,
+    specs: dict[str, dict[str, Any]],
+    expected_epochs: int,
+    expected_patience: int,
+    protocol_name: str,
 ) -> tuple[
     dict[str, Any],
     pd.DataFrame,
@@ -2136,13 +2161,13 @@ def _g2_tuning_row(
     str,
     Path,
 ]:
-    """Verify one tuning experiment, including every hash-linked epoch history."""
+    """Verify one deep experiment, including every hash-linked epoch history."""
     from fashion.task2.experiments import load_experiment_config
 
     experiment_id = str(manifest.get("experiment_id", ""))
-    if experiment_id not in G2_TUNING_SPECS:
-        raise ValueError(f"unexpected G2 tuning experiment: {experiment_id}")
-    spec = G2_TUNING_SPECS[experiment_id]
+    if experiment_id not in specs:
+        raise ValueError(f"unexpected {protocol_name} experiment: {experiment_id}")
+    spec = specs[experiment_id]
     if tuple(manifest.get("folds", ())) != G1_EXPECTED_FOLDS:
         raise ValueError(f"{experiment_id} must contain canonical folds 0-4")
     if int(manifest.get("seed", -1)) != 2753:
@@ -2165,7 +2190,9 @@ def _g2_tuning_row(
         }
     )
     if expected_coverage_sha256 and coverage_sha256 != expected_coverage_sha256:
-        raise ValueError("tuning manifests do not cover the same OOF products and labels")
+        raise ValueError(
+            f"{protocol_name} manifests do not cover the same OOF products and labels"
+        )
 
     resolved_config = _resolve_evidence_path(config_path, project_root=project_root)
     config = load_experiment_config(resolved_config)
@@ -2197,10 +2224,10 @@ def _g2_tuning_row(
         or config.loss_id != "cross_entropy"
         or config.data.image_size != (80, 60)
         or config.data.augmentation != "a0"
-        or config.optimisation.epochs != 8
-        or config.optimisation.patience != 8
+        or config.optimisation.epochs != expected_epochs
+        or config.optimisation.patience != expected_patience
     ):
-        raise ValueError(f"{experiment_id} violates the frozen tuning protocol")
+        raise ValueError(f"{experiment_id} violates the frozen {protocol_name} protocol")
     matched_payload = config.to_dict()
     matched_payload.pop("experiment_id")
     matched_payload.pop("stage")
@@ -2597,11 +2624,15 @@ def build_g2_tuning_evidence(
             observed_coverage,
             observed_config,
             _,
-        ) = _g2_tuning_row(
+        ) = _audited_deep_experiment_row(
             manifest,
             config_path=configs_by_id[experiment_id],
             project_root=root,
             expected_coverage_sha256=coverage_sha256,
+            specs=G2_TUNING_SPECS,
+            expected_epochs=8,
+            expected_patience=8,
+            protocol_name="compact tuning",
         )
         coverage_sha256 = coverage_sha256 or observed_coverage
         matched_config_sha256 = matched_config_sha256 or observed_config
@@ -2846,6 +2877,422 @@ def build_g2_tuning_evidence(
             ),
             "sha256": compute_sha256(resolved_augmentation_decision),
             "selected_variant": "A0",
+        },
+        "input_manifests": input_manifests,
+        "input_configs": input_configs,
+        "artifacts": artifact_manifest,
+    }
+    manifest_path = evidence_root / "manifest.json"
+    atomic_write_json(manifest_path, manifest)
+    manifest["manifest_path"] = str(manifest_path)
+    manifest["manifest_sha256"] = compute_sha256(manifest_path)
+    return manifest
+
+
+def _verified_declared_input(
+    entry: Any,
+    *,
+    project_root: Path,
+    description: str,
+) -> Path:
+    """Resolve one declared input and fail when its committed hash changed."""
+    if not isinstance(entry, dict) or not {"path", "sha256"}.issubset(entry):
+        raise ValueError(f"{description} must declare path and sha256")
+    path = _resolve_evidence_path(entry["path"], project_root=project_root)
+    if not path.is_file() or compute_sha256(path) != entry["sha256"]:
+        raise ValueError(f"{description} hash does not match: {path}")
+    return path
+
+
+def _screen_matched_payload(config: Any) -> dict[str, Any]:
+    """Remove only the identity and full-budget fields allowed to change after G2."""
+    payload = config.to_dict()
+    payload.pop("experiment_id")
+    payload.pop("stage")
+    payload["optimisation"].pop("epochs")
+    payload["optimisation"].pop("patience")
+    return payload
+
+
+def build_g3_full_budget_evidence(
+    *,
+    experiment_manifest_paths: Sequence[str | Path],
+    experiment_config_paths: Sequence[str | Path],
+    tuning_manifest_path: str | Path = TASK2_EVIDENCE_DIR
+    / "g2_compact_tuning/manifest.json",
+    project_root: str | Path = ROOT,
+    evidence_directory: str | Path = TASK2_EVIDENCE_DIR / "g3_full_budget",
+    figure_directory: str | Path = TASK2_FIGURE_DIR,
+    near_tie_threshold: float = G3_NEAR_TIE_THRESHOLD,
+) -> dict[str, Any]:
+    """Audit the matched full-budget finalists without freezing an ultimate winner."""
+    if not np.isfinite(near_tie_threshold) or near_tie_threshold < 0.0:
+        raise ValueError("G3 near-tie threshold must be non-negative")
+    root = Path(project_root)
+    tuning_manifest, resolved_tuning_manifest = _load_verified_gate_manifest(
+        tuning_manifest_path,
+        project_root=root,
+        expected_gate="G2-T",
+        required_artifacts={"decision", "leaderboard"},
+    )
+
+    loaded_manifests = [
+        _load_verified_experiment_manifest(path, project_root=root)
+        for path in experiment_manifest_paths
+    ]
+    manifest_ids = [
+        str(manifest.get("experiment_id", "")) for manifest, _ in loaded_manifests
+    ]
+    if len(manifest_ids) != len(set(manifest_ids)):
+        raise ValueError("G3 experiment manifests must be unique")
+    if set(manifest_ids) != set(G3_FULL_BUDGET_SPECS):
+        raise ValueError("G3 requires exactly the declared C1-T1 and C2-T0 manifests")
+
+    from fashion.task2.experiments import load_experiment_config
+
+    resolved_configs = [
+        _resolve_evidence_path(path, project_root=root)
+        for path in experiment_config_paths
+    ]
+    configs_by_id = {
+        load_experiment_config(path).experiment_id: path for path in resolved_configs
+    }
+    if len(configs_by_id) != len(resolved_configs):
+        raise ValueError("G3 experiment configs must be unique")
+    if set(configs_by_id) != set(G3_FULL_BUDGET_SPECS):
+        raise ValueError("G3 configs must match the two declared full-budget experiments")
+
+    tuning_families = tuning_manifest.get("families", {})
+    tuning_inputs = tuning_manifest.get("input_configs", {})
+    screen_configs: dict[str, Path] = {}
+    for experiment_id, spec in G3_FULL_BUDGET_SPECS.items():
+        family = str(spec["family"])
+        selected = tuning_families.get(family, {})
+        expected_selection = {
+            "selected_experiment_id": spec["screen_experiment_id"],
+            "selected_tuning_id": spec["tuning_id"],
+            "selected_learning_rate": spec["learning_rate"],
+            "selected_weight_decay": spec["weight_decay"],
+        }
+        mismatches = [
+            name
+            for name, expected in expected_selection.items()
+            if selected.get(name) != expected
+        ]
+        if mismatches:
+            raise ValueError(f"{family} G3 config disagrees with G2: {mismatches}")
+        screen_id = str(spec["screen_experiment_id"])
+        screen_configs[experiment_id] = _verified_declared_input(
+            tuning_inputs.get(screen_id),
+            project_root=root,
+            description=f"{family} selected G2 config",
+        )
+        screen_config = load_experiment_config(screen_configs[experiment_id])
+        full_config = load_experiment_config(configs_by_id[experiment_id])
+        if _screen_matched_payload(screen_config) != _screen_matched_payload(
+            full_config
+        ):
+            raise ValueError(
+                f"{experiment_id} differs from its selected G2 config outside budget"
+            )
+
+    rows: list[dict[str, Any]] = []
+    fold_frames: list[pd.DataFrame] = []
+    class_frames: list[pd.DataFrame] = []
+    history_frames: list[pd.DataFrame] = []
+    coverage_sha256: str | None = None
+    matched_protocol_sha256: str | None = None
+    for manifest, _ in loaded_manifests:
+        experiment_id = str(manifest["experiment_id"])
+        (
+            row,
+            folds,
+            classes,
+            histories,
+            observed_coverage,
+            observed_protocol,
+            _,
+        ) = _audited_deep_experiment_row(
+            manifest,
+            config_path=configs_by_id[experiment_id],
+            project_root=root,
+            expected_coverage_sha256=coverage_sha256,
+            specs=G3_FULL_BUDGET_SPECS,
+            expected_epochs=30,
+            expected_patience=5,
+            protocol_name="G3 full-budget",
+        )
+        coverage_sha256 = coverage_sha256 or observed_coverage
+        matched_protocol_sha256 = matched_protocol_sha256 or observed_protocol
+        if observed_protocol != matched_protocol_sha256:
+            raise ValueError("G3 configs differ outside identity, family, and LR")
+        family = str(row["family"])
+        screen = tuning_families[family]
+        row["screen_experiment_id"] = screen["selected_experiment_id"]
+        row["screen_pooled_macro_f1"] = float(screen["selected_macro_f1"])
+        row["full_minus_screen_macro_f1"] = (
+            float(row["pooled_macro_f1"]) - row["screen_pooled_macro_f1"]
+        )
+        row["median_best_epoch"] = float(np.median(folds["best_epoch"]))
+        rows.append(row)
+        fold_frames.append(folds)
+        class_frames.append(classes)
+        history_frames.append(histories)
+
+    leaderboard = pd.DataFrame(rows)
+    for column in (
+        "split_sha256",
+        "label_map_sha256",
+        "implementation_sha256",
+        "transform_id",
+    ):
+        if leaderboard[column].nunique() != 1:
+            raise ValueError(f"both G3 finalists must share the same {column}")
+    leaderboard["rank"] = leaderboard["pooled_macro_f1"].rank(
+        method="first", ascending=False
+    ).astype(int)
+    leaderboard = leaderboard.sort_values("family").reset_index(drop=True)
+    provisional = leaderboard.sort_values(
+        ["pooled_macro_f1", "parameter_count", "five_fold_runtime_minutes"],
+        ascending=[False, True, True],
+    ).iloc[0]
+    leaderboard["provisional_reference"] = leaderboard["family"].eq(
+        provisional["family"]
+    )
+
+    fold_metrics = pd.concat(fold_frames, ignore_index=True)
+    paired_inputs: dict[str, pd.DataFrame] = {}
+    for family in ("C1", "C2"):
+        family_folds = fold_metrics.loc[
+            fold_metrics["family"].eq(family),
+            [
+                "fold",
+                "run_id",
+                "macro_f1",
+                "runtime_seconds",
+                "peak_vram_mb",
+                "best_epoch",
+                "epochs_completed",
+            ],
+        ].copy()
+        paired_inputs[family] = family_folds.rename(
+            columns={
+                column: f"{family.lower()}_{column}"
+                for column in family_folds
+                if column != "fold"
+            }
+        )
+    paired_folds = paired_inputs["C1"].merge(
+        paired_inputs["C2"], on="fold", validate="one_to_one"
+    )
+    if len(paired_folds) != 5:
+        raise ValueError("G3 comparison requires five paired folds")
+    paired_folds["delta_c1_minus_c2_macro_f1"] = (
+        paired_folds["c1_macro_f1"] - paired_folds["c2_macro_f1"]
+    )
+
+    per_class = pd.concat(class_frames, ignore_index=True)
+    class_inputs: dict[str, pd.DataFrame] = {}
+    for family in ("C1", "C2"):
+        family_classes = per_class.loc[
+            per_class["family"].eq(family),
+            ["label", "precision", "recall", "f1", "support"],
+        ].copy()
+        class_inputs[family] = family_classes.rename(
+            columns={
+                column: f"{family.lower()}_{column}"
+                for column in family_classes
+                if column != "label"
+            }
+        )
+    per_class_comparison = class_inputs["C1"].merge(
+        class_inputs["C2"], on="label", validate="one_to_one"
+    )
+    if not per_class_comparison["c1_support"].eq(
+        per_class_comparison["c2_support"]
+    ).all():
+        raise ValueError("G3 finalists have different per-class supports")
+    per_class_comparison["delta_c1_minus_c2_f1"] = (
+        per_class_comparison["c1_f1"] - per_class_comparison["c2_f1"]
+    )
+
+    history_by_fold = pd.concat(history_frames, ignore_index=True)
+    fold_horizons = history_by_fold.groupby(["family", "fold"])["epoch"].max()
+    common_horizons = fold_horizons.groupby("family").min().astype(int).to_dict()
+    history_by_fold["common_horizon"] = history_by_fold["family"].map(
+        common_horizons
+    )
+    history_by_fold["used_in_five_fold_summary"] = history_by_fold["epoch"].le(
+        history_by_fold["common_horizon"]
+    )
+    summary_source = history_by_fold.loc[
+        history_by_fold["used_in_five_fold_summary"]
+    ]
+    metric_columns = (
+        "learning_rate",
+        "train_loss",
+        "validation_loss",
+        "validation_accuracy",
+        "validation_macro_f1",
+    )
+    aggregations: dict[str, tuple[str, str]] = {
+        "fold_count": ("fold", "nunique")
+    }
+    for metric in metric_columns:
+        aggregations[f"{metric}_mean"] = (metric, "mean")
+        aggregations[f"{metric}_sd"] = (metric, "std")
+    learning_curve_summary = (
+        summary_source.groupby(
+            ["family", "tuning_id", "experiment_id", "epoch"],
+            as_index=False,
+            sort=True,
+        )
+        .agg(**aggregations)
+        .fillna(0.0)
+    )
+    if not learning_curve_summary["fold_count"].eq(5).all():
+        raise ValueError("G3 learning-curve means must contain all five folds")
+
+    c1 = leaderboard.loc[leaderboard["family"].eq("C1")].iloc[0]
+    c2 = leaderboard.loc[leaderboard["family"].eq("C2")].iloc[0]
+    delta_c1_minus_c2 = float(c1["pooled_macro_f1"] - c2["pooled_macro_f1"])
+    near_tie = bool(abs(delta_c1_minus_c2) < near_tie_threshold)
+    screen_to_full_budget = leaderboard.loc[
+        :,
+        [
+            "family",
+            "tuning_id",
+            "screen_experiment_id",
+            "experiment_id",
+            "screen_pooled_macro_f1",
+            "pooled_macro_f1",
+            "full_minus_screen_macro_f1",
+            "median_best_epoch",
+        ],
+    ].copy()
+    decision = {
+        "schema_version": "1.0.0",
+        "gate": "G3-F",
+        "decision_status": "closed",
+        "primary_metric": "pooled_five_fold_oof_macro_f1",
+        "near_tie_threshold": near_tie_threshold,
+        "observed_c1_minus_c2_macro_f1": delta_c1_minus_c2,
+        "near_tie": near_tie,
+        "provisional_reference_family": str(provisional["family"]),
+        "provisional_reference_experiment_id": str(provisional["experiment_id"]),
+        "ultimate_winner_frozen": False,
+        "selection_rule": (
+            "Treat absolute pooled macro-F1 gaps below the near-tie threshold "
+            "as unresolved; keep the score leader only as a provisional reference "
+            "until stability, robustness, cost, and grouped-bootstrap checks close."
+        ),
+        "efficiency": {
+            "c2_over_c1_parameter_ratio": float(
+                c2["parameter_count"] / c1["parameter_count"]
+            ),
+            "c2_over_c1_runtime_ratio": float(
+                c2["five_fold_runtime_minutes"]
+                / c1["five_fold_runtime_minutes"]
+            ),
+        },
+        "common_five_fold_horizons": common_horizons,
+        "limitations": [
+            "No second-seed stability result exists yet.",
+            "Robustness and paired grouped-bootstrap evidence are not yet closed.",
+            "Current softmax probabilities are not calibrated claims.",
+        ],
+        "next_question": (
+            "Test I1 class balancing and I2 masked multi-task learning on the "
+            "provisional reference while retaining the other finalist as comparator."
+        ),
+    }
+
+    evidence_root = Path(evidence_directory)
+    figure_root = Path(figure_directory)
+    common_root = Path(
+        os.path.commonpath([evidence_root.resolve(), figure_root.resolve()])
+    )
+    paths = {
+        "leaderboard": evidence_root / "leaderboard.csv",
+        "paired_fold_metrics": evidence_root / "paired_fold_metrics.csv",
+        "per_class_comparison": evidence_root / "per_class_comparison.csv",
+        "screen_to_full_budget": evidence_root / "screen_to_full_budget.csv",
+        "learning_curves_by_fold": evidence_root / "learning_curves_by_fold.csv",
+        "learning_curve_summary": evidence_root / "learning_curve_summary.csv",
+        "decision": evidence_root / "decision.json",
+        "c1_learning_curves": figure_root / "g3_c1_t1_learning_curves.png",
+        "c2_learning_curves": figure_root / "g3_c2_t0_learning_curves.png",
+    }
+    atomic_write_csv(paths["leaderboard"], leaderboard)
+    atomic_write_csv(paths["paired_fold_metrics"], paired_folds)
+    atomic_write_csv(paths["per_class_comparison"], per_class_comparison)
+    atomic_write_csv(paths["screen_to_full_budget"], screen_to_full_budget)
+    atomic_write_csv(paths["learning_curves_by_fold"], history_by_fold)
+    atomic_write_csv(paths["learning_curve_summary"], learning_curve_summary)
+    atomic_write_json(paths["decision"], decision)
+    for family in ("C1", "C2"):
+        spec = next(
+            value
+            for value in G3_FULL_BUDGET_SPECS.values()
+            if value["family"] == family
+        )
+        experiment_id = next(
+            key
+            for key, value in G3_FULL_BUDGET_SPECS.items()
+            if value["family"] == family
+        )
+        _plot_g2_tuning_learning_curves(
+            learning_curve_summary,
+            family=family,
+            tuning_id=str(spec["tuning_id"]),
+            experiment_id=experiment_id,
+            output_path=paths[f"{family.lower()}_learning_curves"],
+        )
+
+    artifact_manifest = {
+        name: {
+            "path": _portable_artifact_path(path, fallback_root=common_root),
+            "sha256": compute_sha256(path),
+        }
+        for name, path in paths.items()
+    }
+    input_manifests = {
+        str(manifest["experiment_id"]): {
+            "path": _portable_artifact_path(path, fallback_root=root),
+            "sha256": compute_sha256(path),
+        }
+        for manifest, path in loaded_manifests
+    }
+    input_configs = {
+        experiment_id: {
+            "path": _portable_artifact_path(path, fallback_root=root),
+            "sha256": compute_sha256(path),
+            "selected_g2_config_path": _portable_artifact_path(
+                screen_configs[experiment_id], fallback_root=root
+            ),
+            "selected_g2_config_sha256": compute_sha256(
+                screen_configs[experiment_id]
+            ),
+        }
+        for experiment_id, path in configs_by_id.items()
+    }
+    manifest = {
+        "schema_version": "1.0.0",
+        "gate": "G3-F",
+        "decision_status": "closed",
+        "coverage_sha256": coverage_sha256,
+        "matched_protocol_sha256": matched_protocol_sha256,
+        "near_tie_threshold": near_tie_threshold,
+        "near_tie": near_tie,
+        "provisional_reference_experiment_id": decision[
+            "provisional_reference_experiment_id"
+        ],
+        "ultimate_winner_frozen": False,
+        "tuning_manifest": {
+            "path": _portable_artifact_path(
+                resolved_tuning_manifest, fallback_root=root
+            ),
+            "sha256": compute_sha256(resolved_tuning_manifest),
         },
         "input_manifests": input_manifests,
         "input_configs": input_configs,
