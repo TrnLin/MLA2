@@ -39,7 +39,7 @@
     "P1": {
       "experiment_id": "g2-p1-c2-resnet18",
       "path": "results/evidence/task2/g2_p1_c2_resnet18/manifest.json",
-      "sha256": "4d742379ababa4bb0bbbf3b24ad302821b917f2f5d2f1b2c984f7a13ce2e4c49"
+      "sha256": "f7068aec69d66a4e0d9cf70f8118806885a09ed665bcfc7dded1406017621e45"
     }
   },
   "matched_config_sha256": "e3bc84c0d8f1b245389acd7f0c51f04638a5f572128aff88b2a23a49bdbcbb4e",

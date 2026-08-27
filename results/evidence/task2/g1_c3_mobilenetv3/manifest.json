@@ -26,7 +26,7 @@
     },
     "registry_snapshot": {
       "path": "results/evidence/task2/g1_c3_mobilenetv3/registry_snapshot.csv",
-      "sha256": "f7b3aaa90596ba3dbd231c7da25afdbcd97655ab5b92130cbe64ae9e7d8193dc"
+      "sha256": "58462ce7ee1420ed3fd602c976e12886e317f7628666bd6d0b6d7cef13c66e14"
     }
   },
   "calibration_claim_allowed": false,

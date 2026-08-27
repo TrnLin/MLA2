@@ -26,7 +26,7 @@
     },
     "registry_snapshot": {
       "path": "results/evidence/task2/b0_majority/registry_snapshot.csv",
-      "sha256": "81232f4f206216e465ea9908f3821c2bb9644f4d9d20e5160c29cc57c638c674"
+      "sha256": "16ad7f0ad8c6f980b3c1f763b9f86937f442b9affed7cf6a3d1fe3474307f892"
     }
   },
   "calibration_claim_allowed": true,

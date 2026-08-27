@@ -27,13 +27,13 @@
     },
     "g1-c3-mobilenetv3": {
       "path": "results/evidence/task2/g1_c3_mobilenetv3/manifest.json",
-      "sha256": "85d32089deb5f271a732110b568e6d0367b9fe767ebc8ee5d110c46aaf29ef2a"
+      "sha256": "39b2c7de2a7af2fdf1c1afa66bfd3e15f029f4c83c363e070a351760c2436ecd"
     }
   },
   "primary_metric": "pooled_five_fold_oof_macro_f1",
   "reference": {
     "experiment_id": "b1-hog-hsv-svm",
-    "manifest_sha256": "39b9037a322d8887d289234d1fcd2df7f90b0bcb0c6d42bb2e2fd49bf5f1798a",
+    "manifest_sha256": "039b619327986a8e72a89f0193cc3e84fe973ea13240ebb41b62065f24d7d46b",
     "pooled_macro_f1": 0.6095612606010009
   },
   "rejected_experiment_ids": [
