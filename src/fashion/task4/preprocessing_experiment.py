@@ -21,6 +21,7 @@ from fashion.config import ROOT
 from fashion.task4.preprocessing import (
     PreprocessingContract,
     load_preprocessed_image,
+    preprocess_image,
 )
 from fashion.task4.probe import (
     PROBE_VERSION,
@@ -46,6 +47,7 @@ __all__ = (
     "build_size_selection",
     "ensure_feature_index",
     "evaluate_source_pair",
+    "extract_canvas_feature_index",
     "extract_feature_index",
     "resolve_size_policy",
     "run_preprocessing_experiment",
@@ -158,6 +160,50 @@ def extract_feature_index(
         features=np.stack(features).astype(np.float32, copy=False),
         transform_seconds=elapsed,
         source_bytes=sum(path.stat().st_size for path in paths),
+    )
+
+
+def extract_canvas_feature_index(
+    query_rows: pd.DataFrame,
+    *,
+    source: SourceName,
+    path_column: str,
+    orientation: Literal["wide", "tall"],
+    contract: PreprocessingContract,
+    root: str | Path = ROOT,
+    workers: int = 1,
+) -> FeatureIndex:
+    """Extract sorted probe features after deterministic wide/tall canvassing."""
+    working = _development_frame(query_rows, path_column)
+    if orientation not in {"wide", "tall"}:
+        raise ValueError("orientation must be 'wide' or 'tall'")
+    if isinstance(workers, bool) or not isinstance(workers, int) or workers <= 0:
+        raise ValueError("workers must be positive")
+    root_path = Path(root)
+    records = working.to_dict("records")
+
+    def transform(record: dict[str, object]) -> np.ndarray:
+        path = _resolve_path(record[path_column], root_path)
+        with Image.open(path) as image:
+            canvas = build_odd_aspect_canvas(image, orientation)
+            transformed = preprocess_image(canvas, contract)
+        return extract_spatial_probe(
+            transformed.pixels,
+            transformed.content_mask,
+        )
+
+    started = time.perf_counter()
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        features = list(executor.map(transform, records))
+    return FeatureIndex(
+        source=source,
+        contract=contract,
+        ids=working["id"].to_numpy(dtype=np.int64),
+        features=np.stack(features).astype(np.float32, copy=False),
+        transform_seconds=time.perf_counter() - started,
+        source_bytes=sum(
+            _resolve_path(value, root_path).stat().st_size for value in working[path_column]
+        ),
     )
 
 

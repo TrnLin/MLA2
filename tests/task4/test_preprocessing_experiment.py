@@ -17,6 +17,7 @@ from fashion.task4.preprocessing_experiment import (
     build_size_selection,
     ensure_feature_index,
     evaluate_source_pair,
+    extract_canvas_feature_index,
     extract_feature_index,
     run_preprocessing_experiment,
     select_top_sizes,
@@ -74,6 +75,63 @@ def test_feature_extraction_sorts_ids_and_records_real_cost(tmp_path) -> None:
         (tmp_path / name).stat().st_size for name in ("red.png", "blue.png")
     )
     assert result.transform_seconds > 0
+
+
+@pytest.mark.parametrize(
+    "frame",
+    [
+        pd.DataFrame({"id": [1], "source_path": ["does-not-exist.png"]}),
+        pd.DataFrame(
+            {
+                "id": [1],
+                "partition": ["holdout"],
+                "source_path": ["does-not-exist.png"],
+            }
+        ),
+    ],
+)
+def test_canvas_extraction_requires_development_before_file_access(
+    frame: pd.DataFrame,
+    tmp_path,
+) -> None:
+    with pytest.raises(ValueError, match="development|partition"):
+        extract_canvas_feature_index(
+            frame,
+            source="v1",
+            path_column="source_path",
+            orientation="wide",
+            contract=PreprocessingContract(width=4, height=4),
+            root=tmp_path,
+            workers=1,
+        )
+
+
+def test_canvas_extraction_sorts_numeric_ids(tmp_path) -> None:
+    Image.new("RGB", (2, 4), (255, 0, 0)).save(tmp_path / "red.png")
+    Image.new("RGB", (4, 2), (0, 0, 255)).save(tmp_path / "blue.png")
+    query_rows = pd.DataFrame(
+        {
+            "id": [2, 1],
+            "partition": ["development", "development"],
+            "source_path": ["blue.png", "red.png"],
+        }
+    )
+
+    result = extract_canvas_feature_index(
+        query_rows,
+        source="v1",
+        path_column="source_path",
+        orientation="tall",
+        contract=PreprocessingContract(width=4, height=4),
+        root=tmp_path,
+        workers=1,
+    )
+
+    assert result.ids.tolist() == [1, 2]
+    assert result.features.shape[0] == 2
+    assert result.source_bytes == sum(
+        (tmp_path / name).stat().st_size for name in ("red.png", "blue.png")
+    )
 
 
 def test_feature_cache_reuses_an_exact_source_and_contract(tmp_path) -> None:

@@ -1,5 +1,13 @@
 """Task 4 visual-search implementation."""
 
+from .analysis import (
+    CanvasStressEvaluation,
+    build_query_support,
+    evaluate_canvas_stress,
+    mark_failure_slices,
+    select_example_ids,
+    summarize_failure_slices,
+)
 from .baseline import (
     BaselineEvaluation,
     Direction,
@@ -43,6 +51,7 @@ from .preprocessing_experiment import (
     build_size_selection,
     ensure_feature_index,
     evaluate_source_pair,
+    extract_canvas_feature_index,
     extract_feature_index,
     resolve_size_policy,
     run_preprocessing_experiment,
@@ -76,6 +85,7 @@ __all__ = (
     "COVERAGE_COLUMNS",
     "COLOUR_FEATURE_DIM",
     "CachedFeatureIndex",
+    "CanvasStressEvaluation",
     "DevelopmentImageCache",
     "Direction",
     "EDGE_FEATURE_DIM",
@@ -93,6 +103,7 @@ __all__ = (
     "build_headline_summary",
     "build_odd_aspect_canvas",
     "build_query_metrics",
+    "build_query_support",
     "build_random_primary_rankings",
     "build_size_selection",
     "build_development_views",
@@ -104,9 +115,11 @@ __all__ = (
     "ensure_feature_index",
     "evaluate_family_rankings",
     "evaluate_baseline",
+    "evaluate_canvas_stress",
     "evaluate_primary_rankings",
     "evaluate_source_pair",
     "extract_feature_index",
+    "extract_canvas_feature_index",
     "extract_spatial_probe",
     "family_candidate_mask",
     "family_relevance",
@@ -114,6 +127,7 @@ __all__ = (
     "fit_fold_rgb_statistics",
     "load_development_image_cache",
     "load_preprocessed_image",
+    "mark_failure_slices",
     "normalize_for_model",
     "prepare_rankings",
     "preprocess_image",
@@ -124,8 +138,10 @@ __all__ = (
     "resolve_size_policy",
     "run_preprocessing_experiment",
     "select_top_sizes",
+    "select_example_ids",
     "select_development_pairs",
     "source_directions",
     "summarize_stability",
+    "summarize_failure_slices",
     "verify_preprocessing_reproduction",
 )

@@ -5,8 +5,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import time
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 os.environ.setdefault("MPLCONFIGDIR", "/tmp/mla2-task4-cache/matplotlib")
@@ -15,7 +13,6 @@ os.environ.setdefault("XDG_CACHE_HOME", "/tmp/mla2-task4-cache/xdg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from PIL import Image
 
 from fashion.config import ROOT
 from fashion.data.dataset import load_splits
@@ -24,16 +21,16 @@ from fashion.task4.cache import (
     ensure_development_image_cache,
     fit_cached_fold_rgb_statistics,
 )
-from fashion.task4.preprocessing import PreprocessingContract, preprocess_image
+from fashion.task4.preprocessing import PreprocessingContract
 from fashion.task4.preprocessing_experiment import (
     FeatureIndex,
-    build_odd_aspect_canvas,
     ensure_feature_index,
     evaluate_source_pair,
+    extract_canvas_feature_index,
     resolve_size_policy,
     run_preprocessing_experiment,
 )
-from fashion.task4.probe import PROBE_VERSION, extract_spatial_probe
+from fashion.task4.probe import PROBE_VERSION
 from fashion.task4.protocol import build_development_views
 
 CANDIDATE_CONTRACTS = (
@@ -79,41 +76,6 @@ def _load_development_sources() -> tuple[pd.DataFrame, pd.DataFrame]:
     return splits, development
 
 
-def _odd_query_index(
-    query_rows: pd.DataFrame,
-    *,
-    source: str,
-    path_column: str,
-    orientation: str,
-    contract: PreprocessingContract,
-    workers: int,
-) -> FeatureIndex:
-    records = query_rows.to_dict("records")
-
-    def transform(record: dict[str, object]) -> np.ndarray:
-        with Image.open(ROOT / str(record[path_column])) as image:
-            canvas = build_odd_aspect_canvas(image, orientation)
-            transformed = preprocess_image(canvas, contract)
-        return extract_spatial_probe(
-            transformed.pixels,
-            transformed.content_mask,
-        )
-
-    started = time.perf_counter()
-    with ThreadPoolExecutor(max_workers=workers) as executor:
-        features = list(executor.map(transform, records))
-    return FeatureIndex(
-        source=source,
-        contract=contract,
-        ids=query_rows["id"].to_numpy(dtype=np.int64),
-        features=np.stack(features).astype(np.float32, copy=False),
-        transform_seconds=time.perf_counter() - started,
-        source_bytes=sum(
-            (ROOT / str(value)).stat().st_size for value in query_rows[path_column]
-        ),
-    )
-
-
 def _robustness_evidence(
     splits: pd.DataFrame,
     development: pd.DataFrame,
@@ -127,7 +89,7 @@ def _robustness_evidence(
     query_rows = (
         primary.queries[["id"]]
         .merge(
-            development[["id", "teacher_path", "external_path"]],
+            development[["id", "partition", "teacher_path", "external_path"]],
             on="id",
             how="left",
             validate="one_to_one",
@@ -167,12 +129,13 @@ def _robustness_evidence(
             }
         )
         for orientation in ("wide", "tall"):
-            odd_index = _odd_query_index(
+            odd_index = extract_canvas_feature_index(
                 query_rows,
                 source=source,
                 path_column=path_column,
                 orientation=orientation,
                 contract=winner_contract,
+                root=ROOT,
                 workers=workers,
             )
             odd = evaluate_source_pair(
