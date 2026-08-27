@@ -78,10 +78,12 @@ later model robustness and app guidance.
 
 ## Consequences
 
-All future Task 4 candidates receive the same `96×128` geometry and colour
-contract. The selected-size teacher and V1 development caches contain 32,773
-IDs each and no holdout pixels. Fold-1 normalization contains 26,217 training
-products per source.
+Historically, this decision required future Task 4 candidates to receive the
+same `96×128` geometry and colour contract. Decision 0021 supersedes that size:
+the active contract is now `240×320`, while the transform and leakage rules
+above remain unchanged. The selected-size teacher and V1 development caches
+contain 32,773 IDs each and no holdout pixels. Fold-1 normalization contains
+26,217 training products per source.
 
 The holdout remains sealed until Notebook 06. A future change to size, padding,
 colour handling, or normalization requires a new decision record and fresh

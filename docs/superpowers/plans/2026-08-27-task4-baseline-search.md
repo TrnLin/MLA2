@@ -203,7 +203,7 @@ git commit -m "refactor(task4): isolate retrieval implementation"
   - `build_baseline_summary(pair_evaluations, random_rankings, primary_views)`
   - `build_headline_summary(...)`
   - `evaluate_baseline(splits, indexes, *, fold=1)`
-  - `verify_preprocessing_reproduction(summary, comparison, *, atol=5e-8)`
+  - `verify_preprocessing_reproduction(summary, comparison, *, atol=1e-5)`
 
 - [ ] **Step 1: Write failing tests for the random floor and four directions**
 
@@ -360,11 +360,14 @@ def test_headline_uses_equal_source_weight_and_records_claim_failures() -> None:
 
 def test_reproduction_check_rejects_changed_selected_size_score() -> None:
     with pytest.raises(ValueError, match="preprocessing probe"):
-        verify_preprocessing_reproduction(summary, comparison, atol=5e-8)
+        verify_preprocessing_reproduction(summary, comparison, atol=1e-5)
 ```
 
 The verification function compares all four baseline Protocol A nDCG@10 values
-with fold-1 `240x320` rows in `preprocessing_comparison.csv`.
+with fold-1 `240x320` rows in `preprocessing_comparison.csv`. The fresh
+one-thread quality run uses `chunk_size=256` and the named `1e-5` absolute
+tolerance because forcing one BLAS thread moved a few near-tie rankings by at
+most `9.709e-6`; default-thread V1→teacher exactly matched stored evidence.
 
 - [ ] **Step 6: Run focused tests and lint**
 
@@ -1070,9 +1073,11 @@ assert slices.query("slice == 'family_unavailable'")["total_queries"].max() == 3
 assert slices.query("slice == 'weak_family'")["total_queries"].max() == 1659
 ```
 
-Also verify that baseline values reproduce the selected-size preprocessing
-probe rows within `5e-8`. Hypothesis failures remain visible and do not fail
-the run.
+Also verify that the one-thread, `chunk_size=256` baseline values reproduce the
+selected-size preprocessing probe rows within the named absolute tolerance
+`1e-5`. Default-thread V1→teacher exactly matched stored evidence; the forced
+one-thread near-tie drift was at most `9.709e-6`. Hypothesis failures remain
+visible and do not fail the run.
 
 - [ ] **Step 4: Inspect the generated figure**
 

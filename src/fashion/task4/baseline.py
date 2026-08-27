@@ -492,7 +492,7 @@ def verify_preprocessing_reproduction(
     *,
     atol: float = PREPROCESSING_REPRODUCTION_ATOL,
 ) -> None:
-    """Require exact reproduction of the prior fold-1 240×320 probe scores."""
+    """Require bounded reproduction of the prior fold-1 240×320 probe scores."""
     if isinstance(atol, bool) or not np.isfinite(atol) or atol < 0:
         raise ValueError("atol must be a finite non-negative number")
     observed = _reproduction_values(

@@ -12,12 +12,13 @@ Notebooks tell the investigation story. Reusable code lives in `src/fashion/`.
 | 03 | `03_task2_season.ipynb` | planning scaffold | season comparisons and judgement |
 | 04 | `04_task3_gender_usage.ipynb` | planning scaffold | separate gender and usage outputs |
 | 05a | `task-4/01_v1_eda.ipynb` | complete and executed | V1 provenance, geometry, and paired-image audit |
-| 05b | `task-4/05_task4_visual_search.ipynb` | planning scaffold | Top-K search choices and comparisons |
+| 05b | `task-4/05_task4_visual_search.ipynb` | baseline complete; model work open | Top-K search choices and comparisons |
 | 06 | `06_final_evaluation.ipynb` | locked scaffold | one holdout evaluation and ultimate judgement |
 
-The Task 4 EDA contains audit code only. Modelling notebooks still make no model,
-metric, loss, sampler, transform, or Task 4 protocol choice. Each `TODO(owner)`
-belongs to the task owner.
+The Task 4 EDA contains audit code only. The main Task 4 notebook has frozen its
+protocol, preprocessing, and untrained baseline from development evidence.
+Learned-model and final-winner choices remain open. Other modelling notebook
+`TODO(owner)` items still belong to their task owners.
 
 ## Shared rules
 

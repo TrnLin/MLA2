@@ -40,7 +40,7 @@ location is always exactly
 
 Milestone 3 compares `60×80`, `96×128`, and `240×320` with the fixed
 development-only HSV-and-edge probe. Rebuild these files with
-`scripts/run_task4_preprocessing.py`:
+`scripts/task4/run_preprocessing.py`:
 
 - `preprocessing_comparison.csv` contains fold, source direction, protocol,
   metric, quality, tie, and cost rows.
@@ -58,3 +58,27 @@ development-only HSV-and-edge probe. Rebuild these files with
 
 The tracked evidence contains no holdout pixels or outcomes. The lossless
 development caches remain local below `data/processed/task4/preprocessing/`.
+
+## Frozen baseline search
+
+Rebuild the Milestone 4 baseline with
+`scripts/task4/run_baseline.py`. It consumes development fold `1` only and
+writes:
+
+- `baseline_summary.csv`: four-direction quality, random floor, and hypothesis
+  verdicts;
+- `baseline_query_metrics.csv`: development-only per-query quality used by the
+  slice analysis;
+- `baseline_failure_slices.csv`: predeclared slice counts and scores, including
+  clean/wide/tall canvas stress;
+- `baseline_timing.csv`: every batch-one CPU timing sample for 6,556 queries per
+  direction after 100 warm-ups;
+- `baseline_cost.json`: p50/p95 summaries, hardware, index build time, bytes,
+  peak RSS, and practical verdicts;
+- `baseline_examples.csv`: the eight selected qualitative rows, each with only
+  its Top-5 result records.
+
+The probe is untrained, so this run creates no checkpoint and no
+`results/runs.csv` row. All files have `scope=development`; the holdout remains
+sealed. Timing, build time, and peak RSS are measurements from one machine and
+may differ on another machine.

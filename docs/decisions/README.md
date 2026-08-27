@@ -28,6 +28,7 @@ mark the old one as superseded, and link both records.
 - `0018-task4-v1-image-variant.md`
 - `0019-task4-retrieval-evaluation.md`
 - `0021-task4-high-resolution-input.md`
+- `0022-task4-baseline-search.md`
 
 ## Superseded decisions
 
@@ -48,7 +49,8 @@ mark the old one as superseded, and link both records.
   the protected runtime boundary remains active.
 - `0009-task4-retrieval-isolation.md` — the fixed shared query/gallery and image-variant protocol is
   superseded by 0015; stale fixed query counts and retired validation-split details are superseded
-  by 0019. The rule against retrieval self-match leakage remains active.
+  by 0019, while baseline fusion and measured operating details are frozen by 0022. The rule
+  against retrieval self-match leakage remains active.
 - `0020-task4-image-preprocessing.md` — size choice superseded by 0021; the
   transform and leakage-safe normalization rules remain active.
 

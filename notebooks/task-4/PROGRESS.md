@@ -76,10 +76,15 @@ Evidence: `docs/decisions/0020-task4-image-preprocessing.md`,
 
 ## 4. Baseline search
 
-- [ ] Build a simple non-deep-learning baseline
-- [ ] Measure quality, speed, memory, and common failures
+- [x] Build a simple non-deep-learning baseline
+- [x] Measure quality, speed, memory, and common failures
 
 Done when: later models have a fair comparison point.
+
+Decision 0022 freezes the untrained `spatial-hsv-edge-4x4-v2` baseline. It
+beats random, but its `0.94250242` cross-source ratio fails and rejects the 95%
+source-robustness hypothesis. Quality, CPU timing, index cost, failure slices,
+and all eight qualitative examples are tracked under `results/`.
 
 ## 5. Model comparisons
 
@@ -128,6 +133,6 @@ final choice.
 
 ## Current next milestone
 
-**Milestone 4 — Baseline search**
+**Milestone 5 — Model comparisons**
 
 The holdout remains sealed until Milestone 8.

@@ -212,6 +212,60 @@ def test_task4_preprocessing_milestone_is_frozen_and_executed() -> None:
         assert path.exists()
 
 
+def test_task4_baseline_milestone_is_frozen_and_executed() -> None:
+    notebook = nbformat.read(_task_path("05_task4_visual_search.ipynb"), as_version=4)
+    source = _source(notebook)
+    start = next(
+        index
+        for index, cell in enumerate(notebook.cells)
+        if cell.source.startswith("## 7. Hypotheses and baseline")
+    )
+    end = next(
+        index
+        for index, cell in enumerate(notebook.cells[start + 1 :], start=start + 1)
+        if cell.source.startswith("## 8. Candidate model comparisons")
+    )
+    baseline_cells = notebook.cells[start:end]
+    baseline = "\n".join(cell.source for cell in baseline_cells)
+    baseline_code = [
+        cell for cell in baseline_cells if cell.cell_type == "code" and cell.source.strip()
+    ]
+
+    for required in (
+        "spatial-hsv-edge-4x4-v2",
+        "240×320",
+        "Hypothesis 1",
+        "Hypothesis 2",
+        "PASS",
+        "FAIL",
+        "reject",
+        "Teacher → teacher",
+        "V1 → V1",
+        "Teacher → V1",
+        "V1 → teacher",
+        "baseline_summary.csv",
+        "baseline_examples.png",
+    ):
+        assert required in baseline
+    assert "TODO(owner)" not in baseline
+    assert len(baseline_code) == 2
+    assert all(cell.execution_count is not None for cell in baseline_code)
+    assert all(
+        not any(output.get("output_type") == "error" for output in cell.get("outputs", []))
+        for cell in baseline_code
+    )
+
+    for required in (
+        "baseline_failure_slices.csv",
+        "baseline_cost.json",
+        "p50",
+        "p95",
+        "p95 end-to-end latency < 1 second: PASS",
+        "index size < 1 GiB: PASS",
+    ):
+        assert required in source
+
+
 def test_task4_preprocessing_artifacts_are_development_only_and_complete() -> None:
     evidence = ROOT / "results/evidence/task4"
     comparison = pd.read_csv(evidence / "preprocessing_comparison.csv")

@@ -112,11 +112,56 @@ def test_task4_preprocessing_decision_and_progress_are_frozen() -> None:
     ):
         assert artifact in evidence_readme
     assert "preprocessing_comparison.png" in figure_readme
-    assert "scripts/run_task4_preprocessing.py" in evidence_readme
-    assert "scripts/run_task4_preprocessing.py" in figure_readme
+    assert "scripts/task4/run_preprocessing.py" in evidence_readme
+    assert "scripts/task4/run_preprocessing.py" in figure_readme
     assert "addition to ADR 0019" in old_decision
     assert "does not reopen" in old_decision
     assert "arbitrary-query image policy" not in open_decisions
+
+
+def test_task4_baseline_decision_and_handoffs_are_frozen() -> None:
+    decision_index = (ROOT / "docs/decisions/README.md").read_text(encoding="utf-8")
+    decision = (
+        ROOT / "docs/decisions/0022-task4-baseline-search.md"
+    ).read_text(encoding="utf-8")
+    package_readme = (ROOT / "src/fashion/README.md").read_text(encoding="utf-8")
+    scripts_readme = (ROOT / "scripts/README.md").read_text(encoding="utf-8")
+    evidence_readme = (
+        ROOT / "results/evidence/task4/README.md"
+    ).read_text(encoding="utf-8")
+    figure_readme = (
+        ROOT / "results/figures/task4/README.md"
+    ).read_text(encoding="utf-8")
+    plan = (
+        ROOT / "docs/superpowers/plans/2026-08-27-task4-baseline-search.md"
+    ).read_text(encoding="utf-8")
+
+    assert "0022-task4-baseline-search.md" in decision_index
+    assert "- Status: Accepted" in decision
+    assert "spatial-hsv-edge-4x4-v2" in decision
+    assert "0.94250242" in decision
+    assert "rejected" in decision.lower()
+    assert "1e-5" in decision
+    assert "fashion.task4" in package_readme
+    assert "fashion.retrieval" in package_readme
+    for runner in (
+        "scripts/task4/run_preprocessing.py",
+        "scripts/task4/run_baseline.py",
+    ):
+        assert runner in scripts_readme
+        assert runner in evidence_readme
+    for artifact in (
+        "baseline_summary.csv",
+        "baseline_query_metrics.csv",
+        "baseline_failure_slices.csv",
+        "baseline_timing.csv",
+        "baseline_cost.json",
+        "baseline_examples.csv",
+    ):
+        assert artifact in evidence_readme
+    assert "baseline_examples.png" in figure_readme
+    assert "5e-8" not in plan
+    assert "1e-5" in plan
 
 
 def test_locked_setup_and_single_split_rule_are_documented() -> None:
@@ -160,6 +205,7 @@ def test_delivered_prepared_cache_is_not_ignored() -> None:
 def test_runtime_code_cannot_read_or_unseal_the_protected_split_directly() -> None:
     runtime_files = [
         *sorted((ROOT / "src/fashion/eda").rglob("*.py")),
+        *sorted((ROOT / "src/fashion/task4").rglob("*.py")),
         *sorted((ROOT / "src/fashion/retrieval").rglob("*.py")),
     ]
     for optional in (ROOT / "src/fashion/models", ROOT / "src/fashion/train"):

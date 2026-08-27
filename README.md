@@ -79,6 +79,11 @@ a second split. The main search work stays in
 The expected image data is about 14 GB. Raw images are ignored by Git and must not
 be committed.
 
+The frozen untrained Task 4 baseline and its development-only quality, timing,
+cost, slice, and example evidence are recorded in
+`docs/decisions/0022-task4-baseline-search.md` and
+`results/evidence/task4/`. Learned models and the final winner remain open.
+
 ## One split, five folds
 
 `data/processed/splits.csv` is the only split:
