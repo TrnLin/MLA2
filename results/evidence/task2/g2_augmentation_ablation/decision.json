@@ -1,0 +1,18 @@
+{
+  "decision_status": "closed",
+  "gate": "G2-A",
+  "maximum_robustness_loss": 0.01,
+  "minimum_gain": 0.003,
+  "next_question": "Tune T0, T1, and T2 on A0 while holding the retained transform, folds, seed, loss, and budget fixed.",
+  "observed_a1_minus_a0_macro_f1": -0.010437554965761597,
+  "observed_worst_robustness_loss": null,
+  "primary_metric": "pooled_five_fold_oof_macro_f1",
+  "quality_gate_passed": false,
+  "rejected_variant": "A1",
+  "robustness_evidence_status": "not_required",
+  "robustness_gate_passed": null,
+  "schema_version": "1.0.0",
+  "selected_experiment_id": "g1-c2-resnet18",
+  "selected_variant": "A0",
+  "selection_rule": "Select A1 only when A1 minus A0 is at least 0.003 absolute macro-F1 and its worst matched robustness loss is no more than 0.010; otherwise retain A0."
+}

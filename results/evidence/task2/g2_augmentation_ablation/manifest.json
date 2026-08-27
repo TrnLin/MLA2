@@ -1,0 +1,57 @@
+{
+  "artifacts": {
+    "comparison": {
+      "path": "results/evidence/task2/g2_augmentation_ablation/comparison.csv",
+      "sha256": "9c0b567c3dfb30e597f43a9940c5ecda24971039a8b095b88e1f62156899a03a"
+    },
+    "decision": {
+      "path": "results/evidence/task2/g2_augmentation_ablation/decision.json",
+      "sha256": "807a10cfca5d8c7651e9bc57d92a7623823e07d50f1fbffcd6c48e9dba9087a0"
+    },
+    "figure": {
+      "path": "results/figures/task2/g2_augmentation_ablation.png",
+      "sha256": "c7c78f0908dee85799b10e1b6feeaa6921fbe751620aad691a5260abe5f1a8e3"
+    },
+    "paired_fold_metrics": {
+      "path": "results/evidence/task2/g2_augmentation_ablation/paired_fold_metrics.csv",
+      "sha256": "468e7cb927699b0630a1f940f8f63a889888f0cf80321792ba48a81530d70084"
+    },
+    "per_class_comparison": {
+      "path": "results/evidence/task2/g2_augmentation_ablation/per_class_comparison.csv",
+      "sha256": "232e247fc1d72b28c748c8f30c7e0c8f82bdb2d042e03e8f6c93cc0c28646972"
+    }
+  },
+  "coverage_sha256": "5abf2d57d9959d9eea327149a70503b222ec98a487bc8de75d8bdc7ee8b47272",
+  "decision_status": "closed",
+  "gate": "G2-A",
+  "input_configs": {
+    "A0": {
+      "path": "configs/task2/g1_c2_resnet18.json",
+      "sha256": "f4bbaf32f0742613afb1b7c8f4d10ce760722137cd311c5c32a7f1d0f3c534b1"
+    },
+    "A1": {
+      "path": "configs/task2/g2_a1_c2_resnet18.json",
+      "sha256": "28431a8a415008c7c35dd9bafbe777f1605db4583f91a9acb0ed74cb80266681"
+    }
+  },
+  "input_manifests": {
+    "A0": {
+      "experiment_id": "g1-c2-resnet18",
+      "path": "results/evidence/task2/g1_c2_resnet18/manifest.json",
+      "sha256": "8c242353243d1cb821eae183d1b6eaaaee39d510bb614c7c2e27f8af8ed344c1"
+    },
+    "A1": {
+      "experiment_id": "g2-a1-c2-resnet18",
+      "path": "results/evidence/task2/g2_a1_c2_resnet18/manifest.json",
+      "sha256": "e316f4179203a7fc497ae465392d2dcf66152426401a4726b7b6e7b0457a0180"
+    }
+  },
+  "matched_config_sha256": "84fcd82f347e4310911e2b5e5c237b80abdf663b8a687e3260eb7f9f8a519ae8",
+  "maximum_robustness_loss": 0.01,
+  "minimum_gain": 0.003,
+  "observed_a1_minus_a0_macro_f1": -0.010437554965761597,
+  "robustness_input": null,
+  "schema_version": "1.0.0",
+  "selected_experiment_id": "g1-c2-resnet18",
+  "selected_variant": "A0"
+}
