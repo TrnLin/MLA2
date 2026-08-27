@@ -1,0 +1,77 @@
+{
+  "artifacts": {
+    "c1_learning_curves": {
+      "path": "results/figures/task2/g3_c1_t1_learning_curves.png",
+      "sha256": "5d96c0befa07052fa9bcd7ebbb99674a71c4be1bc0b552c1ef015ebb7e7629d6"
+    },
+    "c2_learning_curves": {
+      "path": "results/figures/task2/g3_c2_t0_learning_curves.png",
+      "sha256": "b0a6317b6636de50f9c98fc157067722801763f04385714138c0d3c2d5e33f41"
+    },
+    "decision": {
+      "path": "results/evidence/task2/g3_full_budget/decision.json",
+      "sha256": "dc476ffde7553e98738c6488dbc9c531ae7540ee18033f7277eb4c49caf38c9a"
+    },
+    "leaderboard": {
+      "path": "results/evidence/task2/g3_full_budget/leaderboard.csv",
+      "sha256": "f16c841bd4a3868ca06ac3db4409ba2a509232df16cb73b4c4e546107f88a28f"
+    },
+    "learning_curve_summary": {
+      "path": "results/evidence/task2/g3_full_budget/learning_curve_summary.csv",
+      "sha256": "cbdba2e096ab39de2716bfc2904c93c354900895df416963f35ca04490b5f862"
+    },
+    "learning_curves_by_fold": {
+      "path": "results/evidence/task2/g3_full_budget/learning_curves_by_fold.csv",
+      "sha256": "446aeae360a41cd1e967f66d3d0a46c30a5456844f09ef50134874c4f0a4024a"
+    },
+    "paired_fold_metrics": {
+      "path": "results/evidence/task2/g3_full_budget/paired_fold_metrics.csv",
+      "sha256": "b2d538c7ceaed1c2d39a3d32d61b8a7d5e13baa19b8eeebdade196269dc03242"
+    },
+    "per_class_comparison": {
+      "path": "results/evidence/task2/g3_full_budget/per_class_comparison.csv",
+      "sha256": "914e40911a1a390d485b0c42dff659320ce353d0b8eafc391a14d3c6a71cb49d"
+    },
+    "screen_to_full_budget": {
+      "path": "results/evidence/task2/g3_full_budget/screen_to_full_budget.csv",
+      "sha256": "c035387274e3576e15b531dbe3324f0cd74a1272abc74b115aa76ebfcb109c19"
+    }
+  },
+  "coverage_sha256": "5abf2d57d9959d9eea327149a70503b222ec98a487bc8de75d8bdc7ee8b47272",
+  "decision_status": "closed",
+  "gate": "G3-F",
+  "input_configs": {
+    "g3-c1-t1-smallcnn": {
+      "path": "configs/task2/g3_c1_t1_smallcnn.json",
+      "selected_g2_config_path": "configs/task2/g2_t1_c1_smallcnn.json",
+      "selected_g2_config_sha256": "0624a158b8e10890a57e13b3c6c47fec282572cda705bd90418b50e0df6f72e2",
+      "sha256": "d97d7f01b8a4be435c9cfa51dbfad206d590d7e1c79a69713b659069de9def08"
+    },
+    "g3-c2-t0-resnet18": {
+      "path": "configs/task2/g3_c2_t0_resnet18.json",
+      "selected_g2_config_path": "configs/task2/g1_c2_resnet18.json",
+      "selected_g2_config_sha256": "f4bbaf32f0742613afb1b7c8f4d10ce760722137cd311c5c32a7f1d0f3c534b1",
+      "sha256": "dfc15dcd1f2190768e4a1e7b304a9954bf1a5926155b19eb247252c6e1fc6e71"
+    }
+  },
+  "input_manifests": {
+    "g3-c1-t1-smallcnn": {
+      "path": "results/evidence/task2/g3_c1_t1_smallcnn/manifest.json",
+      "sha256": "cb0302364b8c2a48b7095eebd9478ddfebdb05886ae3f7d9778f78f890855495"
+    },
+    "g3-c2-t0-resnet18": {
+      "path": "results/evidence/task2/g3_c2_t0_resnet18/manifest.json",
+      "sha256": "7d4dcf12a65097465c512d5eca4dca1d5ba3140e052712899c6904446336b892"
+    }
+  },
+  "matched_protocol_sha256": "31ca52cd12c44c0eceb243e018be1274562a504990a571fae5ca6d391a4dd533",
+  "near_tie": true,
+  "near_tie_threshold": 0.005,
+  "provisional_reference_experiment_id": "g3-c1-t1-smallcnn",
+  "schema_version": "1.0.0",
+  "tuning_manifest": {
+    "path": "results/evidence/task2/g2_compact_tuning/manifest.json",
+    "sha256": "0bac681541d3b6a38d67dae531171cdac01b03159dc57a1f2f271e6cce27c280"
+  },
+  "ultimate_winner_frozen": false
+}

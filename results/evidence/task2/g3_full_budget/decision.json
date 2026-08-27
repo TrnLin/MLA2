@@ -1,0 +1,27 @@
+{
+  "common_five_fold_horizons": {
+    "C1": 18,
+    "C2": 19
+  },
+  "decision_status": "closed",
+  "efficiency": {
+    "c2_over_c1_parameter_ratio": 9.513256188662663,
+    "c2_over_c1_runtime_ratio": 3.7613229723316204
+  },
+  "gate": "G3-F",
+  "limitations": [
+    "No second-seed stability result exists yet.",
+    "Robustness and paired grouped-bootstrap evidence are not yet closed.",
+    "Current softmax probabilities are not calibrated claims."
+  ],
+  "near_tie": true,
+  "near_tie_threshold": 0.005,
+  "next_question": "Test I1 class balancing and I2 masked multi-task learning on the provisional reference while retaining the other finalist as comparator.",
+  "observed_c1_minus_c2_macro_f1": 0.0021429135757005113,
+  "primary_metric": "pooled_five_fold_oof_macro_f1",
+  "provisional_reference_experiment_id": "g3-c1-t1-smallcnn",
+  "provisional_reference_family": "C1",
+  "schema_version": "1.0.0",
+  "selection_rule": "Treat absolute pooled macro-F1 gaps below the near-tie threshold as unresolved; keep the score leader only as a provisional reference until stability, robustness, cost, and grouped-bootstrap checks close.",
+  "ultimate_winner_frozen": false
+}
