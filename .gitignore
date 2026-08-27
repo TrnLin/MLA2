@@ -39,6 +39,7 @@ __pycache__/
 !/data/processed/audit/product_family_groups.csv.gz
 !/data/processed/audit/product_family_summary.json
 !/data/processed/audit/target_class_counts.csv
+.agents/
 
 # Local scratch material and generated model weights.
 tmp/

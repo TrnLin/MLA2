@@ -11,11 +11,13 @@ Notebooks tell the investigation story. Reusable code lives in `src/fashion/`.
 | 02 | `02_task1_article_type.ipynb` | planning scaffold | article-type comparisons and judgement |
 | 03 | `03_task2_season.ipynb` | planning scaffold | season comparisons and judgement |
 | 04 | `04_task3_gender_usage.ipynb` | planning scaffold | separate gender and usage outputs |
-| 05 | `05_task4_visual_search.ipynb` | planning scaffold | Top-K search choices and comparisons |
+| 05a | `task-4/01_v1_eda.ipynb` | complete and executed | V1 provenance, geometry, and paired-image audit |
+| 05b | `task-4/05_task4_visual_search.ipynb` | planning scaffold | Top-K search choices and comparisons |
 | 06 | `06_final_evaluation.ipynb` | locked scaffold | one holdout evaluation and ultimate judgement |
 
-Notebooks 02–06 contain Markdown only. They make no model, metric, loss, sampler,
-transform, or Task 4 protocol choice. Each `TODO(owner)` belongs to the task owner.
+The Task 4 EDA contains audit code only. Modelling notebooks still make no model,
+metric, loss, sampler, transform, or Task 4 protocol choice. Each `TODO(owner)`
+belongs to the task owner.
 
 ## Shared rules
 

@@ -1,0 +1,121 @@
+{
+  "cache_manifests": {
+    "teacher": {
+      "array_dtype": "uint8",
+      "array_shape": [
+        32773,
+        128,
+        96,
+        3
+      ],
+      "bounds_dtype": "int32",
+      "bounds_shape": [
+        32773,
+        4
+      ],
+      "contract": {
+        "colour_mode": "RGB",
+        "height": 128,
+        "pad_color": [
+          255,
+          255,
+          255
+        ],
+        "resample": "LANCZOS",
+        "resize": "aspect_preserving_letterbox",
+        "width": 96
+      },
+      "files": {
+        "content_bounds": "content_bounds.npy",
+        "ids": "ids.npy",
+        "images": "images.npy"
+      },
+      "id_dtype": "int64",
+      "id_sha256": "2639d731f89942fd9598f9552bb092dd634830c3e6a63d0b569cfc2aa4362d01",
+      "path_column": "teacher_path",
+      "rows": 32773,
+      "schema_version": "1.0.0",
+      "scope": "development",
+      "sha_column": "teacher_sha256",
+      "source": "teacher",
+      "source_fingerprint": "9537d2dc78a30b3bd1f6fb61c9cf7fc1c55d1ff03cbdd8b50a03df1c1c72b8a0"
+    },
+    "v1": {
+      "array_dtype": "uint8",
+      "array_shape": [
+        32773,
+        128,
+        96,
+        3
+      ],
+      "bounds_dtype": "int32",
+      "bounds_shape": [
+        32773,
+        4
+      ],
+      "contract": {
+        "colour_mode": "RGB",
+        "height": 128,
+        "pad_color": [
+          255,
+          255,
+          255
+        ],
+        "resample": "LANCZOS",
+        "resize": "aspect_preserving_letterbox",
+        "width": 96
+      },
+      "files": {
+        "content_bounds": "content_bounds.npy",
+        "ids": "ids.npy",
+        "images": "images.npy"
+      },
+      "id_dtype": "int64",
+      "id_sha256": "2639d731f89942fd9598f9552bb092dd634830c3e6a63d0b569cfc2aa4362d01",
+      "path_column": "external_path",
+      "rows": 32773,
+      "schema_version": "1.0.0",
+      "scope": "development",
+      "sha_column": "external_sha256",
+      "source": "v1",
+      "source_fingerprint": "2d03079c521908b802d95a5bf7f8f57e5a16759a27cb781456fe42fed91f0f84"
+    }
+  },
+  "cache_scope": "lossless uint8 teacher and V1 development images only",
+  "candidate_sizes": [
+    "60x80",
+    "96x128",
+    "240x320"
+  ],
+  "cross_source_role": "supporting robustness only",
+  "holdout_opened": false,
+  "input_contract": {
+    "colour_mode": "RGB",
+    "height": 128,
+    "pad_color": [
+      255,
+      255,
+      255
+    ],
+    "resample": "LANCZOS",
+    "resize": "aspect_preserving_letterbox",
+    "width": 96
+  },
+  "limitation": "This fixed probe supports a preprocessing decision but does not prove learned-model quality.",
+  "normalization": "fit RGB mean/std on the current round training folds only; never refit queries",
+  "probe": {
+    "distance": "exact cosine",
+    "grid": "4x4",
+    "name": "fixed spatial HSV and edge probe",
+    "trained": false,
+    "version": "spatial-hsv-edge-4x4-v2",
+    "weights": "equal L2-normalized colour and edge blocks"
+  },
+  "schema_version": "1.0.0",
+  "scope": "development",
+  "selected_height": 128,
+  "selected_size": "96x128",
+  "selected_width": 96,
+  "selection_ndcg_at_10": 0.49247873036201617,
+  "selection_rule": "equal mean of teacher-to-teacher and v1-to-v1 Protocol A query-mean linear nDCG@10"
+}

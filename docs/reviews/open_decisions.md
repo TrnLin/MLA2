@@ -32,7 +32,12 @@ preprocessing, comparison models, metrics, and error slices. Nothing is selected
 
 ## 4. Task 4 choices
 
-The Task 4 owner must decide the arbitrary-query image policy, one or more image sizes,
-whether to use optional external images, query/gallery isolation, relevance, K, index
-construction, and ranking evaluation. The relevance rule must be labelled as a proxy, not
-real-world similarity ground truth.
+Decision 0018 fixes one boundary: V1 is a high-resolution copy of the same teacher
+catalogue, inherits `data/processed/splits.csv`, and is never split again. Its focused
+audit is in `notebooks/task-4/01_v1_eda.ipynb`.
+
+Decisions 0019 and 0020 now fix the evaluation contract, the `96×128` input size,
+and the arbitrary-query letterbox policy. The Task 4 owner must still decide whether
+V1 improves learned retrieval enough to justify its cost, index construction, and the
+final learned representation. The relevance rule remains a proxy, not real-world
+similarity ground truth.

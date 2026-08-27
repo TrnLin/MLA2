@@ -18,5 +18,13 @@ Reusable project code lives here. Notebooks import it instead of copying shared 
   - `pipeline.py` runs and validates the teacher-only preparation workflow.
   - `splits.py` builds and validates the sole split and its five CV folds.
   - `taxonomy.py` describes and validates development target labels.
+- `retrieval/` owns Task 4 variant audits, evaluation, preprocessing, caching,
+  the fixed selection probe, and experiment orchestration.
+  - `external.py` audits and reconciles the V1 image variant.
+  - `protocol.py` implements the frozen development-only retrieval metrics.
+  - `preprocessing.py` defines the Task 4 image-input contract.
+  - `cache.py` builds guarded lossless development-image caches.
+  - `probe.py` provides the fixed HSV-and-edge comparison descriptor.
+  - `preprocessing_experiment.py` runs the size and source comparison.
 
 Update this if you are adding more scripts.

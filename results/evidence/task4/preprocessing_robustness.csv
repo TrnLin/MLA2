@@ -1,0 +1,7 @@
+scope,source,query_variant,queries,ndcg_at_10,ndcg_change_from_clean,mean_top10_overlap
+development,teacher,clean,6556,0.49409682,0.00000000,1.00000000
+development,teacher,wide,6556,0.11065991,-0.38343691,0.03067419
+development,teacher,tall,6556,0.16829446,-0.32580236,0.07548810
+development,v1,clean,6556,0.49086064,0.00000000,1.00000000
+development,v1,wide,6556,0.11632084,-0.37453981,0.02920988
+development,v1,tall,6556,0.17228593,-0.31857471,0.07481696

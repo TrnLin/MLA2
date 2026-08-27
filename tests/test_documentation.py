@@ -59,12 +59,54 @@ def test_assignment_breakdown_lists_the_canonical_notebooks() -> None:
         "02_task1_article_type.ipynb",
         "03_task2_season.ipynb",
         "04_task3_gender_usage.ipynb",
+        "01_v1_eda.ipynb",
         "05_task4_visual_search.ipynb",
         "06_final_evaluation.ipynb",
     ):
         assert name in document
     for fixed_metric in ("Macro-F1", "nDCG@5", "Recall@5"):
         assert fixed_metric not in document
+
+
+def test_task4_preprocessing_decision_and_progress_are_frozen() -> None:
+    decision_index = (ROOT / "docs/decisions/README.md").read_text(encoding="utf-8")
+    decision = (
+        ROOT / "docs/decisions/0020-task4-image-preprocessing.md"
+    ).read_text(encoding="utf-8")
+    progress = (ROOT / "notebooks/task-4/PROGRESS.md").read_text(encoding="utf-8")
+    evidence_readme = (
+        ROOT / "results/evidence/task4/README.md"
+    ).read_text(encoding="utf-8")
+    figure_readme = (
+        ROOT / "results/figures/task4/README.md"
+    ).read_text(encoding="utf-8")
+    open_decisions = (ROOT / "docs/reviews/open_decisions.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "0020-task4-image-preprocessing.md" in decision_index
+    assert "- Status: Accepted" in decision
+    assert "holdout" in decision.lower() and "sealed" in decision.lower()
+    for completed in (
+        "- [x] Compare useful image sizes",
+        "- [x] Choose resize, padding, and colour handling",
+        "- [x] Define arbitrary query-image handling",
+        "- [x] Fit any learned image values on training folds only",
+    ):
+        assert completed in progress
+    for artifact in (
+        "preprocessing_comparison.csv",
+        "preprocessing_size_selection.csv",
+        "preprocessing_stability.csv",
+        "preprocessing_robustness.csv",
+        "preprocessing_contract.json",
+        "preprocessing_normalization_fold1.json",
+    ):
+        assert artifact in evidence_readme
+    assert "preprocessing_comparison.png" in figure_readme
+    assert "addition to ADR 0019" in decision
+    assert "does not reopen" in decision
+    assert "arbitrary-query image policy" not in open_decisions
 
 
 def test_locked_setup_and_single_split_rule_are_documented() -> None:

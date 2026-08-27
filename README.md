@@ -70,6 +70,12 @@ printf '%s  %s\n' \
   '64dfd2449f22e39120e2ab4b0230a4521f27a3b3513e5eee5cc000ad865df831' \
   'data/raw/external/fashion_product_images_v1/images.csv' | sha256sum --check
 ```
+Run the separate focused audit in
+`notebooks/task-4/01_v1_eda.ipynb`. It proves V1 is the same teacher catalogue at
+higher resolution and joins it to `data/processed/splits.csv` by ID. It never makes
+a second split. The main search work stays in
+`notebooks/task-4/05_task4_visual_search.ipynb`.
+
 The expected image data is about 14 GB. Raw images are ignored by Git and must not
 be committed.
 
