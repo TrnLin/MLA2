@@ -172,9 +172,10 @@ def test_query_encoder_reads_the_row_path_then_runs_the_frozen_probe(tmp_path: P
 
 def test_protocol_a_search_adapter_runs_complete_top_20_batch_one_path() -> None:
     gallery_ids = np.arange(20, 41, dtype=np.int64)
-    gallery_features = np.zeros((21, 2), dtype=np.float32)
+    cache_ids = np.array([999, *range(40, 19, -1), 5], dtype=np.int64)
+    gallery_features = np.zeros((len(cache_ids), 2), dtype=np.float32)
     gallery_features[:, 0] = 1.0
-    gallery_features[-1] = (0.0, 1.0)
+    gallery_features[np.flatnonzero(cache_ids == 40)] = (0.0, 1.0)
     views = RetrievalViews(
         queries=pd.DataFrame({"id": [7]}),
         gallery=pd.DataFrame({"id": gallery_ids}),
@@ -182,7 +183,7 @@ def test_protocol_a_search_adapter_runs_complete_top_20_batch_one_path() -> None
     index = FeatureIndex(
         source="teacher",
         contract=PreprocessingContract(width=240, height=320),
-        ids=gallery_ids,
+        ids=cache_ids,
         features=gallery_features,
         transform_seconds=0.0,
         source_bytes=0,
@@ -194,6 +195,51 @@ def test_protocol_a_search_adapter_runs_complete_top_20_batch_one_path() -> None
     assert result["query_id"].unique().tolist() == [7]
     assert result["candidate_id"].tolist() == list(range(20, 40))
     assert result["rank"].tolist() == list(range(1, 21))
+
+
+def test_protocol_a_search_adapter_rejects_missing_view_gallery_id() -> None:
+    gallery_ids = np.arange(20, 41, dtype=np.int64)
+    views = RetrievalViews(
+        queries=pd.DataFrame({"id": [7]}),
+        gallery=pd.DataFrame({"id": gallery_ids}),
+    )
+    index = FeatureIndex(
+        source="teacher",
+        contract=PreprocessingContract(width=240, height=320),
+        ids=gallery_ids[:-1],
+        features=np.tile(
+            np.array([[1.0, 0.0]], dtype=np.float32),
+            (len(gallery_ids) - 1, 1),
+        ),
+        transform_seconds=0.0,
+        source_bytes=0,
+    )
+
+    with pytest.raises(ValueError, match="missing gallery IDs"):
+        build_protocol_a_search(views=views, gallery_index=index)
+
+
+def test_protocol_a_search_adapter_rejects_duplicate_index_id() -> None:
+    gallery_ids = np.arange(20, 41, dtype=np.int64)
+    duplicate_ids = np.append(gallery_ids, gallery_ids[0])
+    views = RetrievalViews(
+        queries=pd.DataFrame({"id": [7]}),
+        gallery=pd.DataFrame({"id": gallery_ids}),
+    )
+    index = FeatureIndex(
+        source="teacher",
+        contract=PreprocessingContract(width=240, height=320),
+        ids=duplicate_ids,
+        features=np.tile(
+            np.array([[1.0, 0.0]], dtype=np.float32),
+            (len(duplicate_ids), 1),
+        ),
+        transform_seconds=0.0,
+        source_bytes=0,
+    )
+
+    with pytest.raises(ValueError, match="unique"):
+        build_protocol_a_search(views=views, gallery_index=index)
 
 
 def test_measure_index_build_reports_payload_index_and_spawn_peak_rss(

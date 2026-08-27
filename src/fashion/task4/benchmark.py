@@ -243,6 +243,37 @@ def build_protocol_a_search(
         raise ValueError("search timing requires the frozen 240x320 contract")
     ordered_queries = _ordered_query_rows(views.queries).set_index("_numeric_id", drop=False)
     gallery_views = views.gallery.copy()
+    view_gallery_ids = pd.to_numeric(gallery_views["id"], errors="coerce")
+    valid_view_ids = (
+        view_gallery_ids.notna()
+        & np.isfinite(view_gallery_ids)
+        & view_gallery_ids.mod(1).eq(0)
+    )
+    if not valid_view_ids.all():
+        raise ValueError("retrieval view gallery IDs must be integer-compatible")
+    numeric_view_ids = view_gallery_ids.to_numpy(dtype=np.int64)
+    if len(np.unique(numeric_view_ids)) != len(numeric_view_ids):
+        raise ValueError("retrieval view gallery IDs must be unique")
+
+    index_ids = pd.to_numeric(pd.Series(gallery_index.ids), errors="coerce")
+    valid_index_ids = index_ids.notna() & np.isfinite(index_ids) & index_ids.mod(1).eq(0)
+    if not valid_index_ids.all():
+        raise ValueError("gallery index IDs must be integer-compatible")
+    numeric_index_ids = index_ids.to_numpy(dtype=np.int64)
+    if len(np.unique(numeric_index_ids)) != len(numeric_index_ids):
+        raise ValueError("gallery index IDs must be unique")
+    index_features = np.asarray(gallery_index.features)
+    if index_features.ndim != 2 or index_features.shape[0] != len(numeric_index_ids):
+        raise ValueError("gallery index feature rows must align with IDs")
+
+    index_positions = pd.Series(np.arange(len(numeric_index_ids)), index=numeric_index_ids)
+    missing_ids = np.setdiff1d(numeric_view_ids, numeric_index_ids)
+    if len(missing_ids):
+        raise ValueError(f"gallery index is missing gallery IDs: {missing_ids.tolist()}")
+    ranked_gallery_ids = np.sort(numeric_view_ids)
+    ranked_gallery_features = index_features[
+        index_positions.loc[ranked_gallery_ids].to_numpy(dtype=np.int64)
+    ]
 
     def search(query_id: int, feature: np.ndarray) -> pd.DataFrame:
         if query_id not in ordered_queries.index:
@@ -251,8 +282,8 @@ def build_protocol_a_search(
         return rank_probe_embeddings(
             query_ids=np.asarray([query_id], dtype=np.int64),
             query_features=np.asarray(feature, dtype=np.float32).reshape(1, -1),
-            gallery_ids=gallery_index.ids,
-            gallery_features=gallery_index.features,
+            gallery_ids=ranked_gallery_ids,
+            gallery_features=ranked_gallery_features,
             views=RetrievalViews(queries=one_query, gallery=gallery_views),
             protocol="primary",
             max_k=20,
