@@ -2858,6 +2858,375 @@ def build_g2_tuning_evidence(
     return manifest
 
 
+def _load_verified_gate_manifest(
+    manifest_path: str | Path,
+    *,
+    project_root: Path,
+    expected_gate: str,
+    required_artifacts: Collection[str],
+) -> tuple[dict[str, Any], Path]:
+    resolved_manifest = _resolve_evidence_path(manifest_path, project_root=project_root)
+    with resolved_manifest.open(encoding="utf-8") as handle:
+        manifest = json.load(handle)
+    if manifest.get("gate") != expected_gate:
+        raise ValueError(
+            f"expected {expected_gate} manifest, observed {manifest.get('gate')!r}"
+        )
+    if manifest.get("decision_status") != "closed":
+        raise ValueError(f"{expected_gate} evidence must have a closed decision")
+    for name in required_artifacts:
+        _verified_manifest_artifact(manifest, name, project_root=project_root)
+    return manifest, resolved_manifest
+
+
+def build_task2_selection_story_evidence(
+    *,
+    b0_manifest_path: str | Path = TASK2_EVIDENCE_DIR / "b0_majority/manifest.json",
+    b1_manifest_path: str | Path = TASK2_EVIDENCE_DIR / "b1_hog_hsv_svm/manifest.json",
+    g1_manifest_path: str | Path = TASK2_EVIDENCE_DIR / "g1_family_screen/manifest.json",
+    size_manifest_path: str | Path = TASK2_EVIDENCE_DIR
+    / "g2_input_size_ablation/manifest.json",
+    augmentation_manifest_path: str | Path = TASK2_EVIDENCE_DIR
+    / "g2_augmentation_ablation/manifest.json",
+    tuning_manifest_path: str | Path = TASK2_EVIDENCE_DIR
+    / "g2_compact_tuning/manifest.json",
+    project_root: str | Path = ROOT,
+    evidence_directory: str | Path = TASK2_EVIDENCE_DIR / "selection_story",
+) -> dict[str, Any]:
+    """Build a hash-linked EDA reflection and incremental model-selection ladder."""
+    root = Path(project_root)
+    b0_manifest, resolved_b0 = _load_verified_experiment_manifest(
+        b0_manifest_path, project_root=root
+    )
+    b1_manifest, resolved_b1 = _load_verified_experiment_manifest(
+        b1_manifest_path, project_root=root
+    )
+    if b0_manifest.get("experiment_id") != "b0-majority":
+        raise ValueError("selection story requires the B0 majority experiment")
+    if b1_manifest.get("experiment_id") != "b1-hog-hsv-svm":
+        raise ValueError("selection story requires the B1 HOG-HSV experiment")
+
+    g1_manifest, resolved_g1 = _load_verified_gate_manifest(
+        g1_manifest_path,
+        project_root=root,
+        expected_gate="G1",
+        required_artifacts={"leaderboard", "shortlist"},
+    )
+    size_manifest, resolved_size = _load_verified_gate_manifest(
+        size_manifest_path,
+        project_root=root,
+        expected_gate="G2-P",
+        required_artifacts={"comparison", "decision"},
+    )
+    augmentation_manifest, resolved_augmentation = _load_verified_gate_manifest(
+        augmentation_manifest_path,
+        project_root=root,
+        expected_gate="G2-A",
+        required_artifacts={"comparison", "decision"},
+    )
+    tuning_manifest, resolved_tuning = _load_verified_gate_manifest(
+        tuning_manifest_path,
+        project_root=root,
+        expected_gate="G2-T",
+        required_artifacts={"leaderboard", "decision"},
+    )
+
+    if g1_manifest.get("selected_experiment_ids") != [
+        "g1-c2-resnet18",
+        "g1-c1-smallcnn",
+    ] or g1_manifest.get("rejected_experiment_ids") != ["g1-c3-mobilenetv3"]:
+        raise ValueError("selection story requires the closed C2/C1 G1 shortlist")
+    if size_manifest.get("selected_variant") != "P0":
+        raise ValueError("selection story requires retained P0 input size")
+    if augmentation_manifest.get("selected_variant") != "A0":
+        raise ValueError("selection story requires retained A0 augmentation")
+
+    b0_metrics_path = _verified_manifest_artifact(
+        b0_manifest, "pooled_metrics", project_root=root
+    )
+    b1_metrics_path = _verified_manifest_artifact(
+        b1_manifest, "pooled_metrics", project_root=root
+    )
+    with b0_metrics_path.open(encoding="utf-8") as handle:
+        b0_metrics = json.load(handle)
+    with b1_metrics_path.open(encoding="utf-8") as handle:
+        b1_metrics = json.load(handle)
+
+    g1_leaderboard = pd.read_csv(
+        _verified_manifest_artifact(g1_manifest, "leaderboard", project_root=root)
+    )
+    size_comparison = pd.read_csv(
+        _verified_manifest_artifact(size_manifest, "comparison", project_root=root)
+    )
+    tuning_leaderboard = pd.read_csv(
+        _verified_manifest_artifact(tuning_manifest, "leaderboard", project_root=root)
+    )
+    with _verified_manifest_artifact(
+        size_manifest, "decision", project_root=root
+    ).open(encoding="utf-8") as handle:
+        size_decision = json.load(handle)
+    with _verified_manifest_artifact(
+        augmentation_manifest, "decision", project_root=root
+    ).open(encoding="utf-8") as handle:
+        augmentation_decision = json.load(handle)
+    with _verified_manifest_artifact(
+        tuning_manifest, "decision", project_root=root
+    ).open(encoding="utf-8") as handle:
+        tuning_decision = json.load(handle)
+
+    if not (
+        size_decision.get("selected_variant") == "P0"
+        and augmentation_decision.get("selected_variant") == "A0"
+        and tuning_decision.get("families", {}).get("C1", {}).get(
+            "selected_tuning_id"
+        )
+        == "T1"
+        and tuning_decision.get("families", {}).get("C2", {}).get(
+            "selected_tuning_id"
+        )
+        == "T0"
+    ):
+        raise ValueError("selection story inputs do not contain the frozen G2 decisions")
+
+    def score(frame: pd.DataFrame, experiment_id: str) -> float:
+        values = frame.loc[
+            frame["experiment_id"].eq(experiment_id), "pooled_macro_f1"
+        ]
+        if len(values) != 1:
+            raise ValueError(f"expected one leaderboard row for {experiment_id}")
+        return float(values.iloc[0])
+
+    b0_score = float(b0_metrics["macro_f1"])
+    b1_score = float(b1_metrics["macro_f1"])
+    c1_t0_score = score(tuning_leaderboard, "g1-c1-smallcnn")
+    c2_t0_score = score(tuning_leaderboard, "g1-c2-resnet18")
+    c3_score = score(g1_leaderboard, "g1-c3-mobilenetv3")
+    c1_t1_score = score(tuning_leaderboard, "g2-t1-c1-smallcnn")
+
+    source_paths = {
+        "B0": _portable_artifact_path(resolved_b0, fallback_root=root),
+        "B1": _portable_artifact_path(resolved_b1, fallback_root=root),
+        "G1": _portable_artifact_path(resolved_g1, fallback_root=root),
+        "G2-P": _portable_artifact_path(resolved_size, fallback_root=root),
+        "G2-A": _portable_artifact_path(resolved_augmentation, fallback_root=root),
+        "G2-T": _portable_artifact_path(resolved_tuning, fallback_root=root),
+    }
+    model_selection_ladder = pd.DataFrame(
+        [
+            {
+                "step": "B0 majority",
+                "pooled_macro_f1": b0_score,
+                "selected_because": (
+                    "Measure the class-imbalance lower bound and audit folds."
+                ),
+                "strength": "Cheap, deterministic, and leakage-safe.",
+                "limitation_exposed": "No image discrimination; Spring F1 is zero.",
+                "next_question": "Can fixed shape and colour features help?",
+                "source_evidence": source_paths["B0"],
+            },
+            {
+                "step": "B1 HOG + HSV",
+                "pooled_macro_f1": b1_score,
+                "selected_because": (
+                    "Test the EDA shape-and-colour hypothesis classically."
+                ),
+                "strength": "Serious and interpretable image-only baseline.",
+                "limitation_exposed": "Fixed features and uncalibrated decision scores.",
+                "next_question": "Can C1 learn better features end to end?",
+                "source_evidence": source_paths["B1"],
+            },
+            {
+                "step": "C1 SmallCNN T0",
+                "pooled_macro_f1": c1_t0_score,
+                "selected_because": "Learn compact task-specific image features.",
+                "strength": "1,174,244 parameters and competitive quality.",
+                "limitation_exposed": (
+                    "Simple capacity may miss wider spatial structure."
+                ),
+                "next_question": "Does residual depth add enough value?",
+                "source_evidence": source_paths["G1"],
+            },
+            {
+                "step": "C2 ResNet18 T0",
+                "pooled_macro_f1": c2_t0_score,
+                "selected_because": (
+                    "Test residual capacity with a small-image stem."
+                ),
+                "strength": "Best and most stable G1 screen score.",
+                "limitation_exposed": "Much larger model for a small gain over C1.",
+                "next_question": (
+                    "Can an efficient alternative or tuning close the gap?"
+                ),
+                "source_evidence": source_paths["G1"],
+            },
+            {
+                "step": "C3 MobileNetV3 alternative",
+                "pooled_macro_f1": c3_score,
+                "selected_because": "Test the quality-to-cost deployment trade-off.",
+                "strength": "Lowest measured runtime and VRAM in G1.",
+                "limitation_exposed": (
+                    "Quality loss was too large; reject from tuning."
+                ),
+                "next_question": "Compare only C1 and C2 under controlled changes.",
+                "source_evidence": source_paths["G1"],
+            },
+            {
+                "step": "C1-T1 selected finalist",
+                "pooled_macro_f1": c1_t1_score,
+                "selected_because": "Passed the frozen +0.003 tuning gain gate.",
+                "strength": "Compact C1 now matches the larger C2 screen score.",
+                "limitation_exposed": (
+                    "Eight epochs and one seed cannot freeze a winner."
+                ),
+                "next_question": "Fully train C1-T1 versus retained C2-T0 fairly.",
+                "source_evidence": source_paths["G2-T"],
+            },
+            {
+                "step": "C2-T0 retained finalist",
+                "pooled_macro_f1": c2_t0_score,
+                "selected_because": "No tuning alternative gained at least +0.003.",
+                "strength": "Stable residual quality without post-result expansion.",
+                "limitation_exposed": "Higher parameter and deployment cost than C1.",
+                "next_question": "Fully train C2-T0 versus selected C1-T1 fairly.",
+                "source_evidence": source_paths["G2-T"],
+            },
+        ]
+    )
+
+    p1_row = size_comparison.loc[size_comparison["variant"].eq("P1")]
+    if len(p1_row) != 1:
+        raise ValueError("selection story requires one P1 comparison row")
+    p1_runtime_ratio = float(p1_row["runtime_ratio_vs_p0"].iloc[0])
+    spring_f1 = float(b0_metrics["per_class"]["Spring"]["f1"])
+    eda_reflection = pd.DataFrame(
+        [
+            {
+                "earlier_eda_insight": "Class imbalance can make accuracy misleading.",
+                "verdict_after_measured_gates": "supported",
+                "measured_check": (
+                    f"B0: {100 * float(b0_metrics['accuracy']):.3f}% accuracy but "
+                    f"{b0_score:.6f} macro-F1; Spring F1 = {spring_f1:.0f}."
+                ),
+                "next_test": "Keep macro-F1 primary; test I1 later.",
+            },
+            {
+                "earlier_eda_insight": (
+                    "Shape and colour contain useful Season signal."
+                ),
+                "verdict_after_measured_gates": "supported",
+                "measured_check": f"B1 reached {b1_score:.6f} macro-F1, far above B0.",
+                "next_test": "Use learned image features, then inspect errors.",
+            },
+            {
+                "earlier_eda_insight": (
+                    "Learned features should improve fixed HOG/HSV."
+                ),
+                "verdict_after_measured_gates": "supported",
+                "measured_check": (
+                    f"C1 and C2 reached {c1_t0_score:.6f} and {c2_t0_score:.6f}."
+                ),
+                "next_test": "Run both finalists at the full matched budget.",
+            },
+            {
+                "earlier_eda_insight": (
+                    "More model capacity should clearly improve quality."
+                ),
+                "verdict_after_measured_gates": "partly supported",
+                "measured_check": (
+                    f"C2 beat C1-T0 by {c2_t0_score - c1_t0_score:.6f}, but "
+                    f"C1-T1 reached {c1_t1_score:.6f}."
+                ),
+                "next_test": "Compare C1-T1 and C2-T0 for quality and cost.",
+            },
+            {
+                "earlier_eda_insight": (
+                    "A larger P1 input may preserve useful detail."
+                ),
+                "verdict_after_measured_gates": "contradicted",
+                "measured_check": (
+                    f"P1 changed macro-F1 by "
+                    f"{float(size_decision['observed_p1_minus_p0_macro_f1']):+.6f} "
+                    f"and used {p1_runtime_ratio:.3f}x runtime."
+                ),
+                "next_test": "Retain P0; do not add more image sizes.",
+            },
+            {
+                "earlier_eda_insight": (
+                    "Extra colour jitter may improve generalisation."
+                ),
+                "verdict_after_measured_gates": "contradicted",
+                "measured_check": (
+                    f"A1 changed macro-F1 by "
+                    f"{float(augmentation_decision['observed_a1_minus_a0_macro_f1']):+.6f} "
+                    "and hurt Fall/Spring F1."
+                ),
+                "next_test": "Retain A0; colour may be genuine signal.",
+            },
+            {
+                "earlier_eda_insight": (
+                    "ArticleType, file size, and acquisition year may be shortcuts."
+                ),
+                "verdict_after_measured_gates": "still untested",
+                "measured_check": "No current gate isolates these OOF slices.",
+                "next_test": (
+                    "Measure conflict, size-quartile, and year slices in Section 10."
+                ),
+            },
+        ]
+    )
+
+    evidence_root = Path(evidence_directory)
+    paths = {
+        "incremental_model_selection": (
+            evidence_root / "incremental_model_selection.csv"
+        ),
+        "eda_reflection": evidence_root / "eda_reflection.csv",
+    }
+    atomic_write_csv(paths["incremental_model_selection"], model_selection_ladder)
+    atomic_write_csv(paths["eda_reflection"], eda_reflection)
+    artifact_manifest = {
+        name: {
+            "path": _portable_artifact_path(path, fallback_root=evidence_root),
+            "sha256": compute_sha256(path),
+        }
+        for name, path in paths.items()
+    }
+    input_manifests = {
+        name: {
+            "path": source_paths[name],
+            "sha256": compute_sha256(path),
+        }
+        for name, path in (
+            ("B0", resolved_b0),
+            ("B1", resolved_b1),
+            ("G1", resolved_g1),
+            ("G2-P", resolved_size),
+            ("G2-A", resolved_augmentation),
+            ("G2-T", resolved_tuning),
+        )
+    }
+    manifest = {
+        "schema_version": "1.0.0",
+        "gate": "Task2-selection-story",
+        "decision_status": "measured_through_g2_tuning",
+        "claim_boundary": (
+            "The ladder and reflection explain hash-linked development evidence; "
+            "they do not add a new training result or open the holdout."
+        ),
+        "selected_finalist_experiment_ids": [
+            "g2-t1-c1-smallcnn",
+            "g1-c2-resnet18",
+        ],
+        "input_manifests": input_manifests,
+        "artifacts": artifact_manifest,
+    }
+    manifest_path = evidence_root / "manifest.json"
+    atomic_write_json(manifest_path, manifest)
+    manifest["manifest_path"] = str(manifest_path)
+    manifest["manifest_sha256"] = compute_sha256(manifest_path)
+    return manifest
+
+
 def build_g0_evidence(
     result: G0SmokeResult,
     *,

@@ -24,6 +24,7 @@ from fashion.task2.evidence import (
     build_g2_input_size_evidence,
     build_g2_tuning_evidence,
     build_task2_evidence,
+    build_task2_selection_story_evidence,
     plot_file_impact_flow,
     validate_file_impact_edges,
 )
@@ -62,6 +63,7 @@ __all__ = [
     "build_g2_augmentation_evidence",
     "build_g2_input_size_evidence",
     "build_g2_tuning_evidence",
+    "build_task2_selection_story_evidence",
     "build_g0_evidence",
     "build_task2_evidence",
     "HogHsvFoldResult",
