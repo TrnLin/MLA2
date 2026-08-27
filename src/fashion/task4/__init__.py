@@ -10,6 +10,7 @@ from .analysis import (
 )
 from .baseline import (
     BASELINE_QUALITY_CHUNK_SIZE,
+    PREPROCESSING_REPRODUCTION_ATOL,
     BaselineEvaluation,
     Direction,
     build_baseline_summary,
@@ -102,6 +103,7 @@ from .protocol import (
 
 __all__ = (
     "BASELINE_QUALITY_CHUNK_SIZE",
+    "PREPROCESSING_REPRODUCTION_ATOL",
     "BaselineEvaluation",
     "COVERAGE_COLUMNS",
     "COLOUR_FEATURE_DIM",

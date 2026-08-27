@@ -238,6 +238,40 @@ def test_reproduction_check_accepts_all_four_selected_size_scores() -> None:
     verify_preprocessing_reproduction(summary, _reproduction_rows(), atol=5e-8)
 
 
+def test_default_reproduction_tolerance_accepts_delta_at_boundary() -> None:
+    comparison = _reproduction_rows()
+    summary = _reproduction_rows()
+    summary.insert(0, "method", PROBE_VERSION)
+    direction = (
+        comparison["query_source"].eq("v1")
+        & comparison["gallery_source"].eq("teacher")
+    )
+    comparison.loc[direction, "value"] = 0.0
+    summary.loc[direction, "value"] = 1e-5
+
+    verify_preprocessing_reproduction(summary, comparison)
+
+
+def test_default_reproduction_tolerance_rejects_delta_above_boundary() -> None:
+    comparison = _reproduction_rows()
+    summary = _reproduction_rows()
+    summary.insert(0, "method", PROBE_VERSION)
+    direction = (
+        comparison["query_source"].eq("v1")
+        & comparison["gallery_source"].eq("teacher")
+    )
+    comparison.loc[direction, "value"] = 0.0
+    summary.loc[direction, "value"] = 1.0001e-5
+
+    with pytest.raises(ValueError) as error:
+        verify_preprocessing_reproduction(summary, comparison)
+
+    assert (
+        "v1->teacher: observed=1.0001e-05, expected=0, "
+        "absolute_delta=1.0001e-05"
+    ) in str(error.value)
+
+
 def test_reproduction_check_rejects_changed_selected_size_score() -> None:
     summary = _reproduction_rows()
     summary.insert(0, "method", PROBE_VERSION)

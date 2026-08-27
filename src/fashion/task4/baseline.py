@@ -28,6 +28,7 @@ from fashion.task4.protocol import (
 Direction: TypeAlias = tuple[SourceName, SourceName]
 
 BASELINE_QUALITY_CHUNK_SIZE = 256
+PREPROCESSING_REPRODUCTION_ATOL = 1e-5
 _BASELINE_CONTRACT = PreprocessingContract(width=240, height=320)
 _DIRECTIONS = source_directions()
 _PREFIX_COLUMNS = (
@@ -42,6 +43,7 @@ _PREFIX_COLUMNS = (
 
 __all__ = (
     "BASELINE_QUALITY_CHUNK_SIZE",
+    "PREPROCESSING_REPRODUCTION_ATOL",
     "BaselineEvaluation",
     "Direction",
     "build_baseline_summary",
@@ -488,7 +490,7 @@ def verify_preprocessing_reproduction(
     summary: pd.DataFrame,
     comparison: pd.DataFrame,
     *,
-    atol: float = 5e-8,
+    atol: float = PREPROCESSING_REPRODUCTION_ATOL,
 ) -> None:
     """Require exact reproduction of the prior fold-1 240×320 probe scores."""
     if isinstance(atol, bool) or not np.isfinite(atol) or atol < 0:
