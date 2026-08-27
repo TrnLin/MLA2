@@ -86,6 +86,8 @@ FAILURE_SLICE_COLUMNS = (
     "coverage",
 )
 TIMING_COLUMNS = (
+    "scope",
+    "fold",
     "query_id",
     "query_source",
     "gallery_source",
@@ -421,10 +423,10 @@ def _prepare_frames(
     )
     _require_finite_non_null(
         timings,
-        TIMING_COLUMNS[3:],
+        TIMING_COLUMNS[5:],
         label="baseline timings",
     )
-    if timings.loc[:, TIMING_COLUMNS[3:]].lt(0).any().any():
+    if timings.loc[:, TIMING_COLUMNS[5:]].lt(0).any().any():
         raise ValueError("baseline timing values must be non-negative")
 
     ordered_slices = _ordered_categories(
@@ -631,7 +633,7 @@ def _reopen_artifacts(
     )
     _require_finite_non_null(
         frames["baseline_timing.csv"],
-        TIMING_COLUMNS[3:],
+        TIMING_COLUMNS[5:],
         label="baseline_timing.csv",
     )
     _validate_examples(frames["baseline_examples.csv"])

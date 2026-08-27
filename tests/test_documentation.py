@@ -3,6 +3,8 @@ from __future__ import annotations
 import ast
 import subprocess
 
+import nbformat
+
 from fashion.config import ROOT
 from fashion.data.pipeline import _BASE_ARTIFACTS, CACHE_FILENAME
 
@@ -162,6 +164,22 @@ def test_task4_baseline_decision_and_handoffs_are_frozen() -> None:
     assert "baseline_examples.png" in figure_readme
     assert "5e-8" not in plan
     assert "1e-5" in plan
+    notebooks = [
+        nbformat.read(ROOT / "notebooks/task-4" / filename, as_version=4)
+        for filename in ("01_v1_eda.ipynb", "05_task4_visual_search.ipynb")
+    ]
+    code_sources = [
+        "\n".join(
+            cell.source for cell in notebook.cells if cell.cell_type == "code"
+        )
+        for notebook in notebooks
+    ]
+    assert all("fashion.retrieval" not in source for source in code_sources)
+    main_source = "\n".join(cell.source for cell in notebooks[1].cells)
+    assert (
+        "Model quality remains unknown until the baseline and learned search methods are run."
+        not in main_source
+    )
 
 
 def test_locked_setup_and_single_split_rule_are_documented() -> None:

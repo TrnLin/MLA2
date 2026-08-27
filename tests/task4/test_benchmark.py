@@ -46,6 +46,8 @@ def test_benchmark_api_is_exported_from_task4_package() -> None:
 def test_timing_keeps_every_query_and_reports_linear_percentiles() -> None:
     samples = pd.DataFrame(
         {
+            "scope": ["development"] * 4,
+            "fold": [1] * 4,
             "query_source": ["teacher"] * 4,
             "gallery_source": ["v1"] * 4,
             "encoding_seconds": [0.1, 0.2, 0.3, 10.0],
@@ -104,6 +106,8 @@ def test_benchmark_warms_first_100_then_times_every_sorted_id_once() -> None:
     assert encoded_ids[100:] == list(range(100, 203))
     assert searched_ids[100:] == list(range(100, 203))
     assert samples["query_id"].tolist() == list(range(100, 203))
+    assert samples["scope"].unique().tolist() == ["development"]
+    assert samples["fold"].unique().tolist() == [1]
     assert samples["encoding_seconds"].tolist() == pytest.approx([0.1] * 103)
     assert samples["search_seconds"].tolist() == pytest.approx([0.05] * 103)
     assert samples["end_to_end_seconds"].tolist() == pytest.approx([0.15] * 103)

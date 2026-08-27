@@ -87,6 +87,8 @@ SLICE_COLUMNS = [
     "coverage",
 ]
 TIMING_COLUMNS = [
+    "scope",
+    "fold",
     "query_id",
     "query_source",
     "gallery_source",
@@ -187,8 +189,8 @@ def _slice_summary() -> pd.DataFrame:
 def _timings() -> pd.DataFrame:
     return pd.DataFrame(
         [
-            [20, "v1", "v1", 0.2, 0.02, 0.22],
-            [10, "teacher", "teacher", 0.1, 0.01, 0.11],
+            ["development", 1, 20, "v1", "v1", 0.2, 0.02, 0.22],
+            ["development", 1, 10, "teacher", "teacher", 0.1, 0.01, 0.11],
         ],
         columns=TIMING_COLUMNS,
     )
@@ -427,6 +429,47 @@ def test_writer_creates_complete_deterministic_artifact_set(tmp_path: Path) -> N
             assert set(frame["scope"]) == {"development"}
         if "partition" in frame:
             assert not frame["partition"].isin({"holdout", "quarantine"}).any()
+
+
+@pytest.mark.parametrize(
+    ("mutation", "message"),
+    [
+        ("missing_scope", "columns"),
+        ("missing_fold", "columns"),
+        ("wrong_scope", "scope must be development"),
+        ("wrong_fold", "frozen fold 1"),
+    ],
+)
+def test_writer_rejects_missing_or_wrong_timing_provenance(
+    tmp_path: Path,
+    mutation: str,
+    message: str,
+) -> None:
+    timings = _timings()
+    if mutation == "missing_scope":
+        timings = timings.drop(columns="scope")
+    elif mutation == "missing_fold":
+        timings = timings.drop(columns="fold")
+    elif mutation == "wrong_scope":
+        timings["scope"] = "holdout"
+    elif mutation == "wrong_fold":
+        timings["fold"] = 2
+    else:
+        raise AssertionError(f"unknown mutation: {mutation}")
+    image_rows, examples, rankings = _example_inputs(tmp_path)
+
+    with pytest.raises(ValueError, match=message):
+        write_baseline_artifacts(
+            baseline=_baseline(),
+            slice_summary=_slice_summary(),
+            timings=timings,
+            cost=_cost(),
+            examples=examples,
+            evidence_dir=tmp_path / "evidence",
+            figure_dir=tmp_path / "figures",
+            image_rows=image_rows,
+            example_rankings=rankings,
+        )
 
 
 def test_writer_rejects_non_top_five_example_rows(tmp_path: Path) -> None:

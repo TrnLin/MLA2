@@ -31,6 +31,7 @@ from fashion.task4.baseline import (
 from fashion.task4.baseline_evidence import (
     EXAMPLE_COLUMNS,
     FAILURE_SLICE_COLUMNS,
+    TIMING_COLUMNS,
     write_baseline_artifacts,
 )
 from fashion.task4.benchmark import (
@@ -441,6 +442,12 @@ def _validate_run_outputs(
     *,
     query_count: int,
 ) -> None:
+    if tuple(timings.columns) != TIMING_COLUMNS:
+        raise ValueError(f"baseline timing columns must be {TIMING_COLUMNS}")
+    if set(timings["scope"].astype(str)) != {"development"}:
+        raise ValueError("baseline timing scope must be development")
+    if set(pd.to_numeric(timings["fold"], errors="coerce")) != {1}:
+        raise ValueError("baseline timings must use frozen fold 1")
     expected_directions = set(source_directions())
     baseline_directions = set(
         baseline.query_metrics.loc[

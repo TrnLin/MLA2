@@ -48,6 +48,12 @@ def _source(notebook: nbformat.NotebookNode) -> str:
     return "\n".join(cell.source for cell in notebook.cells)
 
 
+def _code_source(notebook: nbformat.NotebookNode) -> str:
+    return "\n".join(
+        cell.source for cell in notebook.cells if cell.cell_type == "code"
+    )
+
+
 def test_only_planned_notebook_names_are_present() -> None:
     allowed = {
         "00_problem_definition.ipynb",
@@ -159,7 +165,21 @@ def test_task4_evaluation_protocol_is_frozen_and_executed() -> None:
     assert "Fontconfig error" not in saved_stderr
     assert "Matplotlib created a temporary cache" not in saved_stderr
     assert "load_splits_for_final_evaluation" not in source
+    assert (
+        "Model quality remains unknown until the baseline and learned search methods are run."
+        not in source
+    )
+    assert "Only learned-model quality remains unknown." in source
     assert (ROOT / "results/figures/task4/retrieval_protocol_overview.png").exists()
+
+
+def test_active_task4_notebooks_use_canonical_import_owners() -> None:
+    for filename in ("01_v1_eda.ipynb", "05_task4_visual_search.ipynb"):
+        notebook = nbformat.read(ROOT / "notebooks/task-4" / filename, as_version=4)
+        code_source = _code_source(notebook)
+
+        assert "fashion.retrieval" not in code_source
+        assert "fashion.task4" in code_source
 
 
 def test_task4_preprocessing_milestone_is_frozen_and_executed() -> None:

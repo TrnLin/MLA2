@@ -146,6 +146,8 @@ def benchmark_source_direction(
         searched = clock_ns()
         records.append(
             {
+                "scope": "development",
+                "fold": FIXED_VALIDATION_FOLD,
                 "query_id": int(row["_numeric_id"]),
                 "query_source": query_source,
                 "gallery_source": gallery_source,
@@ -157,6 +159,8 @@ def benchmark_source_direction(
     return pd.DataFrame.from_records(
         records,
         columns=[
+            "scope",
+            "fold",
             "query_id",
             "query_source",
             "gallery_source",
@@ -170,6 +174,8 @@ def benchmark_source_direction(
 def summarize_timings(samples: pd.DataFrame) -> pd.DataFrame:
     """Report linear p50 and p95 while retaining the full sample count."""
     required = {
+        "scope",
+        "fold",
         "query_source",
         "gallery_source",
         *(column for _, column in _TIMING_COLUMNS),
@@ -178,6 +184,14 @@ def summarize_timings(samples: pd.DataFrame) -> pd.DataFrame:
         raise ValueError(f"timing samples are missing columns: {sorted(missing)}")
     if samples.empty:
         raise ValueError("timing samples must not be empty")
+    if set(samples["scope"].astype(str)) != {"development"}:
+        raise ValueError("timing samples scope must be development")
+    if set(pd.to_numeric(samples["fold"], errors="coerce")) != {
+        FIXED_VALIDATION_FOLD
+    }:
+        raise ValueError(
+            f"timing samples must use frozen fold {FIXED_VALIDATION_FOLD}"
+        )
     directions = samples.loc[:, ["query_source", "gallery_source"]].drop_duplicates()
     if len(directions) != 1:
         raise ValueError("timing samples must describe exactly one source direction")
