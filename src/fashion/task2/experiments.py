@@ -37,6 +37,7 @@ from fashion.train.cache import RunCacheKey, build_run_cache_key, find_cached_ru
 from fashion.train.engine import FoldResult, TrainConfig, train_fold
 from fashion.train.metrics import validate_oof
 from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
+from fashion.train.reproducibility import seed_everything
 
 ExperimentMethod = Literal["majority", "hog_hsv_svm", "deep"]
 ExecutionMode = Literal["run_or_load", "run", "load"]
@@ -453,6 +454,9 @@ def _execute_deep(
     splits_path: Path,
     label_map_path: Path,
 ) -> tuple[FoldResult, dict[str, Any]]:
+    # Model parameters are initialized before train_fold receives the model, so the
+    # declared run seed must be applied here as well as inside the training engine.
+    seed_everything(seed)
     loaders = build_task_loaders(
         validation_fold=fold,
         image_size=config.data.image_size,

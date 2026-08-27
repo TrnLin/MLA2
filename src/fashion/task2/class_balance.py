@@ -46,6 +46,7 @@ from fashion.train.losses import (
 )
 from fashion.train.metrics import validate_oof
 from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
+from fashion.train.reproducibility import seed_everything
 
 I1_EXPERIMENT_ID = "g4-i1-effective-number-c1"
 I1_STAGE = "g4_i1_class_balanced"
@@ -256,6 +257,8 @@ def _execute_i1(
     splits_path: Path,
     label_map_path: Path,
 ) -> tuple[FoldResult, dict[str, Any]]:
+    # Match the legacy deep path: the run seed owns initialization and training.
+    seed_everything(seed)
     loaders = build_task_loaders(
         validation_fold=fold,
         image_size=config.data.image_size,
