@@ -277,8 +277,10 @@ def test_g2_tuning_selects_only_meaningful_gain_and_writes_learning_curves(
 ) -> None:
     plot_calls: list[tuple] = []
     bar_calls: list[tuple] = []
+    ylim_calls: list[tuple[float, float]] = []
     original_plot = Axes.plot
     original_bar = Axes.bar
+    original_set_ylim = Axes.set_ylim
 
     def capture_plot(self, *args, **kwargs):
         plot_calls.append(args)
@@ -288,8 +290,14 @@ def test_g2_tuning_selects_only_meaningful_gain_and_writes_learning_curves(
         bar_calls.append(args)
         return original_bar(self, *args, **kwargs)
 
+    def capture_ylim(self, bottom=None, top=None, *args, **kwargs):
+        if bottom is not None and top is not None:
+            ylim_calls.append((float(bottom), float(top)))
+        return original_set_ylim(self, bottom, top, *args, **kwargs)
+
     monkeypatch.setattr(Axes, "plot", capture_plot)
     monkeypatch.setattr(Axes, "bar", capture_bar)
+    monkeypatch.setattr(Axes, "set_ylim", capture_ylim)
     manifest, _ = _build(tmp_path)
     result_root = tmp_path / "results"
     decision = json.loads(
@@ -314,6 +322,8 @@ def test_g2_tuning_selects_only_meaningful_gain_and_writes_learning_curves(
     assert len(summary) == 6 * 8
     assert len(plot_calls) == 8
     assert not bar_calls
+    assert len(ylim_calls) == 2
+    assert all(0.0 < bottom < top <= 1.0 for bottom, top in ylim_calls)
     for name in ("c1_learning_curves", "c2_learning_curves"):
         figure = result_root / manifest["artifacts"][name]["path"]
         assert figure.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
