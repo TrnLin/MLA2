@@ -6,6 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from fashion.data.dataset import get_cv_split, get_samples, load_splits
@@ -25,7 +26,7 @@ from fashion.task2.experiments import ExperimentConfig, _implementation_paths
 from fashion.train.artifacts import canonical_sha256
 from fashion.train.engine import FoldResult
 from fashion.train.losses import EFFECTIVE_NUMBER_LOSS_ID
-from fashion.train.metrics import SEASON_LABELS
+from fashion.train.metrics import SEASON_LABELS, OOFValidationError, multiclass_metrics
 from fashion.train.registry import RunRegistry
 
 
@@ -128,6 +129,68 @@ def _fake_execute_i1(
     }
 
 
+def _single_cached_oof(
+    *,
+    run_id: str = "i1-cache-run",
+    experiment_id: str = I1_EXPERIMENT_ID,
+    fold: int = 0,
+    seed: int = 2753,
+    truth: str = "Fall",
+) -> pd.DataFrame:
+    probabilities = {f"prob_{label}": float(label == truth) for label in SEASON_LABELS}
+    return pd.DataFrame(
+        [
+            {
+                "run_id": run_id,
+                "experiment_id": experiment_id,
+                "id": 1,
+                "fold": fold,
+                "seed": seed,
+                "y_true": truth,
+                "y_pred": truth,
+                **probabilities,
+            }
+        ]
+    )
+
+
+def _cached_metrics(oof: pd.DataFrame) -> dict:
+    return multiclass_metrics(
+        oof["y_true"].astype(str),
+        probabilities=oof[[f"prob_{label}" for label in SEASON_LABELS]],
+        labels=SEASON_LABELS,
+        y_pred=oof["y_pred"].astype(str),
+    )
+
+
+def _load_cached_for_test(
+    tmp_path: Path,
+    *,
+    oof: pd.DataFrame,
+    metrics: dict,
+):
+    prediction_path = tmp_path / "cached_oof.csv"
+    oof.to_csv(prediction_path, index=False)
+    cached = SimpleNamespace(
+        run_id="i1-cache-run",
+        row={
+            "prediction_path": str(prediction_path),
+            "metrics": json.dumps(metrics),
+        },
+        verified_artifacts={},
+    )
+    return class_balance._load_cached_output(
+        cached=cached,
+        config=_config(),
+        fold=0,
+        seed=2753,
+        key=SimpleNamespace(),
+        data_root=tmp_path,
+        expected=pd.DataFrame({"id": [1], "season": ["Fall"]}),
+        labels=SEASON_LABELS,
+    )
+
+
 def test_i1_implementation_paths_extend_without_changing_legacy_deep_paths() -> None:
     legacy = _implementation_paths("deep")
 
@@ -136,6 +199,33 @@ def test_i1_implementation_paths_extend_without_changing_legacy_deep_paths() -> 
         "src/fashion/train/losses.py",
         "src/fashion/task2/class_balance.py",
     )
+
+
+def test_i1_oof_validation_rejects_canonical_truth_mismatch() -> None:
+    expected = pd.DataFrame({"id": [1], "season": ["Spring"]})
+
+    with pytest.raises(OOFValidationError, match="canonical true labels"):
+        class_balance._validate_output_oof(
+            _single_cached_oof(truth="Fall"),
+            expected=expected,
+            labels=SEASON_LABELS,
+        )
+
+
+def test_i1_cached_output_rejects_run_identity_mismatch(tmp_path: Path) -> None:
+    oof = _single_cached_oof(fold=4)
+
+    with pytest.raises(OOFValidationError, match="identity"):
+        _load_cached_for_test(tmp_path, oof=oof, metrics=_cached_metrics(oof))
+
+
+def test_i1_cached_output_rejects_recorded_metric_mismatch(tmp_path: Path) -> None:
+    oof = _single_cached_oof()
+    metrics = _cached_metrics(oof)
+    metrics["macro_f1"] = 0.5
+
+    with pytest.raises(OOFValidationError, match="metrics"):
+        _load_cached_for_test(tmp_path, oof=oof, metrics=metrics)
 
 
 def test_validate_i1_config_freezes_the_full_protocol() -> None:
