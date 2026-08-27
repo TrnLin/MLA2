@@ -425,6 +425,17 @@ def test_task2_g3_cell_records_audited_full_budget_comparison() -> None:
         assert required in finding
 
 
+def test_task2_g3_notebook_preserves_registered_probability_note() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    code = {cell.id: cell for cell in notebook.cells}["s08-01-02-code"].source
+
+    assert (
+        "Uncalibrated softmax probabilities from the best validation macro-F1 "
+        "checkpoint in each fold; calibration metrics are diagnostic only."
+        in code
+    )
+
+
 def test_task2_g2_size_cell_records_audited_selection() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
