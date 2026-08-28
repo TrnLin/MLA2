@@ -28,6 +28,11 @@ from fashion.train.artifacts import (
     atomic_write_json,
     canonical_sha256,
 )
+from fashion.train.losses import (
+    EFFECTIVE_NUMBER_BETA,
+    EFFECTIVE_NUMBER_LOSS_ID,
+    effective_number_class_weights,
+)
 from fashion.train.metrics import SEASON_LABELS, multiclass_metrics, validate_oof
 from fashion.train.registry import RunRegistry
 
@@ -36,9 +41,7 @@ if TYPE_CHECKING:
 
 FILE_IMPACT_COLUMNS = ("producer", "artifact", "consumer", "effect", "phase")
 FROZEN_BUNDLE = "Frozen Season bundle"
-DEPLOYMENT_CONSUMERS = frozenset(
-    {"Notebook 06 holdout", "Prediction CLI", "Streamlit app"}
-)
+DEPLOYMENT_CONSUMERS = frozenset({"Notebook 06 holdout", "Prediction CLI", "Streamlit app"})
 TRAINING_NODES = frozenset(
     {"fashion.data.torch", "fashion.models.season", "fashion.train.engine", "Task 2 runner"}
 )
@@ -184,6 +187,29 @@ G3_FULL_BUDGET_SPECS = {
         "model_family": "resnet18_small_stem",
         "stage": "g3_full_budget",
         "learning_rate": 3e-4,
+        "weight_decay": 1e-4,
+    },
+}
+I1_REFERENCE_EXPERIMENT_ID = "g3-c1-t1-smallcnn"
+I1_EXPERIMENT_ID = "g4-i1-effective-number-c1"
+I1_SPRING_MINIMUM_GAIN = 0.010
+I1_MAXIMUM_MACRO_F1_LOSS = 0.002
+I1_MAXIMUM_OTHER_CLASS_LOSS = 0.020
+I1_COMPARISON_SPECS = {
+    I1_REFERENCE_EXPERIMENT_ID: {
+        "family": "G3-C1",
+        "tuning_id": "T1",
+        "model_family": "smallcnn",
+        "stage": "g3_full_budget",
+        "learning_rate": 1e-3,
+        "weight_decay": 1e-4,
+    },
+    I1_EXPERIMENT_ID: {
+        "family": "I1",
+        "tuning_id": "effective-number",
+        "model_family": "smallcnn",
+        "stage": "g4_i1_class_balanced",
+        "learning_rate": 1e-3,
         "weight_decay": 1e-4,
     },
 }
@@ -508,9 +534,7 @@ def build_task2_evidence(
     edges_path = evidence_root / "file_impact_edges.csv"
     figure_path = figure_root / "file_impact_flow.png"
     manifest_path = evidence_root / "file_impact_manifest.json"
-    common_root = Path(
-        os.path.commonpath([evidence_root.resolve(), figure_root.resolve()])
-    )
+    common_root = Path(os.path.commonpath([evidence_root.resolve(), figure_root.resolve()]))
     edges = build_file_impact_edges()
     atomic_write_csv(edges_path, edges)
     figure, _ = plot_file_impact_flow(edges, output_path=figure_path)
@@ -576,9 +600,7 @@ def _validate_experiment_outputs(
             "label_map_sha256": output.cache_key.label_map_sha256,
             "implementation_sha256": output.cache_key.implementation_sha256,
         }
-        mismatches = [
-            name for name, value in expected_identity.items() if row[name] != value
-        ]
+        mismatches = [name for name, value in expected_identity.items() if row[name] != value]
         for artifact, digest in output.artifacts.items():
             hash_column = f"{artifact}_sha256"
             if hash_column not in row or row[hash_column] != digest:
@@ -826,9 +848,7 @@ def _verified_manifest_artifact(
     if name not in artifacts:
         raise ValueError(f"experiment manifest is missing required artifact: {name}")
     declaration = artifacts[name]
-    artifact_path = _resolve_evidence_path(
-        declaration["path"], project_root=project_root
-    )
+    artifact_path = _resolve_evidence_path(declaration["path"], project_root=project_root)
     if not artifact_path.is_file():
         raise ValueError(f"declared {name} artifact does not exist: {artifact_path}")
     if compute_sha256(artifact_path) != declaration["sha256"]:
@@ -848,9 +868,7 @@ def _load_verified_experiment_manifest(
     artifacts = manifest.get("artifacts", {})
     missing = required_artifacts - set(artifacts)
     if missing:
-        raise ValueError(
-            f"experiment manifest is missing required artifacts: {sorted(missing)}"
-        )
+        raise ValueError(f"experiment manifest is missing required artifacts: {sorted(missing)}")
     for name in required_artifacts:
         _verified_manifest_artifact(manifest, name, project_root=project_root)
     return manifest, resolved_manifest
@@ -894,14 +912,10 @@ def _g1_family_row(
     ).open(encoding="utf-8") as handle:
         pooled = json.load(handle)
     fold_summary = pd.read_csv(
-        _resolve_evidence_path(
-            artifacts["fold_summary"]["path"], project_root=project_root
-        )
+        _resolve_evidence_path(artifacts["fold_summary"]["path"], project_root=project_root)
     )
     registry = pd.read_csv(
-        _resolve_evidence_path(
-            artifacts["registry_snapshot"]["path"], project_root=project_root
-        ),
+        _resolve_evidence_path(artifacts["registry_snapshot"]["path"], project_root=project_root),
         dtype=str,
         keep_default_na=False,
     )
@@ -920,13 +934,9 @@ def _g1_family_row(
     for column, expected in required_registry_values.items():
         observed = set(registry[column].astype(str).str.lower())
         if observed != {expected}:
-            raise ValueError(
-                f"{experiment_id} registry {column} must be {expected}: {observed}"
-            )
+            raise ValueError(f"{experiment_id} registry {column} must be {expected}: {observed}")
     model_families = set(registry["model_family"].astype(str))
-    parameter_counts = set(
-        pd.to_numeric(registry["parameter_count"], errors="raise").astype(int)
-    )
+    parameter_counts = set(pd.to_numeric(registry["parameter_count"], errors="raise").astype(int))
     if len(model_families) != 1 or len(parameter_counts) != 1:
         raise ValueError(f"{experiment_id} changed model identity across folds")
     macro_summary = fold_summary.loc[fold_summary["metric"].eq("macro_f1")]
@@ -949,9 +959,7 @@ def _g1_family_row(
             "five_fold_runtime_minutes": float(
                 pd.to_numeric(registry["runtime_seconds"], errors="raise").sum() / 60.0
             ),
-            "peak_vram_mb": float(
-                pd.to_numeric(registry["peak_vram_mb"], errors="raise").max()
-            ),
+            "peak_vram_mb": float(pd.to_numeric(registry["peak_vram_mb"], errors="raise").max()),
         },
         coverage_sha256,
     )
@@ -966,9 +974,7 @@ def _plot_g1_family_screen(
     figure = Figure(figsize=(10.5, 6.2), constrained_layout=True)
     FigureCanvasAgg(figure)
     axis = figure.subplots()
-    colours = [
-        "#16A34A" if value else "#94A3B8" for value in leaderboard["shortlisted"]
-    ]
+    colours = ["#16A34A" if value else "#94A3B8" for value in leaderboard["shortlisted"]]
     sizes = 100.0 + 12.0 * leaderboard["five_fold_runtime_minutes"].to_numpy()
     axis.scatter(
         leaderboard["parameter_count"],
@@ -1029,8 +1035,7 @@ def build_g1_family_screen_evidence(
         raise ValueError("G1 family manifest paths must be unique")
     if set(experiment_ids) != set(G1_FAMILY_EXPERIMENTS):
         raise ValueError(
-            "G1 family screen requires exactly C1 SmallCNN, C2 ResNet18, and "
-            "C3 MobileNetV3-Small"
+            "G1 family screen requires exactly C1 SmallCNN, C2 ResNet18, and C3 MobileNetV3-Small"
         )
 
     rows: list[dict[str, Any]] = []
@@ -1050,9 +1055,7 @@ def build_g1_family_screen_evidence(
     leaderboard.insert(0, "rank", np.arange(1, len(leaderboard) + 1))
     leaderboard["shortlisted"] = leaderboard["rank"].le(2)
     best_score = float(leaderboard.loc[0, "pooled_macro_f1"])
-    leaderboard["delta_vs_best_macro_f1"] = (
-        leaderboard["pooled_macro_f1"] - best_score
-    )
+    leaderboard["delta_vs_best_macro_f1"] = leaderboard["pooled_macro_f1"] - best_score
 
     reference_macro_f1: float | None = None
     reference_manifest_sha256: str | None = None
@@ -1074,15 +1077,11 @@ def build_g1_family_screen_evidence(
             raise ValueError("B1 and G1 evidence do not cover the same OOF products")
         reference_macro_f1 = float(reference["pooled_macro_f1"])
         reference_manifest_sha256 = compute_sha256(resolved_reference)
-        leaderboard["gain_over_b1_macro_f1"] = (
-            leaderboard["pooled_macro_f1"] - reference_macro_f1
-        )
+        leaderboard["gain_over_b1_macro_f1"] = leaderboard["pooled_macro_f1"] - reference_macro_f1
 
     evidence_root = Path(evidence_directory)
     figure_root = Path(figure_directory)
-    common_root = Path(
-        os.path.commonpath([evidence_root.resolve(), figure_root.resolve()])
-    )
+    common_root = Path(os.path.commonpath([evidence_root.resolve(), figure_root.resolve()]))
     leaderboard_path = evidence_root / "leaderboard.csv"
     shortlist_path = evidence_root / "shortlist.json"
     figure_path = figure_root / "g1_family_screen.png"
@@ -1094,9 +1093,7 @@ def build_g1_family_screen_evidence(
         "gate": "G1",
         "decision_status": "closed",
         "primary_metric": "pooled_five_fold_oof_macro_f1",
-        "selection_rule": (
-            "Select the two deep families with the highest pooled OOF macro-F1."
-        ),
+        "selection_rule": ("Select the two deep families with the highest pooled OOF macro-F1."),
         "selected_experiment_ids": selected,
         "rejected_experiment_ids": rejected,
         "next_question": (
@@ -1173,9 +1170,7 @@ def _g2_transform_row(
         raise ValueError(f"unsupported G2 transform field: {changed_data_field}")
     experiment_id = str(manifest.get("experiment_id", ""))
     if experiment_id != expected_experiment_id:
-        raise ValueError(
-            f"{variant} manifest must be {expected_experiment_id}: {experiment_id}"
-        )
+        raise ValueError(f"{variant} manifest must be {expected_experiment_id}: {experiment_id}")
     if tuple(manifest.get("folds", ())) != G1_EXPECTED_FOLDS:
         raise ValueError(f"{experiment_id} must contain canonical folds 0-4")
     if int(manifest.get("seed", -1)) != 2753:
@@ -1198,13 +1193,9 @@ def _g2_transform_row(
         }
     )
     if expected_coverage_sha256 and coverage_sha256 != expected_coverage_sha256:
-        raise ValueError(
-            f"{comparison_name} do not cover the same OOF products and labels"
-        )
+        raise ValueError(f"{comparison_name} do not cover the same OOF products and labels")
 
-    resolved_config_path = _resolve_evidence_path(
-        config_path, project_root=project_root
-    )
+    resolved_config_path = _resolve_evidence_path(config_path, project_root=project_root)
     config = load_experiment_config(resolved_config_path)
     if config.experiment_id != experiment_id:
         raise ValueError(f"{variant} config and evidence experiment IDs do not match")
@@ -1227,9 +1218,7 @@ def _g2_transform_row(
     matched_config_sha256 = canonical_sha256(comparison_payload)
     config_sha256 = canonical_sha256(config.to_dict())
 
-    pooled_path = _verified_manifest_artifact(
-        manifest, "pooled_metrics", project_root=project_root
-    )
+    pooled_path = _verified_manifest_artifact(manifest, "pooled_metrics", project_root=project_root)
     fold_summary_path = _verified_manifest_artifact(
         manifest, "fold_summary", project_root=project_root
     )
@@ -1266,9 +1255,7 @@ def _g2_transform_row(
     for column, expected in required_registry_values.items():
         observed = set(registry[column].astype(str).str.lower())
         if observed != {expected}:
-            raise ValueError(
-                f"{experiment_id} registry {column} must be {expected}: {observed}"
-            )
+            raise ValueError(f"{experiment_id} registry {column} must be {expected}: {observed}")
     unique_registry_fields: dict[str, str] = {}
     for column in (
         "config_sha256",
@@ -1296,21 +1283,17 @@ def _g2_transform_row(
     registry_cost["runtime_seconds"] = pd.to_numeric(
         registry_cost["runtime_seconds"], errors="raise"
     )
-    registry_cost["peak_vram_mb"] = pd.to_numeric(
-        registry_cost["peak_vram_mb"], errors="raise"
+    registry_cost["peak_vram_mb"] = pd.to_numeric(registry_cost["peak_vram_mb"], errors="raise")
+    registry_cost["best_epoch"] = pd.to_numeric(registry_cost["best_epoch"], errors="raise").astype(
+        int
     )
-    registry_cost["best_epoch"] = pd.to_numeric(
-        registry_cost["best_epoch"], errors="raise"
-    ).astype(int)
     fold_detail = fold_metrics.loc[:, ["run_id", "fold", "macro_f1"]].merge(
         registry_cost,
         on="run_id",
         how="inner",
         validate="one_to_one",
     )
-    fold_detail["macro_f1"] = pd.to_numeric(
-        fold_detail["macro_f1"], errors="raise"
-    )
+    fold_detail["macro_f1"] = pd.to_numeric(fold_detail["macro_f1"], errors="raise")
     macro_summary = fold_summary.loc[fold_summary["metric"].eq("macro_f1")]
     if len(macro_summary) != 1:
         raise ValueError(f"{experiment_id} requires one macro-F1 fold summary row")
@@ -1326,9 +1309,7 @@ def _g2_transform_row(
         required_metrics = {"precision", "recall", "f1", "support"}
         if set(metrics) < required_metrics:
             raise ValueError(f"{experiment_id} {label} metrics are incomplete")
-        scores = {
-            name: float(metrics[name]) for name in ("precision", "recall", "f1")
-        }
+        scores = {name: float(metrics[name]) for name in ("precision", "recall", "f1")}
         support = int(metrics["support"])
         if (
             not np.isfinite(np.fromiter(scores.values(), dtype=float)).all()
@@ -1358,9 +1339,7 @@ def _g2_transform_row(
         "five_fold_runtime_minutes": float(
             pd.to_numeric(registry["runtime_seconds"], errors="raise").sum() / 60.0
         ),
-        "peak_vram_mb": float(
-            pd.to_numeric(registry["peak_vram_mb"], errors="raise").max()
-        ),
+        "peak_vram_mb": float(pd.to_numeric(registry["peak_vram_mb"], errors="raise").max()),
         "parameter_count": int(unique_registry_fields["parameter_count"]),
         "config_sha256": config_sha256,
         "split_sha256": unique_registry_fields["split_sha256"],
@@ -1417,9 +1396,7 @@ def _plot_g2_input_size_ablation(
                 ha="center",
                 fontsize=8,
             )
-    p0_score = float(
-        comparison.loc[comparison["variant"].eq("P0"), "pooled_macro_f1"].iloc[0]
-    )
+    p0_score = float(comparison.loc[comparison["variant"].eq("P0"), "pooled_macro_f1"].iloc[0])
     threshold = p0_score + minimum_gain
     quality_axis.axhline(
         threshold,
@@ -1448,9 +1425,7 @@ def _plot_g2_input_size_ablation(
         color=fold_colours,
     )
     pooled_delta = float(
-        comparison.loc[
-            comparison["variant"].eq("P1"), "delta_vs_p0_macro_f1"
-        ].iloc[0]
+        comparison.loc[comparison["variant"].eq("P1"), "delta_vs_p0_macro_f1"].iloc[0]
     )
     fold_axis.axhline(0.0, color="#0F172A", linewidth=1.0)
     fold_axis.axhline(
@@ -1509,23 +1484,21 @@ def build_g2_input_size_evidence(
             observed_coverage,
             observed_config,
             resolved_config,
-        ) = (
-            _g2_transform_row(
-                loaded[variant][0],
-                variant=variant,
-                config_path=config_paths[variant],
-                project_root=root,
-                expected_coverage_sha256=coverage_sha256,
-                expected_experiment_id=G2_SIZE_EXPERIMENTS[variant],
-                expected_stage={
-                    "P0": "g1_family_screen",
-                    "P1": "g2_input_size_ablation",
-                }[variant],
-                expected_image_size=G2_SIZE_EXPECTED_PIXELS[variant],
-                expected_augmentation="a0",
-                changed_data_field="image_size",
-                comparison_name="P0 and P1",
-            )
+        ) = _g2_transform_row(
+            loaded[variant][0],
+            variant=variant,
+            config_path=config_paths[variant],
+            project_root=root,
+            expected_coverage_sha256=coverage_sha256,
+            expected_experiment_id=G2_SIZE_EXPERIMENTS[variant],
+            expected_stage={
+                "P0": "g1_family_screen",
+                "P1": "g2_input_size_ablation",
+            }[variant],
+            expected_image_size=G2_SIZE_EXPECTED_PIXELS[variant],
+            expected_augmentation="a0",
+            changed_data_field="image_size",
+            comparison_name="P0 and P1",
         )
         coverage_sha256 = coverage_sha256 or observed_coverage
         matched_config_sha256 = matched_config_sha256 or observed_config
@@ -1546,48 +1519,42 @@ def build_g2_input_size_evidence(
     ):
         if comparison[column].nunique() != 1:
             raise ValueError(f"P0 and P1 must share the same {column}")
-    p0_score = float(
-        comparison.loc[comparison["variant"].eq("P0"), "pooled_macro_f1"].iloc[0]
-    )
-    p0_spring = float(
-        comparison.loc[comparison["variant"].eq("P0"), "spring_f1"].iloc[0]
-    )
+    p0_score = float(comparison.loc[comparison["variant"].eq("P0"), "pooled_macro_f1"].iloc[0])
+    p0_spring = float(comparison.loc[comparison["variant"].eq("P0"), "spring_f1"].iloc[0])
     comparison["delta_vs_p0_macro_f1"] = comparison["pooled_macro_f1"] - p0_score
     comparison["delta_vs_p0_spring_f1"] = comparison["spring_f1"] - p0_spring
     p0_runtime = float(
-        comparison.loc[
-            comparison["variant"].eq("P0"), "five_fold_runtime_minutes"
-        ].iloc[0]
+        comparison.loc[comparison["variant"].eq("P0"), "five_fold_runtime_minutes"].iloc[0]
     )
-    p0_vram = float(
-        comparison.loc[comparison["variant"].eq("P0"), "peak_vram_mb"].iloc[0]
-    )
-    comparison["runtime_ratio_vs_p0"] = (
-        comparison["five_fold_runtime_minutes"] / p0_runtime
-    )
+    p0_vram = float(comparison.loc[comparison["variant"].eq("P0"), "peak_vram_mb"].iloc[0])
+    comparison["runtime_ratio_vs_p0"] = comparison["five_fold_runtime_minutes"] / p0_runtime
     comparison["peak_vram_ratio_vs_p0"] = comparison["peak_vram_mb"] / p0_vram
 
-    paired_folds = details["P0"].rename(
-        columns={
-            "run_id": "p0_run_id",
-            "macro_f1": "p0_macro_f1",
-            "runtime_seconds": "p0_runtime_seconds",
-            "peak_vram_mb": "p0_peak_vram_mb",
-            "best_epoch": "p0_best_epoch",
-        }
-    ).merge(
-        details["P1"].rename(
+    paired_folds = (
+        details["P0"]
+        .rename(
             columns={
-                "run_id": "p1_run_id",
-                "macro_f1": "p1_macro_f1",
-                "runtime_seconds": "p1_runtime_seconds",
-                "peak_vram_mb": "p1_peak_vram_mb",
-                "best_epoch": "p1_best_epoch",
+                "run_id": "p0_run_id",
+                "macro_f1": "p0_macro_f1",
+                "runtime_seconds": "p0_runtime_seconds",
+                "peak_vram_mb": "p0_peak_vram_mb",
+                "best_epoch": "p0_best_epoch",
             }
-        ),
-        on="fold",
-        how="inner",
-        validate="one_to_one",
+        )
+        .merge(
+            details["P1"].rename(
+                columns={
+                    "run_id": "p1_run_id",
+                    "macro_f1": "p1_macro_f1",
+                    "runtime_seconds": "p1_runtime_seconds",
+                    "peak_vram_mb": "p1_peak_vram_mb",
+                    "best_epoch": "p1_best_epoch",
+                }
+            ),
+            on="fold",
+            how="inner",
+            validate="one_to_one",
+        )
     )
     if len(paired_folds) != 5:
         raise ValueError("P0/P1 paired comparison requires exactly five folds")
@@ -1598,11 +1565,7 @@ def build_g2_input_size_evidence(
         paired_folds["p1_runtime_seconds"] / paired_folds["p0_runtime_seconds"]
     )
 
-    p1_delta = float(
-        comparison.loc[
-            comparison["variant"].eq("P1"), "delta_vs_p0_macro_f1"
-        ].iloc[0]
-    )
+    p1_delta = float(comparison.loc[comparison["variant"].eq("P1"), "delta_vs_p0_macro_f1"].iloc[0])
     selected_variant = "P1" if p1_delta >= minimum_gain else "P0"
     rejected_variant = "P0" if selected_variant == "P1" else "P1"
     selected_experiment_id = G2_SIZE_EXPERIMENTS[selected_variant]
@@ -1628,9 +1591,7 @@ def build_g2_input_size_evidence(
 
     evidence_root = Path(evidence_directory)
     figure_root = Path(figure_directory)
-    common_root = Path(
-        os.path.commonpath([evidence_root.resolve(), figure_root.resolve()])
-    )
+    common_root = Path(os.path.commonpath([evidence_root.resolve(), figure_root.resolve()]))
     comparison_path = evidence_root / "comparison.csv"
     paired_folds_path = evidence_root / "paired_fold_metrics.csv"
     decision_path = evidence_root / "decision.json"
@@ -1713,9 +1674,7 @@ def _load_g2_augmentation_robustness(
     probes = evidence["probe"].astype(str).str.strip()
     if probes.eq("").any() or probes.duplicated().any():
         raise ValueError("robustness probe names must be non-empty and unique")
-    deltas = pd.to_numeric(
-        evidence["delta_a1_minus_a0_macro_f1"], errors="raise"
-    )
+    deltas = pd.to_numeric(evidence["delta_a1_minus_a0_macro_f1"], errors="raise")
     if not np.isfinite(deltas.to_numpy(dtype=float)).all():
         raise ValueError("robustness deltas must be finite")
     evidence = evidence.copy()
@@ -1766,9 +1725,7 @@ def _plot_g2_augmentation_ablation(
                 ha="center",
                 fontsize=8,
             )
-    a0_score = float(
-        comparison.loc[comparison["variant"].eq("A0"), "pooled_macro_f1"].iloc[0]
-    )
+    a0_score = float(comparison.loc[comparison["variant"].eq("A0"), "pooled_macro_f1"].iloc[0])
     threshold = a0_score + minimum_gain
     quality_axis.axhline(
         threshold,
@@ -1783,9 +1740,7 @@ def _plot_g2_augmentation_ablation(
         min(1.0, max(quality_values + [threshold]) + 0.015),
     )
     decision_label = (
-        f"selected {selected_variant}"
-        if selected_variant is not None
-        else "pending robustness"
+        f"selected {selected_variant}" if selected_variant is not None else "pending robustness"
     )
     quality_axis.set_ylabel("OOF F1")
     quality_axis.set_title(f"Pooled quality; {decision_status}: {decision_label}")
@@ -1826,8 +1781,7 @@ def build_g2_augmentation_evidence(
     a0_config_path: str | Path,
     a1_config_path: str | Path,
     project_root: str | Path = ROOT,
-    evidence_directory: str | Path = TASK2_EVIDENCE_DIR
-    / "g2_augmentation_ablation",
+    evidence_directory: str | Path = TASK2_EVIDENCE_DIR / "g2_augmentation_ablation",
     figure_directory: str | Path = TASK2_FIGURE_DIR,
     minimum_gain: float = G2_AUGMENTATION_MINIMUM_GAIN,
     maximum_robustness_loss: float = G2_AUGMENTATION_MAX_ROBUSTNESS_LOSS,
@@ -1903,48 +1857,42 @@ def build_g2_augmentation_evidence(
     if comparison["transform_id"].nunique() != 2:
         raise ValueError("A0 and A1 must produce distinct transform IDs")
 
-    a0_score = float(
-        comparison.loc[comparison["variant"].eq("A0"), "pooled_macro_f1"].iloc[0]
-    )
-    a0_spring = float(
-        comparison.loc[comparison["variant"].eq("A0"), "spring_f1"].iloc[0]
-    )
+    a0_score = float(comparison.loc[comparison["variant"].eq("A0"), "pooled_macro_f1"].iloc[0])
+    a0_spring = float(comparison.loc[comparison["variant"].eq("A0"), "spring_f1"].iloc[0])
     comparison["delta_vs_a0_macro_f1"] = comparison["pooled_macro_f1"] - a0_score
     comparison["delta_vs_a0_spring_f1"] = comparison["spring_f1"] - a0_spring
     a0_runtime = float(
-        comparison.loc[
-            comparison["variant"].eq("A0"), "five_fold_runtime_minutes"
-        ].iloc[0]
+        comparison.loc[comparison["variant"].eq("A0"), "five_fold_runtime_minutes"].iloc[0]
     )
-    a0_vram = float(
-        comparison.loc[comparison["variant"].eq("A0"), "peak_vram_mb"].iloc[0]
-    )
-    comparison["runtime_ratio_vs_a0"] = (
-        comparison["five_fold_runtime_minutes"] / a0_runtime
-    )
+    a0_vram = float(comparison.loc[comparison["variant"].eq("A0"), "peak_vram_mb"].iloc[0])
+    comparison["runtime_ratio_vs_a0"] = comparison["five_fold_runtime_minutes"] / a0_runtime
     comparison["peak_vram_ratio_vs_a0"] = comparison["peak_vram_mb"] / a0_vram
 
-    paired_folds = fold_details["A0"].rename(
-        columns={
-            "run_id": "a0_run_id",
-            "macro_f1": "a0_macro_f1",
-            "runtime_seconds": "a0_runtime_seconds",
-            "peak_vram_mb": "a0_peak_vram_mb",
-            "best_epoch": "a0_best_epoch",
-        }
-    ).merge(
-        fold_details["A1"].rename(
+    paired_folds = (
+        fold_details["A0"]
+        .rename(
             columns={
-                "run_id": "a1_run_id",
-                "macro_f1": "a1_macro_f1",
-                "runtime_seconds": "a1_runtime_seconds",
-                "peak_vram_mb": "a1_peak_vram_mb",
-                "best_epoch": "a1_best_epoch",
+                "run_id": "a0_run_id",
+                "macro_f1": "a0_macro_f1",
+                "runtime_seconds": "a0_runtime_seconds",
+                "peak_vram_mb": "a0_peak_vram_mb",
+                "best_epoch": "a0_best_epoch",
             }
-        ),
-        on="fold",
-        how="inner",
-        validate="one_to_one",
+        )
+        .merge(
+            fold_details["A1"].rename(
+                columns={
+                    "run_id": "a1_run_id",
+                    "macro_f1": "a1_macro_f1",
+                    "runtime_seconds": "a1_runtime_seconds",
+                    "peak_vram_mb": "a1_peak_vram_mb",
+                    "best_epoch": "a1_best_epoch",
+                }
+            ),
+            on="fold",
+            how="inner",
+            validate="one_to_one",
+        )
     )
     if len(paired_folds) != 5:
         raise ValueError("A0/A1 paired comparison requires exactly five folds")
@@ -1955,11 +1903,15 @@ def build_g2_augmentation_evidence(
         paired_folds["a1_runtime_seconds"] / paired_folds["a0_runtime_seconds"]
     )
 
-    a0_classes = class_details["A0"].drop(columns="variant").rename(
-        columns={name: f"a0_{name}" for name in ("precision", "recall", "f1", "support")}
+    a0_classes = (
+        class_details["A0"]
+        .drop(columns="variant")
+        .rename(columns={name: f"a0_{name}" for name in ("precision", "recall", "f1", "support")})
     )
-    a1_classes = class_details["A1"].drop(columns="variant").rename(
-        columns={name: f"a1_{name}" for name in ("precision", "recall", "f1", "support")}
+    a1_classes = (
+        class_details["A1"]
+        .drop(columns="variant")
+        .rename(columns={name: f"a1_{name}" for name in ("precision", "recall", "f1", "support")})
     )
     per_class = a0_classes.merge(
         a1_classes,
@@ -1978,14 +1930,9 @@ def build_g2_augmentation_evidence(
             per_class[f"a1_{metric}"] - per_class[f"a0_{metric}"]
         )
 
-    a1_delta = float(
-        comparison.loc[
-            comparison["variant"].eq("A1"), "delta_vs_a0_macro_f1"
-        ].iloc[0]
-    )
+    a1_delta = float(comparison.loc[comparison["variant"].eq("A1"), "delta_vs_a0_macro_f1"].iloc[0])
     quality_gate_passed = bool(
-        a1_delta > minimum_gain
-        or np.isclose(a1_delta, minimum_gain, rtol=0.0, atol=1e-12)
+        a1_delta > minimum_gain or np.isclose(a1_delta, minimum_gain, rtol=0.0, atol=1e-12)
     )
     robustness_frame: pd.DataFrame | None = None
     resolved_robustness: Path | None = None
@@ -2025,9 +1972,7 @@ def build_g2_augmentation_evidence(
         )
         selected_variant = "A1" if robustness_gate_passed else "A0"
     selected_experiment_id = (
-        G2_AUGMENTATION_EXPERIMENTS[selected_variant]
-        if selected_variant is not None
-        else None
+        G2_AUGMENTATION_EXPERIMENTS[selected_variant] if selected_variant is not None else None
     )
     rejected_variant = {"A0": "A1", "A1": "A0", None: None}[selected_variant]
     next_question = (
@@ -2063,9 +2008,7 @@ def build_g2_augmentation_evidence(
 
     evidence_root = Path(evidence_directory)
     figure_root = Path(figure_directory)
-    common_root = Path(
-        os.path.commonpath([evidence_root.resolve(), figure_root.resolve()])
-    )
+    common_root = Path(os.path.commonpath([evidence_root.resolve(), figure_root.resolve()]))
     comparison_path = evidence_root / "comparison.csv"
     paired_folds_path = evidence_root / "paired_fold_metrics.csv"
     per_class_path = evidence_root / "per_class_comparison.csv"
@@ -2153,6 +2096,7 @@ def _audited_deep_experiment_row(
     expected_epochs: int,
     expected_patience: int,
     protocol_name: str,
+    expected_loss_id: str = "cross_entropy",
 ) -> tuple[
     dict[str, Any],
     pd.DataFrame,
@@ -2191,9 +2135,7 @@ def _audited_deep_experiment_row(
         }
     )
     if expected_coverage_sha256 and coverage_sha256 != expected_coverage_sha256:
-        raise ValueError(
-            f"{protocol_name} manifests do not cover the same OOF products and labels"
-        )
+        raise ValueError(f"{protocol_name} manifests do not cover the same OOF products and labels")
 
     resolved_config = _resolve_evidence_path(config_path, project_root=project_root)
     config = load_experiment_config(resolved_config)
@@ -2212,9 +2154,7 @@ def _audited_deep_experiment_row(
         "weight_decay": config.optimisation.weight_decay,
     }
     mismatches = [
-        name
-        for name, expected in expected_fields.items()
-        if observed_fields[name] != expected
+        name for name, expected in expected_fields.items() if observed_fields[name] != expected
     ]
     if mismatches:
         raise ValueError(f"{experiment_id} has invalid tuning fields: {mismatches}")
@@ -2222,7 +2162,7 @@ def _audited_deep_experiment_row(
         config.method != "deep"
         or config.folds != G1_EXPECTED_FOLDS
         or config.seeds != (2753,)
-        or config.loss_id != "cross_entropy"
+        or config.loss_id != expected_loss_id
         or config.data.image_size != (80, 60)
         or config.data.augmentation != "a0"
         or config.optimisation.epochs != expected_epochs
@@ -2238,9 +2178,7 @@ def _audited_deep_experiment_row(
     matched_config_sha256 = canonical_sha256(matched_payload)
     config_sha256 = canonical_sha256(config.to_dict())
 
-    pooled_path = _verified_manifest_artifact(
-        manifest, "pooled_metrics", project_root=project_root
-    )
+    pooled_path = _verified_manifest_artifact(manifest, "pooled_metrics", project_root=project_root)
     fold_summary_path = _verified_manifest_artifact(
         manifest, "fold_summary", project_root=project_root
     )
@@ -2272,16 +2210,14 @@ def _audited_deep_experiment_row(
         "final_eligible": "true",
         "scratch": "true",
         "seed": "2753",
-        "loss_id": "cross_entropy",
+        "loss_id": expected_loss_id,
         "git_dirty": "false",
         "status": "completed",
     }
     for column, expected in required_registry_values.items():
         observed = set(registry[column].astype(str).str.lower())
         if observed != {expected.lower()}:
-            raise ValueError(
-                f"{experiment_id} registry {column} must be {expected}: {observed}"
-            )
+            raise ValueError(f"{experiment_id} registry {column} must be {expected}: {observed}")
     unique_registry_fields: dict[str, str] = {}
     for column in (
         "config_sha256",
@@ -2300,9 +2236,7 @@ def _audited_deep_experiment_row(
 
     if len(fold_metrics) != 5 or set(fold_metrics["run_id"].astype(str)) != set(run_ids):
         raise ValueError(f"{experiment_id} fold metrics must match five run IDs")
-    fold_metrics["fold"] = pd.to_numeric(
-        fold_metrics["fold"], errors="raise"
-    ).astype(int)
+    fold_metrics["fold"] = pd.to_numeric(fold_metrics["fold"], errors="raise").astype(int)
     if set(fold_metrics["fold"]) != set(G1_EXPECTED_FOLDS):
         raise ValueError(f"{experiment_id} fold metrics have invalid folds")
     registry_cost = registry.loc[
@@ -2330,9 +2264,7 @@ def _audited_deep_experiment_row(
         how="inner",
         validate="one_to_one",
     )
-    fold_detail["macro_f1"] = pd.to_numeric(
-        fold_detail["macro_f1"], errors="raise"
-    )
+    fold_detail["macro_f1"] = pd.to_numeric(fold_detail["macro_f1"], errors="raise")
     if not np.allclose(
         fold_detail["macro_f1"],
         fold_detail["primary_metric_value"],
@@ -2404,18 +2336,13 @@ def _audited_deep_experiment_row(
             if score > selected_history_score + config.optimisation.min_delta:
                 selected_history_epoch = int(entry["epoch"])
                 selected_history_score = score
-        if (
-            selected_history_epoch != int(registry_row["best_epoch"])
-            or not np.isclose(
-                selected_history_score,
-                float(registry_row["primary_metric_value"]),
-                rtol=0.0,
-                atol=1e-12,
-            )
+        if selected_history_epoch != int(registry_row["best_epoch"]) or not np.isclose(
+            selected_history_score,
+            float(registry_row["primary_metric_value"]),
+            rtol=0.0,
+            atol=1e-12,
         ):
-            raise ValueError(
-                f"history checkpoint selection does not match for {run_id}"
-            )
+            raise ValueError(f"history checkpoint selection does not match for {run_id}")
 
     macro_summary = fold_summary.loc[fold_summary["metric"].eq("macro_f1")]
     if len(macro_summary) != 1:
@@ -2435,10 +2362,7 @@ def _audited_deep_experiment_row(
                 "tuning_id": spec["tuning_id"],
                 "experiment_id": experiment_id,
                 "label": label,
-                **{
-                    name: metrics[name]
-                    for name in ("precision", "recall", "f1", "support")
-                },
+                **{name: metrics[name] for name in ("precision", "recall", "f1", "support")},
             }
         )
     summary = macro_summary.iloc[0]
@@ -2456,9 +2380,7 @@ def _audited_deep_experiment_row(
         "five_fold_runtime_minutes": float(
             pd.to_numeric(registry["runtime_seconds"], errors="raise").sum() / 60.0
         ),
-        "peak_vram_mb": float(
-            pd.to_numeric(registry["peak_vram_mb"], errors="raise").max()
-        ),
+        "peak_vram_mb": float(pd.to_numeric(registry["peak_vram_mb"], errors="raise").max()),
         "parameter_count": int(unique_registry_fields["parameter_count"]),
         "config_sha256": config_sha256,
         "split_sha256": unique_registry_fields["split_sha256"],
@@ -2487,6 +2409,8 @@ def _plot_g2_tuning_learning_curves(
     tuning_id: str,
     experiment_id: str,
     output_path: Path,
+    loss_axis_label: str = "Cross-entropy loss",
+    figure_title: str | None = None,
 ) -> None:
     """Plot the selected five-fold mean curves in the teacher's two-panel form."""
     selected = summary.loc[
@@ -2517,7 +2441,7 @@ def _plot_g2_tuning_learning_curves(
         )
         loss_axis.fill_between(epochs, mean - sd, mean + sd, color=colour, alpha=0.13)
     loss_axis.set_xlabel("Epoch")
-    loss_axis.set_ylabel("Cross-entropy loss")
+    loss_axis.set_ylabel(loss_axis_label)
     loss_axis.set_title("Loss learning curves")
     loss_axis.legend(loc="best")
     loss_axis.grid(alpha=0.2)
@@ -2561,7 +2485,7 @@ def _plot_g2_tuning_learning_curves(
     score_axis.legend(loc="best")
     score_axis.grid(alpha=0.2)
     figure.suptitle(
-        f"{family} selected {tuning_id}: five-fold mean ± SD ({experiment_id})",
+        figure_title or f"{family} selected {tuning_id}: five-fold mean ± SD ({experiment_id})",
         fontweight="bold",
     )
     buffer = io.BytesIO()
@@ -2609,12 +2533,9 @@ def build_g2_tuning_evidence(
     from fashion.task2.experiments import load_experiment_config
 
     resolved_configs = [
-        _resolve_evidence_path(path, project_root=root)
-        for path in experiment_config_paths
+        _resolve_evidence_path(path, project_root=root) for path in experiment_config_paths
     ]
-    configs_by_id = {
-        load_experiment_config(path).experiment_id: path for path in resolved_configs
-    }
+    configs_by_id = {load_experiment_config(path).experiment_id: path for path in resolved_configs}
     if len(configs_by_id) != len(resolved_configs):
         raise ValueError("tuning experiment configs must be unique")
     if set(configs_by_id) != set(G2_TUNING_SPECS):
@@ -2649,9 +2570,7 @@ def build_g2_tuning_evidence(
         coverage_sha256 = coverage_sha256 or observed_coverage
         matched_config_sha256 = matched_config_sha256 or observed_config
         if observed_config != matched_config_sha256:
-            raise ValueError(
-                "tuning configs differ outside identity, stage, family, and LR/WD"
-            )
+            raise ValueError("tuning configs differ outside identity, stage, family, and LR/WD")
         rows.append(row)
         fold_frames.append(folds)
         class_frames.append(classes)
@@ -2673,12 +2592,12 @@ def build_g2_tuning_evidence(
     tuning_order = {"T0": 0, "T1": 1, "T2": 2}
     leaderboard["_family_order"] = leaderboard["family"].map({"C1": 0, "C2": 1})
     leaderboard["_tuning_order"] = leaderboard["tuning_id"].map(tuning_order)
-    leaderboard = leaderboard.sort_values(
-        ["_family_order", "_tuning_order"]
-    ).reset_index(drop=True)
-    leaderboard["rank_within_family"] = leaderboard.groupby("family")[
-        "pooled_macro_f1"
-    ].rank(method="first", ascending=False).astype(int)
+    leaderboard = leaderboard.sort_values(["_family_order", "_tuning_order"]).reset_index(drop=True)
+    leaderboard["rank_within_family"] = (
+        leaderboard.groupby("family")["pooled_macro_f1"]
+        .rank(method="first", ascending=False)
+        .astype(int)
+    )
     leaderboard["delta_vs_t0_macro_f1"] = 0.0
     leaderboard["eligible_to_replace_t0"] = False
     leaderboard["selected"] = False
@@ -2703,17 +2622,12 @@ def build_g2_tuning_evidence(
         ).iloc[0]
         best_gain = float(best["pooled_macro_f1"] - t0_score)
         gain_passed = bool(
-            best_gain > minimum_gain
-            or np.isclose(best_gain, minimum_gain, rtol=0.0, atol=1e-12)
+            best_gain > minimum_gain or np.isclose(best_gain, minimum_gain, rtol=0.0, atol=1e-12)
         )
         selected_tuning_id = (
-            str(best["tuning_id"])
-            if str(best["tuning_id"]) != "T0" and gain_passed
-            else "T0"
+            str(best["tuning_id"]) if str(best["tuning_id"]) != "T0" and gain_passed else "T0"
         )
-        selected_row = family_rows.loc[
-            family_rows["tuning_id"].eq(selected_tuning_id)
-        ].iloc[0]
+        selected_row = family_rows.loc[family_rows["tuning_id"].eq(selected_tuning_id)].iloc[0]
         leaderboard.loc[
             family_mask & leaderboard["tuning_id"].eq(selected_tuning_id), "selected"
         ] = True
@@ -2737,14 +2651,12 @@ def build_g2_tuning_evidence(
     paired_rows: list[pd.DataFrame] = []
     for family in ("C1", "C2"):
         t0 = fold_metrics.loc[
-            fold_metrics["family"].eq(family)
-            & fold_metrics["tuning_id"].eq("T0"),
+            fold_metrics["family"].eq(family) & fold_metrics["tuning_id"].eq("T0"),
             ["fold", "run_id", "macro_f1"],
         ].rename(columns={"run_id": "t0_run_id", "macro_f1": "t0_macro_f1"})
         for tuning_id in ("T1", "T2"):
             candidate = fold_metrics.loc[
-                fold_metrics["family"].eq(family)
-                & fold_metrics["tuning_id"].eq(tuning_id),
+                fold_metrics["family"].eq(family) & fold_metrics["tuning_id"].eq(tuning_id),
                 ["fold", "run_id", "macro_f1"],
             ].rename(
                 columns={
@@ -2779,9 +2691,7 @@ def build_g2_tuning_evidence(
         )
         if not merged["support"].eq(merged["t0_support"]).all():
             raise ValueError(f"{family} per-class supports changed during tuning")
-        per_class.loc[family_index, "delta_vs_t0_f1"] = (
-            merged["f1"] - merged["t0_f1"]
-        ).to_numpy()
+        per_class.loc[family_index, "delta_vs_t0_f1"] = (merged["f1"] - merged["t0_f1"]).to_numpy()
 
     history_by_fold = pd.concat(history_frames, ignore_index=True)
     metric_columns = (
@@ -2825,9 +2735,7 @@ def build_g2_tuning_evidence(
 
     evidence_root = Path(evidence_directory)
     figure_root = Path(figure_directory)
-    common_root = Path(
-        os.path.commonpath([evidence_root.resolve(), figure_root.resolve()])
-    )
+    common_root = Path(os.path.commonpath([evidence_root.resolve(), figure_root.resolve()]))
     paths = {
         "leaderboard": evidence_root / "leaderboard.csv",
         "paired_fold_metrics": evidence_root / "paired_fold_metrics.csv",
@@ -2884,9 +2792,7 @@ def build_g2_tuning_evidence(
         "minimum_gain": minimum_gain,
         "families": family_decisions,
         "augmentation_decision": {
-            "path": _portable_artifact_path(
-                resolved_augmentation_decision, fallback_root=root
-            ),
+            "path": _portable_artifact_path(resolved_augmentation_decision, fallback_root=root),
             "sha256": compute_sha256(resolved_augmentation_decision),
             "selected_variant": "A0",
         },
@@ -2930,8 +2836,7 @@ def build_g3_full_budget_evidence(
     *,
     experiment_manifest_paths: Sequence[str | Path],
     experiment_config_paths: Sequence[str | Path],
-    tuning_manifest_path: str | Path = TASK2_EVIDENCE_DIR
-    / "g2_compact_tuning/manifest.json",
+    tuning_manifest_path: str | Path = TASK2_EVIDENCE_DIR / "g2_compact_tuning/manifest.json",
     project_root: str | Path = ROOT,
     evidence_directory: str | Path = TASK2_EVIDENCE_DIR / "g3_full_budget",
     figure_directory: str | Path = TASK2_FIGURE_DIR,
@@ -2970,9 +2875,7 @@ def build_g3_full_budget_evidence(
         _load_verified_experiment_manifest(path, project_root=root)
         for path in experiment_manifest_paths
     ]
-    manifest_ids = [
-        str(manifest.get("experiment_id", "")) for manifest, _ in loaded_manifests
-    ]
+    manifest_ids = [str(manifest.get("experiment_id", "")) for manifest, _ in loaded_manifests]
     if len(manifest_ids) != len(set(manifest_ids)):
         raise ValueError("G3 experiment manifests must be unique")
     if set(manifest_ids) != set(G3_FULL_BUDGET_SPECS):
@@ -2981,12 +2884,9 @@ def build_g3_full_budget_evidence(
     from fashion.task2.experiments import load_experiment_config
 
     resolved_configs = [
-        _resolve_evidence_path(path, project_root=root)
-        for path in experiment_config_paths
+        _resolve_evidence_path(path, project_root=root) for path in experiment_config_paths
     ]
-    configs_by_id = {
-        load_experiment_config(path).experiment_id: path for path in resolved_configs
-    }
+    configs_by_id = {load_experiment_config(path).experiment_id: path for path in resolved_configs}
     if len(configs_by_id) != len(resolved_configs):
         raise ValueError("G3 experiment configs must be unique")
     if set(configs_by_id) != set(G3_FULL_BUDGET_SPECS):
@@ -3006,9 +2906,7 @@ def build_g3_full_budget_evidence(
             "selected_weight_decay": spec["weight_decay"],
         }
         mismatches = [
-            name
-            for name, expected in expected_selection.items()
-            if selected.get(name) != expected
+            name for name, expected in expected_selection.items() if selected.get(name) != expected
         ]
         if mismatches:
             raise ValueError(f"{family} G3 config disagrees with G2: {mismatches}")
@@ -3046,12 +2944,8 @@ def build_g3_full_budget_evidence(
         )
         screen_config = load_experiment_config(screen_configs[experiment_id])
         full_config = load_experiment_config(configs_by_id[experiment_id])
-        if _screen_matched_payload(screen_config) != _screen_matched_payload(
-            full_config
-        ):
-            raise ValueError(
-                f"{experiment_id} differs from its selected G2 config outside budget"
-            )
+        if _screen_matched_payload(screen_config) != _screen_matched_payload(full_config):
+            raise ValueError(f"{experiment_id} differs from its selected G2 config outside budget")
 
     rows: list[dict[str, Any]] = []
     fold_frames: list[pd.DataFrame] = []
@@ -3118,9 +3012,7 @@ def build_g3_full_budget_evidence(
     leaderboard["rank"] = np.arange(1, len(leaderboard) + 1)
     provisional = leaderboard.iloc[0]
     leaderboard = leaderboard.sort_values("family").reset_index(drop=True)
-    leaderboard["provisional_reference"] = leaderboard["family"].eq(
-        provisional["family"]
-    )
+    leaderboard["provisional_reference"] = leaderboard["family"].eq(provisional["family"])
 
     fold_metrics = pd.concat(fold_frames, ignore_index=True)
     paired_inputs: dict[str, pd.DataFrame] = {}
@@ -3139,14 +3031,10 @@ def build_g3_full_budget_evidence(
         ].copy()
         paired_inputs[family] = family_folds.rename(
             columns={
-                column: f"{family.lower()}_{column}"
-                for column in family_folds
-                if column != "fold"
+                column: f"{family.lower()}_{column}" for column in family_folds if column != "fold"
             }
         )
-    paired_folds = paired_inputs["C1"].merge(
-        paired_inputs["C2"], on="fold", validate="one_to_one"
-    )
+    paired_folds = paired_inputs["C1"].merge(paired_inputs["C2"], on="fold", validate="one_to_one")
     if len(paired_folds) != 5:
         raise ValueError("G3 comparison requires five paired folds")
     paired_folds["delta_c1_minus_c2_macro_f1"] = (
@@ -3170,9 +3058,7 @@ def build_g3_full_budget_evidence(
     per_class_comparison = class_inputs["C1"].merge(
         class_inputs["C2"], on="label", validate="one_to_one"
     )
-    if not per_class_comparison["c1_support"].eq(
-        per_class_comparison["c2_support"]
-    ).all():
+    if not per_class_comparison["c1_support"].eq(per_class_comparison["c2_support"]).all():
         raise ValueError("G3 finalists have different per-class supports")
     per_class_comparison["delta_c1_minus_c2_f1"] = (
         per_class_comparison["c1_f1"] - per_class_comparison["c2_f1"]
@@ -3181,15 +3067,11 @@ def build_g3_full_budget_evidence(
     history_by_fold = pd.concat(history_frames, ignore_index=True)
     fold_horizons = history_by_fold.groupby(["family", "fold"])["epoch"].max()
     common_horizons = fold_horizons.groupby("family").min().astype(int).to_dict()
-    history_by_fold["common_horizon"] = history_by_fold["family"].map(
-        common_horizons
-    )
+    history_by_fold["common_horizon"] = history_by_fold["family"].map(common_horizons)
     history_by_fold["used_in_five_fold_summary"] = history_by_fold["epoch"].le(
         history_by_fold["common_horizon"]
     )
-    summary_source = history_by_fold.loc[
-        history_by_fold["used_in_five_fold_summary"]
-    ]
+    summary_source = history_by_fold.loc[history_by_fold["used_in_five_fold_summary"]]
     metric_columns = (
         "learning_rate",
         "train_loss",
@@ -3197,9 +3079,7 @@ def build_g3_full_budget_evidence(
         "validation_accuracy",
         "validation_macro_f1",
     )
-    aggregations: dict[str, tuple[str, str]] = {
-        "fold_count": ("fold", "nunique")
-    }
+    aggregations: dict[str, tuple[str, str]] = {"fold_count": ("fold", "nunique")}
     for metric in metric_columns:
         aggregations[f"{metric}_mean"] = (metric, "mean")
         aggregations[f"{metric}_sd"] = (metric, "std")
@@ -3249,12 +3129,9 @@ def build_g3_full_budget_evidence(
             "until stability, robustness, cost, and grouped-bootstrap checks close."
         ),
         "efficiency": {
-            "c2_over_c1_parameter_ratio": float(
-                c2["parameter_count"] / c1["parameter_count"]
-            ),
+            "c2_over_c1_parameter_ratio": float(c2["parameter_count"] / c1["parameter_count"]),
             "c2_over_c1_runtime_ratio": float(
-                c2["five_fold_runtime_minutes"]
-                / c1["five_fold_runtime_minutes"]
+                c2["five_fold_runtime_minutes"] / c1["five_fold_runtime_minutes"]
             ),
         },
         "common_five_fold_horizons": common_horizons,
@@ -3271,9 +3148,7 @@ def build_g3_full_budget_evidence(
 
     evidence_root = Path(evidence_directory)
     figure_root = Path(figure_directory)
-    common_root = Path(
-        os.path.commonpath([evidence_root.resolve(), figure_root.resolve()])
-    )
+    common_root = Path(os.path.commonpath([evidence_root.resolve(), figure_root.resolve()]))
     paths = {
         "leaderboard": evidence_root / "leaderboard.csv",
         "paired_fold_metrics": evidence_root / "paired_fold_metrics.csv",
@@ -3293,15 +3168,9 @@ def build_g3_full_budget_evidence(
     atomic_write_csv(paths["learning_curve_summary"], learning_curve_summary)
     atomic_write_json(paths["decision"], decision)
     for family in ("C1", "C2"):
-        spec = next(
-            value
-            for value in G3_FULL_BUDGET_SPECS.values()
-            if value["family"] == family
-        )
+        spec = next(value for value in G3_FULL_BUDGET_SPECS.values() if value["family"] == family)
         experiment_id = next(
-            key
-            for key, value in G3_FULL_BUDGET_SPECS.items()
-            if value["family"] == family
+            key for key, value in G3_FULL_BUDGET_SPECS.items() if value["family"] == family
         )
         _plot_g2_tuning_learning_curves(
             learning_curve_summary,
@@ -3332,9 +3201,7 @@ def build_g3_full_budget_evidence(
             "selected_g2_config_path": _portable_artifact_path(
                 screen_configs[experiment_id], fallback_root=root
             ),
-            "selected_g2_config_sha256": compute_sha256(
-                screen_configs[experiment_id]
-            ),
+            "selected_g2_config_sha256": compute_sha256(screen_configs[experiment_id]),
         }
         for experiment_id, path in configs_by_id.items()
     }
@@ -3346,18 +3213,539 @@ def build_g3_full_budget_evidence(
         "matched_protocol_sha256": matched_protocol_sha256,
         "near_tie_threshold": near_tie_threshold,
         "near_tie": near_tie,
-        "provisional_reference_experiment_id": decision[
-            "provisional_reference_experiment_id"
-        ],
+        "provisional_reference_experiment_id": decision["provisional_reference_experiment_id"],
         "ultimate_winner_frozen": False,
         "tuning_manifest": {
-            "path": _portable_artifact_path(
-                resolved_tuning_manifest, fallback_root=root
-            ),
+            "path": _portable_artifact_path(resolved_tuning_manifest, fallback_root=root),
             "sha256": compute_sha256(resolved_tuning_manifest),
         },
         "input_manifests": input_manifests,
         "input_configs": input_configs,
+        "artifacts": artifact_manifest,
+    }
+    manifest_path = evidence_root / "manifest.json"
+    atomic_write_json(manifest_path, manifest)
+    manifest["manifest_path"] = str(manifest_path)
+    manifest["manifest_sha256"] = compute_sha256(manifest_path)
+    return manifest
+
+
+def _i1_matched_payload(config: Any) -> dict[str, Any]:
+    """Remove only the three fields intentionally changed by I1."""
+    payload = config.to_dict()
+    payload.pop("experiment_id")
+    payload.pop("stage")
+    payload.pop("loss_id")
+    return payload
+
+
+def _i1_class_weight_rows(
+    registry: pd.DataFrame,
+    *,
+    project_root: Path,
+) -> pd.DataFrame:
+    """Verify fold-fitted effective-number audits and return one row per class."""
+    rows: list[dict[str, Any]] = []
+    training_hashes: set[str] = set()
+    for registry_row in registry.sort_values("fold").to_dict(orient="records"):
+        run_id = str(registry_row["run_id"])
+        fold = int(registry_row["fold"])
+        history_path = _resolve_evidence_path(
+            registry_row["history_path"], project_root=project_root
+        )
+        if not history_path.is_file():
+            raise ValueError(f"I1 history artifact does not exist: {history_path}")
+        if compute_sha256(history_path) != registry_row["history_sha256"]:
+            raise ValueError(f"I1 history artifact hash does not match for {run_id}")
+        with history_path.open(encoding="utf-8") as handle:
+            history = json.load(handle)
+        balance = history.get("class_balance")
+        if not isinstance(balance, dict):
+            raise ValueError(f"I1 class-balance audit is missing for {run_id}")
+        if (
+            balance.get("schema_version") != "1.0.0"
+            or balance.get("loss_id") != EFFECTIVE_NUMBER_LOSS_ID
+            or tuple(balance.get("labels", ())) != tuple(SEASON_LABELS)
+        ):
+            raise ValueError(f"I1 class-balance identity is invalid for {run_id}")
+        beta = float(balance.get("beta", np.nan))
+        if not np.isclose(beta, EFFECTIVE_NUMBER_BETA, rtol=0.0, atol=0.0):
+            raise ValueError(f"I1 beta is invalid for {run_id}")
+        counts_by_label = balance.get("class_counts")
+        weights_by_label = balance.get("class_weights")
+        if not isinstance(counts_by_label, dict) or set(counts_by_label) != set(SEASON_LABELS):
+            raise ValueError(f"I1 class counts are invalid for {run_id}")
+        if not isinstance(weights_by_label, dict) or set(weights_by_label) != set(SEASON_LABELS):
+            raise ValueError(f"I1 class weights are invalid for {run_id}")
+        counts = tuple(counts_by_label[label] for label in SEASON_LABELS)
+        if any(
+            isinstance(value, bool) or not isinstance(value, int) or value <= 0 for value in counts
+        ):
+            raise ValueError(f"I1 class counts must be positive integers for {run_id}")
+        weights = tuple(float(weights_by_label[label]) for label in SEASON_LABELS)
+        if not np.isfinite(weights).all() or any(value <= 0.0 for value in weights):
+            raise ValueError(f"I1 class weights must be finite and positive for {run_id}")
+        expected_weights = effective_number_class_weights(counts, beta=beta)
+        if not np.allclose(weights, expected_weights, rtol=0.0, atol=1e-12):
+            raise ValueError(f"I1 class weights do not match their counts for {run_id}")
+        training_product_count = int(balance.get("training_product_count", -1))
+        if training_product_count != sum(counts):
+            raise ValueError(f"I1 class counts do not match training total for {run_id}")
+        training_id_sha256 = str(balance.get("training_id_sha256", ""))
+        if not re.fullmatch(r"[0-9a-f]{64}", training_id_sha256):
+            raise ValueError(f"I1 training ID hash is invalid for {run_id}")
+        training_hashes.add(training_id_sha256)
+        for label, count, weight in zip(SEASON_LABELS, counts, weights, strict=True):
+            rows.append(
+                {
+                    "experiment_id": I1_EXPERIMENT_ID,
+                    "fold": fold,
+                    "run_id": run_id,
+                    "label": label,
+                    "class_count": count,
+                    "class_weight": weight,
+                    "beta": beta,
+                    "training_product_count": training_product_count,
+                    "training_id_sha256": training_id_sha256,
+                    "history_sha256": str(registry_row["history_sha256"]),
+                }
+            )
+    if len(training_hashes) != len(G1_EXPECTED_FOLDS):
+        raise ValueError("I1 requires a different training-ID audit for every fold")
+    return pd.DataFrame(rows)
+
+
+def _plot_i1_per_class_f1_delta(
+    per_class: pd.DataFrame,
+    *,
+    output_path: Path,
+    maximum_other_class_loss: float,
+) -> None:
+    """Plot I1-minus-reference class F1 changes around an honest zero line."""
+    ordered = per_class.set_index("label").loc[list(SEASON_LABELS)].reset_index()
+    values = ordered["delta_i1_minus_reference_f1"].to_numpy(dtype=float)
+    colours = ["#16A34A" if value >= 0.0 else "#DC2626" for value in values]
+    figure = Figure(figsize=(8.0, 4.8), constrained_layout=True)
+    FigureCanvasAgg(figure)
+    axis = figure.subplots()
+    positions = np.arange(len(ordered))
+    axis.bar(positions, values, color=colours, width=0.66)
+    axis.axhline(0.0, color="#111827", linewidth=1.0)
+    axis.axhline(
+        -maximum_other_class_loss,
+        color="#DC2626",
+        linestyle="--",
+        linewidth=1.2,
+        label=f"Other-class floor = {-maximum_other_class_loss:+.3f}",
+    )
+    axis.set_xticks(positions, labels=ordered["label"])
+    axis.set_ylabel("OOF F1 change: I1 minus G3-C1")
+    axis.set_title("I1 effective-number loss: per-class discrimination change")
+    axis.grid(axis="y", alpha=0.2)
+    axis.legend(loc="best")
+    span = max(0.01, float(np.max(np.abs(values))))
+    offset = span * 0.07
+    for position, value in zip(positions, values, strict=True):
+        axis.text(
+            position,
+            value + (offset if value >= 0.0 else -offset),
+            f"{value:+.4f}",
+            ha="center",
+            va="bottom" if value >= 0.0 else "top",
+            fontsize=9,
+        )
+    buffer = io.BytesIO()
+    figure.savefig(buffer, format="png", dpi=180, bbox_inches="tight")
+    atomic_write_bytes(output_path, buffer.getvalue())
+    figure.clear()
+
+
+def build_i1_class_balance_evidence(
+    *,
+    reference_manifest_path: str | Path = TASK2_EVIDENCE_DIR / "g3_c1_t1_smallcnn/manifest.json",
+    i1_manifest_path: str | Path = TASK2_EVIDENCE_DIR / "g4_i1_effective_number_c1/manifest.json",
+    reference_config_path: str | Path = ROOT / "configs/task2/g3_c1_t1_smallcnn.json",
+    i1_config_path: str | Path = ROOT / "configs/task2/g4_i1_effective_number_c1.json",
+    project_root: str | Path = ROOT,
+    evidence_directory: str | Path = TASK2_EVIDENCE_DIR / "i1_class_balance",
+    figure_directory: str | Path = TASK2_FIGURE_DIR,
+    spring_minimum_gain: float = I1_SPRING_MINIMUM_GAIN,
+    maximum_macro_f1_loss: float = I1_MAXIMUM_MACRO_F1_LOSS,
+    maximum_other_class_loss: float = I1_MAXIMUM_OTHER_CLASS_LOSS,
+) -> dict[str, Any]:
+    """Audit I1 against corrected G3-C1 and apply the frozen minority rule."""
+    thresholds = (
+        spring_minimum_gain,
+        maximum_macro_f1_loss,
+        maximum_other_class_loss,
+    )
+    if any(not np.isfinite(value) or value < 0.0 for value in thresholds):
+        raise ValueError("I1 decision thresholds must be finite and non-negative")
+    root = Path(project_root)
+    reference_manifest, resolved_reference_manifest = _load_verified_experiment_manifest(
+        reference_manifest_path,
+        project_root=root,
+    )
+    i1_manifest, resolved_i1_manifest = _load_verified_experiment_manifest(
+        i1_manifest_path,
+        project_root=root,
+    )
+    if reference_manifest.get("experiment_id") != I1_REFERENCE_EXPERIMENT_ID:
+        raise ValueError("I1 reference must be corrected G3 C1-T1")
+    if i1_manifest.get("experiment_id") != I1_EXPERIMENT_ID:
+        raise ValueError("I1 manifest has the wrong experiment identity")
+
+    from fashion.task2.class_balance import validate_i1_config
+    from fashion.task2.experiments import load_experiment_config
+
+    resolved_reference_config = _resolve_evidence_path(reference_config_path, project_root=root)
+    resolved_i1_config = _resolve_evidence_path(i1_config_path, project_root=root)
+    reference_config = load_experiment_config(resolved_reference_config)
+    i1_config = load_experiment_config(resolved_i1_config)
+    validate_i1_config(i1_config)
+    if reference_config.experiment_id != I1_REFERENCE_EXPERIMENT_ID:
+        raise ValueError("I1 reference config has the wrong experiment identity")
+    if _i1_matched_payload(reference_config) != _i1_matched_payload(i1_config):
+        raise ValueError("I1 must change only experiment identity, stage, and loss")
+    matched_protocol_sha256 = canonical_sha256(_i1_matched_payload(reference_config))
+
+    (
+        reference_row,
+        reference_folds,
+        reference_classes,
+        _,
+        coverage_sha256,
+        _,
+        _,
+    ) = _audited_deep_experiment_row(
+        reference_manifest,
+        config_path=resolved_reference_config,
+        project_root=root,
+        expected_coverage_sha256=None,
+        specs=I1_COMPARISON_SPECS,
+        expected_epochs=30,
+        expected_patience=5,
+        protocol_name="I1 reference",
+        expected_loss_id="cross_entropy",
+    )
+    (
+        i1_row,
+        i1_folds,
+        i1_classes,
+        i1_histories,
+        _,
+        _,
+        _,
+    ) = _audited_deep_experiment_row(
+        i1_manifest,
+        config_path=resolved_i1_config,
+        project_root=root,
+        expected_coverage_sha256=coverage_sha256,
+        specs=I1_COMPARISON_SPECS,
+        expected_epochs=30,
+        expected_patience=5,
+        protocol_name="I1 intervention",
+        expected_loss_id=EFFECTIVE_NUMBER_LOSS_ID,
+    )
+    for field in (
+        "model_family",
+        "split_sha256",
+        "label_map_sha256",
+        "transform_id",
+        "parameter_count",
+    ):
+        if reference_row[field] != i1_row[field]:
+            raise ValueError(f"I1 and its G3 reference must share {field}")
+
+    reference_classes = reference_classes.rename(
+        columns={name: f"reference_{name}" for name in ("precision", "recall", "f1", "support")}
+    )
+    i1_classes = i1_classes.rename(
+        columns={name: f"i1_{name}" for name in ("precision", "recall", "f1", "support")}
+    )
+    per_class = reference_classes.loc[
+        :, ["label", "reference_precision", "reference_recall", "reference_f1", "reference_support"]
+    ].merge(
+        i1_classes.loc[:, ["label", "i1_precision", "i1_recall", "i1_f1", "i1_support"]],
+        on="label",
+        validate="one_to_one",
+    )
+    if set(per_class["label"]) != set(SEASON_LABELS):
+        raise ValueError("I1 comparison requires all four Season classes")
+    if not per_class["reference_support"].eq(per_class["i1_support"]).all():
+        raise ValueError("I1 and G3 reference have different class supports")
+    for metric in ("precision", "recall", "f1"):
+        per_class[f"delta_i1_minus_reference_{metric}"] = (
+            per_class[f"i1_{metric}"] - per_class[f"reference_{metric}"]
+        )
+    label_order = {label: index for index, label in enumerate(SEASON_LABELS)}
+    per_class["label_order"] = per_class["label"].map(label_order)
+    per_class = per_class.sort_values("label_order").drop(columns="label_order")
+    per_class = per_class.reset_index(drop=True)
+
+    macro_delta = float(i1_row["pooled_macro_f1"] - reference_row["pooled_macro_f1"])
+    spring = per_class.loc[per_class["label"].eq("Spring")].iloc[0]
+    spring_delta = float(spring["delta_i1_minus_reference_f1"])
+    other_classes = per_class.loc[~per_class["label"].eq("Spring")]
+    worst_other = other_classes.sort_values("delta_i1_minus_reference_f1").iloc[0]
+    worst_other_delta = float(worst_other["delta_i1_minus_reference_f1"])
+    spring_passed = spring_delta >= spring_minimum_gain
+    macro_passed = macro_delta >= -maximum_macro_f1_loss
+    other_classes_passed = worst_other_delta >= -maximum_other_class_loss
+    keep_i1 = bool(spring_passed and macro_passed and other_classes_passed)
+
+    comparison_rows = []
+    for variant, loss_id, row in (
+        ("G3-C1 reference", "cross_entropy", reference_row),
+        ("I1 effective-number", EFFECTIVE_NUMBER_LOSS_ID, i1_row),
+    ):
+        comparison_rows.append(
+            {
+                "variant": variant,
+                "experiment_id": row["experiment_id"],
+                "loss_id": loss_id,
+                "pooled_macro_f1": row["pooled_macro_f1"],
+                "fold_mean_macro_f1": row["fold_mean_macro_f1"],
+                "fold_sd_macro_f1": row["fold_sd_macro_f1"],
+                "spring_f1": row["spring_f1"],
+                "five_fold_runtime_minutes": row["five_fold_runtime_minutes"],
+                "peak_vram_mb": row["peak_vram_mb"],
+                "parameter_count": row["parameter_count"],
+                "median_best_epoch": float(
+                    np.median(
+                        i1_folds["best_epoch"]
+                        if row["experiment_id"] == I1_EXPERIMENT_ID
+                        else reference_folds["best_epoch"]
+                    )
+                ),
+                "delta_macro_f1_vs_reference": (
+                    macro_delta if row["experiment_id"] == I1_EXPERIMENT_ID else 0.0
+                ),
+                "delta_spring_f1_vs_reference": (
+                    spring_delta if row["experiment_id"] == I1_EXPERIMENT_ID else 0.0
+                ),
+                "selected_by_i1_gate": row["experiment_id"]
+                == (I1_EXPERIMENT_ID if keep_i1 else I1_REFERENCE_EXPERIMENT_ID),
+                "config_sha256": row["config_sha256"],
+                "split_sha256": row["split_sha256"],
+                "label_map_sha256": row["label_map_sha256"],
+                "implementation_sha256": row["implementation_sha256"],
+                "transform_id": row["transform_id"],
+            }
+        )
+    comparison = pd.DataFrame(comparison_rows)
+
+    paired_reference = reference_folds.loc[
+        :,
+        [
+            "fold",
+            "run_id",
+            "macro_f1",
+            "runtime_seconds",
+            "peak_vram_mb",
+            "best_epoch",
+            "epochs_completed",
+        ],
+    ].rename(columns={name: f"reference_{name}" for name in reference_folds if name != "fold"})
+    paired_i1 = i1_folds.loc[
+        :,
+        [
+            "fold",
+            "run_id",
+            "macro_f1",
+            "runtime_seconds",
+            "peak_vram_mb",
+            "best_epoch",
+            "epochs_completed",
+        ],
+    ].rename(columns={name: f"i1_{name}" for name in i1_folds if name != "fold"})
+    paired_folds = paired_reference.merge(paired_i1, on="fold", validate="one_to_one")
+    if len(paired_folds) != len(G1_EXPECTED_FOLDS):
+        raise ValueError("I1 comparison requires five paired folds")
+    paired_folds["delta_i1_minus_reference_macro_f1"] = (
+        paired_folds["i1_macro_f1"] - paired_folds["reference_macro_f1"]
+    )
+
+    i1_history_by_fold = i1_histories.copy()
+    fold_horizons = i1_history_by_fold.groupby("fold")["epoch"].max()
+    if set(fold_horizons.index.astype(int)) != set(G1_EXPECTED_FOLDS):
+        raise ValueError("I1 histories require all five folds")
+    common_horizon = int(fold_horizons.min())
+    i1_history_by_fold["common_horizon"] = common_horizon
+    i1_history_by_fold["used_in_five_fold_summary"] = i1_history_by_fold["epoch"].le(common_horizon)
+    summary_source = i1_history_by_fold.loc[i1_history_by_fold["used_in_five_fold_summary"]]
+    aggregations: dict[str, tuple[str, str]] = {"fold_count": ("fold", "nunique")}
+    for metric in (
+        "learning_rate",
+        "train_loss",
+        "validation_loss",
+        "validation_accuracy",
+        "validation_macro_f1",
+    ):
+        aggregations[f"{metric}_mean"] = (metric, "mean")
+        aggregations[f"{metric}_sd"] = (metric, "std")
+    learning_curve_summary = (
+        summary_source.groupby(
+            ["family", "tuning_id", "experiment_id", "epoch"],
+            as_index=False,
+            sort=True,
+        )
+        .agg(**aggregations)
+        .fillna(0.0)
+    )
+    if not learning_curve_summary["fold_count"].eq(5).all():
+        raise ValueError("I1 learning-curve means must contain all five folds")
+
+    i1_registry_path = _verified_manifest_artifact(
+        i1_manifest, "registry_snapshot", project_root=root
+    )
+    reference_registry_path = _verified_manifest_artifact(
+        reference_manifest, "registry_snapshot", project_root=root
+    )
+    i1_registry = pd.read_csv(i1_registry_path, dtype=str, keep_default_na=False)
+    reference_registry = pd.read_csv(reference_registry_path, dtype=str, keep_default_na=False)
+    class_weights = _i1_class_weight_rows(i1_registry, project_root=root)
+    registry_snapshot = pd.concat(
+        [
+            reference_registry.assign(variant="G3-C1 reference"),
+            i1_registry.assign(variant="I1 effective-number"),
+        ],
+        ignore_index=True,
+    )
+    registry_snapshot = registry_snapshot.loc[
+        :, ["variant", *EXPERIMENT_REGISTRY_COLUMNS]
+    ].sort_values(["variant", "fold", "run_id"])
+
+    selected_experiment_id = I1_EXPERIMENT_ID if keep_i1 else I1_REFERENCE_EXPERIMENT_ID
+    decision = {
+        "schema_version": "1.0.0",
+        "gate": "G4-I1",
+        "decision_status": "closed",
+        "primary_metric": "pooled_five_fold_oof_macro_f1",
+        "targeted_class": "Spring",
+        "reference_experiment_id": I1_REFERENCE_EXPERIMENT_ID,
+        "intervention_experiment_id": I1_EXPERIMENT_ID,
+        "observed_i1_minus_reference_macro_f1": macro_delta,
+        "observed_i1_minus_reference_spring_f1": spring_delta,
+        "observed_worst_other_class": str(worst_other["label"]),
+        "observed_worst_other_class_f1_delta": worst_other_delta,
+        "criteria": {
+            "spring_f1_gain": {
+                "minimum": spring_minimum_gain,
+                "observed": spring_delta,
+                "passed": bool(spring_passed),
+            },
+            "macro_f1_loss": {
+                "maximum_loss": maximum_macro_f1_loss,
+                "observed_delta": macro_delta,
+                "passed": bool(macro_passed),
+            },
+            "other_class_f1_loss": {
+                "maximum_loss": maximum_other_class_loss,
+                "worst_label": str(worst_other["label"]),
+                "observed_delta": worst_other_delta,
+                "passed": bool(other_classes_passed),
+            },
+        },
+        "keep_i1": keep_i1,
+        "selected_experiment_id": selected_experiment_id,
+        "ultimate_winner_frozen": False,
+        "loss_values_comparable_to_reference": False,
+        "loss_note": (
+            "I1 uses fold-specific weighted cross-entropy, so compare OOF macro-F1 "
+            "and per-class metrics rather than numeric loss levels against G3-C1."
+        ),
+        "common_five_fold_horizon": common_horizon,
+        "limitations": [
+            "No second-seed stability result exists yet.",
+            "I1 tests class weighting only; it does not isolate ArticleType shortcuts.",
+            "Current softmax probabilities are not calibrated claims.",
+        ],
+        "next_question": (
+            "Test masked ArticleType multi-task learning, then close stability, "
+            "robustness, cost, and grouped-bootstrap gates."
+        ),
+    }
+
+    evidence_root = Path(evidence_directory)
+    figure_root = Path(figure_directory)
+    common_root = Path(os.path.commonpath([evidence_root.resolve(), figure_root.resolve()]))
+    paths = {
+        "comparison": evidence_root / "comparison.csv",
+        "paired_fold_metrics": evidence_root / "paired_fold_metrics.csv",
+        "per_class_comparison": evidence_root / "per_class_comparison.csv",
+        "class_weights_by_fold": evidence_root / "class_weights_by_fold.csv",
+        "registry_snapshot": evidence_root / "registry_snapshot.csv",
+        "learning_curves_by_fold": evidence_root / "learning_curves_by_fold.csv",
+        "learning_curve_summary": evidence_root / "learning_curve_summary.csv",
+        "decision": evidence_root / "decision.json",
+        "learning_curves": figure_root / "i1_effective_number_learning_curves.png",
+        "per_class_f1_delta": figure_root / "i1_per_class_f1_delta.png",
+    }
+    atomic_write_csv(paths["comparison"], comparison)
+    atomic_write_csv(paths["paired_fold_metrics"], paired_folds)
+    atomic_write_csv(paths["per_class_comparison"], per_class)
+    atomic_write_csv(paths["class_weights_by_fold"], class_weights)
+    atomic_write_csv(paths["registry_snapshot"], registry_snapshot)
+    atomic_write_csv(paths["learning_curves_by_fold"], i1_history_by_fold)
+    atomic_write_csv(paths["learning_curve_summary"], learning_curve_summary)
+    atomic_write_json(paths["decision"], decision)
+    _plot_g2_tuning_learning_curves(
+        learning_curve_summary,
+        family="I1",
+        tuning_id="effective-number",
+        experiment_id=I1_EXPERIMENT_ID,
+        output_path=paths["learning_curves"],
+        loss_axis_label="Fold-weighted cross-entropy loss",
+        figure_title=(f"I1 effective-number loss: five-fold mean ± SD ({I1_EXPERIMENT_ID})"),
+    )
+    _plot_i1_per_class_f1_delta(
+        per_class,
+        output_path=paths["per_class_f1_delta"],
+        maximum_other_class_loss=maximum_other_class_loss,
+    )
+
+    artifact_manifest = {
+        name: {
+            "path": _portable_artifact_path(path, fallback_root=common_root),
+            "sha256": compute_sha256(path),
+        }
+        for name, path in paths.items()
+    }
+    manifest = {
+        "schema_version": "1.0.0",
+        "gate": "G4-I1",
+        "decision_status": "closed",
+        "coverage_sha256": coverage_sha256,
+        "matched_protocol_sha256": matched_protocol_sha256,
+        "reference_experiment_id": I1_REFERENCE_EXPERIMENT_ID,
+        "intervention_experiment_id": I1_EXPERIMENT_ID,
+        "spring_minimum_gain": spring_minimum_gain,
+        "maximum_macro_f1_loss": maximum_macro_f1_loss,
+        "maximum_other_class_loss": maximum_other_class_loss,
+        "keep_i1": keep_i1,
+        "selected_experiment_id": selected_experiment_id,
+        "ultimate_winner_frozen": False,
+        "input_manifests": {
+            I1_REFERENCE_EXPERIMENT_ID: {
+                "path": _portable_artifact_path(resolved_reference_manifest, fallback_root=root),
+                "sha256": compute_sha256(resolved_reference_manifest),
+            },
+            I1_EXPERIMENT_ID: {
+                "path": _portable_artifact_path(resolved_i1_manifest, fallback_root=root),
+                "sha256": compute_sha256(resolved_i1_manifest),
+            },
+        },
+        "input_configs": {
+            I1_REFERENCE_EXPERIMENT_ID: {
+                "path": _portable_artifact_path(resolved_reference_config, fallback_root=root),
+                "sha256": compute_sha256(resolved_reference_config),
+            },
+            I1_EXPERIMENT_ID: {
+                "path": _portable_artifact_path(resolved_i1_config, fallback_root=root),
+                "sha256": compute_sha256(resolved_i1_config),
+            },
+        },
         "artifacts": artifact_manifest,
     }
     manifest_path = evidence_root / "manifest.json"
@@ -3378,9 +3766,7 @@ def _load_verified_gate_manifest(
     with resolved_manifest.open(encoding="utf-8") as handle:
         manifest = json.load(handle)
     if manifest.get("gate") != expected_gate:
-        raise ValueError(
-            f"expected {expected_gate} manifest, observed {manifest.get('gate')!r}"
-        )
+        raise ValueError(f"expected {expected_gate} manifest, observed {manifest.get('gate')!r}")
     if manifest.get("decision_status") != "closed":
         raise ValueError(f"{expected_gate} evidence must have a closed decision")
     for name in required_artifacts:
@@ -3393,12 +3779,10 @@ def build_task2_selection_story_evidence(
     b0_manifest_path: str | Path = TASK2_EVIDENCE_DIR / "b0_majority/manifest.json",
     b1_manifest_path: str | Path = TASK2_EVIDENCE_DIR / "b1_hog_hsv_svm/manifest.json",
     g1_manifest_path: str | Path = TASK2_EVIDENCE_DIR / "g1_family_screen/manifest.json",
-    size_manifest_path: str | Path = TASK2_EVIDENCE_DIR
-    / "g2_input_size_ablation/manifest.json",
+    size_manifest_path: str | Path = TASK2_EVIDENCE_DIR / "g2_input_size_ablation/manifest.json",
     augmentation_manifest_path: str | Path = TASK2_EVIDENCE_DIR
     / "g2_augmentation_ablation/manifest.json",
-    tuning_manifest_path: str | Path = TASK2_EVIDENCE_DIR
-    / "g2_compact_tuning/manifest.json",
+    tuning_manifest_path: str | Path = TASK2_EVIDENCE_DIR / "g2_compact_tuning/manifest.json",
     project_root: str | Path = ROOT,
     evidence_directory: str | Path = TASK2_EVIDENCE_DIR / "selection_story",
 ) -> dict[str, Any]:
@@ -3450,12 +3834,8 @@ def build_task2_selection_story_evidence(
     if augmentation_manifest.get("selected_variant") != "A0":
         raise ValueError("selection story requires retained A0 augmentation")
 
-    b0_metrics_path = _verified_manifest_artifact(
-        b0_manifest, "pooled_metrics", project_root=root
-    )
-    b1_metrics_path = _verified_manifest_artifact(
-        b1_manifest, "pooled_metrics", project_root=root
-    )
+    b0_metrics_path = _verified_manifest_artifact(b0_manifest, "pooled_metrics", project_root=root)
+    b1_metrics_path = _verified_manifest_artifact(b1_manifest, "pooled_metrics", project_root=root)
     with b0_metrics_path.open(encoding="utf-8") as handle:
         b0_metrics = json.load(handle)
     with b1_metrics_path.open(encoding="utf-8") as handle:
@@ -3470,37 +3850,29 @@ def build_task2_selection_story_evidence(
     tuning_leaderboard = pd.read_csv(
         _verified_manifest_artifact(tuning_manifest, "leaderboard", project_root=root)
     )
-    with _verified_manifest_artifact(
-        size_manifest, "decision", project_root=root
-    ).open(encoding="utf-8") as handle:
+    with _verified_manifest_artifact(size_manifest, "decision", project_root=root).open(
+        encoding="utf-8"
+    ) as handle:
         size_decision = json.load(handle)
-    with _verified_manifest_artifact(
-        augmentation_manifest, "decision", project_root=root
-    ).open(encoding="utf-8") as handle:
+    with _verified_manifest_artifact(augmentation_manifest, "decision", project_root=root).open(
+        encoding="utf-8"
+    ) as handle:
         augmentation_decision = json.load(handle)
-    with _verified_manifest_artifact(
-        tuning_manifest, "decision", project_root=root
-    ).open(encoding="utf-8") as handle:
+    with _verified_manifest_artifact(tuning_manifest, "decision", project_root=root).open(
+        encoding="utf-8"
+    ) as handle:
         tuning_decision = json.load(handle)
 
     if not (
         size_decision.get("selected_variant") == "P0"
         and augmentation_decision.get("selected_variant") == "A0"
-        and tuning_decision.get("families", {}).get("C1", {}).get(
-            "selected_tuning_id"
-        )
-        == "T1"
-        and tuning_decision.get("families", {}).get("C2", {}).get(
-            "selected_tuning_id"
-        )
-        == "T0"
+        and tuning_decision.get("families", {}).get("C1", {}).get("selected_tuning_id") == "T1"
+        and tuning_decision.get("families", {}).get("C2", {}).get("selected_tuning_id") == "T0"
     ):
         raise ValueError("selection story inputs do not contain the frozen G2 decisions")
 
     def score(frame: pd.DataFrame, experiment_id: str) -> float:
-        values = frame.loc[
-            frame["experiment_id"].eq(experiment_id), "pooled_macro_f1"
-        ]
+        values = frame.loc[frame["experiment_id"].eq(experiment_id), "pooled_macro_f1"]
         if len(values) != 1:
             raise ValueError(f"expected one leaderboard row for {experiment_id}")
         return float(values.iloc[0])
@@ -3525,9 +3897,7 @@ def build_task2_selection_story_evidence(
             {
                 "step": "B0 majority",
                 "pooled_macro_f1": b0_score,
-                "selected_because": (
-                    "Measure the class-imbalance lower bound and audit folds."
-                ),
+                "selected_because": ("Measure the class-imbalance lower bound and audit folds."),
                 "strength": "Cheap, deterministic, and leakage-safe.",
                 "limitation_exposed": "No image discrimination; Spring F1 is zero.",
                 "next_question": "Can fixed shape and colour features help?",
@@ -3536,9 +3906,7 @@ def build_task2_selection_story_evidence(
             {
                 "step": "B1 HOG + HSV",
                 "pooled_macro_f1": b1_score,
-                "selected_because": (
-                    "Test the EDA shape-and-colour hypothesis classically."
-                ),
+                "selected_because": ("Test the EDA shape-and-colour hypothesis classically."),
                 "strength": "Serious and interpretable image-only baseline.",
                 "limitation_exposed": "Fixed features and uncalibrated decision scores.",
                 "next_question": "Can C1 learn better features end to end?",
@@ -3549,23 +3917,17 @@ def build_task2_selection_story_evidence(
                 "pooled_macro_f1": c1_t0_score,
                 "selected_because": "Learn compact task-specific image features.",
                 "strength": "1,174,244 parameters and competitive quality.",
-                "limitation_exposed": (
-                    "Simple capacity may miss wider spatial structure."
-                ),
+                "limitation_exposed": ("Simple capacity may miss wider spatial structure."),
                 "next_question": "Does residual depth add enough value?",
                 "source_evidence": source_paths["G1"],
             },
             {
                 "step": "C2 ResNet18 T0",
                 "pooled_macro_f1": c2_t0_score,
-                "selected_because": (
-                    "Test residual capacity with a small-image stem."
-                ),
+                "selected_because": ("Test residual capacity with a small-image stem."),
                 "strength": "Best and most stable G1 screen score.",
                 "limitation_exposed": "Much larger model for a small gain over C1.",
-                "next_question": (
-                    "Can an efficient alternative or tuning close the gap?"
-                ),
+                "next_question": ("Can an efficient alternative or tuning close the gap?"),
                 "source_evidence": source_paths["G1"],
             },
             {
@@ -3573,9 +3935,7 @@ def build_task2_selection_story_evidence(
                 "pooled_macro_f1": c3_score,
                 "selected_because": "Test the quality-to-cost deployment trade-off.",
                 "strength": "Lowest measured runtime and VRAM in G1.",
-                "limitation_exposed": (
-                    "Quality loss was too large; reject from tuning."
-                ),
+                "limitation_exposed": ("Quality loss was too large; reject from tuning."),
                 "next_question": "Compare only C1 and C2 under controlled changes.",
                 "source_evidence": source_paths["G1"],
             },
@@ -3584,9 +3944,7 @@ def build_task2_selection_story_evidence(
                 "pooled_macro_f1": c1_t1_score,
                 "selected_because": "Passed the frozen +0.003 tuning gain gate.",
                 "strength": "Compact C1 now matches the larger C2 screen score.",
-                "limitation_exposed": (
-                    "Eight epochs and one seed cannot freeze a winner."
-                ),
+                "limitation_exposed": ("Eight epochs and one seed cannot freeze a winner."),
                 "next_question": "Fully train C1-T1 versus retained C2-T0 fairly.",
                 "source_evidence": source_paths["G2-T"],
             },
@@ -3619,27 +3977,19 @@ def build_task2_selection_story_evidence(
                 "next_test": "Keep macro-F1 primary; test I1 later.",
             },
             {
-                "earlier_eda_insight": (
-                    "Shape and colour contain useful Season signal."
-                ),
+                "earlier_eda_insight": ("Shape and colour contain useful Season signal."),
                 "verdict_after_measured_gates": "supported",
                 "measured_check": f"B1 reached {b1_score:.6f} macro-F1, far above B0.",
                 "next_test": "Use learned image features, then inspect errors.",
             },
             {
-                "earlier_eda_insight": (
-                    "Learned features should improve fixed HOG/HSV."
-                ),
+                "earlier_eda_insight": ("Learned features should improve fixed HOG/HSV."),
                 "verdict_after_measured_gates": "supported",
-                "measured_check": (
-                    f"C1 and C2 reached {c1_t0_score:.6f} and {c2_t0_score:.6f}."
-                ),
+                "measured_check": (f"C1 and C2 reached {c1_t0_score:.6f} and {c2_t0_score:.6f}."),
                 "next_test": "Run both finalists at the full matched budget.",
             },
             {
-                "earlier_eda_insight": (
-                    "More model capacity should clearly improve quality."
-                ),
+                "earlier_eda_insight": ("More model capacity should clearly improve quality."),
                 "verdict_after_measured_gates": "partly supported",
                 "measured_check": (
                     f"C2 beat C1-T0 by {c2_t0_score - c1_t0_score:.6f}, but "
@@ -3648,9 +3998,7 @@ def build_task2_selection_story_evidence(
                 "next_test": "Compare C1-T1 and C2-T0 for quality and cost.",
             },
             {
-                "earlier_eda_insight": (
-                    "A larger P1 input may preserve useful detail."
-                ),
+                "earlier_eda_insight": ("A larger P1 input may preserve useful detail."),
                 "verdict_after_measured_gates": "contradicted",
                 "measured_check": (
                     f"P1 changed macro-F1 by "
@@ -3660,9 +4008,7 @@ def build_task2_selection_story_evidence(
                 "next_test": "Retain P0; do not add more image sizes.",
             },
             {
-                "earlier_eda_insight": (
-                    "Extra colour jitter may improve generalisation."
-                ),
+                "earlier_eda_insight": ("Extra colour jitter may improve generalisation."),
                 "verdict_after_measured_gates": "contradicted",
                 "measured_check": (
                     f"A1 changed macro-F1 by "
@@ -3677,18 +4023,14 @@ def build_task2_selection_story_evidence(
                 ),
                 "verdict_after_measured_gates": "still untested",
                 "measured_check": "No current gate isolates these OOF slices.",
-                "next_test": (
-                    "Measure conflict, size-quartile, and year slices in Section 10."
-                ),
+                "next_test": ("Measure conflict, size-quartile, and year slices in Section 10."),
             },
         ]
     )
 
     evidence_root = Path(evidence_directory)
     paths = {
-        "incremental_model_selection": (
-            evidence_root / "incremental_model_selection.csv"
-        ),
+        "incremental_model_selection": (evidence_root / "incremental_model_selection.csv"),
         "eda_reflection": evidence_root / "eda_reflection.csv",
     }
     atomic_write_csv(paths["incremental_model_selection"], model_selection_ladder)
@@ -3807,8 +4149,7 @@ def build_g0_evidence(
     tiny_axis, integration_axis = figure.subplots(1, 2)
     tiny_axis.plot(tiny_trace["step"], tiny_trace["train_loss"], marker="o", color="#2563EB")
     tiny_axis.axhline(
-        result.tiny_overfit["initial_loss"]
-        * result.tiny_overfit["maximum_loss_ratio"],
+        result.tiny_overfit["initial_loss"] * result.tiny_overfit["maximum_loss_ratio"],
         linestyle="--",
         color="#DC2626",
         label="maximum passing loss",
