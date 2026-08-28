@@ -5,13 +5,17 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from matplotlib.figure import Figure
 
 from fashion.config import ROOT
 from fashion.data.hashing import compute_sha256
 from fashion.task2.evidence import EXPERIMENT_REGISTRY_COLUMNS
 from fashion.task2.experiments import load_experiment_config
 from fashion.task2.pretraining import P0S_EXPERIMENT_ID, PSTAR_EXPERIMENT_ID
-from fashion.task2.pretraining_evidence import build_pretraining_benchmark_evidence
+from fashion.task2.pretraining_evidence import (
+    build_pretraining_benchmark_evidence,
+    plot_pretraining_learning_curves,
+)
 from fashion.train.artifacts import canonical_sha256
 from fashion.train.metrics import SEASON_LABELS
 
@@ -294,3 +298,52 @@ def test_pretraining_evidence_rejects_tampered_history(tmp_path: Path) -> None:
             evidence_directory=tmp_path / "results/evidence/task2/pretraining_benchmark",
             figure_directory=tmp_path / "results/figures/task2",
         )
+
+
+def test_pretraining_learning_curve_panel_titles_do_not_overlap(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    variants = {
+        P0S_EXPERIMENT_ID: "P0S standard-stem scratch control",
+        PSTAR_EXPERIMENT_ID: "P* standard-stem ImageNet benchmark",
+    }
+    rows = []
+    for experiment_id, variant in variants.items():
+        for epoch in range(1, 4):
+            rows.append(
+                {
+                    "variant": variant,
+                    "experiment_id": experiment_id,
+                    "epoch": epoch,
+                    "train_loss_mean": 1.0 - epoch * 0.1,
+                    "train_loss_sd": 0.01,
+                    "validation_loss_mean": 0.9 - epoch * 0.05,
+                    "validation_loss_sd": 0.02,
+                    "validation_accuracy_mean": 0.6 + epoch * 0.02,
+                    "validation_accuracy_sd": 0.01,
+                    "validation_macro_f1_mean": 0.58 + epoch * 0.02,
+                    "validation_macro_f1_sd": 0.01,
+                }
+            )
+    observed_overlaps = []
+    original_savefig = Figure.savefig
+
+    def capture_title_bounds(figure, *args, **kwargs):
+        figure.canvas.draw()
+        renderer = figure.canvas.get_renderer()
+        axes = figure.axes
+        for row_index in range(2):
+            left = axes[row_index * 2].title.get_window_extent(renderer)
+            right = axes[row_index * 2 + 1].title.get_window_extent(renderer)
+            observed_overlaps.append(left.overlaps(right))
+        return original_savefig(figure, *args, **kwargs)
+
+    monkeypatch.setattr(Figure, "savefig", capture_title_bounds)
+
+    plot_pretraining_learning_curves(
+        pd.DataFrame(rows),
+        tmp_path / "learning_curves.png",
+    )
+
+    assert observed_overlaps == [False, False]
