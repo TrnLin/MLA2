@@ -293,7 +293,7 @@ def test_i1_evidence_applies_frozen_rule_and_hashes_outputs(tmp_path: Path) -> N
         "per_class_f1_delta",
     }
     for artifact in manifest["artifacts"].values():
-        path = tmp_path / artifact["path"]
+        path = tmp_path / "results" / artifact["path"]
         assert path.is_file()
         assert path.stat().st_size > 0
         assert compute_sha256(path) == artifact["sha256"]
