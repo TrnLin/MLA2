@@ -2,31 +2,31 @@
   "artifacts": {
     "confusion_matrix": {
       "path": "results/evidence/task2/g3_c2_t0_resnet18/confusion_matrix.csv",
-      "sha256": "6b24c531abaf7ec1e7e94a245b60d34c1ae15f5058549871e4a12b648c913186"
+      "sha256": "6aa2d49fd957074fc00dbe234bb8a4a39d2c9174d2cc5ff7d93ca997973217bc"
     },
     "figure": {
       "path": "results/figures/task2/g3_c2_t0_resnet18.png",
-      "sha256": "6ca8e4377bbe46d47a158f67e620e32a717d0fddb27194a45efd5de696b46319"
+      "sha256": "9e61aedbddc87883f55b9b43c80dc60709f0f60682adbf8b239f7ea5cb4b0b9c"
     },
     "fold_metrics": {
       "path": "results/evidence/task2/g3_c2_t0_resnet18/fold_metrics.csv",
-      "sha256": "f7730d6dcc1cb0afef7141a3f4a8669f52b8c28c6377ac4942b133fc959e2a0c"
+      "sha256": "0e7660641c450036d64bcec92e1650fc9ab6ebf1b57dae1060dd9b189d36b9f6"
     },
     "fold_summary": {
       "path": "results/evidence/task2/g3_c2_t0_resnet18/fold_summary.csv",
-      "sha256": "2264502515546e07aec0b4d808eaaac76336cd2f4b2e16a6faf6cff95a516deb"
+      "sha256": "7fd31a6428f48fb032b8d9594e73534fac810f6b97e75d49c122b4a9a576c05f"
     },
     "per_class_metrics": {
       "path": "results/evidence/task2/g3_c2_t0_resnet18/per_class_metrics.csv",
-      "sha256": "d42781d163669fb55b368d84a471ff5374c46ea9bbcdc39100a3b6ffe34d73e6"
+      "sha256": "a30834aabcd2b9c28b790df5e8965304c9c3cf7a7a9fcd6d068619d597fe573c"
     },
     "pooled_metrics": {
       "path": "results/evidence/task2/g3_c2_t0_resnet18/pooled_metrics.json",
-      "sha256": "385c906999279e63c13fc1006dbec6c4e67f465876f7c9c24f5b82f50f588d7c"
+      "sha256": "65016ffd36e636c50dee67633475f83e3104ea0aaccb11c30466e8b481069dff"
     },
     "registry_snapshot": {
       "path": "results/evidence/task2/g3_c2_t0_resnet18/registry_snapshot.csv",
-      "sha256": "a475717554d7512600fa9c40e94a06fd9bf64d23cafff6224f17201e9fbd8ad7"
+      "sha256": "3bf0b66b0ebe18364ec56de99bffdfc75c685a7491fbb71553ed34c3d636ab6f"
     }
   },
   "calibration_claim_allowed": false,
@@ -52,15 +52,15 @@
     3,
     4
   ],
-  "oof_artifact_set_sha256": "4ec694714db393f9cd8669096e35db3dc28688cab33773213a46fb154cab0444",
-  "pooled_macro_f1": 0.7351673521014609,
+  "oof_artifact_set_sha256": "c540e5fcb3ba8393b2b80b2e3ee44d9e3cda2e469574d7a1d0cfaabd00a4f61f",
+  "pooled_macro_f1": 0.7350355076324379,
   "probability_note": "Uncalibrated softmax probabilities from the best validation macro-F1 checkpoint in each fold; calibration metrics are diagnostic only.",
   "run_ids": [
-    "g3-c2-t0-resnet18-f0-s2753-c6cd41fd50f4",
-    "g3-c2-t0-resnet18-f1-s2753-30a5a7742c38",
-    "g3-c2-t0-resnet18-f2-s2753-aaac5fd8559b",
-    "g3-c2-t0-resnet18-f3-s2753-5e67289a4f07",
-    "g3-c2-t0-resnet18-f4-s2753-74ee05278402"
+    "g3-c2-t0-resnet18-f0-s2753-66ee7a85d5c6",
+    "g3-c2-t0-resnet18-f1-s2753-dc728952f19f",
+    "g3-c2-t0-resnet18-f2-s2753-80377ad03917",
+    "g3-c2-t0-resnet18-f3-s2753-7e8c480bec75",
+    "g3-c2-t0-resnet18-f4-s2753-7b3a3bf2d06e"
   ],
   "schema_version": "1.0.0",
   "seed": 2753,

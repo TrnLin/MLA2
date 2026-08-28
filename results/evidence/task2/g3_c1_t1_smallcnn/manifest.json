@@ -2,31 +2,31 @@
   "artifacts": {
     "confusion_matrix": {
       "path": "results/evidence/task2/g3_c1_t1_smallcnn/confusion_matrix.csv",
-      "sha256": "173e741a8ca637ed8e9a8cc77e37b44cbbf28f820e3c90c21f6dddf8e2e504d5"
+      "sha256": "ad6b54cdb979c75c57e9bd8d77e6b4f8a7df21496478c040dceccd16ceca2bd6"
     },
     "figure": {
       "path": "results/figures/task2/g3_c1_t1_smallcnn.png",
-      "sha256": "94f15bd75f8a6776e83445fa4bdc17b24356cab890f1f158b7e74e879ccb5670"
+      "sha256": "84d7962c5cebcc72311d0a1a9834b08e14e7b93b23b5c506bc828f481e10b5f3"
     },
     "fold_metrics": {
       "path": "results/evidence/task2/g3_c1_t1_smallcnn/fold_metrics.csv",
-      "sha256": "abad98a461621ca58f261d399ffb59a54c00ebb3090404d99c15bbe5840ea321"
+      "sha256": "e05fc809b0c9836d9908d41ca0339194140f2d4decfe16bf40f2d0bb18d7cc60"
     },
     "fold_summary": {
       "path": "results/evidence/task2/g3_c1_t1_smallcnn/fold_summary.csv",
-      "sha256": "3d8d4d939943d11fdea413f28ac4ca8359be1c904d8b1efe564160bd3f3e9f5d"
+      "sha256": "412f9740ad755c0e42e01ee13023934a38b9a2b933a17540da4581ee168b9356"
     },
     "per_class_metrics": {
       "path": "results/evidence/task2/g3_c1_t1_smallcnn/per_class_metrics.csv",
-      "sha256": "899261985c5633b27917e1ed81261846526f6b7891a78e8e134cd5bc94b159b6"
+      "sha256": "1d78641f33c96296784e9acc3fac0e14009f5f9063692e68b407311b18c7b265"
     },
     "pooled_metrics": {
       "path": "results/evidence/task2/g3_c1_t1_smallcnn/pooled_metrics.json",
-      "sha256": "fd077722f6ad2ce457143c351182f7fd40116ec8c2a9d09cbd3f38b4175e9817"
+      "sha256": "fee8a0d2cfc03befa7749bc1afdf5a2c95b518756887d2cbb18f704fd7728805"
     },
     "registry_snapshot": {
       "path": "results/evidence/task2/g3_c1_t1_smallcnn/registry_snapshot.csv",
-      "sha256": "5d0a48411b880fdb4030e8430389ead93fbea80c0086b68b5f86b28193074d4e"
+      "sha256": "b755f1f374a51e4bedaa41719404391f6897efeab2659900d75798d4fc5f91af"
     }
   },
   "calibration_claim_allowed": false,
@@ -52,15 +52,15 @@
     3,
     4
   ],
-  "oof_artifact_set_sha256": "3622944278b4ecd20e3680a8b9ddcda209891c5c1ad367b330ea17b9ae2e5b36",
-  "pooled_macro_f1": 0.7373102656771614,
+  "oof_artifact_set_sha256": "98e6911d2068c362809178c0080487314eebc95660803ed2ae10284187d89f5b",
+  "pooled_macro_f1": 0.7376613209761836,
   "probability_note": "Uncalibrated softmax probabilities from the best validation macro-F1 checkpoint in each fold; calibration metrics are diagnostic only.",
   "run_ids": [
-    "g3-c1-t1-smallcnn-f0-s2753-bdfa9d992e00",
-    "g3-c1-t1-smallcnn-f1-s2753-b63b6a84d669",
-    "g3-c1-t1-smallcnn-f2-s2753-e46d771b6d56",
-    "g3-c1-t1-smallcnn-f3-s2753-763dbb29ec53",
-    "g3-c1-t1-smallcnn-f4-s2753-92870ee0d57d"
+    "g3-c1-t1-smallcnn-f0-s2753-1ce4f9978b12",
+    "g3-c1-t1-smallcnn-f1-s2753-ea0b61364ef4",
+    "g3-c1-t1-smallcnn-f2-s2753-8439c63a5bac",
+    "g3-c1-t1-smallcnn-f3-s2753-16f0d6eb1cbc",
+    "g3-c1-t1-smallcnn-f4-s2753-2b4a6d779fa3"
   ],
   "schema_version": "1.0.0",
   "seed": 2753,
