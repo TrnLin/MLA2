@@ -60,7 +60,12 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
 
         assert notebook.metadata["title"] == spec["title"]
         assert headings[0] == f"# {spec['title']}"
-        assert all(cell.cell_type == "markdown" for cell in notebook.cells)
+        if filename == "04_task3_gender_usage.ipynb":
+            assert [cell.cell_type for cell in notebook.cells[2:6]] == ["code"] * 4
+            assert all(cell.cell_type == "markdown" for cell in notebook.cells[:2])
+            assert all(cell.cell_type == "markdown" for cell in notebook.cells[6:])
+        else:
+            assert all(cell.cell_type == "markdown" for cell in notebook.cells)
         assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
         assert [
             int(match.group(1))
@@ -74,18 +79,28 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
         assert "train_test_split" not in source
         assert "pretrained=True" not in source
         assert "Final metric selected: yes" not in source
-        for unselected in ("macro-F1", "nDCG@", "Recall@", "Adam", "cross-entropy"):
-            assert unselected not in source
+        if filename != "04_task3_gender_usage.ipynb":
+            for unselected in ("macro-F1", "nDCG@", "Recall@", "Adam", "cross-entropy"):
+                assert unselected not in source
 
 
-def test_task_metric_placeholders_are_explicit() -> None:
+def test_task_metric_contracts_are_explicit() -> None:
     for filename in ("02_task1_article_type.ipynb", "03_task2_season.ipynb"):
         source = _source(nbformat.read(ROOT / "notebooks" / filename, as_version=4))
         assert "Primary development metric: TODO(owner)" in source
 
     task3 = _source(nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4))
-    assert "Primary development metric for `gender`: TODO(owner)" in task3
-    assert "Primary development metric for `usage`: TODO(owner)" in task3
+    assert (
+        "Primary development metric for `gender`: pooled five-fold OOF macro-F1"
+        in task3
+    )
+    assert (
+        "Primary development metric for `usage`: pooled five-fold OOF macro-F1"
+        in task3
+    )
+    assert "created_before_child_run: true" in task3
+    assert "single_changed_factor: TODO" in task3
+    assert "This table grows one approved row at a time" in task3
 
     task4 = _source(nbformat.read(ROOT / "notebooks/05_task4_visual_search.ipynb", as_version=4))
     assert "Primary ranking-quality metric: TODO(owner)" in task4

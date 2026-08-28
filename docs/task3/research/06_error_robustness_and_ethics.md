@@ -30,6 +30,28 @@ answer those questions.
 6. Separate model error, label ambiguity, data quality, and unsupported-class limits.
 7. Do not infer demographic traits that the dataset does not contain.
 8. Treat visual explanations as diagnostics, not proof.
+9. Run a small fixed diagnostic tier after every E1 candidate; do not wait until all architecture
+   choices are finished.
+10. Run the full manual, robustness, calibration, and explanation tier for finalists.
+
+### 2.1 Repeated per-candidate tier
+
+Every E1 parent and child saves:
+
+- the fixed highest-confidence errors for each target;
+- at least one fixed correct and incorrect example for each supported class where available;
+- grayscale and unusual-size failures;
+- rare-class and majority-collapse examples;
+- JPEG 75, brightness ×0.85/×1.15, 3% translation, and grayscale robustness results;
+- changed failures and robustness relative to the immediate parent.
+
+This small tier is enough to form the next single-factor hypothesis. It is not enough for final
+deployment claims.
+
+### 2.2 Full finalist tier
+
+Finalists use all predeclared slices, the complete manual-review index, the full corruption suite,
+risk–coverage, calibration, Grad-CAM, ethics review, and two-reviewer process where practical.
 
 ## 3. Predeclared quantitative slices
 
@@ -148,7 +170,7 @@ Create a deterministic review index from OOF predictions. Include:
 - every `Party` error and a representative sample of its correct predictions;
 - representative `Travel`, `Smart Casual`, and `NA` errors;
 - highest-confidence errors for each output;
-- separate-versus-shared regressions;
+- separate-versus-shared regressions, only if the shared cost gate opened;
 - grayscale and unusual-size errors;
 - person-visible and multi-product images;
 - a random control sample of correct common-class examples.
@@ -203,6 +225,9 @@ test. This project adopts that principle at a scale suitable for 60×80 catalogu
 
 Use the exact OOF validation image and frozen fold model. The clean prediction is the paired reference
 for every perturbed copy.
+
+The repeated per-candidate tier uses the small fixed subset defined in Section 2.1. The full table
+below is reserved for finalists and independent evaluation.
 
 ### 7.2 Fixed mild perturbations
 
@@ -273,7 +298,7 @@ Include:
 - `Home`;
 - person-visible errors;
 - multi-product images;
-- one separate/shared disagreement per target;
+- one separate/shared disagreement per target, only if a shared model was tested;
 - one grayscale and one unusual-size example.
 
 ### Review questions
@@ -282,7 +307,7 @@ Include:
 - Is it on a face, body, or clothing worn by a model instead?
 - Is it on the white background?
 - Is it on a logo or text?
-- Does gender activation differ from usage activation in the shared model?
+- If sharing was tested, does gender activation differ from usage activation?
 - Does the model focus on a second product rather than the labelled item?
 
 ### Reporting limits

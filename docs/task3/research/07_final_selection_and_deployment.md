@@ -29,8 +29,10 @@ Do not begin final selection until all of these are true:
 - Primary, secondary, class, calibration, robustness, and cost evidence is reproducible.
 - Finalists have three-seed confirmation.
 - Pretrained systems are marked ineligible.
-- Separate/shared negative-transfer evidence is complete.
+- A shared comparison is complete only if the measured separate-system cost gate triggered it;
+  otherwise the decision record says why sharing was not opened.
 - Error and ethics review is complete.
+- The accepted parent-child chain, rejected hypotheses, and stop decisions are traceable.
 - No protected holdout result has been inspected.
 
 The selection gates are defined in

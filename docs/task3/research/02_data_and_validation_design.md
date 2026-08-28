@@ -263,29 +263,33 @@ The existing image utility can:
 
 See [`images.py`](../../../src/fashion/data/images.py).
 
-### Task 3 choices still requiring evidence
+### EDA-derived primary baseline transform
 
-The helper’s default is not an accepted Task 3 transform. Task 3 must compare and record:
-
-- `(80,60)` versus `(128,96)`;
-- whether exact native images or letterbox handling is used;
-- whether fold-train RGB standardisation beats simple `[0,1]` scaling;
-- augmentation strength;
-- interpolation and padding colour.
-
-### Recommended base transform
+The helper's default `(128,96)` size is not the Task 3 baseline. The primary baseline records one
+fixed transform:
 
 1. EXIF-normalise.
 2. Convert to RGB.
-3. Preserve the 3:4 width-to-height ratio.
-4. Letterbox only when source geometry differs.
-5. Fit RGB statistics on training content pixels, excluding padding.
-6. Apply the same saved statistics to validation.
-7. Use deterministic validation transforms.
+3. Use `(height=80, width=60)`.
+4. Preserve the 3:4 width-to-height ratio.
+5. Leave ordinary 60×80 images at native geometry.
+6. Resize only unusual geometry with LANCZOS and letterbox rather than stretch or crop.
+7. Use white padding before scaling.
+8. Fit RGB statistics on training content pixels, excluding padding.
+9. Apply the same saved statistics to validation and make standardised padding neutral.
+10. Use no random baseline augmentation and keep validation deterministic.
 
-Avoid square stretching. Avoid using ImageNet mean and standard deviation for a scratch model unless
-that choice is explicitly compared. The pretrained benchmark must instead use the preprocessing
-required by its exact pretrained weights and remain in the comparison-only lane.
+This follows the EDA: almost all images are already 60×80, 294 grayscale images remain valid, only
+12 images have unusual dimensions, and the transform-risk figure shows that stretch changes shape
+while crop can remove content.
+
+`(128,96)`, augmentation, another normalisation rule, or another interpolation method is a
+conditional child factor. It is tested only when an accepted parent's curves, fixed errors, or core
+robustness evidence justify that one change.
+
+Avoid square stretching. Do not use ImageNet mean and standard deviation for a scratch model. The
+pretrained benchmark uses the preprocessing required by its exact weights and stays in the
+comparison-only lane.
 
 ## 9. Augmentation fit boundary
 
@@ -307,16 +311,16 @@ the experiment plan explicitly defines a separate augmentation comparison.
 
 Selecting a checkpoint on the same validation fold later used for the reported score adds optimism.
 
-**Recommendation.** Use two stages:
+**Recommendation.** Use two evidence levels:
 
-1. **Screening:** learning curves may estimate a sensible epoch budget. These scores are model
-   selection evidence and are labelled as such.
+1. **Parent-child development:** use the fixed final epoch for E1 OOF evidence. Curves diagnose
+   whether the next single-factor child should change the budget.
 2. **Confirmation:** freeze the epoch or schedule, then rerun finalist folds and seeds without
    choosing a separate best checkpoint from each scored validation fold.
 
-Nested CV is not required by the accepted project decision. A bounded experiment matrix plus the
-sealed holdout is the practical control. Do not perform an open-ended search over the same five
-folds.
+Nested CV is not required by the accepted project decision. The written sequential chain, three-seed
+finalist confirmation, and sealed holdout are the practical controls. Do not perform an open-ended
+search over the same five folds.
 
 ## 11. Leakage threats and controls
 

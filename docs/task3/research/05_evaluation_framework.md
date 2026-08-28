@@ -39,6 +39,10 @@ Changing this contract after seeing holdout results would invalidate the indepen
    finalist seeds show the second.
 9. **Measure confidence, robustness, and cost.** Macro-F1 alone cannot support review or deployment.
 10. **Use holdout once.** It judges the frozen method; it does not choose another method.
+11. **Compare each child with its parent.** Initial lower bounds anchor the story, but the immediate
+    accepted parent decides whether one changed factor helped.
+12. **Diagnose before continuing.** A child configuration is blocked until the parent's curves,
+    OOF, class, failure, cost, core-robustness, and decision artifacts exist.
 
 ## 3. Evaluation populations and masks
 
@@ -424,6 +428,10 @@ effect size and uncertainty.
 
 ## 13. Negative-transfer evaluation
 
+Run this evaluation only when accepted separate parents exist and their measured combined cost
+triggers the predeclared shared-system gate. If the gate does not open, record that reason instead
+of manufacturing a shared comparison for breadth.
+
 Use a matched backbone to compare:
 
 - gender-only;
@@ -437,7 +445,8 @@ lower_95_percent_CI(delta_gender) > -0.01
 lower_95_percent_CI(delta_usage)  > -0.01
 ```
 
-The `0.01` margin means one macro-F1 percentage point. It must be approved before M4.1 begins.
+The `0.01` margin means one macro-F1 percentage point. It must be approved before the shared child
+begins.
 
 Also require:
 
@@ -664,18 +673,36 @@ Parameter count or FLOPs alone cannot decide efficiency because hardware kernels
 | Cost measures | Application suitability | Assuming small FLOPs means fast deployment |
 | Holdout gap | Independent generalisation | Treating development selection as final proof |
 
+### Per-candidate diagnostic completeness gate
+
+Before another E1 configuration may be created, the current parent must have:
+
+- per-fold training and validation loss and macro-F1 curves;
+- pooled OOF primary and secondary metrics;
+- fold and per-class tables with predicted counts;
+- raw and row-normalised confusion matrices;
+- a fixed failure-example index;
+- parameter, checkpoint, training-time, peak-memory, and named-device latency evidence;
+- core robustness results for JPEG 75, brightness ×0.85/×1.15, 3% translation, and grayscale;
+- a written accept, reject, or stop decision linked to the parent and evidence.
+
+Finalists still require the full calibration, robustness, explanation, cost, and manual-review
+suite. The repeated smaller gate prevents error analysis from becoming a post-hoc story.
+
 ## 20. Baseline acceptance gate
 
-An eligible learned candidate should satisfy:
+The primary small CNN is kept as the learnable baseline even if it is weak. Before it can be treated
+as a healthy parent for a complexity change, it should satisfy:
 
 1. Split, mask, scratch, and registry integrity passes.
-2. Paired family-bootstrap lower bound for primary macro-F1 improvement over the majority baseline is
-   above zero.
-3. Accuracy does not suffer a severe unexplained collapse.
-4. The model predicts more than the majority class.
-5. Gender recall is nonzero for all five development classes.
-6. Usage recall is nonzero for every class with meaningful training support; `Home` remains a stated
-   untrainable exception.
+2. Tiny-batch overfit passes and the full baseline diagnostic bundle exists.
+3. Its pooled OOF evidence is compared with both the majority lower bound and classical reference.
+4. Paired family-bootstrap evidence against majority is reported, including uncertainty.
+5. The model predicts more than the majority class.
+6. Gender recall is nonzero for all five development classes, or the collapse becomes the next
+   written hypothesis.
+7. Usage recall is nonzero for every class with meaningful training support, or the collapse becomes
+   the next written hypothesis; `Home` remains the stated untrainable exception.
 
 A proposed accuracy guard is no more than a five-percentage-point drop against majority accuracy
 unless the team explicitly accepts the tradeoff for a large and credible minority gain. This is a
@@ -699,14 +726,21 @@ Reject a run from winner selection when:
 
 ### 21.2 Predictive rejection
 
-Reject as a final candidate when:
+Reject a child and return to its parent when:
 
 - it fails the baseline gate;
+- its diagnostic bundle is incomplete;
+- it changes more than the one predeclared main factor;
+- the hypothesis or trigger evidence was not written before the child ran;
 - an adequately supported class collapses to zero recall;
 - improvement comes only from the one `Home` product;
 - fold or seed instability makes the claimed gain unreliable;
 - class weighting floods rare predictions and destroys precision;
-- it is dominated by a simpler eligible model.
+- it is dominated by its simpler parent in performance, cost, and stability;
+- it does not answer the written parent weakness.
+
+Stop rather than create another child when failure review shows that missing visual evidence,
+teacher-label ambiguity, or tiny support is the main limitation.
 
 ### 21.3 Shared-model rejection
 
@@ -738,13 +772,14 @@ For gender and usage separately:
 
 1. Exclude hard integrity failures.
 2. Exclude pretrained/ineligible systems.
-3. Apply baseline and class-collapse gates.
-4. Rank primarily by pooled OOF macro-F1.
-5. Compare the leading pair using paired family-bootstrap differences.
-6. Check three-seed stability.
-7. Inspect class, calibration, robustness, and cost evidence.
-8. Prefer the simpler model when it is within one macro-F1 percentage point and materially cheaper or
-   more stable.
+3. Follow the recorded chain from the primary baseline through accepted children.
+4. Exclude rejected children and explain their failed hypotheses.
+5. Apply baseline and class-collapse gates to the accepted final parent.
+6. Compare that parent with its immediate predecessor using paired family-bootstrap differences.
+7. Check three-seed stability.
+8. Inspect class, calibration, robustness, failure, and cost evidence.
+9. Prefer the simpler predecessor when it is within one macro-F1 percentage point and materially
+   cheaper or more stable.
 
 ### 22.2 System winner
 

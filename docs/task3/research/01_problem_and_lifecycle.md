@@ -230,17 +230,28 @@ See [development/holdout boundary](../../decisions/0014-development-holdout-cv-b
 [teacher-only preparation](../../decisions/0015-teacher-only-shared-image-preparation.md), and
 [development label scope](../../decisions/0016-development-label-scope.md).
 
-## 10. Decisions that experiments must answer
+## 10. Questions that evidence may activate
 
-- Best scratch backbone for each target.
-- Native-like versus upsampled input.
-- Useful augmentation strength.
-- Whether class-balanced loss helps.
-- Whether one shared backbone is non-inferior to separate models.
-- Whether a larger CNN is justified.
-- Whether post-training calibration improves confidence.
-- Which model gives the best performance-cost-risk tradeoff.
+The EDA fixes one primary small-CNN baseline. It does not preselect a list of later models.
 
-These are answered by [03_model_choice.md](03_model_choice.md),
+After each accepted parent, its complete diagnosis may activate one question:
+
+- Is the fixed training budget incomplete?
+- Do weak and close training/validation curves show underfit?
+- Does a large train–validation gap justify one regularisation change?
+- Does supported-class collapse justify one imbalance treatment?
+- Do fixed failure examples show lost detail that could justify larger input?
+- Does robustness evidence justify one matching transform change?
+- Does measured latency, memory, or storage justify a compact architecture?
+- Does the combined cost of two accepted separate models justify a shared comparison?
+
+The selected question, observed evidence, one changed factor, expected result, and rejection
+condition must be written before its child runs. A child is then accepted as the new parent,
+rejected in favour of the old parent, or stopped when the limitation is mainly data or label based.
+
+Calibration remains a finalist and deployment-confidence question. A pretrained comparison remains
+comparison-only and cannot change the eligible winner.
+
+The exact loop is defined in [03_model_choice.md](03_model_choice.md),
 [04_experiment_plan.md](04_experiment_plan.md), and
-[05_evaluation_framework.md](05_evaluation_framework.md), not by preference alone.
+[05_evaluation_framework.md](05_evaluation_framework.md).

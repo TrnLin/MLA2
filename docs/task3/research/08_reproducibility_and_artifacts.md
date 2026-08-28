@@ -42,6 +42,8 @@ The exact implementation can follow repository conventions, but a clear logical 
 results/
   runs.csv
   task3/
+    hypotheses/
+    decisions/
     configs/
     predictions/
       oof/
@@ -96,16 +98,36 @@ for each execution.
 ```text
 run_id
 experiment_id
+hypothesis_id
+decision_id
 task=task3
 target=gender|usage|gender_usage_shared
-parent_run_id
-reference_run_id
+parent_experiment_id
+parent_run_ids
+reference_run_ids
 timestamp_start
 timestamp_end
 status
 ```
 
-### 5.2 Data
+### 5.2 Parent-child question
+
+```text
+observed_weakness
+trigger_observation_ids
+evidence_paths
+hypothesis
+single_changed_factor
+fixed_controls
+expected_result
+rejection_condition
+created_before_child_run
+decision=accept|reject|stop
+accepted_parent_for_next_cycle
+decision_reason
+```
+
+### 5.3 Data
 
 ```text
 split_path
@@ -121,7 +143,7 @@ label_map_digest
 teacher_images_only=true
 ```
 
-### 5.3 Labels and masks
+### 5.4 Labels and masks
 
 ```text
 gender_class_order
@@ -134,7 +156,7 @@ missing_usage_count
 zero_training_support_classes
 ```
 
-### 5.4 Image transform
+### 5.5 Image transform
 
 ```text
 input_height
@@ -152,7 +174,7 @@ normalisation_fit_partition
 padding_excluded_from_statistics
 ```
 
-### 5.5 Augmentation
+### 5.6 Augmentation
 
 Record every operation, probability, magnitude, and order:
 
@@ -173,7 +195,7 @@ mask_handling_rule
 
 Use explicit null/false values when an operation is disabled.
 
-### 5.6 Model
+### 5.7 Model
 
 ```text
 model_family
@@ -195,7 +217,7 @@ official_prediction_eligible
 application_eligible
 ```
 
-### 5.7 Loss and imbalance
+### 5.8 Loss and imbalance
 
 ```text
 loss_name
@@ -213,7 +235,7 @@ gradient_conflict_method
 mask_normalisation_rule
 ```
 
-### 5.8 Optimisation
+### 5.9 Optimisation
 
 ```text
 optimizer
@@ -231,7 +253,7 @@ step_budget
 checkpoint_rule
 ```
 
-### 5.9 Randomness
+### 5.10 Randomness
 
 ```text
 seed
@@ -244,7 +266,7 @@ deterministic_algorithms
 cudnn_benchmark
 ```
 
-### 5.10 Runtime
+### 5.11 Runtime
 
 ```text
 python_version
@@ -273,7 +295,8 @@ shared registry.
 
 | Group | Fields |
 |---|---|
-| Identity | run ID, experiment ID, timestamp, status |
+| Identity | run ID, experiment ID, hypothesis ID, parent run IDs, timestamp, status |
+| Question | observed weakness, changed factor, fixed controls, expected result, rejection condition |
 | Scope | task, target, separate/shared, fold, seed |
 | Data | split digest, label-map digest, train/validation counts |
 | Model | family, variant, scratch/pretrained, eligibility |
@@ -287,7 +310,11 @@ shared registry.
 ### Registry rules
 
 - One row per actual training execution, not only per model family.
+- The registry allocates and appends the execution row before the first optimiser step, then records
+  completion or failure atomically.
 - Fold and seed are explicit.
+- A child run is rejected before training if its hypothesis record is missing, was created after the
+  child start time, or names more than one main changed factor.
 - A five-fold aggregate is generated from execution rows and OOF predictions; it does not replace
   them.
 - Failed training runs remain recorded.
@@ -307,8 +334,8 @@ t3_<experiment>_<target>_<model>_f<fold>_s<seed>_<short_config_hash>
 Examples:
 
 ```text
-t3_a2_2_gender_mnv3s_f0_s2753_8c42d91a
-t3_m4_1_shared_resnet18_f3_s2753_219fe661
+t3_baseline_gender_smallcnn_f0_s2753_8c42d91a
+t3_h03_usage_loss_f3_s2753_219fe661
 ```
 
 Do not encode “winner,” “best,” or a metric value in an immutable run ID. Winner status can change as
@@ -556,11 +583,16 @@ The expected chain is:
 
 ```text
 repository decision and split
-  → run configuration
+  → EDA-derived primary baseline configuration
   → registry execution rows
   → checkpoint and OOF predictions
-  → metrics, uncertainty, calibration, robustness, and cost
-  → Notebook 04 comparison and selected run IDs
+  → curves, metrics, classes, failures, core robustness, and cost
+  → written hypothesis with one changed factor
+  → child registry rows and evidence
+  → accept, reject, or stop decision
+  → repeat only from an accepted parent
+  → finalist uncertainty, calibration, robustness, explanation, and cost
+  → Notebook 04 chain and selected run IDs
   → frozen final-refit run and hashes
   → Notebook 06 holdout evidence
   → official predictions and application package
@@ -622,11 +654,15 @@ and limits. [Datasheets for Datasets](https://doi.org/10.1145/3458723).
 
 Record:
 
-- compared candidates;
-- accepted/rejected decisions;
+- primary baseline run IDs;
+- parent and child run IDs;
+- trigger observations and evidence paths;
+- hypotheses and one changed factor;
+- accepted, rejected, and stop decisions;
+- accepted parent for the next cycle;
 - evidence paths;
 - practical margin;
-- shared no-harm outcome;
+- shared no-harm outcome or why the cost gate did not open;
 - final winner;
 - freeze timestamp;
 - holdout unlock timestamp.
@@ -641,6 +677,9 @@ Record:
 - [ ] Selected run IDs documented.
 - [ ] Scratch eligibility verified.
 - [ ] Separate/shared decision documented.
+- [ ] Parent-child hypotheses were created before their child runs.
+- [ ] Every child changes one main factor.
+- [ ] Accepted, rejected, and stop decisions are traceable.
 
 ### Final model
 
