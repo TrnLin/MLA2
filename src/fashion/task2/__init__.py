@@ -41,6 +41,7 @@ from fashion.task2.pretraining import (
     validate_pretraining_config,
     validate_pretraining_pair,
 )
+from fashion.task2.pretraining_evidence import build_pretraining_benchmark_evidence
 from fashion.task2.smoke import (
     G0SmokeConfig,
     G0SmokeResult,
@@ -70,6 +71,7 @@ __all__ = [
     "build_g2_input_size_evidence",
     "build_g2_tuning_evidence",
     "build_g3_full_budget_evidence",
+    "build_pretraining_benchmark_evidence",
     "build_task2_selection_story_evidence",
     "build_g0_evidence",
     "build_task2_evidence",

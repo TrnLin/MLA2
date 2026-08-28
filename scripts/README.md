@@ -32,3 +32,12 @@ Run the complete matched pretraining benchmark only through its paired launcher:
 It validates both frozen declarations before starting P0S followed by P*. The first P*
 run may download TorchVision's declared ResNet18 ImageNet weights. Both rows remain
 benchmark-only and cannot be selected as the submitted scratch model.
+
+After all ten folds exist, rebuild the comparison in load-only mode:
+
+```powershell
+& '.\.venv\Scripts\python.exe' scripts/build_task2_pretraining_evidence.py
+```
+
+This command cannot start training. It verifies the cached hashes and writes the matched
+P* minus P0S tables plus teacher-style five-fold learning curves.
