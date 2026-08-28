@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import json
+import math
 import os
 import re
 from collections.abc import Collection, Sequence
@@ -2396,16 +2397,25 @@ def _audited_deep_experiment_row(
                     **{name: entry[name] for name in history_fields},
                 }
             )
-        best_history_score = max(
-            float(entry["validation_macro_f1"]) for entry in epochs
-        )
-        if not np.isclose(
-            best_history_score,
-            float(registry_row["primary_metric_value"]),
-            rtol=0.0,
-            atol=1e-12,
+        selected_history_epoch = 0
+        selected_history_score = -math.inf
+        for entry in epochs:
+            score = float(entry["validation_macro_f1"])
+            if score > selected_history_score + config.optimisation.min_delta:
+                selected_history_epoch = int(entry["epoch"])
+                selected_history_score = score
+        if (
+            selected_history_epoch != int(registry_row["best_epoch"])
+            or not np.isclose(
+                selected_history_score,
+                float(registry_row["primary_metric_value"]),
+                rtol=0.0,
+                atol=1e-12,
+            )
         ):
-            raise ValueError(f"history best metric does not match for {run_id}")
+            raise ValueError(
+                f"history checkpoint selection does not match for {run_id}"
+            )
 
     macro_summary = fold_summary.loc[fold_summary["metric"].eq("macro_f1")]
     if len(macro_summary) != 1:
