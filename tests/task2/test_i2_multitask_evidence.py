@@ -12,6 +12,7 @@ from fashion.task2.multitask_evidence import (
     fit_article_type_majorities,
     plot_i2_learning_curves,
 )
+from fashion.train.artifacts import canonical_sha256
 
 
 def test_article_type_majority_fit_is_deterministic_and_ignores_masked_rows() -> None:
@@ -51,6 +52,29 @@ def test_repository_shortcut_audit_covers_only_valid_development_season_rows() -
     assert mappings["training_id_sha256"].str.fullmatch(r"[0-9a-f]{64}").all()
     assert mappings.groupby("fold")["training_id_sha256"].nunique().eq(1).all()
     assert mappings["fold"].nunique() == 5
+
+
+def test_repository_shortcut_assignments_are_canonical_json_safe() -> None:
+    _, assignments, _ = build_article_type_shortcut_audit(load_splits())
+    records = (
+        assignments.loc[
+            :,
+            [
+                "id",
+                "fold",
+                "season",
+                "articleType",
+                "shortcut_majority_season",
+                "shortcut_slice",
+            ],
+        ]
+        .sort_values("id", kind="stable")
+        .to_dict(orient="records")
+    )
+
+    digest = canonical_sha256(records)
+
+    assert len(digest) == 64
 
 
 def _comparison(*, passing: bool) -> pd.DataFrame:
