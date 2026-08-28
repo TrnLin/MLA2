@@ -3345,15 +3345,22 @@ def _plot_i1_per_class_f1_delta(
     axis.legend(loc="best")
     span = max(0.01, float(np.max(np.abs(values))))
     offset = span * 0.07
+    label_positions: list[float] = []
     for position, value in zip(positions, values, strict=True):
+        label_y = value + (offset if value >= 0.0 else -offset)
+        label_positions.append(label_y)
         axis.text(
             position,
-            value + (offset if value >= 0.0 else -offset),
+            label_y,
             f"{value:+.4f}",
             ha="center",
             va="bottom" if value >= 0.0 else "top",
             fontsize=9,
         )
+    lower = min(float(values.min()), -maximum_other_class_loss, min(label_positions))
+    upper = max(float(values.max()), 0.0, max(label_positions))
+    padding = span * 0.08
+    axis.set_ylim(lower - padding, upper + padding)
     buffer = io.BytesIO()
     figure.savefig(buffer, format="png", dpi=180, bbox_inches="tight")
     atomic_write_bytes(output_path, buffer.getvalue())
