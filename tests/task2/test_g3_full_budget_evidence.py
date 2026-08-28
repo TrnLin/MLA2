@@ -421,6 +421,51 @@ def test_g3_rejects_tampered_history(tmp_path: Path) -> None:
         )
 
 
+def test_g3_accepts_checkpoint_selected_by_configured_min_delta(
+    tmp_path: Path,
+) -> None:
+    manifests, configs, tuning, histories = _inputs(tmp_path)
+    experiment_id = "g3-c1-t1-smallcnn"
+    history_path = histories[experiment_id][0]
+    history = json.loads(history_path.read_text(encoding="utf-8"))
+    selected_score = float(history["epoch_history"][-1]["validation_macro_f1"])
+    selected_epoch = len(history["epoch_history"]) - 1
+    history["epoch_history"][-2]["validation_macro_f1"] = selected_score
+    history["epoch_history"][-1]["validation_macro_f1"] = selected_score + 5e-5
+    _write_json(history_path, history)
+
+    manifest_path = manifests[0]
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    registry_path = (
+        tmp_path / manifest["artifacts"]["registry_snapshot"]["path"]
+    )
+    registry = pd.read_csv(registry_path)
+    run_id = str(manifest["run_ids"][0])
+    selected = registry["run_id"].astype(str).eq(run_id)
+    registry.loc[selected, "best_epoch"] = selected_epoch
+    registry.loc[selected, "primary_metric_value"] = selected_score
+    registry.loc[selected, "history_sha256"] = compute_sha256(history_path)
+    registry.to_csv(registry_path, index=False)
+    manifest["artifacts"]["registry_snapshot"]["sha256"] = compute_sha256(
+        registry_path
+    )
+    _write_json(manifest_path, manifest)
+
+    result = build_g3_full_budget_evidence(
+        experiment_manifest_paths=manifests,
+        experiment_config_paths=configs,
+        tuning_manifest_path=tuning,
+        project_root=tmp_path,
+        **_temporary_outputs(tmp_path),
+    )
+
+    paired_path = tmp_path / result["artifacts"]["paired_fold_metrics"]["path"]
+    paired = pd.read_csv(paired_path)
+    fold_zero = paired.loc[paired["fold"].eq(0)].iloc[0]
+    assert fold_zero["c1_best_epoch"] == selected_epoch
+    assert fold_zero["c1_macro_f1"] == pytest.approx(selected_score)
+
+
 def test_g3_rejects_duplicate_run_id_in_experiment_manifest(tmp_path: Path) -> None:
     manifests, configs, tuning, _ = _inputs(tmp_path)
     manifest_path = manifests[0]
