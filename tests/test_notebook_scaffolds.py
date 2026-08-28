@@ -499,6 +499,61 @@ def test_task2_i1_cell_records_audited_class_balance_decision() -> None:
         assert required in finding
 
 
+def test_task2_i2_cell_records_audited_multitask_decision() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    cell = cells["s08-03-02-code"]
+    code = cell.source
+    finding = cells["s08-03-02-finding"].source
+
+    assert not code.startswith("# TODO:")
+    compile(code, "03_task2_season.ipynb:s08-03-02-code", "exec")
+    for required in (
+        "g4_i2_article_type_lambda_0_1_c1.json",
+        "g4_i2_article_type_lambda_0_3_c1.json",
+        "run_i2_matrix",
+        "build_experiment_evidence",
+        "build_i2_transfer_evidence",
+        "protected_ids",
+        "calibration_claim_allowed=False",
+        "current_run_ids",
+        'status"].eq("running")',
+        'i2_manifest["gate"] == "G4-I2"',
+        'i2_manifest["keep_i2"] is True',
+        '== "g4-i2-article-type-lambda-0-3-c1"',
+        'artifacts"]["learning_curves"]',
+        'artifacts"]["transfer_deltas"]',
+    ):
+        assert required in code
+    assert cell.execution_count == 29
+    assert len(cell.outputs) == 8
+    assert all(output.output_type != "error" for output in cell.outputs)
+    for required in (
+        "B0",
+        "B1",
+        "C1/G3",
+        "I1",
+        "I2",
+        "0.750758",
+        "0.752687",
+        "0.737661",
+        "+0.015026",
+        "0.764784",
+        "+0.019809",
+        "+0.013792",
+        "+0.027598",
+        "+0.031917",
+        "training-only ArticleType head",
+        "Notebook 01/data preparation is unchanged",
+        "association, not proof",
+        "keep I2 lambda `0.3`",
+        "g4-i2-article-type-lambda-0-3-c1-f0-s2753-902fcc852d5f",
+        "g4-i2-article-type-lambda-0-3-c1-f4-s2753-8d210d54f01e",
+        "results/evidence/task2/i2_multitask/manifest.json",
+    ):
+        assert required in finding
+
+
 def test_task2_g2_size_cell_records_audited_selection() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
