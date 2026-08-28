@@ -92,6 +92,7 @@ strongest defensible submission path.
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 | Current G4 gate | I1 is rejected; both five-fold I2 lambdas are complete, hash-verified, and tied to clean implementation commit `7a6bb49` | Keep I2 lambda `0.3` as the current candidate; do not freeze yet |
+| Current verification | `pip check`, full-repository Ruff, and `294` tests pass | I2 code, evidence, Notebook outputs, and structure are green before push |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
