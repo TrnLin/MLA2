@@ -405,22 +405,25 @@ def test_task2_g3_cell_records_audited_full_budget_comparison() -> None:
     ):
         assert required in code
     for required in (
-        "0.737310",
-        "0.735167",
-        "0.002143",
+        "0.737661",
+        "0.735036",
+        "0.002626",
         "near-tie threshold",
         "teacher-style",
         "validation accuracy",
         "validation macro-F1",
         "Training accuracy is absent",
         "9.51×",
-        "3.76×",
+        "1.52×",
         "provisional reference",
         "not the ultimate winner",
         "C3 remains rejected",
         "interrupted outside Python",
         "g3-c1-t1-smallcnn-f2-s2753-2283b6495a44",
         "g3-c1-t1-smallcnn-f2-s2753-e46d771b6d56",
+        "g3-c1-t1-smallcnn-f0-s2753-1ce4f9978b12",
+        "g3-c2-t0-resnet18-f0-s2753-66ee7a85d5c6",
+        "47442a2",
         "results/evidence/task2/g3_full_budget/manifest.json",
     ):
         assert required in finding
