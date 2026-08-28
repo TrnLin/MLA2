@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
+
 from fashion.config import (
     LABEL_MAPS_JSON,
     ROOT,
@@ -15,6 +17,7 @@ from fashion.config import (
     TASK2_CHECKPOINT_DIR,
     TASK2_RUN_DIR,
 )
+from fashion.task2 import experiments as experiment_runner
 from fashion.task2 import multitask as multitask_runner
 from fashion.task2.experiments import (
     ExecutionMode,
@@ -24,10 +27,13 @@ from fashion.task2.experiments import (
     run_or_load_experiment,
 )
 from fashion.task2.multitask import (
+    I2_IMPLEMENTATION_PATHS,
     AuxiliaryRunConfig,
     I2ExperimentConfig,
     load_i2_config,
 )
+from fashion.train.artifacts import canonical_sha256
+from fashion.train.cache import build_run_cache_key
 from fashion.train.registry import RunRegistry
 
 G5_STAGE = "g5_seed_stability"
@@ -136,6 +142,80 @@ def load_stability_pair(
     )
 
 
+def validate_stability_implementation(
+    pair: StabilityConfigPair,
+    *,
+    source_root: str | Path = ROOT,
+    splits_path: str | Path = SPLITS_CSV,
+    label_map_path: str | Path = LABEL_MAPS_JSON,
+    registry_path: str | Path = RUNS_CSV,
+) -> dict[str, dict[str, Any]]:
+    """Require current training code to match five valid primary-seed runs."""
+    resolved = validate_stability_pair(pair)
+    registry = RunRegistry(registry_path).read()
+    if registry.empty:
+        raise ValueError("stability preflight found no primary run registry")
+    primary_c2 = load_experiment_config(C2_PRIMARY_CONFIG_PATH)
+    primary_i2 = load_i2_config(I2_PRIMARY_CONFIG_PATH)
+    specifications = (
+        (
+            "C2",
+            primary_c2,
+            resolved.c2,
+            experiment_runner._implementation_paths("deep"),
+        ),
+        (
+            "I2",
+            primary_i2,
+            resolved.i2,
+            I2_IMPLEMENTATION_PATHS,
+        ),
+    )
+    audit: dict[str, dict[str, Any]] = {}
+    for candidate, primary, stability, implementation_paths in specifications:
+        current_key = build_run_cache_key(
+            stability.to_dict(),
+            fold=0,
+            seed=G5_SEED,
+            implementation_paths=implementation_paths,
+            split_path=splits_path,
+            label_map_path=label_map_path,
+            root=source_root,
+        )
+        primary_rows = registry.loc[
+            registry["experiment_id"].eq(primary.experiment_id)
+            & registry["status"].eq("completed")
+            & pd.to_numeric(registry["seed"], errors="coerce").eq(2753)
+            & registry["config_sha256"].eq(canonical_sha256(primary.to_dict()))
+            & registry["split_sha256"].eq(current_key.split_sha256)
+            & registry["label_map_sha256"].eq(current_key.label_map_sha256)
+            & registry["implementation_sha256"].eq(current_key.implementation_sha256)
+            & registry["git_dirty"].astype(str).str.lower().eq("false")
+        ].copy()
+        if (
+            len(primary_rows) != 5
+            or primary_rows["run_id"].nunique() != 5
+            or set(
+                pd.to_numeric(
+                    primary_rows["fold"],
+                    errors="raise",
+                ).astype(int)
+            )
+            != set(range(5))
+        ):
+            raise ValueError(
+                f"{candidate} stability implementation hash mismatch: "
+                "current code does not match five clean primary-seed folds"
+            )
+        audit[candidate] = {
+            "implementation_sha256": current_key.implementation_sha256,
+            "split_sha256": current_key.split_sha256,
+            "label_map_sha256": current_key.label_map_sha256,
+            "primary_run_ids": sorted(primary_rows["run_id"].astype(str)),
+        }
+    return audit
+
+
 def _run_stability_i2_experiment(
     config: I2ExperimentConfig,
     *,
@@ -183,6 +263,13 @@ def run_stability_matrix(
 ) -> list[ExperimentFoldOutput]:
     """Run C2 then I2 only after validating the complete eligible pair."""
     resolved = validate_stability_pair(pair or load_stability_pair())
+    validate_stability_implementation(
+        resolved,
+        source_root=kwargs.get("source_root", ROOT),
+        splits_path=kwargs.get("splits_path", SPLITS_CSV),
+        label_map_path=kwargs.get("label_map_path", LABEL_MAPS_JSON),
+        registry_path=kwargs.get("registry_path", RUNS_CSV),
+    )
     outputs = run_or_load_experiment(resolved.c2, **kwargs)
     outputs.extend(_run_stability_i2_experiment(resolved.i2, **kwargs))
     return outputs
@@ -199,5 +286,6 @@ __all__ = [
     "load_stability_i2_config",
     "load_stability_pair",
     "run_stability_matrix",
+    "validate_stability_implementation",
     "validate_stability_pair",
 ]

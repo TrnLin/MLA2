@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from types import SimpleNamespace
 
+import pandas as pd
 import pytest
 
 from fashion.task2 import stability
@@ -13,8 +15,10 @@ from fashion.task2.stability import (
     StabilityConfigPair,
     load_stability_pair,
     run_stability_matrix,
+    validate_stability_implementation,
     validate_stability_pair,
 )
+from fashion.train.artifacts import canonical_sha256
 
 
 def test_frozen_stability_pair_contains_only_eligible_seed_2026_candidates() -> None:
@@ -70,6 +74,11 @@ def test_stability_matrix_validates_pair_and_runs_c2_before_i2(monkeypatch) -> N
 
     monkeypatch.setattr(stability, "run_or_load_experiment", fake_c2)
     monkeypatch.setattr(stability, "_run_stability_i2_experiment", fake_i2)
+    monkeypatch.setattr(
+        stability,
+        "validate_stability_implementation",
+        lambda *args, **kwargs: {},
+    )
 
     outputs = run_stability_matrix(pair, mode="load")
 
@@ -78,6 +87,59 @@ def test_stability_matrix_validates_pair_and_runs_c2_before_i2(monkeypatch) -> N
         ("c2", C2_STABILITY_EXPERIMENT_ID, {"mode": "load"}),
         ("i2", I2_STABILITY_EXPERIMENT_ID, {"mode": "load"}),
     ]
+
+
+def test_stability_preflight_matches_five_primary_folds_per_candidate(
+    monkeypatch,
+) -> None:
+    pair = load_stability_pair()
+    primary_c2 = stability.load_experiment_config(stability.C2_PRIMARY_CONFIG_PATH)
+    primary_i2 = stability.load_i2_config(stability.I2_PRIMARY_CONFIG_PATH)
+    rows = []
+    for candidate, config, implementation_hash in (
+        ("C2", primary_c2, "c" * 64),
+        ("I2", primary_i2, "d" * 64),
+    ):
+        for fold in range(5):
+            rows.append(
+                {
+                    "run_id": f"{candidate}-f{fold}",
+                    "experiment_id": config.experiment_id,
+                    "status": "completed",
+                    "seed": 2753,
+                    "fold": fold,
+                    "config_sha256": canonical_sha256(config.to_dict()),
+                    "split_sha256": "a" * 64,
+                    "label_map_sha256": "b" * 64,
+                    "implementation_sha256": implementation_hash,
+                    "git_dirty": False,
+                }
+            )
+    registry = pd.DataFrame(rows)
+
+    def fake_key(config, **kwargs):
+        del kwargs
+        implementation_hash = (
+            "c" * 64 if config["model_family"] == "resnet18_small_stem" else "d" * 64
+        )
+        return SimpleNamespace(
+            implementation_sha256=implementation_hash,
+            split_sha256="a" * 64,
+            label_map_sha256="b" * 64,
+        )
+
+    monkeypatch.setattr(
+        stability.RunRegistry,
+        "read",
+        lambda self: registry,
+    )
+    monkeypatch.setattr(stability, "build_run_cache_key", fake_key)
+
+    audit = validate_stability_implementation(pair)
+
+    assert set(audit) == {"C2", "I2"}
+    assert len(audit["C2"]["primary_run_ids"]) == 5
+    assert len(audit["I2"]["primary_run_ids"]) == 5
 
 
 def test_stability_matrix_blocks_before_training_when_primary_hashes_drift(
