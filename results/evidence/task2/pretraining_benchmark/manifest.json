@@ -1,0 +1,78 @@
+{
+  "artifacts": {
+    "comparison": {
+      "path": "results/evidence/task2/pretraining_benchmark/comparison.csv",
+      "sha256": "225333e1ff07596f8034abef04caf5b1b9b910011882dd487defad549c7c2e82"
+    },
+    "decision": {
+      "path": "results/evidence/task2/pretraining_benchmark/decision.json",
+      "sha256": "c58054d7d7df8317d8f1c9d481e95a8c3b4db21fc164d7c0ba0dc515e9497daa"
+    },
+    "effect_figure": {
+      "path": "results/figures/task2/pretraining_benchmark_effect.png",
+      "sha256": "0c6e7718bd63a0be126f70e9d813cd46ad6f655e6f228d3ac70c16811c70f7b1"
+    },
+    "learning_curve_summary": {
+      "path": "results/evidence/task2/pretraining_benchmark/learning_curve_summary.csv",
+      "sha256": "ce1b4dd476e5019fa454fd634388d0f5f8f41525b217f357ba4afd0e487dc1ec"
+    },
+    "learning_curves": {
+      "path": "results/figures/task2/pretraining_benchmark_learning_curves.png",
+      "sha256": "eda33c77a3ee2033163a1e1e7d562d39cbf1a7b8e655ce2bf38b2b17c8a3b7c3"
+    },
+    "learning_curves_by_fold": {
+      "path": "results/evidence/task2/pretraining_benchmark/learning_curves_by_fold.csv",
+      "sha256": "3da060c9133b245bb70c35f1f560aa9fb47d3826ba8f704efbdf0ba2c5324435"
+    },
+    "paired_fold_metrics": {
+      "path": "results/evidence/task2/pretraining_benchmark/paired_fold_metrics.csv",
+      "sha256": "a536355299cb7927ece98aecbf01d6921cc31533e661f9334eb4c4be37991564"
+    },
+    "per_class_comparison": {
+      "path": "results/evidence/task2/pretraining_benchmark/per_class_comparison.csv",
+      "sha256": "db1a1156c5d7b0e63a5972f9e8ee7a849c317e517799832d0f4ff9fbcb174a9b"
+    },
+    "pretraining_effect": {
+      "path": "results/evidence/task2/pretraining_benchmark/pretraining_effect.csv",
+      "sha256": "ae347740e701b74a00786972ac53e56986e739f0deb5f992d2677caa53864bfe"
+    },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/pretraining_benchmark/registry_snapshot.csv",
+      "sha256": "1a869fa5f3f7e8fe37bf6e6d6e813f6792786582ecb4320da9b3b737e84e0249"
+    }
+  },
+  "candidate_selection_affected": false,
+  "coverage_sha256": "ed465ef619067f114b1c7b442cba2eaec2f43202c55ca06a0c25572a37e554fd",
+  "decision_status": "closed",
+  "gate": "G4-PSTAR",
+  "input_configs": {
+    "g4-p0s-resnet18-standard-scratch": {
+      "path": "configs/task2/g4_p0s_resnet18_standard_scratch.json",
+      "sha256": "1d1315cb01d004f614d8e9f4fef479234da046d904addc08c1a5136d1ed84d8a"
+    },
+    "g4-pstar-resnet18-standard-pretrained": {
+      "path": "configs/task2/g4_pstar_resnet18_standard_pretrained.json",
+      "sha256": "d90704748c88e00c3025e8f38754d7f50c44d9e5603d34f7ce052f76ac8f37a5"
+    }
+  },
+  "input_manifests": {
+    "g4-p0s-resnet18-standard-scratch": {
+      "path": "results/evidence/task2/g4_p0s_resnet18_standard_scratch/manifest.json",
+      "sha256": "59ea81e86bbd259fd246aa6668553972cbe3c307f14e1c7b34a1f64df32016a2"
+    },
+    "g4-pstar-resnet18-standard-pretrained": {
+      "path": "results/evidence/task2/g4_pstar_resnet18_standard_pretrained/manifest.json",
+      "sha256": "1b55c35b92b38d244d8ce1c7f7e159bca7a2d6bf9ecfcdf51c0c85db62deefb1"
+    }
+  },
+  "matched_protocol_sha256": "de188f76bf1eff605d9efe27e729ccf930de3d55ccb7984f0cac032f3e95876b",
+  "observed_pstar_minus_p0s_macro_f1": 0.023023536671545886,
+  "pretrained_weight_provenance": {
+    "declaration": "ResNet18_Weights.DEFAULT",
+    "resolved_enum": "ResNet18_Weights.IMAGENET1K_V1",
+    "url": "https://download.pytorch.org/models/resnet18-f37072fd.pth"
+  },
+  "schema_version": "1.0.0",
+  "shared_run_contract_sha256": "a71491ee18ff29db7f23dc8af46be1dcca97b4e2cdded8e71c622cad242bc287",
+  "ultimate_winner_frozen": false
+}
