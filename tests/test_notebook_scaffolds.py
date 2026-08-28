@@ -456,6 +456,49 @@ def test_task2_g3_notebook_preserves_registered_probability_note() -> None:
     )
 
 
+def test_task2_i1_cell_records_audited_class_balance_decision() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    code = cells["s08-03-01-code"].source
+    finding = cells["s08-03-01-finding"].source
+
+    assert not code.startswith("# TODO:")
+    compile(code, "03_task2_season.ipynb:s08-03-01-code", "exec")
+    for required in (
+        "g4_i1_effective_number_c1.json",
+        "run_or_load_i1_experiment",
+        "build_experiment_evidence",
+        "build_i1_class_balance_evidence",
+        "protected_ids",
+        "calibration_claim_allowed=False",
+        "current_run_ids",
+        'status"].eq("running")',
+        'i1_manifest["gate"] == "G4-I1"',
+        'i1_manifest["keep_i1"] is False',
+        'i1_manifest["selected_experiment_id"] == "g3-c1-t1-smallcnn"',
+        'artifacts"]["learning_curves"]',
+        'artifacts"]["per_class_f1_delta"]',
+    ):
+        assert required in code
+    for required in (
+        "0.701471",
+        "0.737661",
+        "-0.036191",
+        "0.702439",
+        "0.744975",
+        "-0.042536",
+        "+0.022573",
+        "-0.152558",
+        "-0.060738",
+        "reject I1",
+        "loss values are not comparable",
+        "g4-i1-effective-number-c1-f0-s2753-9288633e212b",
+        "g4-i1-effective-number-c1-f4-s2753-a70502c769db",
+        "results/evidence/task2/i1_class_balance/manifest.json",
+    ):
+        assert required in finding
+
+
 def test_task2_g2_size_cell_records_audited_selection() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
