@@ -554,6 +554,59 @@ def test_task2_i2_cell_records_audited_multitask_decision() -> None:
         assert required in finding
 
 
+def test_task2_pstar_cell_records_matched_pretraining_boundary() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    cell = cells["s08-03-03-code"]
+    code = cell.source
+    finding = cells["s08-03-03-finding"].source
+
+    assert not code.startswith("# TODO:")
+    compile(code, "03_task2_season.ipynb:s08-03-03-code", "exec")
+    for required in (
+        "g4_p0s_resnet18_standard_scratch.json",
+        "g4_pstar_resnet18_standard_pretrained.json",
+        "load_experiment_config",
+        "run_pretraining_matrix",
+        'mode="run_or_load"',
+        "build_experiment_evidence",
+        "build_pretraining_benchmark_evidence",
+        "protected_ids",
+        "calibration_claim_allowed=False",
+        "current_run_ids",
+        'status"].eq("running")',
+        'pretraining_manifest["gate"] == "G4-PSTAR"',
+        'pretraining_manifest["candidate_selection_affected"] is False',
+        'pretraining_decision["pstar_final_eligible"] is False',
+        'artifacts"]["learning_curves"]',
+        'artifacts"]["effect_figure"]',
+    ):
+        assert required in code
+    assert cell.execution_count == 30
+    assert len(cell.outputs) == 7
+    assert all(output.output_type != "error" for output in cell.outputs)
+    for required in (
+        "0.731172",
+        "0.754196",
+        "+0.023024",
+        "+0.038829",
+        "all five paired folds",
+        "22` to `11",
+        "32.47` to `22.69",
+        "teacher-style chart",
+        "early stopping",
+        "EDA reflection",
+        "benchmark ceiling",
+        "I2 lambda `0.3`",
+        "Notebook 01/data preparation is unchanged",
+        "ResNet18_Weights.IMAGENET1K_V1",
+        "g4-p0s-resnet18-standard-scratch-f0-s2753-7db32dfd4d00",
+        "g4-pstar-resnet18-standard-pretrained-f4-s2753-a15e79285ae2",
+        "results/evidence/task2/pretraining_benchmark/manifest.json",
+    ):
+        assert required in finding
+
+
 def test_task2_g2_size_cell_records_audited_selection() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
