@@ -466,3 +466,37 @@ def test_repository_i1_changes_only_identity_stage_and_loss_from_g3_c1() -> None
         config.pop("stage")
         config.pop("loss_id")
     assert i1_matched == reference_matched
+
+
+def test_repository_pretraining_pair_changes_only_identity_and_initial_weights() -> None:
+    small_stem = load_experiment_config(ROOT / "configs/task2/g3_c2_t0_resnet18.json")
+    scratch = load_experiment_config(ROOT / "configs/task2/g4_p0s_resnet18_standard_scratch.json")
+    pretrained = load_experiment_config(
+        ROOT / "configs/task2/g4_pstar_resnet18_standard_pretrained.json"
+    )
+
+    assert scratch.experiment_id == "g4-p0s-resnet18-standard-scratch"
+    assert scratch.model_family == "resnet18_standard_scratch"
+    assert pretrained.experiment_id == "g4-pstar-resnet18-standard-pretrained"
+    assert pretrained.model_family == "resnet18_standard_pretrained"
+    for config in (scratch, pretrained):
+        assert config.stage == "g4_pretraining_benchmark"
+        assert config.method == "deep"
+        assert config.folds == (0, 1, 2, 3, 4)
+        assert config.seeds == (2753,)
+        assert config.loss_id == "cross_entropy"
+        assert config.data.image_size == (80, 60)
+        assert config.data.augmentation == "a0"
+        assert config.optimisation.epochs == 30
+        assert config.optimisation.patience == 5
+        assert config.optimisation.learning_rate == 3e-4
+        assert config.optimisation.weight_decay == 1e-4
+
+    matched = []
+    for config in (small_stem, scratch, pretrained):
+        payload = config.to_dict()
+        payload.pop("experiment_id")
+        payload.pop("stage")
+        payload.pop("model_family")
+        matched.append(payload)
+    assert matched[0] == matched[1] == matched[2]

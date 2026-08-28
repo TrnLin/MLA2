@@ -50,3 +50,12 @@ stage, loss declaration, and auxiliary weight differ. `lambda=0.1` tests mild tr
 `lambda=0.3` tests a stronger signal. Missing ArticleType labels are masked instead of
 dropping valid Season rows. Selection and early stopping remain based on Season
 macro-F1. Inference accepts images only; true ArticleType is never an inference input.
+
+`g4_p0s_resnet18_standard_scratch.json` and
+`g4_pstar_resnet18_standard_pretrained.json` form one matched benchmark pair. They copy
+G3 C2-T0's five folds, P0/A0 transforms, optimiser, seed, and full budget. The pair
+differs only in experiment identity and whether the standard-stem ResNet18 starts from
+random or ImageNet weights. Both rows are benchmark-only and never final-eligible. P*
+is not tuned and cannot become the Task 2 winner. P* minus P0S estimates the effect of
+initialisation under this project's fixed 80x60 pipeline; it is not an ImageNet-recipe
+benchmark and must not be compared causally with the different I2 architecture.
