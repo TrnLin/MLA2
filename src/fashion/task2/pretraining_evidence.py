@@ -329,7 +329,7 @@ def plot_pretraining_learning_curves(
         if subset.empty:
             raise ValueError(f"learning summary is missing {experiment_id}")
         epochs = subset["epoch"].to_numpy(dtype=float)
-        variant = str(subset["variant"].iloc[0])
+        panel_label = "P0S scratch" if experiment_id == P0S_EXPERIMENT_ID else "P* ImageNet"
         loss_axis = axes[row_index, 0]
         metric_axis = axes[row_index, 1]
         for prefix, label, colour in (
@@ -348,8 +348,8 @@ def plot_pretraining_learning_curves(
             sd = subset[f"{prefix}_sd"].to_numpy(dtype=float)
             metric_axis.plot(epochs, mean, label=label, color=colour, linewidth=2.0)
             metric_axis.fill_between(epochs, mean - sd, mean + sd, color=colour, alpha=0.15)
-        loss_axis.set_title(f"{variant}: loss (five-fold mean ± SD)")
-        metric_axis.set_title(f"{variant}: validation scores (five-fold mean ± SD)")
+        loss_axis.set_title(f"{panel_label}: loss (5-fold mean ± SD)")
+        metric_axis.set_title(f"{panel_label}: validation scores (5-fold mean ± SD)")
         loss_axis.set_ylabel("Loss")
         metric_axis.set_ylabel("Score")
         metric_axis.set_ylim(0.0, 1.0)
