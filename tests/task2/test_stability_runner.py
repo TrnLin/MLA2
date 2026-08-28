@@ -78,3 +78,37 @@ def test_stability_matrix_validates_pair_and_runs_c2_before_i2(monkeypatch) -> N
         ("c2", C2_STABILITY_EXPERIMENT_ID, {"mode": "load"}),
         ("i2", I2_STABILITY_EXPERIMENT_ID, {"mode": "load"}),
     ]
+
+
+def test_stability_matrix_blocks_before_training_when_primary_hashes_drift(
+    monkeypatch,
+) -> None:
+    pair = load_stability_pair()
+    runner_called = False
+
+    def reject_drift(*args, **kwargs):
+        del args, kwargs
+        raise ValueError("stability implementation hash mismatch")
+
+    def unexpected_runner(*args, **kwargs):
+        nonlocal runner_called
+        del args, kwargs
+        runner_called = True
+        return []
+
+    monkeypatch.setattr(
+        stability,
+        "validate_stability_implementation",
+        reject_drift,
+        raising=False,
+    )
+    monkeypatch.setattr(stability, "run_or_load_experiment", unexpected_runner)
+    monkeypatch.setattr(
+        stability,
+        "_run_stability_i2_experiment",
+        unexpected_runner,
+    )
+
+    with pytest.raises(ValueError, match="implementation hash mismatch"):
+        run_stability_matrix(pair, mode="run")
+    assert runner_called is False
