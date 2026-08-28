@@ -59,3 +59,11 @@ random or ImageNet weights. Both rows are benchmark-only and never final-eligibl
 is not tuned and cannot become the Task 2 winner. P* minus P0S estimates the effect of
 initialisation under this project's fixed 80x60 pipeline; it is not an ImageNet-recipe
 benchmark and must not be compared causally with the different I2 architecture.
+
+`g5_c2_t0_resnet18_seed_2026.json` and
+`g5_i2_article_type_lambda_0_3_c1_seed_2026.json` are the frozen eligible stability
+pair. They copy the retained G3 C2-T0 comparator and selected I2 lambda 0.3 candidate.
+Each changes only experiment identity, stage, and seed from 2753 to 2026. Both remain
+scratch, image-only at inference, and final-eligible. The stability gate asks whether
+I2 remains above C2 at both seeds; it does not reopen architecture, transform,
+optimiser, loss, or auxiliary-lambda selection. P* is excluded.

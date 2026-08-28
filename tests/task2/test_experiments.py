@@ -223,6 +223,44 @@ def test_repository_b1_config_freezes_unweighted_hog_hsv_svm_before_execution() 
     assert config.hog_hsv.max_iterations == 5_000
 
 
+def test_repository_g5_c2_config_changes_only_identity_stage_and_seed() -> None:
+    primary = load_experiment_config(
+        ROOT / "configs/task2/g3_c2_t0_resnet18.json"
+    ).to_dict()
+    stability = load_experiment_config(
+        ROOT / "configs/task2/g5_c2_t0_resnet18_seed_2026.json"
+    ).to_dict()
+
+    assert stability["experiment_id"] == "g5-c2-t0-resnet18-s2026"
+    assert stability["stage"] == "g5_seed_stability"
+    assert stability["seeds"] == (2026,)
+    for payload in (primary, stability):
+        payload.pop("experiment_id")
+        payload.pop("stage")
+        payload.pop("seeds")
+    assert stability == primary
+
+
+def test_repository_g5_i2_config_changes_only_identity_stage_and_seed() -> None:
+    primary_path = ROOT / "configs/task2/g4_i2_article_type_lambda_0_3_c1.json"
+    stability_path = (
+        ROOT / "configs/task2/g5_i2_article_type_lambda_0_3_c1_seed_2026.json"
+    )
+    primary = json.loads(primary_path.read_text(encoding="utf-8"))
+    stability = json.loads(stability_path.read_text(encoding="utf-8"))
+
+    assert stability["experiment_id"] == (
+        "g5-i2-article-type-lambda-0-3-c1-s2026"
+    )
+    assert stability["stage"] == "g5_seed_stability"
+    assert stability["seeds"] == [2026]
+    for payload in (primary, stability):
+        payload.pop("experiment_id")
+        payload.pop("stage")
+        payload.pop("seeds")
+    assert stability == primary
+
+
 def test_repository_g1_configs_differ_only_by_family_and_experiment_id() -> None:
     paths = (
         ROOT / "configs/task2/g1_c1_smallcnn.json",
