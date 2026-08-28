@@ -6,6 +6,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+import fashion.task2.evidence as task2_evidence
 from fashion.data.hashing import compute_sha256
 from fashion.task2.evidence import (
     EXPERIMENT_REGISTRY_COLUMNS,
@@ -367,3 +368,36 @@ def test_i1_evidence_rejects_protocol_change_beyond_loss(tmp_path: Path) -> None
 def test_i1_evidence_rejects_invalid_decision_threshold(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="thresholds"):
         _build(tmp_path, spring_minimum_gain=-0.01)
+
+
+def test_i1_per_class_chart_keeps_value_labels_inside_axis(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    y_limits: list[float] = []
+    label_positions: list[float] = []
+    original_savefig = task2_evidence.Figure.savefig
+
+    def capture_layout(figure, *args, **kwargs):
+        axis = figure.axes[0]
+        y_limits.extend(axis.get_ylim())
+        label_positions.extend(text.get_position()[1] for text in axis.texts)
+        return original_savefig(figure, *args, **kwargs)
+
+    monkeypatch.setattr(task2_evidence.Figure, "savefig", capture_layout)
+    per_class = pd.DataFrame(
+        {
+            "label": list(SEASON_LABELS),
+            "delta_i1_minus_reference_f1": [-0.0607, -0.0425, -0.0302, -0.0113],
+        }
+    )
+
+    task2_evidence._plot_i1_per_class_f1_delta(
+        per_class,
+        output_path=tmp_path / "i1-per-class.png",
+        maximum_other_class_loss=0.02,
+    )
+
+    lower, upper = y_limits
+    assert min(label_positions) >= lower
+    assert max(label_positions) <= upper
