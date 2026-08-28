@@ -451,7 +451,7 @@ def test_g3_accepts_checkpoint_selected_by_configured_min_delta(
     )
     _write_json(manifest_path, manifest)
 
-    result = build_g3_full_budget_evidence(
+    build_g3_full_budget_evidence(
         experiment_manifest_paths=manifests,
         experiment_config_paths=configs,
         tuning_manifest_path=tuning,
@@ -459,7 +459,10 @@ def test_g3_accepts_checkpoint_selected_by_configured_min_delta(
         **_temporary_outputs(tmp_path),
     )
 
-    paired_path = tmp_path / result["artifacts"]["paired_fold_metrics"]["path"]
+    paired_path = (
+        _temporary_outputs(tmp_path)["evidence_directory"]
+        / "paired_fold_metrics.csv"
+    )
     paired = pd.read_csv(paired_path)
     fold_zero = paired.loc[paired["fold"].eq(0)].iloc[0]
     assert fold_zero["c1_best_epoch"] == selected_epoch
