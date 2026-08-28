@@ -21,6 +21,7 @@ from fashion.task2.multitask import (
     I2_STAGE,
     AuxiliaryRunConfig,
     I2ExperimentConfig,
+    load_i2_config,
     run_i2_matrix,
     run_or_load_i2_experiment,
     validate_i2_config,
@@ -166,6 +167,49 @@ def test_validate_i2_config_freezes_identity_weight_and_training_protocol() -> N
                 auxiliary=replace(config.auxiliary, target="gender"),
             )
         )
+
+
+def test_repository_i2_configs_change_only_declared_multitask_fields() -> None:
+    paths = (
+        Path("configs/task2/g4_i2_article_type_lambda_0_1_c1.json"),
+        Path("configs/task2/g4_i2_article_type_lambda_0_3_c1.json"),
+    )
+    configs = [load_i2_config(path) for path in paths]
+    reference = ExperimentConfig.from_dict(
+        json.loads(
+            Path("configs/task2/g3_c1_t1_smallcnn.json").read_text(encoding="utf-8")
+        )
+    )
+
+    assert [config.experiment_id for config in configs] == [
+        "g4-i2-article-type-lambda-0-1-c1",
+        "g4-i2-article-type-lambda-0-3-c1",
+    ]
+    assert [config.auxiliary.loss_weight for config in configs] == [0.1, 0.3]
+    assert {config.auxiliary.target for config in configs} == {"articleType"}
+    assert {config.auxiliary.mask_policy for config in configs} == {
+        "available_labels_only"
+    }
+
+    reference_matched = reference.to_dict()
+    for field in ("experiment_id", "stage", "loss_id"):
+        reference_matched.pop(field)
+    for config in configs:
+        candidate = config.base.to_dict()
+        for field in ("experiment_id", "stage", "loss_id"):
+            candidate.pop(field)
+        assert candidate == reference_matched
+
+
+def test_i2_config_parser_rejects_unknown_auxiliary_field(tmp_path: Path) -> None:
+    source = Path("configs/task2/g4_i2_article_type_lambda_0_1_c1.json")
+    raw = json.loads(source.read_text(encoding="utf-8"))
+    raw["auxiliary"]["inference_input"] = True
+    invalid = tmp_path / "invalid-i2.json"
+    invalid.write_text(json.dumps(raw), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="unknown I2 auxiliary fields"):
+        load_i2_config(invalid)
 
 
 def test_i2_cache_hash_covers_only_shared_and_multitask_implementation() -> None:

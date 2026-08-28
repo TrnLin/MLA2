@@ -42,3 +42,11 @@ fold, class counts come only from that fold's training rows. The loss uses Cui e
 effective-number weights with `beta=0.9999`, normalized to mean one. Retain I1 only if
 Spring F1 improves by at least 0.010 while pooled macro-F1 falls by no more than 0.002.
 Compare OOF metrics rather than weighted-loss values because the loss scales differ.
+
+The two `g4_i2_article_type_lambda_*.json` files test one separate question: whether a
+training-only ArticleType head improves the shared C1 representation. They copy G3
+C1-T1's split, P0/A0 data, optimiser, seed, and full budget. Only experiment identity,
+stage, loss declaration, and auxiliary weight differ. `lambda=0.1` tests mild transfer;
+`lambda=0.3` tests a stronger signal. Missing ArticleType labels are masked instead of
+dropping valid Season rows. Selection and early stopping remain based on Season
+macro-F1. Inference accepts images only; true ArticleType is never an inference input.
