@@ -13,6 +13,7 @@ from fashion.task2.evidence import (
     I1_REFERENCE_EXPERIMENT_ID,
     build_i1_class_balance_evidence,
 )
+from fashion.task2.experiments import load_experiment_config
 from fashion.train.artifacts import canonical_sha256
 from fashion.train.losses import (
     EFFECTIVE_NUMBER_BETA,
@@ -104,7 +105,8 @@ def _write_experiment(
     is_i1 = experiment_id == I1_EXPERIMENT_ID
     config_payload = _config_payload(experiment_id)
     config_path = _write_json(root / "configs/task2" / f"{experiment_id}.json", config_payload)
-    config_sha256 = canonical_sha256(config_payload)
+    canonical_config = load_experiment_config(config_path).to_dict()
+    config_sha256 = canonical_sha256(canonical_config)
     per_class = _class_metrics(i1=is_i1)
     pooled_macro_f1 = sum(float(row["f1"]) for row in per_class.values()) / len(per_class)
     fold_offsets = (-0.004, -0.002, 0.0, 0.002, 0.004)
@@ -131,7 +133,7 @@ def _write_experiment(
             "experiment_id": experiment_id,
             "fold": fold,
             "seed": 2753,
-            "config": config_payload,
+            "config": canonical_config,
             "epoch_history": epoch_history,
         }
         if is_i1:
