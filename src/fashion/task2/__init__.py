@@ -36,6 +36,11 @@ from fashion.task2.experiments import (
     run_matrix,
     run_or_load_experiment,
 )
+from fashion.task2.pretraining import (
+    run_pretraining_matrix,
+    validate_pretraining_config,
+    validate_pretraining_pair,
+)
 from fashion.task2.smoke import (
     G0SmokeConfig,
     G0SmokeResult,
@@ -75,9 +80,12 @@ __all__ = [
     "plot_file_impact_flow",
     "run_matrix",
     "run_or_load_experiment",
+    "run_pretraining_matrix",
     "run_or_load_g0_smoke",
     "select_balanced_smoke_rows",
     "SmokeGateError",
     "load_g0_config",
     "validate_file_impact_edges",
+    "validate_pretraining_config",
+    "validate_pretraining_pair",
 ]

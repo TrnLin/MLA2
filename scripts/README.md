@@ -22,3 +22,13 @@ Run one immutable Task 2 config from the repository root:
 creates a new physical run ID and appends it to `results/runs.csv`. The launcher uses a
 Windows-safe `__main__` guard, so multi-worker PyTorch loaders do not start the experiment
 again inside child processes.
+
+Run the complete matched pretraining benchmark only through its paired launcher:
+
+```powershell
+& '.\.venv\Scripts\python.exe' scripts/run_task2_pretraining_benchmark.py --mode run_or_load
+```
+
+It validates both frozen declarations before starting P0S followed by P*. The first P*
+run may download TorchVision's declared ResNet18 ImageNet weights. Both rows remain
+benchmark-only and cannot be selected as the submitted scratch model.
