@@ -9,6 +9,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader, Dataset
 
+from fashion.models.season import SeasonModelSpec, build_multitask_season_model
 from fashion.train.engine import TrainConfig
 from fashion.train.metrics import validate_oof
 from fashion.train.multitask import (
@@ -60,6 +61,27 @@ class TinyMultiTaskModel(nn.Module):
 
     def predict_season_logits(self, images: torch.Tensor) -> torch.Tensor:
         return self.forward(images)["season_logits"]
+
+
+class TinyImageMultiTaskDataset(Dataset):
+    def __init__(self) -> None:
+        generator = torch.Generator().manual_seed(2753)
+        self.images = torch.randn(8, 3, 80, 60, generator=generator)
+        self.targets = torch.tensor([0, 1, 2, 3, 0, 1, 2, 3])
+        self.auxiliary_targets = torch.tensor([0, 1, 2, 3, 4, 5, 6, 7])
+        self.ids = torch.arange(200, 208)
+
+    def __len__(self) -> int:
+        return len(self.targets)
+
+    def __getitem__(self, index: int) -> dict[str, torch.Tensor]:
+        return {
+            "image": self.images[index],
+            "target": self.targets[index],
+            "auxiliary_target": self.auxiliary_targets[index],
+            "auxiliary_mask": torch.tensor(True),
+            "id": self.ids[index],
+        }
 
 
 def _loaders() -> tuple[DataLoader, DataLoader]:
@@ -160,6 +182,47 @@ def test_multitask_fold_writes_best_season_checkpoint_and_oof(tmp_path: Path) ->
         labels=("negative", "positive"),
     )
     assert audit["row_count"] == 32
+
+
+def test_real_scratch_c1_multitask_model_completes_one_training_epoch(
+    tmp_path: Path,
+) -> None:
+    dataset = TinyImageMultiTaskDataset()
+    train_loader = DataLoader(dataset, batch_size=4, shuffle=False)
+    validation_loader = DataLoader(dataset, batch_size=8, shuffle=False)
+    model = build_multitask_season_model(
+        SeasonModelSpec(family="smallcnn", num_classes=4),
+        article_type_classes=8,
+    )
+
+    result = train_masked_multitask_fold(
+        model,
+        train_loader,
+        validation_loader,
+        config=TrainConfig(
+            fold=0,
+            seed=2753,
+            epochs=1,
+            learning_rate=1e-3,
+            weight_decay=1e-4,
+            batch_size=4,
+            effective_batch_size=4,
+            warmup_epochs=0,
+            patience=1,
+            use_amp=False,
+            device="cpu",
+        ),
+        checkpoint_path=tmp_path / "real-c1-i2-smoke.pt",
+        auxiliary_weight=0.1,
+        labels=("Fall", "Spring", "Summer", "Winter"),
+    )
+
+    assert result.epochs_completed == 1
+    assert result.parameter_count > 1_000_000
+    assert result.probabilities.shape == (8, 4)
+    assert result.history[0]["train_auxiliary_labeled_samples"] == 8
+    assert result.metadata["selection_metric"] == "season_macro_f1"
+    assert model.predict_season_logits(dataset.images[:2]).shape == (2, 4)
 
 
 @pytest.mark.parametrize("weight", [0.0, -0.1, float("nan"), float("inf")])
