@@ -164,6 +164,14 @@ def build_article_type_shortcut_audit(
             ["missing_article_type", "unseen_article_type", "aligned"],
             default="conflict",
         )
+        assignments["articleType"] = (
+            assignments["articleType"].astype("string").fillna("<missing>")
+        )
+        assignments["shortcut_majority_season"] = (
+            assignments["shortcut_majority_season"]
+            .astype("string")
+            .fillna("<unmapped>")
+        )
         assignment_parts.append(assignments)
         fold_audits.append(
             {
