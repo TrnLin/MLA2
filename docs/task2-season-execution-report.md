@@ -1,6 +1,6 @@
 ---
 title: "Task 2 - Fashion Season Classification: execution report and plan"
-status: g3-deterministic-rerun-complete
+status: i1-class-balance-complete
 created: 2026-08-25
 updated: 2026-08-28
 scope: task2-season
@@ -32,13 +32,13 @@ Recommended direction:
    and size. Do not select by accuracy alone.
 6. Freeze every choice before Notebook 06 opens the holdout once.
 
-Current position on 28 August 2026: the corrected full-budget G3 comparison is complete.
-C1-T1 reached `0.737661` pooled OOF macro-F1 and C2-T0 reached `0.735036`. The gap is
-only `0.002626`, so C1 is the **provisional reference**, not the final winner. C2 remains
-the comparator because it is slightly stronger on Spring and Summer. The first G3
-attempt remains in Git and the append-only registry as honest history, but it is excluded
-from selection because its seed did not own model initialisation. I1 is now the next safe
-gate. I2, stability, robustness, cost, and uncertainty must still close before freeze.
+Current position on 28 August 2026: the corrected full-budget G3 comparison and the I1
+class-balance gate are complete. C1-T1 reached `0.737661` pooled OOF macro-F1 and C2-T0
+reached `0.735036`. The gap is only `0.002626`, so C1 remains the **provisional
+reference**, not the final winner. I1 then changed only the loss and fell to `0.701471`.
+Spring recall increased by `0.022573`, but Spring precision fell by `0.152558`, so Spring
+F1 fell by `0.042536`. The frozen rule therefore rejects I1. I2, stability, robustness,
+cost, and uncertainty must still close before freeze.
 
 No plan can guarantee a full mark because the mark also depends on real results and the
 quality of the final written argument. This plan covers the HD signals in the assignment
@@ -84,13 +84,13 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | 55-code-cell final scaffold; 27 implemented cells execute cleanly; G0, B0, B1, G1, G2-P, G2-A, G2-T, and G3 have measured interpretations | Continue filling the remaining 28 leaf cells without changing the structure |
+| Notebook 03 | 55-code-cell final scaffold; 28 implemented cells have clean saved outputs; G0, B0, B1, G1, G2-P, G2-A, G2-T, G3, and I1 have measured interpretations | Continue filling the remaining 27 leaf cells without changing the structure |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, Windows-safe runners, strict cache checks, learning curves, the EDA-to-model selection story, and corrected G3 evidence are implemented | Test I1 and I2 on C1 while retaining C2 as the comparator |
-| `results/runs.csv` | 83 append-only rows: 78 completed, one failed, and four interrupted | No running rows; only the ten current completed G3 run IDs enter corrected G3 evidence |
+| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, Windows-safe runners, strict cache checks, learning curves, the EDA-to-model selection story, corrected G3 evidence, and the I1 decision are implemented | Build and test I2 on C1 while retaining C2 as the comparator |
+| `results/runs.csv` | 89 append-only rows: 83 completed, one failed, and five interrupted | No running rows; only the five current completed I1 run IDs enter I1 evidence |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
-| Current G3 gate | Corrected five-fold C1-T1 and C2-T0 evidence is complete, hash-verified, and tied to clean implementation commit `47442a2` | Keep C1 provisional, retain C2, and move to the frozen I1 question |
+| Current G4-I1 gate | Five-fold I1 evidence is complete, hash-verified, and tied to clean implementation commit `2f0c1f0` | Reject I1, retain G3-C1, and move to the separate I2 question |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -160,7 +160,7 @@ recorded as provenance, but it is not used as a proxy for implementation content
 | `fashion.models.season` | Scratch C1/C2/C3, benchmark-only P0S/P*, and image-only multi-task boundaries |
 | `fashion.task2.experiments` | Immutable JSON configs, seeded model construction, run-or-load cache, registry lifecycle, and atomic artifacts |
 | `fashion.task2.class_balance` | Frozen I1 runner with fold-fitted effective-number weights and an isolated cache identity |
-| `fashion.task2.evidence` | File-impact flow, complete-fold OOF packs, verified G1 ranking, audited G2-P/G2-A/G2-T/G3 decisions, learning curves, and a hash-linked selection story |
+| `fashion.task2.evidence` | File-impact flow, complete-fold OOF packs, verified G1 ranking, audited G2-P/G2-A/G2-T/G3/I1 decisions, learning curves, and a hash-linked selection story |
 | `scripts/run_task2_experiment.py` | Windows-safe shared config launcher with a guarded `main()` |
 | `scripts/run_task2_i1_experiment.py` | Windows-safe launcher restricted by the frozen I1 validator |
 | Notebook 03 sections 1-4 | Frozen contract, runtime, EDA handoff, folds, OOF, metrics, transforms, and leakage audit |
@@ -178,6 +178,9 @@ separately to C1 and C2. G3 then verifies that the selected C1-T1 and retained C
 configs differ from their G2 inputs only in the declared full training budget and
 early-stopping patience. It compares all five folds, full histories, per-class metrics,
 cost, and the predeclared near-tie rule without freezing an ultimate winner.
+I1 then verifies that only experiment identity, stage, and loss differ from corrected
+G3-C1. It audits all five fold-fitted class counts, weights, training-ID hashes,
+histories, OOF predictions, and the three predeclared keep/reject criteria.
 
 ### 2.4 Trace corrections kept in Git history
 
@@ -264,14 +267,24 @@ what actually failed:
   The model checkpoints were coherent, so this audit fix required no retraining.
 - Commit `eb9bd4d` refreshes only Notebook 03's G3 output and interpretation. Its
   semantic audit found no change to any other notebook cell.
+- I1 fold-1 attempt `g4-i1-effective-number-c1-f1-s2753-b4387f2c1023` remained
+  `running` after its parent PTY closed. Explicit recovery marked only that row
+  `interrupted`; completed fold 0 was reused, and replacement fold-1 run
+  `g4-i1-effective-number-c1-f1-s2753-a6b4939bacc5` is the row used by evidence.
+- `af196ce` then `f02401f` preserve the clipped Fall-value label regression and the
+  axis-padding fix for the I1 per-class chart. Commit `57e2fcb` records the rebuilt
+  hash-linked evidence, and `68a4f48` updates only Notebook 03's I1 code, outputs,
+  interpretation, and its structural contract.
 
 ### 2.5 Measured execution status
 
 The table preserves every measured gate. G0-B1 remain valid non-deep anchors. G1 and G2
 remain useful exploratory history, but their deep-run seed did not control initial
 weights. Corrected G3 is selection-valid: all ten rows are completed, clean, unique,
-seeded before model construction, and tied to implementation commit `47442a2`. The first
-G3 attempt remains traceable in Git and `results/runs.csv`, but it is excluded here.
+seeded before model construction, and tied to implementation commit `47442a2`. I1 is
+also selection-valid: its five chosen rows are completed, clean, unique, and tied to
+implementation commit `2f0c1f0`. Historical retries remain traceable in Git and
+`results/runs.csv`, but they are excluded from comparison evidence.
 
 | Gate | Measured result | Decision | Trace |
 |---|---|---|---|
@@ -290,6 +303,7 @@ G3 attempt remains traceable in Git and `results/runs.csv`, but it is excluded h
 | G3 C1-T1 SmallCNN - corrected | Pooled macro-F1 `0.737661`; fold SD `0.010013`; Spring F1 `0.744975`; 1,174,244 parameters; 60.21 training minutes; median best epoch 21 | Keep as the compact provisional reference | `results/evidence/task2/g3_c1_t1_smallcnn/manifest.json`; five corrected run IDs recorded there |
 | G3 C2-T0 ResNet18 - corrected | Pooled macro-F1 `0.735036`; fold SD `0.006340`; Spring F1 `0.747547`; 11,170,884 parameters; 91.58 training minutes; median best epoch 24 | Retain because Spring and Summer remain slightly stronger | `results/evidence/task2/g3_c2_t0_resnet18/manifest.json`; five corrected run IDs recorded there |
 | G3 full-budget decision - current | C1 minus C2 `+0.002626`; C2/C1 parameter ratio `9.513`; C2/C1 runtime ratio `1.521`; both cover the same 32,753 OOF products | Near tie: keep C1 provisional, retain C2, and do not freeze an ultimate winner | `results/evidence/task2/g3_full_budget/manifest.json` |
+| G4-I1 effective-number loss | Pooled macro-F1 `0.701471`; fold SD `0.034919`; Spring F1 `0.702439`; I1 minus G3-C1 macro-F1 `-0.036191`; Spring F1 `-0.042536`; Fall F1 `-0.060738` | Reject I1: Spring, overall, and other-class criteria all failed; retain G3-C1 | `results/evidence/task2/i1_class_balance/manifest.json`; five selected run IDs and all class-weight audits recorded there |
 
 B0 predicted Summer for every product. Its Summer F1 was `0.662815`; Fall, Spring,
 and Winter F1 were zero. This is the concrete reason accuracy is not the primary metric.
@@ -339,6 +353,15 @@ by `0.002993`. C1 led in four paired folds, but C2 led fold 4 by `0.011802`; no
 uncertainty claim is allowed before grouped bootstrap. This is why the report keeps C2
 rather than declaring that one aggregate rank settles every risk.
 
+I1 then held the split, images, SmallCNN, P0/A0, optimiser, seed, and full budget fixed.
+Only fold-fitted effective-number cross-entropy changed. Spring received weight
+`2.511-2.513`, while Summer received `0.348`. Spring recall improved by `0.022573`, but
+precision fell by `0.152558`; extra Spring predictions created too many false positives.
+All four class F1 scores fell, pooled macro-F1 lost `0.036191`, and fold SD increased
+from `0.010013` to `0.034919`. This is a useful negative result: the EDA imbalance claim
+was accurate, but this specific remedy was not. The frozen rule rejects I1 without
+trying another beta after seeing the result.
+
 The learning-curve figures use the same visual grammar as the teacher's example. The
 left panel shows train and validation loss. The right panel replaces training accuracy
 with validation accuracy and validation macro-F1 because macro-F1 is the selection
@@ -349,6 +372,10 @@ band. The compact-tuning figures are
 
 The G3 figures use a common five-fold horizon so the number of folds never silently
 shrinks after early stopping: epoch 18 for C1 and epoch 19 for C2.
+The I1 learning curve uses the same grammar and a common 11-epoch horizon at
+`results/figures/task2/i1_effective_number_learning_curves.png`. Its weighted loss
+values are not compared numerically with G3 ordinary cross-entropy. The separate
+`results/figures/task2/i1_per_class_f1_delta.png` shows that every class lost F1.
 
 The chart-to-EDA link is now explicit. Accuracy remaining above macro-F1 supports the
 earlier class-imbalance warning. C2 being 9.51 times larger yet slightly behind C1
@@ -423,17 +450,19 @@ can support, weaken, or reject it.
 
 | Earlier EDA insight | Current verdict | Measured reason | Required next check |
 |---|---|---|---|
-| Class imbalance can make accuracy misleading | Supported | B0 reached 49.568% accuracy but only `0.165704` macro-F1; Spring F1 was zero | Keep macro-F1 primary and test I1 next |
+| Class imbalance can make accuracy misleading | Supported | B0 reached 49.568% accuracy but only `0.165704` macro-F1; Spring F1 was zero | Keep macro-F1 primary even though I1 failed |
+| Fold-fitted class weighting may recover rare Spring | Contradicted for frozen I1 | Spring recall rose `0.022573`, but precision fell `0.152558`; Spring F1 fell `0.042536` and pooled macro-F1 fell `0.036191` | Reject I1; test I2 as a separate feature-learning hypothesis |
 | Shape and colour contain Season signal | Supported | B1 reached `0.609561`, far above B0 | Let C1 learn task-specific features |
 | Learned features should improve fixed HOG/HSV | Supported | Corrected full-budget C1 and C2 reached `0.737661` and `0.735036`, both well above B1 `0.609561` | Keep learned features and analyse their failures |
 | More capacity should clearly improve quality | Contradicted at full budget | C1 beat C2 by `0.002626` despite C2 using 9.51 times more parameters; the gap is a near tie | Keep C1 provisional for efficiency and retain C2 for class-specific checks |
 | A larger input should preserve useful detail | Contradicted | P1 changed macro-F1 by `-0.001787` and used `1.992x` runtime | Retain P0 and stop adding image sizes |
 | Extra colour jitter should improve generalisation | Contradicted | A1 changed macro-F1 by `-0.010438` and hurt Fall and Spring | Retain A0; colour may be real signal |
-| ArticleType, file size, and acquisition year may be shortcuts | Still untested | No completed gate isolates those OOF slices | Test them in Section 10 before model freeze |
+| ArticleType, file size, and acquisition year may be shortcuts | Still untested | No completed gate isolates those OOF slices | Test I2 and the declared OOF slices before model freeze |
 
-The generated version is
-`results/evidence/task2/selection_story/eda_reflection.csv`. It links back to the B0,
-B1, G1, G2-P, G2-A, and G2-T manifests; it does not add a new result or open holdout.
+The baseline-to-G2 rows are generated at
+`results/evidence/task2/selection_story/eda_reflection.csv`. The measured I1 update is
+hash-linked separately at `results/evidence/task2/i1_class_balance/manifest.json` and in
+Notebook 03 section 8.3.1. Neither path opens holdout.
 
 ## 5. Problems that must be solved
 
@@ -669,6 +698,23 @@ The declaration is `configs/task2/g4_i1_effective_number_c1.json`. The dedicated
 launcher is `scripts/run_task2_i1_experiment.py`. Cui et al. (2019), listed in Section
 12.2, is the primary source for the effective-number formula.
 
+### 6.8 Measured I1 outcome
+
+All five selected I1 folds are completed and cover the same 32,753 development products
+exactly once. No protected ID appears. The result fails every frozen criterion:
+
+| Criterion | Required | Observed | Result |
+|---|---:|---:|---|
+| Spring F1 gain | at least `+0.010` | `-0.042536` | Fail |
+| Pooled macro-F1 loss | no worse than `-0.002` | `-0.036191` | Fail |
+| Worst other-class F1 loss | no worse than `-0.020` | Fall `-0.060738` | Fail |
+
+The intervention did what its mechanics suggest: it made the model predict Spring more
+often. Spring recall rose from `0.627540` to `0.650113`, but precision fell from
+`0.916484` to `0.763926`. The extra false positives reduced Spring F1 rather than
+repairing it. The evidence therefore retains ordinary-cross-entropy G3-C1 and closes I1
+as an honest negative result. It does not tune `beta` after seeing the outcome.
+
 ## 7. Experiment matrix
 
 ### 7.1 Execution order
@@ -679,7 +725,7 @@ launcher is `scripts/run_task2_i1_experiment.py`. Cui et al. (2019), listed in S
 | G1 | B0, B1, C1, C2, C3; 8 epochs x 5 folds | Which families deserve full training? | Every valid row has one OOF prediction |
 | G2 | P0/P1 and A0/A1 on C2; T0/T1/T2 on C1 and C2 | Which size, augmentation, learning rate, and weight decay help? | One controlled change, same folds, seed, and eight-epoch budget |
 | G3 - complete | C1-T1 and C2-T0; maximum 30 epochs, patience 5 x 5 folds | Does equal mature training change the screen ordering under a real deterministic seed? | Passed: both corrected five-fold runs and evidence hashes exist; old G3 artifacts are trace only |
-| G4 | I1 and I2; full budget x 5 folds | Do improvements solve EDA problems? | Primary and slice evidence are both available |
+| G4 - I1 complete, I2 pending | I1 and I2; full budget x 5 folds | Do improvements solve EDA problems? | I1 closed as rejected; I2 still requires primary and conflict-slice evidence |
 | G5 | Top two, second seed x 5 folds | Is the result stable? | Winner does not reverse without explanation |
 | G6 | Both finalists: robustness, calibration, and cost | Which finalist is safer to deploy? | Complete comparable scorecards |
 
@@ -787,9 +833,11 @@ exactly one code cell followed by one interpretation prompt. A broader `###` sub
 owns no direct code cell; it is divided into `####` subsubsections, and every `####` leaf
 owns exactly one code cell and one interpretation prompt.
 
-Current measured progress is 27 executed implementation cells and 28 clean placeholders.
+Current measured progress is 28 executed implementation cells and 27 clean placeholders.
 Section 8.1.2 contains the complete G3 tables, run lifecycle audit, decision record, and
-two embedded learning-curve figures; the notebook has zero error outputs.
+two embedded learning-curve figures. Section 8.3.1 adds the I1 comparison, fold and
+class-weight audits, frozen decision, learning curve, and per-class F1 chart. The
+notebook has zero error outputs.
 
 | Section | Final purpose |
 |---|---|
@@ -844,10 +892,10 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** run the already frozen I1 config against corrected C1-T1. Then
-implement masked auxiliary ArticleType loss separately and declare I2 lambdas `0.1` and
-`0.3` on the same C1 backbone. Do not add another architecture, input size,
-augmentation, or tuning pair.
+**Next safe action:** implement masked auxiliary ArticleType loss separately and declare
+I2 lambdas `0.1` and `0.3` on the same C1 backbone. Test pooled Season macro-F1 plus the
+ArticleType aligned/conflict slice. Do not add another architecture, input size,
+augmentation, loss beta, or tuning pair.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
@@ -870,7 +918,8 @@ augmentation, or tuning pair.
   historical trace.
 - [x] Rerun C1-T1 and C2-T0 after seeding before model construction; replace selection
   claims only after corrected evidence passes all hashes.
-- [ ] Run I1 and I2.
+- [x] Run I1, apply the frozen rule, and retain G3-C1 after all three criteria fail.
+- [ ] Run I2 for lambdas `0.1` and `0.3` with masked auxiliary labels.
 - [ ] Run the pretrained benchmark with `benchmark_only=true`.
 - [ ] Run a second seed for both finalists over all five folds.
 
@@ -908,6 +957,8 @@ Task 2 is complete only when all of the following exist:
 - [x] Current B0, B1, C1, C2, and C3 OOF predictions each cover all 32,753 valid development rows;
 - [x] G3 C1-T1 and C2-T0 each cover the same 32,753 valid rows, and their paired
   full-budget comparison is hash-audited;
+- [x] I1 covers the same 32,753 valid rows, records fold-fitted class weights, and is
+  rejected by the frozen Spring/overall/other-class rule;
 - [x] At least three genuinely different algorithm families were evaluated;
 - [x] at least one improvement was implemented and evaluated: C1-T1 improved pooled
   macro-F1 by `0.008173` over C1-T0;
