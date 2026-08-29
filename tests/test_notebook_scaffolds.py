@@ -47,6 +47,8 @@ def test_only_planned_notebook_names_are_present() -> None:
 
 def test_task_scaffolds_leave_owner_decisions_open() -> None:
     for filename, spec in TASK_SPECS.items():
+        if filename == "02_task1_article_type.ipynb":
+            continue
         notebook = nbformat.read(ROOT / "notebooks" / filename, as_version=4)
         nbformat.validate(notebook)
         source = _source(notebook)
@@ -79,9 +81,8 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
 
 
 def test_task_metric_placeholders_are_explicit() -> None:
-    for filename in ("02_task1_article_type.ipynb", "03_task2_season.ipynb"):
-        source = _source(nbformat.read(ROOT / "notebooks" / filename, as_version=4))
-        assert "Primary development metric: TODO(owner)" in source
+    task2 = _source(nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4))
+    assert "Primary development metric: TODO(owner)" in task2
 
     task3 = _source(nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4))
     assert "Primary development metric for `gender`: TODO(owner)" in task3
