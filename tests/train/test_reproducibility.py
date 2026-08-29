@@ -49,6 +49,7 @@ def test_runtime_and_git_provenance_are_serializable() -> None:
     git_state = capture_git_state()
 
     assert runtime["python"]
+    assert runtime["packages"]["scipy"]
     assert runtime["packages"]["torch"]
     assert runtime["logical_cpu_count"] >= 1
     assert isinstance(runtime["cuda_available"], bool)
