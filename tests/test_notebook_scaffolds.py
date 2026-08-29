@@ -607,6 +607,57 @@ def test_task2_pstar_cell_records_matched_pretraining_boundary() -> None:
         assert required in finding
 
 
+def test_task2_g5_cell_records_second_seed_stability() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    cell = cells["s08-04-code"]
+    code = cell.source
+    finding = cells["s08-04-finding"].source
+
+    assert not code.startswith("# TODO:")
+    compile(code, "03_task2_season.ipynb:s08-04-code", "exec")
+    for required in (
+        'stability_root = TASK2_EVIDENCE_DIR / "seed_stability"',
+        'stability_manifest_path = stability_root / "manifest.json"',
+        "verify_artifact",
+        'artifact_group in ("artifacts", "input_configs", "input_manifests")',
+        'manifest["coverage"]["row_count"] == len(season_development)',
+        'manifest["coverage"]["protected_id_count"] == 0',
+        'stability_manifest["gate"] == "G5-SEED"',
+        'stability_manifest["ordering_stable"] is True',
+        'stability_manifest["ultimate_winner_frozen"] is False',
+        'stability_decision["current_candidate"] == "I2"',
+        "len(stability_registry) == 20",
+        'stability_registry["status"].eq("completed").all()',
+        'scores["I2"] > scores["C2"]',
+        'artifact_paths["learning_curves"]',
+        'artifact_paths["comparison_figure"]',
+    ):
+        assert required in code
+    assert cell.execution_count == 31
+    assert len(cell.outputs) == 7
+    assert all(output.output_type != "error" for output in cell.outputs)
+    for required in (
+        "0.752687",
+        "0.735036",
+        "+0.017651",
+        "0.744743",
+        "0.733137",
+        "+0.011607",
+        "-0.007944",
+        "three of five paired folds",
+        "teacher-style figure",
+        "EDA reflection",
+        "directionally accurate",
+        "uniform was inaccurate",
+        "I2 lambda `0.3`",
+        "do **not** freeze the ultimate winner",
+        "04ef69d",
+        "results/evidence/task2/seed_stability/manifest.json",
+    ):
+        assert required in finding
+
+
 def test_task2_g2_size_cell_records_audited_selection() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
