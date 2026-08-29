@@ -32,8 +32,8 @@ Recommended direction:
    and size. Do not select by accuracy alone.
 6. Freeze every choice before Notebook 06 opens the holdout once.
 
-Current position on 29 August 2026: corrected G3, I1, I2, and the matched pretrained
-boundary are complete. C1-T1 reached
+Current position on 29 August 2026: corrected G3, I1, I2, the matched pretrained
+boundary, and G5 seed stability are complete. C1-T1 reached
 `0.737661` pooled OOF macro-F1 and remains the compact reference. I1 changed only the
 loss and fell to `0.701471`, so it was rejected. I2 then added a training-only
 ArticleType head. Lambda `0.1` reached `0.750758`; lambda `0.3` reached `0.752687`,
@@ -41,9 +41,11 @@ improved Spring F1 by `0.019809`, and passed the frozen overall and conflict-sli
 Lambda `0.3` is therefore the **current candidate**, not the ultimate winner. Under the
 same standard-stem ResNet18 protocol, P* improved over its P0S scratch control by
 `0.023024` macro-F1 and by `0.038829` Spring F1. This result is a representation
-benchmark only: P* remains final-ineligible and does not replace I2. The second seed,
-robustness, cost, calibration, uncertainty, and failure analysis must still close before
-freeze.
+benchmark only: P* remains final-ineligible and does not replace I2. At seed `2026`,
+I2 reached `0.744743` and C2 reached `0.733137`, so I2 remains ahead by `0.011607`.
+The ordering is supported at both complete five-fold seeds, although I2 drifts more and
+loses two of five paired folds at seed `2026`. Robustness, cost, calibration,
+uncertainty, shortcut, and failure analysis must still close before freeze.
 
 No plan can guarantee a full mark because the mark also depends on real results and the
 quality of the final written argument. This plan covers the HD signals in the assignment
@@ -89,14 +91,14 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | 55-code-cell final scaffold; 30 implemented cells have clean saved outputs; G0, B0, B1, G1, G2-P, G2-A, G2-T, G3, I1, I2, and P* have measured interpretations | Continue filling the remaining 25 leaf cells without changing the structure |
+| Notebook 03 | 55-code-cell final scaffold; 31 implemented cells have clean saved outputs; G0, B0, B1, G1, G2-P, G2-A, G2-T, G3, I1, I2, P*, and G5 have measured interpretations | Continue filling the remaining 24 leaf cells without changing the structure |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, Windows-safe runners, strict cache checks, learning curves, the EDA-to-model selection story, corrected G3 evidence, I1, masked I2, and the matched P0S/P* boundary are implemented | Run the stability gate without adding another architecture |
-| `results/runs.csv` | 109 append-only rows: 103 completed, one failed, and five interrupted | No running rows; the ten clean P0S/P* run IDs enter matched evidence |
+| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, Windows-safe runners, strict cache checks, learning curves, the EDA-to-model selection story, corrected G3 evidence, I1, masked I2, matched P0S/P*, and G5 stability are implemented | Close analysis gates without adding another architecture |
+| `results/runs.csv` | 119 append-only rows: 113 completed, one failed, and five interrupted | No running rows; the ten clean G5 run IDs enter two-seed evidence |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
-| Current G4 gate | I1 is rejected; both I2 lambdas pass; P0S/P* are complete, hash-verified, and tied to clean implementation commit `e74d0fd` | Keep I2 lambda `0.3`; P* is a non-selectable ceiling; do not freeze yet |
-| Current verification | `pip check`, full-repository Ruff, and `308` tests pass | P* code, evidence, Notebook outputs, and structure are green before push |
+| Current G5 gate | C2 and I2 seed-2026 folds are complete, hash-verified, and tied to clean commit `04ef69d`; I2 remains ahead at both seeds | Keep I2 lambda `0.3`; P* is a non-selectable ceiling; do not freeze yet |
+| Current verification | `pip check`, full-repository Ruff, and `324` tests pass | G5 code, evidence, Notebook outputs, HTML export, and structure are green |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -172,6 +174,8 @@ recorded as provenance, but it is not used as a proxy for implementation content
 | `fashion.task2.multitask_evidence` | Fits ArticleType-to-Season mappings on four training folds only, measures aligned/conflict transfer, applies the frozen I2 gate, and draws teacher-style curves |
 | `fashion.task2.pretraining` | Enforces the matched P0S/P* pair so only model identity and initial weights differ |
 | `fashion.task2.pretraining_evidence` | Audits both boundaries, folds, hashes, histories, and OOF products; measures P* minus P0S without making P* selectable |
+| `fashion.task2.stability` | Enforces seed-2026 clones of the retained C2 comparator and selected I2 candidate, then preflights primary-seed implementation hashes before any training |
+| `fashion.task2.stability_evidence` | Audits four complete OOF packs, measures seed drift and paired-fold ordering, applies the frozen G5 rule, and draws two-seed learning curves |
 | `fashion.task2.evidence` | File-impact flow, complete-fold OOF packs, verified G1 ranking, audited G2-P/G2-A/G2-T/G3/I1 decisions, learning curves, and a hash-linked selection story |
 | `scripts/run_task2_experiment.py` | Windows-safe shared config launcher with a guarded `main()` |
 | `scripts/run_task2_i1_experiment.py` | Windows-safe launcher restricted by the frozen I1 validator |
@@ -179,8 +183,11 @@ recorded as provenance, but it is not used as a proxy for implementation content
 | `scripts/build_task2_i2_evidence.py` | Loads ten verified folds and builds both OOF packs plus the closed I2 decision |
 | `scripts/run_task2_pretraining_benchmark.py` | Runs or loads exactly the matched P0S/P* pair |
 | `scripts/build_task2_pretraining_evidence.py` | Load-only builder for the paired benchmark evidence and figures |
+| `scripts/run_task2_stability.py` | Runs or loads exactly five C2 and five I2 folds at seed `2026` after strict clone and implementation preflight checks |
+| `scripts/build_task2_stability_evidence.py` | Load-only builder for four hash-verified candidate/seed OOF packs and the closed G5 decision |
 | Notebook 03 sections 1-4 | Frozen contract, runtime, EDA handoff, folds, OOF, metrics, transforms, and leakage audit |
 | Notebook 03 sections 6 and 7.2 | Scratch forward audits, benchmark rejection, state hashes, and registry health |
+| Notebook 03 section 8.4 | SHA-256 verification, two-seed tables, teacher-style curves, trace table, EDA reflection, and the non-freeze G5 decision |
 
 Measured evidence is stored under `results/evidence/task2/` and
 `results/figures/task2/`. The G1 screen links capacity, training cost, and pooled OOF
@@ -306,6 +313,16 @@ what actually failed:
   overlapping panel titles. `fcbd79c` preserves the failing bounding-box regression
   test; `8f4cf4a` fixes the titles; `70f5308` records regenerated evidence; and
   `2a4b801` executes only Notebook 03's P* leaf.
+- Commits `1341254`, `b6540b8`, and `99d5f90` freeze the G5 configs, load-or-run
+  matrix, and four-pack evidence contract before physical execution. A preflight review
+  then found that a new stability run could start after implementation drift;
+  `2da2754` preserves the failing regression and `04ef69d` blocks training until both
+  primary-seed implementation hashes match current code.
+- Ten clean seed-2026 folds then completed under commit `04ef69d`. A load-only rerun
+  returned all ten rows from cache without changing the 119-row registry. Commit
+  `daf65c8` records the measured two-seed evidence, and `e6939c3` executes only Notebook
+  03's G5 leaf. Full Ruff then exposed a 107-character Styler line; `62e8cda` preserves
+  the separate formatting fix without changing outputs.
 
 ### 2.5 Measured execution status
 
@@ -319,7 +336,9 @@ clean, unique, use seed `2753`, cover folds 0-4 for both lambdas, and share impl
 commit `7a6bb49`. Historical retries remain traceable in Git and `results/runs.csv`, but
 they are excluded from comparison evidence. P0S/P* are benchmark-valid: their ten rows
 are completed, clean, cover folds 0-4, use seed `2753`, share implementation commit
-`e74d0fd`, and differ only in model identity and initial weights.
+`e74d0fd`, and differ only in model identity and initial weights. G5 is stability-valid:
+its ten new rows are completed, clean, cover folds 0-4 at seed `2026`, use commit
+`04ef69d`, and preserve the candidate-specific implementation hashes from seed `2753`.
 
 | Gate | Measured result | Decision | Trace |
 |---|---|---|---|
@@ -345,6 +364,9 @@ are completed, clean, cover folds 0-4, use seed `2753`, share implementation com
 | G4-P0S standard-stem scratch control | Pooled macro-F1 `0.731172`; fold SD `0.006199`; Spring F1 `0.729537`; median best epoch `22`; 32.47 training minutes | Use only as the matched scratch control; it is benchmark-only and final-ineligible | `results/evidence/task2/g4_p0s_resnet18_standard_scratch/manifest.json`; five clean run IDs |
 | G4-P* ImageNet benchmark | Pooled macro-F1 `0.754196`; fold SD `0.008002`; Spring F1 `0.768366`; median best epoch `11`; 22.69 training minutes | Record the representation ceiling, but never select or submit it | `results/evidence/task2/g4_pstar_resnet18_standard_pretrained/manifest.json`; five clean run IDs |
 | G4-PSTAR decision | P* minus P0S macro-F1 `+0.023024`; Spring F1 `+0.038829`; all five paired folds positive; parameters and peak VRAM matched | Close the benchmark boundary without changing the current I2 candidate | `results/evidence/task2/pretraining_benchmark/manifest.json` |
+| G5 C2 seed `2026` | Pooled macro-F1 `0.733137`; fold SD `0.020605`; Spring F1 `0.747865`; seed drift `-0.001899`; 60.92 training minutes | Retain as the scratch comparator; its pooled score is stable but fold spread increases | `results/evidence/task2/g5_c2_t0_resnet18_s2026/manifest.json`; five clean run IDs |
+| G5 I2 seed `2026` | Pooled macro-F1 `0.744743`; fold SD `0.015412`; Spring F1 `0.754291`; seed drift `-0.007944`; 26.44 training minutes | Keep I2 lambda `0.3` as the current candidate, while recording greater seed sensitivity | `results/evidence/task2/g5_i2_article_type_lambda_0_3_c1_s2026/manifest.json`; five clean run IDs |
+| G5 stability decision | I2 minus C2 macro-F1 is `+0.017651` at seed `2753` and `+0.011607` at seed `2026`; three of five seed-2026 folds favour I2 | Ordering is supported across two seeds; close architecture search but do not freeze the ultimate winner | `results/evidence/task2/seed_stability/manifest.json` links four configs, twenty runs, drift tables, and two figures |
 
 B0 predicted Summer for every product. Its Summer F1 was `0.662815`; Fall, Spring,
 and Winter F1 were zero. This is the concrete reason accuracy is not the primary metric.
@@ -444,12 +466,19 @@ P0S/P* use common horizons of 20 and 12 epochs at
 `results/figures/task2/pretraining_benchmark_effect.png` shows overall and per-class
 P* minus P0S changes. These charts show validation scores flattening while training loss
 continues to fall, which justifies best-macro-F1 checkpointing and early stopping.
+G5 overlays seeds `2753` and `2026` with solid and dashed lines at
+`results/figures/task2/seed_stability_learning_curves.png`. It uses common five-fold
+horizons of 11 epochs for C2 and 14 for I2, so no late point silently averages fewer
+folds. `results/figures/task2/seed_stability_comparison.png` shows pooled macro-F1,
+Spring recall, and Spring F1 without hiding the smaller seed-2026 I2 margin.
 
 The chart-to-EDA link is now explicit. Accuracy remaining above macro-F1 supports the
 earlier class-imbalance warning. C2 being 9.51 times larger yet slightly behind C1
 contradicts the earlier expectation that capacity alone would clearly improve quality.
 P* reaching a higher plateau in fewer epochs weakens the idea that the development data
-alone lets a standard-stem scratch model close the representation gap.
+alone lets a standard-stem scratch model close the representation gap. I2 remaining
+ahead at both seeds supports the ArticleType feature-learning direction, but its larger
+seed drift and two reversed seed-2026 folds contradict a uniform-gain interpretation.
 
 | C1-T1 SmallCNN | C2-T0 ResNet18 |
 |---|---|
@@ -458,6 +487,10 @@ alone lets a standard-stem scratch model close the representation gap.
 | P0S/P* matched learning curves | P* minus P0S effect |
 |---|---|
 | ![P0S and P* learning curves](../results/figures/task2/pretraining_benchmark_learning_curves.png) | ![P* minus P0S effect](../results/figures/task2/pretraining_benchmark_effect.png) |
+
+| G5 learning curves across two seeds | G5 pooled and Spring stability |
+|---|---|
+| ![C2 and I2 learning curves at seeds 2753 and 2026](../results/figures/task2/seed_stability_learning_curves.png) | ![C2 and I2 stability comparison](../results/figures/task2/seed_stability_comparison.png) |
 
 ## 3. Task 2 contract
 
@@ -531,17 +564,18 @@ can support, weaken, or reject it.
 | More capacity should clearly improve quality | Contradicted at full budget | C1 beat C2 by `0.002626` despite C2 using 9.51 times more parameters; the gap is a near tie | Keep C1 provisional for efficiency and retain C2 for class-specific checks |
 | A larger input should preserve useful detail | Contradicted | P1 changed macro-F1 by `-0.001787` and used `1.992x` runtime | Retain P0 and stop adding image sizes |
 | Extra colour jitter should improve generalisation | Contradicted | A1 changed macro-F1 by `-0.010438` and hurt Fall and Spring | Retain A0; colour may be real signal |
-| ArticleType contains useful structure for Season | Supported, with limits | I2 lambda `0.3` improved pooled macro-F1 by `0.015026` and Spring F1 by `0.019809` | Confirm at seed `2026`; do not call association causation |
-| I2 may only strengthen the ArticleType shortcut | Weakened, not disproved | The conflict slice improved by `0.027598`, although aligned rows remain much easier | Keep the aligned/conflict slice in stability and failure analysis |
-| Development data alone may close the representation gap | Weakened for standard-stem ResNet18 | Matched ImageNet initialisation improved macro-F1 by `0.023024`, Spring F1 by `0.038829`, and all five folds | Keep P* as a ceiling only; test the eligible scratch candidate at seed `2026` |
+| ArticleType contains useful structure for Season | Supported across two seeds, with limits | I2 leads C2 by `0.017651` at seed `2753` and `0.011607` at seed `2026`, but the I2 seed drift is `-0.007944` | Keep I2 current; do not call association causation or assume a uniform gain |
+| I2 may only strengthen the ArticleType shortcut | Weakened, not disproved | The primary conflict slice improved by `0.027598`, although aligned rows remain much easier; seed stability does not replace slice analysis | Keep aligned/conflict analysis in the frozen failure gate |
+| Development data alone may close the representation gap | Weakened for standard-stem ResNet18 | Matched ImageNet initialisation improved macro-F1 by `0.023024`, Spring F1 by `0.038829`, and all five folds | Keep P* as a ceiling only; it remains outside the eligible two-seed gate |
 | File size and acquisition year may be shortcuts | Still untested | I2 isolates ArticleType only; it says nothing about JPEG or year dependence | Run the declared OOF slices and perturbations before freeze |
 
 The baseline-to-G2 rows are generated at
 `results/evidence/task2/selection_story/eda_reflection.csv`. The measured I1 and I2
 updates are hash-linked at `results/evidence/task2/i1_class_balance/manifest.json` and
 `results/evidence/task2/i2_multitask/manifest.json`. The pretraining reflection is
-hash-linked at `results/evidence/task2/pretraining_benchmark/manifest.json`. Notebook 03
-sections 8.3.1-8.3.3 interpret all three boundaries. None of these paths opens holdout.
+hash-linked at `results/evidence/task2/pretraining_benchmark/manifest.json`, and G5 is
+hash-linked at `results/evidence/task2/seed_stability/manifest.json`. Notebook 03
+sections 8.3.1-8.4 interpret all four boundaries. None of these paths opens holdout.
 
 ## 5. Problems that must be solved
 
@@ -647,6 +681,7 @@ flowchart LR
     F --> I[I1 class balance and I2 multi-task]
     I --> P[P0S/P* matched pretraining boundary]
     P --> G5[Seed 2026 stability]
+    G5 --> A[Shortcut, error, robustness, calibration, and uncertainty analysis]
 ```
 
 - **B0 was selected first** because it is the cheapest leakage-safe lower bound and tests
@@ -676,6 +711,11 @@ flowchart LR
   P* shows how much transferred representation can help this pipeline, but the assignment
   still requires the submitted model to start from scratch. The measured ceiling therefore
   informs the limitation discussion and never changes the eligible winner table.
+- **G5 follows after candidate selection** and changes only the random seed for the
+  retained C2 comparator and I2 candidate. I2 remains ahead on pooled OOF macro-F1 at
+  both seeds, so architecture search closes. The smaller second-seed margin, two reversed
+  folds, and larger I2 drift prevent a stronger claim and lead directly to failure,
+  robustness, calibration, cost, and uncertainty analysis.
 
 The generated ladder is
 `results/evidence/task2/selection_story/incremental_model_selection.csv`.
@@ -833,7 +873,8 @@ Lambda `0.1` is better on the conflict gain, so it is not hidden as a failed mod
 Lambda `0.3` is selected because the rule already gave overall pooled macro-F1 first
 priority. This is a primary-seed decision only. The 19 unseen-ArticleType rows are too few
 for a strong subgroup claim, and there are no missing-ArticleType rows in this valid
-Season set. Calibration, robustness, uncertainty, and the second seed remain open.
+Season set. G5 later confirms the ordering at seed `2026`; calibration, robustness,
+uncertainty, and shortcut analysis remain open.
 
 ### 6.11 Measured P0S/P* pretraining boundary
 
@@ -861,6 +902,30 @@ closes without changing candidate selection: I2 lambda `0.3` remains the current
 eligible scratch candidate. Limitations are one seed, a fixed 80 x 60 transform rather
 than the standard 224 x 224 ImageNet recipe, and uncalibrated probabilities.
 
+### 6.12 Measured G5 seed-stability outcome
+
+G5 changes only the seed from `2753` to `2026` for the retained C2 comparator and I2
+lambda `0.3`. It preserves each candidate's data, transform, model, loss, optimiser,
+budget, split hash, label-map hash, and implementation hash. All ten new rows are clean,
+completed, and cover folds 0-4. Each candidate/seed OOF pack contains exactly 32,753
+development IDs and no protected ID.
+
+| Measure | C2 seed 2753 | C2 seed 2026 | I2 seed 2753 | I2 seed 2026 |
+|---|---:|---:|---:|---:|
+| Pooled OOF macro-F1 | `0.735036` | `0.733137` | `0.752687` | `0.744743` |
+| Fold SD | `0.006340` | `0.020605` | `0.006752` | `0.015412` |
+| Spring recall | `0.630549` | `0.626035` | `0.647103` | `0.628292` |
+| Spring F1 | `0.747547` | `0.747865` | `0.764784` | `0.754291` |
+| Five-fold runtime | `91.58` min | `60.92` min | `28.56` min | `26.44` min |
+
+I2 minus C2 pooled macro-F1 is positive at both seeds: `+0.017651` at seed `2753`
+and `+0.011607` at seed `2026`. The frozen ordering rule therefore passes, and I2
+remains the current eligible candidate. The conclusion is deliberately limited: I2
+drifts by `-0.007944`, two of five seed-2026 folds favour C2, and the Spring-recall
+advantage narrows to `+0.002257`. Two seeds support the direction, not every possible
+random start. The ultimate winner remains unfrozen until grouped bootstrap, shortcut,
+error, robustness, cost, calibration, and Grad-CAM evidence are complete.
+
 ## 7. Experiment matrix
 
 ### 7.1 Execution order
@@ -873,7 +938,7 @@ than the standard 224 x 224 ImageNet recipe, and uncalibrated probabilities.
 | G3 - complete | C1-T1 and C2-T0; maximum 30 epochs, patience 5 x 5 folds | Does equal mature training change the screen ordering under a real deterministic seed? | Passed: both corrected five-fold runs and evidence hashes exist; old G3 artifacts are trace only |
 | G4 - complete | I1 and two I2 lambdas; full budget x 5 folds | Do improvements solve EDA problems? | I1 rejected; both I2 lambdas pass; lambda `0.3` is the current candidate |
 | G4-PSTAR - complete | Matched P0S scratch and P* ImageNet standard-stem ResNet18 x 5 folds | What is the initialisation gap under one fixed pipeline? | P* gained `0.023024` macro-F1 but remains benchmark-only and final-ineligible |
-| G5 | Top two, second seed x 5 folds | Is the result stable? | Winner does not reverse without explanation |
+| G5 - complete | Retained C2 and selected I2 at seed `2026` x 5 folds | Is the result stable? | Passed: I2 remains ahead by `0.011607`; close architecture search but do not freeze the ultimate winner |
 | G6 | Both finalists: robustness, calibration, and cost | Which finalist is safer to deploy? | Complete comparable scorecards |
 
 ### 7.2 Experiment stopping rules
@@ -1043,9 +1108,10 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** run seed `2026` for the two eligible scratch finalists under the
-already frozen settings. Do not add another architecture, input size, augmentation,
-loss beta, auxiliary lambda, or tuning pair. P* is closed and must not enter this gate.
+**Next safe action:** keep C2 and I2 frozen and build the OOF shortcut/error slices for
+Spring, ArticleType aligned/conflict, acquisition year, training-fitted file-size
+quartile, product-family size, and image mode. Do not add another architecture, input
+size, augmentation, loss beta, auxiliary lambda, or tuning pair. Do not open holdout.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
@@ -1072,7 +1138,8 @@ loss beta, auxiliary lambda, or tuning pair. P* is closed and must not enter thi
 - [x] Run I2 for lambdas `0.1` and `0.3`; keep lambda `0.3` under the frozen rule.
 - [x] Run the matched pretrained benchmark with `benchmark_only=true` and keep both
   P0S/P* rows `final_eligible=false`.
-- [ ] Run a second seed for both finalists over all five folds.
+- [x] Run a second seed for both finalists over all five folds; keep I2 after the pooled
+  ordering remains positive at both seeds.
 
 ### Phase 4 - Analysis, 1-2 days
 
