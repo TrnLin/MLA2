@@ -6,7 +6,7 @@ import gc
 import io
 import json
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -156,6 +156,27 @@ def load_verified_slice_manifest(
             "decision": decision,
         },
     )
+
+
+def portable_record_paths(
+    records: Sequence[Mapping[str, Any]],
+    *,
+    fields: Sequence[str],
+    project_root: str | Path = ROOT,
+) -> list[dict[str, Any]]:
+    """Copy records while converting selected artifact paths to repository-relative form."""
+    root = Path(project_root)
+    portable: list[dict[str, Any]] = []
+    for record in records:
+        copied = dict(record)
+        for field in fields:
+            value = copied.get(field)
+            if value in {None, ""}:
+                continue
+            resolved = _resolve_evidence_path(str(value), project_root=root)
+            copied[field] = _portable_artifact_path(resolved, fallback_root=root)
+        portable.append(copied)
+    return portable
 
 
 def _plot_robustness(
@@ -582,6 +603,11 @@ def build_robustness_cost_evidence(
             cost_records.append(result)
             del model
             gc.collect()
+    cost_records = portable_record_paths(
+        cost_records,
+        fields=("result_path",),
+        project_root=root,
+    )
     deployment_cost = pd.DataFrame(cost_records).sort_values(["candidate", "device"], kind="stable")
 
     prediction_frames: dict[tuple[str, str], pd.DataFrame] = {}
@@ -658,6 +684,11 @@ def build_robustness_cost_evidence(
     decision = build_robustness_cost_decision(tables, deployment_cost, spec)
     checkpoint_audit = pd.DataFrame(checkpoint_audit_rows).sort_values(
         ["candidate", "fold"], kind="stable"
+    )
+    probe_records = portable_record_paths(
+        probe_records,
+        fields=("prediction_path", "manifest_path"),
+        project_root=root,
     )
     probe_registry = pd.json_normalize(probe_records, sep="_").sort_values(
         ["candidate", "condition", "fold"], kind="stable"
@@ -777,4 +808,5 @@ __all__ = [
     "build_robustness_cost_decision",
     "build_robustness_cost_evidence",
     "load_verified_slice_manifest",
+    "portable_record_paths",
 ]
