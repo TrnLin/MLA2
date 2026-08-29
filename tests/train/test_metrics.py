@@ -191,6 +191,10 @@ def test_fit_temperature_reduces_nll_for_overconfident_predictions() -> None:
 def test_cross_fit_temperature_never_fits_on_the_evaluation_fold(monkeypatch) -> None:
     true, probabilities = _overconfident_probabilities()
     folds = np.repeat(np.arange(5), 8)
+    fold_targets = [
+        np.roll(np.tile(np.asarray(LABELS, dtype=object), 2), fold) for fold in range(5)
+    ]
+    true = np.concatenate(fold_targets)
     observed_fit_inputs: list[tuple[np.ndarray, np.ndarray]] = []
     probabilities[:, 0] += np.repeat(np.arange(5), 8) * 1e-4
     probabilities /= probabilities.sum(axis=1, keepdims=True)

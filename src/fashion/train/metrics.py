@@ -66,12 +66,17 @@ def temperature_scale_probabilities(
     matrix = _probability_matrix(matrix, class_count=matrix.shape[1])
     if not np.isfinite(temperature) or temperature <= 0:
         raise ValueError("temperature must be finite and positive")
-    if not 0 < probability_floor < 0.5:
-        raise ValueError("probability_floor must be in (0, 0.5)")
-    pseudo_logits = np.log(np.clip(matrix, probability_floor, 1.0)) / float(temperature)
-    pseudo_logits -= pseudo_logits.max(axis=1, keepdims=True)
-    scaled = np.exp(pseudo_logits)
-    scaled /= scaled.sum(axis=1, keepdims=True)
+    class_reciprocal = 1.0 / matrix.shape[1]
+    if not 0 < probability_floor < class_reciprocal:
+        raise ValueError("probability_floor must be below the reciprocal of class count")
+    log_probabilities = np.log(np.clip(matrix, probability_floor, 1.0))
+    centred = log_probabilities - log_probabilities.max(axis=1, keepdims=True)
+    with np.errstate(over="ignore", under="ignore"):
+        scaled = np.exp(centred / float(temperature))
+    row_sums = scaled.sum(axis=1, keepdims=True)
+    if not np.isfinite(scaled).all() or not np.isfinite(row_sums).all() or (row_sums <= 0).any():
+        raise ValueError("temperature scaling produced invalid probabilities")
+    scaled /= row_sums
     return scaled
 
 
@@ -117,15 +122,15 @@ def fit_temperature(
     probability_floor: float = 1e-12,
     optimizer_tolerance: float = 1e-8,
 ) -> float:
-    """Fit one positive scalar temperature by bounded NLL minimisation."""
+    """Fit one scalar by bounded NLL minimisation; fitting data must contain every class."""
     ordered_labels = _unique_labels(labels)
     matrix = _probability_matrix(probabilities, class_count=len(ordered_labels))
     targets = _target_indices(y_true, ordered_labels)
     if len(targets) != len(matrix):
         raise ValueError("probabilities and y_true row counts differ")
     lower, upper = (float(value) for value in temperature_bounds)
-    if not 0 < lower < upper:
-        raise ValueError("temperature_bounds must satisfy 0 < lower < upper")
+    if not np.isfinite((lower, upper)).all() or not 0 < lower < upper:
+        raise ValueError("temperature_bounds must be finite and satisfy 0 < lower < upper")
     if not np.isfinite(optimizer_tolerance) or optimizer_tolerance <= 0:
         raise ValueError("optimizer_tolerance must be finite and positive")
 
@@ -165,7 +170,17 @@ def cross_fit_temperature(
         raise ValueError("probabilities, y_true, and fold_ids must have equal row counts")
     if folds.dtype.kind not in "iu" or not np.isfinite(folds.astype(float)).all():
         raise ValueError("fold_ids must contain finite integers")
-    expected = tuple(int(fold) for fold in expected_folds)
+    try:
+        expected_values = np.asarray(expected_folds, dtype=float)
+    except (TypeError, ValueError) as error:
+        raise ValueError("expected_folds must contain finite integers") from error
+    if (
+        expected_values.ndim != 1
+        or not np.isfinite(expected_values).all()
+        or not np.equal(expected_values, np.floor(expected_values)).all()
+    ):
+        raise ValueError("expected_folds must contain finite integers")
+    expected = tuple(int(fold) for fold in expected_values)
     if len(expected) < 2 or len(set(expected)) != len(expected):
         raise ValueError("expected_folds must contain at least two unique folds")
     if set(folds.astype(int)) != set(expected):
