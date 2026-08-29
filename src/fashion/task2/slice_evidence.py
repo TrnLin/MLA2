@@ -318,13 +318,21 @@ def build_slice_decision(
     tables: SliceAnalysisTables,
     *,
     stability_decision: Mapping[str, Any],
+    low_support_threshold: int = 100,
 ) -> dict[str, Any]:
     """Describe measured weaknesses without using post-hoc slices to select a model."""
     if stability_decision.get("current_candidate") != "I2":
         raise ValueError("G6 requires the seed-stable I2 candidate from G5")
+    if low_support_threshold < 1:
+        raise ValueError("low-support threshold must be positive")
     deltas = tables.candidate_slice_deltas.copy()
+    if not deltas["c2_support"].eq(deltas["i2_support"]).all():
+        raise ValueError("C2 and I2 slice supports differ")
     finite = deltas.loc[np.isfinite(pd.to_numeric(deltas["i2_minus_c2_macro_f1"]))].copy()
+    finite["support"] = pd.to_numeric(finite["c2_support"], errors="raise").astype(int)
+    finite["low_support"] = finite["support"].lt(low_support_threshold)
     negative = finite.loc[finite["i2_minus_c2_macro_f1"].lt(0)]
+    adequately_supported_negative = negative.loc[~negative["low_support"]]
     pivot = finite.pivot_table(
         index=["slice_family", "slice_name"],
         columns="seed",
@@ -338,7 +346,17 @@ def build_slice_decision(
     worst_rows = (
         finite.sort_values("i2_minus_c2_macro_f1", kind="stable")
         .head(5)
-        .loc[:, ["seed", "slice_family", "slice_name", "i2_minus_c2_macro_f1"]]
+        .loc[
+            :,
+            [
+                "seed",
+                "slice_family",
+                "slice_name",
+                "support",
+                "low_support",
+                "i2_minus_c2_macro_f1",
+            ],
+        ]
         .to_dict(orient="records")
     )
     spring = tables.spring_metrics.set_index(["candidate", "seed"])
@@ -363,7 +381,10 @@ def build_slice_decision(
         "ultimate_winner_frozen": False,
         "evaluated_candidate_seed_pairs": 4,
         "finite_candidate_slice_comparisons": len(finite),
+        "low_support_threshold": low_support_threshold,
         "i2_below_c2_slice_count": len(negative),
+        "adequately_supported_i2_below_c2_slice_count": len(adequately_supported_negative),
+        "low_support_i2_below_c2_slice_count": int(negative["low_support"].sum()),
         "slice_delta_sign_reversals_between_seeds": sign_reversals,
         "spring_deltas_by_seed": spring_deltas,
         "worst_i2_minus_c2_slice_rows": worst_rows,
@@ -451,7 +472,11 @@ def build_shortcut_error_slice_evidence(
 
     bundle = build_slice_assignments(splits, spec)
     tables = analyse_slice_packs(packs, bundle, spec)
-    decision = build_slice_decision(tables, stability_decision=stability_decision)
+    decision = build_slice_decision(
+        tables,
+        stability_decision=stability_decision,
+        low_support_threshold=spec.low_support_threshold,
+    )
 
     evidence_root = Path(evidence_directory)
     figure_root = Path(figure_directory)

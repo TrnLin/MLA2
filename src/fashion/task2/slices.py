@@ -796,8 +796,12 @@ def analyse_slice_packs(
 def plot_slice_macro_f1(
     slice_metrics: pd.DataFrame,
     output_path: str | Path,
+    *,
+    low_support_threshold: int = 100,
 ) -> Path:
     """Plot macro-F1 for every non-empty declared slice across models and seeds."""
+    if low_support_threshold < 1:
+        raise ValueError("low-support threshold must be positive")
     figure, axes = plt.subplots(3, 2, figsize=(14, 13), constrained_layout=True)
     styles = {
         ("C2", 2753): ("#82A6EA", "o", "-"),
@@ -824,14 +828,35 @@ def plot_slice_macro_f1(
                 linewidth=2,
                 label=f"{candidate} seed {seed}",
             )
-        axis.set_xticks(positions, [name.replace("_", "\n") for name in names])
+        tick_labels = []
+        for name in names:
+            support_values = set(
+                pd.to_numeric(
+                    slice_metrics.loc[
+                        slice_metrics["slice_family"].eq(family)
+                        & slice_metrics["slice_name"].eq(name),
+                        "support",
+                    ],
+                    errors="raise",
+                ).astype(int)
+            )
+            if len(support_values) != 1:
+                raise ValueError(f"slice support changed across candidates for {family}/{name}")
+            support = support_values.pop()
+            support_note = f"n={support:,}"
+            if 0 < support < low_support_threshold:
+                support_note += " LOW SUPPORT"
+            elif support == 0:
+                support_note += " NO ROWS"
+            tick_labels.append(f"{name.replace('_', '\n')}\n({support_note})")
+        axis.set_xticks(positions, tick_labels)
         axis.set_ylim(0, 1)
         axis.set_ylabel("Fixed-label macro-F1")
         axis.set_title(family.replace("_", " ").title())
         axis.grid(axis="y", alpha=0.2)
     axes.flat[-1].axis("off")
     handles, labels = axes.flat[0].get_legend_handles_labels()
-    figure.legend(handles, labels, loc="lower center", ncols=4, fontsize=9)
+    figure.legend(handles, labels, loc="outside lower center", ncols=4, fontsize=9)
     figure.suptitle(
         "Frozen C2/I2 OOF performance across declared shortcut slices",
         fontsize=16,
@@ -883,7 +908,7 @@ def plot_spring_destinations(
         axis.set_ylabel("Share of true Spring products")
         axis.grid(axis="y", alpha=0.2)
     handles, labels = axes[0].get_legend_handles_labels()
-    figure.legend(handles, labels, loc="lower center", ncols=4, fontsize=9)
+    figure.legend(handles, labels, loc="outside lower center", ncols=4, fontsize=9)
     figure.suptitle(
         "True Spring prediction destinations",
         fontsize=15,
