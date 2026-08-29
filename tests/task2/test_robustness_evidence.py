@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
 
 import pandas as pd
@@ -16,6 +17,7 @@ from fashion.task2.robustness_evidence import (
     load_verified_slice_manifest,
 )
 from fashion.train.artifacts import ArtifactVerificationError
+from fashion.train.cache import verify_implementation_at_head
 
 
 def _write(path: Path, content: str) -> Path:
@@ -207,3 +209,32 @@ def test_robustness_and_cost_figures_are_nonempty_pngs(tmp_path: Path) -> None:
         with Image.open(path) as image:
             assert image.width >= 2_000
             assert image.height >= 700
+
+
+def test_implementation_provenance_rejects_untracked_or_changed_source(
+    tmp_path: Path,
+) -> None:
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    subprocess.run(
+        ["git", "config", "user.email", "task2@example.invalid"],
+        cwd=tmp_path,
+        check=True,
+    )
+    subprocess.run(
+        ["git", "config", "user.name", "Task 2 Test"],
+        cwd=tmp_path,
+        check=True,
+    )
+    tracked = _write(tmp_path / "src/tracked.py", "VALUE = 1\n")
+    subprocess.run(["git", "add", "--", "src/tracked.py"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "commit", "-qm", "test fixture"], cwd=tmp_path, check=True)
+
+    assert verify_implementation_at_head("src/tracked.py", root=tmp_path) == (
+        "src/tracked.py",
+    )
+    untracked = _write(tmp_path / "src/untracked.py", "VALUE = 2\n")
+    with pytest.raises(ValueError, match="not tracked"):
+        verify_implementation_at_head(untracked, root=tmp_path)
+    tracked.write_text("VALUE = 3\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="differs from HEAD"):
+        verify_implementation_at_head(tracked, root=tmp_path)
