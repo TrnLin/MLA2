@@ -900,6 +900,7 @@ def run_or_load_fold_probe(
     )
     prediction_path = output / "predictions.csv"
     atomic_write_csv(prediction_path, predictions)
+    predictions = pd.read_csv(prediction_path)
     coverage = validate_oof(
         predictions,
         expected_ids=expected_ids,
