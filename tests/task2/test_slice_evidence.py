@@ -243,12 +243,16 @@ def test_slice_decision_reports_weaknesses_without_post_hoc_selection() -> None:
                 "seed": 2753,
                 "slice_family": "image_mode",
                 "slice_name": "rgb",
+                "c2_support": 1000,
+                "i2_support": 1000,
                 "i2_minus_c2_macro_f1": 0.02,
             },
             {
                 "seed": 2026,
                 "slice_family": "image_mode",
                 "slice_name": "rgb",
+                "c2_support": 19,
+                "i2_support": 19,
                 "i2_minus_c2_macro_f1": -0.01,
             },
         ]
@@ -277,6 +281,9 @@ def test_slice_decision_reports_weaknesses_without_post_hoc_selection() -> None:
     decision = build_slice_decision(tables, stability_decision={"current_candidate": "I2"})
 
     assert decision["i2_below_c2_slice_count"] == 1
+    assert decision["adequately_supported_i2_below_c2_slice_count"] == 0
     assert decision["slice_delta_sign_reversals_between_seeds"] == 1
+    assert decision["worst_i2_minus_c2_slice_rows"][0]["support"] == 19
+    assert decision["worst_i2_minus_c2_slice_rows"][0]["low_support"] is True
     assert decision["candidate_selection_affected"] is False
     assert decision["ultimate_winner_frozen"] is False
