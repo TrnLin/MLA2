@@ -98,7 +98,7 @@ strongest defensible submission path.
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 | Current G5 gate | C2 and I2 seed-2026 folds are complete, hash-verified, and tied to clean commit `04ef69d`; I2 remains ahead at both seeds | Keep I2 lambda `0.3`; P* is a non-selectable ceiling; do not freeze yet |
-| Current verification | `pip check`, full-repository Ruff, and `324` tests pass | G5 code, evidence, Notebook outputs, HTML export, and structure are green |
+| Current verification | `pip check`, full-repository Ruff, and `337` tests pass | G6 slice code, evidence, Notebook outputs, and structure are green |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -1080,7 +1080,6 @@ Notebook presentation rules:
   evidence.
 - Save report figures under `results/figures/task2/`.
 - Save compact evidence tables under `results/evidence/task2/`.
-- Generate `results/notebooks/03_task2_season.html` after a clean Run All.
 - Do not write fabricated results or a “best model” claim before real runs finish.
 
 ## 10. Completion plan
@@ -1158,14 +1157,14 @@ size, augmentation, loss beta, auxiliary lambda, or tuning pair. Do not open hol
 - [ ] Hand off to Notebook 06.
 - [ ] Open holdout once and never return to tuning.
 
-### Phase 6 - Prediction, app, and report, 1-2 days
+### Phase 6 - Prediction and deferred integration, 1-2 days
 
 - [ ] Produce exactly `id,gender,articleType,season,usage`; Task 2 fills only `season`
   inside the shared pipeline.
 - [ ] Validate 5,829 IDs, order, four allowed labels, and no blanks.
-- [ ] Integrate image upload, label, probabilities, review flag, and latency in the app.
-- [ ] Generate report tables and figures from artifacts rather than hand-copying values.
-- [ ] Export Notebook 03 to HTML and verify Run All in a clean environment.
+
+Future work outside the current analysis window: integrate the app workflow and assemble
+report tables and figures directly from verified artifacts.
 
 ### Definition of done
 
