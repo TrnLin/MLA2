@@ -229,9 +229,7 @@ def test_implementation_provenance_rejects_untracked_or_changed_source(
     subprocess.run(["git", "add", "--", "src/tracked.py"], cwd=tmp_path, check=True)
     subprocess.run(["git", "commit", "-qm", "test fixture"], cwd=tmp_path, check=True)
 
-    assert verify_implementation_at_head("src/tracked.py", root=tmp_path) == (
-        "src/tracked.py",
-    )
+    assert verify_implementation_at_head("src/tracked.py", root=tmp_path) == ("src/tracked.py",)
     untracked = _write(tmp_path / "src/untracked.py", "VALUE = 2\n")
     with pytest.raises(ValueError, match="not tracked"):
         verify_implementation_at_head(untracked, root=tmp_path)

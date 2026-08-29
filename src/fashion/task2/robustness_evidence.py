@@ -47,7 +47,7 @@ from fashion.train.artifacts import (
     canonical_sha256,
     verify_artifact,
 )
-from fashion.train.cache import implementation_sha256
+from fashion.train.cache import implementation_sha256, verify_implementation_at_head
 from fashion.train.metrics import SEASON_LABELS, validate_oof
 from fashion.train.reproducibility import capture_git_state, capture_runtime
 
@@ -459,6 +459,10 @@ def build_robustness_cost_evidence(
         raise ValueError("robustness evidence requires a Git commit")
     if git_state.get("dirty") is not False:
         raise ValueError("robustness probes require a clean tracked Git worktree")
+    implementation_files = verify_implementation_at_head(
+        *ROBUSTNESS_IMPLEMENTATION_PATHS,
+        root=root,
+    )
     runtime = capture_runtime()
     runtime_sha256 = canonical_sha256(runtime)
     config_sha256 = compute_sha256(config_path)
@@ -749,6 +753,7 @@ def build_robustness_cost_evidence(
             },
         },
         "implementation_sha256": implementation_hash,
+        "implementation_files_at_head": list(implementation_files),
         "runtime_sha256": runtime_sha256,
         "input_checkpoints": {
             str(row["run_id"]): {

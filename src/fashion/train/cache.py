@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import subprocess
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -115,6 +116,47 @@ def implementation_sha256(
             }
         )
     return canonical_sha256(manifest)
+
+
+def verify_implementation_at_head(
+    *paths: str | Path,
+    root: str | Path = ROOT,
+    directory_suffixes: tuple[str, ...] = (".py",),
+) -> tuple[str, ...]:
+    """Require every hashed implementation file to be tracked and unchanged at HEAD."""
+    repository = Path(root).resolve()
+    files = _implementation_files(
+        tuple(paths),
+        root=repository,
+        directory_suffixes=directory_suffixes,
+    )
+    relative_paths = tuple(path.relative_to(repository).as_posix() for path in files)
+
+    tracked_result = subprocess.run(
+        ["git", "ls-files", "-z", "--", *relative_paths],
+        cwd=repository,
+        check=False,
+        capture_output=True,
+    )
+    if tracked_result.returncode != 0:
+        raise ValueError("cannot audit implementation files against Git")
+    tracked = {item.decode("utf-8") for item in tracked_result.stdout.split(b"\0") if item}
+    untracked = sorted(set(relative_paths) - tracked)
+    if untracked:
+        raise ValueError(f"implementation files are not tracked by Git: {untracked}")
+
+    changed_result = subprocess.run(
+        ["git", "diff", "--name-only", "-z", "HEAD", "--", *relative_paths],
+        cwd=repository,
+        check=False,
+        capture_output=True,
+    )
+    if changed_result.returncode != 0:
+        raise ValueError("cannot compare implementation files with Git HEAD")
+    changed = sorted(item.decode("utf-8") for item in changed_result.stdout.split(b"\0") if item)
+    if changed:
+        raise ValueError(f"implementation source differs from HEAD: {changed}")
+    return relative_paths
 
 
 def build_run_cache_key(
