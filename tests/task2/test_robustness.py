@@ -491,3 +491,31 @@ def test_direct_fold_prediction_uses_only_declared_validation_ids(tmp_path: Path
     assert set(predictions["id"]) == set(frame["id"])
     assert set(predictions["fold"]) == {0}
     assert metadata["rows"] == 4
+
+
+def test_clean_condition_uses_the_same_fold_inference_pipeline(tmp_path: Path) -> None:
+    frame = _make_images(tmp_path)
+
+    predictions, metadata = predict_robustness_fold(
+        TinySeasonModel(),
+        candidate=RobustnessCandidate("C2", "g3-c2-t0-resnet18", 2753),
+        condition=_conditions()[0],
+        validation_frame=frame,
+        stats=_stats(),
+        label_to_index={label: index for index, label in enumerate(SEASON_LABELS)},
+        project_root=tmp_path,
+        batch_size=2,
+        num_workers=0,
+        pin_memory=False,
+        device="cpu",
+        use_amp=False,
+        checkpoint_run_id="run-1",
+        probe_id="clean-probe-1",
+    )
+
+    assert set(predictions["condition"]) == {"clean"}
+    assert set(predictions["id"]) == set(frame["id"])
+    assert metadata["rows"] == len(frame)
+    assert load_robustness_cost_spec().conditions[0].source == (
+        "re_inferred_and_verified_against_frozen_oof"
+    )
