@@ -9,6 +9,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from scipy.optimize import minimize_scalar
 from sklearn.metrics import (
     accuracy_score,
     confusion_matrix,
@@ -30,6 +31,191 @@ def _unique_labels(labels: Sequence[str]) -> tuple[str, ...]:
     if len(ordered) < 2 or len(set(ordered)) != len(ordered):
         raise ValueError("labels must contain at least two unique values in class order")
     return ordered
+
+
+def _probability_matrix(
+    probabilities: Sequence[Sequence[float]] | np.ndarray,
+    *,
+    class_count: int,
+) -> np.ndarray:
+    matrix = np.asarray(probabilities, dtype=np.float64)
+    if matrix.ndim != 2 or matrix.shape[0] == 0 or matrix.shape[1] != class_count:
+        raise ValueError(
+            "probabilities must be a non-empty matrix with "
+            f"{class_count} columns, got {matrix.shape}"
+        )
+    if not np.isfinite(matrix).all():
+        raise ValueError("probabilities must all be finite")
+    if ((matrix < 0.0) | (matrix > 1.0)).any():
+        raise ValueError("probabilities must be in [0, 1]")
+    if not np.allclose(matrix.sum(axis=1), 1.0, rtol=0.0, atol=1e-5):
+        raise ValueError("each probability row must sum to one")
+    return matrix
+
+
+def temperature_scale_probabilities(
+    probabilities: Sequence[Sequence[float]] | np.ndarray,
+    temperature: float,
+    *,
+    probability_floor: float = 1e-12,
+) -> np.ndarray:
+    """Apply scalar temperature scaling to softmax probabilities."""
+    matrix = np.asarray(probabilities, dtype=np.float64)
+    if matrix.ndim != 2:
+        raise ValueError("probabilities must be a two-dimensional matrix")
+    matrix = _probability_matrix(matrix, class_count=matrix.shape[1])
+    if not np.isfinite(temperature) or temperature <= 0:
+        raise ValueError("temperature must be finite and positive")
+    if not 0 < probability_floor < 0.5:
+        raise ValueError("probability_floor must be in (0, 0.5)")
+    pseudo_logits = np.log(np.clip(matrix, probability_floor, 1.0)) / float(temperature)
+    pseudo_logits -= pseudo_logits.max(axis=1, keepdims=True)
+    scaled = np.exp(pseudo_logits)
+    scaled /= scaled.sum(axis=1, keepdims=True)
+    return scaled
+
+
+def _target_indices(y_true: Sequence[str] | np.ndarray, labels: tuple[str, ...]) -> np.ndarray:
+    true = np.asarray(y_true, dtype=object)
+    if true.ndim != 1 or len(true) == 0:
+        raise ValueError("y_true must be a non-empty one-dimensional sequence")
+    label_to_index = {label: index for index, label in enumerate(labels)}
+    unknown = sorted(set(true.astype(str)) - set(labels))
+    if unknown:
+        raise ValueError(f"y_true contains unknown labels: {unknown}")
+    if set(true.astype(str)) != set(labels):
+        raise ValueError("temperature fitting requires every declared class")
+    return np.fromiter(
+        (label_to_index[str(label)] for label in true),
+        dtype=np.int64,
+        count=len(true),
+    )
+
+
+def _temperature_nll(
+    probabilities: np.ndarray,
+    target_indices: np.ndarray,
+    temperature: float,
+    *,
+    probability_floor: float,
+) -> float:
+    scaled = temperature_scale_probabilities(
+        probabilities,
+        temperature,
+        probability_floor=probability_floor,
+    )
+    selected = scaled[np.arange(len(target_indices)), target_indices]
+    return float(-np.log(np.clip(selected, probability_floor, 1.0)).mean())
+
+
+def fit_temperature(
+    probabilities: Sequence[Sequence[float]] | np.ndarray,
+    y_true: Sequence[str] | np.ndarray,
+    *,
+    labels: Sequence[str] = SEASON_LABELS,
+    temperature_bounds: tuple[float, float] = (0.05, 10.0),
+    probability_floor: float = 1e-12,
+    optimizer_tolerance: float = 1e-8,
+) -> float:
+    """Fit one positive scalar temperature by bounded NLL minimisation."""
+    ordered_labels = _unique_labels(labels)
+    matrix = _probability_matrix(probabilities, class_count=len(ordered_labels))
+    targets = _target_indices(y_true, ordered_labels)
+    if len(targets) != len(matrix):
+        raise ValueError("probabilities and y_true row counts differ")
+    lower, upper = (float(value) for value in temperature_bounds)
+    if not 0 < lower < upper:
+        raise ValueError("temperature_bounds must satisfy 0 < lower < upper")
+    if not np.isfinite(optimizer_tolerance) or optimizer_tolerance <= 0:
+        raise ValueError("optimizer_tolerance must be finite and positive")
+
+    result = minimize_scalar(
+        lambda log_temperature: _temperature_nll(
+            matrix,
+            targets,
+            math.exp(float(log_temperature)),
+            probability_floor=probability_floor,
+        ),
+        bounds=(math.log(lower), math.log(upper)),
+        method="bounded",
+        options={"xatol": optimizer_tolerance},
+    )
+    if not result.success or not np.isfinite(result.x):
+        raise RuntimeError(f"temperature optimisation failed: {result.message}")
+    return float(math.exp(float(result.x)))
+
+
+def cross_fit_temperature(
+    probabilities: Sequence[Sequence[float]] | np.ndarray,
+    y_true: Sequence[str] | np.ndarray,
+    fold_ids: Sequence[int] | np.ndarray,
+    *,
+    labels: Sequence[str] = SEASON_LABELS,
+    expected_folds: Sequence[int] = tuple(range(5)),
+    temperature_bounds: tuple[float, float] = (0.05, 10.0),
+    probability_floor: float = 1e-12,
+    optimizer_tolerance: float = 1e-8,
+) -> tuple[np.ndarray, pd.DataFrame]:
+    """Fit on other OOF folds and calibrate each row only with an unseen-fold scalar."""
+    ordered_labels = _unique_labels(labels)
+    matrix = _probability_matrix(probabilities, class_count=len(ordered_labels))
+    true = np.asarray(y_true, dtype=object)
+    folds = np.asarray(fold_ids)
+    if true.ndim != 1 or folds.ndim != 1 or len(true) != len(matrix) or len(folds) != len(matrix):
+        raise ValueError("probabilities, y_true, and fold_ids must have equal row counts")
+    if folds.dtype.kind not in "iu" or not np.isfinite(folds.astype(float)).all():
+        raise ValueError("fold_ids must contain finite integers")
+    expected = tuple(int(fold) for fold in expected_folds)
+    if len(expected) < 2 or len(set(expected)) != len(expected):
+        raise ValueError("expected_folds must contain at least two unique folds")
+    if set(folds.astype(int)) != set(expected):
+        raise ValueError("fold_ids do not match expected_folds")
+
+    calibrated = np.empty_like(matrix)
+    audit_rows: list[dict[str, Any]] = []
+    original_argmax = matrix.argmax(axis=1)
+    for evaluation_fold in expected:
+        evaluation_mask = folds.astype(int) == evaluation_fold
+        fit_mask = ~evaluation_mask
+        fit_folds = tuple(fold for fold in expected if fold != evaluation_fold)
+        temperature = fit_temperature(
+            matrix[fit_mask],
+            true[fit_mask],
+            labels=ordered_labels,
+            temperature_bounds=temperature_bounds,
+            probability_floor=probability_floor,
+            optimizer_tolerance=optimizer_tolerance,
+        )
+        calibrated[evaluation_mask] = temperature_scale_probabilities(
+            matrix[evaluation_mask],
+            temperature,
+            probability_floor=probability_floor,
+        )
+        audit_rows.append(
+            {
+                "evaluation_fold": evaluation_fold,
+                "fit_folds": "|".join(str(fold) for fold in fit_folds),
+                "fit_fold_count": len(fit_folds),
+                "calibration_rows": int(fit_mask.sum()),
+                "evaluation_rows": int(evaluation_mask.sum()),
+                "temperature": temperature,
+                "fit_nll_before": _temperature_nll(
+                    matrix[fit_mask],
+                    _target_indices(true[fit_mask], ordered_labels),
+                    1.0,
+                    probability_floor=probability_floor,
+                ),
+                "fit_nll_after": _temperature_nll(
+                    matrix[fit_mask],
+                    _target_indices(true[fit_mask], ordered_labels),
+                    temperature,
+                    probability_floor=probability_floor,
+                ),
+            }
+        )
+    if not np.array_equal(original_argmax, calibrated.argmax(axis=1)):
+        raise RuntimeError("temperature scaling changed class ranking")
+    return calibrated, pd.DataFrame(audit_rows)
 
 
 def validate_oof(
@@ -80,12 +266,8 @@ def validate_oof(
     if expected_targets is not None:
         canonical_truth = {str(key): str(value) for key, value in expected_targets.items()}
         if len(canonical_truth) != len(expected_targets) or set(canonical_truth) != expected:
-            raise OOFValidationError(
-                "canonical true-label IDs differ from the expected OOF IDs"
-            )
-        recorded_truth = dict(
-            zip(ids, relevant[true_column].astype(str), strict=True)
-        )
+            raise OOFValidationError("canonical true-label IDs differ from the expected OOF IDs")
+        recorded_truth = dict(zip(ids, relevant[true_column].astype(str), strict=True))
         mismatches = sorted(
             identifier
             for identifier in expected
@@ -281,7 +463,9 @@ def multiclass_metrics(
             true,
             predicted,
             labels=ordered_labels,
-        ).astype(int).tolist(),
+        )
+        .astype(int)
+        .tolist(),
     }
 
 
@@ -296,9 +480,7 @@ def _assert_metric_payload_matches(
             raise OOFValidationError(f"cached metrics type mismatch at {path}")
         missing = sorted(set(recomputed) - set(recorded))
         if missing:
-            raise OOFValidationError(
-                f"cached metrics are missing keys at {path}: {missing}"
-            )
+            raise OOFValidationError(f"cached metrics are missing keys at {path}: {missing}")
         for key, value in recomputed.items():
             _assert_metric_payload_matches(
                 recorded[key],

@@ -6,7 +6,14 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from fashion.train.metrics import OOFValidationError, multiclass_metrics, validate_oof
+from fashion.train.metrics import (
+    OOFValidationError,
+    cross_fit_temperature,
+    fit_temperature,
+    multiclass_metrics,
+    temperature_scale_probabilities,
+    validate_oof,
+)
 
 LABELS = ("Fall", "Spring", "Summer", "Winter")
 
@@ -106,3 +113,73 @@ def test_multiclass_metrics_accepts_float32_softmax_without_warning() -> None:
         )
 
     assert metrics["nll"] > 0
+
+
+def _overconfident_probabilities() -> tuple[np.ndarray, np.ndarray]:
+    true = np.tile(np.asarray(LABELS, dtype=object), 10)
+    probabilities = np.full((len(true), len(LABELS)), 0.01, dtype=float)
+    true_indices = np.tile(np.arange(len(LABELS)), 10)
+    wrong_indices = (true_indices + 1) % len(LABELS)
+    for row, (true_index, wrong_index) in enumerate(zip(true_indices, wrong_indices, strict=True)):
+        if row % 4 == 0:
+            probabilities[row, wrong_index] = 0.94
+            probabilities[row, true_index] = 0.03
+        else:
+            probabilities[row, true_index] = 0.94
+            probabilities[row, wrong_index] = 0.03
+    probabilities /= probabilities.sum(axis=1, keepdims=True)
+    return true, probabilities
+
+
+def test_temperature_scaling_softens_confidence_without_changing_argmax() -> None:
+    _, probabilities = _overconfident_probabilities()
+
+    scaled = temperature_scale_probabilities(probabilities, 2.0)
+
+    np.testing.assert_allclose(scaled.sum(axis=1), 1.0, rtol=0.0, atol=1e-12)
+    np.testing.assert_array_equal(scaled.argmax(axis=1), probabilities.argmax(axis=1))
+    assert np.all(scaled.max(axis=1) < probabilities.max(axis=1))
+
+
+def test_fit_temperature_reduces_nll_for_overconfident_predictions() -> None:
+    true, probabilities = _overconfident_probabilities()
+    before = multiclass_metrics(true, probabilities=probabilities, labels=LABELS)
+
+    temperature = fit_temperature(probabilities, true, labels=LABELS)
+    scaled = temperature_scale_probabilities(probabilities, temperature)
+    after = multiclass_metrics(true, probabilities=scaled, labels=LABELS)
+
+    assert temperature > 1.0
+    assert after["nll"] < before["nll"]
+    assert after["accuracy"] == before["accuracy"]
+
+
+def test_cross_fit_temperature_never_fits_on_the_evaluation_fold(monkeypatch) -> None:
+    true, probabilities = _overconfident_probabilities()
+    folds = np.repeat(np.arange(5), 8)
+    observed_fit_markers: list[set[float]] = []
+    probabilities[:, 0] += np.repeat(np.arange(5), 8) * 1e-4
+    probabilities /= probabilities.sum(axis=1, keepdims=True)
+
+    def recording_fit(matrix, targets, **kwargs):
+        observed_fit_markers.append(set(np.round(matrix[:, 0], 8)))
+        return 1.5
+
+    monkeypatch.setattr("fashion.train.metrics.fit_temperature", recording_fit)
+    calibrated, audit = cross_fit_temperature(probabilities, true, folds, labels=LABELS)
+
+    assert len(audit) == 5
+    assert audit["fit_fold_count"].eq(4).all()
+    assert audit["calibration_rows"].eq(32).all()
+    assert audit["evaluation_rows"].eq(8).all()
+    for evaluation_fold, seen in enumerate(observed_fit_markers):
+        held_out = set(np.round(probabilities[folds == evaluation_fold, 0], 8))
+        assert seen.isdisjoint(held_out)
+    np.testing.assert_array_equal(calibrated.argmax(axis=1), probabilities.argmax(axis=1))
+
+
+def test_cross_fit_temperature_rejects_incomplete_fold_set() -> None:
+    true, probabilities = _overconfident_probabilities()
+
+    with pytest.raises(ValueError, match="expected_folds"):
+        cross_fit_temperature(probabilities, true, np.zeros(len(true), dtype=int), labels=LABELS)

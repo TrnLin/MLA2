@@ -20,7 +20,10 @@ from fashion.train.cache import (
 from fashion.train.engine import FoldResult, TrainConfig, train_fold
 from fashion.train.metrics import (
     OOFValidationError,
+    cross_fit_temperature,
+    fit_temperature,
     multiclass_metrics,
+    temperature_scale_probabilities,
     validate_oof,
 )
 from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
@@ -44,8 +47,10 @@ __all__ = [
     "canonical_sha256",
     "capture_git_state",
     "capture_runtime",
+    "cross_fit_temperature",
     "FoldResult",
     "find_cached_run",
+    "fit_temperature",
     "implementation_sha256",
     "make_torch_generator",
     "multiclass_metrics",
@@ -57,6 +62,7 @@ __all__ = [
     "seed_everything",
     "seed_worker",
     "tracked_run",
+    "temperature_scale_probabilities",
     "TrainConfig",
     "train_fold",
     "validate_oof",
