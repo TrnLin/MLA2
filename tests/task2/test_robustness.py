@@ -341,7 +341,11 @@ def test_fold_prediction_and_hash_cache_are_exact(tmp_path: Path) -> None:
 
     assert first.record["source"] == "run"
     assert second.record["source"] == "cache"
-    pd.testing.assert_frame_equal(first.predictions, second.predictions)
+    pd.testing.assert_frame_equal(
+        first.predictions,
+        second.predictions,
+        check_exact=True,
+    )
     prediction_path = Path(second.record["prediction_path"])
     prediction_path.write_text("changed\n", encoding="utf-8")
     with pytest.raises(ArtifactVerificationError, match="SHA-256 mismatch"):
