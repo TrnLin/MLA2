@@ -76,3 +76,9 @@ product-family size, and image mode are joined only after prediction and are nev
 inputs. The contract also fixes the Spring error outputs, high-confidence threshold,
 low-support warning, and class order. Slice results can weaken a claim, but cannot add a
 new architecture or freeze the ultimate winner by themselves.
+
+`g6_robustness_cost.json` pairs the primary-seed C2 and I2 fold checkpoints on
+all 32,753 development products under JPEG-85, two fixed brightness shifts, and
+radius-1 Gaussian blur. It also freezes single-image CPU and available-CUDA
+latency and memory measurement rules. These probes explain deployment risk;
+they cannot reopen the G5 model choice or access holdout data.

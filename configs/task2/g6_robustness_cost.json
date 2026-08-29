@@ -1,0 +1,99 @@
+{
+  "analysis_id": "g6-robustness-cost",
+  "candidate_experiments": [
+    {
+      "candidate": "C2",
+      "experiment_id": "g3-c2-t0-resnet18",
+      "seed": 2753
+    },
+    {
+      "candidate": "I2",
+      "experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+      "seed": 2753
+    }
+  ],
+  "cost_protocol": {
+    "batch_size": 1,
+    "checkpoint_fold": 0,
+    "cpu_threads": 1,
+    "devices": [
+      "cpu",
+      "cuda_if_available"
+    ],
+    "end_to_end_repeats": 50,
+    "end_to_end_warmups": 10,
+    "fixed_input_rule": "lowest_id_in_checkpoint_validation_fold",
+    "memory_metrics": [
+      "parameter_and_buffer_bytes",
+      "training_checkpoint_bytes",
+      "process_rss_delta_bytes",
+      "peak_cuda_allocated_bytes"
+    ],
+    "model_only_repeats": 200,
+    "model_only_warmups": 30,
+    "synchronise_accelerator_each_repeat": true
+  },
+  "expected_row_count": 32753,
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "material_macro_f1_degradation": 0.01,
+  "robustness_conditions": [
+    {
+      "condition": "clean",
+      "kind": "none",
+      "source": "verified_frozen_oof"
+    },
+    {
+      "condition": "jpeg_quality_85",
+      "kind": "jpeg_reencode",
+      "quality": 85,
+      "subsampling": 2
+    },
+    {
+      "condition": "brightness_0_85",
+      "factor": 0.85,
+      "kind": "brightness"
+    },
+    {
+      "condition": "brightness_1_15",
+      "factor": 1.15,
+      "kind": "brightness"
+    },
+    {
+      "condition": "gaussian_blur_radius_1",
+      "kind": "gaussian_blur",
+      "radius": 1.0
+    }
+  ],
+  "robustness_protocol": {
+    "amp_matches_training_evaluation": true,
+    "batch_size": 256,
+    "cache_directory": "tmp/task2/robustness",
+    "evaluation_scope": "all_valid_development_rows_once_through_their_validation_fold_checkpoint",
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "num_workers": 4,
+    "perturbation_order": "decode_exif_rgb_then_perturb_then_original_fold_normalisation",
+    "pin_memory": true,
+    "prediction_artifacts_are_temporary": true
+  },
+  "schema_version": "1.0.0",
+  "stage": "g6_robustness_cost_analysis",
+  "target": "season",
+  "warnings": {
+    "analysis_does_not_change_the_g5_candidate": true,
+    "confidence_is_uncalibrated": true,
+    "cost_measurements_are_machine_specific": true,
+    "holdout_is_forbidden": true,
+    "primary_seed_only_because_g5_already_tests_random_seed_stability": true
+  }
+}
