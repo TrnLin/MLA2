@@ -141,6 +141,40 @@ def test_temperature_scaling_softens_confidence_without_changing_argmax() -> Non
     assert np.all(scaled.max(axis=1) < probabilities.max(axis=1))
 
 
+def test_temperature_scaling_matches_direct_logit_scaling() -> None:
+    logits = np.array([[2.0, -0.5, 1.2, 0.1], [-1.0, 0.7, 2.4, 0.3]])
+    probabilities = np.exp(logits - logits.max(axis=1, keepdims=True))
+    probabilities /= probabilities.sum(axis=1, keepdims=True)
+    temperature = 1.7
+    expected = np.exp(logits / temperature - (logits / temperature).max(axis=1, keepdims=True))
+    expected /= expected.sum(axis=1, keepdims=True)
+
+    actual = temperature_scale_probabilities(probabilities, temperature)
+
+    np.testing.assert_allclose(actual, expected, rtol=0.0, atol=3e-16)
+
+
+def test_temperature_scaling_rejects_floor_that_can_flatten_class_ranking() -> None:
+    probabilities = np.array([[0.1, 0.4, 0.3, 0.2]])
+
+    with pytest.raises(ValueError, match="reciprocal"):
+        temperature_scale_probabilities(
+            probabilities,
+            1.0,
+            probability_floor=0.26,
+        )
+
+
+def test_temperature_scaling_handles_subnormal_positive_temperature() -> None:
+    probabilities = np.array([[0.1, 0.4, 0.3, 0.2]])
+
+    scaled = temperature_scale_probabilities(probabilities, np.nextafter(0.0, 1.0))
+
+    assert np.isfinite(scaled).all()
+    np.testing.assert_allclose(scaled.sum(axis=1), 1.0, rtol=0.0, atol=0.0)
+    np.testing.assert_array_equal(scaled.argmax(axis=1), probabilities.argmax(axis=1))
+
+
 def test_fit_temperature_reduces_nll_for_overconfident_predictions() -> None:
     true, probabilities = _overconfident_probabilities()
     before = multiclass_metrics(true, probabilities=probabilities, labels=LABELS)
@@ -157,12 +191,12 @@ def test_fit_temperature_reduces_nll_for_overconfident_predictions() -> None:
 def test_cross_fit_temperature_never_fits_on_the_evaluation_fold(monkeypatch) -> None:
     true, probabilities = _overconfident_probabilities()
     folds = np.repeat(np.arange(5), 8)
-    observed_fit_markers: list[set[float]] = []
+    observed_fit_inputs: list[tuple[np.ndarray, np.ndarray]] = []
     probabilities[:, 0] += np.repeat(np.arange(5), 8) * 1e-4
     probabilities /= probabilities.sum(axis=1, keepdims=True)
 
     def recording_fit(matrix, targets, **kwargs):
-        observed_fit_markers.append(set(np.round(matrix[:, 0], 8)))
+        observed_fit_inputs.append((matrix.copy(), np.asarray(targets).copy()))
         return 1.5
 
     monkeypatch.setattr("fashion.train.metrics.fit_temperature", recording_fit)
@@ -172,9 +206,13 @@ def test_cross_fit_temperature_never_fits_on_the_evaluation_fold(monkeypatch) ->
     assert audit["fit_fold_count"].eq(4).all()
     assert audit["calibration_rows"].eq(32).all()
     assert audit["evaluation_rows"].eq(8).all()
-    for evaluation_fold, seen in enumerate(observed_fit_markers):
-        held_out = set(np.round(probabilities[folds == evaluation_fold, 0], 8))
-        assert seen.isdisjoint(held_out)
+    for evaluation_fold, (fit_probabilities, fit_targets) in enumerate(observed_fit_inputs):
+        fit_mask = folds != evaluation_fold
+        np.testing.assert_array_equal(fit_probabilities, probabilities[fit_mask])
+        np.testing.assert_array_equal(fit_targets, true[fit_mask])
+        assert audit.loc[evaluation_fold, "fit_folds"] == "|".join(
+            str(fold) for fold in range(5) if fold != evaluation_fold
+        )
     np.testing.assert_array_equal(calibrated.argmax(axis=1), probabilities.argmax(axis=1))
 
 
@@ -183,3 +221,29 @@ def test_cross_fit_temperature_rejects_incomplete_fold_set() -> None:
 
     with pytest.raises(ValueError, match="expected_folds"):
         cross_fit_temperature(probabilities, true, np.zeros(len(true), dtype=int), labels=LABELS)
+
+
+def test_cross_fit_temperature_rejects_fractional_expected_folds() -> None:
+    true, probabilities = _overconfident_probabilities()
+    folds = np.repeat(np.arange(5), 8)
+
+    with pytest.raises(ValueError, match="integers"):
+        cross_fit_temperature(
+            probabilities,
+            true,
+            folds,
+            labels=LABELS,
+            expected_folds=(0.0, 1.0, 2.0, 3.0, 4.5),
+        )
+
+
+def test_fit_temperature_rejects_non_finite_bounds() -> None:
+    true, probabilities = _overconfident_probabilities()
+
+    with pytest.raises(ValueError, match="finite"):
+        fit_temperature(
+            probabilities,
+            true,
+            labels=LABELS,
+            temperature_bounds=(0.05, np.inf),
+        )
