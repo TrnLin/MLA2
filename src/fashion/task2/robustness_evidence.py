@@ -165,6 +165,17 @@ def portable_record_paths(
     project_root: str | Path = ROOT,
 ) -> list[dict[str, Any]]:
     """Copy records while converting selected artifact paths to repository-relative form."""
+
+    def canonicalise(value: Any) -> Any:
+        if isinstance(value, Mapping):
+            return {
+                str(key): canonicalise(value[key])
+                for key in sorted(value, key=lambda item: str(item))
+            }
+        if isinstance(value, (list, tuple)):
+            return [canonicalise(item) for item in value]
+        return value
+
     root = Path(project_root)
     portable: list[dict[str, Any]] = []
     for record in records:
@@ -175,7 +186,7 @@ def portable_record_paths(
                 continue
             resolved = _resolve_evidence_path(str(value), project_root=root)
             copied[field] = _portable_artifact_path(resolved, fallback_root=root)
-        portable.append(copied)
+        portable.append(canonicalise(copied))
     return portable
 
 
