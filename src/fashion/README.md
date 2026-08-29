@@ -18,5 +18,12 @@ Reusable project code lives here. Notebooks import it instead of copying shared 
   - `pipeline.py` runs and validates the teacher-only preparation workflow.
   - `splits.py` builds and validates the sole split and its five CV folds.
   - `taxonomy.py` describes and validates development target labels.
+- `train/` owns registered model execution and evaluation contracts.
+  - `config.py` freezes the Task 3 primary baseline and its parameter count.
+  - `data.py` fits fold-only RGB statistics and loads traceable PyTorch samples.
+  - `metrics.py` calculates fixed-class OOF, calibration, and per-class metrics.
+  - `model.py` defines only the exact Task 3 scratch baseline CNN.
+  - `registry.py` appends a durable row before training and preserves failed runs.
+  - `task3_baseline.py` checks the Colab runtime and runs the five-fold baseline.
 
 Update this if you are adding more scripts.

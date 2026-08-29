@@ -48,6 +48,7 @@ DEVELOPMENT_IMAGE_PROFILE_JSON = PROCESSED_DATA_DIR / "development_image_profile
 TAXONOMY_JSON = PROCESSED_DATA_DIR / "taxonomy.json"
 
 RESULTS_DIR = ROOT / "results"
+RUNS_CSV = RESULTS_DIR / "runs.csv"
 FIGURE_DIR = RESULTS_DIR / "figures"
 DATA_PREPARATION_FIGURE_DIR = FIGURE_DIR / "data_preparation"
 EVIDENCE_DIR = RESULTS_DIR / "evidence"

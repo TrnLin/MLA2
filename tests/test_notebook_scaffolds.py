@@ -61,9 +61,18 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
         assert notebook.metadata["title"] == spec["title"]
         assert headings[0] == f"# {spec['title']}"
         if filename == "04_task3_gender_usage.ipynb":
-            assert [cell.cell_type for cell in notebook.cells[2:6]] == ["code"] * 4
-            assert all(cell.cell_type == "markdown" for cell in notebook.cells[:2])
-            assert all(cell.cell_type == "markdown" for cell in notebook.cells[6:])
+            code_ids = {cell.id for cell in notebook.cells if cell.cell_type == "code"}
+            assert code_ids == {
+                "t3-colab-config",
+                "t3-colab-repository",
+                "t3-colab-data",
+                "t3-colab-load",
+                "t3-baseline-check",
+                "t3-baseline-launch",
+            }
+            assert all(
+                cell.cell_type == "markdown" or cell.id in code_ids for cell in notebook.cells
+            )
         else:
             assert all(cell.cell_type == "markdown" for cell in notebook.cells)
         assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
@@ -101,6 +110,11 @@ def test_task_metric_contracts_are_explicit() -> None:
     assert "created_before_child_run: true" in task3
     assert "single_changed_factor: TODO" in task3
     assert "This table grows one approved row at a time" in task3
+    assert "The EDA justifies a small native-resolution CNN" in task3
+    assert "does **not** prove that `32,64,128,256` is optimal" in task3
+    assert "START_BASELINE_TRAINING = False" in task3
+    assert "check_task3_baseline_setup" in task3
+    assert "run_task3_baseline_cv" in task3
 
     task4 = _source(nbformat.read(ROOT / "notebooks/05_task4_visual_search.ipynb", as_version=4))
     assert "Primary ranking-quality metric: TODO(owner)" in task4

@@ -1,0 +1,730 @@
+"""Check and execute the Task 3 primary learnable baseline."""
+
+from __future__ import annotations
+
+import argparse
+import importlib.metadata
+import json
+import os
+import platform
+import random
+import time
+import uuid
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any, Iterable, Sequence
+
+import numpy as np
+import pandas as pd
+import torch
+from torch import nn
+from torch.utils.data import DataLoader
+
+from fashion.config import LABEL_MAPS_JSON, ROOT, RUNS_CSV, SPLITS_CSV
+from fashion.data import load_label_maps, load_splits
+from fashion.data.hashing import compute_sha256
+from fashion.train.config import Task3BaselineConfig, baseline_parameter_count, config_digest
+from fashion.train.data import (
+    CORE_CORRUPTIONS,
+    Task3ImageDataset,
+    fit_fold_rgb_stats,
+    task3_target_frames,
+)
+from fashion.train.metrics import classification_metrics
+from fashion.train.model import Task3BaselineCNN
+from fashion.train.registry import RunRegistry
+
+BASELINE_EXPERIMENT_ID = "t3_primary_baseline_smallcnn"
+VERIFIED_COLAB_RUNTIME = {
+    "python_major_minor": "3.13",
+    "torch": "2.11.0",
+    "torchvision": "0.26.0",
+    "numpy": "2.1.3",
+    "pandas": "2.2.3",
+    "pillow": "11.3.0",
+}
+
+
+def _json_dump(payload: Any, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    os.replace(temporary, path)
+
+
+def _log(message: str) -> None:
+    print(f"[task3] {message}", flush=True)
+
+
+def _package_version(distribution: str) -> str:
+    try:
+        return importlib.metadata.version(distribution)
+    except importlib.metadata.PackageNotFoundError:
+        return "not-installed"
+
+
+def runtime_environment(device: torch.device) -> dict[str, object]:
+    """Capture the runtime fields needed to interpret cost and reproducibility."""
+    gpu_name = torch.cuda.get_device_name(device) if device.type == "cuda" else ""
+    properties = torch.cuda.get_device_properties(device) if device.type == "cuda" else None
+    return {
+        "python": platform.python_version(),
+        "torch": torch.__version__,
+        "torchvision": _package_version("torchvision"),
+        "numpy": np.__version__,
+        "pandas": pd.__version__,
+        "pillow": _package_version("Pillow"),
+        "sklearn": _package_version("scikit-learn"),
+        "platform": platform.platform(),
+        "cpu": platform.processor(),
+        "gpu": gpu_name,
+        "cuda_runtime": torch.version.cuda or "",
+        "vram_bytes": int(properties.total_memory) if properties is not None else 0,
+    }
+
+
+def validate_verified_colab_runtime(environment: dict[str, object]) -> None:
+    """Fail before training when the managed Colab stack differs from the tested stack."""
+    actual = {
+        "python_major_minor": ".".join(str(environment["python"]).split(".")[:2]),
+        "torch": str(environment["torch"]).split("+")[0],
+        "torchvision": str(environment["torchvision"]).split("+")[0],
+        "numpy": str(environment["numpy"]),
+        "pandas": str(environment["pandas"]),
+        "pillow": str(environment["pillow"]),
+    }
+    mismatches = {
+        name: {"expected": expected, "actual": actual[name]}
+        for name, expected in VERIFIED_COLAB_RUNTIME.items()
+        if actual[name] != expected
+    }
+    if mismatches:
+        raise RuntimeError(
+            "Colab runtime differs from requirements/colab-task3-runtime.txt: "
+            + json.dumps(mismatches, sort_keys=True)
+        )
+
+
+def set_reproducible_seed(seed: int) -> None:
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    torch.use_deterministic_algorithms(True, warn_only=True)
+
+
+def _worker_seed(worker_id: int) -> None:
+    seed = torch.initial_seed() % (2**32)
+    np.random.seed(seed)
+    random.seed(seed)
+
+
+def _loader(
+    dataset: Task3ImageDataset,
+    *,
+    config: Task3BaselineConfig,
+    shuffle: bool,
+    device: torch.device,
+) -> DataLoader[dict[str, Any]]:
+    generator = torch.Generator()
+    generator.manual_seed(config.seed)
+    return DataLoader(
+        dataset,
+        batch_size=config.batch_size,
+        shuffle=shuffle,
+        num_workers=config.num_workers,
+        pin_memory=device.type == "cuda",
+        persistent_workers=config.num_workers > 0,
+        worker_init_fn=_worker_seed,
+        generator=generator,
+    )
+
+
+def _class_spec(
+    label_maps: dict[str, dict[str, object]], target: str
+) -> tuple[list[str], dict[str, int]]:
+    if target not in label_maps:
+        raise ValueError(f"label maps do not contain target {target}")
+    spec = label_maps[target]
+    classes = [str(label) for label in spec["classes"]]
+    mapping = {str(label): int(index) for label, index in dict(spec["label_to_index"]).items()}
+    if mapping != {label: index for index, label in enumerate(classes)}:
+        raise ValueError(f"{target} label map is not a stable contiguous ordering")
+    return classes, mapping
+
+
+def check_task3_baseline_setup(
+    target: str,
+    *,
+    root: str | Path = ROOT,
+    device_name: str = "cuda",
+) -> dict[str, object]:
+    """Validate the complete baseline contract without an optimiser step."""
+    root = Path(root)
+    config = Task3BaselineConfig(target=target)  # type: ignore[arg-type]
+    splits_path = root / SPLITS_CSV.relative_to(ROOT)
+    label_maps_path = root / LABEL_MAPS_JSON.relative_to(ROOT)
+    splits = load_splits(splits_path)
+    label_maps = load_label_maps(label_maps_path)
+    classes, mapping = _class_spec(label_maps, target)
+    if len(classes) != config.num_classes:
+        raise ValueError("model head and fixed label map disagree")
+    if set(pd.to_numeric(splits.loc[splits["partition"].eq("development"), "cv_fold"])) != set(
+        range(5)
+    ):
+        raise ValueError("the development data does not contain all five canonical folds")
+
+    fold_counts: dict[str, dict[str, int]] = {}
+    required_paths: set[str] = set()
+    for fold in range(5):
+        training, validation = task3_target_frames(splits, target=target, validation_fold=fold)
+        fold_counts[str(fold)] = {"training": len(training), "validation": len(validation)}
+        required_paths.update(str(path) for path in validation["path"])
+    missing_paths = sorted(path for path in required_paths if not (root / path).is_file())
+    if missing_paths:
+        preview = missing_paths[:10]
+        raise FileNotFoundError(
+            f"{len(missing_paths)} development images are missing; first paths: {preview}"
+        )
+
+    if device_name == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError("CUDA was requested but Colab has no active GPU runtime")
+    device = torch.device(device_name)
+    set_reproducible_seed(config.seed)
+    model = Task3BaselineCNN(config).to(device)
+    with torch.inference_mode():
+        output = model(torch.zeros(2, 3, config.image_height, config.image_width, device=device))
+    if tuple(output.shape) != (2, config.num_classes):
+        raise RuntimeError(f"unexpected baseline output shape: {tuple(output.shape)}")
+    environment = runtime_environment(device)
+    validate_verified_colab_runtime(environment)
+    return {
+        "target": target,
+        "classes": classes,
+        "label_to_index": mapping,
+        "fold_counts": fold_counts,
+        "checked_image_paths": len(required_paths),
+        "parameter_count": baseline_parameter_count(config.target),
+        "config_hash": config_digest(config),
+        "device": str(device),
+        "environment": environment,
+        "optimizer_steps": 0,
+        "ready": True,
+    }
+
+
+def _pass(
+    model: nn.Module,
+    loader: DataLoader[dict[str, Any]],
+    criterion: nn.Module,
+    device: torch.device,
+    *,
+    optimizer: torch.optim.Optimizer | None = None,
+) -> tuple[float, np.ndarray, np.ndarray, dict[str, list[Any]]]:
+    training = optimizer is not None
+    model.train(training)
+    total_loss = 0.0
+    total_rows = 0
+    labels: list[np.ndarray] = []
+    probabilities: list[np.ndarray] = []
+    trace: dict[str, list[Any]] = {
+        "id": [],
+        "cv_fold": [],
+        "product_family_group": [],
+        "path": [],
+    }
+    context = torch.enable_grad() if training else torch.inference_mode()
+    with context:
+        for batch in loader:
+            images = batch["image"].to(device, non_blocking=True)
+            target = batch["label"].to(device, non_blocking=True)
+            if training:
+                optimizer.zero_grad(set_to_none=True)
+            logits = model(images)
+            loss = criterion(logits, target)
+            if training:
+                loss.backward()
+                optimizer.step()
+            rows = len(target)
+            total_rows += rows
+            total_loss += float(loss.detach()) * rows
+            labels.append(target.detach().cpu().numpy())
+            probabilities.append(torch.softmax(logits.detach(), dim=1).cpu().numpy())
+            if not training:
+                trace["id"].extend(batch["id"].tolist())
+                trace["cv_fold"].extend(batch["cv_fold"].tolist())
+                trace["product_family_group"].extend(batch["product_family_group"])
+                trace["path"].extend(batch["path"])
+    if total_rows == 0:
+        raise ValueError("a data loader produced no rows")
+    return (
+        total_loss / total_rows,
+        np.concatenate(labels),
+        np.concatenate(probabilities),
+        trace,
+    )
+
+
+def _prediction_frame(
+    labels: np.ndarray,
+    probabilities: np.ndarray,
+    trace: dict[str, list[Any]],
+    classes: Sequence[str],
+    run_id: str,
+) -> pd.DataFrame:
+    predicted = probabilities.argmax(axis=1)
+    frame = pd.DataFrame(trace)
+    frame["run_id"] = run_id
+    frame["true_index"] = labels
+    frame["true_label"] = [classes[index] for index in labels]
+    frame["predicted_index"] = predicted
+    frame["predicted_label"] = [classes[index] for index in predicted]
+    frame["confidence"] = probabilities.max(axis=1)
+    for index, class_name in enumerate(classes):
+        frame[f"probability_{index}_{class_name}"] = probabilities[:, index]
+    return frame
+
+
+def _failure_index(predictions: pd.DataFrame, class_names: Sequence[str]) -> pd.DataFrame:
+    selected: list[pd.DataFrame] = []
+    errors = predictions[predictions["true_index"] != predictions["predicted_index"]]
+    correct = predictions[predictions["true_index"] == predictions["predicted_index"]]
+    if not errors.empty:
+        top_errors = errors.nlargest(40, "confidence").copy()
+        top_errors["selection_reason"] = "high_confidence_error"
+        selected.append(top_errors)
+    if not correct.empty:
+        top_correct = correct.nlargest(20, "confidence").copy()
+        top_correct["selection_reason"] = "high_confidence_correct"
+        selected.append(top_correct)
+    for index, class_name in enumerate(class_names):
+        class_errors = errors[errors["true_index"].eq(index)].nlargest(10, "confidence").copy()
+        if not class_errors.empty:
+            class_errors["selection_reason"] = f"class_error:{class_name}"
+            selected.append(class_errors)
+    if not selected:
+        return predictions.head(0).assign(selection_reason=pd.Series(dtype=str))
+    result = pd.concat(selected, ignore_index=True)
+    return result.drop_duplicates(subset=["id", "selection_reason"])
+
+
+def _measure_latency(
+    model: nn.Module,
+    device: torch.device,
+    *,
+    height: int,
+    width: int,
+    repetitions: int = 100,
+) -> float:
+    model.eval()
+    sample = torch.zeros(1, 3, height, width, device=device)
+    with torch.inference_mode():
+        for _ in range(10):
+            model(sample)
+        if device.type == "cuda":
+            torch.cuda.synchronize(device)
+        start = time.perf_counter()
+        for _ in range(repetitions):
+            model(sample)
+        if device.type == "cuda":
+            torch.cuda.synchronize(device)
+    return (time.perf_counter() - start) * 1000 / repetitions
+
+
+def run_task3_baseline_fold(
+    target: str,
+    validation_fold: int,
+    *,
+    output_root: str | Path,
+    registry_path: str | Path = RUNS_CSV,
+    registry_mirrors: Sequence[str | Path] = (),
+    root: str | Path = ROOT,
+    device_name: str = "cuda",
+) -> dict[str, object]:
+    """Train and evaluate one registered E1 baseline fold."""
+    root = Path(root)
+    output_root = Path(output_root)
+    config = Task3BaselineConfig(target=target)  # type: ignore[arg-type]
+    set_reproducible_seed(config.seed)
+    if device_name == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError("CUDA was requested but is not available")
+    device = torch.device(device_name)
+    splits_path = root / SPLITS_CSV.relative_to(ROOT)
+    label_maps_path = root / LABEL_MAPS_JSON.relative_to(ROOT)
+    splits = load_splits(splits_path)
+    label_maps = load_label_maps(label_maps_path)
+    classes, label_to_index = _class_spec(label_maps, target)
+    training, validation = task3_target_frames(
+        splits, target=target, validation_fold=validation_fold
+    )
+    _log(
+        f"preparing target={target} fold={validation_fold}: "
+        f"train={len(training):,}, validation={len(validation):,}"
+    )
+
+    execution = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + uuid.uuid4().hex[:6]
+    digest = config_digest(config)
+    run_id = (
+        f"t3_baseline_{target}_smallcnn_f{validation_fold}_s{config.seed}_{digest}_{execution}"
+    )
+    run_dir = output_root / "baseline" / target / run_id
+    run_dir.mkdir(parents=True, exist_ok=False)
+    config_path = run_dir / "config.json"
+    normalization_path = run_dir / "normalization.json"
+    history_path = run_dir / "history.csv"
+    prediction_path = run_dir / "oof_predictions.csv"
+    metrics_path = run_dir / "metrics.json"
+    robustness_path = run_dir / "robustness.csv"
+    checkpoint_path = run_dir / "final_epoch.pt"
+
+    _json_dump(config.to_dict(), config_path)
+    _log(f"fitting fold-training RGB statistics for target={target} fold={validation_fold}")
+    stats = fit_fold_rgb_stats(
+        training,
+        root=root,
+        image_size=(config.image_height, config.image_width),
+    )
+    _json_dump(
+        {
+            **stats,
+            "fit_scope": "fold_training_content_pixels_only",
+            "validation_fold": validation_fold,
+            "padding_excluded": True,
+        },
+        normalization_path,
+    )
+    _log(f"RGB statistics ready for target={target} fold={validation_fold}")
+
+    dataset_kwargs = {
+        "target": target,
+        "label_to_index": label_to_index,
+        "mean": stats["mean"],
+        "std": stats["std"],
+        "root": root,
+        "image_size": (config.image_height, config.image_width),
+    }
+    train_dataset = Task3ImageDataset(training, **dataset_kwargs)
+    validation_dataset = Task3ImageDataset(validation, **dataset_kwargs)
+    train_loader = _loader(train_dataset, config=config, shuffle=True, device=device)
+    validation_loader = _loader(validation_dataset, config=config, shuffle=False, device=device)
+
+    model = Task3BaselineCNN(config).to(device)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.AdamW(
+        model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay
+    )
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+        optimizer, T_max=config.epochs, eta_min=config.minimum_learning_rate
+    )
+    environment = runtime_environment(device)
+    registry = RunRegistry(registry_path, mirrors=registry_mirrors)
+    split_digest = compute_sha256(splits_path)
+    label_map_digest = compute_sha256(label_maps_path)
+    registry.start(
+        {
+            "run_id": run_id,
+            "experiment_id": BASELINE_EXPERIMENT_ID,
+            "hypothesis_id": "baseline_contract",
+            "parent_run_ids": [],
+            "task": "task3",
+            "target": target,
+            "validation_fold": validation_fold,
+            "seed": config.seed,
+            "debug": False,
+            "scratch": True,
+            "submission_eligible": True,
+            "config_hash": digest,
+            "config_path": config_path,
+            "split_digest": split_digest,
+            "label_map_digest": label_map_digest,
+            "training_product_count": len(training),
+            "validation_product_count": len(validation),
+            "training_family_count": training["product_family_group"].nunique(),
+            "validation_family_count": validation["product_family_group"].nunique(),
+            "model_family": config.model_family,
+            "parameter_count": baseline_parameter_count(config.target),
+            "history_path": history_path,
+            "environment_json": environment,
+            "last_completed_stage": "registered_before_first_optimizer_step",
+        }
+    )
+    _log(f"registered {run_id}; the first optimiser step may now run")
+
+    history: list[dict[str, object]] = []
+    started = time.perf_counter()
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
+    last_stage = "registered_before_first_optimizer_step"
+    try:
+        for epoch in range(1, config.epochs + 1):
+            learning_rate = float(optimizer.param_groups[0]["lr"])
+            train_loss, train_labels, train_probabilities, _ = _pass(
+                model, train_loader, criterion, device, optimizer=optimizer
+            )
+            validation_loss, validation_labels, validation_probabilities, _ = _pass(
+                model, validation_loader, criterion, device
+            )
+            train_metrics = classification_metrics(train_labels, train_probabilities, classes)
+            validation_metrics = classification_metrics(
+                validation_labels, validation_probabilities, classes
+            )
+            history.append(
+                {
+                    "epoch": epoch,
+                    "learning_rate": learning_rate,
+                    "train_loss": train_loss,
+                    "train_macro_f1": train_metrics["macro_f1"],
+                    "validation_loss": validation_loss,
+                    "validation_macro_f1": validation_metrics["macro_f1"],
+                }
+            )
+            pd.DataFrame(history).to_csv(history_path, index=False)
+            scheduler.step()
+            last_stage = f"epoch_{epoch}_complete"
+            registry.update(run_id, {"last_completed_stage": last_stage})
+            _log(
+                f"target={target} fold={validation_fold} epoch={epoch}/{config.epochs} "
+                f"train_loss={train_loss:.4f} train_macro_f1={train_metrics['macro_f1']:.4f} "
+                f"validation_loss={validation_loss:.4f} "
+                f"validation_macro_f1={validation_metrics['macro_f1']:.4f}"
+            )
+
+        training_finished = time.perf_counter()
+
+        torch.save(
+            {
+                "run_id": run_id,
+                "config": config.to_dict(),
+                "class_names": classes,
+                "normalization": stats,
+                "model_state_dict": model.state_dict(),
+            },
+            checkpoint_path,
+        )
+        clean_loss, labels, probabilities, trace = _pass(
+            model, validation_loader, criterion, device
+        )
+        predictions = _prediction_frame(labels, probabilities, trace, classes, run_id)
+        predictions.to_csv(prediction_path, index=False)
+        metrics = classification_metrics(labels, probabilities, classes)
+        metrics["loss"] = clean_loss
+        metrics["run_id"] = run_id
+        metrics["validation_fold"] = validation_fold
+        if target == "usage":
+            without_home = [index for index, name in enumerate(classes) if name != "Home"]
+            per_class = metrics["per_class"]
+            metrics["macro_f1_without_home"] = float(
+                np.mean([per_class[index]["f1"] for index in without_home])
+            )
+        _json_dump(metrics, metrics_path)
+
+        robustness_rows: list[dict[str, object]] = []
+        clean_macro_f1 = float(metrics["macro_f1"])
+        for corruption in CORE_CORRUPTIONS:
+            corrupted_dataset = Task3ImageDataset(
+                validation, corruption=corruption, **dataset_kwargs
+            )
+            corrupted_loader = _loader(
+                corrupted_dataset, config=config, shuffle=False, device=device
+            )
+            corrupted_loss, corrupted_labels, corrupted_probabilities, _ = _pass(
+                model, corrupted_loader, criterion, device
+            )
+            corrupted_metrics = classification_metrics(
+                corrupted_labels, corrupted_probabilities, classes
+            )
+            robustness_rows.append(
+                {
+                    "run_id": run_id,
+                    "validation_fold": validation_fold,
+                    "corruption": corruption,
+                    "loss": corrupted_loss,
+                    "macro_f1": corrupted_metrics["macro_f1"],
+                    "macro_f1_change": float(corrupted_metrics["macro_f1"])
+                    - clean_macro_f1,
+                }
+            )
+        pd.DataFrame(robustness_rows).to_csv(robustness_path, index=False)
+
+        train_seconds = training_finished - started
+        diagnostic_seconds = time.perf_counter() - training_finished
+        peak_memory = (
+            int(torch.cuda.max_memory_allocated(device)) if device.type == "cuda" else 0
+        )
+        latency_ms = _measure_latency(
+            model,
+            device,
+            height=config.image_height,
+            width=config.image_width,
+        )
+        metrics["latency_ms_batch_1"] = latency_ms
+        metrics["train_seconds"] = train_seconds
+        metrics["diagnostic_seconds"] = diagnostic_seconds
+        metrics["peak_memory_bytes"] = peak_memory
+        _json_dump(metrics, metrics_path)
+        registry.complete(
+            run_id,
+            {
+                "checkpoint_path": checkpoint_path,
+                "checkpoint_sha256": compute_sha256(checkpoint_path),
+                "prediction_path": prediction_path,
+                "prediction_sha256": compute_sha256(prediction_path),
+                "metrics_json": metrics,
+                "train_seconds": train_seconds,
+                "peak_memory_bytes": peak_memory,
+                "checkpoint_bytes": checkpoint_path.stat().st_size,
+                "last_completed_stage": "diagnostic_bundle_complete",
+            },
+        )
+        _log(f"completed target={target} fold={validation_fold}: {run_id}")
+        return {
+            "run_id": run_id,
+            "run_dir": str(run_dir),
+            "prediction_path": str(prediction_path),
+            "metrics_path": str(metrics_path),
+            "robustness_path": str(robustness_path),
+            "metrics": metrics,
+        }
+    except BaseException as error:
+        registry.fail(run_id, error, last_completed_stage=last_stage)
+        _log(
+            f"failed target={target} fold={validation_fold} after {last_stage}: "
+            f"{type(error).__name__}: {error}"
+        )
+        raise
+
+
+def _aggregate_target(
+    target: str,
+    fold_results: Sequence[dict[str, object]],
+    *,
+    output_root: Path,
+    root: Path,
+) -> dict[str, object]:
+    label_maps = load_label_maps(root / LABEL_MAPS_JSON.relative_to(ROOT))
+    classes, _ = _class_spec(label_maps, target)
+    prediction_paths = [Path(str(result["prediction_path"])) for result in fold_results]
+    predictions = pd.concat([pd.read_csv(path) for path in prediction_paths], ignore_index=True)
+    if predictions["id"].duplicated().any():
+        raise ValueError("aggregate OOF predictions contain duplicate IDs")
+    probability_columns = [f"probability_{index}_{name}" for index, name in enumerate(classes)]
+    probabilities = predictions[probability_columns].to_numpy(dtype=np.float64)
+    labels = predictions["true_index"].to_numpy(dtype=np.int64)
+    metrics = classification_metrics(labels, probabilities, classes)
+    if target == "usage":
+        metrics["macro_f1_without_home"] = float(
+            np.mean(
+                [
+                    row["f1"]
+                    for row in metrics["per_class"]
+                    if row["class_name"] != "Home"
+                ]
+            )
+        )
+    aggregate_dir = output_root / "baseline" / target / "aggregate"
+    aggregate_dir.mkdir(parents=True, exist_ok=True)
+    predictions_path = aggregate_dir / "oof_predictions.csv"
+    metrics_path = aggregate_dir / "metrics.json"
+    class_report_path = aggregate_dir / "per_class.csv"
+    confusion_path = aggregate_dir / "confusion_matrix.csv"
+    failures_path = aggregate_dir / "failure_index.csv"
+    predictions.sort_values("id").to_csv(predictions_path, index=False)
+    _json_dump(metrics, metrics_path)
+    pd.DataFrame(metrics["per_class"]).to_csv(class_report_path, index=False)
+    pd.DataFrame(metrics["confusion_matrix"], index=classes, columns=classes).to_csv(
+        confusion_path, index_label="true_label"
+    )
+    _failure_index(predictions, classes).to_csv(failures_path, index=False)
+    return {
+        "target": target,
+        "fold_run_ids": [str(result["run_id"]) for result in fold_results],
+        "prediction_path": str(predictions_path),
+        "metrics_path": str(metrics_path),
+        "class_report_path": str(class_report_path),
+        "confusion_path": str(confusion_path),
+        "failure_index_path": str(failures_path),
+        "metrics": metrics,
+    }
+
+
+def run_task3_baseline_cv(
+    target: str,
+    *,
+    output_root: str | Path,
+    folds: Iterable[int] = range(5),
+    registry_path: str | Path = RUNS_CSV,
+    registry_mirrors: Sequence[str | Path] = (),
+    root: str | Path = ROOT,
+    device_name: str = "cuda",
+) -> dict[str, object]:
+    """Run the full five-fold E1 baseline and create pooled OOF artifacts."""
+    fold_list = tuple(int(fold) for fold in folds)
+    if fold_list != tuple(range(5)):
+        raise ValueError("E1 baseline evidence requires folds 0,1,2,3,4 in order")
+    root = Path(root)
+    output_root = Path(output_root)
+    _log(f"starting five-fold E1 baseline for target={target}")
+    results = [
+        run_task3_baseline_fold(
+            target,
+            fold,
+            output_root=output_root,
+            registry_path=registry_path,
+            registry_mirrors=registry_mirrors,
+            root=root,
+            device_name=device_name,
+        )
+        for fold in fold_list
+    ]
+    aggregate = _aggregate_target(target, results, output_root=output_root, root=root)
+    _log(f"completed pooled five-fold OOF aggregation for target={target}")
+    return aggregate
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--target", required=True, choices=("gender", "usage"))
+    parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument("--output-root", type=Path)
+    parser.add_argument("--registry", type=Path, default=RUNS_CSV)
+    parser.add_argument("--registry-mirror", type=Path, action="append", default=[])
+    parser.add_argument("--device", default="cuda")
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check-only", action="store_true")
+    mode.add_argument("--train", action="store_true")
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = _parse_args()
+    if args.check_only:
+        print(
+            json.dumps(
+                check_task3_baseline_setup(
+                    args.target,
+                    root=args.root,
+                    device_name=args.device,
+                ),
+                indent=2,
+                sort_keys=True,
+            )
+        )
+        return
+    if args.output_root is None:
+        raise ValueError("--output-root is required with --train")
+    result = run_task3_baseline_cv(
+        args.target,
+        output_root=args.output_root,
+        registry_path=args.registry,
+        registry_mirrors=args.registry_mirror,
+        root=args.root,
+        device_name=args.device,
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
