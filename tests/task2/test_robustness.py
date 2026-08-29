@@ -13,7 +13,9 @@ from torch import nn
 import fashion.task2.robustness as robustness_module
 from fashion.data.hashing import compute_sha256
 from fashion.data.torch import FoldImageStats
+from fashion.task2.multitask import I2_IMPLEMENTATION_PATHS
 from fashion.task2.robustness import (
+    ROBUSTNESS_IMPLEMENTATION_PATHS,
     CostProtocol,
     PerturbedTensorTransform,
     RobustnessCandidate,
@@ -188,6 +190,19 @@ def test_frozen_robustness_cost_contract_loads() -> None:
         "gaussian_blur_radius_1",
     ]
     assert spec.material_macro_f1_degradation == 0.01
+
+
+def test_robustness_hash_covers_inference_metrics_and_evidence_dependencies() -> None:
+    required = {
+        *I2_IMPLEMENTATION_PATHS,
+        "src/fashion/task2/evidence.py",
+        "src/fashion/task2/slices.py",
+        "src/fashion/task2/slice_evidence.py",
+        "src/fashion/task2/robustness.py",
+        "src/fashion/task2/robustness_evidence.py",
+    }
+
+    assert required <= set(ROBUSTNESS_IMPLEMENTATION_PATHS)
 
 
 def test_robustness_conditions_are_deterministic_and_change_pixels() -> None:
