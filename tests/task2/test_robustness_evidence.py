@@ -15,6 +15,7 @@ from fashion.task2.robustness_evidence import (
     _plot_robustness,
     build_robustness_cost_decision,
     load_verified_slice_manifest,
+    portable_record_paths,
 )
 from fashion.train.artifacts import ArtifactVerificationError
 from fashion.train.cache import verify_implementation_at_head
@@ -236,3 +237,25 @@ def test_implementation_provenance_rejects_untracked_or_changed_source(
     tracked.write_text("VALUE = 3\n", encoding="utf-8")
     with pytest.raises(ValueError, match="differs from HEAD"):
         verify_implementation_at_head(tracked, root=tmp_path)
+
+
+def test_committed_evidence_records_use_portable_paths(tmp_path: Path) -> None:
+    prediction = _write(tmp_path / "tmp/task2/probe/predictions.csv", "id\n1\n")
+    manifest = _write(tmp_path / "tmp/task2/probe/manifest.json", "{}\n")
+    records = [
+        {
+            "probe_id": "probe-1",
+            "prediction_path": str(prediction),
+            "manifest_path": str(manifest),
+        }
+    ]
+
+    portable = portable_record_paths(
+        records,
+        fields=("prediction_path", "manifest_path"),
+        project_root=tmp_path,
+    )
+
+    assert portable[0]["prediction_path"] == "tmp/task2/probe/predictions.csv"
+    assert portable[0]["manifest_path"] == "tmp/task2/probe/manifest.json"
+    assert records[0]["prediction_path"] == str(prediction)
