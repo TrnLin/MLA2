@@ -135,6 +135,7 @@ def _make_images(root: Path) -> pd.DataFrame:
             {
                 "id": identifier,
                 "path": path.relative_to(root).as_posix(),
+                "sha256": compute_sha256(path),
                 "season": label,
                 "partition": "development",
                 "cv_fold": 0,
@@ -327,6 +328,41 @@ def test_fold_prediction_and_hash_cache_are_exact(tmp_path: Path) -> None:
     pd.testing.assert_frame_equal(first.predictions, second.predictions)
     prediction_path = Path(second.record["prediction_path"])
     prediction_path.write_text("changed\n", encoding="utf-8")
+    with pytest.raises(ArtifactVerificationError, match="SHA-256 mismatch"):
+        run_or_load_fold_probe(model, mode="load", **kwargs)
+
+
+def test_fold_cache_rejects_changed_source_image_bytes(tmp_path: Path) -> None:
+    frame = _make_images(tmp_path)
+    model = TinySeasonModel()
+    kwargs = {
+        "candidate": RobustnessCandidate("C2", "g3-c2-t0-resnet18", 2753),
+        "condition": _conditions()[2],
+        "registry_row": {
+            "run_id": "checkpoint-run",
+            "fold": 0,
+            "checkpoint_sha256": "a" * 64,
+            "history_sha256": "b" * 64,
+        },
+        "validation_frame": frame,
+        "stats": _stats(),
+        "label_to_index": {label: index for index, label in enumerate(SEASON_LABELS)},
+        "analysis_config_sha256": "c" * 64,
+        "split_sha256": "d" * 64,
+        "label_map_sha256": "e" * 64,
+        "implementation_sha256_value": "f" * 64,
+        "cache_directory": tmp_path / "cache",
+        "project_root": tmp_path,
+        "batch_size": 2,
+        "num_workers": 0,
+        "pin_memory": False,
+        "device": "cpu",
+        "use_amp": False,
+    }
+    run_or_load_fold_probe(model, mode="run", **kwargs)
+    image_path = tmp_path / frame.iloc[0]["path"]
+    image_path.write_bytes(b"changed image bytes")
+
     with pytest.raises(ArtifactVerificationError, match="SHA-256 mismatch"):
         run_or_load_fold_probe(model, mode="load", **kwargs)
 
