@@ -67,3 +67,12 @@ Each changes only experiment identity, stage, and seed from 2753 to 2026. Both r
 scratch, image-only at inference, and final-eligible. The stability gate asks whether
 I2 remains above C2 at both seeds; it does not reopen architecture, transform,
 optimiser, loss, or auxiliary-lambda selection. P* is excluded.
+
+`g6_shortcut_error_slices.json` freezes the first post-modelling analysis gate before
+its results are calculated. It reads the four eligible C2/I2 OOF packs across seeds
+2753 and 2026. ArticleType majorities and file-size quartiles are fit on four training
+folds only, then applied to the matching validation fold. Acquisition year, canonical
+product-family size, and image mode are joined only after prediction and are never model
+inputs. The contract also fixes the Spring error outputs, high-confidence threshold,
+low-support warning, and class order. Slice results can weaken a claim, but cannot add a
+new architecture or freeze the ultimate winner by themselves.
