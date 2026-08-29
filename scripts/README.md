@@ -52,3 +52,14 @@ analysis from the same frozen OOF files:
 This command never trains or opens holdout labels. It verifies the G5 manifest, all 20
 OOF hashes, canonical IDs, folds, targets, and post-prediction slice assignments before
 writing G6 tables and figures.
+
+After the slice boundary is closed, run or hash-load the frozen image-stress and
+machine-cost probes:
+
+```powershell
+& '.\.venv\Scripts\python.exe' scripts/build_task2_robustness_evidence.py --mode run_or_load
+```
+
+This command does not train. It reuses the primary-seed C2 and I2 fold checkpoints,
+applies only the declared image perturbations to development rows, and records latency
+and memory on the current machine. Use `--mode load` to require every exact cache.
