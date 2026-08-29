@@ -41,3 +41,14 @@ After all ten folds exist, rebuild the comparison in load-only mode:
 
 This command cannot start training. It verifies the cached hashes and writes the matched
 P* minus P0S tables plus teacher-style five-fold learning curves.
+
+After the C2 and I2 stability gate is closed, build the declared shortcut and error
+analysis from the same frozen OOF files:
+
+```powershell
+& '.\.venv\Scripts\python.exe' scripts/build_task2_slice_evidence.py
+```
+
+This command never trains or opens holdout labels. It verifies the G5 manifest, all 20
+OOF hashes, canonical IDs, folds, targets, and post-prediction slice assignments before
+writing G6 tables and figures.
