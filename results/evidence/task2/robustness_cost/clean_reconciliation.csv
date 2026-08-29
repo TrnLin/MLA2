@@ -1,0 +1,3 @@
+candidate,experiment_id,seed,support,clean_reference,prediction_agreement,minimum_prediction_agreement,maximum_probability_delta,mean_probability_delta,maximum_probability_delta_tolerance
+C2,g3-c2-t0-resnet18,2753,32753,verified_frozen_oof,1.0,1.0,0.0,0.0,0.0001
+I2,g4-i2-article-type-lambda-0-3-c1,2753,32753,verified_frozen_oof,1.0,1.0,0.0,0.0,0.0001
