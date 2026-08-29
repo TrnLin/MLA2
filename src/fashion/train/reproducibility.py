@@ -104,6 +104,7 @@ def capture_runtime() -> dict[str, Any]:
                 "numpy",
                 "pandas",
                 "pillow",
+                "scipy",
                 "scikit-image",
                 "scikit-learn",
                 "torch",
