@@ -45,7 +45,7 @@
     {
       "condition": "clean",
       "kind": "none",
-      "source": "verified_frozen_oof"
+      "source": "re_inferred_and_verified_against_frozen_oof"
     },
     {
       "condition": "jpeg_quality_85",
@@ -71,8 +71,11 @@
   ],
   "robustness_protocol": {
     "amp_matches_training_evaluation": true,
-    "batch_size": 256,
+    "batch_size": 128,
     "cache_directory": "tmp/task2/robustness",
+    "clean_max_probability_delta": 0.0001,
+    "clean_min_prediction_agreement": 1.0,
+    "clean_reference": "verified_frozen_oof",
     "evaluation_scope": "all_valid_development_rows_once_through_their_validation_fold_checkpoint",
     "folds": [
       0,

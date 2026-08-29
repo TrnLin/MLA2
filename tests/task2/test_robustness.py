@@ -29,6 +29,7 @@ from fashion.task2.robustness import (
     measure_deployment_cost,
     model_tensor_bytes,
     predict_robustness_fold,
+    reconcile_clean_probe,
     robustness_cache_key,
     run_or_load_deployment_cost,
     run_or_load_fold_probe,
@@ -61,7 +62,11 @@ def _stats(*, fold: int = 0, image_count: int = 4, training_hash: str = "a" * 64
 
 def _conditions() -> tuple[RobustnessCondition, ...]:
     return (
-        RobustnessCondition("clean", "none", source="verified_frozen_oof"),
+        RobustnessCondition(
+            "clean",
+            "none",
+            source="re_inferred_and_verified_against_frozen_oof",
+        ),
         RobustnessCondition("jpeg_quality_85", "jpeg_reencode", quality=85, subsampling=2),
         RobustnessCondition("brightness_0_85", "brightness", factor=0.85),
         RobustnessCondition("brightness_1_15", "brightness", factor=1.15),
@@ -79,11 +84,14 @@ def _spec(*, expected_row_count: int = 20) -> RobustnessCostSpec:
         ),
         conditions=_conditions(),
         robustness=RobustnessProtocol(
-            batch_size=256,
+            batch_size=128,
             num_workers=4,
             pin_memory=True,
             folds=tuple(range(5)),
             cache_directory="tmp/task2/robustness",
+            clean_reference="verified_frozen_oof",
+            clean_min_prediction_agreement=1.0,
+            clean_max_probability_delta=0.0001,
             amp_matches_training_evaluation=True,
             evaluation_scope=(
                 "all_valid_development_rows_once_through_their_validation_fold_checkpoint"
@@ -519,3 +527,29 @@ def test_clean_condition_uses_the_same_fold_inference_pipeline(tmp_path: Path) -
     assert load_robustness_cost_spec().conditions[0].source == (
         "re_inferred_and_verified_against_frozen_oof"
     )
+
+
+def test_clean_probe_must_reproduce_frozen_oof_probabilities() -> None:
+    spec = _spec()
+    candidate = spec.candidates[0]
+    frozen = _synthetic_predictions()[("C2", "clean")]
+    probed = frozen.copy()
+    probed["prob_Fall"] += 0.00001
+
+    audit = reconcile_clean_probe(
+        probed,
+        frozen,
+        candidate=candidate,
+        protocol=spec.robustness,
+    )
+
+    assert audit["prediction_agreement"] == 1.0
+    assert audit["maximum_probability_delta"] == pytest.approx(0.00001)
+    probed.loc[0, "prob_Fall"] += 0.001
+    with pytest.raises(ValueError, match="drift beyond"):
+        reconcile_clean_probe(
+            probed,
+            frozen,
+            candidate=candidate,
+            protocol=spec.robustness,
+        )

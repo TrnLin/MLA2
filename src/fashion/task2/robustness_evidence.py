@@ -30,6 +30,7 @@ from fashion.task2.robustness import (
     fold_stats_from_history,
     load_robustness_checkpoint,
     load_robustness_cost_spec,
+    reconcile_clean_probe,
     run_or_load_deployment_cost,
     run_or_load_fold_probe,
 )
@@ -155,14 +156,6 @@ def load_verified_slice_manifest(
             "decision": decision,
         },
     )
-
-
-def _clean_frame(pack: Any) -> pd.DataFrame:
-    frame = pack.oof.copy()
-    frame["candidate"] = pack.candidate
-    frame["condition"] = "clean"
-    frame["checkpoint_run_id"] = frame["run_id"]
-    return frame
 
 
 def _plot_robustness(
@@ -588,11 +581,11 @@ def build_robustness_cost_evidence(
 
     prediction_frames: dict[tuple[str, str], pd.DataFrame] = {}
     probe_records: list[dict[str, Any]] = []
+    clean_reconciliation_rows: list[dict[str, Any]] = []
     for pack in selected_packs:
         candidate = RobustnessCandidate(pack.candidate, pack.experiment_id, pack.seed)
-        prediction_frames[(candidate.candidate, "clean")] = _clean_frame(pack)
         condition_parts: dict[str, list[pd.DataFrame]] = {
-            condition.condition: [] for condition in spec.conditions[1:]
+            condition.condition: [] for condition in spec.conditions
         }
         for registry_row in pack.registry.sort_values("fold", kind="stable").to_dict(
             orient="records"
@@ -607,7 +600,7 @@ def build_robustness_cost_evidence(
                 registry_row,
                 project_root=root,
             )
-            for condition in spec.conditions[1:]:
+            for condition in spec.conditions:
                 result = run_or_load_fold_probe(
                     model,
                     candidate=candidate,
@@ -636,7 +629,7 @@ def build_robustness_cost_evidence(
                 probe_records.append(record)
             del model
             gc.collect()
-        for condition in spec.conditions[1:]:
+        for condition in spec.conditions:
             combined = pd.concat(condition_parts[condition.condition], ignore_index=True)
             validate_oof(
                 combined,
@@ -646,6 +639,15 @@ def build_robustness_cost_evidence(
                 labels=SEASON_LABELS,
             )
             prediction_frames[(candidate.candidate, condition.condition)] = combined
+            if condition.condition == "clean":
+                clean_reconciliation_rows.append(
+                    reconcile_clean_probe(
+                        combined,
+                        pack.oof,
+                        candidate=candidate,
+                        protocol=spec.robustness,
+                    )
+                )
 
     tables = build_robustness_tables(prediction_frames, spec)
     decision = build_robustness_cost_decision(tables, deployment_cost, spec)
@@ -654,6 +656,9 @@ def build_robustness_cost_evidence(
     )
     probe_registry = pd.json_normalize(probe_records, sep="_").sort_values(
         ["candidate", "condition", "fold"], kind="stable"
+    )
+    clean_reconciliation = pd.DataFrame(clean_reconciliation_rows).sort_values(
+        "candidate", kind="stable"
     )
 
     evidence_root = _resolve_evidence_path(evidence_directory, project_root=root)
@@ -665,6 +670,7 @@ def build_robustness_cost_evidence(
         "probe_registry": evidence_root / "probe_registry.csv",
         "checkpoint_audit": evidence_root / "checkpoint_audit.csv",
         "deployment_cost": evidence_root / "deployment_cost.csv",
+        "clean_reconciliation": evidence_root / "clean_reconciliation.csv",
         "runtime": evidence_root / "runtime.json",
         "decision": evidence_root / "decision.json",
         "robustness_figure": figure_root / "robustness_comparison.png",
@@ -676,6 +682,7 @@ def build_robustness_cost_evidence(
     atomic_write_csv(paths["probe_registry"], probe_registry)
     atomic_write_csv(paths["checkpoint_audit"], checkpoint_audit)
     atomic_write_csv(paths["deployment_cost"], deployment_cost)
+    atomic_write_csv(paths["clean_reconciliation"], clean_reconciliation)
     atomic_write_json(paths["runtime"], runtime)
     atomic_write_json(paths["decision"], decision)
     _plot_robustness(

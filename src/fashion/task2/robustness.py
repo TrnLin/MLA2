@@ -95,6 +95,9 @@ class RobustnessProtocol:
     pin_memory: bool
     folds: tuple[int, ...]
     cache_directory: str
+    clean_reference: str
+    clean_min_prediction_agreement: float
+    clean_max_probability_delta: float
     amp_matches_training_evaluation: bool
     evaluation_scope: str
     perturbation_order: str
@@ -230,7 +233,10 @@ def load_robustness_cost_spec(
     if tuple(row.condition for row in conditions) != EXPECTED_CONDITIONS:
         raise ValueError("robustness changed the condition order")
     expected_condition_values = {
-        "clean": {"kind": "none", "source": "verified_frozen_oof"},
+        "clean": {
+            "kind": "none",
+            "source": "re_inferred_and_verified_against_frozen_oof",
+        },
         "jpeg_quality_85": {"kind": "jpeg_reencode", "quality": 85, "subsampling": 2},
         "brightness_0_85": {"kind": "brightness", "factor": 0.85},
         "brightness_1_15": {"kind": "brightness", "factor": 1.15},
@@ -251,6 +257,9 @@ def load_robustness_cost_spec(
             "pin_memory",
             "folds",
             "cache_directory",
+            "clean_reference",
+            "clean_min_prediction_agreement",
+            "clean_max_probability_delta",
             "amp_matches_training_evaluation",
             "evaluation_scope",
             "perturbation_order",
@@ -264,6 +273,9 @@ def load_robustness_cost_spec(
         pin_memory=bool(robustness_raw["pin_memory"]),
         folds=tuple(int(value) for value in robustness_raw["folds"]),
         cache_directory=str(robustness_raw["cache_directory"]),
+        clean_reference=str(robustness_raw["clean_reference"]),
+        clean_min_prediction_agreement=float(robustness_raw["clean_min_prediction_agreement"]),
+        clean_max_probability_delta=float(robustness_raw["clean_max_probability_delta"]),
         amp_matches_training_evaluation=bool(robustness_raw["amp_matches_training_evaluation"]),
         evaluation_scope=str(robustness_raw["evaluation_scope"]),
         perturbation_order=str(robustness_raw["perturbation_order"]),
@@ -272,10 +284,13 @@ def load_robustness_cost_spec(
         ),
     )
     if (
-        robustness.batch_size != 256
+        robustness.batch_size != 128
         or robustness.num_workers != 4
         or robustness.folds != tuple(range(5))
         or robustness.cache_directory != "tmp/task2/robustness"
+        or robustness.clean_reference != "verified_frozen_oof"
+        or robustness.clean_min_prediction_agreement != 1.0
+        or robustness.clean_max_probability_delta != 0.0001
         or not robustness.pin_memory
         or not robustness.amp_matches_training_evaluation
         or not robustness.prediction_artifacts_are_temporary
@@ -563,8 +578,6 @@ def predict_robustness_fold(
     probe_id: str,
 ) -> tuple[pd.DataFrame, dict[str, Any]]:
     """Run one perturbation through one matching validation-fold checkpoint."""
-    if condition.kind == "none":
-        raise ValueError("clean predictions must reuse the verified frozen OOF artifact")
     if validation_frame.empty or validation_frame["id"].duplicated().any():
         raise ValueError("robustness validation frame must contain unique products")
     fold_values = pd.to_numeric(validation_frame["cv_fold"], errors="raise").astype(int)
@@ -771,8 +784,6 @@ def run_or_load_fold_probe(
     """Reuse only an exact probe cache, otherwise execute and atomically replace it."""
     if mode not in {"run", "load", "run_or_load"}:
         raise ValueError(f"unknown robustness execution mode: {mode}")
-    if condition.kind == "none":
-        raise ValueError("clean condition is supplied by the verified OOF pack")
     fold = int(registry_row["fold"])
     cache_key = robustness_cache_key(
         analysis_config_sha256=analysis_config_sha256,
@@ -864,6 +875,62 @@ def run_or_load_fold_probe(
         predictions=predictions,
         record={**manifest, "source": "run", "manifest_path": str(manifest_path)},
     )
+
+
+def reconcile_clean_probe(
+    probed: pd.DataFrame,
+    frozen_oof: pd.DataFrame,
+    *,
+    candidate: RobustnessCandidate,
+    protocol: RobustnessProtocol,
+) -> dict[str, Any]:
+    """Prove that same-pipeline clean inference reproduces the frozen OOF reference."""
+    probability_columns = [f"prob_{label}" for label in SEASON_LABELS]
+    required = {"id", "y_true", "y_pred", *probability_columns}
+    for name, frame in (("clean probe", probed), ("frozen OOF", frozen_oof)):
+        missing = sorted(required - set(frame.columns))
+        if missing:
+            raise ValueError(f"{name} lacks reconciliation columns: {missing}")
+        if frame["id"].duplicated().any():
+            raise ValueError(f"{name} contains duplicate IDs")
+    if len(probed) != len(frozen_oof):
+        raise ValueError("clean probe and frozen OOF row counts differ")
+    merged = probed.loc[:, sorted(required)].merge(
+        frozen_oof.loc[:, sorted(required)],
+        on="id",
+        how="inner",
+        validate="one_to_one",
+        suffixes=("_probe", "_frozen"),
+    )
+    if len(merged) != len(probed):
+        raise ValueError("clean probe and frozen OOF IDs differ")
+    if not merged["y_true_probe"].eq(merged["y_true_frozen"]).all():
+        raise ValueError("clean probe and frozen OOF targets differ")
+    agreement = float(merged["y_pred_probe"].eq(merged["y_pred_frozen"]).mean())
+    probe_probabilities = merged.loc[
+        :, [f"{column}_probe" for column in probability_columns]
+    ].to_numpy(dtype=float)
+    frozen_probabilities = merged.loc[
+        :, [f"{column}_frozen" for column in probability_columns]
+    ].to_numpy(dtype=float)
+    absolute_delta = np.abs(probe_probabilities - frozen_probabilities)
+    result = {
+        "candidate": candidate.candidate,
+        "experiment_id": candidate.experiment_id,
+        "seed": candidate.seed,
+        "support": len(merged),
+        "clean_reference": protocol.clean_reference,
+        "prediction_agreement": agreement,
+        "minimum_prediction_agreement": protocol.clean_min_prediction_agreement,
+        "maximum_probability_delta": float(absolute_delta.max()),
+        "mean_probability_delta": float(absolute_delta.mean()),
+        "maximum_probability_delta_tolerance": protocol.clean_max_probability_delta,
+    }
+    if agreement < protocol.clean_min_prediction_agreement:
+        raise ValueError("clean probe predictions do not reproduce the frozen OOF reference")
+    if result["maximum_probability_delta"] > protocol.clean_max_probability_delta:
+        raise ValueError("clean probe probabilities drift beyond the frozen OOF tolerance")
+    return result
 
 
 def _metric_row(
@@ -1376,6 +1443,7 @@ __all__ = [
     "measure_deployment_cost",
     "model_tensor_bytes",
     "predict_robustness_fold",
+    "reconcile_clean_probe",
     "robustness_cache_key",
     "run_or_load_fold_probe",
     "run_or_load_deployment_cost",
