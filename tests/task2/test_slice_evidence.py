@@ -11,6 +11,7 @@ from fashion.task2.evidence import EXPERIMENT_REGISTRY_COLUMNS
 from fashion.task2.slice_evidence import (
     build_slice_decision,
     load_candidate_oof_packs,
+    load_declared_config_hashes,
     load_verified_stability_manifest,
 )
 from fashion.task2.slices import (
@@ -192,6 +193,26 @@ def test_stability_manifest_rejects_changed_artifact_bytes(tmp_path: Path) -> No
 
     with pytest.raises(ArtifactVerificationError, match="SHA-256 mismatch"):
         load_verified_stability_manifest(path, project_root=tmp_path)
+
+
+def test_repository_config_hashes_match_normalised_registry_contract() -> None:
+    _, _, sections = load_verified_stability_manifest()
+    registry = pd.read_csv(
+        sections["artifacts"]["registry_snapshot"],
+        dtype=str,
+        keep_default_na=False,
+    )
+
+    hashes = load_declared_config_hashes(sections["input_configs"])
+
+    for experiment_id, digest in hashes.items():
+        recorded = set(
+            registry.loc[
+                registry["experiment_id"].eq(experiment_id),
+                "config_sha256",
+            ]
+        )
+        assert recorded == {digest}
 
 
 def test_candidate_loader_verifies_twenty_exactly_once_fold_files(tmp_path: Path) -> None:
