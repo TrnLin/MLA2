@@ -679,12 +679,48 @@ def predict_robustness_fold(
     return predictions, metadata
 
 
+def verify_image_frame(
+    frame: pd.DataFrame,
+    *,
+    project_root: str | Path = ROOT,
+) -> str:
+    """Verify current image bytes and hash the exact ordered image set."""
+    required = {"id", "path", "sha256"}
+    missing = sorted(required - set(frame.columns))
+    if missing:
+        raise ValueError(f"image frame lacks provenance columns: {missing}")
+    if frame.empty or frame["id"].duplicated().any():
+        raise ValueError("image frame must contain unique product IDs")
+    root = Path(project_root).resolve()
+    records: list[dict[str, Any]] = []
+    for row in frame.sort_values("id", kind="stable").to_dict(orient="records"):
+        path = Path(str(row["path"]))
+        resolved = path.resolve() if path.is_absolute() else (root / path).resolve()
+        try:
+            portable_path = resolved.relative_to(root).as_posix()
+        except ValueError as error:
+            raise ValueError(f"image path is outside project root: {resolved}") from error
+        expected_sha256 = str(row["sha256"])
+        if len(expected_sha256) != 64:
+            raise ValueError(f"image {row['id']} has an invalid SHA-256 declaration")
+        verify_artifact(resolved, expected_sha256)
+        records.append(
+            {
+                "id": int(row["id"]),
+                "path": portable_path,
+                "sha256": expected_sha256,
+            }
+        )
+    return canonical_sha256(records)
+
+
 def robustness_cache_key(
     *,
     analysis_config_sha256: str,
     split_sha256: str,
     label_map_sha256: str,
     implementation_sha256_value: str,
+    image_set_sha256: str,
     candidate: RobustnessCandidate,
     condition: RobustnessCondition,
     fold: int,
@@ -697,6 +733,7 @@ def robustness_cache_key(
         split_sha256,
         label_map_sha256,
         implementation_sha256_value,
+        image_set_sha256,
         checkpoint_sha256,
         history_sha256,
     )
@@ -711,6 +748,7 @@ def robustness_cache_key(
             "split_sha256": split_sha256,
             "label_map_sha256": label_map_sha256,
             "implementation_sha256": implementation_sha256_value,
+            "image_set_sha256": image_set_sha256,
             "candidate": asdict(candidate),
             "condition": condition.to_dict(),
             "fold": fold,
@@ -785,11 +823,16 @@ def run_or_load_fold_probe(
     if mode not in {"run", "load", "run_or_load"}:
         raise ValueError(f"unknown robustness execution mode: {mode}")
     fold = int(registry_row["fold"])
+    image_set_sha256 = verify_image_frame(
+        validation_frame,
+        project_root=project_root,
+    )
     cache_key = robustness_cache_key(
         analysis_config_sha256=analysis_config_sha256,
         split_sha256=split_sha256,
         label_map_sha256=label_map_sha256,
         implementation_sha256_value=implementation_sha256_value,
+        image_set_sha256=image_set_sha256,
         candidate=candidate,
         condition=condition,
         fold=fold,
@@ -863,6 +906,7 @@ def run_or_load_fold_probe(
         "split_sha256": split_sha256,
         "label_map_sha256": label_map_sha256,
         "implementation_sha256": implementation_sha256_value,
+        "image_set_sha256": image_set_sha256,
         "git_commit": git_commit,
         "prediction_path": str(prediction_path),
         "prediction_sha256": compute_sha256(prediction_path),
@@ -1273,6 +1317,7 @@ def deployment_cost_cache_key(
     checkpoint_sha256: str,
     stats_sha256: str,
     runtime_sha256: str,
+    input_image_sha256: str,
     candidate: RobustnessCandidate,
     requested_device: str,
     input_id: int,
@@ -1285,6 +1330,7 @@ def deployment_cost_cache_key(
         checkpoint_sha256,
         stats_sha256,
         runtime_sha256,
+        input_image_sha256,
     )
     if any(len(value) != 64 for value in digests):
         raise ValueError("deployment-cost cache inputs require SHA-256 digests")
@@ -1298,6 +1344,7 @@ def deployment_cost_cache_key(
             "checkpoint_sha256": checkpoint_sha256,
             "stats_sha256": stats_sha256,
             "runtime_sha256": runtime_sha256,
+            "input_image_sha256": input_image_sha256,
             "candidate": asdict(candidate),
             "requested_device": requested_device,
             "input_id": input_id,
@@ -1322,6 +1369,7 @@ def run_or_load_deployment_cost(
     implementation_sha256_value: str,
     stats_sha256: str,
     runtime_sha256: str,
+    input_image_sha256: str,
     cache_directory: str | Path,
     mode: ExecutionMode = "run_or_load",
     rss_baseline_before_model_load: int | None = None,
@@ -1329,12 +1377,14 @@ def run_or_load_deployment_cost(
     """Reuse only an exact machine-specific cost result, otherwise measure it once."""
     if mode not in {"run", "load", "run_or_load"}:
         raise ValueError(f"unknown deployment-cost execution mode: {mode}")
+    verify_artifact(image_path, input_image_sha256)
     cache_key = deployment_cost_cache_key(
         analysis_config_sha256=analysis_config_sha256,
         implementation_sha256_value=implementation_sha256_value,
         checkpoint_sha256=checkpoint_sha256,
         stats_sha256=stats_sha256,
         runtime_sha256=runtime_sha256,
+        input_image_sha256=input_image_sha256,
         candidate=candidate,
         requested_device=requested_device,
         input_id=input_id,
@@ -1392,6 +1442,7 @@ def run_or_load_deployment_cost(
         "implementation_sha256": implementation_sha256_value,
         "stats_sha256": stats_sha256,
         "runtime_sha256": runtime_sha256,
+        "input_image_sha256": input_image_sha256,
         "input_id": input_id,
         "result_path": str(result_path),
         "result_sha256": compute_sha256(result_path),
@@ -1447,4 +1498,5 @@ __all__ = [
     "robustness_cache_key",
     "run_or_load_fold_probe",
     "run_or_load_deployment_cost",
+    "verify_image_frame",
 ]

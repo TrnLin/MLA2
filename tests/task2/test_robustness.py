@@ -33,6 +33,7 @@ from fashion.task2.robustness import (
     robustness_cache_key,
     run_or_load_deployment_cost,
     run_or_load_fold_probe,
+    verify_image_frame,
 )
 from fashion.train.artifacts import ArtifactVerificationError, canonical_sha256
 from fashion.train.metrics import SEASON_LABELS
@@ -373,6 +374,7 @@ def test_cache_key_changes_with_condition() -> None:
         "split_sha256": "b" * 64,
         "label_map_sha256": "c" * 64,
         "implementation_sha256_value": "d" * 64,
+        "image_set_sha256": "0" * 64,
         "candidate": RobustnessCandidate("C2", "g3-c2-t0-resnet18", 2753),
         "fold": 0,
         "checkpoint_sha256": "e" * 64,
@@ -383,6 +385,11 @@ def test_cache_key_changes_with_condition() -> None:
     brighter = robustness_cache_key(condition=_conditions()[3], **base)
 
     assert darker != brighter
+    changed_images = robustness_cache_key(
+        condition=_conditions()[2],
+        **{**base, "image_set_sha256": "1" * 64},
+    )
+    assert changed_images != darker
 
 
 def test_robustness_tables_report_paired_degradation() -> None:
@@ -478,13 +485,16 @@ def test_deployment_cost_cache_reuses_only_hash_valid_result(
         "measure_deployment_cost",
         lambda *args, **kwargs: measured,
     )
+    input_path = tmp_path / "input.jpg"
+    input_path.write_bytes(b"frozen image bytes")
+    input_sha256 = compute_sha256(input_path)
     kwargs = {
         "candidate": RobustnessCandidate("C2", "g3-c2-t0-resnet18", 2753),
         "checkpoint_run_id": "run-1",
         "checkpoint_sha256": "a" * 64,
         "checkpoint_bytes": 123,
         "transform": object(),
-        "image_path": tmp_path / "unused.jpg",
+        "image_path": input_path,
         "input_id": 1,
         "protocol": protocol,
         "requested_device": "cpu",
@@ -492,6 +502,7 @@ def test_deployment_cost_cache_reuses_only_hash_valid_result(
         "implementation_sha256_value": "c" * 64,
         "stats_sha256": "d" * 64,
         "runtime_sha256": "e" * 64,
+        "input_image_sha256": input_sha256,
         "cache_directory": tmp_path / "cache",
     }
 
@@ -506,10 +517,27 @@ def test_deployment_cost_cache_reuses_only_hash_valid_result(
     assert first["source"] == "run"
     assert second["source"] == "cache"
     assert second["model_only_median_ms"] == 1.25
+    input_path.write_bytes(b"changed image bytes")
+    with pytest.raises(ArtifactVerificationError, match="SHA-256 mismatch"):
+        run_or_load_deployment_cost(TinySeasonModel(), mode="load", **kwargs)
+    input_path.write_bytes(b"frozen image bytes")
     result_path = Path(second["result_path"])
     result_path.write_text("changed\n", encoding="utf-8")
     with pytest.raises(ArtifactVerificationError, match="SHA-256 mismatch"):
         run_or_load_deployment_cost(TinySeasonModel(), mode="load", **kwargs)
+
+
+def test_image_set_digest_verifies_declared_bytes(tmp_path: Path) -> None:
+    frame = _make_images(tmp_path)
+
+    first = verify_image_frame(frame, project_root=tmp_path)
+    second = verify_image_frame(frame.sample(frac=1, random_state=7), project_root=tmp_path)
+
+    assert first == second
+    assert len(first) == 64
+    (tmp_path / frame.iloc[0]["path"]).write_bytes(b"changed image bytes")
+    with pytest.raises(ArtifactVerificationError, match="SHA-256 mismatch"):
+        verify_image_frame(frame, project_root=tmp_path)
 
 
 def test_direct_fold_prediction_uses_only_declared_validation_ids(tmp_path: Path) -> None:

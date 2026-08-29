@@ -569,6 +569,7 @@ def build_robustness_cost_evidence(
                 implementation_sha256_value=implementation_hash,
                 stats_sha256=canonical_sha256(stats.to_dict()),
                 runtime_sha256=runtime_sha256,
+                input_image_sha256=str(input_row["sha256"]),
                 cache_directory=cache_root,
                 mode=mode,
                 rss_baseline_before_model_load=rss_baseline,
