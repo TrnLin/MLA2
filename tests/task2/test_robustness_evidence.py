@@ -259,3 +259,40 @@ def test_committed_evidence_records_use_portable_paths(tmp_path: Path) -> None:
     assert portable[0]["prediction_path"] == "tmp/task2/probe/predictions.csv"
     assert portable[0]["manifest_path"] == "tmp/task2/probe/manifest.json"
     assert records[0]["prediction_path"] == str(prediction)
+
+
+def test_run_and_cache_records_have_identical_canonical_column_order(
+    tmp_path: Path,
+) -> None:
+    prediction = _write(tmp_path / "tmp/task2/probe/predictions.csv", "id\n1\n")
+    run_record = {
+        "schema_version": "1.0.0",
+        "status": "completed",
+        "condition_spec": {"condition": "clean", "kind": "none"},
+        "prediction_path": str(prediction),
+    }
+    cache_record = {
+        "prediction_path": str(prediction),
+        "condition_spec": {"kind": "none", "condition": "clean"},
+        "status": "completed",
+        "schema_version": "1.0.0",
+    }
+
+    run_frame = pd.json_normalize(
+        portable_record_paths(
+            [run_record],
+            fields=("prediction_path",),
+            project_root=tmp_path,
+        ),
+        sep="_",
+    )
+    cache_frame = pd.json_normalize(
+        portable_record_paths(
+            [cache_record],
+            fields=("prediction_path",),
+            project_root=tmp_path,
+        ),
+        sep="_",
+    )
+
+    assert run_frame.to_csv(index=False) == cache_frame.to_csv(index=False)
