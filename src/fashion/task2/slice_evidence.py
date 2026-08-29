@@ -17,6 +17,8 @@ from fashion.task2.evidence import (
     _portable_artifact_path,
     _resolve_evidence_path,
 )
+from fashion.task2.experiments import load_experiment_config
+from fashion.task2.multitask import load_i2_config
 from fashion.task2.slices import (
     CandidateOOFPack,
     SliceAnalysisSpec,
@@ -26,6 +28,13 @@ from fashion.task2.slices import (
     load_slice_analysis_spec,
     plot_slice_macro_f1,
     plot_spring_destinations,
+)
+from fashion.task2.stability import (
+    C2_PRIMARY_EXPERIMENT_ID,
+    C2_STABILITY_EXPERIMENT_ID,
+    I2_PRIMARY_EXPERIMENT_ID,
+    I2_STABILITY_EXPERIMENT_ID,
+    load_stability_i2_config,
 )
 from fashion.task2.stability_evidence import EXPECTED_EXPERIMENTS
 from fashion.train.artifacts import (
@@ -115,6 +124,28 @@ def load_verified_stability_manifest(
 
 def _normalised_boolean_values(frame: pd.DataFrame, column: str) -> set[str]:
     return set(frame[column].astype(str).str.strip().str.lower())
+
+
+def load_declared_config_hashes(
+    config_paths: Mapping[str, str | Path],
+) -> dict[str, str]:
+    """Hash loader-normalised configs exactly as the run registry does."""
+    if set(config_paths) != set(EXPECTED_EXPERIMENTS):
+        raise ValueError("config hash audit requires the exact frozen experiment set")
+    hashes: dict[str, str] = {}
+    for experiment_id, path in config_paths.items():
+        if experiment_id in {C2_PRIMARY_EXPERIMENT_ID, C2_STABILITY_EXPERIMENT_ID}:
+            config = load_experiment_config(path)
+        elif experiment_id == I2_PRIMARY_EXPERIMENT_ID:
+            config = load_i2_config(path)
+        elif experiment_id == I2_STABILITY_EXPERIMENT_ID:
+            config = load_stability_i2_config(path)
+        else:  # pragma: no cover - exact set check above keeps this defensive.
+            raise ValueError(f"unexpected G6 experiment config: {experiment_id}")
+        if config.experiment_id != experiment_id:
+            raise ValueError(f"declared config identity differs for {experiment_id}")
+        hashes[experiment_id] = canonical_sha256(config.to_dict())
+    return hashes
 
 
 def load_candidate_oof_packs(
@@ -400,10 +431,7 @@ def build_shortcut_error_slice_evidence(
     stability_summary = pd.read_csv(sections["artifacts"]["seed_stability"])
     with sections["artifacts"]["decision"].open(encoding="utf-8") as handle:
         stability_decision = json.load(handle)
-    config_hashes: dict[str, str] = {}
-    for experiment_id, config_path in sections["input_configs"].items():
-        with config_path.open(encoding="utf-8") as handle:
-            config_hashes[experiment_id] = canonical_sha256(json.load(handle))
+    config_hashes = load_declared_config_hashes(sections["input_configs"])
 
     packs, coverage_by_experiment, prediction_artifacts = load_candidate_oof_packs(
         registry,
@@ -518,5 +546,6 @@ __all__ = [
     "build_shortcut_error_slice_evidence",
     "build_slice_decision",
     "load_candidate_oof_packs",
+    "load_declared_config_hashes",
     "load_verified_stability_manifest",
 ]
