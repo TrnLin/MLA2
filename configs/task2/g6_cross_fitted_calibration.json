@@ -63,6 +63,7 @@
     "coverage_step": 0.01,
     "coverage_stop": 1.0,
     "ranking_rule": "descending_calibrated_top_label_confidence_then_ascending_id",
+    "retained_count_rounding": "ceiling",
     "review_budgets": [
       0.0,
       0.1,
