@@ -41,11 +41,29 @@ from fashion.train.reproducibility import make_torch_generator, seed_worker
 
 ROBUSTNESS_CONFIG_PATH = TASK2_CONFIG_DIR / "g6_robustness_cost.json"
 ROBUSTNESS_IMPLEMENTATION_PATHS = (
-    "src/fashion/task2/robustness.py",
-    "src/fashion/task2/robustness_evidence.py",
+    "src/fashion/task2/experiments.py",
+    "src/fashion/config.py",
+    "src/fashion/data/hashing.py",
+    "src/fashion/data/metadata.py",
+    "src/fashion/data/splits.py",
+    "src/fashion/train/artifacts.py",
+    "src/fashion/train/cache.py",
+    "src/fashion/train/metrics.py",
+    "src/fashion/train/registry.py",
+    "src/fashion/data/dataset.py",
     "src/fashion/data/images.py",
     "src/fashion/data/torch.py",
     "src/fashion/models/season.py",
+    "src/fashion/train/engine.py",
+    "src/fashion/train/reproducibility.py",
+    "src/fashion/data/multitask.py",
+    "src/fashion/train/multitask.py",
+    "src/fashion/task2/multitask.py",
+    "src/fashion/task2/evidence.py",
+    "src/fashion/task2/slices.py",
+    "src/fashion/task2/slice_evidence.py",
+    "src/fashion/task2/robustness.py",
+    "src/fashion/task2/robustness_evidence.py",
 )
 EXPECTED_CANDIDATES = (
     ("C2", "g3-c2-t0-resnet18", 2753),
