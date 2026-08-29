@@ -1,0 +1,87 @@
+{
+  "analysis_id": "g6-cross-fitted-calibration",
+  "calibration_metrics": {
+    "ece_bins": 15,
+    "metrics": [
+      "accuracy",
+      "macro_f1",
+      "nll",
+      "brier",
+      "ece",
+      "mean_confidence"
+    ],
+    "reliability_definition": "top_label_confidence_vs_empirical_accuracy",
+    "reliability_strategy": "equal_width"
+  },
+  "candidate_experiments": [
+    {
+      "candidate": "C2",
+      "experiment_id": "g3-c2-t0-resnet18",
+      "seed": 2753
+    },
+    {
+      "candidate": "I2",
+      "experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+      "seed": 2753
+    }
+  ],
+  "cross_fitting": {
+    "evaluation_rule": "apply_each_temperature_only_to_its_held_out_oof_fold",
+    "fit_rule": "fit_on_the_other_four_oof_folds_of_the_same_candidate",
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "objective": "multiclass_negative_log_likelihood",
+    "optimizer": "bounded_scalar_minimisation",
+    "optimizer_tolerance": 1e-08,
+    "probability_floor": 1e-12,
+    "probability_source": "frozen_softmax_oof_probabilities",
+    "pseudo_logit_rule": "natural_log_of_clipped_probability",
+    "temperature_bounds": [
+      0.05,
+      10.0
+    ]
+  },
+  "deployment_temperature": {
+    "evaluation_claim_allowed": false,
+    "fit_rule": "fit_one_scalar_on_all_primary_seed_oof_rows_after_cross_fitted_evaluation",
+    "purpose": "future_frozen_bundle_confidence_only"
+  },
+  "expected_row_count": 32753,
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "risk_coverage": {
+    "coverage_start": 0.1,
+    "coverage_step": 0.01,
+    "coverage_stop": 1.0,
+    "ranking_rule": "descending_calibrated_top_label_confidence_then_ascending_id",
+    "review_budgets": [
+      0.0,
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5
+    ],
+    "risk_definition": "one_minus_accuracy_among_automatically_accepted_rows",
+    "threshold_selection_rule": "no_threshold_is_frozen_without_a_business_error_cost"
+  },
+  "schema_version": "1.0.0",
+  "stage": "g6_cross_fitted_calibration_and_risk_coverage",
+  "target": "season",
+  "warnings": {
+    "calibration_cannot_reopen_g5_model_selection": true,
+    "holdout_is_forbidden": true,
+    "pseudo_logits_are_equivalent_only_up_to_probability_clipping": true,
+    "temperature_scaling_preserves_class_ranking": true,
+    "ultimate_winner_remains_unfrozen": true
+  }
+}

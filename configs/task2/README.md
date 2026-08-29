@@ -82,3 +82,10 @@ all 32,753 development products under JPEG-85, two fixed brightness shifts, and
 radius-1 Gaussian blur. It also freezes single-image CPU and available-CUDA
 latency and memory measurement rules. These probes explain deployment risk;
 they cannot reopen the G5 model choice or access holdout data.
+
+`g6_cross_fitted_calibration.json` evaluates temperature scaling without fitting a
+calibrator on the rows it scores. For each primary-seed candidate and held-out OOF fold,
+one scalar temperature is fit on the other four OOF folds. The contract fixes the NLL
+objective, reliability bins, risk-coverage grid, and review budgets. A separate all-OOF
+temperature may later support the frozen deployment bundle, but it cannot support an
+evaluation claim or select an app threshold without a stated business error cost.
