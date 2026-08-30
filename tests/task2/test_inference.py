@@ -120,6 +120,21 @@ def test_prediction_rejects_missing_and_corrupted_images(
         predict_season(bundle, corrupted)
 
 
+def test_prediction_rejects_decompression_bomb_as_invalid_image(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle = _load_fixture(tmp_path, monkeypatch)
+    image_path = tmp_path / "oversized.png"
+    image_path.write_bytes(b"fixture")
+
+    def reject_oversized_image(path: str | Path) -> torch.Tensor:
+        raise Image.DecompressionBombError("image exceeds safe pixel limit")
+
+    with pytest.raises(InvalidSeasonImageError, match="Could not read a valid image"):
+        predict_season(replace(bundle, transform=reject_oversized_image), image_path)
+
+
 class _NonFiniteModel(nn.Module):
     def predict_season_logits(self, images: torch.Tensor) -> torch.Tensor:
         return torch.full((len(images), 4), float("nan"), device=images.device)
