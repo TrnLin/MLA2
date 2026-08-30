@@ -227,6 +227,36 @@ def test_refit_manifest_rejects_a_claim_that_holdout_was_opened(
             )
 
 
+@pytest.mark.parametrize(
+    ("field", "integer_value"),
+    [
+        ("scratch", 1),
+        ("holdout_opened", 0),
+        ("model_change_after_holdout_allowed", 0),
+    ],
+)
+def test_refit_manifest_rejects_integer_substitutes_for_booleans(
+    monkeypatch: pytest.MonkeyPatch,
+    field: str,
+    integer_value: int,
+) -> None:
+    _patch_fast_refit(monkeypatch)
+    (ROOT / "tmp").mkdir(exist_ok=True)
+    with TemporaryDirectory(dir=ROOT / "tmp") as directory:
+        paths = _paths(Path(directory))
+        run_or_load_development_refit(mode="run", project_root=ROOT, **paths)
+        manifest = json.loads(paths["manifest_path"].read_text(encoding="utf-8"))
+        manifest[field] = integer_value
+        paths["manifest_path"].write_text(json.dumps(manifest), encoding="utf-8")
+
+        with pytest.raises(ValueError, match="boolean"):
+            load_verified_development_refit_manifest(
+                paths["manifest_path"],
+                project_root=ROOT,
+                registry_path=paths["registry_path"],
+            )
+
+
 def test_refit_refuses_to_replace_an_unmanifested_model_bundle() -> None:
     (ROOT / "tmp").mkdir(exist_ok=True)
     with TemporaryDirectory(dir=ROOT / "tmp") as directory:
