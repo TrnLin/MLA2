@@ -73,3 +73,15 @@ After the robustness/cost boundary is closed, build cross-fitted calibration evi
 This command does not train. It verifies the frozen upstream manifests and uses only the
 primary-seed development OOF probabilities. Each fold is calibrated by a temperature fit
 on the other four folds. The holdout stays sealed, and no app threshold is frozen.
+
+After calibration is closed, build paired product-family bootstrap intervals:
+
+```powershell
+& '.\.venv\Scripts\python.exe' scripts/build_task2_bootstrap_evidence.py
+```
+
+This command does not train. It verifies all 20 frozen C2/I2 OOF files, joins them to
+canonical `product_family_group` values by ID, and runs the declared 10,000 paired draws
+for each seed pair. The same family draw is reused across candidates and seeds. The
+result describes fitted-pair uncertainty only; it does not open holdout or freeze the
+ultimate winner.
