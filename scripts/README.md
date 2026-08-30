@@ -85,3 +85,15 @@ canonical `product_family_group` values by ID, and runs the declared 10,000 pair
 for each seed pair. The same family draw is reused across candidates and seeds. The
 result describes fitted-pair uncertainty only; it does not open holdout or freeze the
 ultimate winner.
+
+After paired uncertainty is closed, build the fixed Grad-CAM and failure review:
+
+```powershell
+& '.\.venv\Scripts\python.exe' scripts/build_task2_gradcam_evidence.py
+```
+
+This command selects three high-confidence correct and incorrect rows per true class
+for both primary-seed finalists. It restores only each row's matching validation-fold
+checkpoint, reconciles the raw OOF probabilities, and writes two contact sheets plus
+non-causal attention and failure tables. Metadata is review context only. Holdout stays
+sealed, and this command does not change or freeze the candidate.
