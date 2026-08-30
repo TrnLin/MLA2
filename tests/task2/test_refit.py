@@ -341,3 +341,60 @@ def test_refit_rejects_a_parallel_live_process_before_writing_artifacts(
 
         assert not paths["registry_path"].exists()
         assert not paths["bundle_path"].exists()
+
+
+def test_refit_load_rejects_non_finite_model_parameters(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _patch_fast_refit(monkeypatch)
+    (ROOT / "tmp").mkdir(exist_ok=True)
+    with TemporaryDirectory(dir=ROOT / "tmp") as directory:
+        paths = _paths(Path(directory))
+        run_or_load_development_refit(mode="run", project_root=ROOT, **paths)
+
+        bundle = torch.load(paths["bundle_path"], map_location="cpu", weights_only=True)
+        first_tensor = next(iter(bundle["model_state_dict"].values()))
+        first_tensor.view(-1)[0] = float("nan")
+        torch.save(bundle, paths["bundle_path"])
+        bundle_sha256 = compute_sha256(paths["bundle_path"])
+        manifest = json.loads(paths["manifest_path"].read_text(encoding="utf-8"))
+        manifest["bundle"]["sha256"] = bundle_sha256
+        paths["manifest_path"].write_text(json.dumps(manifest), encoding="utf-8")
+        registry = pd.read_csv(paths["registry_path"], dtype=str, keep_default_na=False)
+        registry.loc[0, "checkpoint_sha256"] = bundle_sha256
+        registry.to_csv(paths["registry_path"], index=False)
+
+        with pytest.raises(ValueError, match="non-finite"):
+            load_verified_development_refit_manifest(
+                paths["manifest_path"],
+                project_root=ROOT,
+                registry_path=paths["registry_path"],
+            )
+
+
+def test_refit_load_rejects_non_finite_training_history(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _patch_fast_refit(monkeypatch)
+    (ROOT / "tmp").mkdir(exist_ok=True)
+    with TemporaryDirectory(dir=ROOT / "tmp") as directory:
+        paths = _paths(Path(directory))
+        run_or_load_development_refit(mode="run", project_root=ROOT, **paths)
+
+        history = pd.read_csv(paths["history_path"])
+        history.loc[0, "train_loss"] = float("inf")
+        history.to_csv(paths["history_path"], index=False)
+        history_sha256 = compute_sha256(paths["history_path"])
+        manifest = json.loads(paths["manifest_path"].read_text(encoding="utf-8"))
+        manifest["artifacts"]["history"]["sha256"] = history_sha256
+        paths["manifest_path"].write_text(json.dumps(manifest), encoding="utf-8")
+        registry = pd.read_csv(paths["registry_path"], dtype=str, keep_default_na=False)
+        registry.loc[0, "history_sha256"] = history_sha256
+        registry.to_csv(paths["registry_path"], index=False)
+
+        with pytest.raises(ValueError, match="non-finite"):
+            load_verified_development_refit_manifest(
+                paths["manifest_path"],
+                project_root=ROOT,
+                registry_path=paths["registry_path"],
+            )

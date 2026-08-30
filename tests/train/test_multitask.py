@@ -66,6 +66,13 @@ class TinyMultiTaskModel(nn.Module):
         return self.forward(images)["season_logits"]
 
 
+class NonFiniteMultiTaskModel(TinyMultiTaskModel):
+    def forward(self, images: torch.Tensor) -> dict[str, torch.Tensor]:
+        outputs = super().forward(images)
+        outputs["season_logits"] = outputs["season_logits"] * float("nan")
+        return outputs
+
+
 class TinyImageMultiTaskDataset(Dataset):
     def __init__(self) -> None:
         generator = torch.Generator().manual_seed(2753)
@@ -343,6 +350,30 @@ def test_multitask_refit_rejects_loader_batch_size_drift() -> None:
     with pytest.raises(ValueError, match="batch_size must match"):
         train_masked_multitask_refit(
             TinyMultiTaskModel(),
+            train_loader,
+            config=config,
+            auxiliary_weight=0.3,
+        )
+
+
+def test_multitask_refit_stops_before_updating_on_non_finite_loss() -> None:
+    train_loader, _ = _loaders()
+    config = RefitTrainConfig(
+        seed=2753,
+        epochs=1,
+        learning_rate=1e-3,
+        weight_decay=1e-4,
+        batch_size=4,
+        effective_batch_size=8,
+        gradient_clip_norm=1.0,
+        warmup_epochs=0,
+        use_amp=False,
+        device="cpu",
+    )
+
+    with pytest.raises(FloatingPointError, match="non-finite"):
+        train_masked_multitask_refit(
+            NonFiniteMultiTaskModel(),
             train_loader,
             config=config,
             auxiliary_weight=0.3,
