@@ -13,8 +13,36 @@ class Task1ModelConfig:
     """Fixed architecture settings for the Task 1 scratch CNN."""
 
     num_classes: int = 124
-    adaptive_size: tuple[int, int] = (5, 7)
+    adaptive_size: tuple[int, int] = (4, 3)
     hidden_features: int = 128
+
+
+class MpsSafeAdaptiveAvgPool2d(nn.Module):
+    """Match adaptive average pooling with MPS-supported slices and means."""
+
+    def __init__(self, output_size: tuple[int, int]) -> None:
+        super().__init__()
+        if any(size <= 0 for size in output_size):
+            raise ValueError("output_size values must be positive")
+        self.output_size = output_size
+
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+        """Average PyTorch's exact adaptive-pooling bins without MPS adaptive pooling."""
+        input_height, input_width = inputs.shape[-2:]
+        output_height, output_width = self.output_size
+        rows: list[torch.Tensor] = []
+        for row in range(output_height):
+            row_start = (row * input_height) // output_height
+            row_end = ((row + 1) * input_height + output_height - 1) // output_height
+            columns: list[torch.Tensor] = []
+            for column in range(output_width):
+                column_start = (column * input_width) // output_width
+                column_end = ((column + 1) * input_width + output_width - 1) // output_width
+                columns.append(
+                    inputs[..., row_start:row_end, column_start:column_end].mean(dim=(-2, -1))
+                )
+            rows.append(torch.stack(columns, dim=-1))
+        return torch.stack(rows, dim=-2)
 
 
 class Task1SmallCNN(nn.Module):
@@ -30,8 +58,8 @@ class Task1SmallCNN(nn.Module):
         self.conv4 = nn.Conv2d(64, 64, kernel_size=5, padding=2)
         self.conv5 = nn.Conv2d(64, 64, kernel_size=5, padding=2)
         self.pool = nn.MaxPool2d(2, 2)
-        self.adaptive_pool = nn.AdaptiveAvgPool2d(self.config.adaptive_size)
-        self.fc1 = nn.Linear(64 * 5 * 7, self.config.hidden_features)
+        self.adaptive_pool = MpsSafeAdaptiveAvgPool2d(self.config.adaptive_size)
+        self.fc1 = nn.Linear(64 * 4 * 3, self.config.hidden_features)
         self.fc2 = nn.Linear(self.config.hidden_features, num_classes)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
