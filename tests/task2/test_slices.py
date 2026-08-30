@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import fashion.task2.slices as slices_module
 from fashion.data.dataset import get_cv_split, get_samples, load_splits
 from fashion.task2.slices import (
     CandidateExperiment,
@@ -261,7 +260,7 @@ def test_slice_figures_do_not_require_an_interactive_pyplot_backend(
     def reject_interactive_manager(*_args: object, **_kwargs: object) -> None:
         raise AssertionError("slice figures must use the headless Agg canvas")
 
-    monkeypatch.setattr(slices_module.plt, "subplots", reject_interactive_manager)
+    monkeypatch.setattr("matplotlib.pyplot.subplots", reject_interactive_manager)
 
     assert plot_slice_macro_f1(
         tables.slice_metrics,

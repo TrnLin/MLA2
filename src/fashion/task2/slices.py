@@ -8,9 +8,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Sequence
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+from matplotlib.figure import Figure
 
 from fashion.config import TASK2_CONFIG_DIR
 from fashion.data.dataset import get_cv_split, get_samples
@@ -802,7 +803,9 @@ def plot_slice_macro_f1(
     """Plot macro-F1 for every non-empty declared slice across models and seeds."""
     if low_support_threshold < 1:
         raise ValueError("low-support threshold must be positive")
-    figure, axes = plt.subplots(3, 2, figsize=(14, 13), constrained_layout=True)
+    figure = Figure(figsize=(14, 13), constrained_layout=True)
+    FigureCanvasAgg(figure)
+    axes = figure.subplots(3, 2)
     styles = {
         ("C2", 2753): ("#82A6EA", "o", "-"),
         ("C2", 2026): ("#2F66E8", "o", "--"),
@@ -864,7 +867,6 @@ def plot_slice_macro_f1(
     )
     buffer = io.BytesIO()
     figure.savefig(buffer, format="png", dpi=180, bbox_inches="tight")
-    plt.close(figure)
     path = Path(output_path)
     atomic_write_bytes(path, buffer.getvalue())
     return path
@@ -875,7 +877,9 @@ def plot_spring_destinations(
     output_path: str | Path,
 ) -> Path:
     """Plot where true Spring products are predicted for each candidate and seed."""
-    figure, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True, constrained_layout=True)
+    figure = Figure(figsize=(12, 5), constrained_layout=True)
+    FigureCanvasAgg(figure)
+    axes = figure.subplots(1, 2, sharey=True)
     colors = {
         "Fall": "#D97706",
         "Spring": "#16A34A",
@@ -916,7 +920,6 @@ def plot_spring_destinations(
     )
     buffer = io.BytesIO()
     figure.savefig(buffer, format="png", dpi=180, bbox_inches="tight")
-    plt.close(figure)
     path = Path(output_path)
     atomic_write_bytes(path, buffer.getvalue())
     return path
