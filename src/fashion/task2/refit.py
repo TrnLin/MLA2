@@ -67,12 +67,12 @@ REFIT_HISTORY_CSV = REFIT_EVIDENCE_DIRECTORY / "training_history.csv"
 REFIT_RUNTIME_JSON = REFIT_EVIDENCE_DIRECTORY / "runtime.json"
 REFIT_LOCK_FILENAME = ".task2-season-refit.lock"
 REFIT_IMPLEMENTATION_PATHS = tuple(
-    dict.fromkeys(
-        (
+    sorted(
+        {
             *I2_IMPLEMENTATION_PATHS,
             "src/fashion/task2/refit.py",
             "src/fashion/task2/ultimate_judgement.py",
-        )
+        }
     )
 )
 HISTORY_COLUMNS = (
