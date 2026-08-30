@@ -923,6 +923,60 @@ def test_task2_slice_cells_load_verified_post_inference_evidence() -> None:
         assert required in findings
 
 
+def test_task2_robustness_cells_load_verified_stress_and_cost_evidence() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    cell_ids = ("s11-01-code", "s11-02-01-code", "s11-02-02-code")
+
+    for cell_id in cell_ids:
+        code = cells[cell_id].source
+        assert not code.startswith("# TODO:")
+        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+
+    combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
+    for required in (
+        "results/evidence/task2/robustness_cost/manifest.json",
+        'robustness_manifest["git_dirty"] is False',
+        'robustness_manifest["candidate_selection_affected"] is False',
+        'robustness_manifest["ultimate_winner_frozen"] is False',
+        "expected_conditions",
+        "clean_reconciliation",
+        'len(probe_registry) == probe_registry["probe_id"].nunique() == 50',
+        "model_only_warmups",
+        "end_to_end_repeats",
+        "parameter_and_buffer_bytes",
+        "process_rss_delta_bytes",
+        "peak_cuda_allocated_bytes",
+        "deployment_cost_figure",
+    ):
+        assert required in combined
+    assert "train_fold" not in combined
+    assert "run_or_load_experiment" not in combined
+
+    findings = "\n".join(
+        cells[cell_id].source
+        for cell_id in (
+            "s11-01-finding",
+            "s11-02-01-finding",
+            "s11-02-02-finding",
+        )
+    )
+    for required in (
+        "brightness `0.85` is the worst",
+        "0.363961",
+        "0.003010",
+        "6.493/7.069 ms",
+        "47.357/51.721 ms",
+        "1.312",
+        "1,206,112",
+        "0.108x",
+        "28.56",
+        "Process RSS",
+        "both better and cheaper",
+    ):
+        assert required in findings
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
