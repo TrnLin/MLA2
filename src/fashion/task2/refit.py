@@ -8,6 +8,7 @@ import os
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, Iterator, Literal, Mapping
 
 import pandas as pd
@@ -221,6 +222,13 @@ class _RefitContract:
         )
 
 
+@dataclass(frozen=True)
+class _RefitStagingPaths:
+    bundle: Path
+    history: Path
+    runtime: Path
+
+
 def _require_exact_keys(payload: Mapping[str, Any], expected: set[str], scope: str) -> None:
     if set(payload) != expected:
         missing = sorted(expected - set(payload))
@@ -285,6 +293,37 @@ def _exclusive_refit_lock(path: Path) -> Iterator[None]:
             path.unlink(missing_ok=True)
 
 
+@contextmanager
+def _refit_artifact_transaction(
+    *,
+    run_id: str,
+    root: Path,
+    final_paths: tuple[Path, ...],
+) -> Iterator[_RefitStagingPaths]:
+    """Stage one package and roll back every uncommitted final output on error."""
+    staging_root = root / "tmp" / "task2" / "development_refit"
+    staging_root.mkdir(parents=True, exist_ok=True)
+    try:
+        with TemporaryDirectory(prefix=f"{run_id}-", dir=staging_root) as directory:
+            staging = Path(directory)
+            try:
+                yield _RefitStagingPaths(
+                    bundle=staging / "task2_season.pt",
+                    history=staging / "training_history.csv",
+                    runtime=staging / "runtime.json",
+                )
+            except BaseException:
+                for path in final_paths:
+                    path.unlink(missing_ok=True)
+                raise
+    finally:
+        try:
+            staging_root.rmdir()
+            staging_root.parent.rmdir()
+        except OSError:
+            pass
+
+
 def _relative_path(path: Path, *, root: Path) -> str:
     resolved = path.resolve()
     try:
@@ -298,6 +337,18 @@ def _declaration(path: Path, *, root: Path) -> dict[str, str]:
         "path": _relative_path(path, root=root),
         "sha256": compute_sha256(path),
     }
+
+
+def _staged_declaration(final_path: Path, staged_path: Path, *, root: Path) -> dict[str, str]:
+    return {
+        "path": _relative_path(final_path, root=root),
+        "sha256": compute_sha256(staged_path),
+    }
+
+
+def _publish_staged_artifact(staged_path: Path, final_path: Path) -> None:
+    final_path.parent.mkdir(parents=True, exist_ok=True)
+    os.replace(staged_path, final_path)
 
 
 def _resolve_declaration(
@@ -880,9 +931,15 @@ def _run_or_load_development_refit_unlocked(
         return _outcome(manifest, verified_manifest, source="load")
     if mode == "load":
         raise FileNotFoundError(f"development refit manifest does not exist: {manifest_file}")
-    if bundle_file.exists():
+    orphaned_outputs = [
+        path
+        for path in (bundle_file, history_file, runtime_file)
+        if path.exists()
+    ]
+    if orphaned_outputs:
         raise FileExistsError(
-            "an unmanifested Task 2 model bundle exists; audit it before a new refit"
+            "unmanifested Task 2 refit artifacts exist; audit them before a new refit: "
+            + ", ".join(str(path) for path in orphaned_outputs)
         )
 
     contract = _load_refit_contract(
@@ -917,7 +974,14 @@ def _run_or_load_development_refit_unlocked(
     )
     registry = RunRegistry(registry_file)
     runtime_environment = capture_runtime()
-    with tracked_run(registry, record) as run:
+    with (
+        _refit_artifact_transaction(
+            run_id=run_id,
+            root=root,
+            final_paths=(bundle_file, manifest_file, history_file, runtime_file),
+        ) as staged,
+        tracked_run(registry, record) as run,
+    ):
         loaders = build_development_multitask_loader(
             image_size=contract.config.data.image_size,
             batch_size=contract.config.data.batch_size,
@@ -1032,9 +1096,9 @@ def _run_or_load_development_refit_unlocked(
                 "auxiliary_target_used": False,
             },
         }
-        bundle_sha256 = _save_bundle(bundle_file, bundle_payload)
+        bundle_sha256 = _save_bundle(staged.bundle, bundle_payload)
         history = _history_frame(result)
-        atomic_write_csv(history_file, history)
+        atomic_write_csv(staged.history, history)
         runtime_payload = {
             "schema_version": "1.0.0",
             "gate": REFIT_GATE,
@@ -1049,7 +1113,11 @@ def _run_or_load_development_refit_unlocked(
             "validation_used": False,
             "primary_metric_name": None,
         }
-        atomic_write_json(runtime_file, runtime_payload)
+        atomic_write_json(staged.runtime, runtime_payload)
+        history_sha256 = compute_sha256(staged.history)
+        bundle_declaration = _staged_declaration(bundle_file, staged.bundle, root=root)
+        history_declaration = _staged_declaration(history_file, staged.history, root=root)
+        runtime_declaration = _staged_declaration(runtime_file, staged.runtime, root=root)
         run.epochs_completed = result.epochs_completed
         run.best_epoch = None
         run.parameter_count = result.parameter_count
@@ -1058,7 +1126,7 @@ def _run_or_load_development_refit_unlocked(
         run.checkpoint_path = _relative_path(bundle_file, root=root)
         run.checkpoint_sha256 = bundle_sha256
         run.history_path = _relative_path(history_file, root=root)
-        run.history_sha256 = compute_sha256(history_file)
+        run.history_sha256 = history_sha256
         run.metrics = {}
 
         manifest = {
@@ -1098,13 +1166,16 @@ def _run_or_load_development_refit_unlocked(
             },
             "selection_freeze": _declaration(contract.freeze_path, root=root),
             "selected_config": _declaration(contract.config_path, root=root),
-            "bundle": _declaration(bundle_file, root=root),
+            "bundle": bundle_declaration,
             "artifacts": {
-                "history": _declaration(history_file, root=root),
-                "runtime": _declaration(runtime_file, root=root),
+                "history": history_declaration,
+                "runtime": runtime_declaration,
             },
             "model_change_after_holdout_allowed": False,
         }
+        _publish_staged_artifact(staged.bundle, bundle_file)
+        _publish_staged_artifact(staged.history, history_file)
+        _publish_staged_artifact(staged.runtime, runtime_file)
         atomic_write_json(manifest_file, manifest)
         _load_verified_development_refit_package(
             manifest_file,
