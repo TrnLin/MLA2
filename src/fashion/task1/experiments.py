@@ -16,6 +16,7 @@ from fashion.config import ROOT, TASK1_EVIDENCE_DIR, TASK1_FIGURE_DIR, TASK1_RES
 from fashion.data.dataset import get_samples
 from fashion.task1.evaluation import (
     aggregate_fold_metrics,
+    classification_metrics,
     per_class_metrics,
     validate_oof_predictions,
 )
@@ -33,6 +34,7 @@ class Task1ExperimentResult:
     fold_results: tuple[Task1FoldResult, ...]
     fold_metrics: pd.DataFrame
     comparison: pd.DataFrame
+    oof_metrics: pd.DataFrame
     oof_predictions: dict[str, pd.DataFrame]
     per_class: dict[str, pd.DataFrame]
 
@@ -75,10 +77,17 @@ def _aggregate_comparison(
     ]
     rows: list[dict[str, float | str]] = []
     for preprocessing_id in preprocessing_ids:
-        candidate = fold_metrics.loc[
+        candidate_rows = fold_metrics.loc[
             fold_metrics["preprocessing_id"].eq(preprocessing_id), metric_columns
         ]
-        summary = aggregate_fold_metrics(candidate.to_dict(orient="records"))
+        candidate_folds = fold_metrics.loc[
+            fold_metrics["preprocessing_id"].eq(preprocessing_id), "fold"
+        ]
+        if set(candidate_folds.astype(int)) != set(range(5)) or len(candidate_folds) != 5:
+            raise ValueError(
+                "full Task 1 evidence requires exactly five folds with unique labels 0,1,2,3,4"
+            )
+        summary = aggregate_fold_metrics(candidate_rows.to_dict(orient="records"))
         row: dict[str, float | str] = {"preprocessing_id": preprocessing_id}
         for metric, values in summary.iterrows():
             row[f"{metric}_mean"] = float(values["mean"])
@@ -99,11 +108,13 @@ def _prediction_probabilities(predictions: pd.DataFrame) -> np.ndarray:
 def _write_full_evidence(
     fold_metrics: pd.DataFrame,
     comparison: pd.DataFrame,
+    oof_metrics: pd.DataFrame,
     per_class: Mapping[str, pd.DataFrame],
 ) -> None:
     """Persist report inputs only after all candidate evidence validates."""
     atomic_write_csv(TASK1_EVIDENCE_DIR / "fold_metrics.csv", fold_metrics)
     atomic_write_csv(TASK1_EVIDENCE_DIR / "comparison.csv", comparison)
+    atomic_write_csv(TASK1_EVIDENCE_DIR / "oof_metrics.csv", oof_metrics)
     for preprocessing_id, frame in per_class.items():
         atomic_write_csv(TASK1_EVIDENCE_DIR / f"per_class_{preprocessing_id}.csv", frame)
 
@@ -152,6 +163,7 @@ def run_task1_experiment(
             fold_results=fold_results,
             fold_metrics=fold_metrics,
             comparison=pd.DataFrame(),
+            oof_metrics=pd.DataFrame(),
             oof_predictions={},
             per_class={},
         )
@@ -161,6 +173,7 @@ def run_task1_experiment(
     expected_ids = get_samples(splits, partition="development", target="articleType")["id"].tolist()
     class_names = _class_names(label_map)
     oof_predictions: dict[str, pd.DataFrame] = {}
+    oof_metrics_rows: list[dict[str, float | str]] = []
     per_class: dict[str, pd.DataFrame] = {}
     for preprocessing_id in preprocessing_ids:
         candidate_results = [
@@ -172,17 +185,31 @@ def run_task1_experiment(
         )
         validate_oof_predictions(predictions, expected_ids)
         probabilities = _prediction_probabilities(predictions)
+        pooled = classification_metrics(
+            predictions["true_index"].to_numpy(dtype=np.int64), probabilities
+        )
+        oof_metrics_rows.append(
+            {
+                "preprocessing_id": preprocessing_id,
+                "macro_f1_124": pooled["macro_f1"],
+                "weighted_f1": pooled["weighted_f1"],
+                "top1_accuracy": pooled["top1_accuracy"],
+                "top5_accuracy": pooled["top5_accuracy"],
+            }
+        )
         oof_predictions[preprocessing_id] = predictions
         per_class[preprocessing_id] = per_class_metrics(
             predictions["true_index"].to_numpy(dtype=np.int64), probabilities, class_names
         )
 
-    _write_full_evidence(fold_metrics, comparison, per_class)
+    oof_metrics = pd.DataFrame(oof_metrics_rows)
+    _write_full_evidence(fold_metrics, comparison, oof_metrics, per_class)
     return Task1ExperimentResult(
         mode=mode,
         fold_results=fold_results,
         fold_metrics=fold_metrics,
         comparison=comparison,
+        oof_metrics=oof_metrics,
         oof_predictions=oof_predictions,
         per_class=per_class,
     )

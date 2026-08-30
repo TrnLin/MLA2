@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 
 import pandas as pd
@@ -239,4 +240,34 @@ def test_final_run_rejects_custom_model_factory() -> None:
             config=Task1TrainConfig.full(),
             split_path=SPLITS_CSV,
             model_factory=lambda _: _ExplodingModel(),
+        )
+
+
+@pytest.mark.parametrize(
+    "field",
+    ["seed", "max_lr", "weight_decay", "grad_clip_norm", "epochs", "stage"],
+)
+def test_final_run_rejects_changed_sealed_training_setting(field: str) -> None:
+    full = Task1TrainConfig.full()
+    values = {"seed": 999, "max_lr": 2e-3, "weight_decay": 2e-5, "grad_clip_norm": 2.0,
+              "epochs": 19, "stage": "smoke"}
+    invalid = replace(full, **{field: values[field]})
+    with pytest.raises(ValueError, match="final-eligible Task 1 runs require"):
+        train_task1_fold(
+            pd.DataFrame(), {}, validation_fold=0,
+            preprocessing=TASK1_CONTROL_PREPROCESSING,
+            config=invalid, split_path=SPLITS_CSV,
+        )
+
+
+def test_final_run_rejects_unapproved_preprocessing() -> None:
+    from fashion.task1.preprocessing import Task1PreprocessingConfig
+
+    custom = Task1PreprocessingConfig(
+        preprocessing_id="custom", horizontal_flip_probability=0.25
+    )
+    with pytest.raises(ValueError, match="approved preprocessing"):
+        train_task1_fold(
+            pd.DataFrame(), {}, validation_fold=0,
+            preprocessing=custom, config=Task1TrainConfig.full(), split_path=SPLITS_CSV,
         )

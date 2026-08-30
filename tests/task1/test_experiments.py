@@ -9,7 +9,11 @@ import pandas as pd
 import pytest
 
 import fashion.task1.experiments as experiments
-from fashion.task1.experiments import run_task1_experiment, write_task1_comparison_figure
+from fashion.task1.experiments import (
+    run_task1_experiment,
+    write_task1_comparison_figure,
+    write_task1_confusion_figure,
+)
 from fashion.task1.training import Task1FoldResult
 
 
@@ -121,12 +125,17 @@ def test_runner_uses_one_control_fold_for_smoke_and_ten_fixed_full_runs(
     ] * 5 + ["task1_rgb_60x80_mild_aug_v1"] * 5
     assert len(full.fold_metrics) == 10
     assert len(full.comparison) == 2
+    assert list(full.oof_metrics.columns) == [
+        "preprocessing_id", "macro_f1_124", "weighted_f1", "top1_accuracy", "top5_accuracy"
+    ]
+    assert len(full.oof_metrics) == 2
     assert set(full.oof_predictions) == {
         "task1_rgb_60x80_no_aug_v1",
         "task1_rgb_60x80_mild_aug_v1",
     }
     assert all(len(frame) == 124 for frame in full.per_class.values())
     assert (tmp_path / "evidence" / "fold_metrics.csv").is_file()
+    assert (tmp_path / "evidence" / "oof_metrics.csv").is_file()
 
 
 def test_runner_propagates_fold_exception_without_writing_aggregate(
@@ -224,3 +233,12 @@ def test_comparison_figure_writes_one_png(tmp_path: Path) -> None:
 
     assert output == tmp_path / "comparison.png"
     assert output.is_file()
+
+
+def test_confusion_figure_writes_one_png(tmp_path: Path) -> None:
+    predictions = pd.DataFrame({"true_index": [0, 1], "predicted_index": [0, 1]})
+    output = write_task1_confusion_figure(
+        predictions, [f"class-{index}" for index in range(124)], output=tmp_path / "confusion.png"
+    )
+    assert output.is_file()
+    assert output.stat().st_size > 0

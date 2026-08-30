@@ -29,6 +29,8 @@ from fashion.task1.evaluation import (
 )
 from fashion.task1.models import Task1SmallCNN, count_trainable_parameters
 from fashion.task1.preprocessing import (
+    DEFAULT_TASK1_PREPROCESSING,
+    TASK1_CONTROL_PREPROCESSING,
     Task1Normalization,
     Task1PreprocessingConfig,
     build_task1_training_transform,
@@ -244,17 +246,25 @@ def train_task1_fold(
         raise ValueError("max_train_batches must be positive or None")
     if config.max_validation_batches is not None and config.max_validation_batches <= 0:
         raise ValueError("max_validation_batches must be positive or None")
+    if config.num_workers < 0:
+        raise ValueError("num_workers must be non-negative")
     if config.final_eligible:
         if (
             config.stage != "experiment"
             or config.epochs != 20
+            or config.seed != RANDOM_SEED
+            or config.max_lr != 1e-3
+            or config.weight_decay != 1e-5
+            or config.grad_clip_norm != 1.0
             or config.max_train_batches is not None
             or config.max_validation_batches is not None
         ):
             raise ValueError(
                 "final-eligible Task 1 runs require stage='experiment', "
-                "20 epochs, and no batch limits"
+                "fixed full-run optimization settings, and no batch limits"
             )
+        if preprocessing not in (TASK1_CONTROL_PREPROCESSING, DEFAULT_TASK1_PREPROCESSING):
+            raise ValueError("final-eligible Task 1 runs require approved preprocessing")
         if model_factory is not Task1SmallCNN:
             raise ValueError("final-eligible Task 1 runs require Task1SmallCNN")
         if Path(split_path).resolve() != SPLITS_CSV.resolve():

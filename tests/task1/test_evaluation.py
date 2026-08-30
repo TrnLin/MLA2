@@ -165,3 +165,20 @@ def test_aggregate_fold_metrics_returns_mean_and_sample_std() -> None:
 def test_aggregate_fold_metrics_requires_five_folds() -> None:
     with pytest.raises(ValueError, match="exactly five folds"):
         aggregate_fold_metrics([{"macro_f1": 0.1}])
+
+
+def test_aggregate_fold_metrics_requires_unique_fold_labels() -> None:
+    rows = [{"fold": fold, "macro_f1": 0.1} for fold in [0, 1, 2, 3, 3]]
+    with pytest.raises(ValueError, match="unique labels"):
+        from fashion.task1.experiments import _aggregate_comparison
+
+        _aggregate_comparison(
+            pd.DataFrame(
+                {
+                    "preprocessing_id": ["candidate"] * 5,
+                    "fold": [row["fold"] for row in rows],
+                    "macro_f1": [row["macro_f1"] for row in rows],
+                }
+            ),
+            ["candidate"],
+        )
