@@ -801,6 +801,61 @@ def test_task2_teacher_feedback_is_explicitly_connected_to_eda() -> None:
         assert required in architecture_story
 
 
+def test_task2_results_cells_load_only_verified_measured_evidence() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    cell_ids = (
+        "s09-01-code",
+        "s09-02-code",
+        "s09-03-01-code",
+        "s09-03-02-code",
+    )
+
+    for cell_id in cell_ids:
+        code = cells[cell_id].source
+        assert not code.startswith("# TODO:")
+        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+
+    combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
+    for required in (
+        "load_verified_notebook_manifest",
+        "verify_artifact",
+        "results/evidence/task2/seed_stability/manifest.json",
+        "len(stability_registry) == stability_registry[\"run_id\"].nunique() == 20",
+        "results/evidence/task2/g3_c2_t0_resnet18/manifest.json",
+        "g4_i2_article_type_lambda_0_3_c1/manifest.json",
+        "results/evidence/task2/calibration/manifest.json",
+        "cross_fitted_evaluation_claim_allowed",
+        "learning_curve_summary",
+        "median_best_epoch",
+    ):
+        assert required in combined
+    assert "atomic_write" not in combined
+    assert "run_or_load_experiment" not in combined
+    assert "train_fold" not in combined
+
+    findings = "\n".join(
+        cells[cell_id].source
+        for cell_id in (
+            "s09-01-finding",
+            "s09-02-finding",
+            "s09-03-01-finding",
+            "s09-03-02-finding",
+        )
+    )
+    for required in (
+        "0.752687",
+        "0.733137",
+        "3,041",
+        "0.647103",
+        "0.011701",
+        "20% review budget",
+        "median best epoch is `24`",
+        "never holdout",
+    ):
+        assert required in findings
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
