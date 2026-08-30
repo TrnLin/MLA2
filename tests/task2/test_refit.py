@@ -241,3 +241,69 @@ def test_refit_load_mode_requires_an_existing_manifest() -> None:
                 project_root=ROOT,
                 **_paths(Path(directory)),
             )
+
+
+def test_refit_registry_stays_failed_when_manifest_publish_fails(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _patch_fast_refit(monkeypatch)
+    original_write_json = refit_module.atomic_write_json
+    (ROOT / "tmp").mkdir(exist_ok=True)
+    with TemporaryDirectory(dir=ROOT / "tmp") as directory:
+        paths = _paths(Path(directory))
+
+        def fail_manifest_publish(path: str | Path, value: object) -> Path:
+            if Path(path) == paths["manifest_path"]:
+                raise OSError("simulated manifest publish failure")
+            return original_write_json(path, value)
+
+        monkeypatch.setattr(refit_module, "atomic_write_json", fail_manifest_publish)
+
+        with pytest.raises(OSError, match="manifest publish failure"):
+            run_or_load_development_refit(
+                mode="run",
+                project_root=ROOT,
+                **paths,
+            )
+
+        registry = RunRegistry(paths["registry_path"]).read()
+        assert len(registry) == 1
+        assert registry.loc[0, "status"] == "failed"
+        assert registry.loc[0, "error_type"] == "OSError"
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected_message"),
+    [
+        ("missing", "registry"),
+        ("failed", "completed"),
+        ("checkpoint_hash", "checkpoint"),
+    ],
+)
+def test_refit_load_rejects_missing_or_tampered_registry_row(
+    monkeypatch: pytest.MonkeyPatch,
+    mutation: str,
+    expected_message: str,
+) -> None:
+    _patch_fast_refit(monkeypatch)
+    (ROOT / "tmp").mkdir(exist_ok=True)
+    with TemporaryDirectory(dir=ROOT / "tmp") as directory:
+        paths = _paths(Path(directory))
+        run_or_load_development_refit(mode="run", project_root=ROOT, **paths)
+
+        if mutation == "missing":
+            paths["registry_path"].unlink()
+        else:
+            registry = pd.read_csv(paths["registry_path"], dtype=str, keep_default_na=False)
+            if mutation == "failed":
+                registry.loc[0, "status"] = "failed"
+            else:
+                registry.loc[0, "checkpoint_sha256"] = "0" * 64
+            registry.to_csv(paths["registry_path"], index=False)
+
+        with pytest.raises(ValueError, match=expected_message):
+            run_or_load_development_refit(
+                mode="load",
+                project_root=ROOT,
+                **paths,
+            )
