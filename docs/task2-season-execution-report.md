@@ -1,6 +1,6 @@
 ---
 title: "Task 2 - Fashion Season Classification: execution report and plan"
-status: gradcam-failure-review-complete
+status: ultimate-judgement-frozen
 created: 2026-08-25
 updated: 2026-08-30
 scope: task2-season
@@ -34,17 +34,18 @@ Recommended direction:
 
 Current position on 30 August 2026: corrected G3, I1, I2, the matched pretrained
 boundary, G5 seed stability, shortcut/error slices, robustness/cost, calibration,
-paired grouped-bootstrap uncertainty, and deterministic Grad-CAM/failure review are
-complete. I2 lambda `0.3` remains the
-**current candidate**, not the ultimate winner. It reached `0.752687` pooled OOF
+paired grouped-bootstrap uncertainty, deterministic Grad-CAM/failure review, and the
+G7 Ultimate Judgement are complete. I2 lambda `0.3` is the **frozen Task 2 winner**. It
+reached `0.752687` pooled OOF
 macro-F1 at seed `2753` and `0.744743` at seed `2026`; C2 reached `0.735036` and
 `0.733137`. The I2-minus-C2 paired family-bootstrap intervals are
 `[0.013050, 0.022453]` at seed `2753` and `[0.005793, 0.017341]` at seed `2026`.
 Both fitted pairs favour I2, but two seeds do not prove the ordering for every random
 initialisation. The fixed 48-row Grad-CAM review found no empty heatmap or declared
 border/background flag, but its selected severe errors still expose shortcut conflict,
-weak-data proxies, and unresolved label ambiguity. Notebook integration and the frozen
-scorecard remain before the ultimate winner can be frozen.
+weak-data proxies, and unresolved label ambiguity. All six direct G7 checks passed, so
+the cost tie-break was not needed. The immutable selection record fixes a 24-epoch,
+development-only refit; holdout remains sealed.
 
 No plan can guarantee a full mark because the mark also depends on real results and the
 quality of the final written argument. This plan covers the HD signals in the assignment
@@ -86,18 +87,18 @@ strongest defensible submission path.
 
 | Area | Current state | Meaning for Task 2 |
 |---|---|---|
-| Data and EDA | Complete and executed | Modelling can begin |
+| Data and EDA | Complete and executed | The frozen model continues to use this shared contract |
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | 55-code-cell final scaffold; 31 implemented cells have clean saved outputs; G0, B0, B1, G1, G2-P, G2-A, G2-T, G3, I1, I2, P*, and G5 have measured interpretations | Continue filling the remaining 24 leaf cells without changing the structure |
+| Notebook 03 | Fixed 55-code-cell scaffold; 51 cells are implemented and four development-refit/handoff cells remain | Do not change the 193-cell structure |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Training, cache, model comparison, learning curves, EDA reflection, G5 stability, shortcut/error slices, robustness/cost, cross-fitted calibration, paired grouped bootstrap, Grad-CAM, and failure taxonomy are implemented | Integrate the closed analysis into Notebook 03 without adding another architecture |
+| Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G7 analysis, immutable freeze, and Notebook Sections 9-14.2 are implemented | Refit the frozen I2 model; do not add or retune a candidate |
 | `results/runs.csv` | 119 append-only rows: 113 completed, one failed, and five interrupted | No running rows; the ten clean G5 run IDs enter two-seed evidence |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
-| Current G6 gate | Slices, robustness/cost, calibration, paired grouped bootstrap, and Grad-CAM/failure evidence are hash-verified; the holdout remains sealed | Keep I2 lambda `0.3`; integrate the closed G6 analysis before freeze |
-| Current verification | `pip check`, full-repository Ruff, and `475` tests pass | Analysis code and evidence builders are green; Notebook integration is still pending |
+| Current G7 gate | I2 passed every direct scorecard check; selection freeze and G7 evidence are hash-verified; holdout remains sealed | Refit I2 for 24 epochs on valid development rows only |
+| Current verification | `274` Task 2 tests and `30` Notebook contract tests pass; all 193 Notebook cells validate and all 55 code cells compile | G7, notebook integration, and headless figures are green |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -571,10 +572,10 @@ can support, weaken, or reject it.
 | More capacity should clearly improve quality | Contradicted at full budget | C1 beat C2 by `0.002626` despite C2 using 9.51 times more parameters; the gap is a near tie | Keep C1 provisional for efficiency and retain C2 for class-specific checks |
 | A larger input should preserve useful detail | Contradicted | P1 changed macro-F1 by `-0.001787` and used `1.992x` runtime | Retain P0 and stop adding image sizes |
 | Extra colour jitter should improve generalisation | Contradicted | A1 changed macro-F1 by `-0.010438` and hurt Fall and Spring | Retain A0; colour may be real signal |
-| ArticleType contains useful structure for Season | Supported across two seeds, with limits | I2 leads C2 by `0.017651` at seed `2753` and `0.011607` at seed `2026`, but the I2 seed drift is `-0.007944` | Keep I2 current; do not call association causation or assume a uniform gain |
-| I2 may only strengthen the ArticleType shortcut | Weakened, not disproved | The primary conflict slice improved by `0.027598`, although aligned rows remain much easier; seed stability does not replace slice analysis | Keep aligned/conflict analysis in the frozen failure gate |
+| ArticleType contains useful structure for Season | Supported across two seeds, with limits | I2 leads C2 by `0.017651` at seed `2753` and `0.011607` at seed `2026`, but the I2 seed drift is `-0.007944` | Use the frozen I2 model; do not call association causation or assume a uniform gain |
+| I2 may only strengthen the ArticleType shortcut | Weakened, not disproved | The primary conflict slice improved by `0.027598`, although aligned rows remain much easier | Preserve aligned/conflict evidence as a deployment limitation |
 | Development data alone may close the representation gap | Weakened for standard-stem ResNet18 | Matched ImageNet initialisation improved macro-F1 by `0.023024`, Spring F1 by `0.038829`, and all five folds | Keep P* as a ceiling only; it remains outside the eligible two-seed gate |
-| File size and acquisition year may be shortcuts | Still untested | I2 isolates ArticleType only; it says nothing about JPEG or year dependence | Run the declared OOF slices and perturbations before freeze |
+| File size and acquisition year may be shortcuts | Supported as risks, not causes | I2 seed `2753` has higher accuracy but lower macro-F1 on 2011-2012 rows than other years (`0.774764/0.591334` versus `0.733996/0.682438`); its largest-minus-smallest file-quartile macro-F1 gap is `+0.038842` | Keep year/file size post-prediction only; retain JPEG and brightness stress tests |
 
 The baseline-to-G2 rows are generated at
 `results/evidence/task2/selection_story/eda_reflection.csv`. The measured I1 and I2
@@ -932,8 +933,8 @@ remains the current eligible candidate. The conclusion is deliberately limited: 
 drifts by `-0.007944`, two of five seed-2026 folds favour C2, and the Spring-recall
 advantage narrows to `+0.002257`. Two seeds support the direction, not every possible
 random start. The later grouped-bootstrap intervals support a positive I2-minus-C2
-difference for each fitted seed pair. The ultimate winner remains unfrozen until
-the closed G6 evidence is integrated and the frozen scorecard is applied.
+difference for each fitted seed pair. At the G5 gate the winner was still unfrozen;
+G7 later integrated the closed G6 evidence and froze I2 through the direct rule.
 
 ## 7. Experiment matrix
 
@@ -949,6 +950,7 @@ the closed G6 evidence is integrated and the frozen scorecard is applied.
 | G4-PSTAR - complete | Matched P0S scratch and P* ImageNet standard-stem ResNet18 x 5 folds | What is the initialisation gap under one fixed pipeline? | P* gained `0.023024` macro-F1 but remains benchmark-only and final-ineligible |
 | G5 - complete | Retained C2 and selected I2 at seed `2026` x 5 folds | Is the result stable? | Passed: I2 remains ahead by `0.011607`; close architecture search but do not freeze the ultimate winner |
 | G6 - complete | C2 and I2: slices, robustness/cost, cross-fitted calibration, paired family bootstrap, and Grad-CAM | Where do the fitted models fail, and which is safer? | Passed: all declared analysis artifacts are hash-linked; no new model was added and holdout stayed sealed |
+| G7 - complete | Verified C2/I2 scorecard plus immutable selection record | Which eligible scratch model is the Ultimate Judgement? | I2 passed all six direct checks; tie-break unused; 24-epoch development refit frozen before holdout |
 
 ### 7.2 Experiment stopping rules
 
@@ -1092,12 +1094,20 @@ After freezing:
 
 - refit the exact configuration on all development rows with a valid Season label;
 - use the median best epoch from CV, never holdout early stopping;
-- refit mean, standard deviation, and class weights on all development data;
+- refit mean and standard deviation on development content pixels; the frozen I2 loss
+  uses no Season class weights;
 - fit one temperature scalar from development OOF logits if the app needs confidence;
 - allow only Notebook 06 to request `evaluation_unlocked=True`;
 - evaluate holdout once and do not modify the model afterward.
 
-The app may use the OOF risk-coverage curve to choose a human-review threshold. The
+G7 selected I2 through the direct rule: it led C2 at both seeds, both paired grouped
+bootstrap intervals stayed above zero, ArticleType-conflict and JPEG guards passed, and
+I2 stayed above C2 in all declared robustness conditions. The cost tie-break was not
+used. The selection is recorded in
+`results/evidence/task2/selection_freeze.json` with SHA-256
+`51475a6e83c3e49e904633e1fa8a7e86bcc5e2f592c81f981561dac9f7cff995`; the G7 manifest
+SHA-256 is `cd87705b94219bd07bebb720fb4bd3736b4442afe6f1316c046b4cd98c960ab0`.
+No app review threshold is frozen because no business error cost was supplied. The
 official CSV must still contain all 5,829 rows and the exact required schema.
 
 ## 9. Final Notebook 03 structure
@@ -1107,15 +1117,13 @@ exactly one code cell followed by one interpretation prompt. A broader `###` sub
 owns no direct code cell; it is divided into `####` subsubsections, and every `####` leaf
 owns exactly one code cell and one interpretation prompt.
 
-Current measured progress is 30 executed implementation cells and 25 clean placeholders.
-Section 8.1.2 contains the complete G3 tables, run lifecycle audit, decision record, and
-two embedded learning-curve figures. Section 8.3.1 adds the I1 comparison, fold and
-class-weight audits, frozen decision, learning curve, and per-class F1 chart. Section
-8.3.2 adds both I2 lambdas, all ten run IDs, Spring and aligned/conflict evidence, the
-frozen decision, a teacher-style learning curve, and the transfer-delta chart. Section
-8.3.3 adds the matched P0S/P* table, all ten run IDs, the explicit non-selectable
-boundary, teacher-style learning curves, and the overall/per-class effect chart. The
-notebook has zero error outputs.
+Current measured progress is 51 implemented code cells and four clean placeholders.
+Sections 1-13 now cover the shared contract, EDA reflection, baselines, incremental model
+selection, learning curves, G5 stability, slices, robustness/cost, calibration,
+bootstrap uncertainty, Grad-CAM, failure cases, and literature boundaries. Sections 14.1
+and 14.2 load the verified G7 scorecard, rejected alternatives, and immutable selection
+freeze. The remaining cells are development refit and sealed handoff work only. The
+notebook has zero error outputs and keeps its fixed 193-cell structure.
 
 | Section | Final purpose |
 |---|---|
@@ -1169,9 +1177,9 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** integrate the closed G6 artifacts into Notebook 03, then apply the
-already-frozen scorecard to C2 and I2. Do not add another architecture, input size,
-augmentation, loss beta, auxiliary lambda, or tuning pair. Do not open holdout.
+**Next safe action:** refit the frozen I2 configuration for exactly 24 epochs on all valid
+development rows, then build the sealed handoff. Do not add another architecture, input
+size, augmentation, loss beta, auxiliary lambda, or tuning pair. Do not open holdout.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
@@ -1213,8 +1221,8 @@ augmentation, loss beta, auxiliary lambda, or tuning pair. Do not open holdout.
 
 ### Phase 5 - Freeze and independent evaluation, 1 day
 
-- [ ] Select the winner with the frozen rule, not intuition.
-- [ ] Record run ID, config hash, checkpoint rule, and limitations.
+- [x] Select I2 with the frozen rule, not intuition.
+- [x] Record run IDs, config hash, checkpoint rule, and limitations.
 - [ ] Refit on all development data.
 - [ ] Hash the final model and config.
 - [ ] Hand off to Notebook 06.
@@ -1249,7 +1257,7 @@ Task 2 is complete only when all of the following exist:
   over corrected G3-C1;
 - [x] error, shortcut, robustness, calibration, cost, and paired-bootstrap evidence is complete;
 - [x] deterministic Grad-CAM and the real-ID failure taxonomy are complete;
-- [ ] the winner was frozen before holdout access;
+- [x] the winner was frozen before holdout access;
 - [ ] one independent holdout evaluation exists;
 - [ ] a final scratch-trained checkpoint and inference function exist;
 - [ ] the official prediction file is valid;
