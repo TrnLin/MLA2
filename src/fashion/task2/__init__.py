@@ -50,6 +50,14 @@ from fashion.task2.smoke import (
     run_or_load_g0_smoke,
     select_balanced_smoke_rows,
 )
+from fashion.task2.ultimate_judgement import (
+    apply_ultimate_judgement,
+    build_candidate_scorecard,
+    build_ultimate_judgement_evidence,
+    load_ultimate_judgement_spec,
+    load_verified_selection_freeze,
+    load_verified_ultimate_judgement_manifest,
+)
 
 __all__ = [
     "MajorityBaselineModel",
@@ -75,10 +83,15 @@ __all__ = [
     "build_task2_selection_story_evidence",
     "build_g0_evidence",
     "build_task2_evidence",
+    "build_candidate_scorecard",
+    "build_ultimate_judgement_evidence",
     "HogHsvFoldResult",
     "HogHsvSpec",
     "HogHsvSvmModel",
     "load_experiment_config",
+    "load_ultimate_judgement_spec",
+    "load_verified_selection_freeze",
+    "load_verified_ultimate_judgement_manifest",
     "plot_file_impact_flow",
     "run_matrix",
     "run_or_load_experiment",
@@ -90,4 +103,5 @@ __all__ = [
     "validate_file_impact_edges",
     "validate_pretraining_config",
     "validate_pretraining_pair",
+    "apply_ultimate_judgement",
 ]
