@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
@@ -310,3 +311,24 @@ def test_refit_load_rejects_missing_or_tampered_registry_row(
                 project_root=ROOT,
                 **paths,
             )
+
+
+def test_refit_rejects_a_parallel_live_process_before_writing_artifacts(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _patch_fast_refit(monkeypatch)
+    (ROOT / "tmp").mkdir(exist_ok=True)
+    with TemporaryDirectory(dir=ROOT / "tmp") as directory:
+        paths = _paths(Path(directory))
+        lock_path = paths["manifest_path"].parent / ".task2-season-refit.lock"
+        lock_path.write_text(json.dumps({"pid": os.getpid()}), encoding="utf-8")
+
+        with pytest.raises(RuntimeError, match="already running"):
+            run_or_load_development_refit(
+                mode="run",
+                project_root=ROOT,
+                **paths,
+            )
+
+        assert not paths["registry_path"].exists()
+        assert not paths["bundle_path"].exists()
