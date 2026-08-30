@@ -977,6 +977,55 @@ def test_task2_robustness_cells_load_verified_stress_and_cost_evidence() -> None
         assert required in findings
 
 
+def test_task2_gradcam_cells_load_verified_noncausal_failure_evidence() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    cell_ids = ("s12-01-code", "s12-02-code", "s12-03-code")
+
+    for cell_id in cell_ids:
+        code = cells[cell_id].source
+        assert not code.startswith("# TODO:")
+        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+
+    combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
+    for required in (
+        "results/evidence/task2/gradcam_failure_review/manifest.json",
+        'gradcam_manifest["holdout_opened"] is False',
+        'gradcam_manifest["causal_failure_claim_allowed"] is False',
+        'gradcam_manifest["candidate_selection_affected"] is False',
+        'gradcam_manifest["ultimate_winner_frozen"] is False',
+        "len(selected_examples) == len(heatmap_index) == 48",
+        'selected_examples["id"].nunique() == 44',
+        'gradcam_checkpoints["run_id"].nunique() == 8',
+        'attention_metrics["probability_max_absolute_delta"].max() <= 1e-4',
+        "c2_contact_sheet",
+        "i2_contact_sheet",
+        'len(failure_taxonomy) == 24',
+        "human_label_ambiguity_review_required",
+        "diagnostic_tags",
+    ):
+        assert required in combined
+    assert "generate_gradcam" not in combined
+    assert "run_or_load_experiment" not in combined
+
+    findings = "\n".join(
+        cells[cell_id].source
+        for cell_id in ("s12-01-finding", "s12-02-finding", "s12-03-finding")
+    )
+    for required in (
+        "`48` rows, `44` distinct images",
+        "not a random sample",
+        "0.633160/1.490200",
+        "0.642716/1.719056",
+        "cannot establish why",
+        "`6` ArticleType-shortcut conflicts",
+        "`9` conflicts",
+        "Every selected error",
+        "not causal labels or frequency estimates",
+    ):
+        assert required in findings
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
