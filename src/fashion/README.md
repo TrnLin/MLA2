@@ -19,4 +19,12 @@ Reusable project code lives here. Notebooks import it instead of copying shared 
   - `splits.py` builds and validates the sole split and its five CV folds.
   - `taxonomy.py` describes and validates development target labels.
 
+- `task1/` owns reusable Task 1 article-type classification code.
+  - `models.py` defines the scratch small-CNN architecture.
+  - `dataset.py` builds validated Task 1 tensor samples.
+  - `evaluation.py` calculates fixed-124-class metrics and checks out-of-fold predictions.
+  - `training.py` trains and registers one fold at a time.
+  - `experiments.py` orchestrates smoke and full cross-validation runs.
+- `train/` owns shared artifacts, reproducibility seeds, and the run registry.
+
 Update this if you are adding more scripts.

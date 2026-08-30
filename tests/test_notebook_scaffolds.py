@@ -80,6 +80,25 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
             assert unselected not in source
 
 
+def test_task1_scaffold_has_a_complete_controller_structure() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4)
+    nbformat.validate(notebook)
+    headings = [
+        line
+        for cell in notebook.cells
+        for line in cell.source.splitlines()
+        if line.startswith("#")
+    ]
+
+    assert notebook.metadata["title"] == TASK_SPECS["02_task1_article_type.ipynb"]["title"]
+    assert headings[0] == "# Task 1 — Article Type Classification"
+    assert [
+        int(match.group(1))
+        for heading in headings
+        if (match := re.fullmatch(r"## (\d+)\. .+", heading))
+    ] == list(range(1, 16))
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task2 = _source(nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task2
