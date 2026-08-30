@@ -63,3 +63,13 @@ machine-cost probes:
 This command does not train. It reuses the primary-seed C2 and I2 fold checkpoints,
 applies only the declared image perturbations to development rows, and records latency
 and memory on the current machine. Use `--mode load` to require every exact cache.
+
+After the robustness/cost boundary is closed, build cross-fitted calibration evidence:
+
+```powershell
+& '.\.venv\Scripts\python.exe' scripts/build_task2_calibration_evidence.py
+```
+
+This command does not train. It verifies the frozen upstream manifests and uses only the
+primary-seed development OOF probabilities. Each fold is calibrated by a temperature fit
+on the other four folds. The holdout stays sealed, and no app threshold is frozen.
