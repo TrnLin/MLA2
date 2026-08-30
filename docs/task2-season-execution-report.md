@@ -1,6 +1,6 @@
 ---
 title: "Task 2 - Fashion Season Classification: execution report and plan"
-status: paired-bootstrap-complete
+status: gradcam-failure-review-complete
 created: 2026-08-25
 updated: 2026-08-30
 scope: task2-season
@@ -33,15 +33,18 @@ Recommended direction:
 6. Freeze every choice before Notebook 06 opens the holdout once.
 
 Current position on 30 August 2026: corrected G3, I1, I2, the matched pretrained
-boundary, G5 seed stability, shortcut/error slices, robustness/cost, calibration, and
-paired grouped-bootstrap uncertainty are complete. I2 lambda `0.3` remains the
+boundary, G5 seed stability, shortcut/error slices, robustness/cost, calibration,
+paired grouped-bootstrap uncertainty, and deterministic Grad-CAM/failure review are
+complete. I2 lambda `0.3` remains the
 **current candidate**, not the ultimate winner. It reached `0.752687` pooled OOF
 macro-F1 at seed `2753` and `0.744743` at seed `2026`; C2 reached `0.735036` and
 `0.733137`. The I2-minus-C2 paired family-bootstrap intervals are
 `[0.013050, 0.022453]` at seed `2753` and `[0.005793, 0.017341]` at seed `2026`.
 Both fitted pairs favour I2, but two seeds do not prove the ordering for every random
-initialisation. Deterministic Grad-CAM review and the real-ID failure taxonomy are the
-remaining analysis gate before the winner can be frozen.
+initialisation. The fixed 48-row Grad-CAM review found no empty heatmap or declared
+border/background flag, but its selected severe errors still expose shortcut conflict,
+weak-data proxies, and unresolved label ambiguity. Notebook integration and the frozen
+scorecard remain before the ultimate winner can be frozen.
 
 No plan can guarantee a full mark because the mark also depends on real results and the
 quality of the final written argument. This plan covers the HD signals in the assignment
@@ -89,12 +92,12 @@ strongest defensible submission path.
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
 | Notebook 03 | 55-code-cell final scaffold; 31 implemented cells have clean saved outputs; G0, B0, B1, G1, G2-P, G2-A, G2-T, G3, I1, I2, P*, and G5 have measured interpretations | Continue filling the remaining 24 leaf cells without changing the structure |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Training, cache, model comparison, learning curves, EDA reflection, G5 stability, shortcut/error slices, robustness/cost, cross-fitted calibration, and paired grouped bootstrap are implemented | Complete Grad-CAM and the failure taxonomy without adding another architecture |
+| Task 2 foundation | Training, cache, model comparison, learning curves, EDA reflection, G5 stability, shortcut/error slices, robustness/cost, cross-fitted calibration, paired grouped bootstrap, Grad-CAM, and failure taxonomy are implemented | Integrate the closed analysis into Notebook 03 without adding another architecture |
 | `results/runs.csv` | 119 append-only rows: 113 completed, one failed, and five interrupted | No running rows; the ten clean G5 run IDs enter two-seed evidence |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
-| Current G6 gate | Slices, robustness/cost, calibration, and paired grouped bootstrap are hash-verified; the holdout remains sealed | Keep I2 lambda `0.3`; complete Grad-CAM/failure review before freeze |
-| Current verification | `pip check`, full-repository Ruff, and `452` tests pass | Bootstrap code and evidence builder are green; Notebook integration is still pending |
+| Current G6 gate | Slices, robustness/cost, calibration, paired grouped bootstrap, and Grad-CAM/failure evidence are hash-verified; the holdout remains sealed | Keep I2 lambda `0.3`; integrate the closed G6 analysis before freeze |
+| Current verification | `pip check`, full-repository Ruff, and `475` tests pass | Analysis code and evidence builders are green; Notebook integration is still pending |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -930,7 +933,7 @@ drifts by `-0.007944`, two of five seed-2026 folds favour C2, and the Spring-rec
 advantage narrows to `+0.002257`. Two seeds support the direction, not every possible
 random start. The later grouped-bootstrap intervals support a positive I2-minus-C2
 difference for each fitted seed pair. The ultimate winner remains unfrozen until
-deterministic Grad-CAM and the failure taxonomy are complete.
+the closed G6 evidence is integrated and the frozen scorecard is applied.
 
 ## 7. Experiment matrix
 
@@ -945,7 +948,7 @@ deterministic Grad-CAM and the failure taxonomy are complete.
 | G4 - complete | I1 and two I2 lambdas; full budget x 5 folds | Do improvements solve EDA problems? | I1 rejected; both I2 lambdas pass; lambda `0.3` is the current candidate |
 | G4-PSTAR - complete | Matched P0S scratch and P* ImageNet standard-stem ResNet18 x 5 folds | What is the initialisation gap under one fixed pipeline? | P* gained `0.023024` macro-F1 but remains benchmark-only and final-ineligible |
 | G5 - complete | Retained C2 and selected I2 at seed `2026` x 5 folds | Is the result stable? | Passed: I2 remains ahead by `0.011607`; close architecture search but do not freeze the ultimate winner |
-| G6 - analysis in progress | C2 and I2: slices, robustness/cost, cross-fitted calibration, paired family bootstrap, and Grad-CAM | Where do the fitted models fail, and which is safer? | Slices, robustness/cost, calibration, and uncertainty passed; Grad-CAM/failure taxonomy remains |
+| G6 - complete | C2 and I2: slices, robustness/cost, cross-fitted calibration, paired family bootstrap, and Grad-CAM | Where do the fitted models fail, and which is safer? | Passed: all declared analysis artifacts are hash-linked; no new model was added and holdout stayed sealed |
 
 ### 7.2 Experiment stopping rules
 
@@ -1017,14 +1020,53 @@ model features.
 
 ### 8.4 Explainability and failure analysis
 
-- Produce Grad-CAM for three correct and three incorrect examples per class, selected by
-  a fixed confidence-then-ID rule.
-- Check whether attention falls on the product or on borders and background.
-- Create a contact sheet with ID, true label, prediction, confidence, ArticleType, year
-  group, and failure note.
-- Classify failures as label ambiguity, weak data, shortcut, transform, imbalance, or
-  model limitation.
-- Do not present only attractive examples.
+The closed review uses predicted-class Grad-CAM on C2 and I2 at seed `2753`. Selection
+comes from cross-fitted calibrated OOF predictions: for each candidate and true class,
+take the three highest-confidence correct rows and the three highest-confidence incorrect
+rows, breaking ties by ascending ID. This produces 48 review rows: 24 per model, balanced
+across all four true classes and both correctness groups. Four IDs appear for both models,
+so the manifest declares 44 distinct image files. No holdout or quarantine ID appears.
+
+| Diagnostic | C2 | I2 | Careful reading |
+|---|---:|---:|---|
+| Reviewed rows | `24` | `24` | Fixed examples, not a random sample |
+| Empty heatmaps | `0` | `0` | Every selected prediction produced a usable map |
+| Foreground attention share, mean | `0.633160` | `0.642716` | Non-white product proxy only |
+| Foreground attention lift, mean | `1.490200` | `1.719056` | Both exceed neutral lift `1.0` |
+| Border attention lift, mean | `0.674038` | `0.623785` | Neither model overweights the declared border band on average |
+| Declared attention-review flags | `0` | `0` | No row crossed the frozen border/foreground thresholds |
+| Maximum raw-probability reconciliation error | `0.000077` | `0.000015` | Both are below the frozen `0.0001` tolerance |
+
+This supports one narrow conclusion: **there is no obvious border/background shortcut in
+this fixed high-confidence subset**. It does not prove that the highlighted pixels caused
+the prediction. Grad-CAM is a coarse final-layer localization method, and saliency methods
+need sanity checks before they are treated as faithful explanations. The non-white
+foreground mask can also undercount white products. No performance claim is based on the
+heatmap colour.
+
+The 24 incorrect rows receive non-causal diagnostic tags from metadata that is never fed
+to inference. C2 has six primary `article_type_shortcut_conflict` hypotheses and six
+`weak_data_proxy` hypotheses. I2 has nine and three respectively. Every error is marked
+for human label-ambiguity review. These counts are **not failure prevalence**: the sample
+deliberately contains only the most confident mistakes, and its global ranking selected
+folds 0, 1, 3, and 4 rather than balancing by fold. The stronger population-level claim
+must continue to come from the complete OOF slice tables, where I2 improved the conflict
+slice; the contact sheets expose concrete exceptions to that average.
+
+The contact sheets keep only ID, true/predicted label, and cross-fitted confidence readable.
+ArticleType, year group, file-size quartile, family size, image mode, run ID, checkpoint
+hash, attention measures, and failure note remain in the linked CSV tables. The trace is:
+
+- `results/evidence/task2/gradcam_failure_review/manifest.json`;
+- `results/evidence/task2/gradcam_failure_review/attention_metrics.csv`;
+- `results/evidence/task2/gradcam_failure_review/failure_taxonomy.csv`;
+- `results/figures/task2/gradcam_c2_contact_sheet.png`;
+- `results/figures/task2/gradcam_i2_contact_sheet.png`.
+
+The evidence was generated twice with the same manifest SHA-256
+`3dd2893d7d38f3dd25833e7895ab8910ba85119f16f1245a060b98b09d57df25` from clean
+commit `a04eb019acbbff8b9ecdae5ecace320df5756087`. The gate does not reopen model search,
+does not freeze the winner, and does not open holdout.
 
 ### 8.5 Ultimate Judgement rule
 
@@ -1127,8 +1169,8 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** keep C2 and I2 frozen and build the deterministic Grad-CAM review
-plus real-ID failure taxonomy. Do not add another architecture, input size,
+**Next safe action:** integrate the closed G6 artifacts into Notebook 03, then apply the
+already-frozen scorecard to C2 and I2. Do not add another architecture, input size,
 augmentation, loss beta, auxiliary lambda, or tuning pair. Do not open holdout.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
@@ -1164,9 +1206,10 @@ augmentation, loss beta, auxiliary lambda, or tuning pair. Do not open holdout.
 - [x] Produce the OOF comparison table, paired confidence interval, and confusion matrices.
 - [x] Produce every predeclared slice and robustness test.
 - [x] Produce cross-fitted calibration and diagnostic risk-coverage evidence.
-- [ ] Produce deterministic Grad-CAM contact sheets.
+- [x] Produce deterministic Grad-CAM contact sheets.
 - [x] Measure CPU/GPU latency, model size, RAM/VRAM, and training time.
-- [ ] Write the failure taxonomy using real product IDs.
+- [x] Write the non-causal failure taxonomy using real product IDs and preserve the human
+  review boundary.
 
 ### Phase 5 - Freeze and independent evaluation, 1 day
 
@@ -1205,7 +1248,7 @@ Task 2 is complete only when all of the following exist:
   macro-F1 by `0.008173` over C1-T0, and I2 lambda `0.3` then improved by `0.015026`
   over corrected G3-C1;
 - [x] error, shortcut, robustness, calibration, cost, and paired-bootstrap evidence is complete;
-- [ ] deterministic Grad-CAM and the real-ID failure taxonomy are complete;
+- [x] deterministic Grad-CAM and the real-ID failure taxonomy are complete;
 - [ ] the winner was frozen before holdout access;
 - [ ] one independent holdout evaluation exists;
 - [ ] a final scratch-trained checkpoint and inference function exist;
@@ -1275,6 +1318,7 @@ claim must point to a run ID or generated artifact.
 13. Kolisnik et al., [Condition-CNN](https://www.sciencedirect.com/science/article/pii/S0957417421006291), Expert Systems with Applications 2021: the same dataset for hierarchical classification, not a direct Season benchmark.
 14. Field and Welsh, [Bootstrapping clustered data](https://doi.org/10.1111/j.1467-9868.2007.00593.x), Journal of the Royal Statistical Society: Series B 2007.
 15. Rifkin and Klautau, [In Defense of One-Vs-All Classification](https://www.jmlr.org/papers/v5/rifkin04a.html), JMLR 2004.
+16. Adebayo et al., [Sanity Checks for Saliency Maps](https://papers.nips.cc/paper/2018/hash/294a8ed24b1ad22ec2e7efea049b8737-Abstract.html), NeurIPS 2018: saliency output must not be treated as a causal explanation without method and model checks.
 
 The limited search found no peer-reviewed benchmark matching **Season + the current
 teacher split + scratch-only training + the current metric**. Literature can therefore

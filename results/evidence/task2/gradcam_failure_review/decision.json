@@ -1,0 +1,57 @@
+{
+  "analysis_role": "development_oof_explainability_and_failure_diagnosis_only",
+  "attention_review_flag_count_by_candidate": {
+    "C2": 0,
+    "I2": 0
+  },
+  "candidate_selection_affected": false,
+  "causal_failure_claim_allowed": false,
+  "current_candidate": "I2",
+  "decision_status": "closed",
+  "gate": "G6-GRADCAM-FAILURE-REVIEW",
+  "holdout_opened": false,
+  "human_causal_adjudication_completed": false,
+  "interpretation_rule": "Grad-CAM shows where the fitted model was sensitive for one predicted class. It does not prove why the prediction occurred or that a highlighted region is causal.",
+  "limitations": [
+    "Grad-CAM is a coarse post-hoc diagnostic and can be unstable across layers or methods.",
+    "The non-white foreground mask is a proxy that can miss white products.",
+    "Only fixed high-confidence primary-seed examples are reviewed.",
+    "Diagnostic tags are hypotheses and require human interpretation.",
+    "Holdout remains sealed and this gate does not freeze the winner."
+  ],
+  "maximum_probability_reconciliation_delta": 7.70357437432298e-05,
+  "metadata_boundary": "ArticleType, year, file size, family size, and image mode are review context only and never enter model inference.",
+  "next_question": "Apply the frozen scorecard and record the ultimate Season judgement.",
+  "primary_failure_hypothesis_counts": {
+    "C2": {
+      "article_type_shortcut_conflict": 6,
+      "weak_data_proxy": 6
+    },
+    "I2": {
+      "article_type_shortcut_conflict": 9,
+      "weak_data_proxy": 3
+    }
+  },
+  "schema_version": "1.0.0",
+  "selected_example_counts": {
+    "C2/Fall/correct": 3,
+    "C2/Fall/incorrect": 3,
+    "C2/Spring/correct": 3,
+    "C2/Spring/incorrect": 3,
+    "C2/Summer/correct": 3,
+    "C2/Summer/incorrect": 3,
+    "C2/Winter/correct": 3,
+    "C2/Winter/incorrect": 3,
+    "I2/Fall/correct": 3,
+    "I2/Fall/incorrect": 3,
+    "I2/Spring/correct": 3,
+    "I2/Spring/incorrect": 3,
+    "I2/Summer/correct": 3,
+    "I2/Summer/incorrect": 3,
+    "I2/Winter/correct": 3,
+    "I2/Winter/incorrect": 3
+  },
+  "selection_boundary": "High-confidence correct and incorrect rows expose strong beliefs and severe mistakes; their taxonomy counts are not population prevalence estimates.",
+  "ultimate_winner_frozen": false,
+  "zero_heatmap_count": 0
+}
