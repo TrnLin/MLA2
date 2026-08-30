@@ -1113,6 +1113,58 @@ def test_task2_ultimate_judgement_cells_load_verified_freeze_evidence() -> None:
         assert required in findings
 
 
+def test_task2_refit_cell_loads_verified_bundle_without_evaluation_leakage() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    code = cells["s14-03-code"].source
+
+    assert not code.startswith("# TODO:")
+    compile(code, "03_task2_season.ipynb:s14-03-code", "exec")
+    for required in (
+        "load_verified_development_refit_manifest",
+        'refit_manifest["gate"] == "G8-DEVELOPMENT-REFIT"',
+        'refit_manifest["selected_candidate"] == "I2"',
+        'refit_manifest["scratch"] is True',
+        'refit_manifest["weights"] is None',
+        'refit_manifest["valid_development_rows"] == 32753',
+        'refit_manifest["final_epoch"] == 24',
+        'refit_manifest["validation_used"] is False',
+        'refit_manifest["early_stopping_used"] is False',
+        'refit_manifest["holdout_opened"] is False',
+        'refit_manifest["holdout_metrics_present"] is False',
+        'refit_manifest["primary_metric_name"] is None',
+        'refit_bundle["inference"]["inputs"] == ["image"]',
+        'refit_bundle["auxiliary"]["used_at_inference"] is False',
+        'not any("validation" in column.lower()',
+        "development_refit_training_curve.png",
+    ):
+        assert required in code
+    for forbidden in (
+        "train_fold",
+        "train_masked_multitask_refit",
+        "run_or_load_development_refit",
+        "load_splits_for_final_evaluation",
+    ):
+        assert forbidden not in code
+
+    finding = cells["s14-03-finding"].source
+    for required in (
+        "all `32,753` valid development rows",
+        "frozen `24` epochs",
+        "`1,206,112` parameters",
+        "`1.789050` to `0.551781`",
+        "`0.559124` to `0.820505`",
+        "optimisation diagnostics, not unbiased performance estimates",
+        "five-fold CV curves in Section 8.4",
+        "no validation selection, no early stopping, and no holdout labels",
+        "temperature `1.365002`",
+        "ArticleType is not an inference input",
+        "holdout remains sealed",
+        "task2-season-i2-refit-fall-s2753-3d60bd14cc91",
+    ):
+        assert required in finding
+
+
 def test_task2_analysis_cells_verify_all_declared_inputs_and_exact_claims() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
