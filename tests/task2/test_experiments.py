@@ -261,6 +261,26 @@ def test_repository_g5_i2_config_changes_only_identity_stage_and_seed() -> None:
     assert stability == primary
 
 
+def test_repository_bootstrap_config_references_frozen_stability_experiments() -> None:
+    bootstrap = json.loads(
+        (ROOT / "configs/task2/g6_paired_group_bootstrap.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    stability_pair = bootstrap["candidate_pairs"][1]
+    c2 = load_experiment_config(
+        ROOT / "configs/task2/g5_c2_t0_resnet18_seed_2026.json"
+    )
+    i2 = json.loads(
+        (
+            ROOT / "configs/task2/g5_i2_article_type_lambda_0_3_c1_seed_2026.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert stability_pair["c2_experiment_id"] == c2.experiment_id
+    assert stability_pair["i2_experiment_id"] == i2["experiment_id"]
+
+
 def test_repository_g1_configs_differ_only_by_family_and_experiment_id() -> None:
     paths = (
         ROOT / "configs/task2/g1_c1_smallcnn.json",
