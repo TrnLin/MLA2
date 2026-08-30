@@ -532,6 +532,15 @@ def _load_verified_development_refit_package(
         "git_dirty": False,
         "model_change_after_holdout_allowed": False,
     }
+    non_boolean = [
+        name
+        for name, expected in identity.items()
+        if type(expected) is bool and type(manifest[name]) is not bool
+    ]
+    if non_boolean:
+        raise ValueError(
+            f"development refit boolean fields changed type: {non_boolean}"
+        )
     changed = [name for name, expected in identity.items() if manifest[name] != expected]
     if changed:
         raise ValueError(f"development refit boundary changed: {changed}")
