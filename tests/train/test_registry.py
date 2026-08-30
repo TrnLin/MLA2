@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+import fashion.train.registry as registry_module
 from fashion.train.recovery import interrupt_orphaned_run
 from fashion.train.registry import (
     RUN_COLUMNS,
@@ -127,3 +128,28 @@ def test_record_rejects_invalid_provenance_hash() -> None:
     record.split_sha256 = "not-a-digest"
     with pytest.raises(ValueError, match="split_sha256"):
         record.to_row()
+
+
+def test_registry_retries_transient_windows_write_denial(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    real_write = registry_module.atomic_write_csv
+    attempts = 0
+
+    def deny_once(path: Path, frame: object) -> None:
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            error = PermissionError(5, "Access is denied", str(path))
+            error.winerror = 5
+            raise error
+        real_write(path, frame)
+
+    monkeypatch.setattr(registry_module, "atomic_write_csv", deny_once)
+    registry = RunRegistry(tmp_path / "runs.csv")
+
+    registry.append(_record())
+
+    assert attempts == 2
+    assert registry.read().loc[0, "status"] == "running"

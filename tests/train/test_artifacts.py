@@ -8,7 +8,6 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-import fashion.train.artifacts as artifacts_module
 from fashion.train.artifacts import (
     ArtifactVerificationError,
     atomic_write_bytes,
@@ -54,33 +53,6 @@ def test_atomic_writes_replace_complete_artifacts(tmp_path: Path) -> None:
     assert json.loads(json_path.read_text(encoding="utf-8"))["fold"] == 0
     assert csv_path.read_text(encoding="utf-8") == "id,fold\n2,1\n1,0\n"
     assert not list(tmp_path.rglob("*.tmp"))
-
-
-def test_atomic_write_retries_transient_windows_replace_denial(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    output = tmp_path / "runs.csv"
-    output.write_bytes(b"old")
-    real_replace = artifacts_module.os.replace
-    attempts = 0
-
-    def deny_once(source: str | Path, destination: str | Path) -> None:
-        nonlocal attempts
-        attempts += 1
-        if attempts == 1:
-            error = PermissionError(5, "Access is denied", str(destination))
-            error.winerror = 5
-            raise error
-        real_replace(source, destination)
-
-    monkeypatch.setattr(artifacts_module.os, "replace", deny_once)
-
-    atomic_write_bytes(output, b"new")
-
-    assert attempts == 2
-    assert output.read_bytes() == b"new"
-    assert not list(tmp_path.glob("*.tmp"))
 
 
 def test_verify_artifact_accepts_match_and_rejects_missing_or_changed(tmp_path: Path) -> None:

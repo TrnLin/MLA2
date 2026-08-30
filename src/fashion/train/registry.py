@@ -22,6 +22,8 @@ RUN_STATUSES = frozenset({"running", "completed", "failed", "interrupted"})
 TERMINAL_STATUSES = RUN_STATUSES - {"running"}
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 GIT_PATTERN = re.compile(r"^[0-9a-f]{40}$")
+_WINDOWS_TRANSIENT_WRITE_ERRORS = {5, 32}
+_REGISTRY_WRITE_RETRY_DELAYS_SECONDS = (0.01, 0.02, 0.04, 0.08)
 
 RUN_COLUMNS = (
     "run_id",
@@ -103,6 +105,19 @@ class ImmutableRunError(RegistryError):
 
 def _utc_now() -> str:
     return datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def _write_registry_csv(path: Path, frame: pd.DataFrame) -> None:
+    """Retry short Windows locks around this high-frequency shared ledger only."""
+    for delay in (*_REGISTRY_WRITE_RETRY_DELAYS_SECONDS, None):
+        try:
+            atomic_write_csv(path, frame)
+            return
+        except PermissionError as error:
+            transient = getattr(error, "winerror", None) in _WINDOWS_TRANSIENT_WRITE_ERRORS
+            if not transient or delay is None:
+                raise
+            time.sleep(delay)
 
 
 def new_run_id(experiment_id: str, fold: int | None, seed: int) -> str:
@@ -230,7 +245,7 @@ class RunRegistry:
             [frame, pd.DataFrame([record.to_row()], columns=RUN_COLUMNS)],
             ignore_index=True,
         )
-        atomic_write_csv(self.path, output)
+        _write_registry_csv(self.path, output)
 
     def finalize(self, record: RunRecord) -> None:
         """Replace a running row once, while preserving its starting identity."""
@@ -251,7 +266,7 @@ class RunRegistry:
                 f"cannot change run identity after start: {', '.join(changed)}"
             )
         frame.loc[index, list(RUN_COLUMNS)] = [new_row[name] for name in RUN_COLUMNS]
-        atomic_write_csv(self.path, frame)
+        _write_registry_csv(self.path, frame)
 
     def find(self, **filters: str | int | bool | None) -> pd.DataFrame:
         """Return rows matching exact serialized field values."""
