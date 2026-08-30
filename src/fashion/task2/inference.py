@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 import torch
-from PIL import UnidentifiedImageError
+from PIL import Image, UnidentifiedImageError
 from torch import nn
 
 from fashion.config import ROOT, RUNS_CSV, TASK2_MODEL_MANIFEST_JSON
@@ -172,7 +172,12 @@ def predict_season(bundle: SeasonBundle, image_path: str | Path) -> SeasonPredic
     started = time.perf_counter()
     try:
         image = bundle.transform(path).unsqueeze(0).to(bundle.device)
-    except (OSError, UnidentifiedImageError, ValueError) as error:
+    except (
+        Image.DecompressionBombError,
+        OSError,
+        UnidentifiedImageError,
+        ValueError,
+    ) as error:
         raise InvalidSeasonImageError(
             f"Could not read a valid image for Season prediction: {path}"
         ) from error
