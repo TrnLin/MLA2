@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import io
 import json
+import os
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Literal, Mapping
+from typing import Any, Iterator, Literal, Mapping
 
 import pandas as pd
+import psutil
 import torch
 
 from fashion.config import (
@@ -56,6 +59,7 @@ REFIT_ANALYSIS_ROLE = "post_selection_development_refit_without_holdout_evaluati
 REFIT_EVIDENCE_DIRECTORY = TASK2_EVIDENCE_DIR / "development_refit"
 REFIT_HISTORY_CSV = REFIT_EVIDENCE_DIRECTORY / "training_history.csv"
 REFIT_RUNTIME_JSON = REFIT_EVIDENCE_DIRECTORY / "runtime.json"
+REFIT_LOCK_FILENAME = ".task2-season-refit.lock"
 REFIT_IMPLEMENTATION_PATHS = (
     "src/fashion/config.py",
     "src/fashion/data/dataset.py",
@@ -230,6 +234,55 @@ def _load_json_object(path: Path, scope: str) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise ValueError(f"{scope} must be a JSON object")
     return payload
+
+
+def _lock_owner_is_alive(path: Path) -> bool:
+    try:
+        owner = _load_json_object(path, "development refit lock")
+        process_id = int(owner["pid"])
+    except (KeyError, TypeError, ValueError, json.JSONDecodeError, OSError):
+        return False
+    return psutil.pid_exists(process_id)
+
+
+@contextmanager
+def _exclusive_refit_lock(path: Path) -> Iterator[None]:
+    """Serialise every refit preflight, read, train, and publish operation."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    owner = {"pid": os.getpid()}
+    acquired = False
+    for _ in range(2):
+        try:
+            descriptor = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            if _lock_owner_is_alive(path):
+                raise RuntimeError(
+                    f"development refit is already running; lock={path}"
+                ) from None
+            path.unlink(missing_ok=True)
+            continue
+        try:
+            with os.fdopen(descriptor, mode="w", encoding="utf-8") as handle:
+                json.dump(owner, handle, sort_keys=True)
+                handle.write("\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+        except BaseException:
+            path.unlink(missing_ok=True)
+            raise
+        acquired = True
+        break
+    if not acquired:
+        raise RuntimeError(f"could not acquire development refit lock: {path}")
+    try:
+        yield
+    finally:
+        try:
+            current_owner = _load_json_object(path, "development refit lock")
+        except (json.JSONDecodeError, OSError, ValueError):
+            current_owner = None
+        if current_owner == owner:
+            path.unlink(missing_ok=True)
 
 
 def _relative_path(path: Path, *, root: Path) -> str:
@@ -780,7 +833,7 @@ def load_verified_development_refit_manifest(
     return manifest, manifest_path, bundle
 
 
-def run_or_load_development_refit(
+def _run_or_load_development_refit_unlocked(
     *,
     mode: ExecutionMode = "run_or_load",
     project_root: str | Path = ROOT,
@@ -1066,11 +1119,53 @@ def run_or_load_development_refit(
     return _outcome(verified, verified_path, source="run")
 
 
+def run_or_load_development_refit(
+    *,
+    mode: ExecutionMode = "run_or_load",
+    project_root: str | Path = ROOT,
+    splits_path: str | Path = SPLITS_CSV,
+    label_map_path: str | Path = LABEL_MAPS_JSON,
+    freeze_path: str | Path = TASK2_SELECTION_FREEZE_JSON,
+    registry_path: str | Path = RUNS_CSV,
+    bundle_path: str | Path = TASK2_MODEL_PATH,
+    manifest_path: str | Path = TASK2_MODEL_MANIFEST_JSON,
+    history_path: str | Path = REFIT_HISTORY_CSV,
+    runtime_path: str | Path = REFIT_RUNTIME_JSON,
+) -> RefitOutcome:
+    """Run or load one refit while holding a process-level artifact lock."""
+    root = Path(project_root).resolve()
+    raw_manifest = Path(manifest_path)
+    manifest_file = (
+        raw_manifest.resolve()
+        if raw_manifest.is_absolute()
+        else (root / raw_manifest).resolve()
+    )
+    try:
+        manifest_file.relative_to(root)
+    except ValueError as error:
+        raise ValueError(f"refit output is outside project root: {manifest_file}") from error
+    lock_path = manifest_file.parent / REFIT_LOCK_FILENAME
+    with _exclusive_refit_lock(lock_path):
+        return _run_or_load_development_refit_unlocked(
+            mode=mode,
+            project_root=root,
+            splits_path=splits_path,
+            label_map_path=label_map_path,
+            freeze_path=freeze_path,
+            registry_path=registry_path,
+            bundle_path=bundle_path,
+            manifest_path=manifest_file,
+            history_path=history_path,
+            runtime_path=runtime_path,
+        )
+
+
 __all__ = [
     "REFIT_EVIDENCE_DIRECTORY",
     "REFIT_GATE",
     "REFIT_HISTORY_CSV",
     "REFIT_IMPLEMENTATION_PATHS",
+    "REFIT_LOCK_FILENAME",
     "REFIT_RUNTIME_JSON",
     "RefitOutcome",
     "load_verified_development_refit_manifest",
