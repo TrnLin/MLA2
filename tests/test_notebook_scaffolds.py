@@ -1127,8 +1127,10 @@ def test_task2_analysis_cells_verify_all_declared_inputs_and_exact_claims() -> N
         assert required in manifest_loader
 
     robustness = cells["s11-01-code"].source
-    assert 'robustness_manifest["holdout_opened"] is False' in robustness
-    assert 'robustness_manifest["holdout_metrics_present"] is False' in robustness
+    assert "development_stress_and_machine_cost_diagnosis_only" in robustness
+    assert 'clean_reconciliation["support"].eq(32753).all()' in robustness
+    assert 'clean_reconciliation["clean_reference"]' in robustness
+    assert '["candidate", "condition"], observed=True' in robustness
 
     bootstrap = cells["s13-01-code"].source
     assert 'macro_intervals["ci_lower"] > macro_intervals["practical_tie_threshold"]' in bootstrap
