@@ -1,0 +1,178 @@
+{
+  "analysis_role": "development_evidence_model_selection_and_pre_holdout_freeze",
+  "calibration": {
+    "app_review_threshold": null,
+    "evaluation_claim_allowed": false,
+    "fit_rows": 32753,
+    "fit_scope": "all_primary_seed_oof_rows",
+    "method": "scalar_temperature_scaling",
+    "purpose": "future_frozen_bundle_confidence_only",
+    "temperature": 1.3650015953177774
+  },
+  "canonical_inputs": {
+    "label_maps": {
+      "path": "data/processed/label_maps.json",
+      "sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327"
+    },
+    "splits": {
+      "path": "data/processed/splits.csv",
+      "sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
+    }
+  },
+  "decision_evidence": {
+    "analysis_config": {
+      "path": "configs/task2/g7_ultimate_judgement.json",
+      "sha256": "9ad6f2b2567fe2c7774a1a2892c3d3ad463b0efa8090167c0c6fedce20394e26"
+    },
+    "decision": {
+      "path": "results/evidence/task2/ultimate_judgement/decision.json",
+      "sha256": "db9a2fd4203af8c7d2754e3503f6caacc8821b9b9c595b4497468568301d5fd2"
+    },
+    "rejected_alternatives": {
+      "path": "results/evidence/task2/ultimate_judgement/rejected_alternatives.csv",
+      "sha256": "a66adc413d715b02143d2b0e6968718d23f58af7256ca4d4c71145f813277606"
+    },
+    "scorecard": {
+      "path": "results/evidence/task2/ultimate_judgement/scorecard.csv",
+      "sha256": "7c2faf7cb2d5e982bb7d741632e848450d81bb65d1b9a1e24a328d50206a9fbf"
+    }
+  },
+  "decision_provenance": {
+    "git_commit": "f5d77fb9ec9ba6474c4473167f66e921cc353500",
+    "git_dirty": false,
+    "implementation_files_at_head": [
+      "src/fashion/task2/ultimate_judgement.py",
+      "src/fashion/train/artifacts.py"
+    ],
+    "implementation_sha256": "c481f46f700696cfb425f34b4d699633bb9891f53b38cf6493bdf7c1e29bb401"
+  },
+  "decision_recorded_at_utc": "2026-08-30T14:27:44Z",
+  "freeze_id": "task2-season-i2-development-v1",
+  "gate": "G7-ULTIMATE-JUDGEMENT",
+  "holdout_metrics_present": false,
+  "holdout_opened": false,
+  "immutability": {
+    "different_payload_overwrite_allowed": false,
+    "identical_retry_allowed": true,
+    "model_change_after_holdout_allowed": false
+  },
+  "limitations": [
+    "Two fixed seeds do not cover all optimisation randomness.",
+    "Brightness 0.85 severely damages macro-F1 and Spring recall.",
+    "ArticleType conflict remains difficult despite an average I2 improvement.",
+    "Grad-CAM tags are non-causal review hypotheses, not failure prevalence.",
+    "No app review threshold is justified without a business error cost."
+  ],
+  "primary_development_evidence": {
+    "augmentation": "a0",
+    "config": {
+      "path": "configs/task2/g4_i2_article_type_lambda_0_3_c1.json",
+      "sha256": "fc8e26c3d5183ade1ab1e8db0069528bc5b0ec30755ffac6a045fbcd9b599d60"
+    },
+    "config_semantic_sha256": "28a122892bd80bf44b1dfa79abb6228e4160e430d25ec632386e3be68619eb4c",
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "image_size": [
+      80,
+      60
+    ],
+    "implementation_sha256": "877706919db28f917632f9250b1b40d446695f941fd226211246d69efd7838de",
+    "loss_id": "season_ce_plus_masked_article_type_ce_lambda_0_3",
+    "metric": "pooled_five_fold_oof_macro_f1",
+    "pooled_oof_macro_f1": 0.7526869559580971,
+    "run_ids": [
+      "g4-i2-article-type-lambda-0-3-c1-f0-s2753-902fcc852d5f",
+      "g4-i2-article-type-lambda-0-3-c1-f1-s2753-1e4b66c26b12",
+      "g4-i2-article-type-lambda-0-3-c1-f2-s2753-e4b6d5100cf8",
+      "g4-i2-article-type-lambda-0-3-c1-f3-s2753-bc2ebf436c6b",
+      "g4-i2-article-type-lambda-0-3-c1-f4-s2753-8d210d54f01e"
+    ],
+    "seed": 2753,
+    "transform_id": "a0-7dba8a62f166046d",
+    "valid_development_rows": 32753
+  },
+  "refit_rule": {
+    "article_type_missing_labels": "masked_not_dropped",
+    "checkpoint_rule": "save_the_declared_final_epoch_state",
+    "dataset": "all_development_rows_with_valid_season",
+    "epoch_rule": "median_primary_seed_cv_best_epoch",
+    "epochs": 24,
+    "normalisation_scope": "all_valid_development_content_pixels_only",
+    "season_class_weights": null,
+    "seed": 2753,
+    "source_best_epochs": [
+      22,
+      29,
+      14,
+      26,
+      24
+    ],
+    "validation_or_holdout_early_stopping": false
+  },
+  "schema_version": "1.0.0",
+  "selected_model": {
+    "auxiliary_target_used_at_inference": false,
+    "auxiliary_training_target": "articleType",
+    "benchmark_only": false,
+    "candidate": "I2",
+    "experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+    "final_eligible": true,
+    "inference_inputs": [
+      "image"
+    ],
+    "model_family": "smallcnn",
+    "parameter_count": 1206112,
+    "scratch": true,
+    "weights": null
+  },
+  "selection_checks": {
+    "above_reference_in_every_robustness_condition": true,
+    "article_type_conflict_guard": true,
+    "both_grouped_bootstrap_intervals_above_zero": true,
+    "jpeg_drop_guard": true,
+    "primary_seed_macro_f1_lead": true,
+    "stability_seed_macro_f1_lead": true
+  },
+  "stability_evidence": {
+    "experiment_id": "g5-i2-article-type-lambda-0-3-c1-s2026",
+    "pooled_oof_macro_f1": 0.7447434490683583,
+    "seed": 2026,
+    "two_seeds_cover_all_randomness": false
+  },
+  "status": "frozen",
+  "upstream_manifests": {
+    "bootstrap": {
+      "path": "results/evidence/task2/paired_bootstrap/manifest.json",
+      "sha256": "dbef8dc221cd937f81dc661e5869d5f28471f07656030d3ae1a5dbe042800d6e"
+    },
+    "calibration": {
+      "path": "results/evidence/task2/calibration/manifest.json",
+      "sha256": "e1ca0ab410aec53b34c5abcccf5db20f406f3a559358a4b901e1658875554052"
+    },
+    "gradcam": {
+      "path": "results/evidence/task2/gradcam_failure_review/manifest.json",
+      "sha256": "3dd2893d7d38f3dd25833e7895ab8910ba85119f16f1245a060b98b09d57df25"
+    },
+    "robustness": {
+      "path": "results/evidence/task2/robustness_cost/manifest.json",
+      "sha256": "39c866e9ce255614d88748106db90cecd3e291ade39edbecac91211fccd50f7d"
+    },
+    "selected_experiment": {
+      "path": "results/evidence/task2/g4_i2_article_type_lambda_0_3_c1/manifest.json",
+      "sha256": "4606ec36122acefbf3d04b1e45d8cfaa95fbca27a7e6d0749c9c339147aceae5"
+    },
+    "slices": {
+      "path": "results/evidence/task2/shortcut_error_slices/manifest.json",
+      "sha256": "df40b6c877304f886c484f4753489cd23d6dbda5cced6a391f2321495234d07c"
+    },
+    "stability": {
+      "path": "results/evidence/task2/seed_stability/manifest.json",
+      "sha256": "d893bad6ebf84971db69402d891cc80d8fda9e62c355717765dc729e2a3710fd"
+    }
+  }
+}
