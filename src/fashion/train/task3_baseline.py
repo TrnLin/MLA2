@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.metadata
 import json
 import os
@@ -33,6 +34,7 @@ from fashion.train.data import (
 from fashion.train.metrics import classification_metrics
 from fashion.train.model import Task3BaselineCNN
 from fashion.train.registry import RunRegistry
+from fashion.train.task3_experiments import Task3ChildSpec, effective_number_class_weights
 
 BASELINE_EXPERIMENT_ID = "t3_primary_baseline_smallcnn"
 VERIFIED_COLAB_RUNTIME = {
@@ -343,11 +345,32 @@ def run_task3_baseline_fold(
     registry_mirrors: Sequence[str | Path] = (),
     root: str | Path = ROOT,
     device_name: str = "cuda",
+    child_spec: Task3ChildSpec | None = None,
 ) -> dict[str, object]:
-    """Train and evaluate one registered E1 baseline fold."""
+    """Train one baseline fold or one locked single-factor child fold."""
     root = Path(root)
     output_root = Path(output_root)
     config = Task3BaselineConfig(target=target)  # type: ignore[arg-type]
+    if validation_fold not in range(5):
+        raise ValueError("validation_fold must be one of 0,1,2,3,4")
+    if child_spec is not None and child_spec.target != target:
+        raise ValueError("child target and requested target disagree")
+    if child_spec is not None:
+        parent_run_id = child_spec.parent_run_ids[validation_fold]
+        parent_dir = output_root / "baseline" / target / parent_run_id
+        parent_metrics_path = parent_dir / "metrics.json"
+        parent_checkpoint_path = parent_dir / "final_epoch.pt"
+        if not parent_metrics_path.is_file() or not parent_checkpoint_path.is_file():
+            raise FileNotFoundError(
+                f"completed baseline parent artifacts are missing for fold {validation_fold}: "
+                f"{parent_dir}"
+            )
+        parent_metrics = json.loads(parent_metrics_path.read_text(encoding="utf-8"))
+        if (
+            str(parent_metrics.get("run_id")) != parent_run_id
+            or int(parent_metrics.get("validation_fold", -1)) != validation_fold
+        ):
+            raise ValueError(f"baseline parent metadata disagrees for fold {validation_fold}")
     set_reproducible_seed(config.seed)
     if device_name == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA was requested but is not available")
@@ -365,12 +388,56 @@ def run_task3_baseline_fold(
         f"train={len(training):,}, validation={len(validation):,}"
     )
 
-    execution = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + uuid.uuid4().hex[:6]
-    digest = config_digest(config)
-    run_id = (
-        f"t3_baseline_{target}_smallcnn_f{validation_fold}_s{config.seed}_{digest}_{execution}"
+    class_counts = np.array(
+        [int(training[target].eq(class_name).sum()) for class_name in classes],
+        dtype=np.int64,
     )
-    run_dir = output_root / "baseline" / target / run_id
+    class_weights: np.ndarray | None = None
+    if child_spec is not None and child_spec.loss_name == "effective_number_cross_entropy":
+        if child_spec.class_weight_beta is None or child_spec.class_weight_cap is None:
+            raise ValueError("class-balanced loss requires beta and cap")
+        class_weights = effective_number_class_weights(
+            class_counts,
+            beta=child_spec.class_weight_beta,
+            cap=child_spec.class_weight_cap,
+        )
+
+    config_payload = config.to_dict()
+    if child_spec is None:
+        digest = config_digest(config)
+        experiment_id = BASELINE_EXPERIMENT_ID
+        hypothesis_id = "baseline_contract"
+        parent_run_ids: list[str] = []
+        artifact_dir = "baseline"
+        run_prefix = "t3_baseline"
+        training_augmentation = "none"
+        loss_name = "cross_entropy"
+    else:
+        experiment_id = child_spec.experiment_id
+        hypothesis_id = child_spec.hypothesis_id
+        parent_run_ids = [child_spec.parent_run_ids[validation_fold]]
+        artifact_dir = child_spec.artifact_dir
+        run_prefix = child_spec.run_prefix
+        training_augmentation = child_spec.training_augmentation
+        loss_name = child_spec.loss_name
+        config_payload["child_experiment"] = child_spec.to_dict()
+        digest_payload = {
+            "baseline_controls": config.to_dict(),
+            "child_experiment": child_spec.to_dict(),
+        }
+        encoded = json.dumps(digest_payload, sort_keys=True, separators=(",", ":"))
+        digest = hashlib.sha256(encoded.encode("utf-8")).hexdigest()[:12]
+        config_payload["parent_run_id"] = parent_run_ids[0]
+        config_payload["class_counts"] = class_counts.tolist()
+        config_payload["class_weights"] = (
+            class_weights.tolist() if class_weights is not None else None
+        )
+
+    execution = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + uuid.uuid4().hex[:6]
+    run_id = (
+        f"{run_prefix}_{target}_smallcnn_f{validation_fold}_s{config.seed}_{digest}_{execution}"
+    )
+    run_dir = output_root / artifact_dir / target / run_id
     run_dir.mkdir(parents=True, exist_ok=False)
     config_path = run_dir / "config.json"
     normalization_path = run_dir / "normalization.json"
@@ -380,7 +447,7 @@ def run_task3_baseline_fold(
     robustness_path = run_dir / "robustness.csv"
     checkpoint_path = run_dir / "final_epoch.pt"
 
-    _json_dump(config.to_dict(), config_path)
+    _json_dump(config_payload, config_path)
     _log(f"fitting fold-training RGB statistics for target={target} fold={validation_fold}")
     stats = fit_fold_rgb_stats(
         training,
@@ -406,13 +473,23 @@ def run_task3_baseline_fold(
         "root": root,
         "image_size": (config.image_height, config.image_width),
     }
-    train_dataset = Task3ImageDataset(training, **dataset_kwargs)
+    train_dataset = Task3ImageDataset(
+        training,
+        augmentation=training_augmentation,
+        **dataset_kwargs,
+    )
     validation_dataset = Task3ImageDataset(validation, **dataset_kwargs)
     train_loader = _loader(train_dataset, config=config, shuffle=True, device=device)
     validation_loader = _loader(validation_dataset, config=config, shuffle=False, device=device)
 
     model = Task3BaselineCNN(config).to(device)
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss(
+        weight=(
+            torch.as_tensor(class_weights, dtype=torch.float32, device=device)
+            if class_weights is not None
+            else None
+        )
+    )
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay
     )
@@ -426,9 +503,9 @@ def run_task3_baseline_fold(
     registry.start(
         {
             "run_id": run_id,
-            "experiment_id": BASELINE_EXPERIMENT_ID,
-            "hypothesis_id": "baseline_contract",
-            "parent_run_ids": [],
+            "experiment_id": experiment_id,
+            "hypothesis_id": hypothesis_id,
+            "parent_run_ids": parent_run_ids,
             "task": "task3",
             "target": target,
             "validation_fold": validation_fold,
@@ -497,7 +574,7 @@ def run_task3_baseline_fold(
         torch.save(
             {
                 "run_id": run_id,
-                "config": config.to_dict(),
+                "config": config_payload,
                 "class_names": classes,
                 "normalization": stats,
                 "model_state_dict": model.state_dict(),
@@ -513,6 +590,13 @@ def run_task3_baseline_fold(
         metrics["loss"] = clean_loss
         metrics["run_id"] = run_id
         metrics["validation_fold"] = validation_fold
+        metrics["experiment_id"] = experiment_id
+        metrics["hypothesis_id"] = hypothesis_id
+        metrics["parent_run_ids"] = parent_run_ids
+        metrics["training_augmentation"] = training_augmentation
+        metrics["loss_name"] = loss_name
+        metrics["class_counts"] = class_counts.tolist()
+        metrics["class_weights"] = class_weights.tolist() if class_weights is not None else None
         if target == "usage":
             without_home = [index for index, name in enumerate(classes) if name != "Home"]
             per_class = metrics["per_class"]
@@ -543,17 +627,14 @@ def run_task3_baseline_fold(
                     "corruption": corruption,
                     "loss": corrupted_loss,
                     "macro_f1": corrupted_metrics["macro_f1"],
-                    "macro_f1_change": float(corrupted_metrics["macro_f1"])
-                    - clean_macro_f1,
+                    "macro_f1_change": float(corrupted_metrics["macro_f1"]) - clean_macro_f1,
                 }
             )
         pd.DataFrame(robustness_rows).to_csv(robustness_path, index=False)
 
         train_seconds = training_finished - started
         diagnostic_seconds = time.perf_counter() - training_finished
-        peak_memory = (
-            int(torch.cuda.max_memory_allocated(device)) if device.type == "cuda" else 0
-        )
+        peak_memory = int(torch.cuda.max_memory_allocated(device)) if device.type == "cuda" else 0
         latency_ms = _measure_latency(
             model,
             device,
@@ -603,6 +684,9 @@ def _aggregate_target(
     *,
     output_root: Path,
     root: Path,
+    artifact_dir: str = "baseline",
+    experiment_id: str = BASELINE_EXPERIMENT_ID,
+    hypothesis_id: str = "baseline_contract",
 ) -> dict[str, object]:
     label_maps = load_label_maps(root / LABEL_MAPS_JSON.relative_to(ROOT))
     classes, _ = _class_spec(label_maps, target)
@@ -614,17 +698,14 @@ def _aggregate_target(
     probabilities = predictions[probability_columns].to_numpy(dtype=np.float64)
     labels = predictions["true_index"].to_numpy(dtype=np.int64)
     metrics = classification_metrics(labels, probabilities, classes)
+    metrics["experiment_id"] = experiment_id
+    metrics["hypothesis_id"] = hypothesis_id
+    metrics["fold_run_ids"] = [str(result["run_id"]) for result in fold_results]
     if target == "usage":
         metrics["macro_f1_without_home"] = float(
-            np.mean(
-                [
-                    row["f1"]
-                    for row in metrics["per_class"]
-                    if row["class_name"] != "Home"
-                ]
-            )
+            np.mean([row["f1"] for row in metrics["per_class"] if row["class_name"] != "Home"])
         )
-    aggregate_dir = output_root / "baseline" / target / "aggregate"
+    aggregate_dir = output_root / artifact_dir / target / "aggregate"
     aggregate_dir.mkdir(parents=True, exist_ok=True)
     predictions_path = aggregate_dir / "oof_predictions.csv"
     metrics_path = aggregate_dir / "metrics.json"
@@ -659,14 +740,20 @@ def run_task3_baseline_cv(
     registry_mirrors: Sequence[str | Path] = (),
     root: str | Path = ROOT,
     device_name: str = "cuda",
+    child_spec: Task3ChildSpec | None = None,
 ) -> dict[str, object]:
-    """Run the full five-fold E1 baseline and create pooled OOF artifacts."""
+    """Run a full five-fold baseline or locked child and create pooled OOF artifacts."""
     fold_list = tuple(int(fold) for fold in folds)
     if fold_list != tuple(range(5)):
-        raise ValueError("E1 baseline evidence requires folds 0,1,2,3,4 in order")
+        raise ValueError("Task 3 evidence requires folds 0,1,2,3,4 in order")
+    if child_spec is not None and child_spec.target != target:
+        raise ValueError("child target and requested target disagree")
     root = Path(root)
     output_root = Path(output_root)
-    _log(f"starting five-fold E1 baseline for target={target}")
+    experiment_id = child_spec.experiment_id if child_spec is not None else BASELINE_EXPERIMENT_ID
+    hypothesis_id = child_spec.hypothesis_id if child_spec is not None else "baseline_contract"
+    artifact_dir = child_spec.artifact_dir if child_spec is not None else "baseline"
+    _log(f"starting five-fold experiment={experiment_id} for target={target}")
     results = [
         run_task3_baseline_fold(
             target,
@@ -676,11 +763,20 @@ def run_task3_baseline_cv(
             registry_mirrors=registry_mirrors,
             root=root,
             device_name=device_name,
+            child_spec=child_spec,
         )
         for fold in fold_list
     ]
-    aggregate = _aggregate_target(target, results, output_root=output_root, root=root)
-    _log(f"completed pooled five-fold OOF aggregation for target={target}")
+    aggregate = _aggregate_target(
+        target,
+        results,
+        output_root=output_root,
+        root=root,
+        artifact_dir=artifact_dir,
+        experiment_id=experiment_id,
+        hypothesis_id=hypothesis_id,
+    )
+    _log(f"completed pooled five-fold OOF experiment={experiment_id} target={target}")
     return aggregate
 
 

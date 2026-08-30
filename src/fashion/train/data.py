@@ -16,6 +16,7 @@ from torch.utils.data import Dataset
 from fashion.config import ROOT
 from fashion.data.dataset import get_cv_split, get_samples
 from fashion.data.images import StreamingStats, transform_image, transform_image_with_mask
+from fashion.train.augmentation import TRAINING_AUGMENTATIONS, apply_training_augmentation
 
 CORE_CORRUPTIONS = (
     "jpeg_75",
@@ -110,9 +111,14 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
         root: str | Path = ROOT,
         image_size: tuple[int, int] = (80, 60),
         corruption: str | None = None,
+        augmentation: str = "none",
     ) -> None:
         if corruption not in (None, *CORE_CORRUPTIONS):
             raise ValueError(f"unknown core corruption: {corruption}")
+        if augmentation not in TRAINING_AUGMENTATIONS:
+            raise ValueError(f"unknown Task 3 training augmentation: {augmentation}")
+        if corruption is not None and augmentation != "none":
+            raise ValueError("training augmentation and diagnostic corruption cannot be combined")
         self.frame = frame.reset_index(drop=True)
         self.target = target
         self.label_to_index = dict(label_to_index)
@@ -121,6 +127,7 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
         self.root = Path(root)
         self.image_size = image_size
         self.corruption = corruption
+        self.augmentation = augmentation
         unknown = sorted(set(self.frame[target]).difference(self.label_to_index))
         if unknown:
             raise ValueError(f"unknown {target} labels: {unknown}")
@@ -131,6 +138,7 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
     def __getitem__(self, index: int) -> dict[str, Any]:
         row = self.frame.iloc[index]
         image = _load_corrupted(self.root / str(row["path"]), self.corruption)
+        image = apply_training_augmentation(image, self.augmentation)
         array = transform_image(
             image,
             image_size=self.image_size,

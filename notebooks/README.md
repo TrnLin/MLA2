@@ -10,12 +10,15 @@ Notebooks tell the investigation story. Reusable code lives in `src/fashion/`.
 | 01 | `01_data_preparation.ipynb` | complete and executed | teacher audit, sole split, five folds, and development-only evidence |
 | 02 | `02_task1_article_type.ipynb` | planning scaffold | article-type comparisons and judgement |
 | 03 | `03_task2_season.ipynb` | planning scaffold | season comparisons and judgement |
-| 04 | `04_task3_gender_usage.ipynb` | planning scaffold | separate gender and usage outputs |
+| 04 | `04_task3_gender_usage.ipynb` | baseline evidence notebook | model, five-fold analysis, and next hypotheses |
+| 04a | `04a_task3_smallcnn_baseline_training.ipynb` | executed baseline runner | reproducible five-fold SmallCNN baselines |
+| 04b | `04b_task3_smallcnn_child_experiments.ipynb` | child training runner | brightness-only Gender and loss-only Usage experiments |
 | 05 | `05_task4_visual_search.ipynb` | planning scaffold | Top-K search choices and comparisons |
 | 06 | `06_final_evaluation.ipynb` | locked scaffold | one holdout evaluation and ultimate judgement |
 
-Notebooks 02–06 contain Markdown only. They make no model, metric, loss, sampler,
-transform, or Task 4 protocol choice. Each `TODO(owner)` belongs to the task owner.
+Notebooks 02, 03, 05, and 06 are planning or locked Markdown scaffolds. Task 3 has one
+narrative notebook plus separate SmallCNN baseline and child training runners so Run All
+cannot accidentally retrain an earlier stage. Each `TODO(owner)` belongs to the task owner.
 
 ## Shared rules
 
