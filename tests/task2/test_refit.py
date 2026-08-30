@@ -274,6 +274,10 @@ def test_refit_registry_stays_failed_when_manifest_publish_fails(
         assert len(registry) == 1
         assert registry.loc[0, "status"] == "failed"
         assert registry.loc[0, "error_type"] == "OSError"
+        assert not paths["bundle_path"].exists()
+        assert not paths["manifest_path"].exists()
+        assert not paths["history_path"].exists()
+        assert not paths["runtime_path"].exists()
 
 
 @pytest.mark.parametrize(
