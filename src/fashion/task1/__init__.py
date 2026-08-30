@@ -1,18 +1,18 @@
 """Task 1 article-type classification tools."""
 
 from fashion.task1.dataset import Task1TorchDataset, get_task1_fold_rows
-from fashion.task1.experiments import (
-    Task1ExperimentResult,
-    run_task1_experiment,
-    write_task1_comparison_figure,
-    write_task1_confusion_figure,
-)
 from fashion.task1.evaluation import (
     aggregate_fold_metrics,
     build_prediction_frame,
     classification_metrics,
     per_class_metrics,
     validate_oof_predictions,
+)
+from fashion.task1.experiments import (
+    Task1ExperimentResult,
+    run_task1_experiment,
+    write_task1_comparison_figure,
+    write_task1_confusion_figure,
 )
 from fashion.task1.models import Task1ModelConfig, Task1SmallCNN, count_trainable_parameters
 from fashion.task1.preprocessing import (
