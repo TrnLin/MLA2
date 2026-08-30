@@ -1,6 +1,6 @@
 ---
 title: "Task 2 - Fashion Season Classification: execution report and plan"
-status: development-refit-complete
+status: development-refit-and-inference-complete
 created: 2026-08-25
 updated: 2026-08-31
 scope: task2-season
@@ -51,7 +51,10 @@ rebuild completed training but was correctly rolled back when a canonical file-o
 was detected. Both events remain traceable. The final replacement now passes the stronger
 registry, lock, transaction, source-hash, finite-value, and boundary checks. It contains
 the same frozen I2 model choice, seed, 24 epochs, and 32,753 development rows; no retuning
-occurred. Holdout remains sealed.
+occurred. The shared inference API and command-line launcher now load only this verified
+package, accept explicit image paths, and return calibrated Season probabilities with
+the run, manifest, and bundle hashes. They do not read holdout labels or write the
+official prediction CSV. Holdout remains sealed.
 
 No plan can guarantee a full mark because the mark also depends on real results and the
 quality of the final written argument. This plan covers the HD signals in the assignment
@@ -99,12 +102,12 @@ strongest defensible submission path.
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
 | Notebook 03 | Fixed 55-code-cell scaffold; 52 cells are implemented and three handoff cells remain | Do not change the 193-cell structure |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, and Notebook Sections 9-14.3 are implemented | Build only the sealed handoff; do not add or retune a candidate |
+| Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, verified image-only inference, and Notebook Sections 9-14.3 are implemented | Build only the sealed handoff; do not add or retune a candidate |
 | `results/runs.csv` | 122 append-only rows: 115 completed, two failed, and five interrupted | The replacement refit and both earlier lifecycle outcomes remain traceable |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 | Current G8 gate | The replacement bundle, manifest, 24-row history, runtime, and one completed registry row are hash-verified; holdout remains sealed | Build the sealed handoff only after all group tasks freeze |
-| Current verification | Ruff and all `527` repository tests pass, including `31` Notebook contracts; all 193 Notebook cells validate and all 55 code cells compile | G8 and Notebook Section 14.3 are green |
+| Current verification | Ruff and all `541` repository tests pass, including `31` Notebook contracts; all 193 Notebook cells validate and all 55 code cells compile | G8, inference, and Notebook Section 14.3 are green |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -507,6 +510,20 @@ seed drift and two reversed seed-2026 folds contradict a uniform-gain interpreta
 | G5 learning curves across two seeds | G5 pooled and Spring stability |
 |---|---|
 | ![C2 and I2 learning curves at seeds 2753 and 2026](../results/figures/task2/seed_stability_learning_curves.png) | ![C2 and I2 stability comparison](../results/figures/task2/seed_stability_comparison.png) |
+
+### 2.6 Verified image-only inference handoff
+
+`fashion.task2.inference` exposes immutable `SeasonBundle` and `SeasonPrediction`
+records plus `load_season_bundle`, `predict_season`, and `predict_manifest`. Loading
+delegates to the hardened G8 verifier before model construction. Prediction reuses the
+frozen `(80, 60)` transform, label order, temperature, and scratch I2 image-only method.
+The result contains four probabilities, confidence, end-to-end latency, and provenance
+hashes. `review_required` remains `None` because no review threshold was frozen.
+
+`scripts/predict_task2_season.py` is the thin Windows-safe launcher. It accepts only
+explicit image paths and `--device`; it prints ordered JSON and fails with JSON error
+output for missing, corrupt, unsafe oversized, or otherwise invalid images. It has no
+holdout-manifest or official-CSV path. Those group-level actions remain sealed.
 
 ## 3. Task 2 contract
 
@@ -1284,6 +1301,7 @@ lambda, or tuning pair. Do not open holdout in this Task 2 workstream.
 
 ### Phase 6 - Prediction and deferred integration, 1-2 days
 
+- [x] Provide the verified image-only Season API and explicit-path JSON launcher.
 - [ ] Produce exactly `id,gender,articleType,season,usage`; Task 2 fills only `season`
   inside the shared pipeline.
 - [ ] Validate 5,829 IDs, order, four allowed labels, and no blanks.
@@ -1314,7 +1332,7 @@ Task 2 is complete only when all of the following exist:
 - [x] the winner was frozen before holdout access;
 - [x] a final scratch-trained checkpoint and hash-verified manifest exist after the integrity fix;
 - [ ] one independent holdout evaluation exists;
-- [ ] a final image-only inference function exists;
+- [x] a final image-only inference function exists;
 - [ ] the official prediction file is valid;
 - [ ] the notebook reruns and every figure/table traces back to a run ID.
 
