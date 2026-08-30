@@ -15,6 +15,7 @@ from fashion.config import ROOT
 from fashion.data.dataset import load_label_maps
 from fashion.data.hashing import compute_sha256
 from fashion.data.torch import FoldImageStats
+from fashion.task2.multitask import I2_IMPLEMENTATION_PATHS
 from fashion.task2.refit import (
     REFIT_IMPLEMENTATION_PATHS,
     load_verified_development_refit_manifest,
@@ -64,6 +65,10 @@ def _fake_loader() -> SimpleNamespace:
         training_ids=training_ids,
         audit=lambda: audit,
     )
+
+
+def test_refit_implementation_hash_covers_selected_i2_dependencies() -> None:
+    assert set(I2_IMPLEMENTATION_PATHS).issubset(REFIT_IMPLEMENTATION_PATHS)
 
 
 def _fake_train(model, train_loader, *, config, auxiliary_weight) -> RefitResult:
