@@ -856,6 +856,72 @@ def test_task2_results_cells_load_only_verified_measured_evidence() -> None:
         assert required in findings
 
 
+def test_task2_slice_cells_load_verified_post_inference_evidence() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    cell_ids = (
+        "s10-01-01-code",
+        "s10-01-02-code",
+        "s10-02-01-code",
+        "s10-02-02-code",
+        "s10-03-01-code",
+        "s10-03-02-code",
+    )
+
+    for cell_id in cell_ids:
+        code = cells[cell_id].source
+        assert not code.startswith("# TODO:")
+        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+
+    combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
+    for required in (
+        "results/evidence/task2/shortcut_error_slices/manifest.json",
+        'slice_manifest["analysis_role"] == "development_oof_diagnosis_only"',
+        'slice_manifest["candidate_selection_affected"] is False',
+        'slice_manifest["ultimate_winner_frozen"] is False',
+        "results/evidence/task2/b0_majority/manifest.json",
+        "results/evidence/task2/b1_hog_hsv_svm/manifest.json",
+        "results/evidence/task2/i1_class_balance/manifest.json",
+        "article_type_fold_audit",
+        "missing_article_type",
+        "training_id_sha256",
+        "file_size_boundaries",
+        "product_family_size",
+        "greyscale_deltas",
+    ):
+        assert required in combined
+    assert "train_test_split" not in combined
+    assert "train_fold" not in combined
+    assert "run_or_load_experiment" not in combined
+
+    findings = "\n".join(
+        cells[cell_id].source
+        for cell_id in (
+            "s10-01-01-finding",
+            "s10-01-02-finding",
+            "s10-02-01-finding",
+            "s10-02-02-finding",
+            "s10-03-01-finding",
+            "s10-03-02-finding",
+        )
+    )
+    for required in (
+        "B0 ignores",
+        "I1 raises recall",
+        "+0.017238",
+        "11,619",
+        "+0.026993",
+        "higher accuracy yet much lower macro-F1",
+        "0.038842",
+        "26,201-26,203",
+        "-0.009415",
+        "only `294` greyscale rows",
+        "reverses across seeds",
+        "never an inference input",
+    ):
+        assert required in findings
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
