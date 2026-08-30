@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
+import fashion.task2.slices as slices_module
 from fashion.data.dataset import get_cv_split, get_samples, load_splits
 from fashion.task2.slices import (
     CandidateExperiment,
@@ -249,3 +250,24 @@ def test_slice_figures_render_all_declared_candidates(tmp_path: Path) -> None:
     assert plot_spring_destinations(tables.spring_destinations, spring_figure) == spring_figure
     assert slice_figure.stat().st_size > 10_000
     assert spring_figure.stat().st_size > 10_000
+
+
+def test_slice_figures_do_not_require_an_interactive_pyplot_backend(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    tables = analyse_slice_packs(_packs(), _assignment_bundle(), _analysis_spec())
+
+    def reject_interactive_manager(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("slice figures must use the headless Agg canvas")
+
+    monkeypatch.setattr(slices_module.plt, "subplots", reject_interactive_manager)
+
+    assert plot_slice_macro_f1(
+        tables.slice_metrics,
+        tmp_path / "headless-slice-macro-f1.png",
+    ).is_file()
+    assert plot_spring_destinations(
+        tables.spring_destinations,
+        tmp_path / "headless-spring-destinations.png",
+    ).is_file()
