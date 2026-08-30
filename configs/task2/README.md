@@ -97,3 +97,13 @@ multiplicities to C2 and I2. It fixes 10,000 draws per seed pair, PCG64 seed 275
 four-label macro-F1 definition, and a two-sided 95% percentile interval. Seed 2753 is the
 primary interval; seed 2026 is a sensitivity check. The family is a conservative proxy,
 not a verified SKU, and this gate cannot introduce a model or open holdout data.
+
+`g6_gradcam_failure_review.json` freezes the final pre-selection analysis gate. For each
+primary-seed finalist and true Season class, it selects three correct and three incorrect
+OOF examples by descending cross-fitted calibrated confidence, then ascending ID. Each
+example is explained against the class the model actually predicted and the checkpoint
+that produced that OOF row. The config also freezes a non-white foreground proxy, border
+audit, contact-sheet order, and non-causal diagnostic tags. High-confidence examples are
+chosen to expose strong beliefs and severe mistakes; they do not estimate how common a
+failure is. Grad-CAM and metadata remain review evidence only and cannot reopen G5 or
+access holdout data.
