@@ -1,0 +1,80 @@
+{
+  "analysis_id": "g6-paired-group-bootstrap",
+  "bootstrap": {
+    "batch_size": 64,
+    "bootstrap_seed": 2753,
+    "cluster_draw_rule": "sample_observed_group_count_with_replacement",
+    "confidence_level": 0.95,
+    "group_order": "ascending_product_family_group",
+    "interval_method": "percentile",
+    "pairing_rule": "same_group_multiplicity_for_c2_and_i2",
+    "quantile_method": "linear",
+    "replicates_per_seed_pair": 10000,
+    "retain_cluster_rows": "all_rows_with_sampled_group_multiplicity",
+    "rng": "numpy_pcg64",
+    "same_group_draws_across_seed_pairs": true
+  },
+  "candidate_pairs": [
+    {
+      "c2_experiment_id": "g3-c2-t0-resnet18",
+      "i2_experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+      "role": "primary_interval",
+      "seed": 2753
+    },
+    {
+      "c2_experiment_id": "g5-c2-t0-resnet18-seed-2026",
+      "i2_experiment_id": "g5-i2-article-type-lambda-0-3-c1-seed-2026",
+      "role": "stability_sensitivity",
+      "seed": 2026
+    }
+  ],
+  "decision_boundary": {
+    "confidence_language_if_interval_contains_zero": "cluster_resampling_does_not_resolve_the_fitted_pair",
+    "confidence_language_if_lower_bound_above_zero": "cluster_resampling_supports_a_positive_i2_minus_c2_difference_for_this_fitted_pair",
+    "current_candidate": "I2",
+    "new_candidates_allowed": false,
+    "practical_tie_threshold_macro_f1": 0.005,
+    "random_seed_generalisability_claim_allowed": false,
+    "ultimate_winner_frozen_by_this_gate": false
+  },
+  "expected_group_count": 22885,
+  "expected_row_count": 32753,
+  "group_column": "product_family_group",
+  "group_semantics": "conservative_dependency_block_not_verified_sku",
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "metrics": {
+    "primary": "i2_minus_c2_pooled_oof_macro_f1",
+    "secondary": [
+      "i2_minus_c2_accuracy",
+      "i2_minus_c2_per_class_f1"
+    ],
+    "zero_division": 0
+  },
+  "method_references": [
+    {
+      "citation": "Field and Welsh (2007), Bootstrapping clustered data",
+      "doi": "10.1111/j.1467-9868.2007.00593.x",
+      "purpose": "cluster_resampling_boundary"
+    },
+    {
+      "citation": "Rifkin and Klautau (2004), In Defense of One-Vs-All Classification",
+      "url": "https://www.jmlr.org/papers/v5/rifkin04a.html",
+      "purpose": "paired_classifier_bootstrap_precedent"
+    }
+  ],
+  "schema_version": "1.0.0",
+  "stage": "g6_paired_group_bootstrap_uncertainty",
+  "target": "season",
+  "warnings": {
+    "calibrated_probabilities_are_not_needed_for_label_metrics": true,
+    "family_groups_are_conservative_proxies": true,
+    "holdout_is_forbidden": true,
+    "independent_row_bootstrap_is_forbidden": true,
+    "two_fixed_training_seeds_do_not_measure_all_training_randomness": true
+  }
+}

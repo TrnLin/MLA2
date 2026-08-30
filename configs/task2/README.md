@@ -89,3 +89,11 @@ one scalar temperature is fit on the other four OOF folds. The contract fixes th
 objective, reliability bins, risk-coverage grid, and review budgets. A separate all-OOF
 temperature may later support the frozen deployment bundle, but it cannot support an
 evaluation claim or select an app threshold without a stated business error cost.
+
+`g6_paired_group_bootstrap.json` quantifies finalist uncertainty without pretending that
+related product images are independent. Each replicate samples the observed number of
+canonical `product_family_group` blocks with replacement and applies the same group
+multiplicities to C2 and I2. It fixes 10,000 draws per seed pair, PCG64 seed 2753, the
+four-label macro-F1 definition, and a two-sided 95% percentile interval. Seed 2753 is the
+primary interval; seed 2026 is a sensitivity check. The family is a conservative proxy,
+not a verified SKU, and this gate cannot introduce a model or open holdout data.
