@@ -49,4 +49,5 @@ models/*.ckpt
 
 # Generated experiment registry; report-selected figures remain trackable.
 results/runs.csv
+results/.runs.csv.lock
 /results/task1/

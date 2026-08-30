@@ -30,7 +30,7 @@ def seed_everything(seed: int, *, deterministic: bool = True) -> None:
         torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.benchmark = not deterministic
     torch.backends.cudnn.deterministic = deterministic
-    torch.use_deterministic_algorithms(deterministic, warn_only=True)
+    torch.use_deterministic_algorithms(deterministic, warn_only=False)
 
 
 def seed_worker(worker_id: int) -> None:

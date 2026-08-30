@@ -28,6 +28,15 @@ def test_seed_everything_repeats_random_streams() -> None:
     assert not torch.backends.cudnn.benchmark
 
 
+def test_deterministic_mode_rejects_unsupported_operations() -> None:
+    try:
+        seed_everything(2753, deterministic=True)
+        assert torch.are_deterministic_algorithms_enabled()
+        assert not torch.is_deterministic_algorithms_warn_only_enabled()
+    finally:
+        seed_everything(2753, deterministic=False)
+
+
 def test_seed_and_generator_reject_negative_values() -> None:
     for operation in (seed_everything, make_torch_generator):
         try:

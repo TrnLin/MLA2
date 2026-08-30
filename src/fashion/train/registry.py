@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import fcntl
 import re
 import time
 import uuid
@@ -206,6 +207,18 @@ class RunRegistry:
     def __init__(self, path: str | Path = RUNS_CSV) -> None:
         self.path = Path(path)
 
+    @contextmanager
+    def _locked(self) -> Iterator[None]:
+        """Serialize registry rewrites with a separate persistent lock file."""
+        lock_path = self.path.with_name(f".{self.path.name}.lock")
+        lock_path.parent.mkdir(parents=True, exist_ok=True)
+        with lock_path.open("a+", encoding="utf-8") as lock_file:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            try:
+                yield
+            finally:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
     def read(self) -> pd.DataFrame:
         """Return all rows as strings so identifiers and blank fields stay exact."""
         if not self.path.exists():
@@ -223,35 +236,37 @@ class RunRegistry:
         """Append one new running row; never reuse a run ID."""
         if record.status != "running":
             raise ValueError("new registry rows must start with status='running'")
-        frame = self.read()
-        if record.run_id in set(frame["run_id"]):
-            raise DuplicateRunError(f"run_id already exists: {record.run_id}")
-        output = pd.concat(
-            [frame, pd.DataFrame([record.to_row()], columns=RUN_COLUMNS)],
-            ignore_index=True,
-        )
-        atomic_write_csv(self.path, output)
+        with self._locked():
+            frame = self.read()
+            if record.run_id in set(frame["run_id"]):
+                raise DuplicateRunError(f"run_id already exists: {record.run_id}")
+            output = pd.concat(
+                [frame, pd.DataFrame([record.to_row()], columns=RUN_COLUMNS)],
+                ignore_index=True,
+            )
+            atomic_write_csv(self.path, output)
 
     def finalize(self, record: RunRecord) -> None:
         """Replace a running row once, while preserving its starting identity."""
         if record.status not in TERMINAL_STATUSES:
             raise ValueError("finalized run must have a terminal status")
-        frame = self.read()
-        matches = frame.index[frame["run_id"] == record.run_id].tolist()
-        if not matches:
-            raise RegistryError(f"run_id does not exist: {record.run_id}")
-        index = matches[0]
-        current = frame.loc[index]
-        if current["status"] != "running":
-            raise ImmutableRunError(f"run is already final: {record.run_id}")
-        new_row = record.to_row()
-        changed = [name for name in IMMUTABLE_START_FIELDS if current[name] != new_row[name]]
-        if changed:
-            raise ImmutableRunError(
-                f"cannot change run identity after start: {', '.join(changed)}"
-            )
-        frame.loc[index, list(RUN_COLUMNS)] = [new_row[name] for name in RUN_COLUMNS]
-        atomic_write_csv(self.path, frame)
+        with self._locked():
+            frame = self.read()
+            matches = frame.index[frame["run_id"] == record.run_id].tolist()
+            if not matches:
+                raise RegistryError(f"run_id does not exist: {record.run_id}")
+            index = matches[0]
+            current = frame.loc[index]
+            if current["status"] != "running":
+                raise ImmutableRunError(f"run is already final: {record.run_id}")
+            new_row = record.to_row()
+            changed = [name for name in IMMUTABLE_START_FIELDS if current[name] != new_row[name]]
+            if changed:
+                raise ImmutableRunError(
+                    f"cannot change run identity after start: {', '.join(changed)}"
+                )
+            frame.loc[index, list(RUN_COLUMNS)] = [new_row[name] for name in RUN_COLUMNS]
+            atomic_write_csv(self.path, frame)
 
     def find(self, **filters: str | int | bool | None) -> pd.DataFrame:
         """Return rows matching exact serialized field values."""
