@@ -1,8 +1,8 @@
 ---
 title: "Task 2 - Fashion Season Classification: execution report and plan"
-status: development-refit-rebuild-required
+status: development-refit-complete
 created: 2026-08-25
-updated: 2026-08-30
+updated: 2026-08-31
 scope: task2-season
 ---
 
@@ -32,7 +32,7 @@ Recommended direction:
    and size. Do not select by accuracy alone.
 6. Freeze every choice before Notebook 06 opens the holdout once.
 
-Current position on 30 August 2026: corrected G3, I1, I2, the matched pretrained
+Current position on 31 August 2026: corrected G3, I1, I2, the matched pretrained
 boundary, G5 seed stability, shortcut/error slices, robustness/cost, calibration,
 paired grouped-bootstrap uncertainty, deterministic Grad-CAM/failure review, and the
 G7 Ultimate Judgement is complete. I2 lambda `0.3` is the
@@ -46,11 +46,12 @@ initialisation. The fixed 48-row Grad-CAM review found no empty heatmap or decla
 border/background flag, but its selected severe errors still expose shortcut conflict,
 weak-data proxies, and unresolved label ambiguity. All six direct G7 checks passed, so
 the cost tie-break was not needed. The immutable selection record fixes a 24-epoch,
-development-only refit. A first refit completed, but an integrity review found incomplete
-implementation hashing, late manifest publication, missing registry checks, and no
-exclusive artifact lock. The code now fails closed on those cases, so the first bundle is
-deliberately invalid under the stronger contract and must not be used. Holdout remains
-sealed; the same frozen I2 decision must be rebuilt without any retuning.
+development-only refit. An integrity review invalidated the first package, and a later
+rebuild completed training but was correctly rolled back when a canonical file-order bug
+was detected. Both events remain traceable. The final replacement now passes the stronger
+registry, lock, transaction, source-hash, finite-value, and boundary checks. It contains
+the same frozen I2 model choice, seed, 24 epochs, and 32,753 development rows; no retuning
+occurred. Holdout remains sealed.
 
 No plan can guarantee a full mark because the mark also depends on real results and the
 quality of the final written argument. This plan covers the HD signals in the assignment
@@ -98,12 +99,12 @@ strongest defensible submission path.
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
 | Notebook 03 | Fixed 55-code-cell scaffold; 52 cells are implemented and three handoff cells remain | Do not change the 193-cell structure |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G7 analysis, immutable freeze, hardened refit code, and Notebook Sections 9-14.3 are implemented | Rebuild the same frozen I2 refit; do not add or retune a candidate |
-| `results/runs.csv` | 120 append-only rows: 114 completed, one failed, and five interrupted | Keep the first refit row as history; append a new run after the integrity fix |
+| Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, and Notebook Sections 9-14.3 are implemented | Build only the sealed handoff; do not add or retune a candidate |
+| `results/runs.csv` | 122 append-only rows: 115 completed, two failed, and five interrupted | The replacement refit and both earlier lifecycle outcomes remain traceable |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
-| Current G8 gate | The first package is invalidated by the stronger implementation hash and lifecycle checks; holdout remains sealed | Archive it, rerun the exact frozen 24-epoch refit, and verify the new registry-bound package |
-| Current verification | Registry lifecycle, exclusive lock, transactional publish, full dependency hashing, finite values, and strict booleans now have regression tests | Run the full suite again after rebuilding G8 |
+| Current G8 gate | The replacement bundle, manifest, 24-row history, runtime, and one completed registry row are hash-verified; holdout remains sealed | Build the sealed handoff only after all group tasks freeze |
+| Current verification | Ruff and all `527` repository tests pass, including `31` Notebook contracts; all 193 Notebook cells validate and all 55 code cells compile | G8 and Notebook Section 14.3 are green |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -958,7 +959,7 @@ G7 later integrated the closed G6 evidence and froze I2 through the direct rule.
 | G5 - complete | Retained C2 and selected I2 at seed `2026` x 5 folds | Is the result stable? | Passed: I2 remains ahead by `0.011607`; close architecture search but do not freeze the ultimate winner |
 | G6 - complete | C2 and I2: slices, robustness/cost, cross-fitted calibration, paired family bootstrap, and Grad-CAM | Where do the fitted models fail, and which is safer? | Passed: all declared analysis artifacts are hash-linked; no new model was added and holdout stayed sealed |
 | G7 - complete | Verified C2/I2 scorecard plus immutable selection record | Which eligible scratch model is the Ultimate Judgement? | I2 passed all six direct checks; tie-break unused; 24-epoch development refit frozen before holdout |
-| G8 - rebuild required | Frozen I2 refit on all 32,753 valid development rows for exactly 24 epochs | Can the selected model be packaged without any new validation or holdout choice? | First package exposed lifecycle gaps; code is fixed and the identical frozen run must be repeated before handoff |
+| G8 - complete | Frozen I2 refit on all 32,753 valid development rows for exactly 24 epochs | Can the selected model be packaged without any new validation or holdout choice? | Passed after integrity hardening: the replacement final-epoch scratch bundle is registry-bound and hash-verified; holdout stayed sealed |
 
 ### 7.2 Experiment stopping rules
 
@@ -1118,10 +1119,9 @@ SHA-256 is `cd87705b94219bd07bebb720fb4bd3736b4442afe6f1316c046b4cd98c960ab0`.
 No app review threshold is frozen because no business error cost was supplied. The
 official CSV must still contain all 5,829 rows and the exact required schema.
 
-### 8.6 Historical first G8 attempt and required rebuild
+### 8.6 Measured G8 outcome and integrity history
 
-G8 consumes the immutable G7 record; it does not reopen model selection. The first
-attempt used the selected
+G8 consumes the immutable G7 record; it does not reopen model selection. The selected
 scratch I2 configuration was rebuilt from `weights=None`, then trained on all `32,753`
 development rows with a valid Season label for exactly 24 epochs and seed `2753`.
 ArticleType remained a masked training-only auxiliary target, Season class weights
@@ -1134,31 +1134,34 @@ remained `None`, and no validation or holdout early stopping was available.
 | First to final total training loss | `1.789050` to `0.551781` |
 | First to final training accuracy | `0.559124` to `0.820505` |
 | Parameters | `1,206,112` |
-| Runtime | `789.40 s` |
+| Runtime | `249.72 s` |
 | Peak VRAM | `135.04 MB` |
 | Bundle size | `4,856,199 bytes` |
 
-These historical diagnostics show that optimisation continued as expected;
+These diagnostics show that optimisation continued as expected;
 they are not unbiased model-quality estimates. The teacher-style train/validation curves
 used for comparison remain the five-fold curves in Notebook Section 8.4. The final
 refit chart intentionally contains only training loss and training accuracy because
 adding a validation curve here would require a new post-freeze selection split.
 
-Historical trace, retained for audit but not valid as the final package:
+Final replacement trace:
 
-- run `task2-season-i2-refit-fall-s2753-3d60bd14cc91`;
+- run `task2-season-i2-refit-fall-s2753-4ab5682a30e1`;
 - bundle `models/task2_season.pt`, SHA-256
-  `82e0ca0b15f8d6e7be36cdf26312b652eaf65221aec11ceb976b5e1dedcbd9d8`;
+  `e2511acc2b4e383790d4ba844bb368b1e4b7a40974614a8687a34724aad2566d`;
 - manifest `models/task2_season.manifest.json`, SHA-256
-  `16d56c1c7f5815fe4f5d699923334ac979a94a0735a943ec946cfcd79375370d`;
+  `f4af02a73595380ca14a69b99b0e4f99ebb7479226e4fff4905b3d096f21c24f`;
 - history `results/evidence/task2/development_refit/training_history.csv`;
 - chart `results/figures/task2/development_refit_training_curve.png`.
 
-The first package must not be handed to Notebook 06 because the stronger verifier now
-rejects its incomplete implementation file set. The corrected lifecycle requires one
-completed registry row, stages artifacts before publication, locks concurrent launches,
-rejects non-finite values, and checks strict boolean boundaries. The rebuild must use the
-same candidate, seed, data rows, and 24 epochs. Holdout remains sealed.
+The first package, run `task2-season-i2-refit-fall-s2753-3d60bd14cc91`, is retained under
+`results/evidence/task2/development_refit/invalidated/` and must not be used. The next run,
+`task2-season-i2-refit-fall-s2753-294dece2c93b`, completed 24 epochs but was recorded as
+failed and rolled back because the manifest file order disagreed with the canonical hash
+order. Regression commits preserve both discoveries. The corrected lifecycle now
+requires exactly one matching completed registry row, stages artifacts before publication,
+locks concurrent launches, rejects non-finite values, checks strict booleans, and uses one
+canonical implementation order. The final replacement passes all of these checks.
 
 ## 9. Final Notebook 03 structure
 
@@ -1172,9 +1175,8 @@ Sections 1-13 now cover the shared contract, EDA reflection, baselines, incremen
 selection, learning curves, G5 stability, slices, robustness/cost, calibration,
 bootstrap uncertainty, Grad-CAM, failure cases, and literature boundaries. Sections 14.1
 and 14.2 load the verified G7 scorecard, rejected alternatives, and immutable selection
-freeze. Section 14.3 contains the G8 audit and training-only diagnostic structure, but its
-measured trace must be refreshed after the corrected rebuild. The remaining cells are
-rebuild/handoff work only. The
+freeze. Section 14.3 contains the verified replacement G8 audit, refreshed hashes, and
+training-only diagnostic. The remaining cells are sealed handoff work only. The
 notebook has zero error outputs and keeps its fixed 193-cell structure.
 
 | Section | Final purpose |
@@ -1229,10 +1231,9 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** archive the invalidated first package and rerun the exact frozen I2
-configuration for 24 epochs on all valid development rows. Then refresh Section 14.3 and
-build the sealed handoff. Do not add another architecture, input size, augmentation, loss
-beta, auxiliary lambda, or tuning pair. Do not open holdout.
+**Next safe action:** build the sealed handoff only after the whole group has frozen every
+task. Do not add another architecture, input size, augmentation, loss beta, auxiliary
+lambda, or tuning pair. Do not open holdout in this Task 2 workstream.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
@@ -1276,8 +1277,8 @@ beta, auxiliary lambda, or tuning pair. Do not open holdout.
 
 - [x] Select I2 with the frozen rule, not intuition.
 - [x] Record run IDs, config hash, checkpoint rule, and limitations.
-- [ ] Rebuild on all valid development data after the integrity fix.
-- [ ] Hash and verify the replacement model, config, preprocessing, history, and runtime.
+- [x] Rebuild on all valid development data after the integrity fix.
+- [x] Hash and verify the replacement model, config, preprocessing, history, and runtime.
 - [ ] Hand off to Notebook 06.
 - [ ] Open holdout once and never return to tuning.
 
@@ -1311,7 +1312,7 @@ Task 2 is complete only when all of the following exist:
 - [x] error, shortcut, robustness, calibration, cost, and paired-bootstrap evidence is complete;
 - [x] deterministic Grad-CAM and the real-ID failure taxonomy are complete;
 - [x] the winner was frozen before holdout access;
-- [ ] a final scratch-trained checkpoint and hash-verified manifest exist after the integrity fix;
+- [x] a final scratch-trained checkpoint and hash-verified manifest exist after the integrity fix;
 - [ ] one independent holdout evaluation exists;
 - [ ] a final image-only inference function exists;
 - [ ] the official prediction file is valid;
