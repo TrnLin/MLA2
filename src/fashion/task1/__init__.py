@@ -1,6 +1,12 @@
 """Task 1 article-type classification tools."""
 
 from fashion.task1.dataset import Task1TorchDataset, get_task1_fold_rows
+from fashion.task1.experiments import (
+    Task1ExperimentResult,
+    run_task1_experiment,
+    write_task1_comparison_figure,
+    write_task1_confusion_figure,
+)
 from fashion.task1.evaluation import (
     aggregate_fold_metrics,
     build_prediction_frame,
@@ -37,6 +43,10 @@ __all__ = [
     "fit_task1_normalization",
     "Task1TorchDataset",
     "get_task1_fold_rows",
+    "Task1ExperimentResult",
+    "run_task1_experiment",
+    "write_task1_comparison_figure",
+    "write_task1_confusion_figure",
     "classification_metrics",
     "per_class_metrics",
     "build_prediction_frame",
