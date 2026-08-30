@@ -19,6 +19,7 @@ from torch.optim.lr_scheduler import OneCycleLR
 from torch.utils.data import DataLoader
 
 from fashion.config import RANDOM_SEED, ROOT, SPLITS_CSV, TASK1_RESULT_DIR
+from fashion.data.dataset import load_splits
 from fashion.data.hashing import compute_sha256
 from fashion.task1.dataset import Task1TorchDataset, get_task1_fold_rows
 from fashion.task1.evaluation import (
@@ -243,8 +244,24 @@ def train_task1_fold(
         raise ValueError("max_train_batches must be positive or None")
     if config.max_validation_batches is not None and config.max_validation_batches <= 0:
         raise ValueError("max_validation_batches must be positive or None")
-    if config.final_eligible and Path(split_path).resolve() != SPLITS_CSV.resolve():
-        raise ValueError("final-eligible Task 1 runs require the canonical split path")
+    if config.final_eligible:
+        if (
+            config.stage != "experiment"
+            or config.epochs != 20
+            or config.max_train_batches is not None
+            or config.max_validation_batches is not None
+        ):
+            raise ValueError(
+                "final-eligible Task 1 runs require stage='experiment', "
+                "20 epochs, and no batch limits"
+            )
+        if model_factory is not Task1SmallCNN:
+            raise ValueError("final-eligible Task 1 runs require Task1SmallCNN")
+        if Path(split_path).resolve() != SPLITS_CSV.resolve():
+            raise ValueError("final-eligible Task 1 runs require the canonical split path")
+        canonical_splits = load_splits(split_path)
+        if not splits.equals(canonical_splits):
+            raise ValueError("supplied splits must match the canonical split file")
 
     experiment_id = f"task1-cnn-{preprocessing.preprocessing_id}"
     run_config = {

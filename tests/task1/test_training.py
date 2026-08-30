@@ -8,7 +8,10 @@ import torch
 from PIL import Image
 from torch import nn
 
+from fashion.config import SPLITS_CSV
+from fashion.data.dataset import load_splits
 from fashion.data.hashing import compute_sha256
+from fashion.data.splits import validate_splits
 from fashion.task1.preprocessing import TASK1_CONTROL_PREPROCESSING
 from fashion.task1.training import (
     Task1TrainConfig,
@@ -69,6 +72,11 @@ def _splits_with_images(root: Path) -> pd.DataFrame:
             }
         )
     return pd.DataFrame(rows)
+
+
+@pytest.fixture(scope="module")
+def canonical_splits() -> pd.DataFrame:
+    return load_splits(SPLITS_CSV)
 
 
 def test_train_configs_expose_smoke_and_full_run_contracts() -> None:
@@ -172,3 +180,63 @@ def test_train_task1_fold_finalizes_registry_when_model_raises(tmp_path: Path) -
     assert row["status"] == "failed"
     assert row["error_type"] == "RuntimeError"
     assert row["error_message"] == "model exploded"
+
+
+def test_final_run_rejects_a_structurally_valid_split_frame_that_differs_from_canonical(
+    canonical_splits: pd.DataFrame,
+) -> None:
+    changed = canonical_splits.copy()
+    singleton = changed.loc[
+        changed.groupby("sha256")["id"].transform("size").eq(1)
+        & changed.groupby("duplicate_group")["id"].transform("size").eq(1)
+        & changed.groupby("product_name_key")["id"].transform("size").eq(1)
+        & changed.groupby("product_family_group")["id"].transform("size").eq(1)
+    ]
+    first = singleton.iloc[0]
+    second = singleton.loc[singleton["cv_fold"].ne(first["cv_fold"])].iloc[0]
+    changed.loc[[first.name, second.name], "cv_fold"] = [second.cv_fold, first.cv_fold]
+    validate_splits(changed)
+
+    with pytest.raises(ValueError, match="supplied splits must match the canonical split file"):
+        train_task1_fold(
+            changed,
+            {},
+            validation_fold=0,
+            preprocessing=TASK1_CONTROL_PREPROCESSING,
+            config=Task1TrainConfig.full(),
+            split_path=SPLITS_CSV,
+        )
+
+
+def test_final_run_rejects_smoke_shaped_configuration() -> None:
+    invalid_final_config = Task1TrainConfig(
+        stage="smoke",
+        epochs=1,
+        batch_size=16,
+        max_train_batches=2,
+        max_validation_batches=2,
+        final_eligible=True,
+    )
+
+    with pytest.raises(ValueError, match="final-eligible Task 1 runs require"):
+        train_task1_fold(
+            pd.DataFrame(),
+            {},
+            validation_fold=0,
+            preprocessing=TASK1_CONTROL_PREPROCESSING,
+            config=invalid_final_config,
+            split_path=SPLITS_CSV,
+        )
+
+
+def test_final_run_rejects_custom_model_factory() -> None:
+    with pytest.raises(ValueError, match="final-eligible Task 1 runs require Task1SmallCNN"):
+        train_task1_fold(
+            pd.DataFrame(),
+            {},
+            validation_fold=0,
+            preprocessing=TASK1_CONTROL_PREPROCESSING,
+            config=Task1TrainConfig.full(),
+            split_path=SPLITS_CSV,
+            model_factory=lambda _: _ExplodingModel(),
+        )
