@@ -1026,6 +1026,54 @@ def test_task2_gradcam_cells_load_verified_noncausal_failure_evidence() -> None:
         assert required in findings
 
 
+def test_task2_statistical_and_literature_cells_keep_claim_boundaries() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    cell_ids = ("s13-01-code", "s13-02-code")
+
+    for cell_id in cell_ids:
+        code = cells[cell_id].source
+        assert not code.startswith("# TODO:")
+        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+
+    combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
+    for required in (
+        "results/evidence/task2/paired_bootstrap/manifest.json",
+        'bootstrap_manifest["holdout_opened"] is False',
+        'bootstrap_manifest["new_candidates_allowed"] is False',
+        'bootstrap_manifest["random_seed_generalisability_claim_allowed"] is False',
+        'bootstrap_manifest["ultimate_winner_frozen"] is False',
+        'macro_intervals["replicates"].eq(10000).all()',
+        'bootstrap_groups.loc[0, "unique_group_count"] == 22885',
+        "conservative_dependency_block_not_verified_sku",
+        "ResNet-BERT",
+        "Condition-CNN",
+        "journal.pone.0324621",
+        "S0957417421006291",
+        "Selvaraju_Grad-CAM_Visual_Explanations",
+        "294a8ed24b1ad22ec2e7efea049b8737",
+        "10.1111/j.1467-9868.2007.00593.x",
+        '"direct_score_comparison": "no"',
+    ):
+        assert required in combined
+    assert "train_fold" not in combined
+    assert "bootstrap_draws.csv" not in combined
+
+    findings = cells["s13-01-finding"].source + cells["s13-02-finding"].source
+    for required in (
+        "+0.017651",
+        "[0.013050, 0.022453]",
+        "+0.011607",
+        "[0.005793, 0.017341]",
+        "does not prove I2 wins under every training seed",
+        "Fall and Spring class intervals include zero",
+        "support architecture ideas, not a numeric benchmark",
+        "cannot validate or rank our macro-F1",
+        "non-causal, human-reviewed interpretation",
+    ):
+        assert required in findings
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
