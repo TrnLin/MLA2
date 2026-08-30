@@ -117,7 +117,7 @@ def _patch_fast_refit(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         refit_module,
         "verify_implementation_at_head",
-        lambda *paths, root: tuple(REFIT_IMPLEMENTATION_PATHS),
+        lambda *paths, root: tuple(sorted(set(REFIT_IMPLEMENTATION_PATHS))),
     )
     monkeypatch.setattr(
         refit_module,
