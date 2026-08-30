@@ -18,6 +18,7 @@ from fashion.data.dataset import (
     load_label_maps,
     load_splits,
 )
+from fashion.data.images import resolve_image_size
 from fashion.data.torch import (
     AugmentationPolicy,
     FoldImageStats,
@@ -25,6 +26,7 @@ from fashion.data.torch import (
     TensorImageTransform,
     build_image_transform,
     build_task_loaders,
+    fit_development_stats,
 )
 from fashion.train.artifacts import canonical_sha256
 from fashion.train.reproducibility import make_torch_generator, seed_worker
@@ -152,6 +154,41 @@ class MultiTaskLoaders:
             "auxiliary_training_id_sha256": self.auxiliary_training_id_sha256,
             "train_transform_id": self.train_transform_id,
             "validation_transform_id": self.validation_transform_id,
+            "stats": self.stats.to_dict(),
+        }
+
+
+@dataclass(frozen=True)
+class DevelopmentMultiTaskLoader:
+    """All valid development rows for a fixed-epoch, post-selection refit."""
+
+    train: DataLoader[Any]
+    stats: FoldImageStats
+    labels: tuple[str, ...]
+    label_to_index: dict[str, int]
+    auxiliary_labels: tuple[str, ...]
+    auxiliary_label_to_index: dict[str, int]
+    training_ids: tuple[int, ...]
+    train_transform_id: str
+    auxiliary_target: str
+    auxiliary_training_count: int
+    auxiliary_training_id_sha256: str
+
+    def audit(self) -> dict[str, Any]:
+        """Return evidence that the refit loader stayed inside development."""
+        return {
+            "partition": "development",
+            "training_products": len(self.training_ids),
+            "validation_products": 0,
+            "protected_products": 0,
+            "labels": list(self.labels),
+            "auxiliary_target": self.auxiliary_target,
+            "auxiliary_labels": list(self.auxiliary_labels),
+            "auxiliary_training_products": self.auxiliary_training_count,
+            "auxiliary_training_id_sha256": self.auxiliary_training_id_sha256,
+            "training_id_sha256": canonical_sha256(sorted(self.training_ids)),
+            "train_transform_id": self.train_transform_id,
+            "normalisation_scope": "all_valid_development_content_pixels_only",
             "stats": self.stats.to_dict(),
         }
 
@@ -295,4 +332,108 @@ def build_multitask_loaders(
         auxiliary_training_count=len(training_auxiliary_ids),
         auxiliary_validation_count=validation_auxiliary_count,
         auxiliary_training_id_sha256=canonical_sha256(training_auxiliary_ids),
+    )
+
+
+def build_development_multitask_loader(
+    *,
+    image_size: int | tuple[int, int],
+    batch_size: int,
+    main_target: str = "season",
+    auxiliary_target: str = "articleType",
+    augmentation: AugmentationPolicy = "a0",
+    seed: int = RANDOM_SEED,
+    num_workers: int = 0,
+    pin_memory: bool | None = None,
+    root: str | Path = ROOT,
+    splits_path: str | Path = SPLITS_CSV,
+    label_map_path: str | Path = LABEL_MAPS_JSON,
+    stats: FoldImageStats | None = None,
+) -> DevelopmentMultiTaskLoader:
+    """Build the post-selection I2 refit loader without a validation or holdout side."""
+    if batch_size < 1:
+        raise ValueError("batch_size must be positive")
+    if num_workers < 0:
+        raise ValueError("num_workers must be non-negative")
+
+    splits = load_splits(splits_path)
+    development = get_samples(splits, partition="development", target=main_target)
+    development = development.reset_index(drop=True)
+    if development.empty:
+        raise ValueError(f"development has no valid {main_target} rows")
+    if development["id"].duplicated().any():
+        raise ValueError("development refit IDs must be unique")
+    if not development["partition"].eq("development").all():
+        raise ValueError("development refit loader received a protected partition")
+
+    labels, label_to_index = _canonical_labels(
+        main_target,
+        label_map_path=label_map_path,
+    )
+    auxiliary_labels, auxiliary_label_to_index = _canonical_labels(
+        auxiliary_target,
+        label_map_path=label_map_path,
+    )
+    unknown_main = set(development[main_target].astype(str)) - set(labels)
+    if unknown_main:
+        raise ValueError(
+            f"development contains {main_target} labels absent from the canonical map: "
+            f"{sorted(unknown_main)}"
+        )
+
+    fitted_stats = stats or fit_development_stats(
+        development,
+        image_size=image_size,
+        root=root,
+    )
+    resolved_size = resolve_image_size(image_size)
+    if fitted_stats.validation_fold is not None:
+        raise ValueError("development refit stats must not exclude a validation fold")
+    if fitted_stats.image_size != resolved_size:
+        raise ValueError("supplied development stats were fitted for a different image size")
+    training_ids = tuple(int(value) for value in development["id"])
+    if fitted_stats.training_id_sha256 != canonical_sha256(sorted(training_ids)):
+        raise ValueError("supplied development stats were fitted on different training IDs")
+
+    train_transform = build_image_transform(
+        fitted_stats,
+        training=True,
+        augmentation=augmentation,
+    )
+    dataset = MaskedAuxiliaryDataset(
+        development,
+        transform=train_transform,
+        main_target=main_target,
+        main_label_to_index=label_to_index,
+        auxiliary_target=auxiliary_target,
+        auxiliary_label_to_index=auxiliary_label_to_index,
+        root=root,
+    )
+    auxiliary_mask_column = f"has_{auxiliary_target}_label"
+    auxiliary_ids = sorted(
+        int(value)
+        for value in development.loc[
+            development[auxiliary_mask_column].astype(bool), "id"
+        ]
+    )
+    use_pin_memory = torch.cuda.is_available() if pin_memory is None else pin_memory
+    return DevelopmentMultiTaskLoader(
+        train=_build_loader(
+            dataset,
+            batch_size=batch_size,
+            shuffle=True,
+            seed=seed,
+            num_workers=num_workers,
+            pin_memory=use_pin_memory,
+        ),
+        stats=fitted_stats,
+        labels=labels,
+        label_to_index=label_to_index,
+        auxiliary_labels=auxiliary_labels,
+        auxiliary_label_to_index=auxiliary_label_to_index,
+        training_ids=training_ids,
+        train_transform_id=train_transform.spec.transform_id,
+        auxiliary_target=auxiliary_target,
+        auxiliary_training_count=len(auxiliary_ids),
+        auxiliary_training_id_sha256=canonical_sha256(auxiliary_ids),
     )

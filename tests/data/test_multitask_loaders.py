@@ -4,7 +4,11 @@ import pandas as pd
 import torch
 
 from fashion.data.dataset import load_label_maps, load_splits
-from fashion.data.multitask import AUXILIARY_IGNORE_INDEX, build_multitask_loaders
+from fashion.data.multitask import (
+    AUXILIARY_IGNORE_INDEX,
+    build_development_multitask_loader,
+    build_multitask_loaders,
+)
 
 
 def _build(prepared_project, *, seed: int = 2753):
@@ -90,3 +94,61 @@ def test_repository_multitask_contract_has_no_current_auxiliary_gaps() -> None:
     assert len(valid_season) == 32_753
     assert int(valid_season["has_articleType_label"].sum()) == 32_753
     assert load_label_maps()["articleType"]["num_classes"] == 124
+
+
+def test_development_multitask_loader_uses_all_valid_rows_and_no_protected_rows(
+    prepared_project,
+) -> None:
+    loader = build_development_multitask_loader(
+        image_size=(80, 60),
+        batch_size=2,
+        seed=2753,
+        num_workers=0,
+        pin_memory=False,
+        root=prepared_project.root,
+        splits_path=prepared_project.splits,
+        label_map_path=prepared_project.label_maps,
+    )
+    splits = load_splits(prepared_project.splits)
+    expected = splits.loc[
+        splits["partition"].eq("development") & splits["has_season_label"]
+    ]
+    protected_ids = set(splits.loc[splits["partition"].ne("development"), "id"])
+    audit = loader.audit()
+
+    assert set(loader.training_ids) == set(expected["id"])
+    assert set(loader.training_ids).isdisjoint(protected_ids)
+    assert loader.stats.validation_fold is None
+    assert loader.stats.image_count == len(expected)
+    assert audit["validation_products"] == 0
+    assert audit["protected_products"] == 0
+    assert audit["normalisation_scope"] == "all_valid_development_content_pixels_only"
+
+
+def test_development_multitask_loader_masks_missing_auxiliary_without_dropping(
+    prepared_project,
+) -> None:
+    splits = pd.read_csv(prepared_project.splits, keep_default_na=False)
+    candidate_index = splits.index[
+        splits["partition"].eq("development") & splits["season"].ne("")
+    ][0]
+    candidate_id = int(splits.loc[candidate_index, "id"])
+    splits.loc[candidate_index, "articleType"] = ""
+    splits.loc[candidate_index, "has_articleType_label"] = False
+    splits.to_csv(prepared_project.splits, index=False)
+
+    loader = build_development_multitask_loader(
+        image_size=(80, 60),
+        batch_size=2,
+        num_workers=0,
+        pin_memory=False,
+        root=prepared_project.root,
+        splits_path=prepared_project.splits,
+        label_map_path=prepared_project.label_maps,
+    )
+    samples = {int(sample["id"]): sample for sample in loader.train.dataset}
+
+    assert candidate_id in loader.training_ids
+    assert int(samples[candidate_id]["auxiliary_target"]) == AUXILIARY_IGNORE_INDEX
+    assert not samples[candidate_id]["auxiliary_mask"]
+    assert loader.auxiliary_training_count == len(loader.training_ids) - 1

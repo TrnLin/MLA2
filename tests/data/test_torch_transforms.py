@@ -8,7 +8,12 @@ import pytest
 import torch
 from PIL import Image
 
-from fashion.data.torch import FoldImageStats, build_image_transform, fit_fold_stats
+from fashion.data.torch import (
+    FoldImageStats,
+    build_image_transform,
+    fit_development_stats,
+    fit_fold_stats,
+)
 from fashion.train.reproducibility import seed_everything
 
 
@@ -67,6 +72,26 @@ def test_fit_fold_stats_rejects_validation_or_protected_rows(tmp_path: Path) -> 
     frame.loc[1, "partition"] = "holdout"
     with pytest.raises(ValueError, match="development rows only"):
         fit_fold_stats(frame, validation_fold=1, image_size=(80, 60), root=tmp_path)
+
+
+def test_fit_development_stats_uses_every_supplied_development_row(tmp_path: Path) -> None:
+    frame = _training_frame(tmp_path)
+    frame["cv_fold"] = [0, 1]
+
+    stats = fit_development_stats(frame, image_size=(80, 60), root=tmp_path)
+
+    assert stats.validation_fold is None
+    assert stats.image_count == 2
+    assert stats.content_pixel_count == (80 * 60) + (80 * 30)
+    assert len(stats.training_id_sha256) == 64
+
+
+def test_fit_development_stats_rejects_protected_rows(tmp_path: Path) -> None:
+    frame = _training_frame(tmp_path)
+    frame.loc[1, "partition"] = "holdout"
+
+    with pytest.raises(ValueError, match="development rows only"):
+        fit_development_stats(frame, image_size=(80, 60), root=tmp_path)
 
 
 def test_evaluation_transform_returns_neutral_padded_chw_tensor(tmp_path: Path) -> None:

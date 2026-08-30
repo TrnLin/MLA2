@@ -34,9 +34,9 @@ FOLD_STATS_CACHE_SCHEMA_VERSION = "1.0.0"
 
 @dataclass(frozen=True)
 class FoldImageStats:
-    """Normalization fitted only on the training side of one canonical fold."""
+    """Normalization fitted on development data, with an optional excluded CV fold."""
 
-    validation_fold: int
+    validation_fold: int | None
     image_size: tuple[int, int]
     image_count: int
     content_pixel_count: int
@@ -202,32 +202,34 @@ def _safe_image_path(root: Path, relative_path: Any) -> Path:
     return resolved
 
 
-def fit_fold_stats(
-    training_frame: pd.DataFrame,
+def _fit_image_stats(
+    frame: pd.DataFrame,
     *,
-    validation_fold: int,
+    validation_fold: int | None,
     image_size: int | tuple[int, int],
-    root: str | Path = ROOT,
+    root: str | Path,
 ) -> FoldImageStats:
-    """Fit RGB mean/std on training-fold content pixels, never letterbox padding."""
-    required = {"id", "path", "partition", "cv_fold"}
-    missing = sorted(required - set(training_frame.columns))
+    required = {"id", "path", "partition"}
+    if validation_fold is not None:
+        required.add("cv_fold")
+    missing = sorted(required - set(frame.columns))
     if missing:
         raise ValueError(f"training frame is missing columns: {missing}")
-    if training_frame.empty:
+    if frame.empty:
         raise ValueError("training frame must not be empty")
-    if training_frame["id"].duplicated().any():
+    if frame["id"].duplicated().any():
         raise ValueError("training frame IDs must be unique")
-    if set(training_frame["partition"].astype(str)) != {"development"}:
+    if set(frame["partition"].astype(str)) != {"development"}:
         raise ValueError("fold statistics may use development rows only")
-    folds = pd.to_numeric(training_frame["cv_fold"], errors="raise").astype(int)
-    if folds.eq(validation_fold).any():
-        raise ValueError("validation-fold rows cannot fit image statistics")
+    if validation_fold is not None:
+        folds = pd.to_numeric(frame["cv_fold"], errors="raise").astype(int)
+        if folds.eq(validation_fold).any():
+            raise ValueError("validation-fold rows cannot fit image statistics")
 
     resolved_size = resolve_image_size(image_size)
     project_root = Path(root).resolve()
     streaming = StreamingStats(channels=3)
-    ordered = training_frame.sort_values("id", kind="stable")
+    ordered = frame.sort_values("id", kind="stable")
     for row in ordered.itertuples(index=False):
         path = _safe_image_path(project_root, getattr(row, "path"))
         try:
@@ -254,6 +256,37 @@ def fit_fold_stats(
         mean=mean,
         std=std,
         training_id_sha256=canonical_sha256(training_ids),
+    )
+
+
+def fit_fold_stats(
+    training_frame: pd.DataFrame,
+    *,
+    validation_fold: int,
+    image_size: int | tuple[int, int],
+    root: str | Path = ROOT,
+) -> FoldImageStats:
+    """Fit RGB mean/std on training-fold content pixels, never letterbox padding."""
+    return _fit_image_stats(
+        training_frame,
+        validation_fold=validation_fold,
+        image_size=image_size,
+        root=root,
+    )
+
+
+def fit_development_stats(
+    development_frame: pd.DataFrame,
+    *,
+    image_size: int | tuple[int, int],
+    root: str | Path = ROOT,
+) -> FoldImageStats:
+    """Fit final-refit RGB statistics on all supplied development content pixels."""
+    return _fit_image_stats(
+        development_frame,
+        validation_fold=None,
+        image_size=image_size,
+        root=root,
     )
 
 
