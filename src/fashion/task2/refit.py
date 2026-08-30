@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import json
+import math
 import os
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
@@ -465,7 +466,25 @@ def _history_frame(result: RefitResult) -> pd.DataFrame:
         raise ValueError("refit history schema changed")
     if len(history) != result.final_epoch:
         raise ValueError("refit history does not contain every declared epoch")
+    if any(
+        not math.isfinite(float(value))
+        for column in HISTORY_COLUMNS
+        for value in history[column]
+    ):
+        raise ValueError("refit history contains non-finite values")
     return history
+
+
+def _require_finite_state_dict(state_dict: Any) -> None:
+    if not isinstance(state_dict, Mapping):
+        raise ValueError("model state dict must be a mapping")
+    for name, tensor in state_dict.items():
+        if not isinstance(tensor, torch.Tensor):
+            raise ValueError(f"model state entry is not a tensor: {name}")
+        if (tensor.is_floating_point() or tensor.is_complex()) and not bool(
+            torch.isfinite(tensor).all().item()
+        ):
+            raise ValueError(f"model state contains non-finite values: {name}")
 
 
 def _outcome(manifest: Mapping[str, Any], manifest_path: Path, *, source: str) -> RefitOutcome:
@@ -642,6 +661,12 @@ def _load_verified_development_refit_package(
         or any("validation" in column.lower() for column in history.columns)
     ):
         raise ValueError("development refit history is incomplete or contains validation")
+    if any(
+        not math.isfinite(float(value))
+        for column in HISTORY_COLUMNS
+        for value in history[column]
+    ):
+        raise ValueError("development refit history contains non-finite values")
     runtime = _load_json_object(runtime_path, "development refit runtime")
     _require_exact_keys(runtime, RUNTIME_FIELDS, "development refit runtime")
     if (
@@ -661,6 +686,7 @@ def _load_verified_development_refit_package(
     if not isinstance(bundle, dict):
         raise ValueError("model bundle must be a mapping")
     _require_exact_keys(bundle, BUNDLE_FIELDS, "model bundle")
+    _require_finite_state_dict(bundle["model_state_dict"])
     bundle_section_fields = {
         "model_spec": set(SeasonModelSpec.__dataclass_fields__),
         "model_boundary": {

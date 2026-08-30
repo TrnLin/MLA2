@@ -336,6 +336,10 @@ def train_masked_multitask_fold(
                     require_ids=False,
                 )
                 scaled_loss = terms.total / group_size
+            if not bool(torch.isfinite(terms.total.detach()).item()):
+                raise FloatingPointError(
+                    f"non-finite refit loss at epoch={epoch}, batch={batch_index}"
+                )
             scaler.scale(scaled_loss).backward()
             batch_size = int(targets.shape[0])
             season_loss_sum += float(terms.season.detach()) * batch_size
@@ -350,7 +354,14 @@ def train_masked_multitask_fold(
                 for parameter_group in optimizer.param_groups:
                     parameter_group["lr"] = config.learning_rate * factor
                 scaler.unscale_(optimizer)
-                nn.utils.clip_grad_norm_(model.parameters(), config.gradient_clip_norm)
+                gradient_norm = nn.utils.clip_grad_norm_(
+                    model.parameters(),
+                    config.gradient_clip_norm,
+                )
+                if not bool(torch.isfinite(gradient_norm.detach()).item()):
+                    raise FloatingPointError(
+                        f"non-finite refit gradients at epoch={epoch}, batch={batch_index}"
+                    )
                 scaler.step(optimizer)
                 scaler.update()
                 optimizer.zero_grad(set_to_none=True)
@@ -558,6 +569,12 @@ def train_masked_multitask_refit(
                 "learning_rate": float(optimizer.param_groups[0]["lr"]),
             }
         )
+
+    for name, tensor in model.state_dict().items():
+        if (tensor.is_floating_point() or tensor.is_complex()) and not bool(
+            torch.isfinite(tensor).all().item()
+        ):
+            raise FloatingPointError(f"non-finite final refit state tensor: {name}")
 
     runtime_seconds = time.perf_counter() - started
     peak_vram_mb = None
