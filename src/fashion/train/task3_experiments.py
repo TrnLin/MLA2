@@ -12,7 +12,12 @@ import numpy as np
 from fashion.config import ROOT, RUNS_CSV
 from fashion.train.config import Task3Target
 
-Task3ChildName = Literal["gender_brightness", "usage_class_balanced"]
+Task3ChildName = Literal[
+    "gender_brightness",
+    "usage_class_balanced",
+    "gender_class_balanced",
+    "usage_classifier_dropout",
+]
 
 
 @dataclass(frozen=True)
@@ -28,13 +33,18 @@ class Task3ChildSpec:
     changed_factor: str
     training_augmentation: str
     loss_name: str
+    parent_artifact_dir: str
     parent_run_ids: tuple[str, str, str, str, str]
     class_weight_beta: float | None = None
     class_weight_cap: float | None = None
+    classifier_dropout: float = 0.0
 
     def __post_init__(self) -> None:
         if len(set(self.parent_run_ids)) != 5 or any(not run_id for run_id in self.parent_run_ids):
             raise ValueError("a Task 3 child requires five distinct completed parent run IDs")
+        parent_path = Path(self.parent_artifact_dir)
+        if parent_path.is_absolute() or ".." in parent_path.parts:
+            raise ValueError("parent artifact directory must stay inside the Task 3 output root")
         expected = {
             "gender_brightness": {
                 "target": "gender",
@@ -45,8 +55,10 @@ class Task3ChildSpec:
                 "changed_factor": "brightness_augmentation",
                 "training_augmentation": "brightness_uniform_085_115",
                 "loss_name": "cross_entropy",
+                "parent_artifact_dir": "baseline",
                 "class_weight_beta": None,
                 "class_weight_cap": None,
+                "classifier_dropout": 0.0,
             },
             "usage_class_balanced": {
                 "target": "usage",
@@ -57,8 +69,38 @@ class Task3ChildSpec:
                 "changed_factor": "class_balanced_loss",
                 "training_augmentation": "none",
                 "loss_name": "effective_number_cross_entropy",
+                "parent_artifact_dir": "baseline",
                 "class_weight_beta": 0.999,
                 "class_weight_cap": 5.0,
+                "classifier_dropout": 0.0,
+            },
+            "gender_class_balanced": {
+                "target": "gender",
+                "experiment_id": "t3_gender_class_balanced_smallcnn",
+                "hypothesis_id": "t3_gender_e3_class_balanced_ce",
+                "artifact_dir": "experiments/t3_gender_e3_class_balanced_ce",
+                "run_prefix": "t3_gender_e3_class_balanced_ce",
+                "changed_factor": "class_balanced_loss",
+                "training_augmentation": "none",
+                "loss_name": "effective_number_cross_entropy",
+                "parent_artifact_dir": "baseline",
+                "class_weight_beta": 0.999,
+                "class_weight_cap": 5.0,
+                "classifier_dropout": 0.0,
+            },
+            "usage_classifier_dropout": {
+                "target": "usage",
+                "experiment_id": "t3_usage_classifier_dropout_smallcnn",
+                "hypothesis_id": "t3_usage_e3_classifier_dropout",
+                "artifact_dir": "experiments/t3_usage_e3_classifier_dropout",
+                "run_prefix": "t3_usage_e3_classifier_dropout",
+                "changed_factor": "classifier_dropout",
+                "training_augmentation": "none",
+                "loss_name": "effective_number_cross_entropy",
+                "parent_artifact_dir": "experiments/t3_usage_e2_class_balanced_ce",
+                "class_weight_beta": 0.999,
+                "class_weight_cap": 5.0,
+                "classifier_dropout": 0.2,
             },
         }[self.name]
         actual = asdict(self)
@@ -92,6 +134,7 @@ def gender_brightness_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
         changed_factor="brightness_augmentation",
         training_augmentation="brightness_uniform_085_115",
         loss_name="cross_entropy",
+        parent_artifact_dir="baseline",
         parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
     )
 
@@ -107,9 +150,47 @@ def usage_class_balanced_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
         changed_factor="class_balanced_loss",
         training_augmentation="none",
         loss_name="effective_number_cross_entropy",
+        parent_artifact_dir="baseline",
         parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
         class_weight_beta=0.999,
         class_weight_cap=5.0,
+    )
+
+
+def gender_class_balanced_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    return Task3ChildSpec(
+        name="gender_class_balanced",
+        target="gender",
+        experiment_id="t3_gender_class_balanced_smallcnn",
+        hypothesis_id="t3_gender_e3_class_balanced_ce",
+        artifact_dir="experiments/t3_gender_e3_class_balanced_ce",
+        run_prefix="t3_gender_e3_class_balanced_ce",
+        changed_factor="class_balanced_loss",
+        training_augmentation="none",
+        loss_name="effective_number_cross_entropy",
+        parent_artifact_dir="baseline",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        class_weight_beta=0.999,
+        class_weight_cap=5.0,
+    )
+
+
+def usage_classifier_dropout_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    return Task3ChildSpec(
+        name="usage_classifier_dropout",
+        target="usage",
+        experiment_id="t3_usage_classifier_dropout_smallcnn",
+        hypothesis_id="t3_usage_e3_classifier_dropout",
+        artifact_dir="experiments/t3_usage_e3_classifier_dropout",
+        run_prefix="t3_usage_e3_classifier_dropout",
+        changed_factor="classifier_dropout",
+        training_augmentation="none",
+        loss_name="effective_number_cross_entropy",
+        parent_artifact_dir="experiments/t3_usage_e2_class_balanced_ce",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        class_weight_beta=0.999,
+        class_weight_cap=5.0,
+        classifier_dropout=0.2,
     )
 
 
@@ -136,18 +217,26 @@ def effective_number_class_weights(
     return weights
 
 
-def latest_completed_baseline_parent_run_ids(
-    target: Task3Target, *, output_root: str | Path
+def latest_completed_parent_run_ids(
+    target: Task3Target,
+    *,
+    output_root: str | Path,
+    artifact_dir: str,
+    run_prefix: str,
 ) -> tuple[str, str, str, str, str]:
-    """Find the newest complete baseline checkpoint for each canonical fold."""
-    target_dir = Path(output_root) / "baseline" / target
+    """Find the newest complete registered parent for each canonical fold."""
+    relative_dir = Path(artifact_dir)
+    if relative_dir.is_absolute() or ".." in relative_dir.parts:
+        raise ValueError("artifact directory must stay inside the Task 3 output root")
+    target_dir = Path(output_root) / relative_dir / target
     latest: dict[int, str] = {}
-    for run_dir in sorted(target_dir.glob(f"t3_baseline_{target}_smallcnn_f*")):
+    for run_dir in sorted(target_dir.glob(f"{run_prefix}_{target}_smallcnn_f*")):
         required = (
             run_dir / "config.json",
             run_dir / "final_epoch.pt",
             run_dir / "metrics.json",
             run_dir / "oof_predictions.csv",
+            run_dir / "robustness.csv",
         )
         if not all(path.is_file() for path in required):
             continue
@@ -155,19 +244,49 @@ def latest_completed_baseline_parent_run_ids(
         fold = int(metrics["validation_fold"])
         run_id = str(metrics["run_id"])
         if run_id != run_dir.name:
-            raise ValueError(f"baseline run folder and metrics disagree: {run_dir}")
+            raise ValueError(f"parent run folder and metrics disagree: {run_dir}")
+        if str(metrics.get("target", target)) != target:
+            raise ValueError(f"parent target metadata disagrees: {run_dir}")
         latest[fold] = run_id
     if set(latest) != set(range(5)):
         raise FileNotFoundError(
-            f"expected completed {target} baseline folds 0-4; found {sorted(latest)}"
+            f"expected completed {target} parent folds 0-4; found {sorted(latest)}"
         )
     return tuple(latest[fold] for fold in range(5))  # type: ignore[return-value]
+
+
+def latest_completed_baseline_parent_run_ids(
+    target: Task3Target, *, output_root: str | Path
+) -> tuple[str, str, str, str, str]:
+    """Find the newest complete baseline checkpoint for each canonical fold."""
+    return latest_completed_parent_run_ids(
+        target,
+        output_root=output_root,
+        artifact_dir="baseline",
+        run_prefix="t3_baseline",
+    )
+
+
+def latest_completed_usage_e2_parent_run_ids(
+    *, output_root: str | Path
+) -> tuple[str, str, str, str, str]:
+    """Find the accepted five-fold Usage E2 parent chain."""
+    return latest_completed_parent_run_ids(
+        "usage",
+        output_root=output_root,
+        artifact_dir="experiments/t3_usage_e2_class_balanced_ce",
+        run_prefix="t3_usage_e2_class_balanced_ce",
+    )
 
 
 def _spec(name: Task3ChildName, parent_run_ids: Sequence[str]) -> Task3ChildSpec:
     if name == "gender_brightness":
         return gender_brightness_spec(parent_run_ids)
-    return usage_class_balanced_spec(parent_run_ids)
+    if name == "usage_class_balanced":
+        return usage_class_balanced_spec(parent_run_ids)
+    if name == "gender_class_balanced":
+        return gender_class_balanced_spec(parent_run_ids)
+    return usage_classifier_dropout_spec(parent_run_ids)
 
 
 def check_task3_child_setup(
