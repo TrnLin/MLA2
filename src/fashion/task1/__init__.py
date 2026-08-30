@@ -19,6 +19,12 @@ from fashion.task1.preprocessing import (
     build_task1_validation_transform,
     fit_task1_normalization,
 )
+from fashion.task1.training import (
+    Task1FoldResult,
+    Task1TrainConfig,
+    select_training_device,
+    train_task1_fold,
+)
 
 __all__ = [
     "DEFAULT_TASK1_PREPROCESSING",
@@ -39,4 +45,8 @@ __all__ = [
     "Task1ModelConfig",
     "Task1SmallCNN",
     "count_trainable_parameters",
+    "Task1FoldResult",
+    "Task1TrainConfig",
+    "select_training_device",
+    "train_task1_fold",
 ]
