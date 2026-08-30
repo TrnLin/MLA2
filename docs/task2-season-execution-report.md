@@ -1,6 +1,6 @@
 ---
 title: "Task 2 - Fashion Season Classification: execution report and plan"
-status: ultimate-judgement-frozen
+status: development-refit-rebuild-required
 created: 2026-08-25
 updated: 2026-08-30
 scope: task2-season
@@ -35,7 +35,8 @@ Recommended direction:
 Current position on 30 August 2026: corrected G3, I1, I2, the matched pretrained
 boundary, G5 seed stability, shortcut/error slices, robustness/cost, calibration,
 paired grouped-bootstrap uncertainty, deterministic Grad-CAM/failure review, and the
-G7 Ultimate Judgement are complete. I2 lambda `0.3` is the **frozen Task 2 winner**. It
+G7 Ultimate Judgement is complete. I2 lambda `0.3` is the
+**frozen Task 2 winner**. It
 reached `0.752687` pooled OOF
 macro-F1 at seed `2753` and `0.744743` at seed `2026`; C2 reached `0.735036` and
 `0.733137`. The I2-minus-C2 paired family-bootstrap intervals are
@@ -45,7 +46,11 @@ initialisation. The fixed 48-row Grad-CAM review found no empty heatmap or decla
 border/background flag, but its selected severe errors still expose shortcut conflict,
 weak-data proxies, and unresolved label ambiguity. All six direct G7 checks passed, so
 the cost tie-break was not needed. The immutable selection record fixes a 24-epoch,
-development-only refit; holdout remains sealed.
+development-only refit. A first refit completed, but an integrity review found incomplete
+implementation hashing, late manifest publication, missing registry checks, and no
+exclusive artifact lock. The code now fails closed on those cases, so the first bundle is
+deliberately invalid under the stronger contract and must not be used. Holdout remains
+sealed; the same frozen I2 decision must be rebuilt without any retuning.
 
 No plan can guarantee a full mark because the mark also depends on real results and the
 quality of the final written argument. This plan covers the HD signals in the assignment
@@ -91,14 +96,14 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | Fixed 55-code-cell scaffold; 51 cells are implemented and four development-refit/handoff cells remain | Do not change the 193-cell structure |
+| Notebook 03 | Fixed 55-code-cell scaffold; 52 cells are implemented and three handoff cells remain | Do not change the 193-cell structure |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G7 analysis, immutable freeze, and Notebook Sections 9-14.2 are implemented | Refit the frozen I2 model; do not add or retune a candidate |
-| `results/runs.csv` | 119 append-only rows: 113 completed, one failed, and five interrupted | No running rows; the ten clean G5 run IDs enter two-seed evidence |
+| Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G7 analysis, immutable freeze, hardened refit code, and Notebook Sections 9-14.3 are implemented | Rebuild the same frozen I2 refit; do not add or retune a candidate |
+| `results/runs.csv` | 120 append-only rows: 114 completed, one failed, and five interrupted | Keep the first refit row as history; append a new run after the integrity fix |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
-| Current G7 gate | I2 passed every direct scorecard check; selection freeze and G7 evidence are hash-verified; holdout remains sealed | Refit I2 for 24 epochs on valid development rows only |
-| Current verification | `274` Task 2 tests and `30` Notebook contract tests pass; all 193 Notebook cells validate and all 55 code cells compile | G7, notebook integration, and headless figures are green |
+| Current G8 gate | The first package is invalidated by the stronger implementation hash and lifecycle checks; holdout remains sealed | Archive it, rerun the exact frozen 24-epoch refit, and verify the new registry-bound package |
+| Current verification | Registry lifecycle, exclusive lock, transactional publish, full dependency hashing, finite values, and strict booleans now have regression tests | Run the full suite again after rebuilding G8 |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -168,9 +173,10 @@ recorded as provenance, but it is not used as a proxy for implementation content
 | `fashion.models.season` | Scratch C1/C2/C3, benchmark-only P0S/P*, and image-only multi-task boundaries |
 | `fashion.task2.experiments` | Immutable JSON configs, seeded model construction, run-or-load cache, registry lifecycle, and atomic artifacts |
 | `fashion.task2.class_balance` | Frozen I1 runner with fold-fitted effective-number weights and an isolated cache identity |
-| `fashion.data.multitask` | Keeps every valid Season row and masks missing auxiliary ArticleType labels with ignore index `-100` |
-| `fashion.train.multitask` | Optimises Season plus masked ArticleType loss while selecting checkpoints only by Season validation macro-F1 |
+| `fashion.data.multitask` | Keeps every valid Season row, masks missing ArticleType labels, and builds the final all-development loader with no validation or protected side |
+| `fashion.train.multitask` | Optimises Season plus masked ArticleType loss; CV selects by Season macro-F1, while final refit runs every frozen epoch with no selection metric |
 | `fashion.task2.multitask` | Enforces the frozen I2 configs, image-only inference boundary, isolated cache, and five-fold run-or-load execution |
+| `fashion.task2.refit` | Verifies the G7 freeze, runs or loads one 24-epoch development refit, writes the scratch bundle, and fails closed on hash or boundary drift |
 | `fashion.task2.multitask_evidence` | Fits ArticleType-to-Season mappings on four training folds only, measures aligned/conflict transfer, applies the frozen I2 gate, and draws teacher-style curves |
 | `fashion.task2.pretraining` | Enforces the matched P0S/P* pair so only model identity and initial weights differ |
 | `fashion.task2.pretraining_evidence` | Audits both boundaries, folds, hashes, histories, and OOF products; measures P* minus P0S without making P* selectable |
@@ -193,6 +199,7 @@ recorded as provenance, but it is not used as a proxy for implementation content
 | `scripts/build_task2_robustness_evidence.py` | Reproducible fixed-perturbation and deployment-cost evidence builder |
 | `scripts/build_task2_calibration_evidence.py` | Load-only cross-fitted calibration and risk-coverage evidence builder |
 | `scripts/build_task2_bootstrap_evidence.py` | Load-only 10,000-draw paired family-bootstrap evidence builder |
+| `scripts/refit_task2_season.py` | Windows-safe run-or-load launcher for the frozen development-only refit |
 | Notebook 03 sections 1-4 | Frozen contract, runtime, EDA handoff, folds, OOF, metrics, transforms, and leakage audit |
 | Notebook 03 sections 6 and 7.2 | Scratch forward audits, benchmark rejection, state hashes, and registry health |
 | Notebook 03 section 8.4 | SHA-256 verification, two-seed tables, teacher-style curves, trace table, EDA reflection, and the non-freeze G5 decision |
@@ -951,6 +958,7 @@ G7 later integrated the closed G6 evidence and froze I2 through the direct rule.
 | G5 - complete | Retained C2 and selected I2 at seed `2026` x 5 folds | Is the result stable? | Passed: I2 remains ahead by `0.011607`; close architecture search but do not freeze the ultimate winner |
 | G6 - complete | C2 and I2: slices, robustness/cost, cross-fitted calibration, paired family bootstrap, and Grad-CAM | Where do the fitted models fail, and which is safer? | Passed: all declared analysis artifacts are hash-linked; no new model was added and holdout stayed sealed |
 | G7 - complete | Verified C2/I2 scorecard plus immutable selection record | Which eligible scratch model is the Ultimate Judgement? | I2 passed all six direct checks; tie-break unused; 24-epoch development refit frozen before holdout |
+| G8 - rebuild required | Frozen I2 refit on all 32,753 valid development rows for exactly 24 epochs | Can the selected model be packaged without any new validation or holdout choice? | First package exposed lifecycle gaps; code is fixed and the identical frozen run must be repeated before handoff |
 
 ### 7.2 Experiment stopping rules
 
@@ -1110,6 +1118,48 @@ SHA-256 is `cd87705b94219bd07bebb720fb4bd3736b4442afe6f1316c046b4cd98c960ab0`.
 No app review threshold is frozen because no business error cost was supplied. The
 official CSV must still contain all 5,829 rows and the exact required schema.
 
+### 8.6 Historical first G8 attempt and required rebuild
+
+G8 consumes the immutable G7 record; it does not reopen model selection. The first
+attempt used the selected
+scratch I2 configuration was rebuilt from `weights=None`, then trained on all `32,753`
+development rows with a valid Season label for exactly 24 epochs and seed `2753`.
+ArticleType remained a masked training-only auxiliary target, Season class weights
+remained `None`, and no validation or holdout early stopping was available.
+
+| Refit evidence | Measured value |
+|---|---:|
+| Valid development rows per epoch | `32,753` |
+| Optimiser updates | `6,144` |
+| First to final total training loss | `1.789050` to `0.551781` |
+| First to final training accuracy | `0.559124` to `0.820505` |
+| Parameters | `1,206,112` |
+| Runtime | `789.40 s` |
+| Peak VRAM | `135.04 MB` |
+| Bundle size | `4,856,199 bytes` |
+
+These historical diagnostics show that optimisation continued as expected;
+they are not unbiased model-quality estimates. The teacher-style train/validation curves
+used for comparison remain the five-fold curves in Notebook Section 8.4. The final
+refit chart intentionally contains only training loss and training accuracy because
+adding a validation curve here would require a new post-freeze selection split.
+
+Historical trace, retained for audit but not valid as the final package:
+
+- run `task2-season-i2-refit-fall-s2753-3d60bd14cc91`;
+- bundle `models/task2_season.pt`, SHA-256
+  `82e0ca0b15f8d6e7be36cdf26312b652eaf65221aec11ceb976b5e1dedcbd9d8`;
+- manifest `models/task2_season.manifest.json`, SHA-256
+  `16d56c1c7f5815fe4f5d699923334ac979a94a0735a943ec946cfcd79375370d`;
+- history `results/evidence/task2/development_refit/training_history.csv`;
+- chart `results/figures/task2/development_refit_training_curve.png`.
+
+The first package must not be handed to Notebook 06 because the stronger verifier now
+rejects its incomplete implementation file set. The corrected lifecycle requires one
+completed registry row, stages artifacts before publication, locks concurrent launches,
+rejects non-finite values, and checks strict boolean boundaries. The rebuild must use the
+same candidate, seed, data rows, and 24 epochs. Holdout remains sealed.
+
 ## 9. Final Notebook 03 structure
 
 Notebook 03 keeps 15 top-level numbered sections. Every leaf `###` subsection owns
@@ -1117,12 +1167,14 @@ exactly one code cell followed by one interpretation prompt. A broader `###` sub
 owns no direct code cell; it is divided into `####` subsubsections, and every `####` leaf
 owns exactly one code cell and one interpretation prompt.
 
-Current measured progress is 51 implemented code cells and four clean placeholders.
+Current measured progress is 52 implemented code cells and three clean placeholders.
 Sections 1-13 now cover the shared contract, EDA reflection, baselines, incremental model
 selection, learning curves, G5 stability, slices, robustness/cost, calibration,
 bootstrap uncertainty, Grad-CAM, failure cases, and literature boundaries. Sections 14.1
 and 14.2 load the verified G7 scorecard, rejected alternatives, and immutable selection
-freeze. The remaining cells are development refit and sealed handoff work only. The
+freeze. Section 14.3 contains the G8 audit and training-only diagnostic structure, but its
+measured trace must be refreshed after the corrected rebuild. The remaining cells are
+rebuild/handoff work only. The
 notebook has zero error outputs and keeps its fixed 193-cell structure.
 
 | Section | Final purpose |
@@ -1140,7 +1192,7 @@ notebook has zero error outputs and keeps its fixed 193-cell structure.
 | 11. Robustness and efficiency | Test controlled perturbations and deployment cost |
 | 12. Explainability and failure cases | Produce deterministic examples, Grad-CAM, and a failure taxonomy |
 | 13. Statistical and external comparison | Run paired family bootstrap and make qualified literature comparisons |
-| 14. Ultimate Judgement and freeze | Apply the fixed scorecard, reject alternatives, and write the freeze manifest |
+| 14. Ultimate Judgement and freeze | Apply the fixed scorecard, freeze I2, and audit its all-development refit |
 | 15. Handoff to final evaluation | Audit artifacts and hand the frozen model to Notebook 06 without opening holdout |
 
 Notebook presentation rules:
@@ -1177,9 +1229,10 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** refit the frozen I2 configuration for exactly 24 epochs on all valid
-development rows, then build the sealed handoff. Do not add another architecture, input
-size, augmentation, loss beta, auxiliary lambda, or tuning pair. Do not open holdout.
+**Next safe action:** archive the invalidated first package and rerun the exact frozen I2
+configuration for 24 epochs on all valid development rows. Then refresh Section 14.3 and
+build the sealed handoff. Do not add another architecture, input size, augmentation, loss
+beta, auxiliary lambda, or tuning pair. Do not open holdout.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
@@ -1223,8 +1276,8 @@ size, augmentation, loss beta, auxiliary lambda, or tuning pair. Do not open hol
 
 - [x] Select I2 with the frozen rule, not intuition.
 - [x] Record run IDs, config hash, checkpoint rule, and limitations.
-- [ ] Refit on all development data.
-- [ ] Hash the final model and config.
+- [ ] Rebuild on all valid development data after the integrity fix.
+- [ ] Hash and verify the replacement model, config, preprocessing, history, and runtime.
 - [ ] Hand off to Notebook 06.
 - [ ] Open holdout once and never return to tuning.
 
@@ -1258,8 +1311,9 @@ Task 2 is complete only when all of the following exist:
 - [x] error, shortcut, robustness, calibration, cost, and paired-bootstrap evidence is complete;
 - [x] deterministic Grad-CAM and the real-ID failure taxonomy are complete;
 - [x] the winner was frozen before holdout access;
+- [ ] a final scratch-trained checkpoint and hash-verified manifest exist after the integrity fix;
 - [ ] one independent holdout evaluation exists;
-- [ ] a final scratch-trained checkpoint and inference function exist;
+- [ ] a final image-only inference function exists;
 - [ ] the official prediction file is valid;
 - [ ] the notebook reruns and every figure/table traces back to a run ID.
 
