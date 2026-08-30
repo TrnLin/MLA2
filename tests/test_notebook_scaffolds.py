@@ -120,21 +120,10 @@ def test_task2_execution_scaffold_has_one_code_cell_per_leaf() -> None:
     assert all(cell.source.strip() for cell in code_cells)
     placeholder_cells = [cell for cell in code_cells if cell.source.startswith("# TODO:")]
     assert all("# Expected output:" in cell.source for cell in placeholder_cells)
-    assert all(
-        cell.execution_count is None and cell.outputs == []
-        for cell in placeholder_cells
-    )
+    assert all(cell.execution_count is None and cell.outputs == [] for cell in placeholder_cells)
 
-    h3_indices = [
-        index
-        for index, cell in enumerate(notebook.cells)
-        if _heading_level(cell) == 3
-    ]
-    h4_indices = [
-        index
-        for index, cell in enumerate(notebook.cells)
-        if _heading_level(cell) == 4
-    ]
+    h3_indices = [index for index, cell in enumerate(notebook.cells) if _heading_level(cell) == 3]
+    h4_indices = [index for index, cell in enumerate(notebook.cells) if _heading_level(cell) == 4]
     assert len(h3_indices) == 40
     assert len(h4_indices) == 27
     assert len(code_cells) == 55
@@ -397,11 +386,11 @@ def test_task2_g3_cell_records_audited_full_budget_comparison() -> None:
         "build_experiment_evidence",
         "build_g3_full_budget_evidence",
         "protected_ids",
-        'status\"].eq(\"interrupted\")',
-        'near_tie\"] is True',
-        'ultimate_winner_frozen\"] is False',
-        'artifacts\"][\"c1_learning_curves\"]',
-        'artifacts\"][\"c2_learning_curves\"]',
+        'status"].eq("interrupted")',
+        'near_tie"] is True',
+        'ultimate_winner_frozen"] is False',
+        'artifacts"]["c1_learning_curves"]',
+        'artifacts"]["c2_learning_curves"]',
     ):
         assert required in code
     for required in (
@@ -435,7 +424,7 @@ def test_task2_g3_cell_scopes_validation_to_the_current_run_ids() -> None:
 
     assert "current_run_ids = {output.run_id for output in outputs}" in code
     assert 'attempts["run_id"].isin(current_run_ids)' in code
-    assert 'len(current_attempts) == 5' in code
+    assert "len(current_attempts) == 5" in code
     assert 'g3_attempts["status"].eq("completed").sum() == 10' not in code
     assert 'g3_attempts["status"].eq("interrupted").sum() == 1' not in code
 
@@ -451,8 +440,7 @@ def test_task2_g3_notebook_preserves_registered_probability_note() -> None:
 
     assert (
         "Uncalibrated softmax probabilities from the best validation macro-F1 "
-        "checkpoint in each fold; calibration metrics are diagnostic only."
-        in string_literals
+        "checkpoint in each fold; calibration metrics are diagnostic only." in string_literals
     )
 
 
@@ -821,7 +809,7 @@ def test_task2_results_cells_load_only_verified_measured_evidence() -> None:
         "load_verified_notebook_manifest",
         "verify_artifact",
         "results/evidence/task2/seed_stability/manifest.json",
-        "len(stability_registry) == stability_registry[\"run_id\"].nunique() == 20",
+        'len(stability_registry) == stability_registry["run_id"].nunique() == 20',
         "results/evidence/task2/g3_c2_t0_resnet18/manifest.json",
         "g4_i2_article_type_lambda_0_3_c1/manifest.json",
         "results/evidence/task2/calibration/manifest.json",
@@ -1000,7 +988,7 @@ def test_task2_gradcam_cells_load_verified_noncausal_failure_evidence() -> None:
         'attention_metrics["probability_max_absolute_delta"].max() <= 1e-4',
         "c2_contact_sheet",
         "i2_contact_sheet",
-        'len(failure_taxonomy) == 24',
+        "len(failure_taxonomy) == 24",
         "human_label_ambiguity_review_required",
         "diagnostic_tags",
     ):
@@ -1009,8 +997,7 @@ def test_task2_gradcam_cells_load_verified_noncausal_failure_evidence() -> None:
     assert "run_or_load_experiment" not in combined
 
     findings = "\n".join(
-        cells[cell_id].source
-        for cell_id in ("s12-01-finding", "s12-02-finding", "s12-03-finding")
+        cells[cell_id].source for cell_id in ("s12-01-finding", "s12-02-finding", "s12-03-finding")
     )
     for required in (
         "`48` rows, `44` distinct images",
@@ -1070,6 +1057,58 @@ def test_task2_statistical_and_literature_cells_keep_claim_boundaries() -> None:
         "support architecture ideas, not a numeric benchmark",
         "cannot validate or rank our macro-F1",
         "non-causal, human-reviewed interpretation",
+    ):
+        assert required in findings
+
+
+def test_task2_ultimate_judgement_cells_load_verified_freeze_evidence() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    cell_ids = ("s14-01-code", "s14-02-code")
+
+    for cell_id in cell_ids:
+        code = cells[cell_id].source
+        assert not code.startswith("# TODO:")
+        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+
+    combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
+    for required in (
+        "load_verified_ultimate_judgement_manifest",
+        "results/evidence/task2/ultimate_judgement/manifest.json",
+        'ultimate_manifest["ultimate_winner_frozen"] is True',
+        'ultimate_manifest["holdout_opened"] is False',
+        'ultimate_manifest["selected_candidate"] == "I2"',
+        'decision["direct_selection_rule_passed"] is True',
+        'decision["cost_tie_break_used"] is False',
+        'scorecard["selected"].sum() == 1',
+        "load_verified_selection_freeze",
+        "TASK2_SELECTION_FREEZE_JSON",
+        'selection_freeze["refit_rule"]["epochs"] == 24',
+        'selection_freeze["selected_model"]["scratch"] is True',
+        'selection_freeze["selected_model"]["weights"] is None',
+        'selection_freeze["selected_model"]["inference_inputs"] == ["image"]',
+        'selection_freeze["holdout_metrics_present"] is False',
+        'ultimate_artifacts["selection_freeze"] == selection_freeze_path',
+    ):
+        assert required in combined
+    assert "train_fold" not in combined
+    assert "run_or_load_experiment" not in combined
+
+    findings = cells["s14-01-finding"].source + cells["s14-02-finding"].source
+    for required in (
+        "I2 is the frozen Task 2 winner",
+        "0.752687",
+        "0.735036",
+        "+0.017651",
+        "both seeds",
+        "smaller and faster",
+        "brightness `0.85`",
+        "Spring recall to `0.003010`",
+        "all `32,753` valid development rows",
+        "exactly `24` epochs",
+        "no validation or holdout early stopping",
+        "image-only",
+        "holdout remains sealed",
     ):
         assert required in findings
 
