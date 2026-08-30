@@ -107,3 +107,12 @@ audit, contact-sheet order, and non-causal diagnostic tags. High-confidence exam
 chosen to expose strong beliefs and severe mistakes; they do not estimate how common a
 failure is. Grad-CAM and metadata remain review evidence only and cannot reopen G5 or
 access holdout data.
+
+`g7_ultimate_judgement.json` freezes the final decision rule before the selection file is
+written. It compares only the already-retained scratch C2 reference and I2 challenger.
+The challenger must lead at both seeds, retain positive grouped-bootstrap intervals,
+avoid a material ArticleType-conflict or JPEG disadvantage, and remain above C2 under
+every declared robustness condition. The near-tie threshold remains `0.005`; cost can
+break a true unresolved tie only within the already-declared robustness allowance. The
+contract also fixes the development-only refit epoch rule and records that no app review
+threshold or holdout result is allowed at this gate.
