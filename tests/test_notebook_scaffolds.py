@@ -888,6 +888,7 @@ def test_task2_slice_cells_load_verified_post_inference_evidence() -> None:
         "file_size_boundaries",
         "product_family_size",
         "greyscale_deltas",
+        "other_mode",
     ):
         assert required in combined
     assert "train_test_split" not in combined
