@@ -1113,6 +1113,31 @@ def test_task2_ultimate_judgement_cells_load_verified_freeze_evidence() -> None:
         assert required in findings
 
 
+def test_task2_analysis_cells_verify_all_declared_inputs_and_exact_claims() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+
+    manifest_loader = cells["s09-01-code"].source
+    for required in (
+        "def walk_declarations",
+        '{"path", "sha256"} <= set(value)',
+        "walk_declarations(manifest)",
+        'verified_declarations[f"artifacts.{name}"]',
+    ):
+        assert required in manifest_loader
+
+    robustness = cells["s11-01-code"].source
+    assert 'robustness_manifest["holdout_opened"] is False' in robustness
+    assert 'robustness_manifest["holdout_metrics_present"] is False' in robustness
+
+    bootstrap = cells["s13-01-code"].source
+    assert 'macro_intervals["ci_lower"] > macro_intervals["practical_tie_threshold"]' in bootstrap
+
+    gradcam_finding = cells["s12-02-finding"].source
+    assert "mean border lift stays below `1.0`" in gradcam_finding
+    assert "below area share" not in gradcam_finding
+
+
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
     assert "Primary development metric: TODO(owner)" in task1
