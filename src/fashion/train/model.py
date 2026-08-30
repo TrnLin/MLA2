@@ -13,8 +13,12 @@ from fashion.train.config import Task3BaselineConfig, baseline_parameter_count
 class Task3BaselineCNN(nn.Module):
     """Four-block native-resolution CNN with three spatial reductions."""
 
-    def __init__(self, config: Task3BaselineConfig) -> None:
+    def __init__(
+        self, config: Task3BaselineConfig, *, classifier_dropout: float = 0.0
+    ) -> None:
         super().__init__()
+        if not 0.0 <= classifier_dropout < 1.0:
+            raise ValueError("classifier dropout must be in [0, 1)")
         channel_pairs = zip((3, *config.channels[:-1]), config.channels, strict=True)
         blocks: list[nn.Module] = []
         for index, (input_channels, output_channels) in enumerate(channel_pairs):
@@ -35,6 +39,9 @@ class Task3BaselineCNN(nn.Module):
                 blocks.append(nn.MaxPool2d(kernel_size=2, stride=2))
         self.features = nn.Sequential(*blocks)
         self.pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.classifier_dropout = (
+            nn.Dropout(p=classifier_dropout) if classifier_dropout > 0.0 else nn.Identity()
+        )
         self.classifier = nn.Linear(config.channels[-1], config.num_classes)
         self._initialise()
 
@@ -62,4 +69,4 @@ class Task3BaselineCNN(nn.Module):
     def forward(self, images: torch.Tensor) -> torch.Tensor:
         features = self.features(images)
         pooled = self.pool(features).flatten(1)
-        return self.classifier(pooled)
+        return self.classifier(self.classifier_dropout(pooled))
