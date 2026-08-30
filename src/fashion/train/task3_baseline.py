@@ -228,7 +228,8 @@ def _pass(
 ) -> tuple[float, np.ndarray, np.ndarray, dict[str, list[Any]]]:
     training = optimizer is not None
     model.train(training)
-    total_loss = 0.0
+    total_loss_numerator = 0.0
+    total_loss_denominator = 0.0
     total_rows = 0
     labels: list[np.ndarray] = []
     probabilities: list[np.ndarray] = []
@@ -252,7 +253,14 @@ def _pass(
                 optimizer.step()
             rows = len(target)
             total_rows += rows
-            total_loss += float(loss.detach()) * rows
+            if isinstance(criterion, nn.CrossEntropyLoss) and criterion.weight is not None:
+                batch_loss_denominator = float(
+                    criterion.weight[target].detach().sum().cpu()
+                )
+            else:
+                batch_loss_denominator = float(rows)
+            total_loss_numerator += float(loss.detach()) * batch_loss_denominator
+            total_loss_denominator += batch_loss_denominator
             labels.append(target.detach().cpu().numpy())
             probabilities.append(torch.softmax(logits.detach(), dim=1).cpu().numpy())
             if not training:
@@ -260,10 +268,10 @@ def _pass(
                 trace["cv_fold"].extend(batch["cv_fold"].tolist())
                 trace["product_family_group"].extend(batch["product_family_group"])
                 trace["path"].extend(batch["path"])
-    if total_rows == 0:
+    if total_rows == 0 or total_loss_denominator == 0.0:
         raise ValueError("a data loader produced no rows")
     return (
-        total_loss / total_rows,
+        total_loss_numerator / total_loss_denominator,
         np.concatenate(labels),
         np.concatenate(probabilities),
         trace,
@@ -357,12 +365,22 @@ def run_task3_baseline_fold(
         raise ValueError("child target and requested target disagree")
     if child_spec is not None:
         parent_run_id = child_spec.parent_run_ids[validation_fold]
-        parent_dir = output_root / "baseline" / target / parent_run_id
+        parent_dir = output_root / child_spec.parent_artifact_dir / target / parent_run_id
         parent_metrics_path = parent_dir / "metrics.json"
         parent_checkpoint_path = parent_dir / "final_epoch.pt"
-        if not parent_metrics_path.is_file() or not parent_checkpoint_path.is_file():
+        parent_prediction_path = parent_dir / "oof_predictions.csv"
+        parent_robustness_path = parent_dir / "robustness.csv"
+        if not all(
+            path.is_file()
+            for path in (
+                parent_metrics_path,
+                parent_checkpoint_path,
+                parent_prediction_path,
+                parent_robustness_path,
+            )
+        ):
             raise FileNotFoundError(
-                f"completed baseline parent artifacts are missing for fold {validation_fold}: "
+                f"completed parent artifacts are missing for fold {validation_fold}: "
                 f"{parent_dir}"
             )
         parent_metrics = json.loads(parent_metrics_path.read_text(encoding="utf-8"))
@@ -482,7 +500,8 @@ def run_task3_baseline_fold(
     train_loader = _loader(train_dataset, config=config, shuffle=True, device=device)
     validation_loader = _loader(validation_dataset, config=config, shuffle=False, device=device)
 
-    model = Task3BaselineCNN(config).to(device)
+    classifier_dropout = child_spec.classifier_dropout if child_spec is not None else 0.0
+    model = Task3BaselineCNN(config, classifier_dropout=classifier_dropout).to(device)
     criterion = nn.CrossEntropyLoss(
         weight=(
             torch.as_tensor(class_weights, dtype=torch.float32, device=device)
@@ -584,11 +603,25 @@ def run_task3_baseline_fold(
         clean_loss, labels, probabilities, trace = _pass(
             model, validation_loader, criterion, device
         )
+        training_evaluation_dataset = Task3ImageDataset(training, **dataset_kwargs)
+        training_evaluation_loader = _loader(
+            training_evaluation_dataset,
+            config=config,
+            shuffle=False,
+            device=device,
+        )
+        final_train_loss, final_train_labels, final_train_probabilities, _ = _pass(
+            model, training_evaluation_loader, criterion, device
+        )
+        final_train_metrics = classification_metrics(
+            final_train_labels, final_train_probabilities, classes
+        )
         predictions = _prediction_frame(labels, probabilities, trace, classes, run_id)
         predictions.to_csv(prediction_path, index=False)
         metrics = classification_metrics(labels, probabilities, classes)
         metrics["loss"] = clean_loss
         metrics["run_id"] = run_id
+        metrics["target"] = target
         metrics["validation_fold"] = validation_fold
         metrics["experiment_id"] = experiment_id
         metrics["hypothesis_id"] = hypothesis_id
@@ -597,6 +630,12 @@ def run_task3_baseline_fold(
         metrics["loss_name"] = loss_name
         metrics["class_counts"] = class_counts.tolist()
         metrics["class_weights"] = class_weights.tolist() if class_weights is not None else None
+        metrics["classifier_dropout"] = classifier_dropout
+        metrics["final_train_eval_loss"] = final_train_loss
+        metrics["final_train_eval_macro_f1"] = final_train_metrics["macro_f1"]
+        metrics["final_train_validation_macro_f1_gap"] = float(
+            final_train_metrics["macro_f1"] - metrics["macro_f1"]
+        )
         if target == "usage":
             without_home = [index for index, name in enumerate(classes) if name != "Home"]
             per_class = metrics["per_class"]
