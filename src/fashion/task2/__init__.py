@@ -42,6 +42,11 @@ from fashion.task2.pretraining import (
     validate_pretraining_pair,
 )
 from fashion.task2.pretraining_evidence import build_pretraining_benchmark_evidence
+from fashion.task2.refit import (
+    RefitOutcome,
+    load_verified_development_refit_manifest,
+    run_or_load_development_refit,
+)
 from fashion.task2.smoke import (
     G0SmokeConfig,
     G0SmokeResult,
@@ -95,11 +100,14 @@ __all__ = [
     "plot_file_impact_flow",
     "run_matrix",
     "run_or_load_experiment",
+    "run_or_load_development_refit",
     "run_pretraining_matrix",
     "run_or_load_g0_smoke",
     "select_balanced_smoke_rows",
     "SmokeGateError",
+    "RefitOutcome",
     "load_g0_config",
+    "load_verified_development_refit_manifest",
     "validate_file_impact_edges",
     "validate_pretraining_config",
     "validate_pretraining_pair",
