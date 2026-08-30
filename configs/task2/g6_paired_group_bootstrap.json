@@ -22,8 +22,8 @@
       "seed": 2753
     },
     {
-      "c2_experiment_id": "g5-c2-t0-resnet18-seed-2026",
-      "i2_experiment_id": "g5-i2-article-type-lambda-0-3-c1-seed-2026",
+      "c2_experiment_id": "g5-c2-t0-resnet18-s2026",
+      "i2_experiment_id": "g5-i2-article-type-lambda-0-3-c1-s2026",
       "role": "stability_sensitivity",
       "seed": 2026
     }
