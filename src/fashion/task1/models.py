@@ -13,7 +13,7 @@ class Task1ModelConfig:
     """Fixed architecture settings for the Task 1 scratch CNN."""
 
     num_classes: int = 124
-    adaptive_size: tuple[int, int] = (4, 3)
+    adaptive_size: tuple[int, int] = (5, 7)
     hidden_features: int = 128
 
 
@@ -31,7 +31,7 @@ class Task1SmallCNN(nn.Module):
         self.conv5 = nn.Conv2d(64, 64, kernel_size=5, padding=2)
         self.pool = nn.MaxPool2d(2, 2)
         self.adaptive_pool = nn.AdaptiveAvgPool2d(self.config.adaptive_size)
-        self.fc1 = nn.Linear(64 * 4 * 3, self.config.hidden_features)
+        self.fc1 = nn.Linear(64 * 5 * 7, self.config.hidden_features)
         self.fc2 = nn.Linear(self.config.hidden_features, num_classes)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:

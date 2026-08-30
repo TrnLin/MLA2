@@ -15,6 +15,13 @@ def test_small_cnn_maps_fashion_images_to_124_logits():
     )
 
 
+@pytest.mark.skipif(not torch.backends.mps.is_available(), reason="MPS is unavailable")
+def test_small_cnn_maps_fashion_images_to_124_logits_on_mps():
+    model = Task1SmallCNN(num_classes=124).to("mps")
+    output = model(torch.zeros(2, 3, 80, 60, device="mps"))
+    assert output.shape == (2, 124)
+
+
 def test_small_cnn_uses_distinct_late_convolutions():
     model = Task1SmallCNN(num_classes=124)
     assert model.conv4 is not model.conv5
