@@ -1,8 +1,8 @@
 ---
 title: "Task 2 - Fashion Season Classification: execution report and plan"
-status: pretraining-benchmark-complete
+status: paired-bootstrap-complete
 created: 2026-08-25
-updated: 2026-08-29
+updated: 2026-08-30
 scope: task2-season
 ---
 
@@ -32,20 +32,16 @@ Recommended direction:
    and size. Do not select by accuracy alone.
 6. Freeze every choice before Notebook 06 opens the holdout once.
 
-Current position on 29 August 2026: corrected G3, I1, I2, the matched pretrained
-boundary, and G5 seed stability are complete. C1-T1 reached
-`0.737661` pooled OOF macro-F1 and remains the compact reference. I1 changed only the
-loss and fell to `0.701471`, so it was rejected. I2 then added a training-only
-ArticleType head. Lambda `0.1` reached `0.750758`; lambda `0.3` reached `0.752687`,
-improved Spring F1 by `0.019809`, and passed the frozen overall and conflict-slice rules.
-Lambda `0.3` is therefore the **current candidate**, not the ultimate winner. Under the
-same standard-stem ResNet18 protocol, P* improved over its P0S scratch control by
-`0.023024` macro-F1 and by `0.038829` Spring F1. This result is a representation
-benchmark only: P* remains final-ineligible and does not replace I2. At seed `2026`,
-I2 reached `0.744743` and C2 reached `0.733137`, so I2 remains ahead by `0.011607`.
-The ordering is supported at both complete five-fold seeds, although I2 drifts more and
-loses two of five paired folds at seed `2026`. Robustness, cost, calibration,
-uncertainty, shortcut, and failure analysis must still close before freeze.
+Current position on 30 August 2026: corrected G3, I1, I2, the matched pretrained
+boundary, G5 seed stability, shortcut/error slices, robustness/cost, calibration, and
+paired grouped-bootstrap uncertainty are complete. I2 lambda `0.3` remains the
+**current candidate**, not the ultimate winner. It reached `0.752687` pooled OOF
+macro-F1 at seed `2753` and `0.744743` at seed `2026`; C2 reached `0.735036` and
+`0.733137`. The I2-minus-C2 paired family-bootstrap intervals are
+`[0.013050, 0.022453]` at seed `2753` and `[0.005793, 0.017341]` at seed `2026`.
+Both fitted pairs favour I2, but two seeds do not prove the ordering for every random
+initialisation. Deterministic Grad-CAM review and the real-ID failure taxonomy are the
+remaining analysis gate before the winner can be frozen.
 
 No plan can guarantee a full mark because the mark also depends on real results and the
 quality of the final written argument. This plan covers the HD signals in the assignment
@@ -93,12 +89,12 @@ strongest defensible submission path.
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
 | Notebook 03 | 55-code-cell final scaffold; 31 implemented cells have clean saved outputs; G0, B0, B1, G1, G2-P, G2-A, G2-T, G3, I1, I2, P*, and G5 have measured interpretations | Continue filling the remaining 24 leaf cells without changing the structure |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Loaders, B0/B1, C1/C2/C3, Windows-safe runners, strict cache checks, learning curves, the EDA-to-model selection story, corrected G3 evidence, I1, masked I2, matched P0S/P*, and G5 stability are implemented | Close analysis gates without adding another architecture |
+| Task 2 foundation | Training, cache, model comparison, learning curves, EDA reflection, G5 stability, shortcut/error slices, robustness/cost, cross-fitted calibration, and paired grouped bootstrap are implemented | Complete Grad-CAM and the failure taxonomy without adding another architecture |
 | `results/runs.csv` | 119 append-only rows: 113 completed, one failed, and five interrupted | No running rows; the ten clean G5 run IDs enter two-seed evidence |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
-| Current G5 gate | C2 and I2 seed-2026 folds are complete, hash-verified, and tied to clean commit `04ef69d`; I2 remains ahead at both seeds | Keep I2 lambda `0.3`; P* is a non-selectable ceiling; do not freeze yet |
-| Current verification | `pip check`, full-repository Ruff, and `337` tests pass | G6 slice code, evidence, Notebook outputs, and structure are green |
+| Current G6 gate | Slices, robustness/cost, calibration, and paired grouped bootstrap are hash-verified; the holdout remains sealed | Keep I2 lambda `0.3`; complete Grad-CAM/failure review before freeze |
+| Current verification | `pip check`, full-repository Ruff, and `452` tests pass | Bootstrap code and evidence builder are green; Notebook integration is still pending |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -176,6 +172,10 @@ recorded as provenance, but it is not used as a proxy for implementation content
 | `fashion.task2.pretraining_evidence` | Audits both boundaries, folds, hashes, histories, and OOF products; measures P* minus P0S without making P* selectable |
 | `fashion.task2.stability` | Enforces seed-2026 clones of the retained C2 comparator and selected I2 candidate, then preflights primary-seed implementation hashes before any training |
 | `fashion.task2.stability_evidence` | Audits four complete OOF packs, measures seed drift and paired-fold ordering, applies the frozen G5 rule, and draws two-seed learning curves |
+| `fashion.task2.slices` and `slice_evidence` | Build leakage-safe post-inference slices, compare C2/I2 errors, and keep metadata outside model inputs |
+| `fashion.task2.robustness` and `robustness_evidence` | Apply fixed perturbations, measure machine-specific cost, and compare candidates without reopening selection |
+| `fashion.task2.calibration` and `calibration_evidence` | Fit five-fold cross-fitted temperatures and build probability-quality and diagnostic risk-coverage evidence |
+| `fashion.task2.bootstrap` and `bootstrap_evidence` | Resample conservative family blocks, compare the two fitted seed pairs, and write hash-linked uncertainty evidence |
 | `fashion.task2.evidence` | File-impact flow, complete-fold OOF packs, verified G1 ranking, audited G2-P/G2-A/G2-T/G3/I1 decisions, learning curves, and a hash-linked selection story |
 | `scripts/run_task2_experiment.py` | Windows-safe shared config launcher with a guarded `main()` |
 | `scripts/run_task2_i1_experiment.py` | Windows-safe launcher restricted by the frozen I1 validator |
@@ -185,6 +185,10 @@ recorded as provenance, but it is not used as a proxy for implementation content
 | `scripts/build_task2_pretraining_evidence.py` | Load-only builder for the paired benchmark evidence and figures |
 | `scripts/run_task2_stability.py` | Runs or loads exactly five C2 and five I2 folds at seed `2026` after strict clone and implementation preflight checks |
 | `scripts/build_task2_stability_evidence.py` | Load-only builder for four hash-verified candidate/seed OOF packs and the closed G5 decision |
+| `scripts/build_task2_slice_evidence.py` | Load-only builder for shortcut and error slices from verified OOF packs |
+| `scripts/build_task2_robustness_evidence.py` | Reproducible fixed-perturbation and deployment-cost evidence builder |
+| `scripts/build_task2_calibration_evidence.py` | Load-only cross-fitted calibration and risk-coverage evidence builder |
+| `scripts/build_task2_bootstrap_evidence.py` | Load-only 10,000-draw paired family-bootstrap evidence builder |
 | Notebook 03 sections 1-4 | Frozen contract, runtime, EDA handoff, folds, OOF, metrics, transforms, and leakage audit |
 | Notebook 03 sections 6 and 7.2 | Scratch forward audits, benchmark rejection, state hashes, and registry health |
 | Notebook 03 section 8.4 | SHA-256 verification, two-seed tables, teacher-style curves, trace table, EDA reflection, and the non-freeze G5 decision |
@@ -873,8 +877,9 @@ Lambda `0.1` is better on the conflict gain, so it is not hidden as a failed mod
 Lambda `0.3` is selected because the rule already gave overall pooled macro-F1 first
 priority. This is a primary-seed decision only. The 19 unseen-ArticleType rows are too few
 for a strong subgroup claim, and there are no missing-ArticleType rows in this valid
-Season set. G5 later confirms the ordering at seed `2026`; calibration, robustness,
-uncertainty, and shortcut analysis remain open.
+Season set. G5 later confirms the ordering at seed `2026`; the subsequent slice,
+robustness, calibration, and grouped-bootstrap gates retain I2 without reopening model
+selection.
 
 ### 6.11 Measured P0S/P* pretraining boundary
 
@@ -923,8 +928,9 @@ and `+0.011607` at seed `2026`. The frozen ordering rule therefore passes, and I
 remains the current eligible candidate. The conclusion is deliberately limited: I2
 drifts by `-0.007944`, two of five seed-2026 folds favour C2, and the Spring-recall
 advantage narrows to `+0.002257`. Two seeds support the direction, not every possible
-random start. The ultimate winner remains unfrozen until grouped bootstrap, shortcut,
-error, robustness, cost, calibration, and Grad-CAM evidence are complete.
+random start. The later grouped-bootstrap intervals support a positive I2-minus-C2
+difference for each fitted seed pair. The ultimate winner remains unfrozen until
+deterministic Grad-CAM and the failure taxonomy are complete.
 
 ## 7. Experiment matrix
 
@@ -939,7 +945,7 @@ error, robustness, cost, calibration, and Grad-CAM evidence are complete.
 | G4 - complete | I1 and two I2 lambdas; full budget x 5 folds | Do improvements solve EDA problems? | I1 rejected; both I2 lambdas pass; lambda `0.3` is the current candidate |
 | G4-PSTAR - complete | Matched P0S scratch and P* ImageNet standard-stem ResNet18 x 5 folds | What is the initialisation gap under one fixed pipeline? | P* gained `0.023024` macro-F1 but remains benchmark-only and final-ineligible |
 | G5 - complete | Retained C2 and selected I2 at seed `2026` x 5 folds | Is the result stable? | Passed: I2 remains ahead by `0.011607`; close architecture search but do not freeze the ultimate winner |
-| G6 | Both finalists: robustness, calibration, and cost | Which finalist is safer to deploy? | Complete comparable scorecards |
+| G6 - analysis in progress | C2 and I2: slices, robustness/cost, cross-fitted calibration, paired family bootstrap, and Grad-CAM | Where do the fitted models fail, and which is safer? | Slices, robustness/cost, calibration, and uncertainty passed; Grad-CAM/failure taxonomy remains |
 
 ### 7.2 Experiment stopping rules
 
@@ -972,11 +978,25 @@ Secondary evidence:
 
 ### 8.2 Uncertainty
 
-- Use a paired bootstrap over `product_family_group`, not independent rows.
-- Report a 95% confidence interval for the difference in pooled OOF macro-F1 between the
-  two finalists.
-- A family is a conservative blocking unit, not a verified SKU. Describe the interval as
-  conservative too.
+The closed G6 uncertainty gate resamples `product_family_group`, not independent rows.
+Each draw samples all `22,885` groups with replacement and keeps every row inside a
+selected group. C2 and I2 use the same draw within each comparison, so the difference is
+paired. The protocol uses `10,000` draws and a 95% percentile interval over all `32,753`
+valid development rows.
+
+| Fitted pair | Observed I2 minus C2 macro-F1 | 95% paired family-bootstrap interval | Contains zero | Inside +/-0.005 practical tie |
+|---|---:|---:|---|---|
+| Seed `2753` | `+0.017651` | `[+0.013050, +0.022453]` | No | No |
+| Seed `2026` sensitivity | `+0.011607` | `[+0.005793, +0.017341]` | No | No |
+
+Cluster resampling therefore supports a positive I2-minus-C2 difference for each of the
+two **already-fitted** pairs. It does not measure every source of training randomness,
+and two seeds cannot support a universal random-seed claim. A family is also a
+conservative dependency block, not a verified SKU. No protected ID entered the audit,
+the holdout remains sealed, no new candidate is allowed, and this gate does not freeze
+the winner. The trace is in
+`results/evidence/task2/paired_bootstrap/manifest.json`; the figure is
+`results/figures/task2/paired_group_bootstrap.png`.
 
 ### 8.3 Predeclared slices and shortcut tests
 
@@ -1107,10 +1127,9 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** keep C2 and I2 frozen and build the OOF shortcut/error slices for
-Spring, ArticleType aligned/conflict, acquisition year, training-fitted file-size
-quartile, product-family size, and image mode. Do not add another architecture, input
-size, augmentation, loss beta, auxiliary lambda, or tuning pair. Do not open holdout.
+**Next safe action:** keep C2 and I2 frozen and build the deterministic Grad-CAM review
+plus real-ID failure taxonomy. Do not add another architecture, input size,
+augmentation, loss beta, auxiliary lambda, or tuning pair. Do not open holdout.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
@@ -1142,10 +1161,11 @@ size, augmentation, loss beta, auxiliary lambda, or tuning pair. Do not open hol
 
 ### Phase 4 - Analysis, 1-2 days
 
-- [ ] Produce the OOF comparison table, confidence interval, and confusion matrices.
-- [ ] Produce every predeclared slice and robustness test.
-- [ ] Produce calibration, risk-coverage, and Grad-CAM contact sheets.
-- [ ] Measure CPU/GPU latency, model size, RAM/VRAM, and training time.
+- [x] Produce the OOF comparison table, paired confidence interval, and confusion matrices.
+- [x] Produce every predeclared slice and robustness test.
+- [x] Produce cross-fitted calibration and diagnostic risk-coverage evidence.
+- [ ] Produce deterministic Grad-CAM contact sheets.
+- [x] Measure CPU/GPU latency, model size, RAM/VRAM, and training time.
 - [ ] Write the failure taxonomy using real product IDs.
 
 ### Phase 5 - Freeze and independent evaluation, 1 day
@@ -1184,7 +1204,8 @@ Task 2 is complete only when all of the following exist:
 - [x] at least one improvement was implemented and evaluated: C1-T1 improved pooled
   macro-F1 by `0.008173` over C1-T0, and I2 lambda `0.3` then improved by `0.015026`
   over corrected G3-C1;
-- [ ] error, shortcut, robustness, calibration, and cost evidence is complete;
+- [x] error, shortcut, robustness, calibration, cost, and paired-bootstrap evidence is complete;
+- [ ] deterministic Grad-CAM and the real-ID failure taxonomy are complete;
 - [ ] the winner was frozen before holdout access;
 - [ ] one independent holdout evaluation exists;
 - [ ] a final scratch-trained checkpoint and inference function exist;
@@ -1252,6 +1273,8 @@ claim must point to a run ID or generated artifact.
 11. TorchVision, [models and random initialisation with `weights=None`](https://docs.pytorch.org/vision/stable/models.html) and [MobileNetV3](https://docs.pytorch.org/vision/stable/models/mobilenetv3.html).
 12. Seo et al., [Classification of fashion e-commerce products using ResNet-BERT](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0324621), PLOS One 2025: the same Fashion Product Images dataset but different targets, resolution, pretraining, and multimodal inputs.
 13. Kolisnik et al., [Condition-CNN](https://www.sciencedirect.com/science/article/pii/S0957417421006291), Expert Systems with Applications 2021: the same dataset for hierarchical classification, not a direct Season benchmark.
+14. Field and Welsh, [Bootstrapping clustered data](https://doi.org/10.1111/j.1467-9868.2007.00593.x), Journal of the Royal Statistical Society: Series B 2007.
+15. Rifkin and Klautau, [In Defense of One-Vs-All Classification](https://www.jmlr.org/papers/v5/rifkin04a.html), JMLR 2004.
 
 The limited search found no peer-reviewed benchmark matching **Season + the current
 teacher split + scratch-only training + the current metric**. Literature can therefore
