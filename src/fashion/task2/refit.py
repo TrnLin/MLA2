@@ -382,12 +382,12 @@ def _outcome(manifest: Mapping[str, Any], manifest_path: Path, *, source: str) -
     )
 
 
-def load_verified_development_refit_manifest(
+def _load_verified_development_refit_package(
     path: str | Path = TASK2_MODEL_MANIFEST_JSON,
     *,
     project_root: str | Path = ROOT,
 ) -> tuple[dict[str, Any], Path, dict[str, Any]]:
-    """Verify the final model, evidence, freeze, and scratch boundary before use."""
+    """Verify package bytes without requiring the run row to be terminal yet."""
     root = Path(project_root).resolve()
     manifest_path = Path(path)
     if not manifest_path.is_absolute():
@@ -691,6 +691,95 @@ def load_verified_development_refit_manifest(
     return manifest, manifest_path, bundle
 
 
+def _verify_refit_registry(
+    manifest: Mapping[str, Any],
+    *,
+    registry_path: str | Path,
+    root: Path,
+) -> None:
+    """Bind one completed ledger row to every verified refit artifact."""
+    registry_file = Path(registry_path)
+    if not registry_file.is_absolute():
+        registry_file = root / registry_file
+    registry_file = registry_file.resolve()
+    try:
+        registry_file.relative_to(root)
+    except ValueError as error:
+        raise ValueError(f"refit registry is outside project root: {registry_file}") from error
+    if not registry_file.is_file():
+        raise ValueError(f"development refit registry does not exist: {registry_file}")
+
+    registry = RunRegistry(registry_file).read()
+    matches = registry.loc[registry["run_id"].eq(str(manifest["run_id"]))]
+    if len(matches) != 1:
+        raise ValueError("development refit registry must contain exactly one matching run row")
+    row = matches.iloc[0]
+    if row["status"] != "completed":
+        raise ValueError("development refit registry row is not completed")
+
+    freeze_path = root / str(manifest["selection_freeze"]["path"])
+    config_path = root / str(manifest["selected_config"]["path"])
+    freeze = _load_json_object(freeze_path, "selection freeze")
+    selected_config = load_i2_config(config_path)
+    config_sha256 = canonical_sha256(
+        {
+            "selected_config": selected_config.to_dict(),
+            "refit_rule": freeze["refit_rule"],
+            "selection_freeze_sha256": str(manifest["selection_freeze"]["sha256"]),
+        }
+    )
+    expected = {
+        "experiment_id": f"task2-season-{str(manifest['selected_candidate']).lower()}-refit",
+        "fold": "",
+        "seed": str(manifest["seed"]),
+        "config_sha256": config_sha256,
+        "split_sha256": str(manifest["canonical_inputs"]["splits"]["sha256"]),
+        "label_map_sha256": str(manifest["canonical_inputs"]["label_maps"]["sha256"]),
+        "implementation_sha256": str(manifest["implementation_sha256"]),
+        "stage": REFIT_STAGE,
+        "model_family": str(manifest["model_family"]),
+        "benchmark_only": "false",
+        "final_eligible": "true",
+        "scratch": "true",
+        "git_commit": str(manifest["git_commit"]),
+        "git_dirty": "false",
+        "transform_id": str(manifest["loader_audit"]["train_transform_id"]),
+        "loss_id": selected_config.loss_id,
+        "epochs_requested": str(manifest["final_epoch"]),
+        "epochs_completed": str(manifest["final_epoch"]),
+        "primary_metric_name": "",
+        "primary_metric_value": "",
+        "best_epoch": "",
+        "parameter_count": str(manifest["parameter_count"]),
+        "checkpoint_path": str(manifest["bundle"]["path"]),
+        "checkpoint_sha256": str(manifest["bundle"]["sha256"]),
+        "history_path": str(manifest["artifacts"]["history"]["path"]),
+        "history_sha256": str(manifest["artifacts"]["history"]["sha256"]),
+        "status": "completed",
+        "error_type": "",
+        "error_message": "",
+    }
+    changed = [field for field, value in expected.items() if row[field] != value]
+    if changed:
+        raise ValueError(f"development refit registry fields changed: {changed}")
+
+
+def load_verified_development_refit_manifest(
+    path: str | Path = TASK2_MODEL_MANIFEST_JSON,
+    *,
+    project_root: str | Path = ROOT,
+    registry_path: str | Path = RUNS_CSV,
+) -> tuple[dict[str, Any], Path, dict[str, Any]]:
+    """Verify the package and its one matching completed registry row."""
+    root = Path(project_root).resolve()
+    manifest, manifest_path, bundle = _load_verified_development_refit_package(
+        path,
+        project_root=root,
+    )
+    _verify_refit_registry(manifest, registry_path=registry_path, root=root)
+    return manifest, manifest_path, bundle
+
+
 def run_or_load_development_refit(
     *,
     mode: ExecutionMode = "run_or_load",
@@ -731,6 +820,7 @@ def run_or_load_development_refit(
         manifest, verified_manifest, _ = load_verified_development_refit_manifest(
             manifest_file,
             project_root=root,
+            registry_path=registry_file,
         )
         if mode == "run":
             raise FileExistsError("a verified development refit already exists; use load")
@@ -918,54 +1008,60 @@ def run_or_load_development_refit(
         run.history_sha256 = compute_sha256(history_file)
         run.metrics = {}
 
-    manifest = {
-        "schema_version": "1.0.0",
-        "gate": REFIT_GATE,
-        "status": "complete",
-        "analysis_role": REFIT_ANALYSIS_ROLE,
-        "refit_id": contract.freeze["freeze_id"],
-        "run_id": run_id,
-        "selected_candidate": contract.freeze["selected_model"]["candidate"],
-        "selected_experiment_id": contract.config.experiment_id,
-        "model_family": contract.config.model_family,
-        "scratch": True,
-        "weights": None,
-        "benchmark_only": False,
-        "final_eligible": True,
-        "holdout_opened": False,
-        "holdout_metrics_present": False,
-        "validation_used": False,
-        "early_stopping_used": False,
-        "primary_metric_name": None,
-        "evaluation_claim_allowed": False,
-        "seed": result.seed,
-        "final_epoch": result.final_epoch,
-        "valid_development_rows": len(loaders.training_ids),
-        "parameter_count": result.parameter_count,
-        "temperature": temperature,
-        "loader_audit": loader_audit,
-        "training_metadata": result.metadata,
-        "git_commit": contract.git_commit,
-        "git_dirty": False,
-        "implementation_files_at_head": list(contract.implementation_files),
-        "implementation_sha256": contract.implementation_sha256,
-        "canonical_inputs": {
-            "splits": _declaration(splits, root=root),
-            "label_maps": _declaration(labels, root=root),
-        },
-        "selection_freeze": _declaration(contract.freeze_path, root=root),
-        "selected_config": _declaration(contract.config_path, root=root),
-        "bundle": _declaration(bundle_file, root=root),
-        "artifacts": {
-            "history": _declaration(history_file, root=root),
-            "runtime": _declaration(runtime_file, root=root),
-        },
-        "model_change_after_holdout_allowed": False,
-    }
-    atomic_write_json(manifest_file, manifest)
+        manifest = {
+            "schema_version": "1.0.0",
+            "gate": REFIT_GATE,
+            "status": "complete",
+            "analysis_role": REFIT_ANALYSIS_ROLE,
+            "refit_id": contract.freeze["freeze_id"],
+            "run_id": run_id,
+            "selected_candidate": contract.freeze["selected_model"]["candidate"],
+            "selected_experiment_id": contract.config.experiment_id,
+            "model_family": contract.config.model_family,
+            "scratch": True,
+            "weights": None,
+            "benchmark_only": False,
+            "final_eligible": True,
+            "holdout_opened": False,
+            "holdout_metrics_present": False,
+            "validation_used": False,
+            "early_stopping_used": False,
+            "primary_metric_name": None,
+            "evaluation_claim_allowed": False,
+            "seed": result.seed,
+            "final_epoch": result.final_epoch,
+            "valid_development_rows": len(loaders.training_ids),
+            "parameter_count": result.parameter_count,
+            "temperature": temperature,
+            "loader_audit": loader_audit,
+            "training_metadata": result.metadata,
+            "git_commit": contract.git_commit,
+            "git_dirty": False,
+            "implementation_files_at_head": list(contract.implementation_files),
+            "implementation_sha256": contract.implementation_sha256,
+            "canonical_inputs": {
+                "splits": _declaration(splits, root=root),
+                "label_maps": _declaration(labels, root=root),
+            },
+            "selection_freeze": _declaration(contract.freeze_path, root=root),
+            "selected_config": _declaration(contract.config_path, root=root),
+            "bundle": _declaration(bundle_file, root=root),
+            "artifacts": {
+                "history": _declaration(history_file, root=root),
+                "runtime": _declaration(runtime_file, root=root),
+            },
+            "model_change_after_holdout_allowed": False,
+        }
+        atomic_write_json(manifest_file, manifest)
+        _load_verified_development_refit_package(
+            manifest_file,
+            project_root=root,
+        )
+
     verified, verified_path, _ = load_verified_development_refit_manifest(
         manifest_file,
         project_root=root,
+        registry_path=registry_file,
     )
     return _outcome(verified, verified_path, source="run")
 

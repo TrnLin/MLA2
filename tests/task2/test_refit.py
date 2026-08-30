@@ -152,6 +152,7 @@ def test_refit_writes_fixed_epoch_bundle_registry_and_verifiable_manifest(
         manifest, manifest_path, bundle = load_verified_development_refit_manifest(
             paths["manifest_path"],
             project_root=ROOT,
+            registry_path=paths["registry_path"],
         )
         registry = RunRegistry(paths["registry_path"]).read()
         history = pd.read_csv(paths["history_path"])
@@ -196,6 +197,7 @@ def test_refit_writes_fixed_epoch_bundle_registry_and_verifiable_manifest(
             load_verified_development_refit_manifest(
                 paths["manifest_path"],
                 project_root=ROOT,
+                registry_path=paths["registry_path"],
             )
 
 
@@ -215,6 +217,7 @@ def test_refit_manifest_rejects_a_claim_that_holdout_was_opened(
             load_verified_development_refit_manifest(
                 paths["manifest_path"],
                 project_root=ROOT,
+                registry_path=paths["registry_path"],
             )
 
 
