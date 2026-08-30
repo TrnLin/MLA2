@@ -34,7 +34,11 @@ from fashion.models.season import (
     assert_final_model,
     build_multitask_season_model,
 )
-from fashion.task2.multitask import I2ExperimentConfig, load_i2_config
+from fashion.task2.multitask import (
+    I2_IMPLEMENTATION_PATHS,
+    I2ExperimentConfig,
+    load_i2_config,
+)
 from fashion.task2.ultimate_judgement import load_verified_selection_freeze
 from fashion.train.artifacts import (
     atomic_write_bytes,
@@ -61,23 +65,14 @@ REFIT_EVIDENCE_DIRECTORY = TASK2_EVIDENCE_DIR / "development_refit"
 REFIT_HISTORY_CSV = REFIT_EVIDENCE_DIRECTORY / "training_history.csv"
 REFIT_RUNTIME_JSON = REFIT_EVIDENCE_DIRECTORY / "runtime.json"
 REFIT_LOCK_FILENAME = ".task2-season-refit.lock"
-REFIT_IMPLEMENTATION_PATHS = (
-    "src/fashion/config.py",
-    "src/fashion/data/dataset.py",
-    "src/fashion/data/hashing.py",
-    "src/fashion/data/images.py",
-    "src/fashion/data/multitask.py",
-    "src/fashion/data/torch.py",
-    "src/fashion/models/season.py",
-    "src/fashion/task2/multitask.py",
-    "src/fashion/task2/refit.py",
-    "src/fashion/task2/ultimate_judgement.py",
-    "src/fashion/train/artifacts.py",
-    "src/fashion/train/cache.py",
-    "src/fashion/train/engine.py",
-    "src/fashion/train/multitask.py",
-    "src/fashion/train/registry.py",
-    "src/fashion/train/reproducibility.py",
+REFIT_IMPLEMENTATION_PATHS = tuple(
+    dict.fromkeys(
+        (
+            *I2_IMPLEMENTATION_PATHS,
+            "src/fashion/task2/refit.py",
+            "src/fashion/task2/ultimate_judgement.py",
+        )
+    )
 )
 HISTORY_COLUMNS = (
     "epoch",
