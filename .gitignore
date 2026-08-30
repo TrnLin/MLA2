@@ -49,3 +49,4 @@ models/*.ckpt
 
 # Generated experiment registry; report-selected figures remain trackable.
 results/runs.csv
+/results/task1/
