@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Collection, Mapping, Sequence
-from numbers import Real
+from numbers import Integral, Real
 from typing import Any
 
 import numpy as np
@@ -231,6 +231,248 @@ def cross_fit_temperature(
     if not np.array_equal(original_argmax, calibrated.argmax(axis=1)):
         raise RuntimeError("temperature scaling changed class ranking")
     return calibrated, pd.DataFrame(audit_rows)
+
+
+def _exact_integer(
+    value: Any,
+    *,
+    name: str,
+    minimum: int,
+) -> int:
+    if isinstance(value, bool) or not isinstance(value, Integral) or int(value) < minimum:
+        qualifier = "positive" if minimum == 1 else "non-negative"
+        raise ValueError(f"{name} must be a {qualifier} integer")
+    return int(value)
+
+
+def _label_column_slug(label: str) -> str:
+    slug = "_".join(
+        part
+        for part in "".join(
+            character.lower() if character.isalnum() else " " for character in label
+        ).split()
+    )
+    if not slug:
+        raise ValueError("labels must produce non-empty output column names")
+    return slug
+
+
+def _confusion_scores(confusion: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    true_positive = np.diagonal(confusion, axis1=1, axis2=2).astype(np.float64)
+    true_support = confusion.sum(axis=2, dtype=np.int64).astype(np.float64)
+    predicted_support = confusion.sum(axis=1, dtype=np.int64).astype(np.float64)
+    denominator = true_support + predicted_support
+    per_class_f1 = np.divide(
+        2.0 * true_positive,
+        denominator,
+        out=np.zeros_like(true_positive),
+        where=denominator > 0,
+    )
+    total = confusion.sum(axis=(1, 2), dtype=np.int64).astype(np.float64)
+    accuracy = np.divide(
+        true_positive.sum(axis=1),
+        total,
+        out=np.zeros_like(total),
+        where=total > 0,
+    )
+    return per_class_f1.mean(axis=1), accuracy, per_class_f1
+
+
+def paired_group_bootstrap(
+    y_true: Sequence[str] | np.ndarray,
+    groups: Sequence[str] | np.ndarray,
+    comparisons: Mapping[
+        str,
+        tuple[Sequence[str] | np.ndarray, Sequence[str] | np.ndarray],
+    ],
+    *,
+    labels: Sequence[str] = SEASON_LABELS,
+    replicates: int = 10_000,
+    random_seed: int = 2753,
+    batch_size: int = 64,
+) -> pd.DataFrame:
+    """Resample whole groups and compare paired fixed-label predictions.
+
+    ``y_true``, ``groups``, and every prediction vector are positional: callers must
+    align them to the same audited row order before invoking this metric-only helper.
+    Groups with identical joint confusion signatures are compressed before sampling.
+    Sampling those signatures with their observed frequencies is distributionally exact,
+    while avoiding one probability category per product family. One multiplicity draw is
+    shared by every comparison, so candidate and seed-pair differences stay paired.
+    """
+    ordered_labels = _unique_labels(labels)
+    label_slugs = tuple(_label_column_slug(label) for label in ordered_labels)
+    if len(set(label_slugs)) != len(label_slugs):
+        raise ValueError("labels must produce unique output column names")
+    replicate_count = _exact_integer(replicates, name="replicates", minimum=1)
+    seed = _exact_integer(random_seed, name="random_seed", minimum=0)
+    draw_batch_size = _exact_integer(batch_size, name="batch_size", minimum=1)
+
+    true = np.asarray(y_true, dtype=object)
+    group_values = np.asarray(groups, dtype=object)
+    if true.ndim != 1 or len(true) == 0:
+        raise ValueError("y_true must be a non-empty one-dimensional sequence")
+    if group_values.ndim != 1 or len(group_values) != len(true):
+        raise ValueError("groups must be one-dimensional and match y_true length")
+    if any(not isinstance(value, str) or not value.strip() for value in group_values):
+        raise ValueError("groups must contain non-empty strings")
+
+    allowed = set(ordered_labels)
+    true_strings = np.asarray([str(value) for value in true], dtype=object)
+    unknown_true = sorted(set(true_strings) - allowed)
+    if unknown_true:
+        raise ValueError(f"y_true contains unknown labels: {unknown_true}")
+    label_to_index = {label: index for index, label in enumerate(ordered_labels)}
+    true_indices = np.fromiter(
+        (label_to_index[value] for value in true_strings),
+        dtype=np.int64,
+        count=len(true_strings),
+    )
+
+    if not isinstance(comparisons, Mapping) or not comparisons:
+        raise ValueError("comparisons must be a non-empty mapping")
+    raw_comparison_ids = list(comparisons)
+    if any(
+        not isinstance(comparison_id, str) or not comparison_id.strip()
+        for comparison_id in raw_comparison_ids
+    ):
+        raise ValueError("comparison IDs must be non-empty strings")
+    comparison_ids = sorted(raw_comparison_ids)
+    prediction_pairs: list[tuple[np.ndarray, np.ndarray]] = []
+    for comparison_id in comparison_ids:
+        pair = comparisons[comparison_id]
+        if isinstance(pair, (str, bytes)) or not isinstance(pair, Sequence) or len(pair) != 2:
+            raise ValueError(
+                f"comparison {comparison_id!r} must contain model A and model B predictions"
+            )
+        encoded_pair: list[np.ndarray] = []
+        for model_name, predictions in zip(("model A", "model B"), pair, strict=True):
+            predicted = np.asarray(predictions, dtype=object)
+            if predicted.ndim != 1 or len(predicted) != len(true):
+                raise ValueError(
+                    f"{comparison_id!r} {model_name} predictions must match y_true length"
+                )
+            predicted_strings = np.asarray([str(value) for value in predicted], dtype=object)
+            unknown_predictions = sorted(set(predicted_strings) - allowed)
+            if unknown_predictions:
+                raise ValueError(
+                    f"{comparison_id!r} {model_name} contains unknown labels: {unknown_predictions}"
+                )
+            encoded_pair.append(
+                np.fromiter(
+                    (label_to_index[value] for value in predicted_strings),
+                    dtype=np.int64,
+                    count=len(predicted_strings),
+                )
+            )
+        prediction_pairs.append((encoded_pair[0], encoded_pair[1]))
+
+    ordered_groups = sorted(set(group_values.tolist()))
+    group_count = len(ordered_groups)
+    if group_count < 2:
+        raise ValueError("groups must contain at least two unique values")
+    group_to_index = {group: index for index, group in enumerate(ordered_groups)}
+    group_indices = np.fromiter(
+        (group_to_index[value] for value in group_values),
+        dtype=np.int64,
+        count=len(group_values),
+    )
+
+    class_count = len(ordered_labels)
+    confusion_width = class_count * class_count
+    pair_width = 2 * confusion_width
+    group_signatures = np.zeros(
+        (group_count, 1 + len(prediction_pairs) * pair_width),
+        dtype=np.int64,
+    )
+    np.add.at(group_signatures[:, 0], group_indices, 1)
+    for pair_index, (model_a, model_b) in enumerate(prediction_pairs):
+        pair_offset = 1 + pair_index * pair_width
+        model_a_cells = true_indices * class_count + model_a
+        model_b_cells = true_indices * class_count + model_b
+        np.add.at(
+            group_signatures,
+            (group_indices, pair_offset + model_a_cells),
+            1,
+        )
+        np.add.at(
+            group_signatures,
+            (group_indices, pair_offset + confusion_width + model_b_cells),
+            1,
+        )
+
+    signatures, signature_group_counts = np.unique(
+        group_signatures,
+        axis=0,
+        return_counts=True,
+    )
+    signature_probabilities = signature_group_counts.astype(np.float64) / group_count
+    signature_probabilities[-1] = 1.0 - signature_probabilities[:-1].sum()
+
+    sampled_row_counts = np.empty(replicate_count, dtype=np.int64)
+    macro_a = np.empty((replicate_count, len(prediction_pairs)), dtype=np.float64)
+    macro_b = np.empty_like(macro_a)
+    accuracy_a = np.empty_like(macro_a)
+    accuracy_b = np.empty_like(macro_a)
+    per_class_a = np.empty(
+        (replicate_count, len(prediction_pairs), class_count),
+        dtype=np.float64,
+    )
+    per_class_b = np.empty_like(per_class_a)
+
+    generator = np.random.Generator(np.random.PCG64(seed))
+    for start in range(0, replicate_count, draw_batch_size):
+        stop = min(start + draw_batch_size, replicate_count)
+        multiplicities = generator.multinomial(
+            group_count,
+            signature_probabilities,
+            size=stop - start,
+        )
+        totals = multiplicities @ signatures
+        sampled_row_counts[start:stop] = totals[:, 0]
+        for pair_index in range(len(prediction_pairs)):
+            pair_offset = 1 + pair_index * pair_width
+            model_a_confusion = totals[:, pair_offset : pair_offset + confusion_width].reshape(
+                -1, class_count, class_count
+            )
+            model_b_confusion = totals[
+                :,
+                pair_offset + confusion_width : pair_offset + pair_width,
+            ].reshape(-1, class_count, class_count)
+            (
+                macro_a[start:stop, pair_index],
+                accuracy_a[start:stop, pair_index],
+                per_class_a[start:stop, pair_index, :],
+            ) = _confusion_scores(model_a_confusion)
+            (
+                macro_b[start:stop, pair_index],
+                accuracy_b[start:stop, pair_index],
+                per_class_b[start:stop, pair_index, :],
+            ) = _confusion_scores(model_b_confusion)
+
+    frames: list[pd.DataFrame] = []
+    replicate_ids = np.arange(1, replicate_count + 1, dtype=np.int64)
+    for pair_index, comparison_id in enumerate(comparison_ids):
+        payload: dict[str, Any] = {
+            "comparison_id": comparison_id,
+            "replicate": replicate_ids,
+            "sampled_group_count": np.full(replicate_count, group_count, dtype=np.int64),
+            "sampled_row_count": sampled_row_counts,
+            "model_a_macro_f1": macro_a[:, pair_index],
+            "model_b_macro_f1": macro_b[:, pair_index],
+            "b_minus_a_macro_f1": macro_b[:, pair_index] - macro_a[:, pair_index],
+            "model_a_accuracy": accuracy_a[:, pair_index],
+            "model_b_accuracy": accuracy_b[:, pair_index],
+            "b_minus_a_accuracy": accuracy_b[:, pair_index] - accuracy_a[:, pair_index],
+        }
+        for label_index, slug in enumerate(label_slugs):
+            payload[f"model_a_f1_{slug}"] = per_class_a[:, pair_index, label_index]
+            payload[f"model_b_f1_{slug}"] = per_class_b[:, pair_index, label_index]
+            payload[f"b_minus_a_f1_{slug}"] = (
+                per_class_b[:, pair_index, label_index] - per_class_a[:, pair_index, label_index]
+            )
+        frames.append(pd.DataFrame(payload))
+    return pd.concat(frames, ignore_index=True)
 
 
 def validate_oof(

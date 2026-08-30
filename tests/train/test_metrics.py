@@ -11,6 +11,7 @@ from fashion.train.metrics import (
     cross_fit_temperature,
     fit_temperature,
     multiclass_metrics,
+    paired_group_bootstrap,
     temperature_scale_probabilities,
     validate_oof,
 )
@@ -250,4 +251,246 @@ def test_fit_temperature_rejects_non_finite_bounds() -> None:
             true,
             labels=LABELS,
             temperature_bounds=(0.05, np.inf),
+        )
+
+
+def _bootstrap_inputs():
+    true = np.asarray(["Fall", "Fall", "Spring", "Summer", "Winter"], dtype=object)
+    groups = np.asarray(["family-b", "family-b", "family-a", "family-c", "family-c"])
+    model_a = np.asarray(["Fall", "Spring", "Spring", "Summer", "Fall"], dtype=object)
+    model_b = np.asarray(["Fall", "Fall", "Spring", "Winter", "Winter"], dtype=object)
+    return true, groups, model_a, model_b
+
+
+def test_paired_group_bootstrap_is_deterministic_and_batch_invariant() -> None:
+    true, groups, model_a, model_b = _bootstrap_inputs()
+    comparisons = {"primary": (model_a, model_b)}
+
+    first = paired_group_bootstrap(
+        true,
+        groups,
+        comparisons,
+        labels=LABELS,
+        replicates=37,
+        random_seed=19,
+        batch_size=1,
+    )
+    second = paired_group_bootstrap(
+        true,
+        groups,
+        comparisons,
+        labels=LABELS,
+        replicates=37,
+        random_seed=19,
+        batch_size=7,
+    )
+
+    pd.testing.assert_frame_equal(first, second)
+
+
+def test_paired_group_bootstrap_sorts_comparisons_and_reuses_draws() -> None:
+    true, groups, model_a, model_b = _bootstrap_inputs()
+    forward = {
+        "seed-2753": (model_a, model_b),
+        "seed-2026": (model_a.copy(), model_b.copy()),
+    }
+    reversed_mapping = dict(reversed(list(forward.items())))
+
+    first = paired_group_bootstrap(
+        true,
+        groups,
+        forward,
+        labels=LABELS,
+        replicates=25,
+        random_seed=7,
+        batch_size=4,
+    )
+    second = paired_group_bootstrap(
+        true,
+        groups,
+        reversed_mapping,
+        labels=LABELS,
+        replicates=25,
+        random_seed=7,
+        batch_size=4,
+    )
+
+    pd.testing.assert_frame_equal(first, second)
+    assert list(first["comparison_id"].drop_duplicates()) == ["seed-2026", "seed-2753"]
+    by_comparison = {
+        comparison_id: rows.reset_index(drop=True)
+        for comparison_id, rows in first.groupby("comparison_id", sort=False)
+    }
+    metric_columns = [column for column in first if column != "comparison_id"]
+    pd.testing.assert_frame_equal(
+        by_comparison["seed-2026"][metric_columns],
+        by_comparison["seed-2753"][metric_columns],
+    )
+
+
+def test_paired_group_bootstrap_resamples_whole_groups() -> None:
+    true = np.asarray(["Fall", "Spring", "Winter"], dtype=object)
+    groups = np.asarray(["large", "large", "small"], dtype=object)
+    model_a = np.asarray(["Fall", "Fall", "Winter"], dtype=object)
+    model_b = np.asarray(["Fall", "Spring", "Fall"], dtype=object)
+
+    result = paired_group_bootstrap(
+        true,
+        groups,
+        {"pair": (model_a, model_b)},
+        labels=LABELS,
+        replicates=500,
+        random_seed=11,
+        batch_size=17,
+    )
+
+    assert set(result["sampled_row_count"]) == {2, 3, 4}
+    assert result["sampled_group_count"].eq(2).all()
+
+    def direct_scores(row_indices: list[int]) -> tuple[float, ...]:
+        selected_true = true[row_indices]
+        values: list[float] = []
+        for predictions in (model_a[row_indices], model_b[row_indices]):
+            class_f1 = []
+            for label in LABELS:
+                true_positive = np.count_nonzero((selected_true == label) & (predictions == label))
+                false_positive = np.count_nonzero((selected_true != label) & (predictions == label))
+                false_negative = np.count_nonzero((selected_true == label) & (predictions != label))
+                denominator = 2 * true_positive + false_positive + false_negative
+                class_f1.append(2 * true_positive / denominator if denominator else 0.0)
+            values.extend((float(np.mean(class_f1)), float(np.mean(selected_true == predictions))))
+        return (
+            values[0],
+            values[2],
+            values[2] - values[0],
+            values[1],
+            values[3],
+            values[3] - values[1],
+        )
+
+    exhaustive_scores = []
+    for large_count in range(3):
+        row_indices = [0, 1] * large_count + [2] * (2 - large_count)
+        exhaustive_scores.append(direct_scores(row_indices))
+    metric_columns = [
+        "model_a_macro_f1",
+        "model_b_macro_f1",
+        "b_minus_a_macro_f1",
+        "model_a_accuracy",
+        "model_b_accuracy",
+        "b_minus_a_accuracy",
+    ]
+    expected = {tuple(round(float(value), 12) for value in row) for row in exhaustive_scores}
+    observed = {
+        tuple(round(float(row[column]), 12) for column in metric_columns)
+        for _, row in result.iterrows()
+    }
+    assert observed == expected
+
+
+def test_paired_group_bootstrap_keeps_absent_classes_with_zero_f1() -> None:
+    result = paired_group_bootstrap(
+        ["Fall", "Fall", "Spring"],
+        ["a", "b", "c"],
+        {"pair": (["Fall", "Fall", "Spring"], ["Fall", "Fall", "Spring"])},
+        labels=LABELS,
+        replicates=12,
+        random_seed=3,
+    )
+
+    assert result["model_a_f1_summer"].eq(0.0).all()
+    assert result["model_b_f1_winter"].eq(0.0).all()
+    assert result["model_a_macro_f1"].le(0.5).all()
+    assert not result.isna().any().any()
+
+
+@pytest.mark.parametrize(
+    ("overrides", "message"),
+    [
+        ({"comparisons": {}}, "non-empty mapping"),
+        ({"comparisons": {1: (["Fall"] * 3, ["Fall"] * 3)}}, "comparison IDs"),
+        ({"comparisons": {"pair": ("Fall",)}}, "model A and model B"),
+        ({"groups": ["a"]}, "match y_true length"),
+        ({"groups": ["same", "same", "same"]}, "at least two unique"),
+        ({"groups": ["a", "", "b"]}, "non-empty strings"),
+        ({"groups": ["a", None, "b"]}, "non-empty strings"),
+        ({"y_true": ["Fall", "Unknown", "Spring"]}, "unknown labels"),
+        (
+            {"comparisons": {"pair": (["Fall"], ["Fall", "Fall", "Spring"])}},
+            "match y_true length",
+        ),
+        (
+            {"comparisons": {"pair": (["Fall", "Fall", "Spring"], ["Bad"] * 3)}},
+            "unknown labels",
+        ),
+        ({"replicates": 1.5}, "positive integer"),
+        ({"replicates": True}, "positive integer"),
+        ({"batch_size": 0}, "positive integer"),
+        ({"random_seed": -1}, "non-negative integer"),
+        ({"random_seed": 2.0}, "non-negative integer"),
+    ],
+)
+def test_paired_group_bootstrap_rejects_invalid_inputs(overrides, message: str) -> None:
+    inputs = {
+        "y_true": ["Fall", "Fall", "Spring"],
+        "groups": ["a", "b", "c"],
+        "comparisons": {"pair": (["Fall", "Fall", "Spring"], ["Fall", "Spring", "Spring"])},
+        "labels": LABELS,
+        "replicates": 4,
+        "random_seed": 0,
+        "batch_size": 2,
+    }
+    inputs.update(overrides)
+
+    with pytest.raises(ValueError, match=message):
+        paired_group_bootstrap(**inputs)
+
+
+def test_paired_group_bootstrap_returns_one_row_per_pair_and_replicate() -> None:
+    true, groups, model_a, model_b = _bootstrap_inputs()
+
+    result = paired_group_bootstrap(
+        true,
+        groups,
+        {"primary": (model_a, model_b), "stability": (model_b, model_a)},
+        labels=LABELS,
+        replicates=13,
+        random_seed=5,
+        batch_size=6,
+    )
+
+    assert len(result) == 26
+    assert result.groupby("comparison_id")["replicate"].nunique().eq(13).all()
+    assert not result.isna().any().any()
+
+    primary = result.loc[result["comparison_id"] == "primary"].reset_index(drop=True)
+    stability = result.loc[result["comparison_id"] == "stability"].reset_index(drop=True)
+    pd.testing.assert_series_equal(
+        primary["sampled_row_count"],
+        stability["sampled_row_count"],
+        check_names=False,
+    )
+    metric_suffixes = [
+        "macro_f1",
+        "accuracy",
+        *(f"f1_{label.lower()}" for label in LABELS),
+    ]
+    for suffix in metric_suffixes:
+        np.testing.assert_allclose(
+            stability[f"model_a_{suffix}"],
+            primary[f"model_b_{suffix}"],
+            rtol=0.0,
+            atol=0.0,
+        )
+        np.testing.assert_allclose(
+            stability[f"model_b_{suffix}"],
+            primary[f"model_a_{suffix}"],
+            rtol=0.0,
+            atol=0.0,
+        )
+        np.testing.assert_allclose(
+            stability[f"b_minus_a_{suffix}"],
+            -primary[f"b_minus_a_{suffix}"],
+            rtol=0.0,
+            atol=0.0,
         )

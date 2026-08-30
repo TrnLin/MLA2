@@ -23,6 +23,7 @@ from fashion.train.metrics import (
     cross_fit_temperature,
     fit_temperature,
     multiclass_metrics,
+    paired_group_bootstrap,
     temperature_scale_probabilities,
     validate_oof,
 )
@@ -56,6 +57,7 @@ __all__ = [
     "multiclass_metrics",
     "new_run_id",
     "OOFValidationError",
+    "paired_group_bootstrap",
     "RunRecord",
     "RunRegistry",
     "RunCacheKey",
