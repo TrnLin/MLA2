@@ -27,6 +27,11 @@ from fashion.train.metrics import (
     temperature_scale_probabilities,
     validate_oof,
 )
+from fashion.train.multitask import (
+    RefitResult,
+    RefitTrainConfig,
+    train_masked_multitask_refit,
+)
 from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
 from fashion.train.reproducibility import (
     capture_git_state,
@@ -61,12 +66,15 @@ __all__ = [
     "RunRecord",
     "RunRegistry",
     "RunCacheKey",
+    "RefitResult",
+    "RefitTrainConfig",
     "seed_everything",
     "seed_worker",
     "tracked_run",
     "temperature_scale_probabilities",
     "TrainConfig",
     "train_fold",
+    "train_masked_multitask_refit",
     "validate_oof",
     "verify_artifact",
 ]

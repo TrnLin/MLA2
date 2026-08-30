@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -13,8 +14,10 @@ from fashion.models.season import SeasonModelSpec, build_multitask_season_model
 from fashion.train.engine import TrainConfig
 from fashion.train.metrics import validate_oof
 from fashion.train.multitask import (
+    RefitTrainConfig,
     masked_multitask_cross_entropy,
     train_masked_multitask_fold,
+    train_masked_multitask_refit,
 )
 
 
@@ -248,4 +251,99 @@ def test_multitask_fold_rejects_invalid_auxiliary_weight(
             checkpoint_path=tmp_path / "invalid.pt",
             auxiliary_weight=weight,
             labels=("negative", "positive"),
+        )
+
+
+def test_multitask_refit_runs_every_epoch_without_validation_or_selection() -> None:
+    train_loader, _ = _loaders()
+    model = TinyMultiTaskModel()
+    before = {name: value.detach().clone() for name, value in model.state_dict().items()}
+    config = RefitTrainConfig(
+        seed=2753,
+        epochs=3,
+        learning_rate=0.05,
+        weight_decay=0.0,
+        batch_size=4,
+        effective_batch_size=8,
+        gradient_clip_norm=1.0,
+        warmup_epochs=0,
+        use_amp=False,
+        device="cpu",
+    )
+
+    result = train_masked_multitask_refit(
+        model,
+        train_loader,
+        config=config,
+        auxiliary_weight=0.3,
+    )
+
+    assert result.final_epoch == 3
+    assert result.epochs_completed == 3
+    assert [row["epoch"] for row in result.history] == [1, 2, 3]
+    assert all(row["train_samples"] == 32 for row in result.history)
+    assert all(row["train_auxiliary_labeled_samples"] == 25 for row in result.history)
+    assert all("validation_loss" not in row for row in result.history)
+    assert result.metadata["selection_metric"] is None
+    assert result.metadata["validation_used"] is False
+    assert result.metadata["early_stopping_used"] is False
+    assert result.metadata["checkpoint_rule"] == "save_the_declared_final_epoch_state"
+    assert any(
+        not torch.equal(before[name], value.detach().cpu())
+        for name, value in model.state_dict().items()
+    )
+
+
+@pytest.mark.parametrize(
+    ("change", "message"),
+    [
+        ({"epochs": 0}, "epochs"),
+        ({"effective_batch_size": 6}, "effective_batch_size"),
+        ({"warmup_epochs": 3}, "warmup_epochs"),
+        ({"learning_rate": float("nan")}, "learning_rate"),
+        ({"device": "tpu"}, "device"),
+    ],
+)
+def test_refit_config_rejects_ambiguous_fixed_epoch_settings(
+    change: dict[str, object],
+    message: str,
+) -> None:
+    config = RefitTrainConfig(
+        seed=2753,
+        epochs=3,
+        learning_rate=1e-3,
+        weight_decay=1e-4,
+        batch_size=4,
+        effective_batch_size=8,
+        gradient_clip_norm=1.0,
+        warmup_epochs=1,
+        use_amp=False,
+        device="cpu",
+    )
+
+    with pytest.raises(ValueError, match=message):
+        replace(config, **change).validate()
+
+
+def test_multitask_refit_rejects_loader_batch_size_drift() -> None:
+    train_loader, _ = _loaders()
+    config = RefitTrainConfig(
+        seed=2753,
+        epochs=1,
+        learning_rate=1e-3,
+        weight_decay=1e-4,
+        batch_size=8,
+        effective_batch_size=8,
+        gradient_clip_norm=1.0,
+        warmup_epochs=0,
+        use_amp=False,
+        device="cpu",
+    )
+
+    with pytest.raises(ValueError, match="batch_size must match"):
+        train_masked_multitask_refit(
+            TinyMultiTaskModel(),
+            train_loader,
+            config=config,
+            auxiliary_weight=0.3,
         )

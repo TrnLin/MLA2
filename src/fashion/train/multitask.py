@@ -37,6 +37,70 @@ class MultiTaskLossTerms:
     auxiliary_count: int
 
 
+@dataclass(frozen=True)
+class RefitTrainConfig:
+    """Fixed-epoch optimiser settings after model selection has been frozen."""
+
+    seed: int
+    epochs: int
+    batch_size: int
+    effective_batch_size: int
+    learning_rate: float
+    weight_decay: float
+    gradient_clip_norm: float
+    warmup_epochs: float
+    use_amp: bool = True
+    device: str = "auto"
+
+    def validate(self) -> None:
+        """Reject settings that would make the declared refit ambiguous."""
+        if type(self.seed) is not int or self.seed < 0:
+            raise ValueError("seed must be a non-negative integer")
+        if type(self.epochs) is not int or self.epochs < 1:
+            raise ValueError("epochs must be a positive integer")
+        if type(self.batch_size) is not int or self.batch_size < 1:
+            raise ValueError("batch_size must be a positive integer")
+        if (
+            type(self.effective_batch_size) is not int
+            or self.effective_batch_size < self.batch_size
+            or self.effective_batch_size % self.batch_size
+        ):
+            raise ValueError(
+                "effective_batch_size must be an integer multiple of batch_size"
+            )
+        if not math.isfinite(self.learning_rate) or self.learning_rate <= 0:
+            raise ValueError("learning_rate must be finite and positive")
+        if not math.isfinite(self.weight_decay) or self.weight_decay < 0:
+            raise ValueError("weight_decay must be finite and non-negative")
+        if not math.isfinite(self.gradient_clip_norm) or self.gradient_clip_norm <= 0:
+            raise ValueError("gradient_clip_norm must be finite and positive")
+        if (
+            not math.isfinite(self.warmup_epochs)
+            or self.warmup_epochs < 0
+            or self.warmup_epochs >= self.epochs
+        ):
+            raise ValueError("warmup_epochs must be finite, non-negative, and below epochs")
+        if type(self.use_amp) is not bool:
+            raise ValueError("use_amp must be a boolean")
+        if self.device not in {"auto", "cpu", "cuda"}:
+            raise ValueError("device must be 'auto', 'cpu', or 'cuda'")
+
+
+@dataclass(frozen=True)
+class RefitResult:
+    """Training-only diagnostics for the declared final epoch state."""
+
+    seed: int
+    final_epoch: int
+    epochs_completed: int
+    history: list[dict[str, float | int]]
+    parameter_count: int
+    runtime_seconds: float
+    peak_vram_mb: float | None
+    device: str
+    metadata: dict[str, Any]
+
+
 def masked_multitask_cross_entropy(
     outputs: Mapping[str, torch.Tensor],
     season_targets: torch.Tensor,
@@ -390,5 +454,132 @@ def train_masked_multitask_fold(
             "updates_completed": update_index,
             "auxiliary_weight": auxiliary_weight,
             "selection_metric": "season_macro_f1",
+        },
+    )
+
+
+def train_masked_multitask_refit(
+    model: nn.Module,
+    train_loader: DataLoader[Any],
+    *,
+    config: RefitTrainConfig,
+    auxiliary_weight: float,
+) -> RefitResult:
+    """Train every declared epoch without validation, selection, or early stopping."""
+    config.validate()
+    if not math.isfinite(auxiliary_weight) or auxiliary_weight <= 0:
+        raise ValueError("auxiliary_weight must be a finite positive value")
+    if not isinstance(train_loader, Sized) or len(train_loader) == 0:
+        raise ValueError("train_loader must contain at least one batch")
+    loader_batch_size = getattr(train_loader, "batch_size", None)
+    if loader_batch_size is not None and loader_batch_size != config.batch_size:
+        raise ValueError(
+            "train_loader batch_size must match RefitTrainConfig.batch_size; "
+            f"got {loader_batch_size} and {config.batch_size}"
+        )
+
+    seed_everything(config.seed)
+    device = _resolve_device(config.device)
+    amp_enabled = config.use_amp and device.type == "cuda"
+    model.to(device)
+    optimizer = torch.optim.AdamW(
+        model.parameters(),
+        lr=config.learning_rate,
+        weight_decay=config.weight_decay,
+    )
+    accumulation_steps = config.effective_batch_size // config.batch_size
+    updates_per_epoch = math.ceil(len(train_loader) / accumulation_steps)
+    total_updates = config.epochs * updates_per_epoch
+    warmup_updates = round(config.warmup_epochs * updates_per_epoch)
+    scaler = torch.amp.GradScaler(device.type, enabled=amp_enabled)
+    history: list[dict[str, float | int]] = []
+    update_index = 0
+    started = time.perf_counter()
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
+
+    for epoch in range(1, config.epochs + 1):
+        model.train()
+        optimizer.zero_grad(set_to_none=True)
+        season_loss_sum = 0.0
+        auxiliary_loss_sum = 0.0
+        epoch_samples = 0
+        epoch_correct = 0
+        epoch_auxiliary_count = 0
+        for batch_index, batch in enumerate(train_loader):
+            group_start = (batch_index // accumulation_steps) * accumulation_steps
+            group_size = min(accumulation_steps, len(train_loader) - group_start)
+            with torch.amp.autocast(device_type=device.type, enabled=amp_enabled):
+                logits, targets, terms, _ = _forward_terms(
+                    model,
+                    batch,
+                    device=device,
+                    auxiliary_weight=auxiliary_weight,
+                    require_ids=False,
+                )
+                scaled_loss = terms.total / group_size
+            scaler.scale(scaled_loss).backward()
+            batch_size = int(targets.shape[0])
+            season_loss_sum += float(terms.season.detach()) * batch_size
+            auxiliary_loss_sum += float(terms.auxiliary.detach()) * terms.auxiliary_count
+            epoch_samples += batch_size
+            epoch_correct += int(logits.detach().argmax(dim=1).eq(targets).sum().item())
+            epoch_auxiliary_count += terms.auxiliary_count
+
+            end_of_group = (batch_index + 1) % accumulation_steps == 0
+            end_of_epoch = batch_index + 1 == len(train_loader)
+            if end_of_group or end_of_epoch:
+                factor = _learning_rate_factor(update_index, total_updates, warmup_updates)
+                for parameter_group in optimizer.param_groups:
+                    parameter_group["lr"] = config.learning_rate * factor
+                scaler.unscale_(optimizer)
+                nn.utils.clip_grad_norm_(model.parameters(), config.gradient_clip_norm)
+                scaler.step(optimizer)
+                scaler.update()
+                optimizer.zero_grad(set_to_none=True)
+                update_index += 1
+
+        if epoch_samples == 0:
+            raise ValueError("train loader produced no samples")
+        train_season_loss = season_loss_sum / epoch_samples
+        train_auxiliary_loss = (
+            auxiliary_loss_sum / epoch_auxiliary_count if epoch_auxiliary_count else 0.0
+        )
+        history.append(
+            {
+                "epoch": epoch,
+                "train_loss": train_season_loss
+                + auxiliary_weight * train_auxiliary_loss,
+                "train_season_loss": train_season_loss,
+                "train_auxiliary_loss": train_auxiliary_loss,
+                "train_accuracy": epoch_correct / epoch_samples,
+                "train_samples": epoch_samples,
+                "train_auxiliary_labeled_samples": epoch_auxiliary_count,
+                "learning_rate": float(optimizer.param_groups[0]["lr"]),
+            }
+        )
+
+    runtime_seconds = time.perf_counter() - started
+    peak_vram_mb = None
+    if device.type == "cuda":
+        peak_vram_mb = torch.cuda.max_memory_allocated(device) / (1024**2)
+    return RefitResult(
+        seed=config.seed,
+        final_epoch=config.epochs,
+        epochs_completed=len(history),
+        history=history,
+        parameter_count=sum(parameter.numel() for parameter in model.parameters()),
+        runtime_seconds=runtime_seconds,
+        peak_vram_mb=peak_vram_mb,
+        device=str(device),
+        metadata={
+            "amp_enabled": amp_enabled,
+            "accumulation_steps": accumulation_steps,
+            "updates_completed": update_index,
+            "selection_metric": None,
+            "validation_used": False,
+            "early_stopping_used": False,
+            "checkpoint_rule": "save_the_declared_final_epoch_state",
+            "auxiliary_weight": auxiliary_weight,
         },
     )
