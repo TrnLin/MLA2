@@ -290,6 +290,28 @@ def test_handoff_audits_and_packages_only_the_locked_task2_component(
     assert "latency_ms" not in smoke
 
 
+def test_handoff_accepts_a_cpu_refit_with_unavailable_vram(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """CPU runs use blank/None VRAM values and must remain auditable."""
+    fixture = _fixture(
+        tmp_path,
+        monkeypatch,
+        runtime_peak_vram_mb=None,
+        registry_peak_vram_mb=None,
+    )
+
+    audit = audit_task2_artifacts(
+        project_root=fixture["root"],
+        registry_path=fixture["registry_path"],
+        ultimate_manifest_path=fixture["ultimate_path"],
+        model_manifest_path=fixture["model_manifest"],
+    )
+
+    assert audit["status"].eq("PASS").all()
+
+
 def test_handoff_rejects_inference_from_a_different_manifest(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -327,6 +349,31 @@ def test_handoff_rejects_a_protected_smoke_image(
     )
 
     with pytest.raises(ValueError, match="labelled development data"):
+        build_task2_handoff_evidence(
+            audit,
+            fixture["prediction"],
+            project_root=fixture["root"],
+            registry_path=fixture["registry_path"],
+            model_manifest_path=fixture["model_manifest"],
+            output_directory=Path(fixture["root"]) / "evidence/final_handoff",
+        )
+
+
+def test_handoff_rejects_a_missing_canonical_smoke_image(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fixture = _fixture(tmp_path, monkeypatch)
+    image_path = Path(fixture["root"]) / "data/images/1163.jpg"
+    image_path.unlink()
+    audit = audit_task2_artifacts(
+        project_root=fixture["root"],
+        registry_path=fixture["registry_path"],
+        ultimate_manifest_path=fixture["ultimate_path"],
+        model_manifest_path=fixture["model_manifest"],
+    )
+
+    with pytest.raises((FileNotFoundError, ValueError), match="smoke image|exist"):
         build_task2_handoff_evidence(
             audit,
             fixture["prediction"],

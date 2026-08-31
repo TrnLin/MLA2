@@ -352,6 +352,48 @@ def test_refit_load_rejects_missing_or_tampered_registry_row(
             )
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("task", "task3"),
+        ("metrics", '{"macro_f1": 0.8}'),
+        ("prediction_path", "predictions.csv"),
+        ("prediction_sha256", "0" * 64),
+        ("runtime", '{"python": "tampered"}'),
+        ("runtime_seconds", "999.0"),
+    ],
+    ids=(
+        "wrong-task",
+        "non-empty-metrics",
+        "prediction-path",
+        "prediction-hash",
+        "runtime-environment",
+        "runtime-seconds",
+    ),
+)
+def test_refit_manifest_rejects_non_refit_registry_provenance(
+    monkeypatch: pytest.MonkeyPatch,
+    field: str,
+    value: str,
+) -> None:
+    """Direct refit loading must bind task, evaluation, and runtime provenance."""
+    _patch_fast_refit(monkeypatch)
+    (ROOT / "tmp").mkdir(exist_ok=True)
+    with TemporaryDirectory(dir=ROOT / "tmp") as directory:
+        paths = _paths(Path(directory))
+        run_or_load_development_refit(mode="run", project_root=ROOT, **paths)
+        registry = pd.read_csv(paths["registry_path"], dtype=str, keep_default_na=False)
+        registry.loc[0, field] = value
+        registry.to_csv(paths["registry_path"], index=False)
+
+        with pytest.raises(ValueError, match="registry"):
+            load_verified_development_refit_manifest(
+                paths["manifest_path"],
+                project_root=ROOT,
+                registry_path=paths["registry_path"],
+            )
+
+
 def test_refit_rejects_a_parallel_live_process_before_writing_artifacts(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
