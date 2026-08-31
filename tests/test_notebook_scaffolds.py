@@ -227,6 +227,9 @@ def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
                 "**Column guide.**" in following.source
                 or "**Chart guide.**" in following.source
             ), f"cell {cell.id} has no output-specific reading guide"
+            assert "**Deep analysis.**" in following.source, (
+                f"cell {cell.id} has no output-specific deep analysis"
+            )
 
             for generic in (
                 "A separate compact table exposes",
@@ -237,6 +240,7 @@ def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
                 "read without a wide, scroll-heavy result block",
                 "Interpretation to write after running",
                 "It supports the frozen development decision in the parent subsection",
+                "**Senior analysis.**",
             ):
                 assert generic not in following.source, (
                     f"cell {cell.id} still uses a generic interpretation template"
@@ -416,12 +420,17 @@ def test_task2_b1_cell_records_uncalibrated_five_fold_evidence() -> None:
         "build_experiment_evidence",
         "calibration_claim_allowed=False",
         "macro_f1_gain_over_B0",
+        "threading.Event",
+        "_monitor_b1_progress",
+        "B1 progress:",
+        "b1_progress_thread.join",
     ):
         assert required in code
     assert "32,753" in finding
     assert "0.609561" in finding
     assert "0.486901" in finding
     assert "not calibrated probabilities" in finding
+    assert "operational checkpoints" in finding
     assert "b1-hog-hsv-svm-f0-s2753-b23d1eafe35f" in finding
     assert "results/evidence/task2/b1_hog_hsv_svm/manifest.json" in finding
 
