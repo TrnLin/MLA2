@@ -2,7 +2,7 @@
 title: "Task 2 - Fashion Season Classification: execution report and plan"
 status: task2-component-ready-for-group-freeze
 created: 2026-08-25
-updated: 2026-08-31
+updated: 2026-09-01
 scope: task2-season
 ---
 
@@ -108,14 +108,14 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | Refactored to 147 small code cells: each visible cell emits at most one compact table or figure and is followed by an output-specific reading guide, deep analysis, decision, and limitation | Static structure and interpretation-quality checks pass; saved outputs and execution counts are intentionally clear until the separately scheduled clean-kernel trace run |
+| Notebook 03 | Complete and clean-kernel executed in `artifact_replay` mode: all 147 code cells have sequential counts, exactly one saved output, and no error | Run All verifies and displays frozen tables, figures, manifests, and the final bundle; it cannot launch training or rebuild evidence |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
 | Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, verified image-only inference, and the locked component handoff are implemented | Wait for whole-group freeze; do not add or retune a candidate |
 | `results/runs.csv` | 123 append-only rows: 116 completed, two failed, and five interrupted | The provenance-hardened refit and all earlier lifecycle outcomes remain traceable |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 | Current handoff gate | Ten component checks pass for run `task2-season-i2-refit-fall-s2753-637dd6378be9`; the portable registry snapshot, bundle, and image-only smoke prediction match the frozen hashes; final evaluation remains locked | Wait for a machine-readable whole-group freeze before Notebook 06 |
-| Current verification | `pip check`, Ruff, and all `576` repository tests pass. This includes 43 focused refit/handoff tests and 34 static notebook-contract tests | The code, artifact, and presentation contracts are green; this remains separate from the later clean-kernel trace run |
+| Current verification | Ruff and all `578` repository tests pass. This includes 43 focused refit/handoff tests and 36 notebook-contract tests | The code, artifact, presentation, saved-output, and artifact-only replay contracts are green |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -862,10 +862,13 @@ weights to Git.
 
 ### 6.6 Reproducibility, cache, and Git trace contract
 
-Notebook 03 uses `run_or_load` by default. A completed run may be reused only when its
-config, split, label-map, implementation, fold, seed, and artifact hashes all match.
-Documentation-only changes do not invalidate training artifacts. Failed, interrupted, or
-incomplete runs are never reused.
+Historical Task 2 experiment launchers used `run_or_load`. A completed run could be reused
+only when its config, split, label-map, implementation, fold, seed, and artifact hashes all
+matched. The completed Notebook 03 is now locked to `artifact_replay`: Run All reads only
+the frozen, hash-verified manifests and artifacts. A missing or changed artifact raises an
+error instead of selecting another cache row, rebuilding evidence, or training a model.
+Git-tracked SHA-256 locks anchor the replay roots and loose figures. The fold-0 loader is
+given the frozen statistics directly, so it cannot fit or write a preprocessing cache.
 
 The complete local registry and candidate checkpoints remain generated files. After each
 experiment gate, Git stores a compact registry snapshot, the relevant evidence tables and
@@ -1261,9 +1264,10 @@ freeze, provenance-hardened refit, and locked handoff. Every result cell has one
 display at most. Its interpretation explains how to read the exact displayed columns or
 axes, highlights the important values and reversals, gives a deep analysis tied to that
 output, and closes with a decision and limitation. Static tests reject generic templates,
-shallow analysis, and duplicated analysis text. All execution counts and saved outputs
-are deliberately clear; the notebook makes no clean-kernel execution claim in this
-window.
+shallow analysis, and duplicated analysis text. A clean-kernel Run All completed all 147
+code cells in order. Every cell stores exactly one readable output, no cell stores an
+error, and the run left the registry, frozen evidence, figures, model bundle, and split
+contract byte-for-byte unchanged.
 
 | Section | Final purpose |
 |---|---|
@@ -1420,8 +1424,8 @@ they are not Task 2 implementation checkboxes.
 - [x] a final image-only inference function exists;
 
 Remaining group/deferred verification, outside this Task 2 workstream: one independent
-holdout evaluation after group freeze, official prediction-file validation, and the
-separately scheduled notebook/figure/table trace run.
+holdout evaluation after group freeze and official prediction-file validation. The
+Notebook 03 figure/table trace run is complete.
 
 ## 11. Knowledge to understand
 
