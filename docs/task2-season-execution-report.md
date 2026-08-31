@@ -108,20 +108,49 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | All 55 code cells are implemented; Section 15 records the artifact audit, development-image inference smoke, and locked handoff | Keep the 193-cell structure; final group evaluation remains outside this notebook |
+| Notebook 03 | All 55 code cells are implemented, but the pre-refactor notebook has 36 cells that would emit more than one visible result and 24 later cells without saved outputs | Split each scientific result into one compact output followed immediately by its explanation; final group evaluation remains outside this notebook |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
 | Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, verified image-only inference, and the locked component handoff are implemented | Wait for whole-group freeze; do not add or retune a candidate |
 | `results/runs.csv` | 122 append-only rows: 115 completed, two failed, and five interrupted | The replacement refit and both earlier lifecycle outcomes remain traceable |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 | Current handoff gate | Ten component checks pass; the portable one-row registry snapshot, bundle, and image-only smoke prediction match the frozen run and hashes; final evaluation remains locked | Wait for a machine-readable whole-group freeze before Notebook 06 |
-| Current verification | Ruff and all `563` repository tests pass, including `32` Notebook contracts; all 193 Notebook cells validate and all 55 code cells compile | G8, inference, and the locked Section 15 handoff are green |
+| Current verification | The last committed full gate passed Ruff and `563` tests; the current focused Task 2, model-boundary, and notebook gate passes `371` tests, and all 55 notebook code cells compile | Re-run the full gate after the provenance fixes and notebook refactor; a saved-output audit is not a substitute for a clean-kernel run |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
 Notebook 03 should orchestrate those functions and tell the evidence-backed story.
 
-### 2.1 Implemented shared training core
+### 2.1 Luna Max defect audit and correction order
+
+The read-only Luna Max audit found three integrity defects and four presentation defects.
+The existing measured results are not invalidated, but the contracts must be hardened
+before the component is called finished.
+
+| ID | Confirmed issue | Required correction | Proof of completion |
+|---|---|---|---|
+| H1 | A valid CPU refit stores no peak-VRAM value, while the new handoff validator unconditionally converts it to `float` | Treat missing CPU VRAM consistently in the runtime artifact and registry while still rejecting malformed or mismatched GPU values | A focused CPU-null regression test and the real handoff builder both pass |
+| H2 | The direct development-refit loader does not bind task, metrics, prediction fields, or runtime provenance | Move the complete registry-row contract into the refit verifier so every caller receives the same guarantee | Direct-loader tampering tests fail before the fix and pass after it |
+| H3 | The handoff smoke audit proves that the path is canonical but does not prove that the image file still exists | Require the declared smoke image to be a real file inside the project before accepting the prediction | A missing-image regression test is rejected |
+| N1 | 36 notebook cells can emit several wide tables or figures from one execution | Keep verification code, but split visible results so each code cell emits at most one compact table or one figure | Static notebook contract checks every display cell |
+| N2 | 24 Section 9-15 code cells have no saved output, while one earlier cell has output with no execution count | Clear stale execution state for changed cells and make no false Run All claim | The report separates static validation from the later clean-kernel execution gate |
+| N3 | Raw registries, hashes, and transposed decision JSON overwhelm the scientific story | Show only decision, metric, cost, and compact trace columns; keep complete provenance in verified artifacts | Visible-column tests and immediate table glossaries pass |
+| N4 | One preprocessing figure leaks as an automatic second output, and the impact-flow helper requests an unavailable font weight | Close generated figures explicitly and use an installed font weight | No accidental figure output or font warning remains |
+
+The correction order is intentionally traceable:
+
+1. Commit this audit and plan without changing measured evidence.
+2. Add failing regression tests for H1-H3.
+3. Fix refit and handoff provenance, then run the real CPU handoff builder.
+4. Replace brittle notebook output-count tests with a single-output narrative contract.
+5. Refactor Notebook 03 into setup, compact table, and figure leaves. Every visible result
+   receives an English explanation of purpose, columns or chart encodings, measured
+   finding, decision impact, and limitation.
+6. Run focused tests, Ruff, the complete repository suite, and a final Luna Max review.
+7. Commit each stage separately. Do not open Notebook 06 or the holdout before the
+   whole-group freeze.
+
+### 2.2 Implemented shared training core
 
 | Module | Owns | Must not own |
 |---|---|---|
@@ -137,7 +166,7 @@ The engine is deliberately lower-level than the Task 2 runner. It does not choos
 split, model, transform, or winner. This keeps later experiment comparisons explicit and
 testable.
 
-### 2.2 Runtime call order and file effects
+### 2.3 Runtime call order and file effects
 
 ```mermaid
 flowchart LR
