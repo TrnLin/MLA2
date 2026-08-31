@@ -39,9 +39,14 @@ from fashion.train.data import (
     fit_fold_rgb_stats,
     task3_target_frames,
 )
-from fashion.train.loss import WeightedLabelSmoothedCrossEntropy
+from fashion.train.loss import WeightedFocalCrossEntropy, WeightedLabelSmoothedCrossEntropy
 from fashion.train.metrics import classification_metrics
-from fashion.train.model import Task3BaselineCNN, Task3CompactBlurCNN, Task3TinyResNet18PM
+from fashion.train.model import (
+    Task3BaselineCNN,
+    Task3CompactBlurCNN,
+    Task3GeM3CNN,
+    Task3TinyResNet18PM,
+)
 from fashion.train.registry import RunRegistry
 from fashion.train.task3_experiments import Task3ChildSpec, effective_number_class_weights
 
@@ -377,6 +382,8 @@ def _task3_model_contract(
             compact_blur_cnn_parameter_count(config.target),
             compact_blur_cnn_macs(config.target),
         )
+    if model_family == "task3_small_cnn_gem_p3":
+        return model_family, run_model_token, baseline_parameter_count(config.target), None
     if model_family != "task3_small_cnn":
         raise ValueError(f"unsupported Task 3 model family: {model_family}")
     return model_family, run_model_token, baseline_parameter_count(config.target), None
@@ -391,6 +398,8 @@ def _build_task3_model(
         return Task3TinyResNet18PM(config)
     if model_family == "task3_compact_blur_cnn":
         return Task3CompactBlurCNN(config)
+    if model_family == "task3_small_cnn_gem_p3":
+        return Task3GeM3CNN(config)
     classifier_dropout = child_spec.classifier_dropout if child_spec is not None else 0.0
     return Task3BaselineCNN(config, classifier_dropout=classifier_dropout)
 
@@ -468,6 +477,7 @@ def run_task3_baseline_fold(
     if child_spec is not None and child_spec.loss_name in {
         "effective_number_cross_entropy",
         "effective_number_label_smoothed_cross_entropy",
+        "effective_number_focal_cross_entropy",
     }:
         if child_spec.class_weight_beta is None or child_spec.class_weight_cap is None:
             raise ValueError("class-balanced loss requires beta and cap")
@@ -568,7 +578,14 @@ def run_task3_baseline_fold(
         if class_weights is not None
         else None
     )
-    if child_spec is not None and child_spec.label_smoothing > 0.0:
+    if child_spec is not None and child_spec.focal_gamma > 0.0:
+        if class_weight_tensor is None:
+            raise ValueError("weighted focal loss requires fold-only class weights")
+        criterion: nn.Module = WeightedFocalCrossEntropy(
+            class_weight_tensor,
+            gamma=child_spec.focal_gamma,
+        )
+    elif child_spec is not None and child_spec.label_smoothing > 0.0:
         if class_weight_tensor is None:
             raise ValueError("weighted label smoothing requires fold-only class weights")
         criterion: nn.Module = WeightedLabelSmoothedCrossEntropy(
@@ -702,6 +719,7 @@ def run_task3_baseline_fold(
         metrics["label_smoothing"] = (
             child_spec.label_smoothing if child_spec is not None else 0.0
         )
+        metrics["focal_gamma"] = child_spec.focal_gamma if child_spec is not None else 0.0
         metrics["model_family"] = model_family
         metrics["parameter_count"] = parameter_count
         metrics["architecture_macs"] = architecture_macs
