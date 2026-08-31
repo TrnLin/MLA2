@@ -8,6 +8,8 @@ import pytest
 from fashion.train.config import (
     Task3BaselineConfig,
     baseline_parameter_count,
+    compact_blur_cnn_macs,
+    compact_blur_cnn_parameter_count,
     config_digest,
     tinyresnet18_pm_macs,
     tinyresnet18_pm_parameter_count,
@@ -29,6 +31,10 @@ def test_baseline_configuration_and_parameter_counts_are_frozen() -> None:
     assert tinyresnet18_pm_parameter_count("usage") == 395_253
     assert tinyresnet18_pm_macs("gender") == 94_268_640
     assert tinyresnet18_pm_macs("usage") == 94_269_024
+    assert compact_blur_cnn_parameter_count("gender") == 67_069
+    assert compact_blur_cnn_parameter_count("usage") == 67_585
+    assert compact_blur_cnn_macs("gender") == 29_504_320
+    assert compact_blur_cnn_macs("usage") == 29_504_832
     assert config_digest(gender) == config_digest(Task3BaselineConfig(target="gender"))
     assert config_digest(gender) != config_digest(usage)
 

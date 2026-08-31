@@ -20,7 +20,7 @@ TASK_SPECS = {
     "04_task3_gender_usage.ipynb": {
         "title": "Task 3 — Gender and Usage Classification",
         "tokens": ("gender", "usage", "negative transfer", "label-mask"),
-        "sections": 17,
+        "sections": 19,
     },
     "05_task4_visual_search.ipynb": {
         "title": "Task 4 — Fashion Visual Search",
@@ -47,6 +47,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04b_task3_smallcnn_child_experiments.ipynb",
         "04c_task3_smallcnn_e3_experiments.ipynb",
         "04d_task3_tinyresnet18_pm_e4_experiments.ipynb",
+        "04e_task3_compactblurcnn_label_smoothing_e5_experiments.ipynb",
         *TASK_SPECS,
     }
     present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
@@ -153,10 +154,47 @@ def test_task3_e4_runner_only_trains_tinyresnet_children() -> None:
     assert "START_BASELINE_TRAINING" not in code
     assert "nohup" not in code
     assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
-    assert all(
-        cell.execution_count is None and not cell.outputs
+    assert not any(
+        output.output_type == "error"
         for cell in notebook.cells
         if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_e5_runner_only_trains_frozen_e5_children() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/04e_task3_compactblurcnn_label_smoothing_e5_experiments.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert (
+        notebook.metadata["title"]
+        == "Task 3 — CompactBlurCNN and Label-Smoothing E5 Experiments"
+    )
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert '"gender_compact_blur_cnn"' in source
+    assert '"usage_label_smoothing"' in source
+    assert "latest_completed_baseline_parent_run_ids" in source
+    assert "latest_completed_usage_e2_parent_run_ids" in source
+    assert 'gender_e5_check["parameter_count"] > 100_000' in source
+    assert 'gender_e5_check["architecture_macs"] > 35_000_000' in source
+    assert 'usage_e5_check["label_smoothing"] != 0.05' in source
+    assert "run_task3_baseline_cv" not in source
+    assert "gender_tinyresnet18_pm" not in source
+    assert "usage_tinyresnet18_pm" not in source
+    assert "START_BASELINE_TRAINING" not in code
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
     )
 
 
@@ -200,6 +238,13 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
                 "t3-e3-curves",
                 "t3-e3-diagnostics",
                 "t3-e3-failure-gallery",
+                "t3-e4-results-load",
+                "t3-e4-comparison",
+                "t3-e4-bootstrap",
+                "t3-e4-gates",
+                "t3-e4-curves",
+                "t3-e4-diagnostics",
+                "t3-e4-failure-gallery",
             }
             assert all(
                 cell.cell_type == "markdown" or cell.id in code_ids for cell in notebook.cells
@@ -273,11 +318,38 @@ def test_task_metric_contracts_are_explicit() -> None:
     assert "94,269,024" in task3
     assert "paired product-family bootstrap lower 95% bound" in task3
     assert "If any gate fails, stop and retain Gender E1 or Usage E2" in task3
+    assert "E4 result: reject TinyResNet for both targets" in task3
+    assert "Registry check: ten completed E4 folds" in task3
+    assert "e4_paired_family_bootstrap" in task3
+    assert "0.7121" in task3
+    assert "0.3878" in task3
+    assert "−0.0400 to −0.0034" in task3
+    assert "2.5688 ms against 1.00 ms" in task3
+    assert "e4_learning_curves.png" in task3
+    assert "e4_fold_macro_f1.png" in task3
+    assert "e4_per_class_f1_comparison.png" in task3
+    assert "e4_normalised_confusion.png" in task3
+    assert "e4_robustness_comparison.png" in task3
+    assert "e4_finished_model_gap.png" in task3
+    assert "e4_{target}_high_confidence_errors.png" in task3
+    assert "E5 hypotheses — test the remaining causes directly" in task3
+    assert "Gender E5 hypothesis — CompactBlurCNN" in task3
+    assert "67,069 trainable parameters" in task3
+    assert "does **not** prove that every architecture change is exhausted" in task3
+    assert "Usage E5 hypothesis — class-balanced label smoothing" in task3
+    assert "E2 accuracy is 0.6843 versus 0.8996" in task3
+    assert "wrong predictions at confidence ≥ 0.99" in task3
+    assert "planned: hypothesis and gates frozen before training" in task3
+    assert "results/evidence/task3" in task3
     assert "04a_task3_smallcnn_baseline_training.ipynb` reproduces only" in task3
     assert "04b_task3_smallcnn_child_experiments.ipynb` loads those saved parents" in task3
     assert "04c_task3_smallcnn_e3_experiments.ipynb` loads the accepted E1/E2 parents" in task3
     assert (
         "04d_task3_tinyresnet18_pm_e4_experiments.ipynb` loads the same accepted parents"
+        in task3
+    )
+    assert (
+        "04e_task3_compactblurcnn_label_smoothing_e5_experiments.ipynb` loads E1/E2"
         in task3
     )
     assert "run_task3_baseline_cv" not in task3
