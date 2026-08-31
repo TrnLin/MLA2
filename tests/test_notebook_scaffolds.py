@@ -233,6 +233,10 @@ def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
                 "A separate figure keeps",
                 "Rows represent checks, configurations, candidates, or folds",
                 "The plotted trend is loaded from the verified evidence artifact",
+                "This output isolates",
+                "read without a wide, scroll-heavy result block",
+                "Interpretation to write after running",
+                "It supports the frozen development decision in the parent subsection",
             ):
                 assert generic not in following.source, (
                     f"cell {cell.id} still uses a generic interpretation template"
