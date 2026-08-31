@@ -36,6 +36,11 @@ from fashion.task2.experiments import (
     run_matrix,
     run_or_load_experiment,
 )
+from fashion.task2.handoff import (
+    audit_task2_artifacts,
+    build_task2_handoff_evidence,
+    load_verified_task2_handoff,
+)
 from fashion.task2.inference import (
     InvalidSeasonImageError,
     SeasonBundle,
@@ -102,8 +107,11 @@ __all__ = [
     "HogHsvSpec",
     "HogHsvSvmModel",
     "InvalidSeasonImageError",
+    "audit_task2_artifacts",
+    "build_task2_handoff_evidence",
     "load_experiment_config",
     "load_season_bundle",
+    "load_verified_task2_handoff",
     "load_ultimate_judgement_spec",
     "load_verified_selection_freeze",
     "load_verified_ultimate_judgement_manifest",
