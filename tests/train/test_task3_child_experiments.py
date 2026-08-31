@@ -15,6 +15,7 @@ from fashion.train.task3_experiments import (
     gender_class_balanced_spec,
     gender_compact_blur_cnn_spec,
     gender_gem_p3_spec,
+    gender_tinyhrnet20_spec,
     gender_tinyresnet18_pm_spec,
     latest_completed_baseline_parent_run_ids,
     latest_completed_usage_e2_parent_run_ids,
@@ -22,6 +23,7 @@ from fashion.train.task3_experiments import (
     usage_classifier_dropout_spec,
     usage_focal_gamma1_spec,
     usage_label_smoothing_spec,
+    usage_tinyconvnext18_spec,
     usage_tinyresnet18_pm_spec,
 )
 
@@ -179,6 +181,38 @@ def test_usage_e6_changes_only_focal_modulation_from_e2() -> None:
 
     with pytest.raises(ValueError, match="more than its predeclared factor"):
         replace(spec, label_smoothing=0.05)
+
+
+def test_gender_e7_changes_only_the_architecture_from_e1() -> None:
+    parents = tuple(f"gender-e1-parent-{fold}" for fold in range(5))
+    spec = gender_tinyhrnet20_spec(parents)
+
+    assert spec.target == "gender"
+    assert spec.parent_artifact_dir == "baseline"
+    assert spec.changed_factor == "model_architecture"
+    assert spec.loss_name == "cross_entropy"
+    assert spec.model_family == "task3_tinyhrnet20"
+    assert spec.run_model_token == "tinyhrnet20"
+
+    with pytest.raises(ValueError, match="more than its predeclared factor"):
+        replace(spec, classifier_dropout=0.2)
+
+
+def test_usage_e7_changes_only_the_architecture_from_e2() -> None:
+    parents = tuple(f"usage-e2-parent-{fold}" for fold in range(5))
+    spec = usage_tinyconvnext18_spec(parents)
+
+    assert spec.target == "usage"
+    assert spec.parent_artifact_dir == "experiments/t3_usage_e2_class_balanced_ce"
+    assert spec.changed_factor == "model_architecture"
+    assert spec.loss_name == "effective_number_cross_entropy"
+    assert spec.class_weight_beta == pytest.approx(0.999)
+    assert spec.class_weight_cap == pytest.approx(5.0)
+    assert spec.model_family == "task3_tinyconvnext18"
+    assert spec.run_model_token == "tinyconvnext18"
+
+    with pytest.raises(ValueError, match="more than its predeclared factor"):
+        replace(spec, focal_gamma=1.0)
 
 
 def test_registry_audit_requires_complete_hashed_rows(tmp_path) -> None:

@@ -10,10 +10,15 @@ from torch.nn import functional as F
 
 from fashion.train.config import (
     COMPACT_BLUR_CNN_WIDTHS,
+    TINYCONVNEXT18_DEPTHS,
+    TINYCONVNEXT18_WIDTHS,
+    TINYHRNET20_WIDTHS,
     TINYRESNET18_PM_WIDTHS,
     Task3BaselineConfig,
     baseline_parameter_count,
     compact_blur_cnn_parameter_count,
+    tinyconvnext18_parameter_count,
+    tinyhrnet20_parameter_count,
     tinyresnet18_pm_parameter_count,
 )
 
@@ -301,3 +306,251 @@ class Task3CompactBlurCNN(nn.Module):
     def forward(self, images: torch.Tensor) -> torch.Tensor:
         features = self.features(images)
         return self.classifier(self.pool(features).flatten(1))
+
+
+class _Task3HRNetFuse(nn.Module):
+    """Fuse every HRNet branch into every other resolution."""
+
+    def __init__(self, widths: tuple[int, ...]) -> None:
+        super().__init__()
+        self.widths = widths
+        transforms: dict[str, nn.Module] = {}
+        for source in range(len(widths)):
+            for target in range(len(widths)):
+                if source == target:
+                    continue
+                key = f"{source}_to_{target}"
+                if source > target:
+                    transforms[key] = nn.Sequential(
+                        nn.Conv2d(widths[source], widths[target], kernel_size=1, bias=False),
+                        nn.BatchNorm2d(widths[target]),
+                    )
+                    continue
+                reductions: list[nn.Module] = []
+                input_channels = widths[source]
+                for step in range(source + 1, target + 1):
+                    output_channels = widths[step]
+                    reductions.extend(
+                        [
+                            nn.Conv2d(
+                                input_channels,
+                                output_channels,
+                                kernel_size=3,
+                                stride=2,
+                                padding=1,
+                                bias=False,
+                            ),
+                            nn.BatchNorm2d(output_channels),
+                        ]
+                    )
+                    if step != target:
+                        reductions.append(nn.ReLU(inplace=True))
+                    input_channels = output_channels
+                transforms[key] = nn.Sequential(*reductions)
+        self.transforms = nn.ModuleDict(transforms)
+        self.relu = nn.ReLU(inplace=True)
+
+    def forward(self, branches: list[torch.Tensor]) -> list[torch.Tensor]:
+        if len(branches) != len(self.widths):
+            raise ValueError("HRNet fusion received the wrong number of branches")
+        outputs: list[torch.Tensor] = []
+        for target, target_features in enumerate(branches):
+            fused = target_features
+            for source, source_features in enumerate(branches):
+                if source == target:
+                    continue
+                transformed = self.transforms[f"{source}_to_{target}"](source_features)
+                if source > target:
+                    transformed = F.interpolate(
+                        transformed,
+                        size=target_features.shape[-2:],
+                        mode="bilinear",
+                        align_corners=False,
+                    )
+                if transformed.shape[-2:] != target_features.shape[-2:]:
+                    raise RuntimeError("HRNet fusion produced an unexpected spatial shape")
+                fused = fused + transformed
+            outputs.append(self.relu(fused))
+        return outputs
+
+
+class _Task3HRNetExchangeUnit(nn.Module):
+    """Apply one residual block per branch, then exchange resolutions."""
+
+    def __init__(self, widths: tuple[int, ...]) -> None:
+        super().__init__()
+        self.blocks = nn.ModuleList(
+            _Task3ResidualBlock(channels, channels, stride=1) for channels in widths
+        )
+        self.fuse = _Task3HRNetFuse(widths)
+
+    def forward(self, branches: list[torch.Tensor]) -> list[torch.Tensor]:
+        refined = [block(features) for block, features in zip(self.blocks, branches, strict=True)]
+        return self.fuse(refined)
+
+
+class Task3TinyHRNet20(nn.Module):
+    """Scratch three-resolution network for the Gender E7 hypothesis."""
+
+    def __init__(self, config: Task3BaselineConfig) -> None:
+        super().__init__()
+        high, middle, low = TINYHRNET20_WIDTHS
+        self.stem = nn.Sequential(
+            nn.Conv2d(3, high, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.BatchNorm2d(high),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(high, high, kernel_size=3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(high),
+            nn.ReLU(inplace=True),
+        )
+        self.high_resolution_blocks = nn.Sequential(
+            _Task3ResidualBlock(high, high, stride=1),
+            _Task3ResidualBlock(high, high, stride=1),
+        )
+        self.add_middle_branch = nn.Sequential(
+            nn.Conv2d(high, middle, kernel_size=3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(middle),
+            nn.ReLU(inplace=True),
+        )
+        self.two_branch_stage = nn.ModuleList(
+            [_Task3HRNetExchangeUnit((high, middle)) for _ in range(2)]
+        )
+        self.add_low_branch = nn.Sequential(
+            nn.Conv2d(middle, low, kernel_size=3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(low),
+            nn.ReLU(inplace=True),
+        )
+        self.three_branch_stage = _Task3HRNetExchangeUnit((high, middle, low))
+        self.pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.classifier = nn.Linear(sum(TINYHRNET20_WIDTHS), config.num_classes)
+        self._initialise()
+
+        actual = sum(
+            parameter.numel() for parameter in self.parameters() if parameter.requires_grad
+        )
+        expected = tinyhrnet20_parameter_count(config.target)
+        if actual != expected:
+            raise RuntimeError(
+                f"TinyHRNet parameter contract failed: expected {expected}, found {actual}"
+            )
+
+    def _initialise(self) -> None:
+        for module in self.modules():
+            if isinstance(module, nn.Conv2d):
+                nn.init.kaiming_normal_(module.weight, mode="fan_out", nonlinearity="relu")
+            elif isinstance(module, nn.BatchNorm2d):
+                nn.init.ones_(module.weight)
+                nn.init.zeros_(module.bias)
+            elif isinstance(module, nn.Linear):
+                nn.init.kaiming_uniform_(module.weight, a=math.sqrt(5))
+                if module.bias is not None:
+                    nn.init.zeros_(module.bias)
+
+    def feature_branches(self, images: torch.Tensor) -> list[torch.Tensor]:
+        high = self.high_resolution_blocks(self.stem(images))
+        branches = [high, self.add_middle_branch(high)]
+        for exchange in self.two_branch_stage:
+            branches = exchange(branches)
+        branches.append(self.add_low_branch(branches[1]))
+        return self.three_branch_stage(branches)
+
+    def forward(self, images: torch.Tensor) -> torch.Tensor:
+        branches = self.feature_branches(images)
+        pooled = torch.cat([self.pool(features).flatten(1) for features in branches], dim=1)
+        return self.classifier(pooled)
+
+
+class _Task3LayerNorm2d(nn.Module):
+    """Apply LayerNorm over channels while accepting NCHW tensors."""
+
+    def __init__(self, channels: int) -> None:
+        super().__init__()
+        self.norm = nn.LayerNorm(channels)
+
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+        return self.norm(inputs.permute(0, 2, 3, 1)).permute(0, 3, 1, 2)
+
+
+class _Task3ConvNeXtBlock(nn.Module):
+    """One ConvNeXt block with fixed 7x7 depthwise and 4x channel expansion."""
+
+    def __init__(self, channels: int) -> None:
+        super().__init__()
+        self.depthwise = nn.Conv2d(
+            channels,
+            channels,
+            kernel_size=7,
+            padding=3,
+            groups=channels,
+        )
+        self.norm = nn.LayerNorm(channels)
+        self.expand = nn.Linear(channels, 4 * channels)
+        self.activation = nn.GELU()
+        self.contract = nn.Linear(4 * channels, channels)
+        self.layer_scale = nn.Parameter(torch.full((channels,), 1e-6))
+
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+        features = self.depthwise(inputs).permute(0, 2, 3, 1)
+        features = self.norm(features)
+        features = self.contract(self.activation(self.expand(features)))
+        features = features * self.layer_scale
+        return inputs + features.permute(0, 3, 1, 2)
+
+
+class Task3TinyConvNeXt18(nn.Module):
+    """Scratch TinyConvNeXt for the Usage E7 architecture hypothesis."""
+
+    def __init__(self, config: Task3BaselineConfig) -> None:
+        super().__init__()
+        widths = TINYCONVNEXT18_WIDTHS
+        self.stem = nn.Sequential(
+            nn.Conv2d(3, widths[0], kernel_size=3, stride=1, padding=1),
+            _Task3LayerNorm2d(widths[0]),
+        )
+        self.stages = nn.ModuleList(
+            [
+                nn.Sequential(
+                    *[_Task3ConvNeXtBlock(channels) for _ in range(depth)]
+                )
+                for channels, depth in zip(widths, TINYCONVNEXT18_DEPTHS, strict=True)
+            ]
+        )
+        self.transitions = nn.ModuleList(
+            [
+                nn.Sequential(
+                    _Task3LayerNorm2d(input_channels),
+                    nn.Conv2d(input_channels, output_channels, kernel_size=2, stride=2),
+                )
+                for input_channels, output_channels in zip(
+                    widths[:-1], widths[1:], strict=True
+                )
+            ]
+        )
+        self.head_norm = nn.LayerNorm(widths[-1])
+        self.classifier = nn.Linear(widths[-1], config.num_classes)
+        self._initialise()
+
+        actual = sum(
+            parameter.numel() for parameter in self.parameters() if parameter.requires_grad
+        )
+        expected = tinyconvnext18_parameter_count(config.target)
+        if actual != expected:
+            raise RuntimeError(
+                f"TinyConvNeXt parameter contract failed: expected {expected}, found {actual}"
+            )
+
+    def _initialise(self) -> None:
+        for module in self.modules():
+            if isinstance(module, (nn.Conv2d, nn.Linear)):
+                nn.init.trunc_normal_(module.weight, std=0.02)
+                if module.bias is not None:
+                    nn.init.zeros_(module.bias)
+
+    def forward(self, images: torch.Tensor) -> torch.Tensor:
+        features = self.stem(images)
+        for stage, blocks in enumerate(self.stages):
+            features = blocks(features)
+            if stage < len(self.transitions):
+                features = self.transitions[stage](features)
+        pooled = features.mean(dim=(-2, -1))
+        return self.classifier(self.head_norm(pooled))

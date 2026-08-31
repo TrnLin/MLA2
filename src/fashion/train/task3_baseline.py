@@ -30,6 +30,10 @@ from fashion.train.config import (
     compact_blur_cnn_macs,
     compact_blur_cnn_parameter_count,
     config_digest,
+    tinyconvnext18_macs,
+    tinyconvnext18_parameter_count,
+    tinyhrnet20_macs,
+    tinyhrnet20_parameter_count,
     tinyresnet18_pm_macs,
     tinyresnet18_pm_parameter_count,
 )
@@ -45,6 +49,8 @@ from fashion.train.model import (
     Task3BaselineCNN,
     Task3CompactBlurCNN,
     Task3GeM3CNN,
+    Task3TinyConvNeXt18,
+    Task3TinyHRNet20,
     Task3TinyResNet18PM,
 )
 from fashion.train.registry import RunRegistry
@@ -382,6 +388,20 @@ def _task3_model_contract(
             compact_blur_cnn_parameter_count(config.target),
             compact_blur_cnn_macs(config.target),
         )
+    if model_family == "task3_tinyhrnet20":
+        return (
+            model_family,
+            run_model_token,
+            tinyhrnet20_parameter_count(config.target),
+            tinyhrnet20_macs(config.target),
+        )
+    if model_family == "task3_tinyconvnext18":
+        return (
+            model_family,
+            run_model_token,
+            tinyconvnext18_parameter_count(config.target),
+            tinyconvnext18_macs(config.target),
+        )
     if model_family == "task3_small_cnn_gem_p3":
         return model_family, run_model_token, baseline_parameter_count(config.target), None
     if model_family != "task3_small_cnn":
@@ -398,6 +418,10 @@ def _build_task3_model(
         return Task3TinyResNet18PM(config)
     if model_family == "task3_compact_blur_cnn":
         return Task3CompactBlurCNN(config)
+    if model_family == "task3_tinyhrnet20":
+        return Task3TinyHRNet20(config)
+    if model_family == "task3_tinyconvnext18":
+        return Task3TinyConvNeXt18(config)
     if model_family == "task3_small_cnn_gem_p3":
         return Task3GeM3CNN(config)
     classifier_dropout = child_spec.classifier_dropout if child_spec is not None else 0.0

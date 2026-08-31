@@ -11,6 +11,10 @@ from fashion.train.config import (
     compact_blur_cnn_macs,
     compact_blur_cnn_parameter_count,
     config_digest,
+    tinyconvnext18_macs,
+    tinyconvnext18_parameter_count,
+    tinyhrnet20_macs,
+    tinyhrnet20_parameter_count,
     tinyresnet18_pm_macs,
     tinyresnet18_pm_parameter_count,
 )
@@ -35,6 +39,10 @@ def test_baseline_configuration_and_parameter_counts_are_frozen() -> None:
     assert compact_blur_cnn_parameter_count("usage") == 67_585
     assert compact_blur_cnn_macs("gender") == 29_504_320
     assert compact_blur_cnn_macs("usage") == 29_504_832
+    assert tinyhrnet20_parameter_count("gender") == 374_445
+    assert tinyhrnet20_macs("gender") == 104_064_700
+    assert tinyconvnext18_parameter_count("usage") == 384_345
+    assert tinyconvnext18_macs("usage") == 95_297_616
     assert config_digest(gender) == config_digest(Task3BaselineConfig(target="gender"))
     assert config_digest(gender) != config_digest(usage)
 

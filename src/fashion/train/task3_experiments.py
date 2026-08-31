@@ -24,18 +24,24 @@ Task3ChildName = Literal[
     "usage_label_smoothing",
     "gender_gem_p3",
     "usage_focal_gamma1",
+    "gender_tinyhrnet20",
+    "usage_tinyconvnext18",
 ]
 Task3ModelFamily = Literal[
     "task3_small_cnn",
     "task3_small_cnn_gem_p3",
     "task3_tinyresnet18_pm",
     "task3_compact_blur_cnn",
+    "task3_tinyhrnet20",
+    "task3_tinyconvnext18",
 ]
 Task3RunModelToken = Literal[
     "smallcnn",
     "smallcnngem3",
     "tinyresnet18pm",
     "compactblurcnn",
+    "tinyhrnet20",
+    "tinyconvnext18",
 ]
 
 
@@ -240,6 +246,42 @@ class Task3ChildSpec:
                 "focal_gamma": 1.0,
                 "model_family": "task3_small_cnn",
                 "run_model_token": "smallcnn",
+            },
+            "gender_tinyhrnet20": {
+                "target": "gender",
+                "experiment_id": "t3_gender_tinyhrnet20",
+                "hypothesis_id": "t3_gender_e7_tinyhrnet20",
+                "artifact_dir": "experiments/t3_gender_e7_tinyhrnet20",
+                "run_prefix": "t3_gender_e7_tinyhrnet20",
+                "changed_factor": "model_architecture",
+                "training_augmentation": "none",
+                "loss_name": "cross_entropy",
+                "parent_artifact_dir": "baseline",
+                "class_weight_beta": None,
+                "class_weight_cap": None,
+                "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
+                "focal_gamma": 0.0,
+                "model_family": "task3_tinyhrnet20",
+                "run_model_token": "tinyhrnet20",
+            },
+            "usage_tinyconvnext18": {
+                "target": "usage",
+                "experiment_id": "t3_usage_tinyconvnext18",
+                "hypothesis_id": "t3_usage_e7_tinyconvnext18",
+                "artifact_dir": "experiments/t3_usage_e7_tinyconvnext18",
+                "run_prefix": "t3_usage_e7_tinyconvnext18",
+                "changed_factor": "model_architecture",
+                "training_augmentation": "none",
+                "loss_name": "effective_number_cross_entropy",
+                "parent_artifact_dir": "experiments/t3_usage_e2_class_balanced_ce",
+                "class_weight_beta": 0.999,
+                "class_weight_cap": 5.0,
+                "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
+                "focal_gamma": 0.0,
+                "model_family": "task3_tinyconvnext18",
+                "run_model_token": "tinyconvnext18",
             },
         }[self.name]
         expected.setdefault("focal_gamma", 0.0)
@@ -448,6 +490,46 @@ def usage_focal_gamma1_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
     )
 
 
+def gender_tinyhrnet20_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    """Change only the Gender E1 representation to TinyHRNet-20."""
+    return Task3ChildSpec(
+        name="gender_tinyhrnet20",
+        target="gender",
+        experiment_id="t3_gender_tinyhrnet20",
+        hypothesis_id="t3_gender_e7_tinyhrnet20",
+        artifact_dir="experiments/t3_gender_e7_tinyhrnet20",
+        run_prefix="t3_gender_e7_tinyhrnet20",
+        changed_factor="model_architecture",
+        training_augmentation="none",
+        loss_name="cross_entropy",
+        parent_artifact_dir="baseline",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        model_family="task3_tinyhrnet20",
+        run_model_token="tinyhrnet20",
+    )
+
+
+def usage_tinyconvnext18_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    """Change only the Usage E2 representation to TinyConvNeXt-18."""
+    return Task3ChildSpec(
+        name="usage_tinyconvnext18",
+        target="usage",
+        experiment_id="t3_usage_tinyconvnext18",
+        hypothesis_id="t3_usage_e7_tinyconvnext18",
+        artifact_dir="experiments/t3_usage_e7_tinyconvnext18",
+        run_prefix="t3_usage_e7_tinyconvnext18",
+        changed_factor="model_architecture",
+        training_augmentation="none",
+        loss_name="effective_number_cross_entropy",
+        parent_artifact_dir="experiments/t3_usage_e2_class_balanced_ce",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        class_weight_beta=0.999,
+        class_weight_cap=5.0,
+        model_family="task3_tinyconvnext18",
+        run_model_token="tinyconvnext18",
+    )
+
+
 def effective_number_class_weights(
     counts: Sequence[int], *, beta: float = 0.999, cap: float = 5.0
 ) -> np.ndarray:
@@ -554,6 +636,10 @@ def _spec(name: Task3ChildName, parent_run_ids: Sequence[str]) -> Task3ChildSpec
         return gender_gem_p3_spec(parent_run_ids)
     if name == "usage_focal_gamma1":
         return usage_focal_gamma1_spec(parent_run_ids)
+    if name == "gender_tinyhrnet20":
+        return gender_tinyhrnet20_spec(parent_run_ids)
+    if name == "usage_tinyconvnext18":
+        return usage_tinyconvnext18_spec(parent_run_ids)
     raise ValueError(f"unsupported Task 3 child: {name}")
 
 
@@ -573,6 +659,8 @@ def check_task3_child_setup(
         "task3_small_cnn_gem_p3",
         "task3_tinyresnet18_pm",
         "task3_compact_blur_cnn",
+        "task3_tinyhrnet20",
+        "task3_tinyconvnext18",
     }:
         import torch
 
@@ -581,10 +669,20 @@ def check_task3_child_setup(
             baseline_parameter_count,
             compact_blur_cnn_macs,
             compact_blur_cnn_parameter_count,
+            tinyconvnext18_macs,
+            tinyconvnext18_parameter_count,
+            tinyhrnet20_macs,
+            tinyhrnet20_parameter_count,
             tinyresnet18_pm_macs,
             tinyresnet18_pm_parameter_count,
         )
-        from fashion.train.model import Task3CompactBlurCNN, Task3GeM3CNN, Task3TinyResNet18PM
+        from fashion.train.model import (
+            Task3CompactBlurCNN,
+            Task3GeM3CNN,
+            Task3TinyConvNeXt18,
+            Task3TinyHRNet20,
+            Task3TinyResNet18PM,
+        )
 
         config = Task3BaselineConfig(target=spec.target)
         device = torch.device(device_name)
@@ -596,10 +694,18 @@ def check_task3_child_setup(
             model = Task3TinyResNet18PM(config).to(device)
             parameter_count = tinyresnet18_pm_parameter_count(spec.target)
             architecture_macs = tinyresnet18_pm_macs(spec.target)
-        else:
+        elif spec.model_family == "task3_compact_blur_cnn":
             model = Task3CompactBlurCNN(config).to(device)
             parameter_count = compact_blur_cnn_parameter_count(spec.target)
             architecture_macs = compact_blur_cnn_macs(spec.target)
+        elif spec.model_family == "task3_tinyhrnet20":
+            model = Task3TinyHRNet20(config).to(device)
+            parameter_count = tinyhrnet20_parameter_count(spec.target)
+            architecture_macs = tinyhrnet20_macs(spec.target)
+        else:
+            model = Task3TinyConvNeXt18(config).to(device)
+            parameter_count = tinyconvnext18_parameter_count(spec.target)
+            architecture_macs = tinyconvnext18_macs(spec.target)
         with torch.inference_mode():
             output = model(
                 torch.zeros(2, 3, config.image_height, config.image_width, device=device)

@@ -11,6 +11,8 @@ nn = torch.nn
 Task3BaselineCNN = importlib.import_module("fashion.train.model").Task3BaselineCNN
 Task3CompactBlurCNN = importlib.import_module("fashion.train.model").Task3CompactBlurCNN
 Task3GeM3CNN = importlib.import_module("fashion.train.model").Task3GeM3CNN
+Task3TinyConvNeXt18 = importlib.import_module("fashion.train.model").Task3TinyConvNeXt18
+Task3TinyHRNet20 = importlib.import_module("fashion.train.model").Task3TinyHRNet20
 Task3TinyResNet18PM = importlib.import_module("fashion.train.model").Task3TinyResNet18PM
 WeightedFocalCrossEntropy = importlib.import_module(
     "fashion.train.loss"
@@ -73,6 +75,41 @@ def test_gem_p3_changes_only_global_pooling_and_keeps_the_parameter_count() -> N
         parameter.numel() for parameter in baseline.parameters()
     )
     assert tuple(child(torch.zeros(2, 3, 80, 60)).shape) == (2, 5)
+
+
+def test_tinyhrnet_keeps_three_resolutions_and_matches_the_e7_budget() -> None:
+    config = Task3BaselineConfig(target="gender")
+    model = Task3TinyHRNet20(config)
+
+    with torch.inference_mode():
+        branches = model.feature_branches(torch.zeros(2, 3, 80, 60))
+
+    assert sum(parameter.numel() for parameter in model.parameters()) == 374_445
+    assert [tuple(branch.shape) for branch in branches] == [
+        (2, 20, 40, 30),
+        (2, 40, 20, 15),
+        (2, 80, 10, 8),
+    ]
+    assert not any(isinstance(module, nn.MaxPool2d) for module in model.modules())
+    assert tuple(model(torch.zeros(2, 3, 80, 60)).shape) == (2, 5)
+
+
+def test_tinyconvnext_uses_large_depthwise_kernels_and_matches_the_e7_budget() -> None:
+    config = Task3BaselineConfig(target="usage")
+    model = Task3TinyConvNeXt18(config)
+
+    depthwise = [
+        module
+        for module in model.modules()
+        if isinstance(module, nn.Conv2d)
+        and module.kernel_size == (7, 7)
+        and module.groups == module.in_channels
+    ]
+
+    assert sum(parameter.numel() for parameter in model.parameters()) == 384_345
+    assert len(depthwise) == 6
+    assert not any(isinstance(module, nn.BatchNorm2d) for module in model.modules())
+    assert tuple(model(torch.zeros(2, 3, 80, 60)).shape) == (2, 9)
 
 
 def test_weighted_label_smoothing_weights_examples_by_the_true_class_only() -> None:

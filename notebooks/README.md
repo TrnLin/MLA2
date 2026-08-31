@@ -16,11 +16,13 @@ Notebooks tell the investigation story. Reusable code lives in `src/fashion/`.
 | 04c | `04c_task3_smallcnn_e3_experiments.ipynb` | E3 training runner | loss-only Gender and dropout-only Usage experiments |
 | 04d | `04d_task3_tinyresnet18_pm_e4_experiments.ipynb` | E4 training runner | parameter-matched TinyResNet architecture experiments |
 | 04e | `04e_task3_compactblurcnn_label_smoothing_e5_experiments.ipynb` | E5 training runner | compact Gender architecture and Usage label-smoothing experiments |
+| 04f | `04f_task3_gem_focal_e6_experiments.ipynb` | E6 training runner | Gender GeM pooling and Usage focal-loss experiments |
+| 04g | `04g_task3_tinyconvnext_tinyhrnet_e7_experiments.ipynb` | E7 training runner | Usage TinyConvNeXt and Gender TinyHRNet architecture experiments |
 | 05 | `05_task4_visual_search.ipynb` | planning scaffold | Top-K search choices and comparisons |
 | 06 | `06_final_evaluation.ipynb` | locked scaffold | one holdout evaluation and ultimate judgement |
 
 Notebooks 02, 03, 05, and 06 are planning or locked Markdown scaffolds. Task 3 has one
-narrative notebook plus separate E1–E5 training runners so Run All cannot accidentally retrain
+narrative notebook plus separate E1–E7 training runners so Run All cannot accidentally retrain
 an earlier stage. Each `TODO(owner)` belongs to the task owner.
 
 ## Shared rules

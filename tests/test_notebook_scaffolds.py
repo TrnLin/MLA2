@@ -20,7 +20,7 @@ TASK_SPECS = {
     "04_task3_gender_usage.ipynb": {
         "title": "Task 3 — Gender and Usage Classification",
         "tokens": ("gender", "usage", "negative transfer", "label-mask"),
-        "sections": 21,
+        "sections": 23,
     },
     "05_task4_visual_search.ipynb": {
         "title": "Task 4 — Fashion Visual Search",
@@ -49,6 +49,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04d_task3_tinyresnet18_pm_e4_experiments.ipynb",
         "04e_task3_compactblurcnn_label_smoothing_e5_experiments.ipynb",
         "04f_task3_gem_focal_e6_experiments.ipynb",
+        "04g_task3_tinyconvnext_tinyhrnet_e7_experiments.ipynb",
         *TASK_SPECS,
     }
     present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
@@ -231,6 +232,44 @@ def test_task3_e6_runner_only_trains_gem_and_focal_children() -> None:
     )
 
 
+def test_task3_e7_runner_only_trains_frozen_architecture_children() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/04g_task3_tinyconvnext_tinyhrnet_e7_experiments.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert (
+        notebook.metadata["title"]
+        == "Task 3 — TinyConvNeXt and TinyHRNet E7 Experiments"
+    )
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert source.index('run_task3_child_cv(\n    "usage_tinyconvnext18"') < source.index(
+        'run_task3_child_cv(\n    "gender_tinyhrnet20"'
+    )
+    assert "latest_completed_baseline_parent_run_ids" in source
+    assert "latest_completed_usage_e2_parent_run_ids" in source
+    assert source.count("audit_completed_registry_rows(") == 2
+    assert 'usage_e7_check["parameter_count"] != 384_345' in source
+    assert 'usage_e7_check["architecture_macs"] != 95_297_616' in source
+    assert 'gender_e7_check["parameter_count"] != 374_445' in source
+    assert 'gender_e7_check["architecture_macs"] != 104_064_700' in source
+    assert "run_task3_baseline_cv" not in source
+    assert "gender_gem_p3" not in source
+    assert "usage_focal_gamma1" not in source
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
 def test_task_scaffolds_leave_owner_decisions_open() -> None:
     for filename, spec in TASK_SPECS.items():
         notebook = nbformat.read(ROOT / "notebooks" / filename, as_version=4)
@@ -285,6 +324,9 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
                 "t3-e5-curves",
                 "t3-e5-diagnostics",
                 "t3-e5-failure-gallery",
+                "t3-e6-load",
+                "t3-e6-tables",
+                "t3-e6-plots",
             }
             assert all(
                 cell.cell_type == "markdown" or cell.id in code_ids for cell in notebook.cells
@@ -379,10 +421,27 @@ def test_task_metric_contracts_are_explicit() -> None:
     assert "Usage E5 hypothesis — class-balanced label smoothing" in task3
     assert "E2 accuracy is 0.6843 versus 0.8996" in task3
     assert "wrong predictions at confidence ≥ 0.99" in task3
-    assert "planned: hypothesis and gates frozen before training" in task3
     assert "E6 hypotheses — isolate pooling and hard-example focus" in task3
     assert "Gender E6 — fixed GeM pooling with `p=3`" in task3
     assert "Usage E6 — class-balanced focal loss with `gamma=1`" in task3
+    assert "E6 result: Gender improves; Usage focal loss is rejected" in task3
+    assert "0.7335" in task3
+    assert "0.4094" in task3
+    assert "e6_bootstrap" in task3
+    assert "e6_learning_curves.png" in task3
+    assert "e6_per_class_f1_comparison.png" in task3
+    assert "E7 hypotheses — change the feature representation" in task3
+    assert "Gender E7 — TinyHRNet-20" in task3
+    assert "Usage E7 — TinyConvNeXt-18" in task3
+    assert "374,445 parameters" in task3
+    assert "384,345 parameters" in task3
+    assert "Run Usage TinyConvNeXt-18 first" in task3
+    assert "mean Boys/Girls/Unisex F1 at least 0.6013" in task3
+    assert "mixed-family NLL at most 1.6475" in task3
+    assert "Casual 0.9218, Ethnic 0.8440" in task3
+    assert "if TinyConvNeXt clearly beats E2" in task3
+    assert "04g_task3_tinyconvnext_tinyhrnet_e7_experiments.ipynb` trains Usage" in task3
+    assert "planned: architecture and stronger E6-aware gates frozen before training" in task3
     assert "04f_task3_gem_focal_e6_experiments.ipynb` loads E1/E2" in task3
     assert "results/evidence/task3" in task3
     assert "04a_task3_smallcnn_baseline_training.ipynb` reproduces only" in task3

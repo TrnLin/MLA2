@@ -12,6 +12,9 @@ Task3Target = Literal["gender", "usage"]
 TARGET_CLASS_COUNTS: dict[Task3Target, int] = {"gender": 5, "usage": 9}
 TINYRESNET18_PM_WIDTHS = (12, 24, 48, 96)
 COMPACT_BLUR_CNN_WIDTHS = (24, 48, 96, 128)
+TINYHRNET20_WIDTHS = (20, 40, 80)
+TINYCONVNEXT18_WIDTHS = (18, 36, 72, 144)
+TINYCONVNEXT18_DEPTHS = (1, 1, 3, 1)
 
 
 @dataclass(frozen=True)
@@ -173,3 +176,119 @@ def compact_blur_cnn_macs(target: Task3Target) -> int:
     macs += height * width * third * 3 * 3
     macs += height * width * third * output
     return macs + output * TARGET_CLASS_COUNTS[target]
+
+
+def tinyhrnet20_parameter_count(target: Task3Target) -> int:
+    """Calculate the fixed three-resolution TinyHRNet contract without PyTorch."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    high, middle, low = TINYHRNET20_WIDTHS
+
+    def conv_bn(input_channels: int, output_channels: int, kernel_size: int) -> int:
+        return input_channels * output_channels * kernel_size**2 + 2 * output_channels
+
+    def residual_block(channels: int) -> int:
+        return 2 * conv_bn(channels, channels, 3)
+
+    parameters = conv_bn(3, high, 3) + conv_bn(high, high, 3)
+    parameters += 2 * residual_block(high)
+    parameters += conv_bn(high, middle, 3)
+
+    two_branch_blocks = residual_block(high) + residual_block(middle)
+    two_branch_fusion = conv_bn(high, middle, 3) + conv_bn(middle, high, 1)
+    parameters += 2 * (two_branch_blocks + two_branch_fusion)
+
+    parameters += conv_bn(middle, low, 3)
+    parameters += residual_block(high) + residual_block(middle) + residual_block(low)
+    parameters += conv_bn(middle, high, 1) + conv_bn(low, high, 1)
+    parameters += conv_bn(high, middle, 3) + conv_bn(low, middle, 1)
+    parameters += conv_bn(high, middle, 3) + conv_bn(middle, low, 3)
+    parameters += conv_bn(middle, low, 3)
+
+    classes = TARGET_CLASS_COUNTS[target]
+    return parameters + sum(TINYHRNET20_WIDTHS) * classes + classes
+
+
+def tinyhrnet20_macs(target: Task3Target) -> int:
+    """Return convolution and classifier MACs for the fixed 80x60 TinyHRNet."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    high, middle, low = TINYHRNET20_WIDTHS
+    high_area, middle_area, low_area = 40 * 30, 20 * 15, 10 * 8
+
+    def conv_macs(
+        input_channels: int,
+        output_channels: int,
+        kernel_size: int,
+        output_area: int,
+    ) -> int:
+        return output_area * input_channels * output_channels * kernel_size**2
+
+    def residual_macs(channels: int, area: int) -> int:
+        return 2 * conv_macs(channels, channels, 3, area)
+
+    macs = conv_macs(3, high, 3, 80 * 60)
+    macs += conv_macs(high, high, 3, high_area)
+    macs += 2 * residual_macs(high, high_area)
+    macs += conv_macs(high, middle, 3, middle_area)
+
+    two_branch_blocks = residual_macs(high, high_area) + residual_macs(
+        middle, middle_area
+    )
+    two_branch_fusion = conv_macs(high, middle, 3, middle_area) + conv_macs(
+        middle, high, 1, middle_area
+    )
+    macs += 2 * (two_branch_blocks + two_branch_fusion)
+
+    macs += conv_macs(middle, low, 3, low_area)
+    macs += residual_macs(high, high_area)
+    macs += residual_macs(middle, middle_area)
+    macs += residual_macs(low, low_area)
+    macs += conv_macs(middle, high, 1, middle_area)
+    macs += conv_macs(low, high, 1, low_area)
+    macs += conv_macs(high, middle, 3, middle_area)
+    macs += conv_macs(low, middle, 1, low_area)
+    macs += conv_macs(high, middle, 3, middle_area)
+    macs += conv_macs(middle, low, 3, low_area)
+    macs += conv_macs(middle, low, 3, low_area)
+    return macs + sum(TINYHRNET20_WIDTHS) * TARGET_CLASS_COUNTS[target]
+
+
+def tinyconvnext18_parameter_count(target: Task3Target) -> int:
+    """Calculate the fixed TinyConvNeXt-18 contract without PyTorch."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    widths = TINYCONVNEXT18_WIDTHS
+    parameters = 3 * widths[0] * 3 * 3 + widths[0] + 2 * widths[0]
+    for channels, depth in zip(widths, TINYCONVNEXT18_DEPTHS, strict=True):
+        block = channels * 7 * 7 + channels
+        block += 2 * channels
+        block += channels * (4 * channels) + 4 * channels
+        block += (4 * channels) * channels + channels
+        block += channels
+        parameters += depth * block
+    for input_channels, output_channels in zip(widths[:-1], widths[1:], strict=True):
+        parameters += 2 * input_channels
+        parameters += input_channels * output_channels * 2 * 2 + output_channels
+    parameters += 2 * widths[-1]
+    classes = TARGET_CLASS_COUNTS[target]
+    return parameters + widths[-1] * classes + classes
+
+
+def tinyconvnext18_macs(target: Task3Target) -> int:
+    """Return convolution, linear, and classifier MACs for an 80x60 input."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    widths = TINYCONVNEXT18_WIDTHS
+    height, width = 80, 60
+    macs = height * width * 3 * widths[0] * 3 * 3
+    for stage, (channels, depth) in enumerate(
+        zip(widths, TINYCONVNEXT18_DEPTHS, strict=True)
+    ):
+        area = height * width
+        block_macs = area * (channels * 7 * 7 + 8 * channels * channels)
+        macs += depth * block_macs
+        if stage < len(widths) - 1:
+            height, width = height // 2, width // 2
+            macs += height * width * channels * widths[stage + 1] * 2 * 2
+    return macs + widths[-1] * TARGET_CLASS_COUNTS[target]
