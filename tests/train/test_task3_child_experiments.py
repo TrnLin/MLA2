@@ -14,10 +14,12 @@ from fashion.train.task3_experiments import (
     gender_brightness_spec,
     gender_class_balanced_spec,
     gender_compact_blur_cnn_spec,
+    gender_gem_p3_early_stopping_spec,
     gender_gem_p3_spec,
     gender_tinyhrnet20_spec,
     gender_tinyresnet18_pm_spec,
     latest_completed_baseline_parent_run_ids,
+    latest_completed_gender_e6_parent_run_ids,
     latest_completed_usage_e2_parent_run_ids,
     usage_class_balanced_spec,
     usage_classifier_dropout_spec,
@@ -25,6 +27,7 @@ from fashion.train.task3_experiments import (
     usage_label_smoothing_spec,
     usage_tinyconvnext18_spec,
     usage_tinyresnet18_pm_spec,
+    usage_translation_2px_spec,
 )
 
 
@@ -215,6 +218,40 @@ def test_usage_e7_changes_only_the_architecture_from_e2() -> None:
         replace(spec, focal_gamma=1.0)
 
 
+def test_gender_e8_changes_only_the_e6_checkpoint_policy() -> None:
+    parents = tuple(f"gender-e6-parent-{fold}" for fold in range(5))
+    spec = gender_gem_p3_early_stopping_spec(parents)
+
+    assert spec.target == "gender"
+    assert spec.parent_artifact_dir == "experiments/t3_gender_e6_gem_p3"
+    assert spec.changed_factor == "checkpoint_selection"
+    assert spec.model_family == "task3_small_cnn_gem_p3"
+    assert spec.checkpoint_policy == "best_validation_macro_f1"
+    assert spec.early_stopping_min_epoch == 15
+    assert spec.early_stopping_patience == 10
+    assert spec.early_stopping_min_delta == pytest.approx(0.001)
+
+    with pytest.raises(ValueError, match="more than its predeclared factor"):
+        replace(spec, training_augmentation="translation_uniform_2px_p05")
+
+
+def test_usage_e8_changes_only_training_translation_from_e2() -> None:
+    parents = tuple(f"usage-e2-parent-{fold}" for fold in range(5))
+    spec = usage_translation_2px_spec(parents)
+
+    assert spec.target == "usage"
+    assert spec.parent_artifact_dir == "experiments/t3_usage_e2_class_balanced_ce"
+    assert spec.changed_factor == "training_translation"
+    assert spec.training_augmentation == "translation_uniform_2px_p05"
+    assert spec.loss_name == "effective_number_cross_entropy"
+    assert spec.class_weight_beta == pytest.approx(0.999)
+    assert spec.class_weight_cap == pytest.approx(5.0)
+    assert spec.checkpoint_policy == "final_epoch"
+
+    with pytest.raises(ValueError, match="more than its predeclared factor"):
+        replace(spec, checkpoint_policy="best_validation_macro_f1")
+
+
 def test_registry_audit_requires_complete_hashed_rows(tmp_path) -> None:
     registry = tmp_path / "runs.csv"
     registry.write_text(
@@ -249,6 +286,22 @@ def test_brightness_augmentation_uses_the_predeclared_range(monkeypatch) -> None
     augmented = apply_training_augmentation(image, "brightness_uniform_085_115")
 
     assert np.asarray(augmented).tolist() == np.full((2, 2, 3), 85).tolist()
+
+
+def test_translation_augmentation_uses_the_frozen_probability_and_offsets(monkeypatch) -> None:
+    image = Image.new("RGB", (5, 5), (255, 255, 255))
+    image.putpixel((2, 2), (0, 0, 0))
+    offsets = iter((1, -1))
+    monkeypatch.setattr("fashion.train.augmentation.random.random", lambda: 0.0)
+    monkeypatch.setattr(
+        "fashion.train.augmentation.random.randint", lambda low, high: next(offsets)
+    )
+
+    augmented = apply_training_augmentation(image, "translation_uniform_2px_p05")
+
+    assert augmented.size == image.size
+    assert augmented.getpixel((3, 1)) == (0, 0, 0)
+    assert augmented.getpixel((2, 2)) == (255, 255, 255)
 
 
 def test_latest_parent_lookup_requires_one_complete_baseline_per_fold(tmp_path) -> None:
@@ -297,5 +350,31 @@ def test_latest_usage_e2_lookup_requires_the_accepted_parent_chain(tmp_path) -> 
         )
 
     found = latest_completed_usage_e2_parent_run_ids(output_root=tmp_path)
+
+    assert found == tuple(expected)
+
+
+def test_latest_gender_e6_lookup_uses_the_gem_run_token(tmp_path) -> None:
+    target_dir = tmp_path / "experiments/t3_gender_e6_gem_p3/gender"
+    expected = []
+    for fold in range(5):
+        run_id = f"t3_gender_e6_gem_p3_gender_smallcnngem3_f{fold}_complete"
+        expected.append(run_id)
+        run_dir = target_dir / run_id
+        run_dir.mkdir(parents=True)
+        (run_dir / "config.json").write_text("{}\n", encoding="utf-8")
+        (run_dir / "final_epoch.pt").write_bytes(b"checkpoint")
+        (run_dir / "oof_predictions.csv").write_text("id\n", encoding="utf-8")
+        (run_dir / "robustness.csv").write_text(
+            "corruption,macro_f1_change\n", encoding="utf-8"
+        )
+        (run_dir / "metrics.json").write_text(
+            json.dumps(
+                {"run_id": run_id, "target": "gender", "validation_fold": fold}
+            ),
+            encoding="utf-8",
+        )
+
+    found = latest_completed_gender_e6_parent_run_ids(output_root=tmp_path)
 
     assert found == tuple(expected)
