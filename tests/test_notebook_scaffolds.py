@@ -1248,7 +1248,7 @@ def test_task2_refit_cell_loads_verified_bundle_without_evaluation_leakage() -> 
         "temperature `1.365002`",
         "ArticleType is not an inference input",
         "holdout remains sealed",
-        "task2-season-i2-refit-fall-s2753-4ab5682a30e1",
+        "task2-season-i2-refit-fall-s2753-637dd6378be9",
     ):
         assert required in finding
 
