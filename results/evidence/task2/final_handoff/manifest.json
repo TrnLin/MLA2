@@ -2,11 +2,11 @@
   "artifacts": {
     "artifact_audit": {
       "path": "results/evidence/task2/final_handoff/artifact_audit.csv",
-      "sha256": "1f49a461e9de066db97b91ae910aecaeab8a370de2c96e75cf72f946283fe61f"
+      "sha256": "aa60d932e0448111704cffe9ccc870a9f4f459cc53e17c38c088069fac3896cf"
     },
     "inference_smoke": {
       "path": "results/evidence/task2/final_handoff/inference_smoke.json",
-      "sha256": "7f61f312fa7fbc0e498a77054b22c53a118ec58920ed3c4d055c78c67ea932f7"
+      "sha256": "fb17a89057426a69d7f37816311131675b854716a56313380f435fdb4cec7729"
     },
     "inference_source": {
       "path": "src/fashion/task2/inference.py",
@@ -20,9 +20,17 @@
       "path": "models/task2_season.manifest.json",
       "sha256": "f4af02a73595380ca14a69b99b0e4f99ebb7479226e4fff4905b3d096f21c24f"
     },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/final_handoff/registry_snapshot.csv",
+      "sha256": "40fa462254a51fd9c5e3318b1000182a0f6a16378a102450b93129565d86cb41"
+    },
     "selection_freeze": {
       "path": "results/evidence/task2/selection_freeze.json",
       "sha256": "51475a6e83c3e49e904633e1fa8a7e86bcc5e2f592c81f981561dac9f7cff995"
+    },
+    "ultimate_judgement_manifest": {
+      "path": "results/evidence/task2/ultimate_judgement/manifest.json",
+      "sha256": "cd87705b94219bd07bebb720fb4bd3736b4442afe6f1316c046b4cd98c960ab0"
     }
   },
   "evaluation_claim_allowed": false,
@@ -44,7 +52,7 @@
   "notebook_06_unlocked": false,
   "review_threshold": null,
   "run_id": "task2-season-i2-refit-fall-s2753-4ab5682a30e1",
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "selected_candidate": "I2",
   "selected_experiment_id": "g4-i2-article-type-lambda-0-3-c1",
   "status": "ready_for_group_freeze",

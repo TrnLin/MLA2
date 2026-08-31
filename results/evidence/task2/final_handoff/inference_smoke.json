@@ -1,5 +1,6 @@
 {
   "bundle_sha256": "e2511acc2b4e383790d4ba844bb368b1e4b7a40974614a8687a34724aad2566d",
+  "confidence": 0.9282096028,
   "holdout_opened": false,
   "image_path": "data/raw/teacher/train/images_train/1163.jpg",
   "input_scope": "one labelled development image",
@@ -21,5 +22,5 @@
   "product_id": "1163",
   "review_required": null,
   "run_id": "task2-season-i2-refit-fall-s2753-4ab5682a30e1",
-  "schema_version": "1.0.0"
+  "schema_version": "1.1.0"
 }
