@@ -180,6 +180,7 @@ def _display_calls(source: str) -> list[ast.Call]:
 
 def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    deep_analyses: list[tuple[str, str]] = []
 
     for index, cell in enumerate(notebook.cells):
         if cell.cell_type != "code":
@@ -230,6 +231,17 @@ def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
             assert "**Deep analysis.**" in following.source, (
                 f"cell {cell.id} has no output-specific deep analysis"
             )
+            deep_analysis = (
+                following.source.split("**Deep analysis.**", maxsplit=1)[1]
+                .split("> **Decision and limitation.**", maxsplit=1)[0]
+                .strip()
+            )
+            assert len(deep_analysis) >= 120, (
+                f"cell {cell.id} has a shallow output analysis"
+            )
+            deep_analyses.append(
+                (cell.id, " ".join(deep_analysis.lower().split()))
+            )
 
             for generic in (
                 "A separate compact table exposes",
@@ -241,6 +253,8 @@ def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
                 "Interpretation to write after running",
                 "It supports the frozen development decision in the parent subsection",
                 "**Senior analysis.**",
+                "**Why this output exists.**",
+                "**What it shows.**",
             ):
                 assert generic not in following.source, (
                     f"cell {cell.id} still uses a generic interpretation template"
@@ -251,6 +265,11 @@ def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
                 assert "pd.json_normalize" not in cell.source, (
                     f"cell {cell.id} exposes a tall raw decision JSON view"
                 )
+
+    normalized_analyses = [analysis for _, analysis in deep_analyses]
+    assert len(normalized_analyses) == len(set(normalized_analyses)), (
+        "Task 2 output cells reuse a deep-analysis template"
+    )
 
 
 def test_task2_notebook_has_no_accidental_matplotlib_output() -> None:
