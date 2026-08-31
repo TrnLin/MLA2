@@ -42,3 +42,39 @@ class WeightedLabelSmoothedCrossEntropy(nn.Module):
         if denominator <= 0:
             raise ValueError("a batch has zero total example weight")
         return (per_sample * sample_weights).sum() / denominator
+
+
+class WeightedFocalCrossEntropy(nn.Module):
+    """True-class weighted focal cross-entropy with an explicit denominator."""
+
+    def __init__(self, class_weights: torch.Tensor, *, gamma: float) -> None:
+        super().__init__()
+        if class_weights.ndim != 1 or len(class_weights) < 2:
+            raise ValueError("class weights must be a one-dimensional multi-class tensor")
+        if gamma < 0.0:
+            raise ValueError("focal gamma cannot be negative")
+        if torch.any(class_weights < 0):
+            raise ValueError("class weights cannot be negative")
+        if not torch.any(class_weights > 0):
+            raise ValueError("at least one class weight must be positive")
+        self.register_buffer("class_weights", class_weights.detach().clone())
+        self.gamma = float(gamma)
+
+    def loss_denominator(self, target: torch.Tensor) -> torch.Tensor:
+        """Return the true-class example-weight sum used by this batch."""
+        return self.class_weights[target].sum()
+
+    def forward(self, logits: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        if logits.ndim != 2 or logits.shape[1] != len(self.class_weights):
+            raise ValueError("logits and class-weight dimensions disagree")
+        if target.ndim != 1 or len(target) != len(logits):
+            raise ValueError("targets must contain one class index per logit row")
+        log_probabilities = F.log_softmax(logits, dim=1)
+        true_log_probability = log_probabilities.gather(1, target.unsqueeze(1)).squeeze(1)
+        true_probability = true_log_probability.exp()
+        sample_weights = self.class_weights[target]
+        per_sample = -(1.0 - true_probability).pow(self.gamma) * true_log_probability
+        denominator = sample_weights.sum()
+        if denominator <= 0:
+            raise ValueError("a batch has zero total example weight")
+        return (per_sample * sample_weights).sum() / denominator
