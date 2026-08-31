@@ -108,14 +108,14 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | All 55 code cells are implemented, but the pre-refactor notebook has 36 cells that would emit more than one visible result and 24 later cells without saved outputs | Split each scientific result into one compact output followed immediately by its explanation; final group evaluation remains outside this notebook |
+| Notebook 03 | Refactored to 147 small code cells: each visible cell emits at most one compact table or figure and is followed immediately by an English explanation | Static structure passes; saved outputs and execution counts are intentionally clear until the separately scheduled clean-kernel trace run |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
 | Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, verified image-only inference, and the locked component handoff are implemented | Wait for whole-group freeze; do not add or retune a candidate |
-| `results/runs.csv` | 122 append-only rows: 115 completed, two failed, and five interrupted | The replacement refit and both earlier lifecycle outcomes remain traceable |
+| `results/runs.csv` | 123 append-only rows: 116 completed, two failed, and five interrupted | The provenance-hardened refit and all earlier lifecycle outcomes remain traceable |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
-| Current handoff gate | Ten component checks pass; the portable one-row registry snapshot, bundle, and image-only smoke prediction match the frozen run and hashes; final evaluation remains locked | Wait for a machine-readable whole-group freeze before Notebook 06 |
-| Current verification | The last committed full gate passed Ruff and `563` tests; the current focused Task 2, model-boundary, and notebook gate passes `371` tests, and all 55 notebook code cells compile | Re-run the full gate after the provenance fixes and notebook refactor; a saved-output audit is not a substitute for a clean-kernel run |
+| Current handoff gate | Ten component checks pass for run `task2-season-i2-refit-fall-s2753-637dd6378be9`; the portable registry snapshot, bundle, and image-only smoke prediction match the frozen hashes; final evaluation remains locked | Wait for a machine-readable whole-group freeze before Notebook 06 |
+| Current verification | `pip check`, Ruff, and all `576` repository tests pass. This includes 43 focused refit/handoff tests and 34 static notebook-contract tests | The code, artifact, and presentation contracts are green; this remains separate from the later clean-kernel trace run |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -124,8 +124,8 @@ Notebook 03 should orchestrate those functions and tell the evidence-backed stor
 ### 2.1 Luna Max defect audit and correction order
 
 The read-only Luna Max audit found three integrity defects and four presentation defects.
-The existing measured results are not invalidated, but the contracts must be hardened
-before the component is called finished.
+All seven are now corrected. The old refit and handoff bytes remain archived with their
+hashes, while the live package was rebuilt from the hardened source.
 
 | ID | Confirmed issue | Required correction | Proof of completion |
 |---|---|---|---|
@@ -146,7 +146,10 @@ The correction order is intentionally traceable:
 5. Refactor Notebook 03 into setup, compact table, and figure leaves. Every visible result
    receives an English explanation of purpose, columns or chart encodings, measured
    finding, decision impact, and limitation.
-6. Run focused tests, Ruff, the complete repository suite, and a final Luna Max review.
+6. Run focused tests, Ruff, the complete repository suite, and request a final Luna Max
+   review. The final review request reached the Luna usage limit, so it supports no
+   completion claim; the independent full suite and manual artifact audit are recorded
+   instead.
 7. Commit each stage separately. Do not open Notebook 06 or the holdout before the
    whole-group freeze.
 
@@ -1196,7 +1199,7 @@ remained `None`, and no validation or holdout early stopping was available.
 | First to final total training loss | `1.789050` to `0.551781` |
 | First to final training accuracy | `0.559124` to `0.820505` |
 | Parameters | `1,206,112` |
-| Runtime | `249.72 s` |
+| Runtime | `231.30 s` |
 | Peak VRAM | `135.04 MB` |
 | Bundle size | `4,856,199 bytes` |
 
@@ -1208,11 +1211,11 @@ adding a validation curve here would require a new post-freeze selection split.
 
 Final replacement trace:
 
-- run `task2-season-i2-refit-fall-s2753-4ab5682a30e1`;
+- run `task2-season-i2-refit-fall-s2753-637dd6378be9`;
 - bundle `models/task2_season.pt`, SHA-256
-  `e2511acc2b4e383790d4ba844bb368b1e4b7a40974614a8687a34724aad2566d`;
+  `5927eff73130acedc8015199e1df5a6c6edf64c0b45023ebd91c48d7ed40f93c`;
 - manifest `models/task2_season.manifest.json`, SHA-256
-  `f4af02a73595380ca14a69b99b0e4f99ebb7479226e4fff4905b3d096f21c24f`;
+  `25d918061dbd9b46501de9aa3671adabf951649862ce9613317983dadbac55d9`;
 - history `results/evidence/task2/development_refit/training_history.csv`;
 - chart `results/figures/task2/development_refit_training_curve.png`.
 
@@ -1220,7 +1223,11 @@ The first package, run `task2-season-i2-refit-fall-s2753-3d60bd14cc91`, is retai
 `results/evidence/task2/development_refit/invalidated/` and must not be used. The next run,
 `task2-season-i2-refit-fall-s2753-294dece2c93b`, completed 24 epochs but was recorded as
 failed and rolled back because the manifest file order disagreed with the canonical hash
-order. Regression commits preserve both discoveries. The corrected lifecycle now
+order. A later valid run, `task2-season-i2-refit-fall-s2753-4ab5682a30e1`, was then
+archived as superseded because hardening the refit provenance validator changed the
+implementation bytes. Its refit package and immutable handoff remain under their
+respective `invalidated/` directories with verified hashes. Regression commits preserve
+all three discoveries. The corrected lifecycle now
 requires exactly one matching completed registry row, stages artifacts before publication,
 locks concurrent launches, rejects non-finite values, checks strict booleans, and uses one
 canonical implementation order. The final replacement passes all of these checks.
@@ -1232,14 +1239,15 @@ exactly one code cell followed by one interpretation prompt. A broader `###` sub
 owns no direct code cell; it is divided into `####` subsubsections, and every `####` leaf
 owns exactly one code cell and one interpretation prompt.
 
-Current measured progress is 52 implemented code cells and three clean placeholders.
-Sections 1-13 now cover the shared contract, EDA reflection, baselines, incremental model
-selection, learning curves, G5 stability, slices, robustness/cost, calibration,
-bootstrap uncertainty, Grad-CAM, failure cases, and literature boundaries. Sections 14.1
-and 14.2 load the verified G7 scorecard, rejected alternatives, and immutable selection
-freeze. Section 14.3 contains the verified replacement G8 audit, refreshed hashes, and
-training-only diagnostic. The remaining cells are sealed handoff work only. The
-notebook has zero error outputs and keeps its fixed 193-cell structure.
+The notebook now contains 469 cells: 147 code and 322 Markdown. Its 15 numbered `##`
+sections contain 40 `###` subsections and 119 `####` leaves. Sections 1-13 cover the
+shared contract, EDA reflection, baselines, incremental model selection, learning
+curves, stability, slices, robustness/cost, calibration, bootstrap uncertainty,
+Grad-CAM, failure cases, and literature boundaries. Sections 14-15 load the verified
+freeze, provenance-hardened refit, and locked handoff. Every result cell has one explicit
+display at most, followed immediately by a purpose, column/chart guide, finding,
+decision, and limitation. All execution counts and saved outputs are deliberately clear;
+the notebook makes no clean-kernel execution claim in this window.
 
 | Section | Final purpose |
 |---|---|
@@ -1365,9 +1373,10 @@ Task 2 modelling and its sealed component handoff are complete. The remaining pe
 items are deliberately blocked by the whole-group freeze or deferred integration window;
 they are not Task 2 implementation checkboxes.
 
-- [x] `results/runs.csv` contains all 122 unique Task 2 runs: 115 completed, two failed,
-  and five interrupted; every identity hash, artifact path/hash pair, and terminal row
-  passes the registry audit;
+- [x] `results/runs.csv` contains all 123 unique Task 2 runs: 116 completed, two failed,
+  and five interrupted. The live completed evidence passes identity, schema, provenance,
+  and artifact checks; superseded refit and handoff bytes are preserved under
+  `invalidated/` instead of being expected at their former live paths;
 - [x] Current B0, B1, C1, C2, and C3 OOF predictions each cover all 32,753 valid development rows;
 - [x] G3 C1-T1 and C2-T0 each cover the same 32,753 valid rows, and their paired
   full-budget comparison is hash-audited;
