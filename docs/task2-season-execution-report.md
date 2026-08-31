@@ -407,9 +407,9 @@ its ten new rows are completed, clean, cover folds 0-4 at seed `2026`, use commi
 | G1 C1 SmallCNN | Pooled macro-F1 `0.699902`; fold SD `0.010936`; Spring F1 `0.726168`; 1,174,244 parameters; 19.11 training minutes | Retain as the compact efficiency finalist | `results/evidence/task2/g1_c1_smallcnn/manifest.json`; five run IDs recorded there |
 | G1 C2 ResNet18 | Pooled macro-F1 `0.707099`; fold SD `0.003872`; Spring F1 `0.738433`; 11,170,884 parameters; 29.21 training minutes | Rank first and use for the G2 transform gate | `results/evidence/task2/g1_c2_resnet18/manifest.json`; five run IDs recorded there |
 | G1 C3 MobileNetV3-Small | Pooled macro-F1 `0.638495`; fold SD `0.008339`; Spring F1 `0.668816`; 1,521,956 parameters; 16.66 training minutes | Stop: deployment savings do not offset the quality loss | `results/evidence/task2/g1_c3_mobilenetv3/manifest.json`; five run IDs recorded there |
-| G2-P P1 ResNet18 | Pooled macro-F1 `0.705312`; fold SD `0.006467`; Spring F1 `0.738673`; 58.18 training minutes; 1,321.9 MB peak VRAM | Do not select P1: quality did not improve and measured cost increased | `results/evidence/task2/g2_p1_c2_resnet18/manifest.json`; five clean run IDs recorded there |
+| G2-P P1 ResNet18 | Pooled macro-F1 `0.705312`; fold SD `0.006467`; Spring F1 `0.738673`; 58.18 training minutes; 1,321.9 MiB peak VRAM | Do not select P1: quality did not improve and measured cost increased | `results/evidence/task2/g2_p1_c2_resnet18/manifest.json`; five clean run IDs recorded there |
 | G2-P size decision | P1 minus P0 macro-F1 `-0.001787`; four of five paired folds favoured P0; runtime ratio `1.992`; peak-VRAM ratio `2.180` | Retain P0 `(80, 60)` under the frozen `+0.005` rule and pass it to G2-A | `results/evidence/task2/g2_input_size_ablation/manifest.json` |
-| G2-A A1 ResNet18 | Pooled macro-F1 `0.696662`; fold SD `0.006778`; Spring F1 `0.727354`; 24.56 training minutes; 606.4 MB peak VRAM | Reject A1: it lost overall and minority-class discrimination | `results/evidence/task2/g2_a1_c2_resnet18/manifest.json`; five clean run IDs recorded there |
+| G2-A A1 ResNet18 | Pooled macro-F1 `0.696662`; fold SD `0.006778`; Spring F1 `0.727354`; 24.56 training minutes; 606.4 MiB peak VRAM | Reject A1: it lost overall and minority-class discrimination | `results/evidence/task2/g2_a1_c2_resnet18/manifest.json`; five clean run IDs recorded there |
 | G2-A augmentation decision | A1 minus A0 macro-F1 `-0.010438`; all five paired folds favoured A0; Fall F1 `-0.035008`; Spring F1 `-0.011079` | Retain A0 under the frozen `+0.003` rule; robustness is not required after the quality gate fails | `results/evidence/task2/g2_augmentation_ablation/manifest.json` |
 | G2-T C1 tuning | T0 `0.699902`; T1 `0.708075`; T2 `0.700275`; T1 minus T0 `+0.008173`; T1 Spring F1 `0.741112` | Select C1-T1 because it passes the frozen `+0.003` gain rule | `results/evidence/task2/g2_compact_tuning/manifest.json`; the three C1 source manifests record 15 run IDs |
 | G2-T C2 tuning | T0 `0.707099`; T1 `0.700537`; T2 `0.708246`; best observed gain `+0.001146` | Retain C2-T0 because T2 does not pass the frozen gain rule | `results/evidence/task2/g2_compact_tuning/manifest.json`; the three C2 source manifests record 15 run IDs |
@@ -452,7 +452,7 @@ hash-linked leaderboard, figure, shortlist, and all 15 run IDs are in
 G2-P held C2, A0, folds, seed, optimiser, effective batch size, and eight-epoch budget
 fixed. Upscaling to P1 changed pooled macro-F1 from `0.707099` to `0.705312` while
 training time rose from `29.21` to `58.18` minutes and peak VRAM from `606.4` to
-`1,321.9` MB. Spring F1 changed by only `+0.000239`. P1 therefore adds interpolation
+`1,321.9` MiB. Spring F1 changed by only `+0.000239`. P1 therefore adds interpolation
 and cost without meeting the predeclared quality threshold.
 
 G2-A then held C2, P0, folds, seed, optimiser, effective batch size, and budget fixed.
@@ -975,7 +975,7 @@ pipeline; it does not compare P* causally with the different SmallCNN multi-task
 | Median best epoch | `22` | `11` | `-11` epochs |
 | Five-fold runtime | `32.47` min | `22.69` min | `-9.78` min |
 | Parameters | `11,178,564` | `11,178,564` | matched |
-| Peak VRAM | `279.0` MB | `279.0` MB | matched |
+| Peak VRAM | `279.0` MiB | `279.0` MiB | matched |
 
 Every paired fold and every class F1 favoured P*. The teacher-style curves show that P*
 reaches its score plateau earlier; both variants continue lowering training loss after
@@ -1054,6 +1054,19 @@ Secondary evidence:
 - NLL, multiclass Brier score, and a reliability diagram;
 - batch-one CPU/GPU p50 and p95 latency, model size, and parameter count;
 - training time and peak VRAM.
+
+Numeric decisions use the unrounded finite values stored in CSV/JSON artifacts. Rounding
+is presentation-only: metric tables normally show six decimals, while plots may show
+fewer when labels would overlap. Accuracy, balanced accuracy, precision, recall, F1, ECE,
+and probabilities remain proportions in `[0, 1]`; NLL and multiclass Brier retain their
+native scales. Only differences between proportion metrics are multiplied by 100 when
+explicitly labelled as percentage points. For example, `+0.005` macro-F1 equals `+0.5`
+percentage points. The registry stores runtime in seconds;
+minutes and milliseconds are derived display units. Memory byte counts are authoritative.
+The legacy field name `peak_vram_mb` actually stores MiB (`bytes / 1024**2`), so this
+report labels those values MiB without changing the frozen artifact schema. The handoff
+smoke snapshot keeps ten decimal places only after the full prediction contract is
+checked; it is not used to calculate metrics or select a model.
 
 ### 8.2 Uncertainty
 
@@ -1200,7 +1213,7 @@ remained `None`, and no validation or holdout early stopping was available.
 | First to final training accuracy | `0.559124` to `0.820505` |
 | Parameters | `1,206,112` |
 | Runtime | `231.30 s` |
-| Peak VRAM | `135.04 MB` |
+| Peak VRAM | `135.04 MiB` |
 | Bundle size | `4,856,199 bytes` |
 
 These diagnostics show that optimisation continued as expected;
