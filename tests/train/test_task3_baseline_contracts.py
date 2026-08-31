@@ -20,6 +20,7 @@ from fashion.train.config import (
 )
 from fashion.train.metrics import classification_metrics
 from fashion.train.registry import REGISTRY_COLUMNS, RunRegistry
+from fashion.train.task3_experiments import _EarlyStoppingTracker
 
 
 def test_baseline_configuration_and_parameter_counts_are_frozen() -> None:
@@ -54,6 +55,18 @@ def test_baseline_configuration_rejects_a_second_changed_factor() -> None:
         Task3BaselineConfig(target="gender", augmentation="horizontal_flip")
     with pytest.raises(ValueError, match="80x60"):
         Task3BaselineConfig(target="usage", image_height=128, image_width=96)
+
+
+def test_early_stopping_tracker_uses_the_frozen_delta_and_patience() -> None:
+    tracker = _EarlyStoppingTracker(min_epoch=3, patience=2, min_delta=0.01)
+
+    assert tracker.update(1, 0.50) is True
+    assert tracker.update(2, 0.505) is False
+    assert tracker.should_stop(2) is False
+    assert tracker.update(3, 0.509) is False
+    assert tracker.should_stop(3) is True
+    assert tracker.best_epoch == 1
+    assert tracker.best_score == pytest.approx(0.50)
 
 
 def test_fixed_class_metrics_include_zero_support_classes() -> None:
