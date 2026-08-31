@@ -446,6 +446,47 @@ def test_handoff_rejects_rehashed_semantic_smoke_tampering(
         )
 
 
+def test_handoff_rejects_rehashed_registry_provenance_tampering(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fixture = _fixture(tmp_path, monkeypatch)
+    audit = audit_task2_artifacts(
+        project_root=fixture["root"],
+        registry_path=fixture["registry_path"],
+        ultimate_manifest_path=fixture["ultimate_path"],
+        model_manifest_path=fixture["model_manifest"],
+    )
+    _, manifest_path = build_task2_handoff_evidence(
+        audit,
+        fixture["prediction"],
+        project_root=fixture["root"],
+        registry_path=fixture["registry_path"],
+        model_manifest_path=fixture["model_manifest"],
+        output_directory=Path(fixture["root"]) / "evidence/final_handoff",
+    )
+    snapshot_path = manifest_path.parent / "registry_snapshot.csv"
+    changed_snapshot = pd.read_csv(snapshot_path, dtype="string").fillna("")
+    changed_snapshot.loc[0, "task"] = "fabricated-task"
+    changed_snapshot.to_csv(snapshot_path, index=False)
+    snapshot_sha256 = compute_sha256(snapshot_path)
+    audit_path = manifest_path.parent / "artifact_audit.csv"
+    changed_audit = pd.read_csv(audit_path, dtype="string").fillna("")
+    binding = changed_audit["artifact"].eq("registry_binding")
+    changed_audit.loc[binding, ["expected_sha256", "actual_sha256"]] = snapshot_sha256
+    changed_audit.to_csv(audit_path, index=False)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["artifacts"]["registry_snapshot"]["sha256"] = snapshot_sha256
+    manifest["artifacts"]["artifact_audit"]["sha256"] = compute_sha256(audit_path)
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="registry snapshot provenance"):
+        load_verified_task2_handoff(
+            manifest_path,
+            project_root=fixture["root"],
+        )
+
+
 def test_handoff_accepts_identical_retry_and_rejects_changed_content(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -548,6 +589,73 @@ def test_handoff_serialises_builders_with_an_owned_lock(
             model_manifest_path=fixture["model_manifest"],
             output_directory=output,
         )
+
+
+def test_handoff_treats_a_fresh_unreadable_lock_as_busy(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fixture = _fixture(tmp_path, monkeypatch)
+    audit = audit_task2_artifacts(
+        project_root=fixture["root"],
+        registry_path=fixture["registry_path"],
+        ultimate_manifest_path=fixture["ultimate_path"],
+        model_manifest_path=fixture["model_manifest"],
+    )
+    output = Path(fixture["root"]) / "evidence/final_handoff"
+    output.mkdir(parents=True)
+    (output / handoff_module.HANDOFF_LOCK_FILENAME).write_text("", encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="handoff build is already running"):
+        build_task2_handoff_evidence(
+            audit,
+            fixture["prediction"],
+            project_root=fixture["root"],
+            registry_path=fixture["registry_path"],
+            model_manifest_path=fixture["model_manifest"],
+            output_directory=output,
+        )
+
+
+def test_handoff_rolls_back_when_post_publish_verification_fails(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fixture = _fixture(tmp_path, monkeypatch)
+    audit = audit_task2_artifacts(
+        project_root=fixture["root"],
+        registry_path=fixture["registry_path"],
+        ultimate_manifest_path=fixture["ultimate_path"],
+        model_manifest_path=fixture["model_manifest"],
+    )
+    output = Path(fixture["root"]) / "evidence/final_handoff"
+    monkeypatch.setattr(
+        handoff_module,
+        "load_verified_task2_handoff",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            ValueError("injected post-publish verification failure")
+        ),
+    )
+
+    with pytest.raises(ValueError, match="injected post-publish"):
+        build_task2_handoff_evidence(
+            audit,
+            fixture["prediction"],
+            project_root=fixture["root"],
+            registry_path=fixture["registry_path"],
+            model_manifest_path=fixture["model_manifest"],
+            output_directory=output,
+        )
+
+    assert not any(
+        (output / name).exists()
+        for name in (
+            "artifact_audit.csv",
+            "inference_smoke.json",
+            "registry_snapshot.csv",
+            "manifest.json",
+        )
+    )
 
 
 @pytest.mark.parametrize(
