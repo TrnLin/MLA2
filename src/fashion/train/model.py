@@ -80,6 +80,37 @@ class Task3BaselineCNN(nn.Module):
         return self.classifier(self.classifier_dropout(pooled))
 
 
+class FixedGeMPool2d(nn.Module):
+    """Fixed generalized-mean pooling with no trainable parameters."""
+
+    def __init__(self, *, power: float = 3.0, epsilon: float = 1e-6) -> None:
+        super().__init__()
+        if power <= 0.0:
+            raise ValueError("GeM power must be positive")
+        if epsilon <= 0.0:
+            raise ValueError("GeM epsilon must be positive")
+        self.power = float(power)
+        self.epsilon = float(epsilon)
+
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+        if inputs.ndim != 4:
+            raise ValueError("GeM expects an NCHW feature tensor")
+        return (
+            inputs.clamp_min(self.epsilon)
+            .pow(self.power)
+            .mean(dim=(-2, -1), keepdim=True)
+            .pow(1.0 / self.power)
+        )
+
+
+class Task3GeM3CNN(Task3BaselineCNN):
+    """The accepted SmallCNN with only average pooling changed to fixed GeM p=3."""
+
+    def __init__(self, config: Task3BaselineConfig) -> None:
+        super().__init__(config)
+        self.pool = FixedGeMPool2d(power=3.0)
+
+
 class _Task3ResidualBlock(nn.Module):
     """Two 3x3 convolutions with an identity or projected residual path."""
 
