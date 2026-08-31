@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -21,13 +22,21 @@ Task3ChildName = Literal[
     "usage_tinyresnet18_pm",
     "gender_compact_blur_cnn",
     "usage_label_smoothing",
+    "gender_gem_p3",
+    "usage_focal_gamma1",
 ]
 Task3ModelFamily = Literal[
     "task3_small_cnn",
+    "task3_small_cnn_gem_p3",
     "task3_tinyresnet18_pm",
     "task3_compact_blur_cnn",
 ]
-Task3RunModelToken = Literal["smallcnn", "tinyresnet18pm", "compactblurcnn"]
+Task3RunModelToken = Literal[
+    "smallcnn",
+    "smallcnngem3",
+    "tinyresnet18pm",
+    "compactblurcnn",
+]
 
 
 @dataclass(frozen=True)
@@ -49,6 +58,7 @@ class Task3ChildSpec:
     class_weight_cap: float | None = None
     classifier_dropout: float = 0.0
     label_smoothing: float = 0.0
+    focal_gamma: float = 0.0
     model_family: Task3ModelFamily = "task3_small_cnn"
     run_model_token: Task3RunModelToken = "smallcnn"
 
@@ -195,7 +205,44 @@ class Task3ChildSpec:
                 "model_family": "task3_small_cnn",
                 "run_model_token": "smallcnn",
             },
+            "gender_gem_p3": {
+                "target": "gender",
+                "experiment_id": "t3_gender_gem_p3_smallcnn",
+                "hypothesis_id": "t3_gender_e6_gem_p3",
+                "artifact_dir": "experiments/t3_gender_e6_gem_p3",
+                "run_prefix": "t3_gender_e6_gem_p3",
+                "changed_factor": "global_pooling",
+                "training_augmentation": "none",
+                "loss_name": "cross_entropy",
+                "parent_artifact_dir": "baseline",
+                "class_weight_beta": None,
+                "class_weight_cap": None,
+                "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
+                "focal_gamma": 0.0,
+                "model_family": "task3_small_cnn_gem_p3",
+                "run_model_token": "smallcnngem3",
+            },
+            "usage_focal_gamma1": {
+                "target": "usage",
+                "experiment_id": "t3_usage_focal_gamma1_smallcnn",
+                "hypothesis_id": "t3_usage_e6_focal_gamma1",
+                "artifact_dir": "experiments/t3_usage_e6_focal_gamma1",
+                "run_prefix": "t3_usage_e6_focal_gamma1",
+                "changed_factor": "loss_modulation",
+                "training_augmentation": "none",
+                "loss_name": "effective_number_focal_cross_entropy",
+                "parent_artifact_dir": "experiments/t3_usage_e2_class_balanced_ce",
+                "class_weight_beta": 0.999,
+                "class_weight_cap": 5.0,
+                "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
+                "focal_gamma": 1.0,
+                "model_family": "task3_small_cnn",
+                "run_model_token": "smallcnn",
+            },
         }[self.name]
+        expected.setdefault("focal_gamma", 0.0)
         actual = asdict(self)
         actual.pop("name")
         actual.pop("parent_run_ids")
@@ -362,6 +409,45 @@ def usage_label_smoothing_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
     )
 
 
+def gender_gem_p3_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    """Change only Gender E1 global average pooling to fixed GeM p=3."""
+    return Task3ChildSpec(
+        name="gender_gem_p3",
+        target="gender",
+        experiment_id="t3_gender_gem_p3_smallcnn",
+        hypothesis_id="t3_gender_e6_gem_p3",
+        artifact_dir="experiments/t3_gender_e6_gem_p3",
+        run_prefix="t3_gender_e6_gem_p3",
+        changed_factor="global_pooling",
+        training_augmentation="none",
+        loss_name="cross_entropy",
+        parent_artifact_dir="baseline",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        model_family="task3_small_cnn_gem_p3",
+        run_model_token="smallcnngem3",
+    )
+
+
+def usage_focal_gamma1_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    """Change only Usage E2 cross-entropy modulation to focal gamma=1."""
+    return Task3ChildSpec(
+        name="usage_focal_gamma1",
+        target="usage",
+        experiment_id="t3_usage_focal_gamma1_smallcnn",
+        hypothesis_id="t3_usage_e6_focal_gamma1",
+        artifact_dir="experiments/t3_usage_e6_focal_gamma1",
+        run_prefix="t3_usage_e6_focal_gamma1",
+        changed_factor="loss_modulation",
+        training_augmentation="none",
+        loss_name="effective_number_focal_cross_entropy",
+        parent_artifact_dir="experiments/t3_usage_e2_class_balanced_ce",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        class_weight_beta=0.999,
+        class_weight_cap=5.0,
+        focal_gamma=1.0,
+    )
+
+
 def effective_number_class_weights(
     counts: Sequence[int], *, beta: float = 0.999, cap: float = 5.0
 ) -> np.ndarray:
@@ -462,7 +548,13 @@ def _spec(name: Task3ChildName, parent_run_ids: Sequence[str]) -> Task3ChildSpec
         return usage_tinyresnet18_pm_spec(parent_run_ids)
     if name == "gender_compact_blur_cnn":
         return gender_compact_blur_cnn_spec(parent_run_ids)
-    return usage_label_smoothing_spec(parent_run_ids)
+    if name == "usage_label_smoothing":
+        return usage_label_smoothing_spec(parent_run_ids)
+    if name == "gender_gem_p3":
+        return gender_gem_p3_spec(parent_run_ids)
+    if name == "usage_focal_gamma1":
+        return usage_focal_gamma1_spec(parent_run_ids)
+    raise ValueError(f"unsupported Task 3 child: {name}")
 
 
 def check_task3_child_setup(
@@ -477,21 +569,30 @@ def check_task3_child_setup(
 
     spec = _spec(name, parent_run_ids)
     baseline = check_task3_baseline_setup(spec.target, root=root, device_name=device_name)
-    if spec.model_family in {"task3_tinyresnet18_pm", "task3_compact_blur_cnn"}:
+    if spec.model_family in {
+        "task3_small_cnn_gem_p3",
+        "task3_tinyresnet18_pm",
+        "task3_compact_blur_cnn",
+    }:
         import torch
 
         from fashion.train.config import (
             Task3BaselineConfig,
+            baseline_parameter_count,
             compact_blur_cnn_macs,
             compact_blur_cnn_parameter_count,
             tinyresnet18_pm_macs,
             tinyresnet18_pm_parameter_count,
         )
-        from fashion.train.model import Task3CompactBlurCNN, Task3TinyResNet18PM
+        from fashion.train.model import Task3CompactBlurCNN, Task3GeM3CNN, Task3TinyResNet18PM
 
         config = Task3BaselineConfig(target=spec.target)
         device = torch.device(device_name)
-        if spec.model_family == "task3_tinyresnet18_pm":
+        if spec.model_family == "task3_small_cnn_gem_p3":
+            model = Task3GeM3CNN(config).to(device)
+            parameter_count = baseline_parameter_count(spec.target)
+            architecture_macs = None
+        elif spec.model_family == "task3_tinyresnet18_pm":
             model = Task3TinyResNet18PM(config).to(device)
             parameter_count = tinyresnet18_pm_parameter_count(spec.target)
             architecture_macs = tinyresnet18_pm_macs(spec.target)
@@ -509,12 +610,51 @@ def check_task3_child_setup(
         baseline["architecture_macs"] = architecture_macs
     baseline["model_family"] = spec.model_family
     baseline["label_smoothing"] = spec.label_smoothing
+    baseline["focal_gamma"] = spec.focal_gamma
     return {
         **baseline,
         "child": spec.to_dict(),
         "changed_factor": spec.changed_factor,
         "optimizer_steps": 0,
         "ready": True,
+    }
+
+
+def audit_completed_registry_rows(
+    registry_path: str | Path, run_ids: Sequence[str]
+) -> dict[str, object]:
+    """Require one complete, hashed registry row for every returned fold run."""
+    path = Path(registry_path)
+    if not path.is_file():
+        raise FileNotFoundError(f"Task 3 registry was not persisted: {path}")
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    required_artifacts = (
+        "config_path",
+        "history_path",
+        "checkpoint_path",
+        "checkpoint_sha256",
+        "prediction_path",
+        "prediction_sha256",
+        "metrics_json",
+    )
+    audited: list[dict[str, str]] = []
+    for run_id in run_ids:
+        matches = [row for row in rows if row.get("run_id") == run_id]
+        if len(matches) != 1:
+            raise RuntimeError(f"expected one registry row for {run_id}; found {len(matches)}")
+        row = matches[0]
+        if row.get("status") != "complete":
+            raise RuntimeError(f"registry row is not complete: {run_id}")
+        missing = [field for field in required_artifacts if not row.get(field)]
+        if missing:
+            raise RuntimeError(f"registry row {run_id} lacks {missing}")
+        audited.append(row)
+    return {
+        "registry_path": str(path),
+        "run_ids": list(run_ids),
+        "completed_rows": len(audited),
+        "ready": len(audited) == len(run_ids),
     }
 
 
