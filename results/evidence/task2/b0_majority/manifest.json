@@ -1,0 +1,74 @@
+{
+  "artifacts": {
+    "confusion_matrix": {
+      "path": "results/evidence/task2/b0_majority/confusion_matrix.csv",
+      "sha256": "cacd1d94b0286ae12b9c38443202c1dc830e9cc4d282eb17a6825cdddaad27b2"
+    },
+    "figure": {
+      "path": "results/figures/task2/b0_majority.png",
+      "sha256": "e0416294b572b83bb4843e0e7b13189046ca6edbf294f2f6324b344fef01dfd0"
+    },
+    "fold_metrics": {
+      "path": "results/evidence/task2/b0_majority/fold_metrics.csv",
+      "sha256": "b0814dbae826fae5042e9bbe3b25a7e76664840ccdd6b34bbf66e747c21ec044"
+    },
+    "fold_summary": {
+      "path": "results/evidence/task2/b0_majority/fold_summary.csv",
+      "sha256": "e948087a4d3960e6dcc1ac6c4e5ff4d41b1f275458e18b51fd568b2e9992348f"
+    },
+    "per_class_metrics": {
+      "path": "results/evidence/task2/b0_majority/per_class_metrics.csv",
+      "sha256": "568ca9c9596d187885c4af453f53275554d9ae0b148324a0d0f1abe84739e6e4"
+    },
+    "pooled_metrics": {
+      "path": "results/evidence/task2/b0_majority/pooled_metrics.json",
+      "sha256": "10d31775a575cbda8fd671cabfa51031a60abdb6b1a7285e61a65c0cd617271c"
+    },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/b0_majority/registry_snapshot.csv",
+      "sha256": "16ad7f0ad8c6f980b3c1f763b9f86937f442b9affed7cf6a3d1fe3474307f892"
+    }
+  },
+  "calibration_claim_allowed": true,
+  "coverage": {
+    "expected_row_count": 32753,
+    "id_set_sha256": "7e278f240c9be8e59b9bf070866f725c71906f73ce910be49a752daf3e2c5b85",
+    "labels": [
+      "Fall",
+      "Spring",
+      "Summer",
+      "Winter"
+    ],
+    "probability_sum_tolerance": 1e-05,
+    "protected_id_count": 0,
+    "row_count": 32753,
+    "unique_id_count": 32753
+  },
+  "experiment_id": "b0-majority",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "oof_artifact_set_sha256": "f4127e76cc7fbe587505bfb8c6bf0b8d4faab5d5f3f77c5de2ed14dcda707da9",
+  "pooled_macro_f1": 0.1657038458397975,
+  "probability_note": "Each validation product receives empirical Season priors fitted only on the other four training folds; these are valid probabilistic baseline outputs, not image-conditioned confidence.",
+  "run_ids": [
+    "b0-majority-f0-s2753-8200c51534e3",
+    "b0-majority-f1-s2753-7c378e67d9e6",
+    "b0-majority-f2-s2753-e50abeab2421",
+    "b0-majority-f3-s2753-b2fb197c26c1",
+    "b0-majority-f4-s2753-b068532dab0a"
+  ],
+  "schema_version": "1.0.0",
+  "seed": 2753,
+  "sources": [
+    "cache",
+    "cache",
+    "cache",
+    "cache",
+    "cache"
+  ]
+}

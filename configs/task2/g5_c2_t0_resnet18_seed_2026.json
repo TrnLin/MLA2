@@ -1,0 +1,42 @@
+{
+  "data": {
+    "augmentation": "a0",
+    "batch_size": 32,
+    "image_size": [
+      80,
+      60
+    ],
+    "num_workers": 4,
+    "pin_memory": true,
+    "validation_batch_size": 128
+  },
+  "experiment_id": "g5-c2-t0-resnet18-s2026",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "loss_id": "cross_entropy",
+  "method": "deep",
+  "model_family": "resnet18_small_stem",
+  "optimisation": {
+    "device": "auto",
+    "effective_batch_size": 128,
+    "epochs": 30,
+    "gradient_clip_norm": 1.0,
+    "learning_rate": 0.0003,
+    "min_delta": 0.0001,
+    "patience": 5,
+    "use_amp": true,
+    "warmup_epochs": 1.0,
+    "weight_decay": 0.0001
+  },
+  "schema_version": "1.0.0",
+  "seeds": [
+    2026
+  ],
+  "stage": "g5_seed_stability",
+  "target": "season"
+}

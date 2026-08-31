@@ -1,0 +1,29 @@
+{
+  "checks": {
+    "audit model is scratch and final-eligible": true,
+    "dataset exposes only id, image, and encoded target": true,
+    "forbidden metadata absent from model inputs": true,
+    "model forward accepts images only": true,
+    "normalisation fitted on fold-0 training IDs": true,
+    "protected labels remain sealed": true,
+    "training and validation IDs do not overlap": true,
+    "validation transform is deterministic": true
+  },
+  "forbidden_inference_fields": [
+    "articleType",
+    "cv_fold",
+    "file_size_bytes",
+    "partition",
+    "season",
+    "year"
+  ],
+  "model_boundary": {
+    "benchmark_only": false,
+    "class": "SmallSeasonCNN",
+    "final_eligible": true,
+    "training_origin": "scratch",
+    "weights": null
+  },
+  "schema_version": "1.0.0",
+  "validation_fold": 0
+}

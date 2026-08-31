@@ -1,0 +1,91 @@
+{
+  "artifacts": {
+    "comparison_figure": {
+      "path": "results/figures/task2/seed_stability_comparison.png",
+      "sha256": "c7bd583829fd8e98e0549378c0de1b7afd3680398c40bc23b9c1e8885aa4bb4e"
+    },
+    "decision": {
+      "path": "results/evidence/task2/seed_stability/decision.json",
+      "sha256": "e453e57cdd1a77199412ebb46e82b26b5398a841777b5c8923460563ca6cd02c"
+    },
+    "learning_curve_summary": {
+      "path": "results/evidence/task2/seed_stability/learning_curve_summary.csv",
+      "sha256": "ef0d78d960921ad51dc5399aed0af316ab48d860ef5ca757dfd60a3bffb83f75"
+    },
+    "learning_curves": {
+      "path": "results/figures/task2/seed_stability_learning_curves.png",
+      "sha256": "f9245d93b3b963728c27ccf90ad77a676833e0d42d6ffa600062f2787ab7cc78"
+    },
+    "learning_curves_by_fold": {
+      "path": "results/evidence/task2/seed_stability/learning_curves_by_fold.csv",
+      "sha256": "3cd6b3841cee7b70ac9ff86e974985d4745535072ae87ff7c2a0fd2869e1e67a"
+    },
+    "paired_fold_metrics": {
+      "path": "results/evidence/task2/seed_stability/paired_fold_metrics.csv",
+      "sha256": "aeb06fb233aaca869311b73bf633a9a2ab1f395b6e0631c2e7f6878cb07584cc"
+    },
+    "per_class_by_seed": {
+      "path": "results/evidence/task2/seed_stability/per_class_by_seed.csv",
+      "sha256": "feb55f7f911468a0976b5934ad832b64fd9b898f786aab7bead9cd3e76444b2e"
+    },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/seed_stability/registry_snapshot.csv",
+      "sha256": "a904f22dddb4b6e718149a8df608de4ebb133c1fac5d5d42c8246757416384f3"
+    },
+    "seed_drift": {
+      "path": "results/evidence/task2/seed_stability/seed_drift.csv",
+      "sha256": "32d994d0efe429b0bdb7641eff058a5ae1ad7d353842388c9a340f3f9247eb11"
+    },
+    "seed_stability": {
+      "path": "results/evidence/task2/seed_stability/seed_stability.csv",
+      "sha256": "7197624bf52a88284c0a409ce983af9b18d9f9b5ef1a4a95f3fb4bc8112d8797"
+    }
+  },
+  "candidate_selection_affected": false,
+  "coverage_sha256": "ed465ef619067f114b1c7b442cba2eaec2f43202c55ca06a0c25572a37e554fd",
+  "decision_status": "closed",
+  "gate": "G5-SEED",
+  "implementation_hashes_by_candidate": {
+    "C2": "2887c38cd5653b64b57c880880a7fdf9d6aa590a4e4bd1000b87a9806a2d09fe",
+    "I2": "877706919db28f917632f9250b1b40d446695f941fd226211246d69efd7838de"
+  },
+  "input_configs": {
+    "g3-c2-t0-resnet18": {
+      "path": "configs/task2/g3_c2_t0_resnet18.json",
+      "sha256": "dfc15dcd1f2190768e4a1e7b304a9954bf1a5926155b19eb247252c6e1fc6e71"
+    },
+    "g4-i2-article-type-lambda-0-3-c1": {
+      "path": "configs/task2/g4_i2_article_type_lambda_0_3_c1.json",
+      "sha256": "fc8e26c3d5183ade1ab1e8db0069528bc5b0ec30755ffac6a045fbcd9b599d60"
+    },
+    "g5-c2-t0-resnet18-s2026": {
+      "path": "configs/task2/g5_c2_t0_resnet18_seed_2026.json",
+      "sha256": "a1cd9a7ea47df755b6d1ec13dd8860d4efba8d347c9c29d4a2dfa899e408d85b"
+    },
+    "g5-i2-article-type-lambda-0-3-c1-s2026": {
+      "path": "configs/task2/g5_i2_article_type_lambda_0_3_c1_seed_2026.json",
+      "sha256": "d6d59e58ce27e17d4f46323098fcb9e5f91a1410f638139167a9eefbff5e6a28"
+    }
+  },
+  "input_manifests": {
+    "g3-c2-t0-resnet18": {
+      "path": "results/evidence/task2/g3_c2_t0_resnet18/manifest.json",
+      "sha256": "fa99e1d4500610c69e56a0a7412bba7fde3455c68b3be8de338bbac4f34e59ca"
+    },
+    "g4-i2-article-type-lambda-0-3-c1": {
+      "path": "results/evidence/task2/g4_i2_article_type_lambda_0_3_c1/manifest.json",
+      "sha256": "4606ec36122acefbf3d04b1e45d8cfaa95fbca27a7e6d0749c9c339147aceae5"
+    },
+    "g5-c2-t0-resnet18-s2026": {
+      "path": "results/evidence/task2/g5_c2_t0_resnet18_s2026/manifest.json",
+      "sha256": "f844b0d6a1978cb782588988608bd8ea923b77014f1e887ef4e51b680e710587"
+    },
+    "g5-i2-article-type-lambda-0-3-c1-s2026": {
+      "path": "results/evidence/task2/g5_i2_article_type_lambda_0_3_c1_s2026/manifest.json",
+      "sha256": "741e28829da35b0fce17a8ae2efa1e8c51f7e116398ad126bb6a18d6fce293bb"
+    }
+  },
+  "ordering_stable": true,
+  "schema_version": "1.0.0",
+  "ultimate_winner_frozen": false
+}

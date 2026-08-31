@@ -1,0 +1,8 @@
+earlier_eda_insight,verdict_after_measured_gates,measured_check,next_test
+Class imbalance can make accuracy misleading.,supported,B0: 49.568% accuracy but 0.165704 macro-F1; Spring F1 = 0.,Keep macro-F1 primary; test I1 later.
+Shape and colour contain useful Season signal.,supported,"B1 reached 0.609561 macro-F1, far above B0.","Use learned image features, then inspect errors."
+Learned features should improve fixed HOG/HSV.,supported,C1 and C2 reached 0.699902 and 0.707099.,Run both finalists at the full matched budget.
+More model capacity should clearly improve quality.,partly supported,"C2 beat C1-T0 by 0.007197, but C1-T1 reached 0.708075.",Compare C1-T1 and C2-T0 for quality and cost.
+A larger P1 input may preserve useful detail.,contradicted,P1 changed macro-F1 by -0.001787 and used 1.992x runtime.,Retain P0; do not add more image sizes.
+Extra colour jitter may improve generalisation.,contradicted,A1 changed macro-F1 by -0.010438 and hurt Fall/Spring F1.,Retain A0; colour may be genuine signal.
+"ArticleType, file size, and acquisition year may be shortcuts.",still untested,No current gate isolates these OOF slices.,"Measure conflict, size-quartile, and year slices in Section 10."

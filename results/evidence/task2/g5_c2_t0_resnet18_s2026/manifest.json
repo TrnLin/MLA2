@@ -1,0 +1,74 @@
+{
+  "artifacts": {
+    "confusion_matrix": {
+      "path": "results/evidence/task2/g5_c2_t0_resnet18_s2026/confusion_matrix.csv",
+      "sha256": "6926ea3d3230d3bb434d581cac68beb52610f63e8c3655a833531179f82a9804"
+    },
+    "figure": {
+      "path": "results/figures/task2/g5_c2_t0_resnet18_s2026.png",
+      "sha256": "1cef087c9ec20dd9260041f16eaa6ab844a972ee12ba405fabd844640a55fdb6"
+    },
+    "fold_metrics": {
+      "path": "results/evidence/task2/g5_c2_t0_resnet18_s2026/fold_metrics.csv",
+      "sha256": "5d805034375e3d3e993d8e8efd5b9233a28daea028e550a5aa110b88128c7294"
+    },
+    "fold_summary": {
+      "path": "results/evidence/task2/g5_c2_t0_resnet18_s2026/fold_summary.csv",
+      "sha256": "0caad77692380959a154bf2b736ce215ff7851dda5ba0a04ee96b360e234f5bd"
+    },
+    "per_class_metrics": {
+      "path": "results/evidence/task2/g5_c2_t0_resnet18_s2026/per_class_metrics.csv",
+      "sha256": "849e3ad74a246744e52a99569f82a73e1b60ff20b935568d0b6f5f417192dd00"
+    },
+    "pooled_metrics": {
+      "path": "results/evidence/task2/g5_c2_t0_resnet18_s2026/pooled_metrics.json",
+      "sha256": "b137c4aaf07da4a73f8377f8f2725033efda12e37587cedd12b2ba2567116ff1"
+    },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/g5_c2_t0_resnet18_s2026/registry_snapshot.csv",
+      "sha256": "905ebb8f337190c317fad8d1b613b783f226185243e5d404a289a5e0a4a4988f"
+    }
+  },
+  "calibration_claim_allowed": false,
+  "coverage": {
+    "expected_row_count": 32753,
+    "id_set_sha256": "7e278f240c9be8e59b9bf070866f725c71906f73ce910be49a752daf3e2c5b85",
+    "labels": [
+      "Fall",
+      "Spring",
+      "Summer",
+      "Winter"
+    ],
+    "probability_sum_tolerance": 1e-05,
+    "protected_id_count": 0,
+    "row_count": 32753,
+    "unique_id_count": 32753
+  },
+  "experiment_id": "g5-c2-t0-resnet18-s2026",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "oof_artifact_set_sha256": "78d6d091d4351b9b24a6ec2e3c8e1c8d18f56b50e3f5505e16ae0b855ef2409e",
+  "pooled_macro_f1": 0.7331367789638595,
+  "probability_note": "Uncalibrated softmax probabilities from the best validation macro-F1 checkpoint in each fold; calibration metrics are diagnostic only.",
+  "run_ids": [
+    "g5-c2-t0-resnet18-s2026-f0-s2026-5444e94d7f03",
+    "g5-c2-t0-resnet18-s2026-f1-s2026-4a70c208e6c1",
+    "g5-c2-t0-resnet18-s2026-f2-s2026-8a316de3c09e",
+    "g5-c2-t0-resnet18-s2026-f3-s2026-00bc83e754cd",
+    "g5-c2-t0-resnet18-s2026-f4-s2026-b9ac258333f7"
+  ],
+  "schema_version": "1.0.0",
+  "seed": 2026,
+  "sources": [
+    "cache",
+    "cache",
+    "cache",
+    "cache",
+    "cache"
+  ]
+}
