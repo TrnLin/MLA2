@@ -26,6 +26,8 @@ Task3ChildName = Literal[
     "usage_focal_gamma1",
     "gender_tinyhrnet20",
     "usage_tinyconvnext18",
+    "gender_gem_p3_early_stopping",
+    "usage_translation_2px",
 ]
 Task3ModelFamily = Literal[
     "task3_small_cnn",
@@ -43,6 +45,42 @@ Task3RunModelToken = Literal[
     "tinyhrnet20",
     "tinyconvnext18",
 ]
+
+
+@dataclass
+class _EarlyStoppingTracker:
+    """Track one frozen best-validation checkpoint policy."""
+
+    min_epoch: int
+    patience: int
+    min_delta: float
+    best_score: float = float("-inf")
+    best_epoch: int = 0
+    epochs_without_improvement: int = 0
+
+    def __post_init__(self) -> None:
+        if self.min_epoch < 1:
+            raise ValueError("early-stopping minimum epoch must be positive")
+        if self.patience < 1:
+            raise ValueError("early-stopping patience must be positive")
+        if self.min_delta < 0:
+            raise ValueError("early-stopping minimum delta cannot be negative")
+
+    def update(self, epoch: int, score: float) -> bool:
+        """Record a qualifying improvement and return whether it was selected."""
+        if epoch < 1 or not np.isfinite(score):
+            raise ValueError("early-stopping epoch must be positive and score must be finite")
+        improved = score > self.best_score + self.min_delta
+        if improved:
+            self.best_score = float(score)
+            self.best_epoch = int(epoch)
+            self.epochs_without_improvement = 0
+        else:
+            self.epochs_without_improvement += 1
+        return improved
+
+    def should_stop(self, epoch: int) -> bool:
+        return epoch >= self.min_epoch and self.epochs_without_improvement >= self.patience
 
 
 @dataclass(frozen=True)
@@ -67,6 +105,10 @@ class Task3ChildSpec:
     focal_gamma: float = 0.0
     model_family: Task3ModelFamily = "task3_small_cnn"
     run_model_token: Task3RunModelToken = "smallcnn"
+    checkpoint_policy: Literal["final_epoch", "best_validation_macro_f1"] = "final_epoch"
+    early_stopping_min_epoch: int = 0
+    early_stopping_patience: int = 0
+    early_stopping_min_delta: float = 0.0
 
     def __post_init__(self) -> None:
         if len(set(self.parent_run_ids)) != 5 or any(not run_id for run_id in self.parent_run_ids):
@@ -283,8 +325,56 @@ class Task3ChildSpec:
                 "model_family": "task3_tinyconvnext18",
                 "run_model_token": "tinyconvnext18",
             },
+            "gender_gem_p3_early_stopping": {
+                "target": "gender",
+                "experiment_id": "t3_gender_gem_p3_early_stopping",
+                "hypothesis_id": "t3_gender_e8_early_stopping",
+                "artifact_dir": "experiments/t3_gender_e8_early_stopping",
+                "run_prefix": "t3_gender_e8_early_stopping",
+                "changed_factor": "checkpoint_selection",
+                "training_augmentation": "none",
+                "loss_name": "cross_entropy",
+                "parent_artifact_dir": "experiments/t3_gender_e6_gem_p3",
+                "class_weight_beta": None,
+                "class_weight_cap": None,
+                "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
+                "focal_gamma": 0.0,
+                "model_family": "task3_small_cnn_gem_p3",
+                "run_model_token": "smallcnngem3",
+                "checkpoint_policy": "best_validation_macro_f1",
+                "early_stopping_min_epoch": 15,
+                "early_stopping_patience": 10,
+                "early_stopping_min_delta": 0.001,
+            },
+            "usage_translation_2px": {
+                "target": "usage",
+                "experiment_id": "t3_usage_translation_2px_smallcnn",
+                "hypothesis_id": "t3_usage_e8_translation",
+                "artifact_dir": "experiments/t3_usage_e8_translation",
+                "run_prefix": "t3_usage_e8_translation",
+                "changed_factor": "training_translation",
+                "training_augmentation": "translation_uniform_2px_p05",
+                "loss_name": "effective_number_cross_entropy",
+                "parent_artifact_dir": "experiments/t3_usage_e2_class_balanced_ce",
+                "class_weight_beta": 0.999,
+                "class_weight_cap": 5.0,
+                "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
+                "focal_gamma": 0.0,
+                "model_family": "task3_small_cnn",
+                "run_model_token": "smallcnn",
+                "checkpoint_policy": "final_epoch",
+                "early_stopping_min_epoch": 0,
+                "early_stopping_patience": 0,
+                "early_stopping_min_delta": 0.0,
+            },
         }[self.name]
         expected.setdefault("focal_gamma", 0.0)
+        expected.setdefault("checkpoint_policy", "final_epoch")
+        expected.setdefault("early_stopping_min_epoch", 0)
+        expected.setdefault("early_stopping_patience", 0)
+        expected.setdefault("early_stopping_min_delta", 0.0)
         actual = asdict(self)
         actual.pop("name")
         actual.pop("parent_run_ids")
@@ -530,6 +620,50 @@ def usage_tinyconvnext18_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
     )
 
 
+def gender_gem_p3_early_stopping_spec(
+    parent_run_ids: Sequence[str],
+) -> Task3ChildSpec:
+    """Change only the Gender E6 checkpoint-selection policy."""
+    return Task3ChildSpec(
+        name="gender_gem_p3_early_stopping",
+        target="gender",
+        experiment_id="t3_gender_gem_p3_early_stopping",
+        hypothesis_id="t3_gender_e8_early_stopping",
+        artifact_dir="experiments/t3_gender_e8_early_stopping",
+        run_prefix="t3_gender_e8_early_stopping",
+        changed_factor="checkpoint_selection",
+        training_augmentation="none",
+        loss_name="cross_entropy",
+        parent_artifact_dir="experiments/t3_gender_e6_gem_p3",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        model_family="task3_small_cnn_gem_p3",
+        run_model_token="smallcnngem3",
+        checkpoint_policy="best_validation_macro_f1",
+        early_stopping_min_epoch=15,
+        early_stopping_patience=10,
+        early_stopping_min_delta=0.001,
+    )
+
+
+def usage_translation_2px_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    """Change only the accepted Usage E2 training translation."""
+    return Task3ChildSpec(
+        name="usage_translation_2px",
+        target="usage",
+        experiment_id="t3_usage_translation_2px_smallcnn",
+        hypothesis_id="t3_usage_e8_translation",
+        artifact_dir="experiments/t3_usage_e8_translation",
+        run_prefix="t3_usage_e8_translation",
+        changed_factor="training_translation",
+        training_augmentation="translation_uniform_2px_p05",
+        loss_name="effective_number_cross_entropy",
+        parent_artifact_dir="experiments/t3_usage_e2_class_balanced_ce",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        class_weight_beta=0.999,
+        class_weight_cap=5.0,
+    )
+
+
 def effective_number_class_weights(
     counts: Sequence[int], *, beta: float = 0.999, cap: float = 5.0
 ) -> np.ndarray:
@@ -559,6 +693,7 @@ def latest_completed_parent_run_ids(
     output_root: str | Path,
     artifact_dir: str,
     run_prefix: str,
+    run_model_token: str = "smallcnn",
 ) -> tuple[str, str, str, str, str]:
     """Find the newest complete registered parent for each canonical fold."""
     relative_dir = Path(artifact_dir)
@@ -566,7 +701,7 @@ def latest_completed_parent_run_ids(
         raise ValueError("artifact directory must stay inside the Task 3 output root")
     target_dir = Path(output_root) / relative_dir / target
     latest: dict[int, str] = {}
-    for run_dir in sorted(target_dir.glob(f"{run_prefix}_{target}_smallcnn_f*")):
+    for run_dir in sorted(target_dir.glob(f"{run_prefix}_{target}_{run_model_token}_f*")):
         required = (
             run_dir / "config.json",
             run_dir / "final_epoch.pt",
@@ -615,6 +750,19 @@ def latest_completed_usage_e2_parent_run_ids(
     )
 
 
+def latest_completed_gender_e6_parent_run_ids(
+    *, output_root: str | Path
+) -> tuple[str, str, str, str, str]:
+    """Find the five completed Gender E6 GeM performance-benchmark folds."""
+    return latest_completed_parent_run_ids(
+        "gender",
+        output_root=output_root,
+        artifact_dir="experiments/t3_gender_e6_gem_p3",
+        run_prefix="t3_gender_e6_gem_p3",
+        run_model_token="smallcnngem3",
+    )
+
+
 def _spec(name: Task3ChildName, parent_run_ids: Sequence[str]) -> Task3ChildSpec:
     if name == "gender_brightness":
         return gender_brightness_spec(parent_run_ids)
@@ -640,6 +788,10 @@ def _spec(name: Task3ChildName, parent_run_ids: Sequence[str]) -> Task3ChildSpec
         return gender_tinyhrnet20_spec(parent_run_ids)
     if name == "usage_tinyconvnext18":
         return usage_tinyconvnext18_spec(parent_run_ids)
+    if name == "gender_gem_p3_early_stopping":
+        return gender_gem_p3_early_stopping_spec(parent_run_ids)
+    if name == "usage_translation_2px":
+        return usage_translation_2px_spec(parent_run_ids)
     raise ValueError(f"unsupported Task 3 child: {name}")
 
 
