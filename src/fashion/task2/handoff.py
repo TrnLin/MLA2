@@ -5,7 +5,9 @@ from __future__ import annotations
 import json
 import math
 import os
+import time
 from contextlib import contextmanager
+from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any, Iterator, Mapping
@@ -43,6 +45,7 @@ DEFAULT_ULTIMATE_MANIFEST = TASK2_EVIDENCE_DIR / "ultimate_judgement/manifest.js
 HANDOFF_LOCK_FILENAME = ".task2-handoff.lock"
 HANDOFF_SCHEMA_VERSION = "1.1.0"
 REGISTRY_SNAPSHOT_FILENAME = "registry_snapshot.csv"
+UNREADABLE_LOCK_GRACE_SECONDS = 300.0
 SEASON_LABELS = ("Fall", "Spring", "Summer", "Winter")
 
 _AUDIT_COLUMNS = (
@@ -187,6 +190,72 @@ def _registry_snapshot(
     return matches.loc[:, RUN_COLUMNS].reset_index(drop=True), resolved
 
 
+def _parse_utc_timestamp(value: str, scope: str) -> datetime:
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as error:
+        raise ValueError(f"{scope} is not a valid timestamp") from error
+    if parsed.utcoffset() is None or parsed.utcoffset().total_seconds() != 0:
+        raise ValueError(f"{scope} must use UTC")
+    return parsed
+
+
+def _validate_registry_snapshot_provenance(
+    refit: Mapping[str, Any],
+    registry_path: str | Path,
+    *,
+    root: Path,
+) -> tuple[pd.DataFrame, Path]:
+    """Bind every registry field omitted by the core refit verifier."""
+    frame, resolved = _registry_snapshot(refit, registry_path, root=root)
+    row = frame.iloc[0]
+    runtime_path = _declared_path(
+        refit["artifacts"]["runtime"],
+        root=root,
+        scope="development refit runtime",
+    )
+    runtime = _load_json_object(runtime_path, "development refit runtime")
+    try:
+        metrics = json.loads(str(row["metrics"]))
+        registry_runtime = json.loads(str(row["runtime"]))
+        runtime_seconds = float(row["runtime_seconds"])
+        peak_vram_mb = float(row["peak_vram_mb"])
+        expected_runtime_seconds = float(runtime["runtime_seconds"])
+        expected_peak_vram_mb = float(runtime["peak_vram_mb"])
+        started = _parse_utc_timestamp(str(row["started_at_utc"]), "registry start")
+        finished = _parse_utc_timestamp(str(row["finished_at_utc"]), "registry finish")
+    except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+        raise ValueError("Task 2 registry snapshot provenance changed") from error
+    elapsed_seconds = (finished - started).total_seconds()
+    if (
+        row["task"] != "task2"
+        or metrics != {}
+        or row["prediction_path"] != ""
+        or row["prediction_sha256"] != ""
+        or registry_runtime != runtime.get("environment")
+        or not math.isfinite(runtime_seconds)
+        or runtime_seconds <= 0.0
+        or not math.isclose(
+            runtime_seconds,
+            expected_runtime_seconds,
+            rel_tol=0.0,
+            abs_tol=1e-9,
+        )
+        or not math.isfinite(peak_vram_mb)
+        or peak_vram_mb < 0.0
+        or not math.isclose(
+            peak_vram_mb,
+            expected_peak_vram_mb,
+            rel_tol=0.0,
+            abs_tol=1e-9,
+        )
+        or elapsed_seconds < runtime_seconds
+        or elapsed_seconds > runtime_seconds + 600.0
+    ):
+        raise ValueError("Task 2 registry snapshot provenance changed")
+    return frame, resolved
+
+
 def audit_task2_artifacts(
     *,
     project_root: str | Path = ROOT,
@@ -209,7 +278,7 @@ def audit_task2_artifacts(
             project_root=root,
             registry_path=registry_path,
         )
-        registry_frame, resolved_registry = _registry_snapshot(
+        registry_frame, resolved_registry = _validate_registry_snapshot_provenance(
             refit,
             registry_path,
             root=root,
@@ -220,7 +289,7 @@ def audit_task2_artifacts(
             model_manifest_path,
             project_root=root,
         )
-        _, resolved_registry = _registry_snapshot(
+        _, resolved_registry = _validate_registry_snapshot_provenance(
             refit,
             registry_snapshot_path,
             root=root,
@@ -503,7 +572,11 @@ def _lock_owner_is_alive(path: Path) -> bool:
         owner = _load_json_object(path, "Task 2 handoff build lock")
         process_id = int(owner["pid"])
     except (KeyError, TypeError, ValueError, json.JSONDecodeError, OSError):
-        return False
+        try:
+            age_seconds = max(0.0, time.time() - path.stat().st_mtime)
+        except OSError:
+            return True
+        return age_seconds < UNREADABLE_LOCK_GRACE_SECONDS
     return psutil.pid_exists(process_id)
 
 
@@ -547,7 +620,8 @@ def _exclusive_handoff_lock(path: Path) -> Iterator[None]:
             path.unlink(missing_ok=True)
 
 
-def _publish_transaction(staged_to_final: Mapping[Path, Path]) -> None:
+@contextmanager
+def _publish_transaction(staged_to_final: Mapping[Path, Path]) -> Iterator[None]:
     """Publish children before the manifest and restore every old file on failure."""
     if not staged_to_final:
         raise ValueError("Task 2 handoff transaction is empty")
@@ -566,6 +640,7 @@ def _publish_transaction(staged_to_final: Mapping[Path, Path]) -> None:
             final.parent.mkdir(parents=True, exist_ok=True)
             os.replace(staged, final)
             published.append(final)
+        yield
     except BaseException:
         for final in reversed(published):
             final.unlink(missing_ok=True)
@@ -785,25 +860,25 @@ def build_task2_handoff_evidence(
                             + ", ".join(str(path) for path in orphaned)
                         )
 
-                _publish_transaction(
+                with _publish_transaction(
                     {
                         staged_snapshot: snapshot_path,
                         staged_audit: audit_path,
                         staged_smoke: smoke_path,
                         staged_manifest: manifest_path,
                     }
-                )
+                ):
+                    verified, verified_path, _, _ = load_verified_task2_handoff(
+                        manifest_path,
+                        project_root=root,
+                    )
+                return verified, verified_path
         finally:
             try:
                 staging_root.rmdir()
                 staging_root.parent.rmdir()
             except OSError:
                 pass
-        verified, verified_path, _, _ = load_verified_task2_handoff(
-            manifest_path,
-            project_root=root,
-        )
-        return verified, verified_path
 
 
 def load_verified_task2_handoff(
@@ -851,9 +926,9 @@ def load_verified_task2_handoff(
         verified["model_manifest"],
         project_root=root,
     )
-    _verify_refit_registry(
+    _validate_registry_snapshot_provenance(
         refit,
-        registry_path=verified["registry_snapshot"],
+        verified["registry_snapshot"],
         root=root,
     )
     freeze, freeze_path = load_verified_selection_freeze(

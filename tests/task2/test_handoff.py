@@ -45,6 +45,8 @@ def _fixture(
     monkeypatch: pytest.MonkeyPatch,
     *,
     partition: str = "development",
+    runtime_peak_vram_mb: float | None = 0.0,
+    registry_peak_vram_mb: float | None = 0.0,
 ) -> dict[str, object]:
     root = tmp_path.resolve()
     ultimate_path = _write(root / "ultimate/manifest.json", "{}\n")
@@ -52,7 +54,17 @@ def _fixture(
     freeze_path = _write(root / "evidence/selection_freeze.json", "{}\n")
     bundle_path = _write(root / "models/task2_season.pt", "weights")
     history_path = _write(root / "evidence/history.csv", "epoch,loss\n1,1.0\n")
-    runtime_path = _write(root / "evidence/runtime.json", "{}\n")
+    runtime_environment = {"python": "3.12-test"}
+    runtime_path = _write(
+        root / "evidence/runtime.json",
+        json.dumps(
+            {
+                "runtime_seconds": 12.5,
+                "peak_vram_mb": runtime_peak_vram_mb,
+                "environment": runtime_environment,
+            }
+        ),
+    )
     label_maps_path = _write(root / "data/label_maps.json", "{}\n")
     inference_source = _write(root / "src/fashion/task2/inference.py", "# image only\n")
     selected_config_path = root / "configs/task2/g4_i2_article_type_lambda_0_3_c1.json"
@@ -158,7 +170,15 @@ def _fixture(
             "checkpoint_sha256": refit["bundle"]["sha256"],
             "history_path": refit["artifacts"]["history"]["path"],
             "history_sha256": refit["artifacts"]["history"]["sha256"],
+            "metrics": "{}",
+            "runtime_seconds": "12.5",
+            "peak_vram_mb": (
+                "" if registry_peak_vram_mb is None else str(registry_peak_vram_mb)
+            ),
             "status": "completed",
+            "started_at_utc": "2026-08-30T22:02:02Z",
+            "finished_at_utc": "2026-08-30T22:02:15Z",
+            "runtime": json.dumps(runtime_environment),
         }
     )
     registry_path = root / "results/runs.csv"
