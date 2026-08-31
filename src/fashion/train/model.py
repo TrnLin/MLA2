@@ -6,11 +6,14 @@ import math
 
 import torch
 from torch import nn
+from torch.nn import functional as F
 
 from fashion.train.config import (
+    COMPACT_BLUR_CNN_WIDTHS,
     TINYRESNET18_PM_WIDTHS,
     Task3BaselineConfig,
     baseline_parameter_count,
+    compact_blur_cnn_parameter_count,
     tinyresnet18_pm_parameter_count,
 )
 
@@ -174,4 +177,96 @@ class Task3TinyResNet18PM(nn.Module):
 
     def forward(self, images: torch.Tensor) -> torch.Tensor:
         features = self.features(self.stem(images))
+        return self.classifier(self.pool(features).flatten(1))
+
+
+class _FixedBlurPool(nn.Module):
+    """Channel-wise fixed binomial filtering followed by stride-two sampling."""
+
+    def __init__(self, channels: int) -> None:
+        super().__init__()
+        kernel = torch.tensor(
+            [[1.0, 2.0, 1.0], [2.0, 4.0, 2.0], [1.0, 2.0, 1.0]],
+            dtype=torch.float32,
+        )
+        self.channels = channels
+        self.register_buffer(
+            "kernel",
+            (kernel / 16.0).reshape(1, 1, 3, 3).repeat(channels, 1, 1, 1),
+        )
+
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+        if inputs.shape[1] != self.channels:
+            raise ValueError(
+                f"BlurPool expected {self.channels} channels, found {inputs.shape[1]}"
+            )
+        return F.conv2d(
+            inputs,
+            self.kernel,
+            stride=2,
+            padding=1,
+            groups=self.channels,
+        )
+
+
+class Task3CompactBlurCNN(nn.Module):
+    """Low-capacity scratch CNN with fixed anti-aliased spatial reductions."""
+
+    def __init__(self, config: Task3BaselineConfig) -> None:
+        super().__init__()
+        first, second, third, output = COMPACT_BLUR_CNN_WIDTHS
+        self.features = nn.Sequential(
+            nn.Conv2d(3, first, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(first),
+            nn.ReLU(inplace=True),
+            _FixedBlurPool(first),
+            nn.Conv2d(first, second, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(second),
+            nn.ReLU(inplace=True),
+            _FixedBlurPool(second),
+            nn.Conv2d(second, third, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(third),
+            nn.ReLU(inplace=True),
+            _FixedBlurPool(third),
+            nn.Conv2d(
+                third,
+                third,
+                kernel_size=3,
+                padding=1,
+                groups=third,
+                bias=False,
+            ),
+            nn.BatchNorm2d(third),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(third, output, kernel_size=1, bias=False),
+            nn.BatchNorm2d(output),
+            nn.ReLU(inplace=True),
+        )
+        self.pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.classifier = nn.Linear(output, config.num_classes)
+        self._initialise()
+
+        actual = sum(
+            parameter.numel() for parameter in self.parameters() if parameter.requires_grad
+        )
+        expected = compact_blur_cnn_parameter_count(config.target)
+        if actual != expected:
+            raise RuntimeError(
+                f"CompactBlurCNN parameter contract failed: expected {expected}, found {actual}"
+            )
+
+    def _initialise(self) -> None:
+        for module in self.modules():
+            if isinstance(module, nn.Conv2d):
+                nn.init.kaiming_normal_(module.weight, mode="fan_out", nonlinearity="relu")
+            elif isinstance(module, nn.BatchNorm2d):
+                nn.init.ones_(module.weight)
+                nn.init.zeros_(module.bias)
+            elif isinstance(module, nn.Linear):
+                nn.init.kaiming_uniform_(module.weight, a=math.sqrt(5))
+                if module.bias is not None:
+                    nn.init.zeros_(module.bias)
+
+    def forward(self, images: torch.Tensor) -> torch.Tensor:
+        features = self.features(images)
         return self.classifier(self.pool(features).flatten(1))

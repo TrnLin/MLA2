@@ -11,6 +11,7 @@ Task3Target = Literal["gender", "usage"]
 
 TARGET_CLASS_COUNTS: dict[Task3Target, int] = {"gender": 5, "usage": 9}
 TINYRESNET18_PM_WIDTHS = (12, 24, 48, 96)
+COMPACT_BLUR_CNN_WIDTHS = (24, 48, 96, 128)
 
 
 @dataclass(frozen=True)
@@ -138,3 +139,37 @@ def tinyresnet18_pm_macs(target: Task3Target) -> int:
                 macs += height * width * input_channels * output_channels
             input_channels = output_channels
     return macs + widths[-1] * TARGET_CLASS_COUNTS[target]
+
+
+def compact_blur_cnn_parameter_count(target: Task3Target) -> int:
+    """Calculate the fixed compact anti-aliased CNN contract without PyTorch."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    first, second, third, output = COMPACT_BLUR_CNN_WIDTHS
+    parameters = 3 * first * 3 * 3 + 2 * first
+    parameters += first * second * 3 * 3 + 2 * second
+    parameters += second * third * 3 * 3 + 2 * third
+    parameters += third * 3 * 3 + 2 * third
+    parameters += third * output + 2 * output
+    classes = TARGET_CLASS_COUNTS[target]
+    return parameters + output * classes + classes
+
+
+def compact_blur_cnn_macs(target: Task3Target) -> int:
+    """Return convolution, fixed BlurPool, and classifier MACs for an 80x60 input."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    first, second, third, output = COMPACT_BLUR_CNN_WIDTHS
+    height, width = 80, 60
+    macs = height * width * 3 * first * 3 * 3
+    height, width = (height + 1) // 2, (width + 1) // 2
+    macs += height * width * first * 3 * 3
+    macs += height * width * first * second * 3 * 3
+    height, width = (height + 1) // 2, (width + 1) // 2
+    macs += height * width * second * 3 * 3
+    macs += height * width * second * third * 3 * 3
+    height, width = (height + 1) // 2, (width + 1) // 2
+    macs += height * width * third * 3 * 3
+    macs += height * width * third * 3 * 3
+    macs += height * width * third * output
+    return macs + output * TARGET_CLASS_COUNTS[target]

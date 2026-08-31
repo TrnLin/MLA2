@@ -27,6 +27,8 @@ from fashion.data.hashing import compute_sha256
 from fashion.train.config import (
     Task3BaselineConfig,
     baseline_parameter_count,
+    compact_blur_cnn_macs,
+    compact_blur_cnn_parameter_count,
     config_digest,
     tinyresnet18_pm_macs,
     tinyresnet18_pm_parameter_count,
@@ -37,8 +39,9 @@ from fashion.train.data import (
     fit_fold_rgb_stats,
     task3_target_frames,
 )
+from fashion.train.loss import WeightedLabelSmoothedCrossEntropy
 from fashion.train.metrics import classification_metrics
-from fashion.train.model import Task3BaselineCNN, Task3TinyResNet18PM
+from fashion.train.model import Task3BaselineCNN, Task3CompactBlurCNN, Task3TinyResNet18PM
 from fashion.train.registry import RunRegistry
 from fashion.train.task3_experiments import Task3ChildSpec, effective_number_class_weights
 
@@ -259,7 +262,12 @@ def _pass(
                 optimizer.step()
             rows = len(target)
             total_rows += rows
-            if isinstance(criterion, nn.CrossEntropyLoss) and criterion.weight is not None:
+            denominator_method = getattr(criterion, "loss_denominator", None)
+            if callable(denominator_method):
+                batch_loss_denominator = float(
+                    denominator_method(target).detach().cpu()
+                )
+            elif isinstance(criterion, nn.CrossEntropyLoss) and criterion.weight is not None:
                 batch_loss_denominator = float(
                     criterion.weight[target].detach().sum().cpu()
                 )
@@ -362,6 +370,13 @@ def _task3_model_contract(
             tinyresnet18_pm_parameter_count(config.target),
             tinyresnet18_pm_macs(config.target),
         )
+    if model_family == "task3_compact_blur_cnn":
+        return (
+            model_family,
+            run_model_token,
+            compact_blur_cnn_parameter_count(config.target),
+            compact_blur_cnn_macs(config.target),
+        )
     if model_family != "task3_small_cnn":
         raise ValueError(f"unsupported Task 3 model family: {model_family}")
     return model_family, run_model_token, baseline_parameter_count(config.target), None
@@ -374,6 +389,8 @@ def _build_task3_model(
     model_family, _, _, _ = _task3_model_contract(config, child_spec)
     if model_family == "task3_tinyresnet18_pm":
         return Task3TinyResNet18PM(config)
+    if model_family == "task3_compact_blur_cnn":
+        return Task3CompactBlurCNN(config)
     classifier_dropout = child_spec.classifier_dropout if child_spec is not None else 0.0
     return Task3BaselineCNN(config, classifier_dropout=classifier_dropout)
 
@@ -448,7 +465,10 @@ def run_task3_baseline_fold(
         dtype=np.int64,
     )
     class_weights: np.ndarray | None = None
-    if child_spec is not None and child_spec.loss_name == "effective_number_cross_entropy":
+    if child_spec is not None and child_spec.loss_name in {
+        "effective_number_cross_entropy",
+        "effective_number_label_smoothed_cross_entropy",
+    }:
         if child_spec.class_weight_beta is None or child_spec.class_weight_cap is None:
             raise ValueError("class-balanced loss requires beta and cap")
         class_weights = effective_number_class_weights(
@@ -543,13 +563,20 @@ def run_task3_baseline_fold(
 
     classifier_dropout = child_spec.classifier_dropout if child_spec is not None else 0.0
     model = _build_task3_model(config, child_spec).to(device)
-    criterion = nn.CrossEntropyLoss(
-        weight=(
-            torch.as_tensor(class_weights, dtype=torch.float32, device=device)
-            if class_weights is not None
-            else None
-        )
+    class_weight_tensor = (
+        torch.as_tensor(class_weights, dtype=torch.float32, device=device)
+        if class_weights is not None
+        else None
     )
+    if child_spec is not None and child_spec.label_smoothing > 0.0:
+        if class_weight_tensor is None:
+            raise ValueError("weighted label smoothing requires fold-only class weights")
+        criterion: nn.Module = WeightedLabelSmoothedCrossEntropy(
+            class_weight_tensor,
+            epsilon=child_spec.label_smoothing,
+        )
+    else:
+        criterion = nn.CrossEntropyLoss(weight=class_weight_tensor)
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay
     )
@@ -672,6 +699,9 @@ def run_task3_baseline_fold(
         metrics["class_counts"] = class_counts.tolist()
         metrics["class_weights"] = class_weights.tolist() if class_weights is not None else None
         metrics["classifier_dropout"] = classifier_dropout
+        metrics["label_smoothing"] = (
+            child_spec.label_smoothing if child_spec is not None else 0.0
+        )
         metrics["model_family"] = model_family
         metrics["parameter_count"] = parameter_count
         metrics["architecture_macs"] = architecture_macs

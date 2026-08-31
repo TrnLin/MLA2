@@ -19,9 +19,15 @@ Task3ChildName = Literal[
     "usage_classifier_dropout",
     "gender_tinyresnet18_pm",
     "usage_tinyresnet18_pm",
+    "gender_compact_blur_cnn",
+    "usage_label_smoothing",
 ]
-Task3ModelFamily = Literal["task3_small_cnn", "task3_tinyresnet18_pm"]
-Task3RunModelToken = Literal["smallcnn", "tinyresnet18pm"]
+Task3ModelFamily = Literal[
+    "task3_small_cnn",
+    "task3_tinyresnet18_pm",
+    "task3_compact_blur_cnn",
+]
+Task3RunModelToken = Literal["smallcnn", "tinyresnet18pm", "compactblurcnn"]
 
 
 @dataclass(frozen=True)
@@ -42,6 +48,7 @@ class Task3ChildSpec:
     class_weight_beta: float | None = None
     class_weight_cap: float | None = None
     classifier_dropout: float = 0.0
+    label_smoothing: float = 0.0
     model_family: Task3ModelFamily = "task3_small_cnn"
     run_model_token: Task3RunModelToken = "smallcnn"
 
@@ -65,6 +72,7 @@ class Task3ChildSpec:
                 "class_weight_beta": None,
                 "class_weight_cap": None,
                 "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
                 "model_family": "task3_small_cnn",
                 "run_model_token": "smallcnn",
             },
@@ -81,6 +89,7 @@ class Task3ChildSpec:
                 "class_weight_beta": 0.999,
                 "class_weight_cap": 5.0,
                 "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
                 "model_family": "task3_small_cnn",
                 "run_model_token": "smallcnn",
             },
@@ -97,6 +106,7 @@ class Task3ChildSpec:
                 "class_weight_beta": 0.999,
                 "class_weight_cap": 5.0,
                 "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
                 "model_family": "task3_small_cnn",
                 "run_model_token": "smallcnn",
             },
@@ -113,6 +123,7 @@ class Task3ChildSpec:
                 "class_weight_beta": 0.999,
                 "class_weight_cap": 5.0,
                 "classifier_dropout": 0.2,
+                "label_smoothing": 0.0,
                 "model_family": "task3_small_cnn",
                 "run_model_token": "smallcnn",
             },
@@ -129,6 +140,7 @@ class Task3ChildSpec:
                 "class_weight_beta": None,
                 "class_weight_cap": None,
                 "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
                 "model_family": "task3_tinyresnet18_pm",
                 "run_model_token": "tinyresnet18pm",
             },
@@ -145,8 +157,43 @@ class Task3ChildSpec:
                 "class_weight_beta": 0.999,
                 "class_weight_cap": 5.0,
                 "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
                 "model_family": "task3_tinyresnet18_pm",
                 "run_model_token": "tinyresnet18pm",
+            },
+            "gender_compact_blur_cnn": {
+                "target": "gender",
+                "experiment_id": "t3_gender_compact_blur_cnn",
+                "hypothesis_id": "t3_gender_e5_compact_blur_cnn",
+                "artifact_dir": "experiments/t3_gender_e5_compact_blur_cnn",
+                "run_prefix": "t3_gender_e5_compact_blur_cnn",
+                "changed_factor": "model_architecture",
+                "training_augmentation": "none",
+                "loss_name": "cross_entropy",
+                "parent_artifact_dir": "baseline",
+                "class_weight_beta": None,
+                "class_weight_cap": None,
+                "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
+                "model_family": "task3_compact_blur_cnn",
+                "run_model_token": "compactblurcnn",
+            },
+            "usage_label_smoothing": {
+                "target": "usage",
+                "experiment_id": "t3_usage_label_smoothing_smallcnn",
+                "hypothesis_id": "t3_usage_e5_label_smoothing",
+                "artifact_dir": "experiments/t3_usage_e5_label_smoothing",
+                "run_prefix": "t3_usage_e5_label_smoothing",
+                "changed_factor": "label_smoothing",
+                "training_augmentation": "none",
+                "loss_name": "effective_number_label_smoothed_cross_entropy",
+                "parent_artifact_dir": "experiments/t3_usage_e2_class_balanced_ce",
+                "class_weight_beta": 0.999,
+                "class_weight_cap": 5.0,
+                "classifier_dropout": 0.0,
+                "label_smoothing": 0.05,
+                "model_family": "task3_small_cnn",
+                "run_model_token": "smallcnn",
             },
         }[self.name]
         actual = asdict(self)
@@ -278,6 +325,43 @@ def usage_tinyresnet18_pm_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
     )
 
 
+def gender_compact_blur_cnn_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    return Task3ChildSpec(
+        name="gender_compact_blur_cnn",
+        target="gender",
+        experiment_id="t3_gender_compact_blur_cnn",
+        hypothesis_id="t3_gender_e5_compact_blur_cnn",
+        artifact_dir="experiments/t3_gender_e5_compact_blur_cnn",
+        run_prefix="t3_gender_e5_compact_blur_cnn",
+        changed_factor="model_architecture",
+        training_augmentation="none",
+        loss_name="cross_entropy",
+        parent_artifact_dir="baseline",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        model_family="task3_compact_blur_cnn",
+        run_model_token="compactblurcnn",
+    )
+
+
+def usage_label_smoothing_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    return Task3ChildSpec(
+        name="usage_label_smoothing",
+        target="usage",
+        experiment_id="t3_usage_label_smoothing_smallcnn",
+        hypothesis_id="t3_usage_e5_label_smoothing",
+        artifact_dir="experiments/t3_usage_e5_label_smoothing",
+        run_prefix="t3_usage_e5_label_smoothing",
+        changed_factor="label_smoothing",
+        training_augmentation="none",
+        loss_name="effective_number_label_smoothed_cross_entropy",
+        parent_artifact_dir="experiments/t3_usage_e2_class_balanced_ce",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        class_weight_beta=0.999,
+        class_weight_cap=5.0,
+        label_smoothing=0.05,
+    )
+
+
 def effective_number_class_weights(
     counts: Sequence[int], *, beta: float = 0.999, cap: float = 5.0
 ) -> np.ndarray:
@@ -374,7 +458,11 @@ def _spec(name: Task3ChildName, parent_run_ids: Sequence[str]) -> Task3ChildSpec
         return usage_classifier_dropout_spec(parent_run_ids)
     if name == "gender_tinyresnet18_pm":
         return gender_tinyresnet18_pm_spec(parent_run_ids)
-    return usage_tinyresnet18_pm_spec(parent_run_ids)
+    if name == "usage_tinyresnet18_pm":
+        return usage_tinyresnet18_pm_spec(parent_run_ids)
+    if name == "gender_compact_blur_cnn":
+        return gender_compact_blur_cnn_spec(parent_run_ids)
+    return usage_label_smoothing_spec(parent_run_ids)
 
 
 def check_task3_child_setup(
@@ -389,28 +477,38 @@ def check_task3_child_setup(
 
     spec = _spec(name, parent_run_ids)
     baseline = check_task3_baseline_setup(spec.target, root=root, device_name=device_name)
-    if spec.model_family == "task3_tinyresnet18_pm":
+    if spec.model_family in {"task3_tinyresnet18_pm", "task3_compact_blur_cnn"}:
         import torch
 
         from fashion.train.config import (
             Task3BaselineConfig,
+            compact_blur_cnn_macs,
+            compact_blur_cnn_parameter_count,
             tinyresnet18_pm_macs,
             tinyresnet18_pm_parameter_count,
         )
-        from fashion.train.model import Task3TinyResNet18PM
+        from fashion.train.model import Task3CompactBlurCNN, Task3TinyResNet18PM
 
         config = Task3BaselineConfig(target=spec.target)
         device = torch.device(device_name)
-        model = Task3TinyResNet18PM(config).to(device)
+        if spec.model_family == "task3_tinyresnet18_pm":
+            model = Task3TinyResNet18PM(config).to(device)
+            parameter_count = tinyresnet18_pm_parameter_count(spec.target)
+            architecture_macs = tinyresnet18_pm_macs(spec.target)
+        else:
+            model = Task3CompactBlurCNN(config).to(device)
+            parameter_count = compact_blur_cnn_parameter_count(spec.target)
+            architecture_macs = compact_blur_cnn_macs(spec.target)
         with torch.inference_mode():
             output = model(
                 torch.zeros(2, 3, config.image_height, config.image_width, device=device)
             )
         if tuple(output.shape) != (2, config.num_classes):
-            raise RuntimeError(f"unexpected TinyResNet output shape: {tuple(output.shape)}")
-        baseline["parameter_count"] = tinyresnet18_pm_parameter_count(spec.target)
-        baseline["architecture_macs"] = tinyresnet18_pm_macs(spec.target)
+            raise RuntimeError(f"unexpected child model output shape: {tuple(output.shape)}")
+        baseline["parameter_count"] = parameter_count
+        baseline["architecture_macs"] = architecture_macs
     baseline["model_family"] = spec.model_family
+    baseline["label_smoothing"] = spec.label_smoothing
     return {
         **baseline,
         "child": spec.to_dict(),
