@@ -9,15 +9,18 @@ from PIL import Image
 
 from fashion.train.augmentation import apply_training_augmentation
 from fashion.train.task3_experiments import (
+    audit_completed_registry_rows,
     effective_number_class_weights,
     gender_brightness_spec,
     gender_class_balanced_spec,
     gender_compact_blur_cnn_spec,
+    gender_gem_p3_spec,
     gender_tinyresnet18_pm_spec,
     latest_completed_baseline_parent_run_ids,
     latest_completed_usage_e2_parent_run_ids,
     usage_class_balanced_spec,
     usage_classifier_dropout_spec,
+    usage_focal_gamma1_spec,
     usage_label_smoothing_spec,
     usage_tinyresnet18_pm_spec,
 )
@@ -144,6 +147,56 @@ def test_usage_e5_changes_only_label_smoothing_from_e2() -> None:
 
     with pytest.raises(ValueError, match="more than its predeclared factor"):
         replace(spec, label_smoothing=0.1)
+
+
+def test_gender_e6_changes_only_global_pooling_from_e1() -> None:
+    parents = tuple(f"gender-e1-parent-{fold}" for fold in range(5))
+    spec = gender_gem_p3_spec(parents)
+
+    assert spec.target == "gender"
+    assert spec.parent_artifact_dir == "baseline"
+    assert spec.changed_factor == "global_pooling"
+    assert spec.loss_name == "cross_entropy"
+    assert spec.model_family == "task3_small_cnn_gem_p3"
+    assert spec.run_model_token == "smallcnngem3"
+
+    with pytest.raises(ValueError, match="more than its predeclared factor"):
+        replace(spec, focal_gamma=1.0)
+
+
+def test_usage_e6_changes_only_focal_modulation_from_e2() -> None:
+    parents = tuple(f"usage-e2-parent-{fold}" for fold in range(5))
+    spec = usage_focal_gamma1_spec(parents)
+
+    assert spec.target == "usage"
+    assert spec.parent_artifact_dir == "experiments/t3_usage_e2_class_balanced_ce"
+    assert spec.changed_factor == "loss_modulation"
+    assert spec.loss_name == "effective_number_focal_cross_entropy"
+    assert spec.class_weight_beta == pytest.approx(0.999)
+    assert spec.class_weight_cap == pytest.approx(5.0)
+    assert spec.focal_gamma == pytest.approx(1.0)
+    assert spec.model_family == "task3_small_cnn"
+
+    with pytest.raises(ValueError, match="more than its predeclared factor"):
+        replace(spec, label_smoothing=0.05)
+
+
+def test_registry_audit_requires_complete_hashed_rows(tmp_path) -> None:
+    registry = tmp_path / "runs.csv"
+    registry.write_text(
+        "run_id,status,config_path,history_path,checkpoint_path,checkpoint_sha256,"
+        "prediction_path,prediction_sha256,metrics_json\n"
+        "fold-0,complete,config.json,history.csv,final.pt,abc,pred.csv,def,{}\n",
+        encoding="utf-8",
+    )
+
+    audit = audit_completed_registry_rows(registry, ["fold-0"])
+
+    assert audit["ready"] is True
+    assert audit["completed_rows"] == 1
+
+    with pytest.raises(RuntimeError, match="found 0"):
+        audit_completed_registry_rows(registry, ["missing"])
 
 
 def test_effective_number_weights_are_fold_only_capped_and_zero_for_absent_class() -> None:
