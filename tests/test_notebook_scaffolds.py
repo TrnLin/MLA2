@@ -1165,6 +1165,59 @@ def test_task2_refit_cell_loads_verified_bundle_without_evaluation_leakage() -> 
         assert required in finding
 
 
+def test_task2_final_cells_build_only_the_locked_component_handoff() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    cell_ids = ("s15-01-01-code", "s15-01-02-code", "s15-02-code")
+
+    for cell_id in cell_ids:
+        code = cells[cell_id].source
+        assert not code.startswith("# TODO:")
+        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+
+    combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
+    for required in (
+        "audit_task2_artifacts",
+        'task2_artifact_audit["status"].eq("PASS").all()',
+        "load_season_bundle",
+        "predict_season",
+        'eq("1163")',
+        'task2_smoke_prediction.review_required is None',
+        "build_task2_handoff_evidence",
+        "load_verified_task2_handoff",
+        'task2_handoff["status"] == "ready_for_group_freeze"',
+        'task2_handoff["group_freeze_verified"] is False',
+        'task2_handoff["notebook_06_unlocked"] is False',
+        'task2_handoff["holdout_opened"] is False',
+        'task2_handoff["model_change_allowed"] is False',
+    ):
+        assert required in combined
+    for forbidden in (
+        "evaluation_unlocked",
+        "load_splits_for_final_evaluation",
+        "styles_prediction.csv",
+        "HTML export",
+    ):
+        assert forbidden not in combined
+
+    findings = "\n".join(
+        cells[cell_id].source
+        for cell_id in ("s15-01-01-finding", "s15-01-02-finding", "s15-02-finding")
+    )
+    for required in (
+        "All `10/10` Task 2 component checks pass",
+        "not claim holdout performance",
+        "development product `1163` as Summer",
+        "not an accuracy estimate",
+        "`ready_for_group_freeze`",
+        "`group_freeze_verified=False`",
+        "`notebook_06_unlocked=False`",
+        "`holdout_opened=False`",
+        "No Task 2 model change is allowed",
+    ):
+        assert required in findings
+
+
 def test_task2_analysis_cells_verify_all_declared_inputs_and_exact_claims() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
