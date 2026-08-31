@@ -108,7 +108,7 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | Refactored to 147 small code cells: each visible cell emits at most one compact table or figure and is followed immediately by an English explanation | Static structure passes; saved outputs and execution counts are intentionally clear until the separately scheduled clean-kernel trace run |
+| Notebook 03 | Refactored to 147 small code cells: each visible cell emits at most one compact table or figure and is followed by an output-specific reading guide, deep analysis, decision, and limitation | Static structure and interpretation-quality checks pass; saved outputs and execution counts are intentionally clear until the separately scheduled clean-kernel trace run |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
 | Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, verified image-only inference, and the locked component handoff are implemented | Wait for whole-group freeze; do not add or retune a candidate |
 | `results/runs.csv` | 123 append-only rows: 116 completed, two failed, and five interrupted | The provenance-hardened refit and all earlier lifecycle outcomes remain traceable |
@@ -1235,9 +1235,9 @@ canonical implementation order. The final replacement passes all of these checks
 ## 9. Final Notebook 03 structure
 
 Notebook 03 keeps 15 top-level numbered sections. Every leaf `###` subsection owns
-exactly one code cell followed by one interpretation prompt. A broader `###` subsection
+exactly one code cell followed by one interpretation. A broader `###` subsection
 owns no direct code cell; it is divided into `####` subsubsections, and every `####` leaf
-owns exactly one code cell and one interpretation prompt.
+owns exactly one code cell and one interpretation.
 
 The notebook now contains 469 cells: 147 code and 322 Markdown. Its 15 numbered `##`
 sections contain 40 `###` subsections and 119 `####` leaves. Sections 1-13 cover the
@@ -1245,9 +1245,12 @@ shared contract, EDA reflection, baselines, incremental model selection, learnin
 curves, stability, slices, robustness/cost, calibration, bootstrap uncertainty,
 Grad-CAM, failure cases, and literature boundaries. Sections 14-15 load the verified
 freeze, provenance-hardened refit, and locked handoff. Every result cell has one explicit
-display at most, followed immediately by a purpose, column/chart guide, finding,
-decision, and limitation. All execution counts and saved outputs are deliberately clear;
-the notebook makes no clean-kernel execution claim in this window.
+display at most. Its interpretation explains how to read the exact displayed columns or
+axes, highlights the important values and reversals, gives a deep analysis tied to that
+output, and closes with a decision and limitation. Static tests reject generic templates,
+shallow analysis, and duplicated analysis text. All execution counts and saved outputs
+are deliberately clear; the notebook makes no clean-kernel execution claim in this
+window.
 
 | Section | Final purpose |
 |---|---|
@@ -1269,7 +1272,13 @@ the notebook makes no clean-kernel execution claim in this window.
 
 Notebook presentation rules:
 
-- Each important code cell has a short Markdown interpretation immediately after it.
+- Every visible code output has an English interpretation immediately after it.
+- A table interpretation names the columns to compare, the direction of each delta,
+  the important rows or outliers, and the decision supported by those values.
+- A figure interpretation names the axes, colours, legends, and reference lines before
+  explaining the trend, trade-off, anomaly, and limitation visible in that figure.
+- The `Deep analysis` paragraph must be specific and unique to its output; repeated
+  generic explanation text is forbidden by the notebook contract tests.
 - Reusable logic belongs in `src/fashion/`; the notebook contains orchestration and
   evidence.
 - Save report figures under `results/figures/task2/`.
