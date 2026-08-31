@@ -20,7 +20,7 @@ TASK_SPECS = {
     "04_task3_gender_usage.ipynb": {
         "title": "Task 3 — Gender and Usage Classification",
         "tokens": ("gender", "usage", "negative transfer", "label-mask"),
-        "sections": 23,
+        "sections": 25,
     },
     "05_task4_visual_search.ipynb": {
         "title": "Task 4 — Fashion Visual Search",
@@ -50,6 +50,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04e_task3_compactblurcnn_label_smoothing_e5_experiments.ipynb",
         "04f_task3_gem_focal_e6_experiments.ipynb",
         "04g_task3_tinyconvnext_tinyhrnet_e7_experiments.ipynb",
+        "04h_task3_early_stopping_translation_e8_experiments.ipynb",
         *TASK_SPECS,
     }
     present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
@@ -270,6 +271,42 @@ def test_task3_e7_runner_only_trains_frozen_architecture_children() -> None:
     )
 
 
+def test_task3_e8_runner_only_trains_early_stopping_and_translation() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/04h_task3_early_stopping_translation_e8_experiments.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert (
+        notebook.metadata["title"]
+        == "Task 3 — Early Stopping and Translation E8 Experiments"
+    )
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert source.index('run_task3_child_cv(\n    "gender_gem_p3_early_stopping"') < source.index(
+        'run_task3_child_cv(\n    "usage_translation_2px"'
+    )
+    assert "latest_completed_gender_e6_parent_run_ids" in source
+    assert "latest_completed_usage_e2_parent_run_ids" in source
+    assert source.count("audit_completed_registry_rows(") == 2
+    assert 'gender_child["checkpoint_policy"] != "best_validation_macro_f1"' in source
+    assert 'usage_child["training_augmentation"] != "translation_uniform_2px_p05"' in source
+    assert "run_task3_baseline_cv" not in source
+    assert "usage_tinyconvnext18" not in source
+    assert "gender_tinyhrnet20" not in source
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
 def test_task_scaffolds_leave_owner_decisions_open() -> None:
     for filename, spec in TASK_SPECS.items():
         notebook = nbformat.read(ROOT / "notebooks" / filename, as_version=4)
@@ -327,6 +364,11 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
                 "t3-e6-load",
                 "t3-e6-tables",
                 "t3-e6-plots",
+                "t3-e7-load",
+                "t3-e7-tables",
+                "t3-e7-gates",
+                "t3-e7-plots",
+                "t3-e7-failure-gallery",
             }
             assert all(
                 cell.cell_type == "markdown" or cell.id in code_ids for cell in notebook.cells
@@ -428,6 +470,23 @@ def test_task_metric_contracts_are_explicit() -> None:
     assert "0.7335" in task3
     assert "0.4094" in task3
     assert "e6_bootstrap" in task3
+    assert "E7 result: reject both scratch architectures" in task3
+    assert "0.7025" in task3
+    assert "0.3451" in task3
+    assert "e7_learning_curves.png" in task3
+    assert "e7_fold_macro_f1.png" in task3
+    assert "e7_per_class_f1_comparison.png" in task3
+    assert "e7_normalised_confusion.png" in task3
+    assert "e7_robustness_comparison.png" in task3
+    assert "e7_finished_model_gap.png" in task3
+    assert "e7_confidence_diagnostics.png" in task3
+    assert "E8 hypotheses — checkpoint selection and small translation" in task3
+    assert "Gender E8G — E6 GeM with best-checkpoint early stopping" in task3
+    assert "Usage E8U — E2 plus two-pixel random translation" in task3
+    assert "96.8% of those wrong disagreement cases" in task3
+    assert "Do not add the ArticleType head" in task3
+    assert "2.0 GiB PyTorch peak-allocation ceiling per fold" in task3
+    assert "04h_task3_early_stopping_translation_e8_experiments.ipynb` resolves" in task3
     assert "e6_learning_curves.png" in task3
     assert "e6_per_class_f1_comparison.png" in task3
     assert "E7 hypotheses — change the feature representation" in task3
@@ -441,7 +500,9 @@ def test_task_metric_contracts_are_explicit() -> None:
     assert "Casual 0.9218, Ethnic 0.8440" in task3
     assert "if TinyConvNeXt clearly beats E2" in task3
     assert "04g_task3_tinyconvnext_tinyhrnet_e7_experiments.ipynb` trains Usage" in task3
-    assert "planned: architecture and stronger E6-aware gates frozen before training" in task3
+    assert "reject: worse pooled, paired, fold, minority" in task3
+    assert "planned: direct test of the observed pre-epoch-30 validation peaks" in task3
+    assert "planned: one controlled position-tolerance test" in task3
     assert "04f_task3_gem_focal_e6_experiments.ipynb` loads E1/E2" in task3
     assert "results/evidence/task3" in task3
     assert "04a_task3_smallcnn_baseline_training.ipynb` reproduces only" in task3
