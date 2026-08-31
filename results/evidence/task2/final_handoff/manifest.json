@@ -1,0 +1,59 @@
+{
+  "artifacts": {
+    "artifact_audit": {
+      "path": "results/evidence/task2/final_handoff/artifact_audit.csv",
+      "sha256": "1f49a461e9de066db97b91ae910aecaeab8a370de2c96e75cf72f946283fe61f"
+    },
+    "inference_smoke": {
+      "path": "results/evidence/task2/final_handoff/inference_smoke.json",
+      "sha256": "7f61f312fa7fbc0e498a77054b22c53a118ec58920ed3c4d055c78c67ea932f7"
+    },
+    "inference_source": {
+      "path": "src/fashion/task2/inference.py",
+      "sha256": "9c323930b9d645e1984da74266316a1a878f066cc4837dff9b65b9b36e65f03f"
+    },
+    "model_bundle": {
+      "path": "models/task2_season.pt",
+      "sha256": "e2511acc2b4e383790d4ba844bb368b1e4b7a40974614a8687a34724aad2566d"
+    },
+    "model_manifest": {
+      "path": "models/task2_season.manifest.json",
+      "sha256": "f4af02a73595380ca14a69b99b0e4f99ebb7479226e4fff4905b3d096f21c24f"
+    },
+    "selection_freeze": {
+      "path": "results/evidence/task2/selection_freeze.json",
+      "sha256": "51475a6e83c3e49e904633e1fa8a7e86bcc5e2f592c81f981561dac9f7cff995"
+    }
+  },
+  "evaluation_claim_allowed": false,
+  "gate": "TASK2-COMPONENT-HANDOFF",
+  "group_freeze_verified": false,
+  "holdout_metrics_present": false,
+  "holdout_opened": false,
+  "inference_inputs": [
+    "image"
+  ],
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "model_change_allowed": false,
+  "next_gate": "whole-group freeze before Notebook 06",
+  "notebook_06_unlocked": false,
+  "review_threshold": null,
+  "run_id": "task2-season-i2-refit-fall-s2753-4ab5682a30e1",
+  "schema_version": "1.0.0",
+  "selected_candidate": "I2",
+  "selected_experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+  "status": "ready_for_group_freeze",
+  "task2_component_ready": true,
+  "unresolved_risks": [
+    "Two fixed seeds do not cover all optimisation randomness.",
+    "Brightness 0.85 severely damages macro-F1 and Spring recall.",
+    "ArticleType conflict remains difficult despite an average I2 improvement.",
+    "Grad-CAM tags are non-causal review hypotheses, not failure prevalence.",
+    "No app review threshold is justified without a business error cost."
+  ]
+}
