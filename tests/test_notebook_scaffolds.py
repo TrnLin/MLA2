@@ -107,7 +107,10 @@ def test_task2_execution_scaffold_has_one_code_cell_per_leaf() -> None:
 
     assert notebook.metadata["title"] == "Task 2 — Season Classification"
     assert headings[0] == "# Task 2 — Season Classification"
-    assert len(notebook.cells) == 193
+    # The notebook is intentionally split into small output/interpretation
+    # trios.  Keep the contract structural rather than freezing a brittle
+    # total-cell count: adding a focused diagnostic must remain safe.
+    assert len(notebook.cells) >= 193
     assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
     assert [
         int(match.group(1))
@@ -124,9 +127,9 @@ def test_task2_execution_scaffold_has_one_code_cell_per_leaf() -> None:
 
     h3_indices = [index for index, cell in enumerate(notebook.cells) if _heading_level(cell) == 3]
     h4_indices = [index for index, cell in enumerate(notebook.cells) if _heading_level(cell) == 4]
-    assert len(h3_indices) == 40
-    assert len(h4_indices) == 27
-    assert len(code_cells) == 55
+    assert len(h3_indices) >= 40
+    assert len(h4_indices) >= 27
+    assert len(code_cells) >= 55
 
     grouped_h3_count = 0
     for index in h3_indices:
@@ -162,6 +165,92 @@ def test_task2_execution_scaffold_has_one_code_cell_per_leaf() -> None:
     assert "TODO(owner)" not in source
     assert "train_test_split" not in source
     assert "pretrained=True" not in source
+
+
+def _display_calls(source: str) -> list[ast.Call]:
+    tree = ast.parse(source)
+    return [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "display"
+    ]
+
+
+def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+
+    for index, cell in enumerate(notebook.cells):
+        if cell.cell_type != "code":
+            continue
+        tree = ast.parse(cell.source)
+        calls = _display_calls(cell.source)
+        assert len(calls) <= 1, f"cell {cell.id} has multiple display calls"
+        assert all(
+            len(call.args) == 1 and not call.keywords
+            for call in calls
+        ), f"cell {cell.id} uses a multi-value display call"
+        assert len(cell.outputs) <= 1, f"cell {cell.id} stores multiple outputs"
+        assert all(output.output_type != "error" for output in cell.outputs)
+
+        # A setup/computation cell that has no explicit display must not carry
+        # a stale rich output from an earlier execution.
+        if not calls and "savefig" not in cell.source:
+            assert cell.outputs == [], f"setup cell {cell.id} has stale output"
+
+        # A final bare expression is another implicit visible output.  Output
+        # cells must use an explicit display call, while setup/computation
+        # cells should end in an assignment/assertion.
+        if tree.body and isinstance(tree.body[-1], ast.Expr):
+            value = tree.body[-1].value
+            is_explicit_display = (
+                isinstance(value, ast.Call)
+                and isinstance(value.func, ast.Name)
+                and value.func.id == "display"
+            )
+            is_file_save = (
+                isinstance(value, ast.Call)
+                and isinstance(value.func, ast.Attribute)
+                and value.func.attr == "savefig"
+            )
+            assert is_explicit_display or is_file_save, (
+                f"cell {cell.id} has an accidental implicit output"
+            )
+
+        if calls:
+            assert index + 1 < len(notebook.cells)
+            following = notebook.cells[index + 1]
+            assert following.cell_type == "markdown"
+            assert following.source.lstrip().startswith("> **Interpretation")
+            assert (
+                "**Column guide.**" in following.source
+                or "**Chart guide.**" in following.source
+            ), f"cell {cell.id} has no output-specific reading guide"
+
+            for generic in (
+                "A separate compact table exposes",
+                "A separate figure keeps",
+                "Rows represent checks, configurations, candidates, or folds",
+                "The plotted trend is loaded from the verified evidence artifact",
+            ):
+                assert generic not in following.source, (
+                    f"cell {cell.id} still uses a generic interpretation template"
+                )
+
+            preceding_heading = notebook.cells[index - 1].source.splitlines()[0].lower()
+            if "decision audit" in preceding_heading:
+                assert "pd.json_normalize" not in cell.source, (
+                    f"cell {cell.id} exposes a tall raw decision JSON view"
+                )
+
+
+def test_task2_notebook_has_no_accidental_matplotlib_output() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    for cell in notebook.cells:
+        if cell.cell_type != "code" or "plt.subplots" not in cell.source:
+            continue
+        assert "plt.close(" in cell.source, f"cell {cell.id} leaves a figure open"
 
 
 def test_task2_data_protocol_cells_are_executable_orchestration() -> None:
@@ -513,9 +602,10 @@ def test_task2_i2_cell_records_audited_multitask_decision() -> None:
         'artifacts"]["transfer_deltas"]',
     ):
         assert required in code
-    assert cell.execution_count == 29
-    assert len(cell.outputs) == 8
-    assert all(output.output_type != "error" for output in cell.outputs)
+    # This orchestration cell is intentionally unexecuted after the output
+    # refactor; its focused output cells follow it below.
+    assert cell.execution_count is None
+    assert cell.outputs == []
     for required in (
         "B0",
         "B1",
@@ -570,9 +660,8 @@ def test_task2_pstar_cell_records_matched_pretraining_boundary() -> None:
         'artifacts"]["effect_figure"]',
     ):
         assert required in code
-    assert cell.execution_count == 30
-    assert len(cell.outputs) == 7
-    assert all(output.output_type != "error" for output in cell.outputs)
+    assert cell.execution_count is None
+    assert cell.outputs == []
     for required in (
         "0.731172",
         "0.754196",
@@ -622,9 +711,8 @@ def test_task2_g5_cell_records_second_seed_stability() -> None:
         'artifact_paths["comparison_figure"]',
     ):
         assert required in code
-    assert cell.execution_count == 31
-    assert len(cell.outputs) == 7
-    assert all(output.output_type != "error" for output in cell.outputs)
+    assert cell.execution_count is None
+    assert cell.outputs == []
     for required in (
         "0.752687",
         "0.735036",
