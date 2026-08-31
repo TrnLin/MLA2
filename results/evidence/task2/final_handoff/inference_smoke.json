@@ -1,0 +1,26 @@
+{
+  "bundle_sha256": "5927eff73130acedc8015199e1df5a6c6edf64c0b45023ebd91c48d7ed40f93c",
+  "confidence": 0.9282096028,
+  "holdout_opened": false,
+  "image_path": "data/raw/teacher/train/images_train/1163.jpg",
+  "input_scope": "one labelled development image",
+  "latency_measured": true,
+  "model_manifest_sha256": "25d918061dbd9b46501de9aa3671adabf951649862ce9613317983dadbac55d9",
+  "predicted_label": "Summer",
+  "probabilities": {
+    "Fall": 0.0561004542,
+    "Spring": 0.0047127758,
+    "Summer": 0.9282096028,
+    "Winter": 0.0109771024
+  },
+  "probability_order": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "product_id": "1163",
+  "review_required": null,
+  "run_id": "task2-season-i2-refit-fall-s2753-637dd6378be9",
+  "schema_version": "1.1.0"
+}
