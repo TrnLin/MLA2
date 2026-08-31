@@ -54,7 +54,11 @@ from fashion.train.model import (
     Task3TinyResNet18PM,
 )
 from fashion.train.registry import RunRegistry
-from fashion.train.task3_experiments import Task3ChildSpec, effective_number_class_weights
+from fashion.train.task3_experiments import (
+    Task3ChildSpec,
+    _EarlyStoppingTracker,
+    effective_number_class_weights,
+)
 
 BASELINE_EXPERIMENT_ID = "t3_primary_baseline_smallcnn"
 VERIFIED_COLAB_RUNTIME = {
@@ -659,6 +663,19 @@ def run_task3_baseline_fold(
     _log(f"registered {run_id}; the first optimiser step may now run")
 
     history: list[dict[str, object]] = []
+    checkpoint_policy = (
+        child_spec.checkpoint_policy if child_spec is not None else "final_epoch"
+    )
+    early_stopping = None
+    if checkpoint_policy == "best_validation_macro_f1":
+        if child_spec is None:
+            raise ValueError("best-checkpoint policy requires a locked child specification")
+        early_stopping = _EarlyStoppingTracker(
+            min_epoch=child_spec.early_stopping_min_epoch,
+            patience=child_spec.early_stopping_patience,
+            min_delta=child_spec.early_stopping_min_delta,
+        )
+    best_model_state: dict[str, torch.Tensor] | None = None
     started = time.perf_counter()
     if device.type == "cuda":
         torch.cuda.reset_peak_memory_stats(device)
@@ -686,6 +703,13 @@ def run_task3_baseline_fold(
                     "validation_macro_f1": validation_metrics["macro_f1"],
                 }
             )
+            if early_stopping is not None and early_stopping.update(
+                epoch, float(validation_metrics["macro_f1"])
+            ):
+                best_model_state = {
+                    name: value.detach().cpu().clone()
+                    for name, value in model.state_dict().items()
+                }
             pd.DataFrame(history).to_csv(history_path, index=False)
             scheduler.step()
             last_stage = f"epoch_{epoch}_complete"
@@ -696,8 +720,29 @@ def run_task3_baseline_fold(
                 f"validation_loss={validation_loss:.4f} "
                 f"validation_macro_f1={validation_metrics['macro_f1']:.4f}"
             )
+            if early_stopping is not None and early_stopping.should_stop(epoch):
+                _log(
+                    f"early stopping target={target} fold={validation_fold} at epoch={epoch}; "
+                    f"selected_epoch={early_stopping.best_epoch} "
+                    f"selected_validation_macro_f1={early_stopping.best_score:.4f}"
+                )
+                break
 
         training_finished = time.perf_counter()
+
+        epochs_completed = int(history[-1]["epoch"])
+        if early_stopping is not None:
+            if best_model_state is None or early_stopping.best_epoch == 0:
+                raise RuntimeError("best-checkpoint policy did not select a model state")
+            model.load_state_dict(best_model_state)
+            selected_epoch = early_stopping.best_epoch
+            selected_validation_macro_f1 = early_stopping.best_score
+        else:
+            selected_epoch = epochs_completed
+            selected_validation_macro_f1 = float(history[-1]["validation_macro_f1"])
+        for row in history:
+            row["selected_checkpoint"] = int(row["epoch"]) == selected_epoch
+        pd.DataFrame(history).to_csv(history_path, index=False)
 
         torch.save(
             {
@@ -705,6 +750,9 @@ def run_task3_baseline_fold(
                 "config": config_payload,
                 "class_names": classes,
                 "normalization": stats,
+                "checkpoint_policy": checkpoint_policy,
+                "epochs_completed": epochs_completed,
+                "selected_epoch": selected_epoch,
                 "model_state_dict": model.state_dict(),
             },
             checkpoint_path,
@@ -747,6 +795,11 @@ def run_task3_baseline_fold(
         metrics["model_family"] = model_family
         metrics["parameter_count"] = parameter_count
         metrics["architecture_macs"] = architecture_macs
+        metrics["checkpoint_policy"] = checkpoint_policy
+        metrics["epochs_completed"] = epochs_completed
+        metrics["selected_epoch"] = selected_epoch
+        metrics["selected_validation_macro_f1"] = selected_validation_macro_f1
+        metrics["early_stopped"] = epochs_completed < config.epochs
         metrics["final_train_eval_loss"] = final_train_loss
         metrics["final_train_eval_macro_f1"] = final_train_metrics["macro_f1"]
         metrics["final_train_validation_macro_f1_gap"] = float(
