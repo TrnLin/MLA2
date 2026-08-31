@@ -97,6 +97,7 @@ def test_flow_figure_is_nonempty_png_with_all_node_labels(tmp_path: Path) -> Non
     assert output.stat().st_size > 50_000
     assert output.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
     assert set(edges["producer"]) | set(edges["consumer"]) <= labels
+    assert "semibold" not in {text.get_fontweight() for text in axis.texts}
     with Image.open(output) as image:
         assert image.width >= 2_500
         assert image.height >= 1_200
