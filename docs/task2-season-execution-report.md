@@ -1,6 +1,6 @@
 ---
 title: "Task 2 - Fashion Season Classification: execution report and plan"
-status: development-refit-and-inference-complete
+status: task2-component-ready-for-group-freeze
 created: 2026-08-25
 updated: 2026-08-31
 scope: task2-season
@@ -55,6 +55,14 @@ occurred. The shared inference API and command-line launcher now load only this 
 package, accept explicit image paths, and return calibrated Season probabilities with
 the run, manifest, and bundle hashes. They do not read holdout labels or write the
 official prediction CSV. Holdout remains sealed.
+The final Task 2 component audit now passes `10/10` checks. A CPU smoke prediction on
+development product `1163` loads the same frozen bytes and returns Summer with the
+expected four calibrated probabilities. The handoff status is
+`ready_for_group_freeze`; `notebook_06_unlocked`, `holdout_opened`, and
+`group_freeze_verified` all remain false.
+Handoff schema `1.1.0` also commits the exact completed refit registry row. The loader
+recomputes the audit instead of trusting a stored `PASS`, rejects rehashed semantic
+changes, and accepts a rebuild only when all package content is identical.
 
 No plan can guarantee a full mark because the mark also depends on real results and the
 quality of the final written argument. This plan covers the HD signals in the assignment
@@ -100,14 +108,14 @@ strongest defensible submission path.
 | Split | `32,773 development`, `5,778 holdout`, `61 quarantine` | Do not create another split |
 | CV | Five folds with no family crossing | Fair comparisons are possible |
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
-| Notebook 03 | Fixed 55-code-cell scaffold; 52 cells are implemented and three handoff cells remain | Do not change the 193-cell structure |
+| Notebook 03 | All 55 code cells are implemented; Section 15 records the artifact audit, development-image inference smoke, and locked handoff | Keep the 193-cell structure; final group evaluation remains outside this notebook |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, verified image-only inference, and Notebook Sections 9-14.3 are implemented | Build only the sealed handoff; do not add or retune a candidate |
+| Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, verified image-only inference, and the locked component handoff are implemented | Wait for whole-group freeze; do not add or retune a candidate |
 | `results/runs.csv` | 122 append-only rows: 115 completed, two failed, and five interrupted | The replacement refit and both earlier lifecycle outcomes remain traceable |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
-| Current G8 gate | The replacement bundle, manifest, 24-row history, runtime, and one completed registry row are hash-verified; holdout remains sealed | Build the sealed handoff only after all group tasks freeze |
-| Current verification | Ruff and all `541` repository tests pass, including `31` Notebook contracts; all 193 Notebook cells validate and all 55 code cells compile | G8, inference, and Notebook Section 14.3 are green |
+| Current handoff gate | Ten component checks pass; the portable one-row registry snapshot, bundle, and image-only smoke prediction match the frozen run and hashes; final evaluation remains locked | Wait for a machine-readable whole-group freeze before Notebook 06 |
+| Current verification | Ruff and all `563` repository tests pass, including `32` Notebook contracts; all 193 Notebook cells validate and all 55 code cells compile | G8, inference, and the locked Section 15 handoff are green |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -524,6 +532,14 @@ hashes. `review_required` remains `None` because no review threshold was frozen.
 explicit image paths and `--device`; it prints ordered JSON and fails with JSON error
 output for missing, corrupt, unsafe oversized, or otherwise invalid images. It has no
 holdout-manifest or official-CSV path. Those group-level actions remain sealed.
+
+`fashion.task2.handoff` verifies the G7 decision, G8 bundle, history, runtime, canonical
+inputs, deployed inference source, and exact registry row. Schema `1.1.0` writes that row
+to `results/evidence/task2/final_handoff/registry_snapshot.csv`, recomputes stored audit
+claims during load, validates probability semantics, and prevents non-identical package
+replacement. Its manifest records `task2_component_ready=true` but deliberately keeps
+`notebook_06_unlocked=false`. This separates “Task 2 is ready” from “the whole group is
+allowed to evaluate.”
 
 ## 3. Task 2 contract
 
@@ -1248,9 +1264,10 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** build the sealed handoff only after the whole group has frozen every
-task. Do not add another architecture, input size, augmentation, loss beta, auxiliary
-lambda, or tuning pair. Do not open holdout in this Task 2 workstream.
+**Next safe action:** wait for a machine-readable whole-group freeze, then let the shared
+evaluation owner consume this locked Task 2 component in Notebook 06. Do not add another
+architecture, input size, augmentation, loss beta, auxiliary lambda, or tuning pair. Do
+not open holdout in this Task 2 workstream.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
@@ -1296,24 +1313,32 @@ lambda, or tuning pair. Do not open holdout in this Task 2 workstream.
 - [x] Record run IDs, config hash, checkpoint rule, and limitations.
 - [x] Rebuild on all valid development data after the integrity fix.
 - [x] Hash and verify the replacement model, config, preprocessing, history, and runtime.
-- [ ] Hand off to Notebook 06.
-- [ ] Open holdout once and never return to tuning.
+- [x] Package and verify the locked Task 2 component handoff without protected data.
+
+Blocked group actions, not Task 2 implementation checkboxes: hand the component to
+Notebook 06 and open holdout once only after every task owner provides the
+machine-readable group freeze.
 
 ### Phase 6 - Prediction and deferred integration, 1-2 days
 
 - [x] Provide the verified image-only Season API and explicit-path JSON launcher.
-- [ ] Produce exactly `id,gender,articleType,season,usage`; Task 2 fills only `season`
-  inside the shared pipeline.
-- [ ] Validate 5,829 IDs, order, four allowed labels, and no blanks.
+
+Pending shared-pipeline work after group freeze: produce exactly
+`id,gender,articleType,season,usage`, let Task 2 fill only `season`, then validate all
+5,829 IDs, their order, the four allowed Season labels, and absence of blanks.
 
 Future work outside the current analysis window: integrate the app workflow and assemble
 report tables and figures directly from verified artifacts.
 
 ### Definition of done
 
-Task 2 is complete only when all of the following exist:
+Task 2 modelling and its sealed component handoff are complete. The remaining pending
+items are deliberately blocked by the whole-group freeze or deferred integration window;
+they are not Task 2 implementation checkboxes.
 
-- [ ] `results/runs.csv` contains every run and hash;
+- [x] `results/runs.csv` contains all 122 unique Task 2 runs: 115 completed, two failed,
+  and five interrupted; every identity hash, artifact path/hash pair, and terminal row
+  passes the registry audit;
 - [x] Current B0, B1, C1, C2, and C3 OOF predictions each cover all 32,753 valid development rows;
 - [x] G3 C1-T1 and C2-T0 each cover the same 32,753 valid rows, and their paired
   full-budget comparison is hash-audited;
@@ -1331,10 +1356,12 @@ Task 2 is complete only when all of the following exist:
 - [x] deterministic Grad-CAM and the real-ID failure taxonomy are complete;
 - [x] the winner was frozen before holdout access;
 - [x] a final scratch-trained checkpoint and hash-verified manifest exist after the integrity fix;
-- [ ] one independent holdout evaluation exists;
+- [x] a portable, immutable Task 2 component handoff passes all ten artifact and inference checks;
 - [x] a final image-only inference function exists;
-- [ ] the official prediction file is valid;
-- [ ] the notebook reruns and every figure/table traces back to a run ID.
+
+Remaining group/deferred verification, outside this Task 2 workstream: one independent
+holdout evaluation after group freeze, official prediction-file validation, and the
+separately scheduled notebook/figure/table trace run.
 
 ## 11. Knowledge to understand
 
