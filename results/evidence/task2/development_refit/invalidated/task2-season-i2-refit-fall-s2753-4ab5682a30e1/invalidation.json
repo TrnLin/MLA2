@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "status": "invalidated_before_holdout",
+  "run_id": "task2-season-i2-refit-fall-s2753-4ab5682a30e1",
+  "holdout_opened": false,
+  "selection_changed": false,
+  "replacement_required": true,
+  "reason": "A post-handoff integrity audit moved the complete registry provenance validator into the refit loader, added portable CPU VRAM handling, and bound registry and runtime environment snapshots. Because src/fashion/task2/refit.py is intentionally covered by the implementation hash, the previous bundle remains historical evidence from its original clean commit but cannot be presented as a current-code refit.",
+  "fix_commits": [
+    "9677306",
+    "f7d1c82"
+  ],
+  "artifacts": {
+    "manifest": {
+      "path": "results/evidence/task2/development_refit/invalidated/task2-season-i2-refit-fall-s2753-4ab5682a30e1/task2_season.manifest.json",
+      "sha256": "f4af02a73595380ca14a69b99b0e4f99ebb7479226e4fff4905b3d096f21c24f"
+    },
+    "history": {
+      "path": "results/evidence/task2/development_refit/invalidated/task2-season-i2-refit-fall-s2753-4ab5682a30e1/training_history.csv",
+      "sha256": "b9f745260db04f7d28cad11c6a591869acd6ecb62b81e081a664cfcea2255978"
+    },
+    "runtime": {
+      "path": "results/evidence/task2/development_refit/invalidated/task2-season-i2-refit-fall-s2753-4ab5682a30e1/runtime.json",
+      "sha256": "661995c948a71eb077a16e865f5e600df829323d9c91b489378918e33f2e726d"
+    },
+    "ignored_binary_archive": {
+      "path": "tmp/task2/development_refit/invalidated/task2-season-i2-refit-fall-s2753-4ab5682a30e1/task2_season.pt",
+      "sha256": "e2511acc2b4e383790d4ba844bb368b1e4b7a40974614a8687a34724aad2566d"
+    }
+  }
+}
