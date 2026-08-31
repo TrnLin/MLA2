@@ -12,10 +12,12 @@ from fashion.train.task3_experiments import (
     effective_number_class_weights,
     gender_brightness_spec,
     gender_class_balanced_spec,
+    gender_tinyresnet18_pm_spec,
     latest_completed_baseline_parent_run_ids,
     latest_completed_usage_e2_parent_run_ids,
     usage_class_balanced_spec,
     usage_classifier_dropout_spec,
+    usage_tinyresnet18_pm_spec,
 )
 
 
@@ -77,6 +79,37 @@ def test_usage_e3_changes_dropout_only_from_the_accepted_e2_parent() -> None:
 
     with pytest.raises(ValueError, match="more than its predeclared factor"):
         replace(spec, class_weight_cap=4.0)
+
+
+def test_gender_e4_changes_only_the_architecture_from_e1() -> None:
+    parents = tuple(f"gender-e1-parent-{fold}" for fold in range(5))
+    spec = gender_tinyresnet18_pm_spec(parents)
+
+    assert spec.target == "gender"
+    assert spec.parent_artifact_dir == "baseline"
+    assert spec.loss_name == "cross_entropy"
+    assert spec.training_augmentation == "none"
+    assert spec.model_family == "task3_tinyresnet18_pm"
+    assert spec.run_model_token == "tinyresnet18pm"
+
+    with pytest.raises(ValueError, match="more than its predeclared factor"):
+        replace(spec, loss_name="effective_number_cross_entropy")
+
+
+def test_usage_e4_changes_only_the_architecture_from_e2() -> None:
+    parents = tuple(f"usage-e2-parent-{fold}" for fold in range(5))
+    spec = usage_tinyresnet18_pm_spec(parents)
+
+    assert spec.target == "usage"
+    assert spec.parent_artifact_dir == "experiments/t3_usage_e2_class_balanced_ce"
+    assert spec.loss_name == "effective_number_cross_entropy"
+    assert spec.class_weight_beta == pytest.approx(0.999)
+    assert spec.class_weight_cap == pytest.approx(5.0)
+    assert spec.classifier_dropout == 0.0
+    assert spec.model_family == "task3_tinyresnet18_pm"
+
+    with pytest.raises(ValueError, match="more than its predeclared factor"):
+        replace(spec, classifier_dropout=0.2)
 
 
 def test_effective_number_weights_are_fold_only_capped_and_zero_for_absent_class() -> None:

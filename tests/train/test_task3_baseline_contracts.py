@@ -5,7 +5,13 @@ import csv
 import numpy as np
 import pytest
 
-from fashion.train.config import Task3BaselineConfig, baseline_parameter_count, config_digest
+from fashion.train.config import (
+    Task3BaselineConfig,
+    baseline_parameter_count,
+    config_digest,
+    tinyresnet18_pm_macs,
+    tinyresnet18_pm_parameter_count,
+)
 from fashion.train.metrics import classification_metrics
 from fashion.train.registry import REGISTRY_COLUMNS, RunRegistry
 
@@ -19,6 +25,10 @@ def test_baseline_configuration_and_parameter_counts_are_frozen() -> None:
     assert usage.num_classes == 9
     assert baseline_parameter_count("gender") == 390_181
     assert baseline_parameter_count("usage") == 391_209
+    assert tinyresnet18_pm_parameter_count("gender") == 394_865
+    assert tinyresnet18_pm_parameter_count("usage") == 395_253
+    assert tinyresnet18_pm_macs("gender") == 94_268_640
+    assert tinyresnet18_pm_macs("usage") == 94_269_024
     assert config_digest(gender) == config_digest(Task3BaselineConfig(target="gender"))
     assert config_digest(gender) != config_digest(usage)
 

@@ -24,7 +24,13 @@ from torch.utils.data import DataLoader
 from fashion.config import LABEL_MAPS_JSON, ROOT, RUNS_CSV, SPLITS_CSV
 from fashion.data import load_label_maps, load_splits
 from fashion.data.hashing import compute_sha256
-from fashion.train.config import Task3BaselineConfig, baseline_parameter_count, config_digest
+from fashion.train.config import (
+    Task3BaselineConfig,
+    baseline_parameter_count,
+    config_digest,
+    tinyresnet18_pm_macs,
+    tinyresnet18_pm_parameter_count,
+)
 from fashion.train.data import (
     CORE_CORRUPTIONS,
     Task3ImageDataset,
@@ -32,7 +38,7 @@ from fashion.train.data import (
     task3_target_frames,
 )
 from fashion.train.metrics import classification_metrics
-from fashion.train.model import Task3BaselineCNN
+from fashion.train.model import Task3BaselineCNN, Task3TinyResNet18PM
 from fashion.train.registry import RunRegistry
 from fashion.train.task3_experiments import Task3ChildSpec, effective_number_class_weights
 
@@ -344,6 +350,34 @@ def _measure_latency(
     return (time.perf_counter() - start) * 1000 / repetitions
 
 
+def _task3_model_contract(
+    config: Task3BaselineConfig, child_spec: Task3ChildSpec | None
+) -> tuple[str, str, int, int | None]:
+    model_family = child_spec.model_family if child_spec is not None else config.model_family
+    run_model_token = child_spec.run_model_token if child_spec is not None else "smallcnn"
+    if model_family == "task3_tinyresnet18_pm":
+        return (
+            model_family,
+            run_model_token,
+            tinyresnet18_pm_parameter_count(config.target),
+            tinyresnet18_pm_macs(config.target),
+        )
+    if model_family != "task3_small_cnn":
+        raise ValueError(f"unsupported Task 3 model family: {model_family}")
+    return model_family, run_model_token, baseline_parameter_count(config.target), None
+
+
+def _build_task3_model(
+    config: Task3BaselineConfig,
+    child_spec: Task3ChildSpec | None,
+) -> nn.Module:
+    model_family, _, _, _ = _task3_model_contract(config, child_spec)
+    if model_family == "task3_tinyresnet18_pm":
+        return Task3TinyResNet18PM(config)
+    classifier_dropout = child_spec.classifier_dropout if child_spec is not None else 0.0
+    return Task3BaselineCNN(config, classifier_dropout=classifier_dropout)
+
+
 def run_task3_baseline_fold(
     target: str,
     validation_fold: int,
@@ -363,6 +397,9 @@ def run_task3_baseline_fold(
         raise ValueError("validation_fold must be one of 0,1,2,3,4")
     if child_spec is not None and child_spec.target != target:
         raise ValueError("child target and requested target disagree")
+    model_family, run_model_token, parameter_count, architecture_macs = (
+        _task3_model_contract(config, child_spec)
+    )
     if child_spec is not None:
         parent_run_id = child_spec.parent_run_ids[validation_fold]
         parent_dir = output_root / child_spec.parent_artifact_dir / target / parent_run_id
@@ -388,7 +425,7 @@ def run_task3_baseline_fold(
             str(parent_metrics.get("run_id")) != parent_run_id
             or int(parent_metrics.get("validation_fold", -1)) != validation_fold
         ):
-            raise ValueError(f"baseline parent metadata disagrees for fold {validation_fold}")
+            raise ValueError(f"parent metadata disagrees for fold {validation_fold}")
     set_reproducible_seed(config.seed)
     if device_name == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA was requested but is not available")
@@ -421,6 +458,9 @@ def run_task3_baseline_fold(
         )
 
     config_payload = config.to_dict()
+    config_payload["effective_model_family"] = model_family
+    config_payload["parameter_count"] = parameter_count
+    config_payload["architecture_macs"] = architecture_macs
     if child_spec is None:
         digest = config_digest(config)
         experiment_id = BASELINE_EXPERIMENT_ID
@@ -453,7 +493,8 @@ def run_task3_baseline_fold(
 
     execution = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + uuid.uuid4().hex[:6]
     run_id = (
-        f"{run_prefix}_{target}_smallcnn_f{validation_fold}_s{config.seed}_{digest}_{execution}"
+        f"{run_prefix}_{target}_{run_model_token}_f{validation_fold}_s{config.seed}_"
+        f"{digest}_{execution}"
     )
     run_dir = output_root / artifact_dir / target / run_id
     run_dir.mkdir(parents=True, exist_ok=False)
@@ -501,7 +542,7 @@ def run_task3_baseline_fold(
     validation_loader = _loader(validation_dataset, config=config, shuffle=False, device=device)
 
     classifier_dropout = child_spec.classifier_dropout if child_spec is not None else 0.0
-    model = Task3BaselineCNN(config, classifier_dropout=classifier_dropout).to(device)
+    model = _build_task3_model(config, child_spec).to(device)
     criterion = nn.CrossEntropyLoss(
         weight=(
             torch.as_tensor(class_weights, dtype=torch.float32, device=device)
@@ -540,8 +581,8 @@ def run_task3_baseline_fold(
             "validation_product_count": len(validation),
             "training_family_count": training["product_family_group"].nunique(),
             "validation_family_count": validation["product_family_group"].nunique(),
-            "model_family": config.model_family,
-            "parameter_count": baseline_parameter_count(config.target),
+            "model_family": model_family,
+            "parameter_count": parameter_count,
             "history_path": history_path,
             "environment_json": environment,
             "last_completed_stage": "registered_before_first_optimizer_step",
@@ -631,6 +672,9 @@ def run_task3_baseline_fold(
         metrics["class_counts"] = class_counts.tolist()
         metrics["class_weights"] = class_weights.tolist() if class_weights is not None else None
         metrics["classifier_dropout"] = classifier_dropout
+        metrics["model_family"] = model_family
+        metrics["parameter_count"] = parameter_count
+        metrics["architecture_macs"] = architecture_macs
         metrics["final_train_eval_loss"] = final_train_loss
         metrics["final_train_eval_macro_f1"] = final_train_metrics["macro_f1"]
         metrics["final_train_validation_macro_f1_gap"] = float(
@@ -726,6 +770,9 @@ def _aggregate_target(
     artifact_dir: str = "baseline",
     experiment_id: str = BASELINE_EXPERIMENT_ID,
     hypothesis_id: str = "baseline_contract",
+    model_family: str = "task3_small_cnn",
+    parameter_count: int | None = None,
+    architecture_macs: int | None = None,
 ) -> dict[str, object]:
     label_maps = load_label_maps(root / LABEL_MAPS_JSON.relative_to(ROOT))
     classes, _ = _class_spec(label_maps, target)
@@ -740,6 +787,9 @@ def _aggregate_target(
     metrics["experiment_id"] = experiment_id
     metrics["hypothesis_id"] = hypothesis_id
     metrics["fold_run_ids"] = [str(result["run_id"]) for result in fold_results]
+    metrics["model_family"] = model_family
+    metrics["parameter_count"] = parameter_count
+    metrics["architecture_macs"] = architecture_macs
     if target == "usage":
         metrics["macro_f1_without_home"] = float(
             np.mean([row["f1"] for row in metrics["per_class"] if row["class_name"] != "Home"])
@@ -792,6 +842,10 @@ def run_task3_baseline_cv(
     experiment_id = child_spec.experiment_id if child_spec is not None else BASELINE_EXPERIMENT_ID
     hypothesis_id = child_spec.hypothesis_id if child_spec is not None else "baseline_contract"
     artifact_dir = child_spec.artifact_dir if child_spec is not None else "baseline"
+    config = Task3BaselineConfig(target=target)
+    model_family, _, parameter_count, architecture_macs = _task3_model_contract(
+        config, child_spec
+    )
     _log(f"starting five-fold experiment={experiment_id} for target={target}")
     results = [
         run_task3_baseline_fold(
@@ -814,6 +868,9 @@ def run_task3_baseline_cv(
         artifact_dir=artifact_dir,
         experiment_id=experiment_id,
         hypothesis_id=hypothesis_id,
+        model_family=model_family,
+        parameter_count=parameter_count,
+        architecture_macs=architecture_macs,
     )
     _log(f"completed pooled five-fold OOF experiment={experiment_id} target={target}")
     return aggregate

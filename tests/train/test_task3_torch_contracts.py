@@ -9,6 +9,7 @@ from fashion.train.config import Task3BaselineConfig
 torch = pytest.importorskip("torch")
 nn = torch.nn
 Task3BaselineCNN = importlib.import_module("fashion.train.model").Task3BaselineCNN
+Task3TinyResNet18PM = importlib.import_module("fashion.train.model").Task3TinyResNet18PM
 _pass = importlib.import_module("fashion.train.task3_baseline")._pass
 
 
@@ -25,6 +26,19 @@ def test_classifier_dropout_changes_behaviour_without_changing_parameters() -> N
     )
     with pytest.raises(ValueError, match="classifier dropout"):
         Task3BaselineCNN(config, classifier_dropout=1.0)
+
+
+@pytest.mark.parametrize("target,expected", [("gender", 394_865), ("usage", 395_253)])
+def test_tinyresnet_is_parameter_matched_and_preserves_the_native_stem(
+    target: str, expected: int
+) -> None:
+    config = Task3BaselineConfig(target=target)
+    model = Task3TinyResNet18PM(config)
+
+    assert sum(parameter.numel() for parameter in model.parameters()) == expected
+    assert model.stem[0].stride == (1, 1)
+    assert not any(isinstance(module, nn.MaxPool2d) for module in model.modules())
+    assert tuple(model(torch.zeros(2, 3, 80, 60)).shape) == (2, config.num_classes)
 
 
 def test_weighted_epoch_loss_uses_the_sum_of_sample_weights() -> None:

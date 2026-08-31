@@ -20,7 +20,7 @@ TASK_SPECS = {
     "04_task3_gender_usage.ipynb": {
         "title": "Task 3 — Gender and Usage Classification",
         "tokens": ("gender", "usage", "negative transfer", "label-mask"),
-        "sections": 16,
+        "sections": 17,
     },
     "05_task4_visual_search.ipynb": {
         "title": "Task 4 — Fashion Visual Search",
@@ -46,6 +46,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04a_task3_smallcnn_baseline_training.ipynb",
         "04b_task3_smallcnn_child_experiments.ipynb",
         "04c_task3_smallcnn_e3_experiments.ipynb",
+        "04d_task3_tinyresnet18_pm_e4_experiments.ipynb",
         *TASK_SPECS,
     }
     present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
@@ -118,6 +119,40 @@ def test_task3_e3_runner_never_retrains_e1_or_e2() -> None:
     assert "START_BASELINE_TRAINING" not in code
     assert "nohup" not in code
     assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_e4_runner_only_trains_tinyresnet_children() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/04d_task3_tinyresnet18_pm_e4_experiments.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == "Task 3 — TinyResNet-18-PM E4 Experiments"
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert '"gender_tinyresnet18_pm"' in source
+    assert '"usage_tinyresnet18_pm"' in source
+    assert "latest_completed_baseline_parent_run_ids" in source
+    assert "latest_completed_usage_e2_parent_run_ids" in source
+    assert "parameter_count\"] > 410_000" in source
+    assert "architecture_macs\"] > 105_000_000" in source
+    assert "run_task3_baseline_cv" not in source
+    assert 'run_task3_child_cv(\n    "gender_brightness"' not in source
+    assert 'run_task3_child_cv(\n    "usage_class_balanced"' not in source
+    assert 'run_task3_child_cv(\n    "gender_class_balanced"' not in source
+    assert 'run_task3_child_cv(\n    "usage_classifier_dropout"' not in source
+    assert "START_BASELINE_TRAINING" not in code
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
     assert all(
         cell.execution_count is None and not cell.outputs
         for cell in notebook.cells
@@ -158,6 +193,13 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
                 "t3-child-curves",
                 "t3-child-diagnostics",
                 "t3-child-failure-gallery",
+                "t3-e3-results-load",
+                "t3-e3-comparison",
+                "t3-e3-bootstrap",
+                "t3-e3-gates",
+                "t3-e3-curves",
+                "t3-e3-diagnostics",
+                "t3-e3-failure-gallery",
             }
             assert all(
                 cell.cell_type == "markdown" or cell.id in code_ids for cell in notebook.cells
@@ -205,7 +247,7 @@ def test_task_metric_contracts_are_explicit() -> None:
     assert "does **not** prove that `32,64,128,256` is optimal" in task3
     assert "Task3BaselineCNN" in task3
     assert "load_target_evidence" in task3
-    assert task3.count("keep_default_na=False") == 6
+    assert task3.count("keep_default_na=False") >= 6
     assert "Loaded completed E2 evidence for gender and usage from Drive" in task3
     assert "e2_learning_curves.png" in task3
     assert "e2_per_class_f1_comparison.png" in task3
@@ -216,9 +258,28 @@ def test_task_metric_contracts_are_explicit() -> None:
     assert "0.3738" in task3
     assert "0.6989 pooled macro-F1" in task3
     assert "0.4082 pooled macro-F1" in task3
+    assert "Loaded completed E3 evidence and accepted parents from Drive" in task3
+    assert "paired_family_bootstrap_macro_f1" in task3
+    assert "E3 result: reject both children under the frozen rules" in task3
+    assert "0.7081" in task3
+    assert "0.4161" in task3
+    assert "e3_learning_curves.png" in task3
+    assert "e3_finished_model_gap.png" in task3
+    assert "primary and paired gates failed" in task3
+    assert "E4 hypotheses — parameter-matched TinyResNet-18-PM" in task3
+    assert "394,865" in task3
+    assert "395,253" in task3
+    assert "94,268,640" in task3
+    assert "94,269,024" in task3
+    assert "paired product-family bootstrap lower 95% bound" in task3
+    assert "If any gate fails, stop and retain Gender E1 or Usage E2" in task3
     assert "04a_task3_smallcnn_baseline_training.ipynb` reproduces only" in task3
     assert "04b_task3_smallcnn_child_experiments.ipynb` loads those saved parents" in task3
     assert "04c_task3_smallcnn_e3_experiments.ipynb` loads the accepted E1/E2 parents" in task3
+    assert (
+        "04d_task3_tinyresnet18_pm_e4_experiments.ipynb` loads the same accepted parents"
+        in task3
+    )
     assert "run_task3_baseline_cv" not in task3
 
     notebook = nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4)

@@ -10,6 +10,7 @@ from typing import Literal
 Task3Target = Literal["gender", "usage"]
 
 TARGET_CLASS_COUNTS: dict[Task3Target, int] = {"gender": 5, "usage": 9}
+TINYRESNET18_PM_WIDTHS = (12, 24, 48, 96)
 
 
 @dataclass(frozen=True)
@@ -93,3 +94,47 @@ def baseline_parameter_count(target: Task3Target) -> int:
     classes = TARGET_CLASS_COUNTS[target]
     output_head = 256 * classes + classes
     return convolutions + batch_norm + output_head
+
+
+def tinyresnet18_pm_parameter_count(target: Task3Target) -> int:
+    """Calculate the parameter-matched TinyResNet contract without PyTorch."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    widths = TINYRESNET18_PM_WIDTHS
+    parameters = 3 * widths[0] * 3 * 3 + 2 * widths[0]
+    input_channels = widths[0]
+    for stage, output_channels in enumerate(widths):
+        for block in range(2):
+            stride = 2 if stage > 0 and block == 0 else 1
+            parameters += input_channels * output_channels * 3 * 3
+            parameters += 2 * output_channels
+            parameters += output_channels * output_channels * 3 * 3
+            parameters += 2 * output_channels
+            if stride != 1 or input_channels != output_channels:
+                parameters += input_channels * output_channels
+                parameters += 2 * output_channels
+            input_channels = output_channels
+    classes = TARGET_CLASS_COUNTS[target]
+    return parameters + widths[-1] * classes + classes
+
+
+def tinyresnet18_pm_macs(target: Task3Target) -> int:
+    """Return convolution and classifier MACs for the fixed 80x60 input."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    widths = TINYRESNET18_PM_WIDTHS
+    height, width = 80, 60
+    macs = height * width * 3 * widths[0] * 3 * 3
+    input_channels = widths[0]
+    for stage, output_channels in enumerate(widths):
+        for block in range(2):
+            stride = 2 if stage > 0 and block == 0 else 1
+            if stride == 2:
+                height = (height + 1) // 2
+                width = (width + 1) // 2
+            macs += height * width * input_channels * output_channels * 3 * 3
+            macs += height * width * output_channels * output_channels * 3 * 3
+            if stride != 1 or input_channels != output_channels:
+                macs += height * width * input_channels * output_channels
+            input_channels = output_channels
+    return macs + widths[-1] * TARGET_CLASS_COUNTS[target]

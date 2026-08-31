@@ -1,4 +1,4 @@
-"""Strict one-factor child experiments for the Task 3 scratch CNN."""
+"""Strict one-factor child experiments for the Task 3 scratch models."""
 
 from __future__ import annotations
 
@@ -17,7 +17,11 @@ Task3ChildName = Literal[
     "usage_class_balanced",
     "gender_class_balanced",
     "usage_classifier_dropout",
+    "gender_tinyresnet18_pm",
+    "usage_tinyresnet18_pm",
 ]
+Task3ModelFamily = Literal["task3_small_cnn", "task3_tinyresnet18_pm"]
+Task3RunModelToken = Literal["smallcnn", "tinyresnet18pm"]
 
 
 @dataclass(frozen=True)
@@ -38,6 +42,8 @@ class Task3ChildSpec:
     class_weight_beta: float | None = None
     class_weight_cap: float | None = None
     classifier_dropout: float = 0.0
+    model_family: Task3ModelFamily = "task3_small_cnn"
+    run_model_token: Task3RunModelToken = "smallcnn"
 
     def __post_init__(self) -> None:
         if len(set(self.parent_run_ids)) != 5 or any(not run_id for run_id in self.parent_run_ids):
@@ -59,6 +65,8 @@ class Task3ChildSpec:
                 "class_weight_beta": None,
                 "class_weight_cap": None,
                 "classifier_dropout": 0.0,
+                "model_family": "task3_small_cnn",
+                "run_model_token": "smallcnn",
             },
             "usage_class_balanced": {
                 "target": "usage",
@@ -73,6 +81,8 @@ class Task3ChildSpec:
                 "class_weight_beta": 0.999,
                 "class_weight_cap": 5.0,
                 "classifier_dropout": 0.0,
+                "model_family": "task3_small_cnn",
+                "run_model_token": "smallcnn",
             },
             "gender_class_balanced": {
                 "target": "gender",
@@ -87,6 +97,8 @@ class Task3ChildSpec:
                 "class_weight_beta": 0.999,
                 "class_weight_cap": 5.0,
                 "classifier_dropout": 0.0,
+                "model_family": "task3_small_cnn",
+                "run_model_token": "smallcnn",
             },
             "usage_classifier_dropout": {
                 "target": "usage",
@@ -101,6 +113,40 @@ class Task3ChildSpec:
                 "class_weight_beta": 0.999,
                 "class_weight_cap": 5.0,
                 "classifier_dropout": 0.2,
+                "model_family": "task3_small_cnn",
+                "run_model_token": "smallcnn",
+            },
+            "gender_tinyresnet18_pm": {
+                "target": "gender",
+                "experiment_id": "t3_gender_tinyresnet18_pm",
+                "hypothesis_id": "t3_gender_e4_tinyresnet18_pm",
+                "artifact_dir": "experiments/t3_gender_e4_tinyresnet18_pm",
+                "run_prefix": "t3_gender_e4_tinyresnet18_pm",
+                "changed_factor": "model_architecture",
+                "training_augmentation": "none",
+                "loss_name": "cross_entropy",
+                "parent_artifact_dir": "baseline",
+                "class_weight_beta": None,
+                "class_weight_cap": None,
+                "classifier_dropout": 0.0,
+                "model_family": "task3_tinyresnet18_pm",
+                "run_model_token": "tinyresnet18pm",
+            },
+            "usage_tinyresnet18_pm": {
+                "target": "usage",
+                "experiment_id": "t3_usage_tinyresnet18_pm",
+                "hypothesis_id": "t3_usage_e4_tinyresnet18_pm",
+                "artifact_dir": "experiments/t3_usage_e4_tinyresnet18_pm",
+                "run_prefix": "t3_usage_e4_tinyresnet18_pm",
+                "changed_factor": "model_architecture",
+                "training_augmentation": "none",
+                "loss_name": "effective_number_cross_entropy",
+                "parent_artifact_dir": "experiments/t3_usage_e2_class_balanced_ce",
+                "class_weight_beta": 0.999,
+                "class_weight_cap": 5.0,
+                "classifier_dropout": 0.0,
+                "model_family": "task3_tinyresnet18_pm",
+                "run_model_token": "tinyresnet18pm",
             },
         }[self.name]
         actual = asdict(self)
@@ -191,6 +237,44 @@ def usage_classifier_dropout_spec(parent_run_ids: Sequence[str]) -> Task3ChildSp
         class_weight_beta=0.999,
         class_weight_cap=5.0,
         classifier_dropout=0.2,
+    )
+
+
+def gender_tinyresnet18_pm_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    return Task3ChildSpec(
+        name="gender_tinyresnet18_pm",
+        target="gender",
+        experiment_id="t3_gender_tinyresnet18_pm",
+        hypothesis_id="t3_gender_e4_tinyresnet18_pm",
+        artifact_dir="experiments/t3_gender_e4_tinyresnet18_pm",
+        run_prefix="t3_gender_e4_tinyresnet18_pm",
+        changed_factor="model_architecture",
+        training_augmentation="none",
+        loss_name="cross_entropy",
+        parent_artifact_dir="baseline",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        model_family="task3_tinyresnet18_pm",
+        run_model_token="tinyresnet18pm",
+    )
+
+
+def usage_tinyresnet18_pm_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    return Task3ChildSpec(
+        name="usage_tinyresnet18_pm",
+        target="usage",
+        experiment_id="t3_usage_tinyresnet18_pm",
+        hypothesis_id="t3_usage_e4_tinyresnet18_pm",
+        artifact_dir="experiments/t3_usage_e4_tinyresnet18_pm",
+        run_prefix="t3_usage_e4_tinyresnet18_pm",
+        changed_factor="model_architecture",
+        training_augmentation="none",
+        loss_name="effective_number_cross_entropy",
+        parent_artifact_dir="experiments/t3_usage_e2_class_balanced_ce",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        class_weight_beta=0.999,
+        class_weight_cap=5.0,
+        model_family="task3_tinyresnet18_pm",
+        run_model_token="tinyresnet18pm",
     )
 
 
@@ -286,7 +370,11 @@ def _spec(name: Task3ChildName, parent_run_ids: Sequence[str]) -> Task3ChildSpec
         return usage_class_balanced_spec(parent_run_ids)
     if name == "gender_class_balanced":
         return gender_class_balanced_spec(parent_run_ids)
-    return usage_classifier_dropout_spec(parent_run_ids)
+    if name == "usage_classifier_dropout":
+        return usage_classifier_dropout_spec(parent_run_ids)
+    if name == "gender_tinyresnet18_pm":
+        return gender_tinyresnet18_pm_spec(parent_run_ids)
+    return usage_tinyresnet18_pm_spec(parent_run_ids)
 
 
 def check_task3_child_setup(
@@ -301,6 +389,28 @@ def check_task3_child_setup(
 
     spec = _spec(name, parent_run_ids)
     baseline = check_task3_baseline_setup(spec.target, root=root, device_name=device_name)
+    if spec.model_family == "task3_tinyresnet18_pm":
+        import torch
+
+        from fashion.train.config import (
+            Task3BaselineConfig,
+            tinyresnet18_pm_macs,
+            tinyresnet18_pm_parameter_count,
+        )
+        from fashion.train.model import Task3TinyResNet18PM
+
+        config = Task3BaselineConfig(target=spec.target)
+        device = torch.device(device_name)
+        model = Task3TinyResNet18PM(config).to(device)
+        with torch.inference_mode():
+            output = model(
+                torch.zeros(2, 3, config.image_height, config.image_width, device=device)
+            )
+        if tuple(output.shape) != (2, config.num_classes):
+            raise RuntimeError(f"unexpected TinyResNet output shape: {tuple(output.shape)}")
+        baseline["parameter_count"] = tinyresnet18_pm_parameter_count(spec.target)
+        baseline["architecture_macs"] = tinyresnet18_pm_macs(spec.target)
+    baseline["model_family"] = spec.model_family
     return {
         **baseline,
         "child": spec.to_dict(),
