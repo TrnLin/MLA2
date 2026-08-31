@@ -10,7 +10,11 @@ torch = pytest.importorskip("torch")
 nn = torch.nn
 Task3BaselineCNN = importlib.import_module("fashion.train.model").Task3BaselineCNN
 Task3CompactBlurCNN = importlib.import_module("fashion.train.model").Task3CompactBlurCNN
+Task3GeM3CNN = importlib.import_module("fashion.train.model").Task3GeM3CNN
 Task3TinyResNet18PM = importlib.import_module("fashion.train.model").Task3TinyResNet18PM
+WeightedFocalCrossEntropy = importlib.import_module(
+    "fashion.train.loss"
+).WeightedFocalCrossEntropy
 WeightedLabelSmoothedCrossEntropy = importlib.import_module(
     "fashion.train.loss"
 ).WeightedLabelSmoothedCrossEntropy
@@ -55,6 +59,22 @@ def test_compact_blur_cnn_is_low_capacity_and_keeps_a_ten_by_eight_grid() -> Non
     assert tuple(model(torch.zeros(2, 3, 80, 60)).shape) == (2, 5)
 
 
+def test_gem_p3_changes_only_global_pooling_and_keeps_the_parameter_count() -> None:
+    config = Task3BaselineConfig(target="gender")
+    baseline = Task3BaselineCNN(config)
+    child = Task3GeM3CNN(config)
+    features = torch.tensor([[[[1.0, 2.0], [3.0, 4.0]]]])
+
+    observed = child.pool(features)
+    expected = features.pow(3.0).mean(dim=(-2, -1), keepdim=True).pow(1.0 / 3.0)
+
+    assert observed == pytest.approx(expected)
+    assert sum(parameter.numel() for parameter in child.parameters()) == sum(
+        parameter.numel() for parameter in baseline.parameters()
+    )
+    assert tuple(child(torch.zeros(2, 3, 80, 60)).shape) == (2, 5)
+
+
 def test_weighted_label_smoothing_weights_examples_by_the_true_class_only() -> None:
     logits = torch.tensor([[2.0, 0.5, -1.0], [0.2, 1.2, -0.4]], dtype=torch.float32)
     labels = torch.tensor([0, 1], dtype=torch.long)
@@ -66,6 +86,23 @@ def test_weighted_label_smoothing_weights_examples_by_the_true_class_only() -> N
         [[0.95, 0.025, 0.025], [0.025, 0.95, 0.025]], dtype=torch.float32
     )
     per_sample = -(soft_targets * torch.log_softmax(logits, dim=1)).sum(dim=1)
+    expected = (per_sample * weights[labels]).sum() / weights[labels].sum()
+
+    assert observed == pytest.approx(float(expected))
+    assert criterion.loss_denominator(labels) == pytest.approx(5.0)
+
+
+def test_weighted_focal_gamma_one_uses_true_class_weights_and_probabilities() -> None:
+    logits = torch.tensor([[2.0, 0.5, -1.0], [0.2, 1.2, -0.4]], dtype=torch.float32)
+    labels = torch.tensor([0, 1], dtype=torch.long)
+    weights = torch.tensor([1.0, 4.0, 2.0], dtype=torch.float32)
+    criterion = WeightedFocalCrossEntropy(weights, gamma=1.0)
+
+    observed = criterion(logits, labels)
+    log_probabilities = torch.log_softmax(logits, dim=1)
+    true_log_probability = log_probabilities[torch.arange(2), labels]
+    true_probability = true_log_probability.exp()
+    per_sample = -(1.0 - true_probability) * true_log_probability
     expected = (per_sample * weights[labels]).sum() / weights[labels].sum()
 
     assert observed == pytest.approx(float(expected))
