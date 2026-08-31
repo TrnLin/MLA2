@@ -92,7 +92,9 @@ def _fake_train(model, train_loader, *, config, auxiliary_weight) -> RefitResult
         epochs_completed=config.epochs,
         history=history,
         parameter_count=sum(parameter.numel() for parameter in model.parameters()),
-        runtime_seconds=12.5,
+        # The fake trainer returns immediately; keep its declared runtime below
+        # the measured registry lifecycle instead of claiming 12.5 seconds.
+        runtime_seconds=1e-6,
         peak_vram_mb=256.0,
         device="cuda",
         metadata={

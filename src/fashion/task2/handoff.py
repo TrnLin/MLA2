@@ -7,7 +7,6 @@ import math
 import os
 import time
 from contextlib import contextmanager
-from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any, Iterator, Mapping
@@ -25,8 +24,8 @@ from fashion.data.hashing import compute_sha256
 from fashion.task2.inference import SeasonPrediction
 from fashion.task2.refit import (
     _load_verified_development_refit_package,
-    _verify_refit_registry,
     load_verified_development_refit_manifest,
+    verify_development_refit_registry,
 )
 from fashion.task2.ultimate_judgement import (
     load_verified_selection_freeze,
@@ -38,7 +37,7 @@ from fashion.train.artifacts import (
     canonical_sha256,
     verify_artifact,
 )
-from fashion.train.registry import RUN_COLUMNS, SHA256_PATTERN, RunRegistry
+from fashion.train.registry import SHA256_PATTERN
 
 DEFAULT_HANDOFF_DIRECTORY = TASK2_EVIDENCE_DIR / "final_handoff"
 DEFAULT_ULTIMATE_MANIFEST = TASK2_EVIDENCE_DIR / "ultimate_judgement/manifest.json"
@@ -181,79 +180,12 @@ def _registry_snapshot(
     *,
     root: Path,
 ) -> tuple[pd.DataFrame, Path]:
-    resolved = _resolve_within_root(registry_path, root=root, scope="refit registry")
-    _verify_refit_registry(refit, registry_path=resolved, root=root)
-    registry = RunRegistry(resolved).read()
-    matches = registry.loc[registry["run_id"].eq(str(refit["run_id"]))]
-    if len(matches) != 1:
-        raise ValueError("Task 2 registry snapshot requires exactly one refit row")
-    return matches.loc[:, RUN_COLUMNS].reset_index(drop=True), resolved
-
-
-def _parse_utc_timestamp(value: str, scope: str) -> datetime:
-    try:
-        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
-    except ValueError as error:
-        raise ValueError(f"{scope} is not a valid timestamp") from error
-    if parsed.utcoffset() is None or parsed.utcoffset().total_seconds() != 0:
-        raise ValueError(f"{scope} must use UTC")
-    return parsed
-
-
-def _validate_registry_snapshot_provenance(
-    refit: Mapping[str, Any],
-    registry_path: str | Path,
-    *,
-    root: Path,
-) -> tuple[pd.DataFrame, Path]:
-    """Bind every registry field omitted by the core refit verifier."""
-    frame, resolved = _registry_snapshot(refit, registry_path, root=root)
-    row = frame.iloc[0]
-    runtime_path = _declared_path(
-        refit["artifacts"]["runtime"],
-        root=root,
-        scope="development refit runtime",
+    return verify_development_refit_registry(
+        refit,
+        registry_path=registry_path,
+        project_root=root,
+        error_scope="Task 2 registry snapshot",
     )
-    runtime = _load_json_object(runtime_path, "development refit runtime")
-    try:
-        metrics = json.loads(str(row["metrics"]))
-        registry_runtime = json.loads(str(row["runtime"]))
-        runtime_seconds = float(row["runtime_seconds"])
-        peak_vram_mb = float(row["peak_vram_mb"])
-        expected_runtime_seconds = float(runtime["runtime_seconds"])
-        expected_peak_vram_mb = float(runtime["peak_vram_mb"])
-        started = _parse_utc_timestamp(str(row["started_at_utc"]), "registry start")
-        finished = _parse_utc_timestamp(str(row["finished_at_utc"]), "registry finish")
-    except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
-        raise ValueError("Task 2 registry snapshot provenance changed") from error
-    elapsed_seconds = (finished - started).total_seconds()
-    if (
-        row["task"] != "task2"
-        or metrics != {}
-        or row["prediction_path"] != ""
-        or row["prediction_sha256"] != ""
-        or registry_runtime != runtime.get("environment")
-        or not math.isfinite(runtime_seconds)
-        or runtime_seconds <= 0.0
-        or not math.isclose(
-            runtime_seconds,
-            expected_runtime_seconds,
-            rel_tol=0.0,
-            abs_tol=1e-9,
-        )
-        or not math.isfinite(peak_vram_mb)
-        or peak_vram_mb < 0.0
-        or not math.isclose(
-            peak_vram_mb,
-            expected_peak_vram_mb,
-            rel_tol=0.0,
-            abs_tol=1e-9,
-        )
-        or elapsed_seconds < runtime_seconds
-        or elapsed_seconds > runtime_seconds + 600.0
-    ):
-        raise ValueError("Task 2 registry snapshot provenance changed")
-    return frame, resolved
 
 
 def audit_task2_artifacts(
@@ -278,10 +210,10 @@ def audit_task2_artifacts(
             project_root=root,
             registry_path=registry_path,
         )
-        registry_frame, resolved_registry = _validate_registry_snapshot_provenance(
+        registry_frame, resolved_registry = verify_development_refit_registry(
             refit,
-            registry_path,
-            root=root,
+            registry_path=registry_path,
+            project_root=root,
         )
         registry_sha256 = canonical_sha256(registry_frame.iloc[0].to_dict())
     else:
@@ -289,7 +221,7 @@ def audit_task2_artifacts(
             model_manifest_path,
             project_root=root,
         )
-        _, resolved_registry = _validate_registry_snapshot_provenance(
+        _, resolved_registry = _registry_snapshot(
             refit,
             registry_snapshot_path,
             root=root,
@@ -462,6 +394,8 @@ def _validate_smoke_image(
     expected_product_id: str | None = None,
 ) -> tuple[str, str]:
     image = _resolve_within_root(image_path, root=root, scope="smoke image")
+    if not image.is_file():
+        raise FileNotFoundError(f"Task 2 inference smoke image does not exist: {image}")
     relative_image = image.relative_to(root).as_posix()
     splits_path = _declared_path(
         refit["canonical_inputs"]["splits"], root=root, scope="canonical splits"
@@ -926,10 +860,11 @@ def load_verified_task2_handoff(
         verified["model_manifest"],
         project_root=root,
     )
-    _validate_registry_snapshot_provenance(
+    verify_development_refit_registry(
         refit,
-        verified["registry_snapshot"],
-        root=root,
+        registry_path=verified["registry_snapshot"],
+        project_root=root,
+        error_scope="Task 2 registry snapshot",
     )
     freeze, freeze_path = load_verified_selection_freeze(
         verified["selection_freeze"],

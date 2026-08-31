@@ -8,6 +8,7 @@ import math
 import os
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
+from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any, Iterator, Literal, Mapping
@@ -54,7 +55,13 @@ from fashion.train.multitask import (
     RefitTrainConfig,
     train_masked_multitask_refit,
 )
-from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
+from fashion.train.registry import (
+    RUN_COLUMNS,
+    RunRecord,
+    RunRegistry,
+    new_run_id,
+    tracked_run,
+)
 from fashion.train.reproducibility import capture_git_state, capture_runtime, seed_everything
 
 ExecutionMode = Literal["run", "load", "run_or_load"]
@@ -66,6 +73,7 @@ REFIT_EVIDENCE_DIRECTORY = TASK2_EVIDENCE_DIR / "development_refit"
 REFIT_HISTORY_CSV = REFIT_EVIDENCE_DIRECTORY / "training_history.csv"
 REFIT_RUNTIME_JSON = REFIT_EVIDENCE_DIRECTORY / "runtime.json"
 REFIT_LOCK_FILENAME = ".task2-season-refit.lock"
+REGISTRY_TIMESTAMP_RESOLUTION_SECONDS = 1.0
 REFIT_IMPLEMENTATION_PATHS = tuple(
     sorted(
         {
@@ -825,13 +833,55 @@ def _load_verified_development_refit_package(
     return manifest, manifest_path, bundle
 
 
-def _verify_refit_registry(
+def _parse_registry_timestamp(value: Any, scope: str) -> datetime:
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{scope} is missing")
+    try:
+        parsed = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+    except ValueError as error:
+        raise ValueError(f"{scope} is not a valid timestamp") from error
+    if parsed.utcoffset() is None or parsed.utcoffset().total_seconds() != 0:
+        raise ValueError(f"{scope} must use UTC")
+    return parsed
+
+
+def _parse_registry_runtime_value(
+    value: Any,
+    *,
+    scope: str,
+    allow_unavailable: bool = False,
+) -> float | None:
+    if allow_unavailable and (
+        value is None or (isinstance(value, str) and not value.strip())
+    ):
+        return None
+    if isinstance(value, bool):
+        raise ValueError(f"{scope} must be numeric")
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError) as error:
+        raise ValueError(f"{scope} must be numeric") from error
+    if not math.isfinite(numeric) or numeric < 0.0:
+        raise ValueError(f"{scope} must be finite and non-negative")
+    return numeric
+
+
+def verify_development_refit_registry(
     manifest: Mapping[str, Any],
     *,
     registry_path: str | Path,
-    root: Path,
-) -> None:
-    """Bind one completed ledger row to every verified refit artifact."""
+    project_root: str | Path = ROOT,
+    error_scope: str = "development refit registry",
+) -> tuple[pd.DataFrame, Path]:
+    """Bind one completed ledger row to every verified refit artifact.
+
+    The same validator is used by direct refit loading and by the portable
+    Task 2 handoff.  A CPU run has no VRAM measurement, so its runtime JSON
+    must contain ``null`` and its registry row must contain the corresponding
+    blank serialization.  GPU measurements must be finite, non-negative, and
+    equal in both artifacts.
+    """
+    root = Path(project_root).resolve()
     registry_file = Path(registry_path)
     if not registry_file.is_absolute():
         registry_file = root / registry_file
@@ -897,6 +947,73 @@ def _verify_refit_registry(
     if changed:
         raise ValueError(f"development refit registry fields changed: {changed}")
 
+    runtime_path = _resolve_declaration(
+        manifest["artifacts"]["runtime"],
+        root=root,
+        scope="development refit runtime",
+    )
+    runtime = _load_json_object(runtime_path, "development refit runtime")
+    try:
+        metrics = json.loads(str(row["metrics"]))
+        registry_runtime = json.loads(str(row["runtime"]))
+        if not isinstance(registry_runtime, dict):
+            raise ValueError("registry runtime must be an object")
+        runtime_environment = runtime["environment"]
+        if not isinstance(runtime_environment, dict):
+            raise ValueError("runtime environment must be an object")
+        registry_runtime_seconds = _parse_registry_runtime_value(
+            row["runtime_seconds"],
+            scope="registry runtime seconds",
+        )
+        expected_runtime_seconds = _parse_registry_runtime_value(
+            runtime["runtime_seconds"],
+            scope="runtime seconds",
+        )
+        registry_peak_vram_mb = _parse_registry_runtime_value(
+            row["peak_vram_mb"],
+            scope="registry peak VRAM",
+            allow_unavailable=True,
+        )
+        expected_peak_vram_mb = _parse_registry_runtime_value(
+            runtime["peak_vram_mb"],
+            scope="runtime peak VRAM",
+            allow_unavailable=True,
+        )
+        started = _parse_registry_timestamp(row["started_at_utc"], "registry start")
+        finished = _parse_registry_timestamp(row["finished_at_utc"], "registry finish")
+    except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+        raise ValueError(f"{error_scope} provenance changed") from error
+
+    elapsed_seconds = (finished - started).total_seconds()
+    vram_mismatch = (
+        (registry_peak_vram_mb is None) != (expected_peak_vram_mb is None)
+        or (
+            registry_peak_vram_mb is not None
+            and expected_peak_vram_mb is not None
+            and registry_peak_vram_mb != expected_peak_vram_mb
+        )
+    )
+    if (
+        row["task"] != "task2"
+        or metrics != {}
+        or row["prediction_path"] != ""
+        or row["prediction_sha256"] != ""
+        or registry_runtime != runtime_environment
+        or registry_runtime_seconds != expected_runtime_seconds
+        or registry_runtime_seconds <= 0.0
+        or expected_runtime_seconds <= 0.0
+        or vram_mismatch
+        # Registry timestamps are intentionally serialized to whole seconds.
+        # Permit only that one-second rounding loss when reconciling the
+        # higher-resolution monotonic training duration.
+        or elapsed_seconds + REGISTRY_TIMESTAMP_RESOLUTION_SECONDS
+        < expected_runtime_seconds
+        or elapsed_seconds > expected_runtime_seconds + 600.0
+    ):
+        raise ValueError(f"{error_scope} provenance changed")
+
+    return matches.loc[:, RUN_COLUMNS].reset_index(drop=True), registry_file
+
 
 def load_verified_development_refit_manifest(
     path: str | Path = TASK2_MODEL_MANIFEST_JSON,
@@ -910,7 +1027,11 @@ def load_verified_development_refit_manifest(
         path,
         project_root=root,
     )
-    _verify_refit_registry(manifest, registry_path=registry_path, root=root)
+    verify_development_refit_registry(
+        manifest,
+        registry_path=registry_path,
+        project_root=root,
+    )
     return manifest, manifest_path, bundle
 
 
@@ -1004,6 +1125,9 @@ def _run_or_load_development_refit_unlocked(
     )
     registry = RunRegistry(registry_file)
     runtime_environment = capture_runtime()
+    # Reuse the exact environment snapshot in the registry and runtime artifact.
+    # This prevents the two provenance records from drifting between captures.
+    record.runtime = runtime_environment
     with (
         _refit_artifact_transaction(
             run_id=run_id,
@@ -1271,4 +1395,5 @@ __all__ = [
     "RefitOutcome",
     "load_verified_development_refit_manifest",
     "run_or_load_development_refit",
+    "verify_development_refit_registry",
 ]
