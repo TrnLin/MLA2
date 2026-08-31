@@ -506,7 +506,7 @@ def plot_file_impact_flow(
             ha="center",
             va="center",
             fontsize=9.2,
-            fontweight="semibold",
+            fontweight="bold",
             wrap=True,
             zorder=3,
         )
