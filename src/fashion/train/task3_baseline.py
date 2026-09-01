@@ -43,6 +43,7 @@ from fashion.train.data import (
     fit_fold_rgb_stats,
     task3_target_frames,
 )
+from fashion.train.evidence import load_oof_predictions
 from fashion.train.loss import WeightedFocalCrossEntropy, WeightedLabelSmoothedCrossEntropy
 from fashion.train.metrics import classification_metrics
 from fashion.train.model import (
@@ -902,7 +903,7 @@ def _aggregate_target(
     label_maps = load_label_maps(root / LABEL_MAPS_JSON.relative_to(ROOT))
     classes, _ = _class_spec(label_maps, target)
     prediction_paths = [Path(str(result["prediction_path"])) for result in fold_results]
-    predictions = pd.concat([pd.read_csv(path) for path in prediction_paths], ignore_index=True)
+    predictions = load_oof_predictions(prediction_paths)
     if predictions["id"].duplicated().any():
         raise ValueError("aggregate OOF predictions contain duplicate IDs")
     probability_columns = [f"probability_{index}_{name}" for index, name in enumerate(classes)]

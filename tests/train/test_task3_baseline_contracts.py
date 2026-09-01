@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from fashion.train.config import (
@@ -18,6 +19,7 @@ from fashion.train.config import (
     tinyresnet18_pm_macs,
     tinyresnet18_pm_parameter_count,
 )
+from fashion.train.evidence import load_oof_predictions
 from fashion.train.metrics import classification_metrics
 from fashion.train.registry import REGISTRY_COLUMNS, RunRegistry
 from fashion.train.task3_experiments import _EarlyStoppingTracker
@@ -87,6 +89,30 @@ def test_fixed_class_metrics_include_zero_support_classes() -> None:
     assert metrics["per_class"][2]["support"] == 0
     assert metrics["per_class"][2]["f1"] == 0.0
     assert metrics["macro_f1"] == pytest.approx((0.8 + 2 / 3 + 0.0) / 3)
+
+
+def test_aggregate_oof_preserves_literal_na_usage_label(tmp_path) -> None:
+    fold_predictions = tmp_path / "fold_0_oof.csv"
+    pd.DataFrame(
+        {
+            "id": [1, 2],
+            "run_id": ["fold-0", "fold-0"],
+            "true_index": [0, 1],
+            "true_label": ["Casual", "NA"],
+            "predicted_index": [0, 1],
+            "predicted_label": ["Casual", "NA"],
+            "confidence": [0.9, 0.8],
+            "probability_0_Casual": [0.9, 0.2],
+            "probability_1_NA": [0.1, 0.8],
+        }
+    ).to_csv(fold_predictions, index=False)
+
+    pooled_path = tmp_path / "pooled_oof.csv"
+    load_oof_predictions([fold_predictions]).to_csv(pooled_path, index=False)
+    saved = pd.read_csv(pooled_path, keep_default_na=False)
+    na_row = saved.loc[saved["true_index"].eq(1)].iloc[0]
+    assert na_row["true_label"] == "NA"
+    assert na_row["predicted_label"] == "NA"
 
 
 def test_registry_appends_before_completion_and_mirrors_atomically(tmp_path) -> None:
