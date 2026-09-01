@@ -24,7 +24,20 @@ Reusable project code lives here. Notebooks import it instead of copying shared 
   - `dataset.py` builds validated Task 1 tensor samples.
   - `evaluation.py` calculates fixed-124-class metrics and checks out-of-fold predictions.
   - `training.py` trains and registers one fold at a time.
-  - `experiments.py` orchestrates smoke and full cross-validation runs.
+  - `classical.py` extracts and caches grayscale HOG features and runs fixed-class KNN
+    and Linear SVM fold candidates.
+  - `experiments.py` orchestrates both the CNN comparison and staged classic-model
+    tuning/five-fold evidence.
 - `train/` owns shared artifacts, reproducibility seeds, and the run registry.
+
+### Task 1 classic-run handoff
+
+Run the controller in [`notebooks/02_task1_article_type.ipynb`](../../notebooks/02_task1_article_type.ipynb).
+It defaults to `CLASSICAL_STAGE = "smoke"`. After smoke passes, run it once with
+`CLASSICAL_STAGE = "tune"`, then with `CLASSICAL_STAGE = "final"`. The final run
+requires `results/evidence/task1/classical_selection.json` from tuning and writes
+registered five-fold evidence. HOG uses scikit-image; KNN and LinearSVC use
+scikit-learn. Smoke checks the path only; tune selects settings and final produces
+the report evidence.
 
 Update this if you are adding more scripts.
