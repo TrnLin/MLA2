@@ -8,6 +8,7 @@ import nbformat
 import pandas as pd
 
 from fashion.config import ROOT
+from fashion.data.hashing import compute_sha256
 
 TASK_SPECS = {
     "02_task1_article_type.ipynb": {
@@ -151,7 +152,8 @@ def test_task2_execution_scaffold_has_one_code_cell_per_leaf() -> None:
 
     for required in (
         "data/processed/splits.csv",
-        "results/runs.csv",
+        "artifact_replay",
+        "load_verified_notebook_manifest",
         "weak-visual-signal",
         "article-type shortcut",
         "calibration",
@@ -280,6 +282,138 @@ def test_task2_notebook_has_no_accidental_matplotlib_output() -> None:
         assert "plt.close(" in cell.source, f"cell {cell.id} leaves a figure open"
 
 
+def test_task2_notebook_maps_training_code_without_executing_it() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    title = next(cell.source for cell in notebook.cells if cell.id == "task2-title")
+
+    for required in (
+        "Training code map (read-only)",
+        "[B0/B1 and G0-G5 declarations](../configs/task2/)",
+        "fit_training_fold_majority",
+        "fit_hog_hsv_svm",
+        "SeasonArticleTypeMultiTaskModel",
+        "build_multitask_season_model",
+        "[general B0/B1 and G1-G3](../scripts/run_task2_experiment.py)",
+        "[I1](../scripts/run_task2_i1_experiment.py)",
+        "[I2](../scripts/run_task2_i2_experiments.py)",
+        "[P0S/P* benchmark](../scripts/run_task2_pretraining_benchmark.py)",
+        "[stability](../scripts/run_task2_stability.py)",
+        "run_or_load_experiment",
+        "_execute_baseline",
+        "run_or_load_g0_smoke",
+        "run_or_load_i1_experiment",
+        "run_or_load_i2_experiment",
+        "run_i2_matrix",
+        "run_pretraining_matrix",
+        "run_stability_matrix",
+        "train_masked_multitask_fold",
+        "[refit_task2_season.py](../scripts/refit_task2_season.py)",
+        "run_or_load_development_refit",
+        "train_masked_multitask_refit",
+        "[refit history](../results/evidence/task2/development_refit/training_history.csv)",
+        "[final weights](../models/task2_season.pt)",
+        "benchmark-only",
+        "Markdown never imports or executes Python",
+        "Restart Kernel and Run All Cells",
+        "`load` | Verify and load",
+        "`run_or_load` | Verify and reuse",
+        "`run` | Deliberately start",
+        "Never use it for G0, I1, I2, P0S/P*, or G5",
+    ):
+        assert required in title
+
+    assert "without being imported or executed here" in title
+    assert "use the declared script outside Notebook 03" in title
+    assert title.count("--mode load") == 6
+    assert title.count("--mode run") == 6
+
+
+def test_task2_notebook_is_fully_executed_artifact_replay() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
+    combined = "\n".join(cell.source for cell in code_cells)
+
+    assert len(code_cells) == 147
+    assert [cell.execution_count for cell in code_cells] == list(range(1, 148))
+    assert all(len(cell.outputs) == 1 for cell in code_cells)
+    assert all(
+        output.output_type != "error"
+        for cell in code_cells
+        for output in cell.outputs
+    )
+    assert 'TASK2_NOTEBOOK_MODE = "artifact_replay"' in combined
+    assert "load_verified_notebook_manifest" in combined
+    assert "verify_artifact" in combined
+
+    for forbidden in (
+        'mode="run_or_load"',
+        "mode='run_or_load'",
+        "run_or_load_experiment",
+        "run_or_load_g0_smoke",
+        "run_or_load_i1_experiment",
+        "run_or_load_i2_experiment",
+        "run_i2_matrix",
+        "run_pretraining_matrix",
+        "run_stability_matrix",
+        "run_or_load_development_refit",
+        "train_masked_multitask_fold",
+        "train_masked_multitask_refit",
+        "build_experiment_evidence(",
+        "build_g0_evidence(",
+        "build_g1_family_screen_evidence(",
+        "build_g3_full_budget_evidence(",
+        "build_g2_input_size_evidence(",
+        "build_g2_augmentation_evidence(",
+        "build_g2_compact_tuning_evidence(",
+        "build_i1_class_balance_evidence(",
+        "build_i2_multitask_evidence(",
+        "build_pretraining_evidence(",
+        "build_task2_handoff_evidence(",
+        "load_or_fit_fold_stats",
+        "atomic_write",
+        ".savefig(",
+        ".to_csv(",
+        ".to_json(",
+        ".write_text(",
+        ".write_bytes(",
+        "torch.save(",
+        ".mkdir(",
+        "train_fold(",
+        ".backward(",
+    ):
+        assert forbidden not in combined
+
+
+def test_task2_replay_locks_match_every_declared_root() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    setup = next(cell.source for cell in notebook.cells if cell.id == "s01-01-code")
+    assignment = next(
+        node
+        for node in ast.parse(setup).body
+        if isinstance(node, ast.Assign)
+        and any(
+            isinstance(target, ast.Name) and target.id == "TASK2_REPLAY_LOCKS"
+            for target in node.targets
+        )
+    )
+    replay_locks = ast.literal_eval(assignment.value)
+
+    for required in (
+        "data/processed/splits.csv",
+        "results/evidence/task2/environment.json",
+        "results/evidence/task2/registry_health.json",
+        "results/evidence/task2/selection_freeze.json",
+        "results/evidence/task2/ultimate_judgement/manifest.json",
+        "results/evidence/task2/final_handoff/manifest.json",
+        "results/figures/task2/fold0_preprocessing_audit.png",
+        "results/figures/task2/development_refit_training_curve.png",
+        "models/task2_season.manifest.json",
+    ):
+        assert required in replay_locks
+    for relative_path, expected_sha256 in replay_locks.items():
+        assert compute_sha256(ROOT / relative_path) == expected_sha256
+
+
 def test_task2_data_protocol_cells_are_executable_orchestration() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
@@ -309,12 +443,23 @@ def test_task2_data_protocol_cells_are_executable_orchestration() -> None:
         "has_season_label",
         "iter_cv_folds(splits)",
         "build_task_loaders(",
+        "FoldImageStats(",
+        "stats=fold0_frozen_stats",
         "validate_oof",
         "protected labels remain sealed",
-        "atomic_write_json",
-        "atomic_write_csv",
+        'TASK2_NOTEBOOK_MODE = "artifact_replay"',
+        "load_verified_notebook_manifest",
+        "verify_artifact",
+        "environment.json",
+        "eda_handoff.csv",
+        "fold_handoff.csv",
+        "oof_contract.json",
+        "metric_contract.json",
+        "transform_matrix.csv",
+        "leakage_audit.json",
     ):
         assert required in combined
+    assert "atomic_write" not in combined
 
 
 def test_task2_environment_table_uses_dataframe_compatible_reset_index() -> None:
@@ -330,7 +475,11 @@ def test_task2_preprocessing_mask_uses_an_informative_padding_example() -> None:
 
     assert "nonstandard_aspect" in preprocessing_cell.source
     assert "first_content_mask.any() and (~first_content_mask).any()" in preprocessing_cell.source
-    assert 'cmap="gray", vmin=0, vmax=1' in preprocessing_cell.source
+    assert "fold0_preprocessing_audit.png" in preprocessing_cell.source
+    assert "stats=fold0_frozen_stats" in preprocessing_cell.source
+    assert "verify_artifact(" in preprocessing_cell.source
+    assert "load_or_fit_fold_stats" not in preprocessing_cell.source
+    assert ".savefig(" not in preprocessing_cell.source
 
 
 def test_task2_model_and_registry_cells_use_shared_interfaces() -> None:
@@ -358,12 +507,13 @@ def test_task2_model_and_registry_cells_use_shared_interfaces() -> None:
         "weights",
         "benchmark_only",
         "state_dict_sha256",
-        "RunRegistry(RUNS_CSV)",
-        "RUN_COLUMNS",
+        "registry_health.json",
+        "registry_status_counts",
         "scratch_model_audit.csv",
         "benchmark_boundary.csv",
     ):
         assert required in combined
+    assert "RunRegistry" not in combined
 
 
 def test_task2_g0_cell_records_a_non_comparison_pass() -> None:
@@ -375,12 +525,15 @@ def test_task2_g0_cell_records_a_non_comparison_pass() -> None:
     assert not code.startswith("# TODO:")
     compile(code, "03_task2_season.ipynb:s07-01-code", "exec")
     for required in (
-        "g0_pipeline_smoke.json",
-        "run_or_load_g0_smoke",
-        "build_g0_evidence",
+        'TASK2_EVIDENCE_DIR / "g0/manifest.json"',
+        "verify_artifact",
+        'g0_manifest["passed"] is True',
+        'g0_manifest["comparison_eligible"] is False',
         "integration_macro_f1_non_comparison",
     ):
         assert required in code
+    assert "run_or_load_g0_smoke" not in code
+    assert "build_g0_evidence" not in code
     assert "passed" in finding
     assert "excluded from every leaderboard" in finding
     assert "g0-pipeline-smoke-f0-s2753-5ad5ee9d433c" in finding
@@ -411,13 +564,16 @@ def test_task2_b0_cell_records_complete_five_fold_evidence() -> None:
     assert not code.startswith("# TODO:")
     compile(code, "03_task2_season.ipynb:s05-01-code", "exec")
     for required in (
-        "b0_majority.json",
-        "run_or_load_experiment",
-        "build_experiment_evidence",
-        "protected_ids",
+        "results/evidence/task2/b0_majority/manifest.json",
+        "load_verified_notebook_manifest",
+        'b0_artifacts["pooled_metrics"]',
+        'b0_artifacts["fold_summary"]',
+        'b0_manifest["coverage"]["protected_id_count"] == 0',
         'b0_manifest["run_ids"]',
     ):
         assert required in code
+    assert "run_or_load_experiment" not in code
+    assert "build_experiment_evidence" not in code
     assert "32,753" in finding
     assert "0.165704" in finding
     assert "Spring" in finding
@@ -434,17 +590,16 @@ def test_task2_b1_cell_records_uncalibrated_five_fold_evidence() -> None:
     assert not code.startswith("# TODO:")
     compile(code, "03_task2_season.ipynb:s05-02-code", "exec")
     for required in (
-        "b1_hog_hsv_svm.json",
-        "run_or_load_experiment",
-        "build_experiment_evidence",
-        "calibration_claim_allowed=False",
+        "results/evidence/task2/b1_hog_hsv_svm/manifest.json",
+        "load_verified_notebook_manifest",
+        'b1_artifacts["pooled_metrics"]',
+        'b1_artifacts["registry_snapshot"]',
+        'not b1_manifest["calibration_claim_allowed"]',
         "macro_f1_gain_over_B0",
-        "threading.Event",
-        "_monitor_b1_progress",
-        "B1 progress:",
-        "b1_progress_thread.join",
     ):
         assert required in code
+    assert "run_or_load_experiment" not in code
+    assert "threading" not in code
     assert "32,753" in finding
     assert "0.609561" in finding
     assert "0.486901" in finding
@@ -463,18 +618,17 @@ def test_task2_g1_cell_records_equal_budget_family_screen() -> None:
     assert not code.startswith("# TODO:")
     compile(code, "03_task2_season.ipynb:s08-01-01-code", "exec")
     for required in (
-        "g1_c1_smallcnn.json",
-        "g1_c2_resnet18.json",
-        "g1_c3_mobilenetv3.json",
-        "run_or_load_experiment",
-        "build_experiment_evidence",
-        "build_g1_family_screen_evidence",
-        "calibration_claim_allowed=False",
-        "protected_ids",
-        "len(g1_trace_rows) == 15",
-        "g1_family_screen",
+        "results/evidence/task2/g1_family_screen/manifest.json",
+        "load_verified_notebook_manifest",
+        "load_verified_input_registry_rows",
+        'g1_screen_artifacts["leaderboard"]',
+        'g1_screen_artifacts["shortlist"]',
+        "len(g1_registry_rows) == 15",
+        "g1_trace_rows = g1_trace.to_dict",
     ):
         assert required in code
+    assert "run_or_load_experiment" not in code
+    assert "build_g1_family_screen_evidence" not in code
     for required in (
         "32,753",
         "0.707099",
@@ -501,19 +655,19 @@ def test_task2_g3_cell_records_audited_full_budget_comparison() -> None:
     assert not code.startswith("# TODO:")
     compile(code, "03_task2_season.ipynb:s08-01-02-code", "exec")
     for required in (
-        "g3_c1_t1_smallcnn.json",
-        "g3_c2_t0_resnet18.json",
-        "run_or_load_experiment",
-        "build_experiment_evidence",
-        "build_g3_full_budget_evidence",
-        "protected_ids",
-        'status"].eq("interrupted")',
+        "results/evidence/task2/g3_full_budget/manifest.json",
+        "load_verified_notebook_manifest",
+        "load_verified_input_registry_rows",
+        'g3_artifacts["leaderboard"]',
+        'g3_artifacts["decision"]',
+        'g3_attempts["status"].eq("completed").all()',
         'near_tie"] is True',
         'ultimate_winner_frozen"] is False',
-        'artifacts"]["c1_learning_curves"]',
-        'artifacts"]["c2_learning_curves"]',
+        "len(g3_attempts) == g3_attempts[\"run_id\"].nunique() == 10",
     ):
         assert required in code
+    assert "run_or_load_experiment" not in code
+    assert "build_g3_full_budget_evidence" not in code
     for required in (
         "0.737661",
         "0.735036",
@@ -543,26 +697,24 @@ def test_task2_g3_cell_scopes_validation_to_the_current_run_ids() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     code = {cell.id: cell for cell in notebook.cells}["s08-01-02-code"].source
 
-    assert "current_run_ids = {output.run_id for output in outputs}" in code
-    assert 'attempts["run_id"].isin(current_run_ids)' in code
-    assert "len(current_attempts) == 5" in code
-    assert 'g3_attempts["status"].eq("completed").sum() == 10' not in code
-    assert 'g3_attempts["status"].eq("interrupted").sum() == 1' not in code
+    assert "g3_attempts = load_verified_input_registry_rows(g3_manifest)" in code
+    assert 'len(g3_attempts) == g3_attempts["run_id"].nunique() == 10' in code
+    assert 'g3_attempts["status"].eq("completed").all()' in code
+    assert "RunRegistry" not in code
 
 
 def test_task2_g3_notebook_preserves_registered_probability_note() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
-    code = {cell.id: cell for cell in notebook.cells}["s08-01-02-code"].source
-    string_literals = {
-        node.value
-        for node in ast.walk(ast.parse(code))
-        if isinstance(node, ast.Constant) and isinstance(node.value, str)
-    }
-
-    assert (
+    note = (
         "Uncalibrated softmax probabilities from the best validation macro-F1 "
-        "checkpoint in each fold; calibration metrics are diagnostic only." in string_literals
+        "checkpoint in each fold; calibration metrics are diagnostic only."
     )
+    for directory in ("g3_c1_t1_smallcnn", "g3_c2_t0_resnet18"):
+        manifest = json.loads(
+            (ROOT / "results/evidence/task2" / directory / "manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert manifest["probability_note"] == note
 
 
 def test_task2_i1_cell_records_audited_class_balance_decision() -> None:
@@ -574,21 +726,20 @@ def test_task2_i1_cell_records_audited_class_balance_decision() -> None:
     assert not code.startswith("# TODO:")
     compile(code, "03_task2_season.ipynb:s08-03-01-code", "exec")
     for required in (
-        "g4_i1_effective_number_c1.json",
-        "run_or_load_i1_experiment",
-        "build_experiment_evidence",
-        "build_i1_class_balance_evidence",
-        "protected_ids",
-        "calibration_claim_allowed=False",
-        "current_run_ids",
-        'status"].eq("running")',
+        "results/evidence/task2/i1_class_balance/manifest.json",
+        "load_verified_notebook_manifest",
+        'i1_artifacts["comparison"]',
+        'i1_artifacts["registry_snapshot"]',
+        'i1_artifacts["class_weights_by_fold"]',
         'i1_manifest["gate"] == "G4-I1"',
         'i1_manifest["keep_i1"] is False',
         'i1_manifest["selected_experiment_id"] == "g3-c1-t1-smallcnn"',
-        'artifacts"]["learning_curves"]',
-        'artifacts"]["per_class_f1_delta"]',
+        'i1_decision["loss_values_comparable_to_reference"] is False',
+        'i1_registry_snapshot["experiment_id"]',
     ):
         assert required in code
+    assert "run_or_load_i1_experiment" not in code
+    assert "build_i1_class_balance_evidence" not in code
     for required in (
         "0.701471",
         "0.737661",
@@ -618,26 +769,22 @@ def test_task2_i2_cell_records_audited_multitask_decision() -> None:
     assert not code.startswith("# TODO:")
     compile(code, "03_task2_season.ipynb:s08-03-02-code", "exec")
     for required in (
-        "g4_i2_article_type_lambda_0_1_c1.json",
-        "g4_i2_article_type_lambda_0_3_c1.json",
-        "run_i2_matrix",
-        "build_experiment_evidence",
-        "build_i2_transfer_evidence",
-        "protected_ids",
-        "calibration_claim_allowed=False",
-        "current_run_ids",
-        'status"].eq("running")',
+        "results/evidence/task2/i2_multitask/manifest.json",
+        "load_verified_notebook_manifest",
+        'i2_artifacts["comparison"]',
+        'i2_artifacts["registry_snapshot"]',
+        'i2_artifacts["slice_metrics"]',
         'i2_manifest["gate"] == "G4-I2"',
         'i2_manifest["keep_i2"] is True',
-        '== "g4-i2-article-type-lambda-0-3-c1"',
-        'artifacts"]["learning_curves"]',
-        'artifacts"]["transfer_deltas"]',
+        'i2_manifest["selected_experiment_id"] == "g4-i2-article-type-lambda-0-3-c1"',
+        'i2_decision["loss_values_comparable_to_reference"] is False',
+        'i2_current_attempts["status"].eq("completed").all()',
     ):
         assert required in code
-    # This orchestration cell is intentionally unexecuted after the output
-    # refactor; its focused output cells follow it below.
-    assert cell.execution_count is None
-    assert cell.outputs == []
+    assert "run_i2_matrix" not in code
+    assert "build_i2_transfer_evidence" not in code
+    assert cell.execution_count is not None
+    assert len(cell.outputs) == 1
     for required in (
         "B0",
         "B1",
@@ -674,26 +821,20 @@ def test_task2_pstar_cell_records_matched_pretraining_boundary() -> None:
     assert not code.startswith("# TODO:")
     compile(code, "03_task2_season.ipynb:s08-03-03-code", "exec")
     for required in (
-        "g4_p0s_resnet18_standard_scratch.json",
-        "g4_pstar_resnet18_standard_pretrained.json",
-        "load_experiment_config",
-        "run_pretraining_matrix",
-        'mode="run_or_load"',
-        "build_experiment_evidence",
-        "build_pretraining_benchmark_evidence",
-        "protected_ids",
-        "calibration_claim_allowed=False",
-        "current_run_ids",
-        'status"].eq("running")',
+        "results/evidence/task2/pretraining_benchmark/manifest.json",
+        "load_verified_notebook_manifest",
+        'pretraining_artifacts["comparison"]',
+        'pretraining_artifacts["registry_snapshot"]',
         'pretraining_manifest["gate"] == "G4-PSTAR"',
         'pretraining_manifest["candidate_selection_affected"] is False',
         'pretraining_decision["pstar_final_eligible"] is False',
-        'artifacts"]["learning_curves"]',
-        'artifacts"]["effect_figure"]',
+        'pretraining_current_attempts["status"].eq("completed").all()',
     ):
         assert required in code
-    assert cell.execution_count is None
-    assert cell.outputs == []
+    assert "run_pretraining_matrix" not in code
+    assert "build_pretraining_benchmark_evidence" not in code
+    assert cell.execution_count is not None
+    assert len(cell.outputs) == 1
     for required in (
         "0.731172",
         "0.754196",
@@ -743,8 +884,8 @@ def test_task2_g5_cell_records_second_seed_stability() -> None:
         'artifact_paths["comparison_figure"]',
     ):
         assert required in code
-    assert cell.execution_count is None
-    assert cell.outputs == []
+    assert cell.execution_count is not None
+    assert len(cell.outputs) == 1
     for required in (
         "0.752687",
         "0.735036",
@@ -775,18 +916,17 @@ def test_task2_g2_size_cell_records_audited_selection() -> None:
     assert not code.startswith("# TODO:")
     compile(code, "03_task2_season.ipynb:s08-02-01-code", "exec")
     for required in (
-        "g2_p1_c2_resnet18.json",
-        "run_or_load_experiment",
-        "build_experiment_evidence",
-        "build_g2_input_size_evidence",
-        "g2_input_size_ablation",
-        "protected_ids",
-        "calibration_claim_allowed=False",
+        "results/evidence/task2/g2_input_size_ablation/manifest.json",
+        "load_verified_notebook_manifest",
+        "load_verified_input_registry_rows",
+        'g2_size_artifacts["comparison"]',
+        'g2_size_artifacts["decision"]',
         'g2_size_decision["selected_variant"] == "P0"',
-        "RunRegistry(RUNS_CSV)",
-        '["status"].eq("running")',
+        'g2_p1_attempts["status"].eq("completed").all()',
     ):
         assert required in code
+    assert "run_or_load_experiment" not in code
+    assert "build_g2_input_size_evidence" not in code
     for required in (
         "0.707099",
         "0.705312",
@@ -815,25 +955,19 @@ def test_task2_g2_tuning_cell_records_audited_incremental_selection() -> None:
     assert not code.startswith("# TODO:")
     compile(code, "03_task2_season.ipynb:s08-02-03-code", "exec")
     for required in (
-        "g1_c1_smallcnn.json",
-        "g1_c2_resnet18.json",
-        "g2_t1_c1_smallcnn.json",
-        "g2_t2_c1_smallcnn.json",
-        "g2_t1_c2_resnet18.json",
-        "g2_t2_c2_resnet18.json",
-        "run_or_load_experiment",
-        "build_experiment_evidence",
-        "build_g2_tuning_evidence",
-        "protected_ids",
+        "results/evidence/task2/g2_compact_tuning/manifest.json",
+        "results/evidence/task2/selection_story/manifest.json",
+        "load_verified_notebook_manifest",
+        "load_verified_input_registry_rows",
         'selected_tuning_id"] == "T1"',
         'selected_tuning_id"] == "T0"',
-        'status"].eq("running")',
-        "incremental_model_selection.csv",
-        "eda_reflection.csv",
-        'artifacts"]["c1_learning_curves"]',
-        'artifacts"]["c2_learning_curves"]',
+        'selection_story_artifacts["incremental_model_selection"]',
+        'selection_story_artifacts["eda_reflection"]',
+        'g2_tuning_attempts["status"].eq("completed").all()',
     ):
         assert required in code
+    assert "run_or_load_experiment" not in code
+    assert "build_g2_tuning_evidence" not in code
     for required in (
         "0.708075",
         "+0.008173",
@@ -924,7 +1058,9 @@ def test_task2_results_cells_load_only_verified_measured_evidence() -> None:
         assert not code.startswith("# TODO:")
         compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
 
-    combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
+    combined = cells["s01-01-code"].source + "\n" + "\n".join(
+        cells[cell_id].source for cell_id in cell_ids
+    )
     for required in (
         "load_verified_notebook_manifest",
         "verify_artifact",
@@ -1303,7 +1439,6 @@ def test_task2_final_cells_build_only_the_locked_component_handoff() -> None:
         "predict_season",
         'eq("1163")',
         'task2_smoke_prediction.review_required is None',
-        "build_task2_handoff_evidence",
         "load_verified_task2_handoff",
         'task2_handoff["status"] == "ready_for_group_freeze"',
         'task2_handoff["group_freeze_verified"] is False',
@@ -1313,6 +1448,7 @@ def test_task2_final_cells_build_only_the_locked_component_handoff() -> None:
     ):
         assert required in combined
     for forbidden in (
+        "build_task2_handoff_evidence",
         "evaluation_unlocked",
         "load_splits_for_final_evaluation",
         "styles_prediction.csv",
@@ -1342,7 +1478,7 @@ def test_task2_analysis_cells_verify_all_declared_inputs_and_exact_claims() -> N
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
 
-    manifest_loader = cells["s09-01-code"].source
+    manifest_loader = cells["s01-01-code"].source
     for required in (
         "def walk_declarations",
         '{"path", "sha256"} <= set(value)',
