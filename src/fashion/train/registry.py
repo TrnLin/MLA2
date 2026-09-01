@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import copy
-import fcntl
 import re
 import time
 import uuid
@@ -14,6 +13,12 @@ from pathlib import Path
 from typing import Any, Iterator
 
 import pandas as pd
+
+try:
+    import fcntl
+except ModuleNotFoundError:  # Windows does not provide the POSIX fcntl module.
+    fcntl = None  # type: ignore[assignment]
+    import msvcrt
 
 from fashion.config import RUNS_CSV
 from fashion.train.artifacts import atomic_write_csv, canonical_json_bytes
@@ -213,11 +218,24 @@ class RunRegistry:
         lock_path = self.path.with_name(f".{self.path.name}.lock")
         lock_path.parent.mkdir(parents=True, exist_ok=True)
         with lock_path.open("a+", encoding="utf-8") as lock_file:
-            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            if fcntl is not None:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            else:
+                # msvcrt locks a byte range. Keep byte zero present and lock it.
+                lock_file.seek(0, 2)
+                if lock_file.tell() == 0:
+                    lock_file.write("0")
+                    lock_file.flush()
+                lock_file.seek(0)
+                msvcrt.locking(lock_file.fileno(), msvcrt.LK_LOCK, 1)
             try:
                 yield
             finally:
-                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+                if fcntl is not None:
+                    fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+                else:
+                    lock_file.seek(0)
+                    msvcrt.locking(lock_file.fileno(), msvcrt.LK_UNLCK, 1)
 
     def read(self) -> pd.DataFrame:
         """Return all rows as strings so identifiers and blank fields stay exact."""
