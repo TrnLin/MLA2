@@ -87,15 +87,26 @@ def extract_task1_hog(path: str | Path, spec: Task1HogSpec) -> np.ndarray:
     return features
 
 
-def _hog_inventory(rows: pd.DataFrame) -> list[dict[str, object]]:
+def _normalized_development_hog_rows(rows: pd.DataFrame) -> pd.DataFrame:
     required = {"id", "path", "sha256", "partition"}
     if required.difference(rows.columns):
         raise ValueError("HOG rows are missing required inventory columns")
     if rows.empty or not rows["partition"].eq("development").all():
         raise ValueError("HOG cache requires unique development rows")
-    if rows["id"].isna().any() or rows["id"].duplicated().any():
+    if rows["id"].isna().any():
         raise ValueError("HOG cache requires unique development rows")
-    ordered = rows.sort_values("id", kind="stable")
+    normalized = rows.copy()
+    try:
+        normalized["id"] = normalized["id"].to_numpy(dtype=np.int64)
+    except (OverflowError, TypeError, ValueError) as error:
+        raise ValueError("HOG cache requires integer development row IDs") from error
+    if normalized["id"].duplicated().any():
+        raise ValueError("HOG cache requires unique development rows")
+    return normalized.sort_values("id", kind="stable")
+
+
+def _hog_inventory(rows: pd.DataFrame) -> list[dict[str, object]]:
+    ordered = _normalized_development_hog_rows(rows)
     return ordered.loc[:, ["id", "path", "sha256"]].to_dict(orient="records")
 
 
@@ -108,7 +119,8 @@ def load_or_build_task1_hog_features(
     split_sha256: str,
     extractor: Callable[[Path, Task1HogSpec], np.ndarray] = extract_task1_hog,
 ) -> Task1HogFeatureSet:
-    inventory = _hog_inventory(rows)
+    ordered = _normalized_development_hog_rows(rows)
+    inventory = _hog_inventory(ordered)
     identity = {
         "schema_version": HOG_CACHE_SCHEMA_VERSION,
         "split_sha256": split_sha256,
@@ -136,7 +148,6 @@ def load_or_build_task1_hog_features(
         except Exception:
             pass
 
-    ordered = rows.sort_values("id", kind="stable")
     ids = ordered["id"].to_numpy(dtype=np.int64)
     project_root = Path(root)
     vectors = [

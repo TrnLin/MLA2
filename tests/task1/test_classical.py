@@ -144,6 +144,35 @@ def test_hog_cache_rejects_non_development_or_duplicate_rows(tmp_path: Path) -> 
         )
 
 
+def test_hog_cache_rejects_holdout_rows(tmp_path: Path) -> None:
+    rows = _cache_rows()
+    rows.loc[1, "partition"] = "holdout"
+
+    with pytest.raises(ValueError, match="unique development rows"):
+        load_or_build_task1_hog_features(
+            rows,
+            TASK1_HOG_COARSE,
+            root=tmp_path,
+            cache_root=tmp_path / "cache",
+            split_sha256="c" * 64,
+        )
+
+
+def test_hog_cache_rejects_ids_that_duplicate_after_integer_normalization(tmp_path: Path) -> None:
+    rows = _cache_rows()
+    rows["id"] = ["01", "1"]
+
+    with pytest.raises(ValueError, match="unique development rows"):
+        load_or_build_task1_hog_features(
+            rows,
+            TASK1_HOG_COARSE,
+            root=tmp_path,
+            cache_root=tmp_path / "cache",
+            split_sha256="c" * 64,
+            extractor=lambda *_: np.zeros(288, dtype=np.float32),
+        )
+
+
 def test_hog_cache_leaves_no_final_file_when_atomic_write_is_interrupted(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
