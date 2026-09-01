@@ -2,15 +2,23 @@
 
 from __future__ import annotations
 
+import io
+import json
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 from PIL import Image
 from skimage.color import rgb2gray
 from skimage.feature import hog
 
+from fashion.config import ROOT, TASK1_HOG_CACHE_DIR
 from fashion.data.images import transform_image_with_mask
+from fashion.train.artifacts import atomic_write_bytes, canonical_json_bytes, canonical_sha256
+
+HOG_CACHE_SCHEMA_VERSION = 1
 
 
 @dataclass(frozen=True)
@@ -47,6 +55,14 @@ TASK1_HOG_FINE = Task1HogSpec("task1_gray_hog_ppc10_v1", (10, 10), 1260)
 TASK1_HOG_SPECS = (TASK1_HOG_COARSE, TASK1_HOG_FINE)
 
 
+@dataclass(frozen=True)
+class Task1HogFeatureSet:
+    ids: np.ndarray
+    features: np.ndarray
+    spec: Task1HogSpec
+    cache_path: Path
+
+
 def extract_task1_hog(path: str | Path, spec: Task1HogSpec) -> np.ndarray:
     image_path = Path(path)
     try:
@@ -69,3 +85,74 @@ def extract_task1_hog(path: str | Path, spec: Task1HogSpec) -> np.ndarray:
     if features.shape != (spec.expected_features,) or not np.isfinite(features).all():
         raise ValueError(f"invalid HOG feature vector for {image_path}")
     return features
+
+
+def _hog_inventory(rows: pd.DataFrame) -> list[dict[str, object]]:
+    required = {"id", "path", "sha256", "partition"}
+    if required.difference(rows.columns):
+        raise ValueError("HOG rows are missing required inventory columns")
+    if rows.empty or not rows["partition"].eq("development").all():
+        raise ValueError("HOG cache requires unique development rows")
+    if rows["id"].isna().any() or rows["id"].duplicated().any():
+        raise ValueError("HOG cache requires unique development rows")
+    ordered = rows.sort_values("id", kind="stable")
+    return ordered.loc[:, ["id", "path", "sha256"]].to_dict(orient="records")
+
+
+def load_or_build_task1_hog_features(
+    rows: pd.DataFrame,
+    spec: Task1HogSpec,
+    *,
+    root: str | Path = ROOT,
+    cache_root: str | Path = TASK1_HOG_CACHE_DIR,
+    split_sha256: str,
+    extractor: Callable[[Path, Task1HogSpec], np.ndarray] = extract_task1_hog,
+) -> Task1HogFeatureSet:
+    inventory = _hog_inventory(rows)
+    identity = {
+        "schema_version": HOG_CACHE_SCHEMA_VERSION,
+        "split_sha256": split_sha256,
+        "inventory_sha256": canonical_sha256(inventory),
+        "hog": spec.to_dict(),
+    }
+    cache_path = Path(cache_root) / f"{spec.hog_id}-{canonical_sha256(identity)[:16]}.npz"
+    expected_ids = np.asarray([int(row["id"]) for row in inventory], dtype=np.int64)
+    if cache_path.is_file():
+        try:
+            with np.load(cache_path, allow_pickle=False) as stored:
+                ids = stored["ids"]
+                features = stored["features"]
+                metadata = json.loads(bytes(stored["metadata"].tolist()).decode("utf-8"))
+            valid = (
+                ids.dtype == np.int64
+                and features.dtype == np.float32
+                and canonical_json_bytes(metadata) == canonical_json_bytes(identity)
+                and np.array_equal(ids, expected_ids)
+                and features.shape == (len(ids), spec.expected_features)
+                and np.isfinite(features).all()
+            )
+            if valid:
+                return Task1HogFeatureSet(ids, features, spec, cache_path)
+        except Exception:
+            pass
+
+    ordered = rows.sort_values("id", kind="stable")
+    ids = ordered["id"].to_numpy(dtype=np.int64)
+    project_root = Path(root)
+    vectors = [
+        np.asarray(extractor(project_root / str(row.path), spec), dtype=np.float32)
+        for row in ordered.itertuples()
+    ]
+    features = np.stack(vectors).astype(np.float32, copy=False)
+    if features.shape != (len(ids), spec.expected_features) or not np.isfinite(features).all():
+        raise ValueError("invalid Task 1 HOG cache features")
+    metadata_bytes = canonical_json_bytes(identity)
+    buffer = io.BytesIO()
+    np.savez_compressed(
+        buffer,
+        ids=ids,
+        features=features,
+        metadata=np.frombuffer(metadata_bytes, dtype=np.uint8),
+    )
+    atomic_write_bytes(cache_path, buffer.getvalue())
+    return Task1HogFeatureSet(ids, features, spec, cache_path)
