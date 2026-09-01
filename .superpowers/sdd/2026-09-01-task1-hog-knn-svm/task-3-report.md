@@ -61,3 +61,22 @@ git diff --check
 
 No known concerns. The SVM probabilities are score-normalised artifacts, not
 calibrated probabilities; callers and report text should describe them that way.
+
+## Round 1 review fix — stable SVM scoring
+
+Added `test_stable_softmax_handles_extreme_finite_logits` with rows containing
+`[1000, 0, -1000]` and `[-1000, 0, 1000]`. It asserts all results are finite
+and each row sums to one.
+
+Mutation RED evidence: temporarily replacing the max-shifted exponentials with
+`np.exp(values)` made the test fail with `nan` output and NumPy overflow and
+invalid-divide warnings. The max shift was restored afterwards.
+
+GREEN verification:
+
+```sh
+PYTHONPATH=src ./.venv/bin/python -m pytest tests/task1/test_classical.py -k "knn or svm or neighbour" -q
+PYTHONPATH=src ./.venv/bin/python -m ruff check src/fashion/task1/classical.py tests/task1/test_classical.py
+```
+
+Both commands pass after the stable implementation is restored.

@@ -12,6 +12,7 @@ from fashion.task1.classical import (
     Task1HogSpec,
     Task1KNNConfig,
     Task1LinearSVMConfig,
+    _stable_softmax,
     extract_task1_hog,
     fit_predict_task1_knn,
     fit_predict_task1_linear_svm,
@@ -244,3 +245,12 @@ def test_reused_neighbour_votes_match_sklearn(weights: str, k: int) -> None:
     expected = np.zeros((len(x_validation), 124))
     expected[:, model.classes_.astype(int)] = expected_local
     np.testing.assert_allclose(reused, expected)
+
+
+def test_stable_softmax_handles_extreme_finite_logits() -> None:
+    logits = np.array([[1_000.0, 0.0, -1_000.0], [-1_000.0, 0.0, 1_000.0]])
+
+    probabilities = _stable_softmax(logits)
+
+    assert np.isfinite(probabilities).all()
+    np.testing.assert_allclose(probabilities.sum(axis=1), 1.0)
