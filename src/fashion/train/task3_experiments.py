@@ -28,6 +28,8 @@ Task3ChildName = Literal[
     "usage_tinyconvnext18",
     "gender_gem_p3_early_stopping",
     "usage_translation_2px",
+    "gender_semantic_filter",
+    "usage_exception_balance",
 ]
 Task3ModelFamily = Literal[
     "task3_small_cnn",
@@ -109,6 +111,11 @@ class Task3ChildSpec:
     early_stopping_min_epoch: int = 0
     early_stopping_patience: int = 0
     early_stopping_min_delta: float = 0.0
+    training_selection_strategy: Literal[
+        "all",
+        "gender_semantic_conflicts_v1",
+        "usage_article_type_exception_balance_v1",
+    ] = "all"
 
     def __post_init__(self) -> None:
         if len(set(self.parent_run_ids)) != 5 or any(not run_id for run_id in self.parent_run_ids):
@@ -369,12 +376,59 @@ class Task3ChildSpec:
                 "early_stopping_patience": 0,
                 "early_stopping_min_delta": 0.0,
             },
+            "gender_semantic_filter": {
+                "target": "gender",
+                "experiment_id": "t3_gender_semantic_filter_gem_p3",
+                "hypothesis_id": "t3_gender_e9_semantic_filter",
+                "artifact_dir": "experiments/t3_gender_e9_semantic_filter",
+                "run_prefix": "t3_gender_e9_semantic_filter",
+                "changed_factor": "fold_training_semantic_filter",
+                "training_augmentation": "none",
+                "loss_name": "cross_entropy",
+                "parent_artifact_dir": "experiments/t3_gender_e6_gem_p3",
+                "class_weight_beta": None,
+                "class_weight_cap": None,
+                "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
+                "focal_gamma": 0.0,
+                "model_family": "task3_small_cnn_gem_p3",
+                "run_model_token": "smallcnngem3",
+                "checkpoint_policy": "final_epoch",
+                "early_stopping_min_epoch": 0,
+                "early_stopping_patience": 0,
+                "early_stopping_min_delta": 0.0,
+                "training_selection_strategy": "gender_semantic_conflicts_v1",
+            },
+            "usage_exception_balance": {
+                "target": "usage",
+                "experiment_id": "t3_usage_exception_balance_smallcnn",
+                "hypothesis_id": "t3_usage_e9_exception_balance",
+                "artifact_dir": "experiments/t3_usage_e9_exception_balance",
+                "run_prefix": "t3_usage_e9_exception_balance",
+                "changed_factor": "fold_training_article_type_group_balance",
+                "training_augmentation": "none",
+                "loss_name": "effective_number_group_balanced_cross_entropy",
+                "parent_artifact_dir": "experiments/t3_usage_e2_class_balanced_ce",
+                "class_weight_beta": 0.999,
+                "class_weight_cap": 5.0,
+                "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
+                "focal_gamma": 0.0,
+                "model_family": "task3_small_cnn",
+                "run_model_token": "smallcnn",
+                "checkpoint_policy": "final_epoch",
+                "early_stopping_min_epoch": 0,
+                "early_stopping_patience": 0,
+                "early_stopping_min_delta": 0.0,
+                "training_selection_strategy": "usage_article_type_exception_balance_v1",
+            },
         }[self.name]
         expected.setdefault("focal_gamma", 0.0)
         expected.setdefault("checkpoint_policy", "final_epoch")
         expected.setdefault("early_stopping_min_epoch", 0)
         expected.setdefault("early_stopping_patience", 0)
         expected.setdefault("early_stopping_min_delta", 0.0)
+        expected.setdefault("training_selection_strategy", "all")
         actual = asdict(self)
         actual.pop("name")
         actual.pop("parent_run_ids")
@@ -392,6 +446,64 @@ class Task3ChildSpec:
     def to_dict(self) -> dict[str, object]:
         payload = asdict(self)
         payload["parent_run_ids"] = list(self.parent_run_ids)
+        stage_two = {"gender_brightness", "usage_class_balanced"}
+        stage_three = {"gender_class_balanced", "usage_classifier_dropout"}
+        stage_four = {"gender_tinyresnet18_pm", "usage_tinyresnet18_pm"}
+        stage_five = {"gender_compact_blur_cnn", "usage_label_smoothing"}
+        stage_six_or_seven = {
+            "gender_gem_p3",
+            "usage_focal_gamma1",
+            "gender_tinyhrnet20",
+            "usage_tinyconvnext18",
+        }
+        checkpoint_fields = {
+            "checkpoint_policy",
+            "early_stopping_min_epoch",
+            "early_stopping_patience",
+            "early_stopping_min_delta",
+        }
+        if self.name in stage_two:
+            for field in (
+                "parent_artifact_dir",
+                "classifier_dropout",
+                "label_smoothing",
+                "focal_gamma",
+                "model_family",
+                "run_model_token",
+                *checkpoint_fields,
+                "training_selection_strategy",
+            ):
+                payload.pop(field)
+        elif self.name in stage_three:
+            for field in (
+                "label_smoothing",
+                "focal_gamma",
+                "model_family",
+                "run_model_token",
+                *checkpoint_fields,
+                "training_selection_strategy",
+            ):
+                payload.pop(field)
+        elif self.name in stage_four:
+            for field in (
+                "label_smoothing",
+                "focal_gamma",
+                *checkpoint_fields,
+                "training_selection_strategy",
+            ):
+                payload.pop(field)
+        elif self.name in stage_five:
+            for field in (
+                "focal_gamma",
+                *checkpoint_fields,
+                "training_selection_strategy",
+            ):
+                payload.pop(field)
+        elif self.name in stage_six_or_seven:
+            for field in (*checkpoint_fields, "training_selection_strategy"):
+                payload.pop(field)
+        elif payload["training_selection_strategy"] == "all":
+            payload.pop("training_selection_strategy")
         return payload
 
 
@@ -664,6 +776,46 @@ def usage_translation_2px_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
     )
 
 
+def gender_semantic_filter_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    """Change only the Gender E6 fold-training row selection."""
+    return Task3ChildSpec(
+        name="gender_semantic_filter",
+        target="gender",
+        experiment_id="t3_gender_semantic_filter_gem_p3",
+        hypothesis_id="t3_gender_e9_semantic_filter",
+        artifact_dir="experiments/t3_gender_e9_semantic_filter",
+        run_prefix="t3_gender_e9_semantic_filter",
+        changed_factor="fold_training_semantic_filter",
+        training_augmentation="none",
+        loss_name="cross_entropy",
+        parent_artifact_dir="experiments/t3_gender_e6_gem_p3",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        model_family="task3_small_cnn_gem_p3",
+        run_model_token="smallcnngem3",
+        training_selection_strategy="gender_semantic_conflicts_v1",
+    )
+
+
+def usage_exception_balance_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    """Change only the Usage E2 fold-training example weights."""
+    return Task3ChildSpec(
+        name="usage_exception_balance",
+        target="usage",
+        experiment_id="t3_usage_exception_balance_smallcnn",
+        hypothesis_id="t3_usage_e9_exception_balance",
+        artifact_dir="experiments/t3_usage_e9_exception_balance",
+        run_prefix="t3_usage_e9_exception_balance",
+        changed_factor="fold_training_article_type_group_balance",
+        training_augmentation="none",
+        loss_name="effective_number_group_balanced_cross_entropy",
+        parent_artifact_dir="experiments/t3_usage_e2_class_balanced_ce",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        class_weight_beta=0.999,
+        class_weight_cap=5.0,
+        training_selection_strategy="usage_article_type_exception_balance_v1",
+    )
+
+
 def effective_number_class_weights(
     counts: Sequence[int], *, beta: float = 0.999, cap: float = 5.0
 ) -> np.ndarray:
@@ -792,6 +944,10 @@ def _spec(name: Task3ChildName, parent_run_ids: Sequence[str]) -> Task3ChildSpec
         return gender_gem_p3_early_stopping_spec(parent_run_ids)
     if name == "usage_translation_2px":
         return usage_translation_2px_spec(parent_run_ids)
+    if name == "gender_semantic_filter":
+        return gender_semantic_filter_spec(parent_run_ids)
+    if name == "usage_exception_balance":
+        return usage_exception_balance_spec(parent_run_ids)
     raise ValueError(f"unsupported Task 3 child: {name}")
 
 
@@ -869,6 +1025,11 @@ def check_task3_child_setup(
     baseline["model_family"] = spec.model_family
     baseline["label_smoothing"] = spec.label_smoothing
     baseline["focal_gamma"] = spec.focal_gamma
+    baseline["training_selection_strategy"] = spec.training_selection_strategy
+    baseline["gender_deterministic_audit_required"] = (
+        spec.training_selection_strategy == "gender_semantic_conflicts_v1"
+    )
+    baseline["gender_human_rating_gate_required"] = False
     return {
         **baseline,
         "child": spec.to_dict(),

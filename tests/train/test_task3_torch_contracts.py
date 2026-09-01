@@ -14,6 +14,9 @@ Task3GeM3CNN = importlib.import_module("fashion.train.model").Task3GeM3CNN
 Task3TinyConvNeXt18 = importlib.import_module("fashion.train.model").Task3TinyConvNeXt18
 Task3TinyHRNet20 = importlib.import_module("fashion.train.model").Task3TinyHRNet20
 Task3TinyResNet18PM = importlib.import_module("fashion.train.model").Task3TinyResNet18PM
+SampleWeightedCrossEntropy = importlib.import_module(
+    "fashion.train.loss"
+).SampleWeightedCrossEntropy
 WeightedFocalCrossEntropy = importlib.import_module(
     "fashion.train.loss"
 ).WeightedFocalCrossEntropy
@@ -183,3 +186,22 @@ def test_weighted_epoch_loss_uses_the_sum_of_sample_weights() -> None:
     expected = float(per_sample.sum() / weights[labels].sum())
 
     assert observed == pytest.approx(expected)
+
+
+def test_e9_combines_class_and_group_weights_with_one_explicit_denominator() -> None:
+    logits = torch.tensor(
+        [[2.0, -1.0], [-0.5, 0.5], [0.2, 0.8], [1.0, -0.2]],
+        dtype=torch.float32,
+    )
+    labels = torch.tensor([0, 0, 1, 1], dtype=torch.long)
+    class_weights = torch.tensor([1.0, 4.0], dtype=torch.float32)
+    group_factors = torch.tensor([0.6, 1.8, 0.6, 1.8], dtype=torch.float32)
+    criterion = SampleWeightedCrossEntropy(class_weights)
+
+    observed = criterion(logits, labels, group_factors)
+    per_sample = nn.functional.cross_entropy(logits, labels, reduction="none")
+    combined = class_weights[labels] * group_factors
+    expected = (per_sample * combined).sum() / combined.sum()
+
+    assert observed == pytest.approx(float(expected))
+    assert criterion.loss_denominator(labels, group_factors) == pytest.approx(combined.sum())

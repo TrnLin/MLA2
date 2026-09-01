@@ -112,6 +112,7 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
         image_size: tuple[int, int] = (80, 60),
         corruption: str | None = None,
         augmentation: str = "none",
+        sample_weight_column: str | None = None,
     ) -> None:
         if corruption not in (None, *CORE_CORRUPTIONS):
             raise ValueError(f"unknown core corruption: {corruption}")
@@ -128,9 +129,18 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
         self.image_size = image_size
         self.corruption = corruption
         self.augmentation = augmentation
+        self.sample_weight_column = sample_weight_column
         unknown = sorted(set(self.frame[target]).difference(self.label_to_index))
         if unknown:
             raise ValueError(f"unknown {target} labels: {unknown}")
+        if sample_weight_column is not None:
+            if sample_weight_column not in self.frame:
+                raise ValueError(f"missing sample-weight column: {sample_weight_column}")
+            weights = pd.to_numeric(self.frame[sample_weight_column], errors="raise").to_numpy(
+                dtype=np.float64
+            )
+            if not np.isfinite(weights).all() or (weights <= 0).any():
+                raise ValueError("sample weights must be finite and strictly positive")
 
     def __len__(self) -> int:
         return len(self.frame)
@@ -146,7 +156,7 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
             std=self.std,
         )
         tensor = torch.from_numpy(np.transpose(array, (2, 0, 1)).copy())
-        return {
+        result = {
             "image": tensor,
             "label": int(self.label_to_index[str(row[self.target])]),
             "id": int(row["id"]),
@@ -154,3 +164,6 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
             "product_family_group": str(row["product_family_group"]),
             "path": str(row["path"]),
         }
+        if self.sample_weight_column is not None:
+            result["sample_weight"] = float(row[self.sample_weight_column])
+        return result

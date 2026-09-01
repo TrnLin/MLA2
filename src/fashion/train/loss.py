@@ -7,6 +7,52 @@ from torch import nn
 from torch.nn import functional as F
 
 
+class SampleWeightedCrossEntropy(nn.Module):
+    """Cross-entropy normalised by combined class and per-example weights."""
+
+    def __init__(self, class_weights: torch.Tensor) -> None:
+        super().__init__()
+        if class_weights.ndim != 1 or len(class_weights) < 2:
+            raise ValueError("class weights must be a one-dimensional multi-class tensor")
+        if torch.any(class_weights < 0):
+            raise ValueError("class weights cannot be negative")
+        if not torch.any(class_weights > 0):
+            raise ValueError("at least one class weight must be positive")
+        self.register_buffer("class_weights", class_weights.detach().clone())
+
+    def _combined_weights(
+        self, target: torch.Tensor, sample_weight: torch.Tensor
+    ) -> torch.Tensor:
+        if sample_weight.ndim != 1 or len(sample_weight) != len(target):
+            raise ValueError("sample weights must contain one value per target")
+        if not torch.isfinite(sample_weight).all() or torch.any(sample_weight <= 0):
+            raise ValueError("sample weights must be finite and strictly positive")
+        return self.class_weights[target] * sample_weight
+
+    def loss_denominator(
+        self, target: torch.Tensor, sample_weight: torch.Tensor
+    ) -> torch.Tensor:
+        """Return the combined example-weight sum used by this batch."""
+        return self._combined_weights(target, sample_weight).sum()
+
+    def forward(
+        self,
+        logits: torch.Tensor,
+        target: torch.Tensor,
+        sample_weight: torch.Tensor,
+    ) -> torch.Tensor:
+        if logits.ndim != 2 or logits.shape[1] != len(self.class_weights):
+            raise ValueError("logits and class-weight dimensions disagree")
+        if target.ndim != 1 or len(target) != len(logits):
+            raise ValueError("targets must contain one class index per logit row")
+        combined = self._combined_weights(target, sample_weight)
+        denominator = combined.sum()
+        if denominator <= 0:
+            raise ValueError("a batch has zero total example weight")
+        per_sample = F.cross_entropy(logits, target, reduction="none")
+        return (per_sample * combined).sum() / denominator
+
+
 class WeightedLabelSmoothedCrossEntropy(nn.Module):
     """Smooth targets first, then apply the original true-class example weight."""
 

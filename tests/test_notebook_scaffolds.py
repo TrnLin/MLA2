@@ -20,7 +20,7 @@ TASK_SPECS = {
     "04_task3_gender_usage.ipynb": {
         "title": "Task 3 — Gender and Usage Classification",
         "tokens": ("gender", "usage", "negative transfer", "label-mask"),
-        "sections": 25,
+        "sections": 27,
     },
     "05_task4_visual_search.ipynb": {
         "title": "Task 4 — Fashion Visual Search",
@@ -51,6 +51,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04f_task3_gem_focal_e6_experiments.ipynb",
         "04g_task3_tinyconvnext_tinyhrnet_e7_experiments.ipynb",
         "04h_task3_early_stopping_translation_e8_experiments.ipynb",
+        "04i_task3_semantic_filter_exception_balance_e9_experiments.ipynb",
         *TASK_SPECS,
     }
     present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
@@ -307,6 +308,48 @@ def test_task3_e8_runner_only_trains_early_stopping_and_translation() -> None:
     )
 
 
+def test_task3_e9_runner_trains_only_e9_with_deterministic_gender_audit() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/04i_task3_semantic_filter_exception_balance_e9_experiments.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert (
+        notebook.metadata["title"]
+        == "Task 3 — Semantic Filter and Exception Balance E9 Experiments"
+    )
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert source.index('run_task3_child_cv(\n    "usage_exception_balance"') < source.index(
+        'run_task3_child_cv(\n    "gender_semantic_filter"'
+    )
+    assert "write_task3_e9_prerun_evidence" in source
+    assert "Deterministic E9 evidence ready in Drive; optimizer steps: 0" in source
+    assert source.index("gender_contract = e9_prerun") < source.index(
+        'run_task3_child_cv(\n    "gender_semantic_filter"'
+    )
+    assert "GENDER_E9_APPROVED" not in source
+    assert "require_gender_e9_training_approval" not in source
+    assert "three-rater" not in source
+    assert "human_rating_gate_required" in source
+    assert "latest_completed_gender_e6_parent_run_ids" in source
+    assert "latest_completed_usage_e2_parent_run_ids" in source
+    assert "no switch or merge was attempted" in source
+    assert source.count("audit_completed_registry_rows(") == 2
+    assert "run_task3_baseline_cv" not in source
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
 def test_task_scaffolds_leave_owner_decisions_open() -> None:
     for filename, spec in TASK_SPECS.items():
         notebook = nbformat.read(ROOT / "notebooks" / filename, as_version=4)
@@ -369,6 +412,11 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
                 "t3-e7-gates",
                 "t3-e7-plots",
                 "t3-e7-failure-gallery",
+                "sc-e8-analysis",
+                "sc-e8-plots",
+                "t3-e9-prerun-audits",
+                "t3-e9-prerun-plots",
+                "t3-e9-deterministic-gate",
             }
             assert all(
                 cell.cell_type == "markdown" or cell.id in code_ids for cell in notebook.cells
@@ -487,6 +535,20 @@ def test_task_metric_contracts_are_explicit() -> None:
     assert "Do not add the ArticleType head" in task3
     assert "2.0 GiB PyTorch peak-allocation ceiling per fold" in task3
     assert "04h_task3_early_stopping_translation_e8_experiments.ipynb` resolves" in task3
+    assert "E9 pre-run audits and conditional hypotheses" in task3
+    assert "optional qualitative review" not in task3
+    assert "The rule finds **305** development rows" in task3
+    assert "242, 224, 259, 263, and 232" in task3
+    assert "No human-rating gate is used" in task3
+    assert "97.21% of 1,614 wrong exception rows" in task3
+    assert "fewer than 179 clean child-to-adult errors" in task3
+    assert "exception error below 45.05%" in task3
+    assert "wrong-exception shortcut below 92.21%" in task3
+    assert "mixed-label-family accuracy above 0.6743" in task3
+    assert "GENDER_E9_APPROVED" not in task3
+    assert "e9_prerun_audit_summary.png" in task3
+    assert "training remains stopped" in task3
+    assert "04i_task3_semantic_filter_exception_balance_e9_experiments.ipynb`" in task3
     assert "e6_learning_curves.png" in task3
     assert "e6_per_class_f1_comparison.png" in task3
     assert "E7 hypotheses — change the feature representation" in task3
@@ -501,8 +563,8 @@ def test_task_metric_contracts_are_explicit() -> None:
     assert "if TinyConvNeXt clearly beats E2" in task3
     assert "04g_task3_tinyconvnext_tinyhrnet_e7_experiments.ipynb` trains Usage" in task3
     assert "reject: worse pooled, paired, fold, minority" in task3
-    assert "planned: direct test of the observed pre-epoch-30 validation peaks" in task3
-    assert "planned: one controlled position-tolerance test" in task3
+    assert "strongest observed score, but reject as finalist" in task3
+    assert "reject: paired, primary, NA, and dark-image no-harm gates fail" in task3
     assert "04f_task3_gem_focal_e6_experiments.ipynb` loads E1/E2" in task3
     assert "results/evidence/task3" in task3
     assert "04a_task3_smallcnn_baseline_training.ipynb` reproduces only" in task3

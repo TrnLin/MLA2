@@ -44,7 +44,11 @@ from fashion.train.data import (
     task3_target_frames,
 )
 from fashion.train.evidence import load_oof_predictions
-from fashion.train.loss import WeightedFocalCrossEntropy, WeightedLabelSmoothedCrossEntropy
+from fashion.train.loss import (
+    SampleWeightedCrossEntropy,
+    WeightedFocalCrossEntropy,
+    WeightedLabelSmoothedCrossEntropy,
+)
 from fashion.train.metrics import classification_metrics
 from fashion.train.model import (
     Task3BaselineCNN,
@@ -55,6 +59,14 @@ from fashion.train.model import (
     Task3TinyResNet18PM,
 )
 from fashion.train.registry import RunRegistry
+from fashion.train.task3_e9 import (
+    GENDER_E9_EXPECTED_TRAINING_REMOVALS,
+    build_usage_article_type_contract,
+    gender_clean_child_evidence_mask,
+    gender_semantic_conflicts,
+    prepare_gender_e9_training,
+    usage_exception_diagnostics,
+)
 from fashion.train.task3_experiments import (
     Task3ChildSpec,
     _EarlyStoppingTracker,
@@ -272,7 +284,14 @@ def _pass(
             if training:
                 optimizer.zero_grad(set_to_none=True)
             logits = model(images)
-            loss = criterion(logits, target)
+            sample_weight = None
+            if isinstance(criterion, SampleWeightedCrossEntropy):
+                if "sample_weight" not in batch:
+                    raise ValueError("sample-weighted loss needs a sample_weight batch field")
+                sample_weight = batch["sample_weight"].to(device, non_blocking=True)
+                loss = criterion(logits, target, sample_weight)
+            else:
+                loss = criterion(logits, target)
             if training:
                 loss.backward()
                 optimizer.step()
@@ -280,9 +299,12 @@ def _pass(
             total_rows += rows
             denominator_method = getattr(criterion, "loss_denominator", None)
             if callable(denominator_method):
-                batch_loss_denominator = float(
-                    denominator_method(target).detach().cpu()
-                )
+                if isinstance(criterion, SampleWeightedCrossEntropy):
+                    assert sample_weight is not None
+                    denominator = denominator_method(target, sample_weight)
+                else:
+                    denominator = denominator_method(target)
+                batch_loss_denominator = float(denominator.detach().cpu())
             elif isinstance(criterion, nn.CrossEntropyLoss) and criterion.weight is not None:
                 batch_loss_denominator = float(
                     criterion.weight[target].detach().sum().cpu()
@@ -493,9 +515,57 @@ def run_task3_baseline_fold(
     training, validation = task3_target_frames(
         splits, target=target, validation_fold=validation_fold
     )
+    original_training_rows = len(training)
+    training_selection: pd.DataFrame | None = None
+    usage_mapping: pd.DataFrame | None = None
+    selection_metadata: dict[str, object] = {
+        "strategy": "all",
+        "before_rows": original_training_rows,
+        "after_rows": original_training_rows,
+        "validation_unchanged": True,
+    }
+    selection_strategy = (
+        child_spec.training_selection_strategy if child_spec is not None else "all"
+    )
+    if selection_strategy == "gender_semantic_conflicts_v1":
+        training, excluded, selection_metadata = prepare_gender_e9_training(training)
+        expected_removed = GENDER_E9_EXPECTED_TRAINING_REMOVALS[str(validation_fold)]
+        if len(excluded) != expected_removed:
+            raise RuntimeError(
+                "Gender E9 deterministic filter changed for validation fold "
+                f"{validation_fold}: expected {expected_removed}, found {len(excluded)}"
+            )
+        selection_metadata["strategy"] = selection_strategy
+        selection_metadata["deterministic_contract_verified"] = True
+        selection_metadata["expected_excluded_rows"] = expected_removed
+        selection_metadata["human_rating_gate_required"] = False
+        training_selection = excluded.assign(selection_action="excluded_from_training")
+    elif selection_strategy == "usage_article_type_exception_balance_v1":
+        training, usage_mapping, selection_metadata = build_usage_article_type_contract(
+            training, classes=classes
+        )
+        selection_metadata["strategy"] = selection_strategy
+        selection_metadata["before_rows"] = original_training_rows
+        selection_metadata["after_rows"] = len(training)
+        training_selection = training.loc[
+            :,
+            [
+                "id",
+                "cv_fold",
+                "product_family_group",
+                "articleType",
+                "usage",
+                "e9_usual_usage",
+                "e9_usage_group",
+                "e9_group_factor",
+            ],
+        ].copy()
+    elif selection_strategy != "all":
+        raise ValueError(f"unknown Task 3 training-selection strategy: {selection_strategy}")
     _log(
         f"preparing target={target} fold={validation_fold}: "
-        f"train={len(training):,}, validation={len(validation):,}"
+        f"train={len(training):,} (before selection={original_training_rows:,}), "
+        f"validation={len(validation):,}"
     )
 
     class_counts = np.array(
@@ -507,6 +577,7 @@ def run_task3_baseline_fold(
         "effective_number_cross_entropy",
         "effective_number_label_smoothed_cross_entropy",
         "effective_number_focal_cross_entropy",
+        "effective_number_group_balanced_cross_entropy",
     }:
         if child_spec.class_weight_beta is None or child_spec.class_weight_cap is None:
             raise ValueError("class-balanced loss requires beta and cap")
@@ -515,11 +586,46 @@ def run_task3_baseline_fold(
             beta=child_spec.class_weight_beta,
             cap=child_spec.class_weight_cap,
         )
+    if selection_strategy == "usage_article_type_exception_balance_v1":
+        if class_weights is None:
+            raise ValueError("usage exception balancing needs effective-number class weights")
+        class_weight_lookup = {
+            class_name: float(class_weights[index])
+            for index, class_name in enumerate(classes)
+        }
+        training["e9_class_weight"] = training[target].map(class_weight_lookup).astype(float)
+        training["e9_combined_weight"] = (
+            training["e9_class_weight"] * training["e9_group_factor"]
+        )
+        selection_metadata["combined_weight"] = {
+            "formula": "effective_number_class_weight * article_type_group_factor",
+            "loss_reduction": "sum(weight * cross_entropy) / sum(weight)",
+            "minimum": float(training["e9_combined_weight"].min()),
+            "maximum": float(training["e9_combined_weight"].max()),
+            "row_mean": float(training["e9_combined_weight"].mean()),
+            "sum": float(training["e9_combined_weight"].sum()),
+        }
+        training_selection = training.loc[
+            :,
+            [
+                "id",
+                "cv_fold",
+                "product_family_group",
+                "articleType",
+                "usage",
+                "e9_usual_usage",
+                "e9_usage_group",
+                "e9_group_factor",
+                "e9_class_weight",
+                "e9_combined_weight",
+            ],
+        ].copy()
 
     config_payload = config.to_dict()
     config_payload["effective_model_family"] = model_family
     config_payload["parameter_count"] = parameter_count
     config_payload["architecture_macs"] = architecture_macs
+    config_payload["training_selection_contract"] = selection_metadata
     if child_spec is None:
         digest = config_digest(config)
         experiment_id = BASELINE_EXPERIMENT_ID
@@ -564,6 +670,17 @@ def run_task3_baseline_fold(
     metrics_path = run_dir / "metrics.json"
     robustness_path = run_dir / "robustness.csv"
     checkpoint_path = run_dir / "final_epoch.pt"
+    selection_path = run_dir / "training_selection.csv"
+    usage_mapping_path = run_dir / "usage_article_type_mapping.csv"
+
+    if training_selection is not None:
+        training_selection.to_csv(selection_path, index=False)
+        selection_metadata["artifact_path"] = str(selection_path)
+        selection_metadata["artifact_sha256"] = compute_sha256(selection_path)
+    if usage_mapping is not None:
+        usage_mapping.to_csv(usage_mapping_path, index=False)
+        selection_metadata["mapping_path"] = str(usage_mapping_path)
+        selection_metadata["mapping_sha256"] = compute_sha256(usage_mapping_path)
 
     _json_dump(config_payload, config_path)
     _log(f"fitting fold-training RGB statistics for target={target} fold={validation_fold}")
@@ -594,6 +711,11 @@ def run_task3_baseline_fold(
     train_dataset = Task3ImageDataset(
         training,
         augmentation=training_augmentation,
+        sample_weight_column=(
+            "e9_group_factor"
+            if selection_strategy == "usage_article_type_exception_balance_v1"
+            else None
+        ),
         **dataset_kwargs,
     )
     validation_dataset = Task3ImageDataset(validation, **dataset_kwargs)
@@ -607,22 +729,30 @@ def run_task3_baseline_fold(
         if class_weights is not None
         else None
     )
-    if child_spec is not None and child_spec.focal_gamma > 0.0:
+    if selection_strategy == "usage_article_type_exception_balance_v1":
+        if class_weight_tensor is None:
+            raise ValueError("usage exception balancing requires fold-only class weights")
+        criterion: nn.Module = SampleWeightedCrossEntropy(class_weight_tensor)
+        evaluation_criterion: nn.Module = nn.CrossEntropyLoss(weight=class_weight_tensor)
+    elif child_spec is not None and child_spec.focal_gamma > 0.0:
         if class_weight_tensor is None:
             raise ValueError("weighted focal loss requires fold-only class weights")
-        criterion: nn.Module = WeightedFocalCrossEntropy(
+        criterion = WeightedFocalCrossEntropy(
             class_weight_tensor,
             gamma=child_spec.focal_gamma,
         )
+        evaluation_criterion = criterion
     elif child_spec is not None and child_spec.label_smoothing > 0.0:
         if class_weight_tensor is None:
             raise ValueError("weighted label smoothing requires fold-only class weights")
-        criterion: nn.Module = WeightedLabelSmoothedCrossEntropy(
+        criterion = WeightedLabelSmoothedCrossEntropy(
             class_weight_tensor,
             epsilon=child_spec.label_smoothing,
         )
+        evaluation_criterion = criterion
     else:
         criterion = nn.CrossEntropyLoss(weight=class_weight_tensor)
+        evaluation_criterion = criterion
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay
     )
@@ -688,7 +818,7 @@ def run_task3_baseline_fold(
                 model, train_loader, criterion, device, optimizer=optimizer
             )
             validation_loss, validation_labels, validation_probabilities, _ = _pass(
-                model, validation_loader, criterion, device
+                model, validation_loader, evaluation_criterion, device
             )
             train_metrics = classification_metrics(train_labels, train_probabilities, classes)
             validation_metrics = classification_metrics(
@@ -759,7 +889,7 @@ def run_task3_baseline_fold(
             checkpoint_path,
         )
         clean_loss, labels, probabilities, trace = _pass(
-            model, validation_loader, criterion, device
+            model, validation_loader, evaluation_criterion, device
         )
         training_evaluation_dataset = Task3ImageDataset(training, **dataset_kwargs)
         training_evaluation_loader = _loader(
@@ -769,7 +899,7 @@ def run_task3_baseline_fold(
             device=device,
         )
         final_train_loss, final_train_labels, final_train_probabilities, _ = _pass(
-            model, training_evaluation_loader, criterion, device
+            model, training_evaluation_loader, evaluation_criterion, device
         )
         final_train_metrics = classification_metrics(
             final_train_labels, final_train_probabilities, classes
@@ -786,6 +916,10 @@ def run_task3_baseline_fold(
         metrics["parent_run_ids"] = parent_run_ids
         metrics["training_augmentation"] = training_augmentation
         metrics["loss_name"] = loss_name
+        metrics["training_selection_strategy"] = selection_strategy
+        metrics["training_selection_contract"] = selection_metadata
+        metrics["training_rows_before_selection"] = original_training_rows
+        metrics["training_rows_after_selection"] = len(training)
         metrics["class_counts"] = class_counts.tolist()
         metrics["class_weights"] = class_weights.tolist() if class_weights is not None else None
         metrics["classifier_dropout"] = classifier_dropout
@@ -824,7 +958,7 @@ def run_task3_baseline_fold(
                 corrupted_dataset, config=config, shuffle=False, device=device
             )
             corrupted_loss, corrupted_labels, corrupted_probabilities, _ = _pass(
-                model, corrupted_loader, criterion, device
+                model, corrupted_loader, evaluation_criterion, device
             )
             corrupted_metrics = classification_metrics(
                 corrupted_labels, corrupted_probabilities, classes
@@ -899,6 +1033,7 @@ def _aggregate_target(
     model_family: str = "task3_small_cnn",
     parameter_count: int | None = None,
     architecture_macs: int | None = None,
+    child_spec: Task3ChildSpec | None = None,
 ) -> dict[str, object]:
     label_maps = load_label_maps(root / LABEL_MAPS_JSON.relative_to(ROOT))
     classes, _ = _class_spec(label_maps, target)
@@ -927,6 +1062,66 @@ def _aggregate_target(
     class_report_path = aggregate_dir / "per_class.csv"
     confusion_path = aggregate_dir / "confusion_matrix.csv"
     failures_path = aggregate_dir / "failure_index.csv"
+    e9_diagnostics_path: Path | None = None
+    selection_strategy = (
+        child_spec.training_selection_strategy if child_spec is not None else "all"
+    )
+    if selection_strategy == "usage_article_type_exception_balance_v1":
+        splits = load_splits(root / SPLITS_CSV.relative_to(ROOT))
+        diagnostics = usage_exception_diagnostics(splits, predictions)
+        metrics["e9_diagnostics"] = diagnostics["summary"]
+        diagnostics["annotated"].sort_values("id").to_csv(
+            aggregate_dir / "e9_usage_diagnostic_rows.csv", index=False
+        )
+        diagnostics["fold_contracts"].to_csv(
+            aggregate_dir / "e9_usage_fold_contracts.csv", index=False
+        )
+        e9_diagnostics_path = aggregate_dir / "e9_diagnostics.json"
+        _json_dump(diagnostics["summary"], e9_diagnostics_path)
+    elif selection_strategy == "gender_semantic_conflicts_v1":
+        splits = load_splits(root / SPLITS_CSV.relative_to(ROOT))
+        development = splits.loc[
+            splits["partition"].eq("development") & splits["has_gender_label"]
+        ].copy()
+        diagnostic_rows = gender_semantic_conflicts(development).merge(
+            predictions.loc[:, ["id", "predicted_label"]],
+            on="id",
+            validate="one_to_one",
+        )
+        clean_child = gender_clean_child_evidence_mask(diagnostic_rows)
+        clean_child_to_adult = clean_child & (
+            (
+                diagnostic_rows["gender"].eq("Boys")
+                & diagnostic_rows["predicted_label"].eq("Men")
+            )
+            | (
+                diagnostic_rows["gender"].eq("Girls")
+                & diagnostic_rows["predicted_label"].eq("Women")
+            )
+        )
+        semantic_conflicts = diagnostic_rows["e9_semantic_conflict"]
+        summary = {
+            "rule_version": "gender_semantic_conflicts_v1",
+            "clean_child_evidence_rows": int(clean_child.sum()),
+            "clean_child_to_adult_errors": int(clean_child_to_adult.sum()),
+            "semantic_conflict_rows": int(semantic_conflicts.sum()),
+            "semantic_conflict_official_errors": int(
+                (
+                    semantic_conflicts
+                    & diagnostic_rows["predicted_label"].ne(diagnostic_rows["gender"])
+                ).sum()
+            ),
+            "validation_rows_unchanged": True,
+        }
+        metrics["e9_diagnostics"] = summary
+        diagnostic_rows.assign(
+            clean_child_evidence=clean_child,
+            clean_child_to_adult_error=clean_child_to_adult,
+        ).sort_values("id").to_csv(
+            aggregate_dir / "e9_gender_diagnostic_rows.csv", index=False
+        )
+        e9_diagnostics_path = aggregate_dir / "e9_diagnostics.json"
+        _json_dump(summary, e9_diagnostics_path)
     predictions.sort_values("id").to_csv(predictions_path, index=False)
     _json_dump(metrics, metrics_path)
     pd.DataFrame(metrics["per_class"]).to_csv(class_report_path, index=False)
@@ -942,6 +1137,9 @@ def _aggregate_target(
         "class_report_path": str(class_report_path),
         "confusion_path": str(confusion_path),
         "failure_index_path": str(failures_path),
+        "e9_diagnostics_path": (
+            str(e9_diagnostics_path) if e9_diagnostics_path is not None else None
+        ),
         "metrics": metrics,
     }
 
@@ -997,6 +1195,7 @@ def run_task3_baseline_cv(
         model_family=model_family,
         parameter_count=parameter_count,
         architecture_macs=architecture_macs,
+        child_spec=child_spec,
     )
     _log(f"completed pooled five-fold OOF experiment={experiment_id} target={target}")
     return aggregate
