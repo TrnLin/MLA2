@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
@@ -206,13 +207,69 @@ def test_classical_tune_selects_shared_hog_then_one_model_per_family(tmp_path: P
         evidence_root=tmp_path / "evidence",
     )
 
+    assert len(_classic_calls) == 14
+    assert [(call.fold, call.hog_id, call.model_id) for call in _classic_calls[:4]] == [
+        (0, "task1_gray_hog_ppc16_v1", "knn-k5-distance"),
+        (0, "task1_gray_hog_ppc16_v1", "linear-svm-c1-normal"),
+        (0, "task1_gray_hog_ppc10_v1", "knn-k5-distance"),
+        (0, "task1_gray_hog_ppc10_v1", "linear-svm-c1-normal"),
+    ]
+    assert len({(call.fold, call.hog_id, call.model_id) for call in _classic_calls}) == 14
     assert len({item.candidate_id for item in result.fold_results}) == 14
     assert result.selection is not None
     assert result.selection.hog_id == "task1_gray_hog_ppc10_v1"
     assert result.selection.knn_config_id == "knn-k3-distance"
     assert result.selection.svm_config_id == "linear-svm-c10-balanced"
-    assert (tmp_path / "evidence" / "classical_tuning.csv").is_file()
-    assert (tmp_path / "evidence" / "classical_selection.json").is_file()
+    tuning_path = tmp_path / "evidence" / "classical_tuning.csv"
+    selection_path = tmp_path / "evidence" / "classical_selection.json"
+    assert tuning_path.is_file()
+    assert selection_path.is_file()
+    tuning = pd.read_csv(tuning_path)
+    assert len(tuning) == 14
+    assert tuning["candidate_id"].nunique() == 14
+    selection_payload = json.loads(selection_path.read_text(encoding="utf-8"))
+    selection_keys = {"hog_id", "knn_config_id", "svm_config_id"}
+    provenance_keys = {
+        "tuning_sha256",
+        "split_sha256",
+        "label_map_sha256",
+        "implementation_sha256",
+    }
+    assert set(selection_payload).difference(provenance_keys) == selection_keys
+    assert set(selection_payload).difference(selection_keys) == provenance_keys
+
+
+def test_classical_tune_uses_coarse_hog_for_an_exact_default_macro_f1_tie(
+    tmp_path: Path,
+) -> None:
+    """An exact default macro-F1 tie must use the frozen coarse-HOG tie-break."""
+
+    def tied_default_runner(*args: object, **kwargs: object) -> Task1ClassicalFoldResult:
+        result = _fake_classical_fold_runner(*args, **kwargs)
+        if result.candidate_id.endswith(("-knn-k5-distance", "-linear-svm-c1-normal")):
+            return replace(
+                result,
+                metrics={
+                    "macro_f1": 0.60,
+                    "weighted_f1": 0.60,
+                    "top1_accuracy": 0.60,
+                    "top5_accuracy": 0.60,
+                },
+            )
+        return result
+
+    _classic_calls.clear()
+    result = run_task1_classical_experiment(
+        _splits(),
+        _label_map(),
+        stage="tune",
+        fold_runner=tied_default_runner,
+        result_root=tmp_path / "runs",
+        evidence_root=tmp_path / "evidence",
+    )
+
+    assert result.selection is not None
+    assert result.selection.hog_id == "task1_gray_hog_ppc16_v1"
 
 
 def test_classical_tune_ranks_model_configs_only_on_the_selected_hog(tmp_path: Path) -> None:
