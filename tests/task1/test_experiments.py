@@ -389,6 +389,71 @@ def test_classical_final_runs_two_selected_candidates_on_exactly_five_folds(
         "per_class_classical_task1_gray_hog_ppc10_v1-linear-svm-c1-balanced.csv",
     }.issubset(path.name for path in evidence_root.glob("*.csv"))
 
+    fold_metrics = pd.read_csv(evidence_root / "classical_fold_metrics.csv")
+    assert list(fold_metrics.columns) == [
+        "run_id",
+        "fold",
+        "candidate_id",
+        "hog_id",
+        "model_family",
+        "macro_f1",
+        "weighted_f1",
+        "top1_accuracy",
+        "top5_accuracy",
+    ]
+    assert len(fold_metrics) == 10
+    assert set(fold_metrics["candidate_id"]) == set(result.oof_predictions)
+    assert all(
+        set(group["fold"]) == set(range(5))
+        for _, group in fold_metrics.groupby("candidate_id")
+    )
+
+    comparison = pd.read_csv(evidence_root / "classical_comparison.csv")
+    assert list(comparison.columns) == [
+        "candidate_id",
+        "hog_id",
+        "model_family",
+        "macro_f1_mean",
+        "macro_f1_std",
+        "weighted_f1_mean",
+        "weighted_f1_std",
+        "top1_accuracy_mean",
+        "top1_accuracy_std",
+        "top5_accuracy_mean",
+        "top5_accuracy_std",
+    ]
+    assert len(comparison) == 2
+    assert set(comparison["candidate_id"]) == set(result.comparison["candidate_id"])
+    assert comparison.filter(regex="_(mean|std)$").notna().all().all()
+
+    oof_metrics = pd.read_csv(evidence_root / "classical_oof_metrics.csv")
+    assert list(oof_metrics.columns) == [
+        "candidate_id",
+        "macro_f1",
+        "weighted_f1",
+        "top1_accuracy",
+        "top5_accuracy",
+    ]
+    assert len(oof_metrics) == 2
+    assert set(oof_metrics["candidate_id"]) == set(result.oof_predictions)
+    assert oof_metrics.drop(columns="candidate_id").notna().all().all()
+
+    per_class_columns = [
+        "class_index",
+        "class_name",
+        "precision",
+        "recall",
+        "f1",
+        "support",
+    ]
+    for candidate_id in result.oof_predictions:
+        per_class = pd.read_csv(
+            evidence_root / f"per_class_classical_{candidate_id}.csv"
+        )
+        assert list(per_class.columns) == per_class_columns
+        assert len(per_class) == 124
+        assert per_class["class_index"].tolist() == list(range(124))
+
 
 def test_classical_final_requires_a_selection_before_writing_aggregate_evidence(
     tmp_path: Path,
