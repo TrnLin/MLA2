@@ -26,6 +26,7 @@ from fashion.task1.evaluation import (
     TASK1_NUM_CLASSES,
     build_prediction_frame,
     classification_metrics,
+    validate_task1_label_map,
 )
 from fashion.task1.models import Task1SmallCNN, count_trainable_parameters
 from fashion.task1.preprocessing import (
@@ -104,25 +105,6 @@ def select_training_device() -> torch.device:
     if torch.backends.mps.is_available():
         return torch.device("mps")
     return torch.device("cpu")
-
-
-def _validate_label_map(label_map: Mapping[str, object]) -> tuple[dict[str, int], list[str]]:
-    """Require the sealed 124-class Task 1 label identity."""
-    try:
-        num_classes = int(label_map["num_classes"])
-        classes = [str(name) for name in label_map["classes"]]  # type: ignore[index]
-        raw_indexes = dict(label_map["label_to_index"])  # type: ignore[arg-type]
-    except (KeyError, TypeError, ValueError) as error:
-        raise ValueError("Task 1 label map must define classes and label_to_index") from error
-    label_to_index = {str(label): int(index) for label, index in raw_indexes.items()}
-    if num_classes != TASK1_NUM_CLASSES or len(classes) != TASK1_NUM_CLASSES:
-        raise ValueError("Task 1 label map must contain exactly 124 classes")
-    if len(set(classes)) != TASK1_NUM_CLASSES:
-        raise ValueError("Task 1 label map classes must be unique")
-    expected = {label: index for index, label in enumerate(classes)}
-    if label_to_index != expected:
-        raise ValueError("Task 1 label_to_index must match ordered classes")
-    return label_to_index, classes
 
 
 def _smoke_rows(rows: pd.DataFrame) -> pd.DataFrame:
@@ -307,7 +289,7 @@ def train_task1_fold(
 
     with tracked_run(active_registry, record) as run:
         seed_everything(config.seed)
-        label_to_index, class_names = _validate_label_map(label_map)
+        label_to_index, class_names = validate_task1_label_map(label_map)
         training_rows, validation_rows = get_task1_fold_rows(splits, validation_fold)
         if config.stage == "smoke":
             training_rows = _smoke_rows(training_rows)

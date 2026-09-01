@@ -11,6 +11,25 @@ from sklearn.metrics import f1_score, precision_recall_fscore_support
 TASK1_NUM_CLASSES = 124
 
 
+def validate_task1_label_map(label_map: Mapping[str, object]) -> tuple[dict[str, int], list[str]]:
+    """Require the sealed 124-class Task 1 label identity."""
+    try:
+        num_classes = int(label_map["num_classes"])
+        classes = [str(name) for name in label_map["classes"]]
+        raw_indexes = dict(label_map["label_to_index"])
+    except (KeyError, TypeError, ValueError) as error:
+        raise ValueError("Task 1 label map must define classes and label_to_index") from error
+    label_to_index = {str(label): int(index) for label, index in raw_indexes.items()}
+    if num_classes != TASK1_NUM_CLASSES or len(classes) != TASK1_NUM_CLASSES:
+        raise ValueError("Task 1 label map must contain exactly 124 classes")
+    if len(set(classes)) != TASK1_NUM_CLASSES:
+        raise ValueError("Task 1 label map classes must be unique")
+    expected = {label: index for index, label in enumerate(classes)}
+    if label_to_index != expected:
+        raise ValueError("Task 1 label_to_index must match ordered classes")
+    return label_to_index, classes
+
+
 def _validated_arrays(
     y_true: np.ndarray,
     probabilities: np.ndarray,
