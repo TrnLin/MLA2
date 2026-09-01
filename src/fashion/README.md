@@ -35,7 +35,7 @@ Reusable project code lives here. Notebooks import it instead of copying shared 
 Run the controller in [`notebooks/02_task1_article_type.ipynb`](../../notebooks/02_task1_article_type.ipynb).
 It defaults to `CLASSICAL_STAGE = "smoke"`. After smoke passes, run it once with
 `CLASSICAL_STAGE = "tune"`, then with `CLASSICAL_STAGE = "final"`. The final run
-requires `results/task1/classical/classical_selection.json` from tuning and writes
+requires `results/evidence/task1/classical_selection.json` from tuning and writes
 registered five-fold evidence. HOG uses scikit-image; KNN and LinearSVC use
 scikit-learn. Smoke checks the path only; tune selects settings and final produces
 the report evidence.

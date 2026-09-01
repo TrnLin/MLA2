@@ -11,6 +11,7 @@ from typing import Literal
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.metrics import confusion_matrix
 
 from fashion.config import (
@@ -33,6 +34,8 @@ from fashion.task1.classical import (
     Task1ClassicalModelConfig,
     Task1ClassicalRunConfig,
     Task1HogSpec,
+    Task1LinearSVMConfig,
+    _classical_implementation_sha256,
     run_task1_classical_fold,
 )
 from fashion.task1.evaluation import (
@@ -187,8 +190,18 @@ def _classical_selection_payload(
         "tuning_sha256": compute_sha256(tuning_path),
         "split_sha256": _split_sha256(splits),
         "label_map_sha256": canonical_sha256(label_map),
-        "implementation_sha256": compute_sha256(Path(__file__)),
+        "implementation_sha256": _classical_selection_implementation_sha256(),
     }
+
+
+def _classical_selection_implementation_sha256() -> str:
+    """Seal a tuning decision to its controller and physical-run implementation."""
+    return canonical_sha256(
+        {
+            "experiments_sha256": compute_sha256(Path(__file__)),
+            "classical_sha256": _classical_implementation_sha256(),
+        }
+    )
 
 
 def _load_classical_selection(
@@ -225,6 +238,8 @@ def _load_classical_selection(
         raise ValueError("classical selection split provenance is stale")
     if payload["label_map_sha256"] != canonical_sha256(label_map):
         raise ValueError("classical selection label-map provenance is stale")
+    if payload["implementation_sha256"] != _classical_selection_implementation_sha256():
+        raise ValueError("classical selection implementation provenance is stale")
     tuning_path = evidence_root / "classical_tuning.csv"
     try:
         tuning_sha256 = compute_sha256(tuning_path)
@@ -469,9 +484,15 @@ def run_task1_classical_experiment(
     for model_config in (*TASK1_KNN_GRID, *TASK1_SVM_GRID):
         candidate_id = f"{selected_hog.hog_id}-{model_config.config_id}"
         if candidate_id not in completed_ids:
-            tuned_results.append(
-                run_one(selected_hog, model_config, Task1ClassicalRunConfig.full())
-            )
+            try:
+                result = run_one(selected_hog, model_config, Task1ClassicalRunConfig.full())
+            except ConvergenceWarning:
+                if not isinstance(model_config, Task1LinearSVMConfig):
+                    raise
+                if model_config == TASK1_DEFAULT_SVM:
+                    raise
+                continue
+            tuned_results.append(result)
             completed_ids.add(candidate_id)
 
     results = tuple(tuned_results)

@@ -189,6 +189,38 @@ def test_classical_smoke_fold_resumes_only_verified_completed_artifacts(tmp_path
     assert len(registry.read()) == 1
 
 
+def test_classical_smoke_fold_does_not_resume_a_stale_implementation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    splits = _splits_with_images(tmp_path)
+    split_path = tmp_path / "splits.csv"
+    splits.to_csv(split_path, index=False)
+    registry = RunRegistry(tmp_path / "runs.csv")
+    implementation_sha256 = ["a" * 64]
+    monkeypatch.setattr(
+        "fashion.task1.classical._classical_implementation_sha256",
+        lambda: implementation_sha256[0],
+    )
+    kwargs = {
+        "validation_fold": 0,
+        "hog_spec": TASK1_HOG_COARSE,
+        "model_config": Task1KNNConfig(3, "distance"),
+        "run_config": Task1ClassicalRunConfig.smoke(),
+        "registry": registry,
+        "root": tmp_path,
+        "result_root": tmp_path / "results",
+        "cache_root": tmp_path / "cache",
+        "split_path": split_path,
+    }
+
+    first = run_task1_classical_fold(splits, _label_map(), **kwargs)
+    implementation_sha256[0] = "b" * 64
+    second = run_task1_classical_fold(splits, _label_map(), **kwargs)
+
+    assert second.run_id != first.run_id
+    assert registry.read()["implementation_sha256"].tolist() == ["a" * 64, "b" * 64]
+
+
 def test_classical_smoke_fold_does_not_resume_a_different_valid_label_order(
     tmp_path: Path,
 ) -> None:
@@ -294,6 +326,25 @@ def test_classical_full_fold_rejects_noncanonical_split_path() -> None:
             model_config=Task1KNNConfig(3, "distance"),
             run_config=Task1ClassicalRunConfig.full(),
             split_path=Path("not-canonical.csv"),
+        )
+
+
+def test_classical_full_fold_rejects_hog_spec_outside_frozen_candidates() -> None:
+    custom_hog = Task1HogSpec(
+        hog_id="task1_gray_hog_ppc20_unapproved",
+        pixels_per_cell=(20, 20),
+        expected_features=216,
+    )
+
+    with pytest.raises(ValueError, match="frozen Task 1 HOG specs"):
+        run_task1_classical_fold(
+            pd.DataFrame(),
+            {},
+            validation_fold=0,
+            hog_spec=custom_hog,
+            model_config=Task1KNNConfig(3, "distance"),
+            run_config=Task1ClassicalRunConfig.full(),
+            split_path=Path("not-used.csv"),
         )
 
 
@@ -415,6 +466,45 @@ def test_hog_cache_rebuilds_when_source_inventory_changes(tmp_path: Path) -> Non
 
     assert calls == 2
     assert np.all(rebuilt.features == 1.0)
+
+
+def test_hog_cache_rebuilds_when_implementation_or_library_identity_changes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    identity = [{"implementation_sha256": "a" * 64, "scikit-image": "0.26.0"}]
+    monkeypatch.setattr(
+        "fashion.task1.classical._hog_cache_implementation_identity",
+        lambda: identity[0],
+        raising=False,
+    )
+    first = load_or_build_task1_hog_features(
+        _cache_rows(),
+        TASK1_HOG_COARSE,
+        root=tmp_path,
+        cache_root=tmp_path / "cache",
+        split_sha256="c" * 64,
+        extractor=lambda *_: np.zeros(288, dtype=np.float32),
+    )
+    identity[0] = {"implementation_sha256": "b" * 64, "scikit-image": "0.27.0"}
+    calls = 0
+
+    def replacement(*_: object) -> np.ndarray:
+        nonlocal calls
+        calls += 1
+        return np.ones(288, dtype=np.float32)
+
+    second = load_or_build_task1_hog_features(
+        _cache_rows(),
+        TASK1_HOG_COARSE,
+        root=tmp_path,
+        cache_root=tmp_path / "cache",
+        split_sha256="c" * 64,
+        extractor=replacement,
+    )
+
+    assert calls == 2
+    assert first.cache_path != second.cache_path
+    assert np.all(second.features == 1.0)
 
 
 def test_hog_cache_rejects_non_development_or_duplicate_rows(tmp_path: Path) -> None:

@@ -8,6 +8,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import pytest
+from sklearn.exceptions import ConvergenceWarning
 
 import fashion.task1.experiments as experiments
 from fashion.task1.classical import Task1ClassicalFoldResult
@@ -334,6 +335,61 @@ def test_classical_tune_ranks_model_configs_only_on_the_selected_hog(tmp_path: P
     assert result.selection.knn_config_id == "knn-k3-distance"
 
 
+def test_classical_tune_excludes_nondefault_svm_convergence_failure_and_continues(
+    tmp_path: Path,
+) -> None:
+    """One failed optional SVM must not stop later candidates or enter selection."""
+    failed_config_id = "linear-svm-c0.1-normal"
+
+    def runner(*args: object, **kwargs: object) -> Task1ClassicalFoldResult:
+        result = _fake_classical_fold_runner(*args, **kwargs)
+        if result.candidate_id.endswith(f"-{failed_config_id}"):
+            raise ConvergenceWarning("optional SVM did not converge")
+        return result
+
+    _classic_calls.clear()
+    result = run_task1_classical_experiment(
+        _splits(),
+        _label_map(),
+        stage="tune",
+        fold_runner=runner,
+        result_root=tmp_path / "runs",
+        evidence_root=tmp_path / "evidence",
+    )
+
+    assert failed_config_id in {call.model_id for call in _classic_calls}
+    assert "linear-svm-c10-balanced" in {call.model_id for call in _classic_calls}
+    assert not result.tuning["candidate_id"].str.endswith(f"-{failed_config_id}").any()
+    assert result.selection is not None
+    assert result.selection.svm_config_id != failed_config_id
+    assert len(result.fold_results) == 13
+
+
+def test_classical_tune_propagates_required_default_svm_convergence_failure(
+    tmp_path: Path,
+) -> None:
+    """The default SVM is required to choose HOG, so its failure must stop tuning."""
+
+    def runner(*args: object, **kwargs: object) -> Task1ClassicalFoldResult:
+        result = _fake_classical_fold_runner(*args, **kwargs)
+        if result.candidate_id.endswith("-linear-svm-c1-normal"):
+            raise ConvergenceWarning("required default SVM did not converge")
+        return result
+
+    evidence_root = tmp_path / "evidence"
+    with pytest.raises(ConvergenceWarning, match="required default SVM"):
+        run_task1_classical_experiment(
+            _splits(),
+            _label_map(),
+            stage="tune",
+            fold_runner=runner,
+            result_root=tmp_path / "runs",
+            evidence_root=evidence_root,
+        )
+
+    assert not (evidence_root / "classical_selection.json").exists()
+
+
 def _final_selection() -> Task1ClassicalSelection:
     return Task1ClassicalSelection(
         hog_id="task1_gray_hog_ppc10_v1",
@@ -621,6 +677,39 @@ def test_classical_final_rejects_stale_selection_file(
     selection_path.write_text(json.dumps(payload), encoding="utf-8")
 
     with pytest.raises(ValueError, match="selection"):
+        run_task1_classical_experiment(
+            _splits(),
+            _label_map(),
+            stage="final",
+            fold_runner=_fake_classical_fold_runner,
+            result_root=tmp_path / "runs",
+            evidence_root=evidence_root,
+        )
+
+
+def test_classical_final_rejects_selection_from_stale_implementation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Final evidence must use a selection produced by the current controller code."""
+    implementation_sha256 = ["a" * 64]
+    monkeypatch.setattr(
+        experiments,
+        "_classical_selection_implementation_sha256",
+        lambda: implementation_sha256[0],
+        raising=False,
+    )
+    evidence_root = tmp_path / "evidence"
+    run_task1_classical_experiment(
+        _splits(),
+        _label_map(),
+        stage="tune",
+        fold_runner=_fake_classical_fold_runner,
+        result_root=tmp_path / "runs",
+        evidence_root=evidence_root,
+    )
+    implementation_sha256[0] = "b" * 64
+
+    with pytest.raises(ValueError, match="implementation provenance is stale"):
         run_task1_classical_experiment(
             _splits(),
             _label_map(),

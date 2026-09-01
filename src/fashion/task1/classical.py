@@ -8,6 +8,7 @@ import pickle
 import warnings
 from collections.abc import Callable, Mapping
 from dataclasses import asdict, dataclass
+from importlib.metadata import version
 from pathlib import Path
 from typing import Literal, TypeAlias
 
@@ -40,7 +41,7 @@ from fashion.train.artifacts import (
 )
 from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
 
-HOG_CACHE_SCHEMA_VERSION = 1
+HOG_CACHE_SCHEMA_VERSION = 2
 
 
 @dataclass(frozen=True)
@@ -384,6 +385,24 @@ def _hog_inventory(rows: pd.DataFrame) -> list[dict[str, object]]:
     return ordered.loc[:, ["id", "path", "sha256"]].to_dict(orient="records")
 
 
+def _hog_cache_implementation_identity() -> dict[str, object]:
+    """Seal cached features to the code and packages that produce their values."""
+    source_paths = {
+        "classical.py": Path(__file__),
+        "images.py": ROOT / "src/fashion/data/images.py",
+    }
+    return {
+        "source_sha256": {
+            name: compute_sha256(path) for name, path in sorted(source_paths.items())
+        },
+        "library_versions": {
+            "numpy": version("numpy"),
+            "Pillow": version("Pillow"),
+            "scikit-image": version("scikit-image"),
+        },
+    }
+
+
 def load_or_build_task1_hog_features(
     rows: pd.DataFrame,
     spec: Task1HogSpec,
@@ -400,6 +419,7 @@ def load_or_build_task1_hog_features(
         "split_sha256": split_sha256,
         "inventory_sha256": canonical_sha256(inventory),
         "hog": spec.to_dict(),
+        "implementation": _hog_cache_implementation_identity(),
     }
     cache_path = Path(cache_root) / f"{spec.hog_id}-{canonical_sha256(identity)[:16]}.npz"
     expected_ids = np.asarray([int(row["id"]) for row in inventory], dtype=np.int64)
@@ -469,8 +489,18 @@ def _classical_implementation_sha256() -> str:
         "src/fashion/task1/dataset.py",
         "src/fashion/task1/evaluation.py",
     )
-    source_hashes = {relative: compute_sha256(ROOT / relative) for relative in relative_paths}
-    return canonical_sha256(source_hashes)
+    identity = {
+        "source_sha256": {
+            relative: compute_sha256(ROOT / relative) for relative in relative_paths
+        },
+        "library_versions": {
+            "numpy": version("numpy"),
+            "Pillow": version("Pillow"),
+            "scikit-image": version("scikit-image"),
+            "scikit-learn": version("scikit-learn"),
+        },
+    }
+    return canonical_sha256(identity)
 
 
 def _smoke_hog_features(
@@ -563,6 +593,8 @@ def run_task1_classical_fold(
             "Task 1 classic run config must be either smoke with final_eligible=False "
             "or experiment with final_eligible=True"
         )
+    if is_full and hog_spec not in TASK1_HOG_SPECS:
+        raise ValueError("final-eligible runs require one of the frozen Task 1 HOG specs")
     split_file = Path(split_path)
     if is_full:
         if run_config.seed != RANDOM_SEED:
@@ -580,6 +612,7 @@ def run_task1_classical_fold(
     candidate_id = f"{hog_spec.hog_id}-{model_config.config_id}"
     experiment_id = f"task1-classical-{candidate_id}"
     split_sha256 = compute_sha256(split_file)
+    implementation_sha256 = _classical_implementation_sha256()
     config_payload = {
         "validation_fold": validation_fold,
         "hog": hog_spec.to_dict(),
@@ -588,6 +621,7 @@ def run_task1_classical_fold(
         "model_family": model_family,
         "split_sha256": split_sha256,
         "label_map_sha256": label_map_sha256,
+        "implementation_sha256": implementation_sha256,
     }
     config_sha256 = canonical_sha256(config_payload)
     active_registry = registry or RunRegistry()
@@ -597,6 +631,7 @@ def run_task1_classical_fold(
         fold=validation_fold,
         config_sha256=config_sha256,
         label_map_sha256=label_map_sha256,
+        implementation_sha256=implementation_sha256,
         status="completed",
     )
     if not matches.empty:
@@ -627,7 +662,7 @@ def run_task1_classical_fold(
         config_sha256=config_sha256,
         split_sha256=split_sha256,
         label_map_sha256=label_map_sha256,
-        implementation_sha256=_classical_implementation_sha256(),
+        implementation_sha256=implementation_sha256,
     )
     project_root = Path(root)
 
