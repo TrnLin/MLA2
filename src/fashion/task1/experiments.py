@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -190,6 +191,164 @@ def _classical_selection_payload(
     }
 
 
+def _load_classical_selection(
+    evidence_root: Path,
+    *,
+    splits: pd.DataFrame,
+    label_map: Mapping[str, object],
+) -> Task1ClassicalSelection:
+    """Load a sealed tuning decision only when its inputs and CSV still match."""
+    selection_path = evidence_root / "classical_selection.json"
+    try:
+        with selection_path.open(encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except FileNotFoundError as error:
+        raise ValueError(
+            "classical_selection.json is required for the final classic stage"
+        ) from error
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError("classical selection is malformed") from error
+    if not isinstance(payload, dict):
+        raise ValueError("classical selection is malformed")
+    required = {
+        "hog_id",
+        "knn_config_id",
+        "svm_config_id",
+        "tuning_sha256",
+        "split_sha256",
+        "label_map_sha256",
+        "implementation_sha256",
+    }
+    if set(payload) != required or not all(isinstance(payload[key], str) for key in required):
+        raise ValueError("classical selection is malformed")
+    if payload["split_sha256"] != _split_sha256(splits):
+        raise ValueError("classical selection split provenance is stale")
+    if payload["label_map_sha256"] != canonical_sha256(label_map):
+        raise ValueError("classical selection label-map provenance is stale")
+    tuning_path = evidence_root / "classical_tuning.csv"
+    try:
+        tuning_sha256 = compute_sha256(tuning_path)
+    except OSError as error:
+        raise ValueError("classical selection tuning evidence is missing") from error
+    if payload["tuning_sha256"] != tuning_sha256:
+        raise ValueError("classical selection tuning provenance is stale")
+    return Task1ClassicalSelection(
+        hog_id=payload["hog_id"],
+        knn_config_id=payload["knn_config_id"],
+        svm_config_id=payload["svm_config_id"],
+    )
+
+
+def _resolve_classical_selection(
+    selection: Task1ClassicalSelection,
+) -> tuple[Task1HogSpec, Task1ClassicalModelConfig, Task1ClassicalModelConfig]:
+    """Resolve a final-stage selection only from the frozen candidate constants."""
+    hog_by_id = {spec.hog_id: spec for spec in TASK1_HOG_SPECS}
+    knn_by_id = {config.config_id: config for config in TASK1_KNN_GRID}
+    svm_by_id = {config.config_id: config for config in TASK1_SVM_GRID}
+    try:
+        hog_spec = hog_by_id[selection.hog_id]
+    except KeyError as error:
+        raise ValueError(f"unknown HOG spec in classical selection: {selection.hog_id}") from error
+    try:
+        knn_config = knn_by_id[selection.knn_config_id]
+    except KeyError as error:
+        raise ValueError(
+            f"unknown KNN config in classical selection: {selection.knn_config_id}"
+        ) from error
+    try:
+        svm_config = svm_by_id[selection.svm_config_id]
+    except KeyError as error:
+        raise ValueError(
+            f"unknown Linear SVM config in classical selection: {selection.svm_config_id}"
+        ) from error
+    return hog_spec, knn_config, svm_config
+
+
+def _aggregate_classical_comparison(
+    fold_metrics: pd.DataFrame,
+    candidate_ids: Sequence[str],
+) -> pd.DataFrame:
+    """Aggregate final-stage classic results after each candidate has five unique folds."""
+    metric_columns = ["macro_f1", "weighted_f1", "top1_accuracy", "top5_accuracy"]
+    required = {"run_id", "fold", "candidate_id", "hog_id", "model_family", *metric_columns}
+    missing = required.difference(fold_metrics.columns)
+    if missing:
+        raise ValueError(f"classic fold metrics are missing columns: {sorted(missing)}")
+    rows: list[dict[str, float | str]] = []
+    for candidate_id in candidate_ids:
+        candidate = fold_metrics.loc[fold_metrics["candidate_id"].eq(candidate_id)].copy()
+        folds = candidate["fold"].astype(int)
+        if set(folds) != set(range(5)) or len(candidate) != 5:
+            raise ValueError(
+                "final classic evidence requires exactly five folds with unique labels 0,1,2,3,4"
+            )
+        if candidate["hog_id"].nunique() != 1 or candidate["model_family"].nunique() != 1:
+            raise ValueError("classic candidate identity must stay consistent across final folds")
+        summary = aggregate_fold_metrics(candidate.loc[:, metric_columns].to_dict(orient="records"))
+        row: dict[str, float | str] = {
+            "candidate_id": candidate_id,
+            "hog_id": str(candidate.iloc[0]["hog_id"]),
+            "model_family": str(candidate.iloc[0]["model_family"]),
+        }
+        for metric, values in summary.iterrows():
+            row[f"{metric}_mean"] = float(values["mean"])
+            row[f"{metric}_std"] = float(values["std"])
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def _classical_final_oof_evidence(
+    results: Sequence[Task1ClassicalFoldResult],
+    candidate_ids: Sequence[str],
+    *,
+    expected_ids: Sequence[int],
+    class_names: Sequence[str],
+) -> tuple[dict[str, pd.DataFrame], pd.DataFrame, dict[str, pd.DataFrame]]:
+    """Validate the two pooled prediction tables before final report files are written."""
+    oof_predictions: dict[str, pd.DataFrame] = {}
+    oof_metrics_rows: list[dict[str, float | str]] = []
+    per_class: dict[str, pd.DataFrame] = {}
+    for candidate_id in candidate_ids:
+        candidate_results = sorted(
+            (result for result in results if result.candidate_id == candidate_id),
+            key=lambda result: result.fold,
+        )
+        predictions = pd.concat(
+            [
+                pd.read_csv(result.prediction_path, keep_default_na=False)
+                for result in candidate_results
+            ],
+            ignore_index=True,
+        )
+        validate_oof_predictions(predictions, expected_ids)
+        probabilities = _prediction_probabilities(predictions)
+        pooled = classification_metrics(
+            predictions["true_index"].to_numpy(dtype=np.int64), probabilities
+        )
+        oof_metrics_rows.append({"candidate_id": candidate_id, **pooled})
+        oof_predictions[candidate_id] = predictions
+        per_class[candidate_id] = per_class_metrics(
+            predictions["true_index"].to_numpy(dtype=np.int64), probabilities, class_names
+        )
+    return oof_predictions, pd.DataFrame(oof_metrics_rows), per_class
+
+
+def _write_classical_final_evidence(
+    evidence_root: Path,
+    fold_metrics: pd.DataFrame,
+    comparison: pd.DataFrame,
+    oof_metrics: pd.DataFrame,
+    per_class: Mapping[str, pd.DataFrame],
+) -> None:
+    """Persist final classic report inputs after every candidate table validates."""
+    atomic_write_csv(evidence_root / "classical_fold_metrics.csv", fold_metrics)
+    atomic_write_csv(evidence_root / "classical_comparison.csv", comparison)
+    atomic_write_csv(evidence_root / "classical_oof_metrics.csv", oof_metrics)
+    for candidate_id, frame in per_class.items():
+        atomic_write_csv(evidence_root / f"per_class_classical_{candidate_id}.csv", frame)
+
+
 def run_task1_classical_experiment(
     splits: pd.DataFrame,
     label_map: Mapping[str, object],
@@ -203,21 +362,20 @@ def run_task1_classical_experiment(
     selection: Task1ClassicalSelection | None = None,
     fold_runner: Callable[..., Task1ClassicalFoldResult] = run_task1_classical_fold,
 ) -> Task1ClassicalExperimentResult:
-    """Run classic fold-0 smoke checks or the staged HOG/model tuning schedule."""
+    """Run classic smoke, tuning, or selected-model five-fold evidence."""
     if stage not in {"smoke", "tune", "final"}:
         raise ValueError("stage must be 'smoke', 'tune', or 'final'")
-    if stage == "final":
-        raise ValueError("stage='final' is not implemented until Task 6")
 
     def run_one(
         hog_spec: Task1HogSpec,
         model_config: Task1ClassicalModelConfig,
         run_config: Task1ClassicalRunConfig,
+        validation_fold: int = 0,
     ) -> Task1ClassicalFoldResult:
         return fold_runner(
             splits,
             label_map,
-            validation_fold=0,
+            validation_fold=validation_fold,
             hog_spec=hog_spec,
             model_config=model_config,
             run_config=run_config,
@@ -243,6 +401,60 @@ def run_task1_classical_experiment(
             oof_metrics=pd.DataFrame(),
             oof_predictions={},
             per_class={},
+        )
+
+    output_root = Path(evidence_root)
+    if stage == "final":
+        selected = selection or _load_classical_selection(
+            output_root, splits=splits, label_map=label_map
+        )
+        hog_spec, knn_config, svm_config = _resolve_classical_selection(selected)
+        selected_configs = (knn_config, svm_config)
+        results = tuple(
+            run_one(hog_spec, model_config, Task1ClassicalRunConfig.full(), validation_fold=fold)
+            for model_config in selected_configs
+            for fold in range(5)
+        )
+        candidate_ids = tuple(
+            f"{hog_spec.hog_id}-{model_config.config_id}" for model_config in selected_configs
+        )
+        fold_metrics = _classical_metrics_frame(results).loc[
+            :,
+            [
+                "run_id",
+                "fold",
+                "candidate_id",
+                "hog_id",
+                "model_family",
+                "macro_f1",
+                "weighted_f1",
+                "top1_accuracy",
+                "top5_accuracy",
+            ],
+        ]
+        comparison = _aggregate_classical_comparison(fold_metrics, candidate_ids)
+        expected_ids = get_samples(splits, partition="development", target="articleType")[
+            "id"
+        ].tolist()
+        oof_predictions, oof_metrics, per_class = _classical_final_oof_evidence(
+            results,
+            candidate_ids,
+            expected_ids=expected_ids,
+            class_names=_class_names(label_map),
+        )
+        _write_classical_final_evidence(
+            output_root, fold_metrics, comparison, oof_metrics, per_class
+        )
+        return Task1ClassicalExperimentResult(
+            stage=stage,
+            fold_results=results,
+            tuning=pd.DataFrame(),
+            selection=selected,
+            fold_metrics=fold_metrics,
+            comparison=comparison,
+            oof_metrics=oof_metrics,
+            oof_predictions=oof_predictions,
+            per_class=per_class,
         )
 
     default_results = tuple(

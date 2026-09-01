@@ -12,6 +12,7 @@ import pytest
 import fashion.task1.experiments as experiments
 from fashion.task1.classical import Task1ClassicalFoldResult
 from fashion.task1.experiments import (
+    Task1ClassicalSelection,
     _rank_classical_candidates,
     _split_sha256,
     run_task1_classical_experiment,
@@ -333,16 +334,235 @@ def test_classical_tune_ranks_model_configs_only_on_the_selected_hog(tmp_path: P
     assert result.selection.knn_config_id == "knn-k3-distance"
 
 
-def test_classical_final_is_guarded_until_final_evidence_exists(tmp_path: Path) -> None:
-    """A final request must not silently run the fold-0 tuning schedule instead."""
-    with pytest.raises(ValueError, match="not implemented until Task 6"):
+def _final_selection() -> Task1ClassicalSelection:
+    return Task1ClassicalSelection(
+        hog_id="task1_gray_hog_ppc10_v1",
+        knn_config_id="knn-k5-distance",
+        svm_config_id="linear-svm-c1-balanced",
+    )
+
+
+def _assert_no_classical_aggregate_csv(evidence_root: Path) -> None:
+    assert not {
+        "classical_fold_metrics.csv",
+        "classical_comparison.csv",
+        "classical_oof_metrics.csv",
+    }.intersection(path.name for path in evidence_root.glob("*.csv"))
+
+
+def test_classical_final_runs_two_selected_candidates_on_exactly_five_folds(
+    tmp_path: Path,
+) -> None:
+    """The final stage must only report the two frozen candidates across five folds."""
+    _classic_calls.clear()
+    evidence_root = tmp_path / "evidence"
+
+    result = run_task1_classical_experiment(
+        _splits(),
+        _label_map(),
+        stage="final",
+        selection=_final_selection(),
+        fold_runner=_fake_classical_fold_runner,
+        result_root=tmp_path / "runs",
+        evidence_root=evidence_root,
+    )
+
+    assert len(result.fold_results) == 10
+    assert {item.fold for item in result.fold_results} == set(range(5))
+    assert [(call.fold, call.model_id) for call in _classic_calls] == [
+        *[(fold, "knn-k5-distance") for fold in range(5)],
+        *[(fold, "linear-svm-c1-balanced") for fold in range(5)],
+    ]
+    assert len(result.comparison) == 2
+    assert set(result.oof_predictions) == {
+        "task1_gray_hog_ppc10_v1-knn-k5-distance",
+        "task1_gray_hog_ppc10_v1-linear-svm-c1-balanced",
+    }
+    assert all(len(frame) == 124 for frame in result.per_class.values())
+    assert {
+        "classical_fold_metrics.csv",
+        "classical_comparison.csv",
+        "classical_oof_metrics.csv",
+    }.issubset(path.name for path in evidence_root.glob("*.csv"))
+    assert {
+        "per_class_classical_task1_gray_hog_ppc10_v1-knn-k5-distance.csv",
+        "per_class_classical_task1_gray_hog_ppc10_v1-linear-svm-c1-balanced.csv",
+    }.issubset(path.name for path in evidence_root.glob("*.csv"))
+
+
+def test_classical_final_requires_a_selection_before_writing_aggregate_evidence(
+    tmp_path: Path,
+) -> None:
+    """A missing frozen selection must fail before creating report aggregate files."""
+    evidence_root = tmp_path / "evidence"
+
+    with pytest.raises(ValueError, match="classical_selection.json"):
         run_task1_classical_experiment(
             _splits(),
             _label_map(),
             stage="final",
             fold_runner=_fake_classical_fold_runner,
             result_root=tmp_path / "runs",
-            evidence_root=tmp_path / "evidence",
+            evidence_root=evidence_root,
+        )
+
+    _assert_no_classical_aggregate_csv(evidence_root)
+
+
+def test_classical_final_rejects_unknown_selected_config_before_writing_aggregate_evidence(
+    tmp_path: Path,
+) -> None:
+    """Final evidence cannot be built with an ID outside the frozen config grids."""
+    evidence_root = tmp_path / "evidence"
+    bad_selection = Task1ClassicalSelection(
+        hog_id="task1_gray_hog_ppc10_v1",
+        knn_config_id="knn-k999-distance",
+        svm_config_id="linear-svm-c1-balanced",
+    )
+
+    with pytest.raises(ValueError, match="unknown KNN config"):
+        run_task1_classical_experiment(
+            _splits(),
+            _label_map(),
+            stage="final",
+            selection=bad_selection,
+            fold_runner=_fake_classical_fold_runner,
+            result_root=tmp_path / "runs",
+            evidence_root=evidence_root,
+        )
+
+    _assert_no_classical_aggregate_csv(evidence_root)
+
+
+def test_classical_final_rejects_duplicate_fold_before_writing_aggregate_evidence(
+    tmp_path: Path,
+) -> None:
+    """Each selected candidate needs exactly one result for every fold."""
+
+    def duplicate_fold_runner(*args: object, **kwargs: object) -> Task1ClassicalFoldResult:
+        result = _fake_classical_fold_runner(*args, **kwargs)
+        if result.candidate_id.endswith("linear-svm-c1-balanced") and result.fold == 4:
+            return replace(result, fold=0)
+        return result
+
+    evidence_root = tmp_path / "evidence"
+    with pytest.raises(ValueError, match="exactly five folds"):
+        run_task1_classical_experiment(
+            _splits(),
+            _label_map(),
+            stage="final",
+            selection=_final_selection(),
+            fold_runner=duplicate_fold_runner,
+            result_root=tmp_path / "runs",
+            evidence_root=evidence_root,
+        )
+
+    _assert_no_classical_aggregate_csv(evidence_root)
+
+
+def test_classical_final_rejects_missing_oof_product_before_writing_aggregate_evidence(
+    tmp_path: Path,
+) -> None:
+    """A missing fold-artifact ID must stop incomplete OOF evidence from being written."""
+
+    def missing_oof_runner(*args: object, **kwargs: object) -> Task1ClassicalFoldResult:
+        result = _fake_classical_fold_runner(*args, **kwargs)
+        if result.candidate_id.endswith("linear-svm-c1-balanced") and result.fold == 4:
+            pd.read_csv(result.prediction_path).iloc[1:].to_csv(result.prediction_path, index=False)
+        return result
+
+    evidence_root = tmp_path / "evidence"
+    with pytest.raises(ValueError, match="expected development IDs"):
+        run_task1_classical_experiment(
+            _splits(),
+            _label_map(),
+            stage="final",
+            selection=_final_selection(),
+            fold_runner=missing_oof_runner,
+            result_root=tmp_path / "runs",
+            evidence_root=evidence_root,
+        )
+
+    _assert_no_classical_aggregate_csv(evidence_root)
+
+
+def test_classical_final_propagates_fold_failure_before_writing_aggregate_evidence(
+    tmp_path: Path,
+) -> None:
+    """A physical fold failure must not leave a partial final report behind."""
+    evidence_root = tmp_path / "evidence"
+
+    def exploding_runner(*_: object, **__: object) -> Task1ClassicalFoldResult:
+        raise RuntimeError("classic fold exploded")
+
+    with pytest.raises(RuntimeError, match="classic fold exploded"):
+        run_task1_classical_experiment(
+            _splits(),
+            _label_map(),
+            stage="final",
+            selection=_final_selection(),
+            fold_runner=exploding_runner,
+            result_root=tmp_path / "runs",
+            evidence_root=evidence_root,
+        )
+
+    _assert_no_classical_aggregate_csv(evidence_root)
+
+
+def test_classical_final_loads_and_validates_tuned_selection_file(tmp_path: Path) -> None:
+    """A final run without a supplied selection must verify the frozen tune outputs."""
+    evidence_root = tmp_path / "evidence"
+    tuned = run_task1_classical_experiment(
+        _splits(),
+        _label_map(),
+        stage="tune",
+        fold_runner=_fake_classical_fold_runner,
+        result_root=tmp_path / "runs",
+        evidence_root=evidence_root,
+    )
+    assert tuned.selection is not None
+    _classic_calls.clear()
+
+    final = run_task1_classical_experiment(
+        _splits(),
+        _label_map(),
+        stage="final",
+        fold_runner=_fake_classical_fold_runner,
+        result_root=tmp_path / "runs",
+        evidence_root=evidence_root,
+    )
+
+    assert final.selection == tuned.selection
+    assert len(final.fold_results) == 10
+
+
+@pytest.mark.parametrize("changed_key", ["split_sha256", "label_map_sha256", "tuning_sha256"])
+def test_classical_final_rejects_stale_selection_file(
+    tmp_path: Path, changed_key: str
+) -> None:
+    """Selection provenance must be sealed before a final comparison begins."""
+    evidence_root = tmp_path / "evidence"
+    run_task1_classical_experiment(
+        _splits(),
+        _label_map(),
+        stage="tune",
+        fold_runner=_fake_classical_fold_runner,
+        result_root=tmp_path / "runs",
+        evidence_root=evidence_root,
+    )
+    selection_path = evidence_root / "classical_selection.json"
+    payload = json.loads(selection_path.read_text(encoding="utf-8"))
+    payload[changed_key] = "0" * 64
+    selection_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="selection"):
+        run_task1_classical_experiment(
+            _splits(),
+            _label_map(),
+            stage="final",
+            fold_runner=_fake_classical_fold_runner,
+            result_root=tmp_path / "runs",
+            evidence_root=evidence_root,
         )
 
 
