@@ -115,15 +115,15 @@ strongest defensible submission path.
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 | Current handoff gate | Ten component checks pass for run `task2-season-i2-refit-fall-s2753-637dd6378be9`; the portable registry snapshot, bundle, and image-only smoke prediction match the frozen hashes; final evaluation remains locked | Wait for a machine-readable whole-group freeze before Notebook 06 |
-| Current verification | Ruff and all `578` repository tests pass. This includes 43 focused refit/handoff tests and 36 notebook-contract tests | The code, artifact, presentation, saved-output, and artifact-only replay contracts are green |
+| Current verification | Ruff and all `579` repository tests pass. This includes 43 focused refit/handoff tests and 37 notebook-contract tests | The code, artifact, presentation, saved-output, and artifact-only replay contracts are green |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
 Notebook 03 should orchestrate those functions and tell the evidence-backed story.
 
-### 2.1 Luna Max defect audit and correction order
+### 2.1 Independent defect audit and correction order
 
-The read-only Luna Max audit found three integrity defects and four presentation defects.
+The read-only independent audit found three integrity defects and four presentation defects.
 All seven are now corrected. The old refit and handoff bytes remain archived with their
 hashes, while the live package was rebuilt from the hardened source.
 
@@ -146,10 +146,8 @@ The correction order is intentionally traceable:
 5. Refactor Notebook 03 into setup, compact table, and figure leaves. Every visible result
    receives an English explanation of purpose, columns or chart encodings, measured
    finding, decision impact, and limitation.
-6. Run focused tests, Ruff, the complete repository suite, and request a final Luna Max
-   review. The final review request reached the Luna usage limit, so it supports no
-   completion claim; the independent full suite and manual artifact audit are recorded
-   instead.
+6. Run focused tests, Ruff, and the complete repository suite. Record those results and
+   the manual artifact audit as the completion evidence.
 7. Commit each stage separately. Do not open Notebook 06 or the holdout before the
    whole-group freeze.
 

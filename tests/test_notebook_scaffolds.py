@@ -282,6 +282,52 @@ def test_task2_notebook_has_no_accidental_matplotlib_output() -> None:
         assert "plt.close(" in cell.source, f"cell {cell.id} leaves a figure open"
 
 
+def test_task2_notebook_maps_training_code_without_executing_it() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    title = next(cell.source for cell in notebook.cells if cell.id == "task2-title")
+
+    for required in (
+        "Training code map (read-only)",
+        "[B0/B1 and G0-G5 declarations](../configs/task2/)",
+        "fit_training_fold_majority",
+        "fit_hog_hsv_svm",
+        "SeasonArticleTypeMultiTaskModel",
+        "build_multitask_season_model",
+        "[general B0/B1 and G1-G3](../scripts/run_task2_experiment.py)",
+        "[I1](../scripts/run_task2_i1_experiment.py)",
+        "[I2](../scripts/run_task2_i2_experiments.py)",
+        "[P0S/P* benchmark](../scripts/run_task2_pretraining_benchmark.py)",
+        "[stability](../scripts/run_task2_stability.py)",
+        "run_or_load_experiment",
+        "_execute_baseline",
+        "run_or_load_g0_smoke",
+        "run_or_load_i1_experiment",
+        "run_or_load_i2_experiment",
+        "run_i2_matrix",
+        "run_pretraining_matrix",
+        "run_stability_matrix",
+        "train_masked_multitask_fold",
+        "[refit_task2_season.py](../scripts/refit_task2_season.py)",
+        "run_or_load_development_refit",
+        "train_masked_multitask_refit",
+        "[refit history](../results/evidence/task2/development_refit/training_history.csv)",
+        "[final weights](../models/task2_season.pt)",
+        "benchmark-only",
+        "Markdown never imports or executes Python",
+        "Restart Kernel and Run All Cells",
+        "`load` | Verify and load",
+        "`run_or_load` | Verify and reuse",
+        "`run` | Deliberately start",
+        "Never use it for G0, I1, I2, P0S/P*, or G5",
+    ):
+        assert required in title
+
+    assert "without being imported or executed here" in title
+    assert "use the declared script outside Notebook 03" in title
+    assert title.count("--mode load") == 6
+    assert title.count("--mode run") == 6
+
+
 def test_task2_notebook_is_fully_executed_artifact_replay() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
@@ -305,8 +351,13 @@ def test_task2_notebook_is_fully_executed_artifact_replay() -> None:
         "run_or_load_experiment",
         "run_or_load_g0_smoke",
         "run_or_load_i1_experiment",
+        "run_or_load_i2_experiment",
         "run_i2_matrix",
         "run_pretraining_matrix",
+        "run_stability_matrix",
+        "run_or_load_development_refit",
+        "train_masked_multitask_fold",
+        "train_masked_multitask_refit",
         "build_experiment_evidence(",
         "build_g0_evidence(",
         "build_g1_family_screen_evidence(",
