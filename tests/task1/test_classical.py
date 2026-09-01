@@ -1,4 +1,5 @@
 import warnings
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -7,6 +8,9 @@ import pytest
 from PIL import Image
 from sklearn.neighbors import KNeighborsClassifier
 
+from fashion.config import SPLITS_CSV
+from fashion.data.dataset import load_splits
+from fashion.data.splits import validate_splits
 from fashion.task1.classical import (
     TASK1_HOG_COARSE,
     TASK1_HOG_FINE,
@@ -185,6 +189,139 @@ def test_classical_smoke_fold_resumes_only_verified_completed_artifacts(tmp_path
     assert len(registry.read()) == 1
 
 
+def test_classical_smoke_fold_does_not_resume_a_different_valid_label_order(
+    tmp_path: Path,
+) -> None:
+    splits = _splits_with_images(tmp_path)
+    split_path = tmp_path / "splits.csv"
+    splits.to_csv(split_path, index=False)
+    registry = RunRegistry(tmp_path / "runs.csv")
+    kwargs = {
+        "validation_fold": 0,
+        "hog_spec": TASK1_HOG_COARSE,
+        "model_config": Task1KNNConfig(3, "distance"),
+        "run_config": Task1ClassicalRunConfig.smoke(),
+        "registry": registry,
+        "root": tmp_path,
+        "result_root": tmp_path / "results",
+        "cache_root": tmp_path / "cache",
+        "split_path": split_path,
+    }
+    first = run_task1_classical_fold(splits, _label_map(), **kwargs)
+    changed_label_map = _label_map()
+    classes = list(reversed(changed_label_map["classes"]))
+    changed_label_map["classes"] = classes
+    changed_label_map["label_to_index"] = {
+        label: index for index, label in enumerate(classes)
+    }
+
+    second = run_task1_classical_fold(splits, changed_label_map, **kwargs)
+
+    assert second.run_id != first.run_id
+    assert len(registry.read()) == 2
+
+
+def test_classical_smoke_fold_passes_configured_batch_size_to_knn_query(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    splits = _splits_with_images(tmp_path)
+    split_path = tmp_path / "splits.csv"
+    splits.to_csv(split_path, index=False)
+    received_batch_sizes: list[int] = []
+    original_query = query_task1_neighbors
+
+    def recording_query(
+        x_train: np.ndarray,
+        y_train: np.ndarray,
+        x_validation: np.ndarray,
+        *,
+        max_k: int,
+        batch_size: int = 512,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        received_batch_sizes.append(batch_size)
+        return original_query(
+            x_train, y_train, x_validation, max_k=max_k, batch_size=batch_size
+        )
+
+    monkeypatch.setattr("fashion.task1.classical.query_task1_neighbors", recording_query)
+    run_task1_classical_fold(
+        splits,
+        _label_map(),
+        validation_fold=0,
+        hog_spec=TASK1_HOG_COARSE,
+        model_config=Task1KNNConfig(3, "distance"),
+        run_config=replace(Task1ClassicalRunConfig.smoke(), validation_batch_size=7),
+        registry=RunRegistry(tmp_path / "runs.csv"),
+        root=tmp_path,
+        result_root=tmp_path / "results",
+        cache_root=tmp_path / "cache",
+        split_path=split_path,
+    )
+
+    assert received_batch_sizes == [7]
+
+
+@pytest.mark.parametrize(
+    "run_config",
+    [
+        Task1ClassicalRunConfig(stage="experiment", final_eligible=False),
+        Task1ClassicalRunConfig(stage="smoke", final_eligible=True),
+        Task1ClassicalRunConfig(stage="invalid", final_eligible=False),  # type: ignore[arg-type]
+    ],
+)
+def test_classical_fold_rejects_any_non_smoke_or_non_final_contract(
+    run_config: Task1ClassicalRunConfig,
+) -> None:
+    with pytest.raises(ValueError, match="classic run config must be either"):
+        run_task1_classical_fold(
+            pd.DataFrame(),
+            {},
+            validation_fold=0,
+            hog_spec=TASK1_HOG_COARSE,
+            model_config=Task1KNNConfig(3, "distance"),
+            run_config=run_config,
+            split_path=Path("not-used.csv"),
+        )
+
+
+def test_classical_full_fold_rejects_noncanonical_split_path() -> None:
+    with pytest.raises(ValueError, match="canonical split path"):
+        run_task1_classical_fold(
+            pd.DataFrame(),
+            {},
+            validation_fold=0,
+            hog_spec=TASK1_HOG_COARSE,
+            model_config=Task1KNNConfig(3, "distance"),
+            run_config=Task1ClassicalRunConfig.full(),
+            split_path=Path("not-canonical.csv"),
+        )
+
+
+def test_classical_full_fold_rejects_altered_structurally_valid_canonical_splits() -> None:
+    changed = load_splits(SPLITS_CSV).copy()
+    singleton = changed.loc[
+        changed.groupby("sha256")["id"].transform("size").eq(1)
+        & changed.groupby("duplicate_group")["id"].transform("size").eq(1)
+        & changed.groupby("product_name_key")["id"].transform("size").eq(1)
+        & changed.groupby("product_family_group")["id"].transform("size").eq(1)
+    ]
+    first = singleton.iloc[0]
+    second = singleton.loc[singleton["cv_fold"].ne(first["cv_fold"])].iloc[0]
+    changed.loc[[first.name, second.name], "cv_fold"] = [second.cv_fold, first.cv_fold]
+    validate_splits(changed)
+
+    with pytest.raises(ValueError, match="supplied splits must match the canonical split file"):
+        run_task1_classical_fold(
+            changed,
+            {},
+            validation_fold=0,
+            hog_spec=TASK1_HOG_COARSE,
+            model_config=Task1KNNConfig(3, "distance"),
+            run_config=Task1ClassicalRunConfig.full(),
+            split_path=SPLITS_CSV,
+        )
+
+
 def test_classical_smoke_fold_finalizes_registry_when_classic_model_explodes(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -193,7 +330,7 @@ def test_classical_smoke_fold_finalizes_registry_when_classic_model_explodes(
     splits.to_csv(split_path, index=False)
     registry = RunRegistry(tmp_path / "runs.csv")
 
-    def explode(*_: object) -> tuple[object, np.ndarray]:
+    def explode(*_: object, **__: object) -> tuple[object, np.ndarray]:
         raise RuntimeError("classic model exploded")
 
     monkeypatch.setattr("fashion.task1.classical.fit_predict_task1_knn", explode)

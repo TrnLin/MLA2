@@ -293,6 +293,8 @@ def fit_predict_task1_knn(
     y_train: np.ndarray,
     x_validation: np.ndarray,
     config: Task1KNNConfig,
+    *,
+    batch_size: int = 512,
 ) -> tuple[KNeighborsClassifier, np.ndarray]:
     model = KNeighborsClassifier(
         n_neighbors=config.n_neighbors,
@@ -303,7 +305,7 @@ def fit_predict_task1_knn(
     )
     model.fit(x_train, y_train)
     distances, indexes = query_task1_neighbors(
-        x_train, y_train, x_validation, max_k=config.n_neighbors, batch_size=512
+        x_train, y_train, x_validation, max_k=config.n_neighbors, batch_size=batch_size
     )
     probabilities = knn_probabilities_from_neighbors(
         distances, indexes, y_train, n_neighbors=config.n_neighbors, weights=config.weights
@@ -554,9 +556,16 @@ def run_task1_classical_fold(
         raise ValueError("validation_fold must be in range(5)")
     if run_config.validation_batch_size <= 0:
         raise ValueError("validation_batch_size must be positive")
+    is_smoke = run_config.stage == "smoke" and not run_config.final_eligible
+    is_full = run_config.stage == "experiment" and run_config.final_eligible
+    if not (is_smoke or is_full):
+        raise ValueError(
+            "Task 1 classic run config must be either smoke with final_eligible=False "
+            "or experiment with final_eligible=True"
+        )
     split_file = Path(split_path)
-    if run_config.final_eligible:
-        if run_config.stage != "experiment" or run_config.seed != RANDOM_SEED:
+    if is_full:
+        if run_config.seed != RANDOM_SEED:
             raise ValueError(
                 "final-eligible Task 1 classic runs require stage='experiment' and seed 2753"
             )
@@ -566,6 +575,7 @@ def run_task1_classical_fold(
             raise ValueError("supplied splits must match the canonical split file")
 
     label_to_index, class_names = validate_task1_label_map(label_map)
+    label_map_sha256 = canonical_sha256(label_map)
     model_family = _classical_model_family(model_config)
     candidate_id = f"{hog_spec.hog_id}-{model_config.config_id}"
     experiment_id = f"task1-classical-{candidate_id}"
@@ -577,6 +587,7 @@ def run_task1_classical_fold(
         "run_config": asdict(run_config),
         "model_family": model_family,
         "split_sha256": split_sha256,
+        "label_map_sha256": label_map_sha256,
     }
     config_sha256 = canonical_sha256(config_payload)
     active_registry = registry or RunRegistry()
@@ -585,6 +596,7 @@ def run_task1_classical_fold(
         experiment_id=experiment_id,
         fold=validation_fold,
         config_sha256=config_sha256,
+        label_map_sha256=label_map_sha256,
         status="completed",
     )
     if not matches.empty:
@@ -614,7 +626,7 @@ def run_task1_classical_fold(
         primary_metric_name="macro_f1_124",
         config_sha256=config_sha256,
         split_sha256=split_sha256,
-        label_map_sha256=canonical_sha256(label_map),
+        label_map_sha256=label_map_sha256,
         implementation_sha256=_classical_implementation_sha256(),
     )
     project_root = Path(root)
@@ -649,7 +661,11 @@ def run_task1_classical_fold(
         )
         if isinstance(model_config, Task1KNNConfig):
             model, probabilities = fit_predict_task1_knn(
-                x_train, y_train, x_validation, model_config
+                x_train,
+                y_train,
+                x_validation,
+                model_config,
+                batch_size=run_config.validation_batch_size,
             )
         else:
             model, probabilities = fit_predict_task1_linear_svm(
