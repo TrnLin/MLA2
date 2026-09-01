@@ -42,6 +42,7 @@ __pycache__/
 
 # Local scratch material and generated model weights.
 tmp/
+.worktrees/
 models/*.pt
 models/*.pth
 models/*.ckpt
