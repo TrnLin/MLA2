@@ -226,7 +226,24 @@ def test_classical_tune_selects_shared_hog_then_one_model_per_family(tmp_path: P
     assert selection_path.is_file()
     tuning = pd.read_csv(tuning_path)
     assert len(tuning) == 14
-    assert tuning["candidate_id"].nunique() == 14
+    expected_candidate_ids = {
+        "task1_gray_hog_ppc16_v1-knn-k5-distance",
+        "task1_gray_hog_ppc16_v1-linear-svm-c1-normal",
+        "task1_gray_hog_ppc10_v1-knn-k5-distance",
+        "task1_gray_hog_ppc10_v1-linear-svm-c1-normal",
+        "task1_gray_hog_ppc10_v1-knn-k3-uniform",
+        "task1_gray_hog_ppc10_v1-knn-k3-distance",
+        "task1_gray_hog_ppc10_v1-knn-k5-uniform",
+        "task1_gray_hog_ppc10_v1-knn-k5-distance",
+        "task1_gray_hog_ppc10_v1-knn-k11-uniform",
+        "task1_gray_hog_ppc10_v1-knn-k11-distance",
+        "task1_gray_hog_ppc10_v1-linear-svm-c0.1-balanced",
+        "task1_gray_hog_ppc10_v1-linear-svm-c1-balanced",
+        "task1_gray_hog_ppc10_v1-linear-svm-c10-normal",
+        "task1_gray_hog_ppc10_v1-linear-svm-c10-balanced",
+        "task1_gray_hog_ppc10_v1-linear-svm-c0.1-normal",
+    }
+    assert set(tuning["candidate_id"]) == expected_candidate_ids
     selection_payload = json.loads(selection_path.read_text(encoding="utf-8"))
     selection_keys = {"hog_id", "knn_config_id", "svm_config_id"}
     provenance_keys = {
@@ -237,6 +254,9 @@ def test_classical_tune_selects_shared_hog_then_one_model_per_family(tmp_path: P
     }
     assert set(selection_payload).difference(provenance_keys) == selection_keys
     assert set(selection_payload).difference(selection_keys) == provenance_keys
+    assert selection_payload["hog_id"] == "task1_gray_hog_ppc10_v1"
+    assert selection_payload["knn_config_id"] == "knn-k3-distance"
+    assert selection_payload["svm_config_id"] == "linear-svm-c10-balanced"
 
 
 def test_classical_tune_uses_coarse_hog_for_an_exact_default_macro_f1_tie(
