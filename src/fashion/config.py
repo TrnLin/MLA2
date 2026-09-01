@@ -56,6 +56,7 @@ RUNS_CSV = RESULTS_DIR / "runs.csv"
 TASK1_RESULT_DIR = RESULTS_DIR / "task1"
 TASK1_FIGURE_DIR = FIGURE_DIR / "task1"
 TASK1_EVIDENCE_DIR = EVIDENCE_DIR / "task1"
+TASK1_HOG_CACHE_DIR = PROCESSED_DATA_DIR / "task1_hog_cache"
 
 TARGET_COLUMNS = ("articleType", "season", "gender", "usage")
 RANDOM_SEED = 2753
