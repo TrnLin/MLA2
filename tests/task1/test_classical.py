@@ -15,8 +15,16 @@ from fashion.task1.classical import (
 def test_hog_specs_have_fixed_ids_and_feature_lengths() -> None:
     assert TASK1_HOG_COARSE.hog_id == "task1_gray_hog_ppc16_v1"
     assert TASK1_HOG_COARSE.expected_features == 288
+    assert TASK1_HOG_COARSE.pixels_per_cell == (16, 16)
     assert TASK1_HOG_FINE.hog_id == "task1_gray_hog_ppc10_v1"
     assert TASK1_HOG_FINE.expected_features == 1260
+    assert TASK1_HOG_FINE.pixels_per_cell == (10, 10)
+    for spec in (TASK1_HOG_COARSE, TASK1_HOG_FINE):
+        assert spec.orientations == 9
+        assert spec.cells_per_block == (2, 2)
+        assert spec.block_norm == "L2-Hys"
+        assert spec.transform_sqrt is True
+        assert spec.image_size == (80, 60)
 
 
 @pytest.mark.parametrize("spec", [TASK1_HOG_COARSE, TASK1_HOG_FINE])
