@@ -1,5 +1,15 @@
 """Task 1 article-type classification tools."""
 
+from fashion.task1.classical import (
+    TASK1_HOG_COARSE,
+    TASK1_HOG_FINE,
+    TASK1_HOG_SPECS,
+    TASK1_KNN_GRID,
+    TASK1_SVM_GRID,
+    Task1HogSpec,
+    Task1KNNConfig,
+    Task1LinearSVMConfig,
+)
 from fashion.task1.dataset import Task1TorchDataset, get_task1_fold_rows
 from fashion.task1.evaluation import (
     aggregate_fold_metrics,
@@ -9,7 +19,10 @@ from fashion.task1.evaluation import (
     validate_oof_predictions,
 )
 from fashion.task1.experiments import (
+    Task1ClassicalExperimentResult,
+    Task1ClassicalSelection,
     Task1ExperimentResult,
+    run_task1_classical_experiment,
     run_task1_experiment,
     write_task1_comparison_figure,
     write_task1_confusion_figure,
@@ -43,6 +56,17 @@ __all__ = [
     "fit_task1_normalization",
     "Task1TorchDataset",
     "get_task1_fold_rows",
+    "TASK1_HOG_COARSE",
+    "TASK1_HOG_FINE",
+    "TASK1_HOG_SPECS",
+    "TASK1_KNN_GRID",
+    "TASK1_SVM_GRID",
+    "Task1HogSpec",
+    "Task1KNNConfig",
+    "Task1LinearSVMConfig",
+    "Task1ClassicalExperimentResult",
+    "Task1ClassicalSelection",
+    "run_task1_classical_experiment",
     "Task1ExperimentResult",
     "run_task1_experiment",
     "write_task1_comparison_figure",

@@ -26,6 +26,23 @@ def test_task1_notebook_controls_registered_cnn_experiments() -> None:
     )
 
     assert all(token in source for token in required)
+    required_classical = (
+        'CLASSICAL_STAGE = "smoke"',
+        "run_task1_classical_experiment",
+        "TASK1_HOG_COARSE",
+        "TASK1_HOG_FINE",
+        "KNeighborsClassifier",
+        "LinearSVC",
+        "16 x 16",
+        "10 x 10",
+        "classical_tuning.csv",
+        "results/runs.csv",
+    )
+
+    assert all(token in source for token in required_classical)
+    assert "shared Task 1 framework owns the metrics for every candidate family" in source
     assert "train_test_split" not in source
     assert "pretrained=True" not in source
     assert "optimizer.step()" not in source
+    assert "StandardScaler" not in source
+    assert "PCA(" not in source

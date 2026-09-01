@@ -24,7 +24,10 @@ Reusable project code lives here. Notebooks import it instead of copying shared 
   - `dataset.py` builds validated Task 1 tensor samples.
   - `evaluation.py` calculates fixed-124-class metrics and checks out-of-fold predictions.
   - `training.py` trains and registers one fold at a time.
-  - `experiments.py` orchestrates smoke and full cross-validation runs.
+  - `classical.py` extracts and caches grayscale HOG features and runs fixed-class KNN
+    and Linear SVM fold candidates.
+  - `experiments.py` orchestrates both the CNN comparison and staged classic-model
+    tuning/five-fold evidence.
 - `train/` owns shared artifacts, reproducibility seeds, and the run registry.
 
 Update this if you are adding more scripts.
