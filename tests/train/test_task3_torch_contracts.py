@@ -11,15 +11,17 @@ nn = torch.nn
 Task3BaselineCNN = importlib.import_module("fashion.train.model").Task3BaselineCNN
 Task3CompactBlurCNN = importlib.import_module("fashion.train.model").Task3CompactBlurCNN
 Task3GeM3CNN = importlib.import_module("fashion.train.model").Task3GeM3CNN
+Task3GeM3AudienceCNN = importlib.import_module("fashion.train.model").Task3GeM3AudienceCNN
 Task3TinyConvNeXt18 = importlib.import_module("fashion.train.model").Task3TinyConvNeXt18
 Task3TinyHRNet20 = importlib.import_module("fashion.train.model").Task3TinyHRNet20
 Task3TinyResNet18PM = importlib.import_module("fashion.train.model").Task3TinyResNet18PM
 SampleWeightedCrossEntropy = importlib.import_module(
     "fashion.train.loss"
 ).SampleWeightedCrossEntropy
-WeightedFocalCrossEntropy = importlib.import_module(
+GenderAudienceAuxiliaryCrossEntropy = importlib.import_module(
     "fashion.train.loss"
-).WeightedFocalCrossEntropy
+).GenderAudienceAuxiliaryCrossEntropy
+WeightedFocalCrossEntropy = importlib.import_module("fashion.train.loss").WeightedFocalCrossEntropy
 WeightedLabelSmoothedCrossEntropy = importlib.import_module(
     "fashion.train.loss"
 ).WeightedLabelSmoothedCrossEntropy
@@ -80,6 +82,43 @@ def test_gem_p3_changes_only_global_pooling_and_keeps_the_parameter_count() -> N
     assert tuple(child(torch.zeros(2, 3, 80, 60)).shape) == (2, 5)
 
 
+def test_e10_adds_only_the_three_way_training_head_to_gender_e6() -> None:
+    config = Task3BaselineConfig(target="gender")
+    model = Task3GeM3AudienceCNN(config)
+
+    with torch.inference_mode():
+        primary, audience = model.forward_with_auxiliary(torch.zeros(2, 3, 80, 60))
+
+    assert sum(parameter.numel() for parameter in model.parameters()) == 390_952
+    assert tuple(primary.shape) == (2, 5)
+    assert tuple(audience.shape) == (2, 3)
+    assert model(torch.zeros(2, 3, 80, 60)) == pytest.approx(primary)
+    with pytest.raises(ValueError, match="Gender target"):
+        Task3GeM3AudienceCNN(Task3BaselineConfig(target="usage"))
+
+
+def test_e10_loss_uses_the_fixed_catalogue_audience_mapping() -> None:
+    primary_logits = torch.zeros(5, 5)
+    audience_logits = torch.tensor(
+        [
+            [4.0, 0.0, 0.0],
+            [0.0, 4.0, 0.0],
+            [4.0, 0.0, 0.0],
+            [0.0, 0.0, 4.0],
+            [0.0, 4.0, 0.0],
+        ]
+    )
+    labels = torch.arange(5)
+    criterion = GenderAudienceAuxiliaryCrossEntropy()
+
+    observed = criterion(primary_logits, audience_logits, labels)
+    expected = 0.5 * nn.functional.cross_entropy(primary_logits, labels) + (
+        0.5 * torch.log(torch.tensor(5.0)) / torch.log(torch.tensor(3.0))
+    ) * nn.functional.cross_entropy(audience_logits, torch.tensor([0, 1, 0, 2, 1]))
+
+    assert observed == pytest.approx(expected)
+
+
 def test_tinyhrnet_keeps_three_resolutions_and_matches_the_e7_budget() -> None:
     config = Task3BaselineConfig(target="gender")
     model = Task3TinyHRNet20(config)
@@ -122,9 +161,7 @@ def test_weighted_label_smoothing_weights_examples_by_the_true_class_only() -> N
     criterion = WeightedLabelSmoothedCrossEntropy(weights, epsilon=0.05)
 
     observed = criterion(logits, labels)
-    soft_targets = torch.tensor(
-        [[0.95, 0.025, 0.025], [0.025, 0.95, 0.025]], dtype=torch.float32
-    )
+    soft_targets = torch.tensor([[0.95, 0.025, 0.025], [0.025, 0.95, 0.025]], dtype=torch.float32)
     per_sample = -(soft_targets * torch.log_softmax(logits, dim=1)).sum(dim=1)
     expected = (per_sample * weights[labels]).sum() / weights[labels].sum()
 

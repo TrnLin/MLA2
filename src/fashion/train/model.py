@@ -17,6 +17,7 @@ from fashion.train.config import (
     Task3BaselineConfig,
     baseline_parameter_count,
     compact_blur_cnn_parameter_count,
+    gender_audience_aux_parameter_count,
     tinyconvnext18_parameter_count,
     tinyhrnet20_parameter_count,
     tinyresnet18_pm_parameter_count,
@@ -26,9 +27,7 @@ from fashion.train.config import (
 class Task3BaselineCNN(nn.Module):
     """Four-block native-resolution CNN with three spatial reductions."""
 
-    def __init__(
-        self, config: Task3BaselineConfig, *, classifier_dropout: float = 0.0
-    ) -> None:
+    def __init__(self, config: Task3BaselineConfig, *, classifier_dropout: float = 0.0) -> None:
         super().__init__()
         if not 0.0 <= classifier_dropout < 1.0:
             raise ValueError("classifier dropout must be in [0, 1)")
@@ -114,6 +113,39 @@ class Task3GeM3CNN(Task3BaselineCNN):
     def __init__(self, config: Task3BaselineConfig) -> None:
         super().__init__(config)
         self.pool = FixedGeMPool2d(power=3.0)
+
+
+class Task3GeM3AudienceCNN(Task3GeM3CNN):
+    """E6 GeM model with one training-only three-way audience helper head."""
+
+    def __init__(self, config: Task3BaselineConfig) -> None:
+        if config.target != "gender":
+            raise ValueError("the audience helper is defined only for the Gender target")
+        super().__init__(config)
+        self.audience_classifier = nn.Linear(config.channels[-1], 3)
+        nn.init.kaiming_uniform_(self.audience_classifier.weight, a=math.sqrt(5))
+        nn.init.zeros_(self.audience_classifier.bias)
+
+        actual = sum(
+            parameter.numel() for parameter in self.parameters() if parameter.requires_grad
+        )
+        expected = gender_audience_aux_parameter_count()
+        if actual != expected:
+            raise RuntimeError(
+                f"E10 parameter contract failed: expected {expected}, found {actual}"
+            )
+
+    def forward_with_auxiliary(self, images: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        """Return the five-way logits and the training-only audience logits."""
+        features = self.features(images)
+        pooled = self.pool(features).flatten(1)
+        pooled = self.classifier_dropout(pooled)
+        return self.classifier(pooled), self.audience_classifier(pooled)
+
+    def forward(self, images: torch.Tensor) -> torch.Tensor:
+        """Return only the five-way logits used by validation and inference."""
+        primary_logits, _ = self.forward_with_auxiliary(images)
+        return primary_logits
 
 
 class _Task3ResidualBlock(nn.Module):
@@ -233,9 +265,7 @@ class _FixedBlurPool(nn.Module):
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         if inputs.shape[1] != self.channels:
-            raise ValueError(
-                f"BlurPool expected {self.channels} channels, found {inputs.shape[1]}"
-            )
+            raise ValueError(f"BlurPool expected {self.channels} channels, found {inputs.shape[1]}")
         return F.conv2d(
             inputs,
             self.kernel,
@@ -509,9 +539,7 @@ class Task3TinyConvNeXt18(nn.Module):
         )
         self.stages = nn.ModuleList(
             [
-                nn.Sequential(
-                    *[_Task3ConvNeXtBlock(channels) for _ in range(depth)]
-                )
+                nn.Sequential(*[_Task3ConvNeXtBlock(channels) for _ in range(depth)])
                 for channels, depth in zip(widths, TINYCONVNEXT18_DEPTHS, strict=True)
             ]
         )
@@ -521,9 +549,7 @@ class Task3TinyConvNeXt18(nn.Module):
                     _Task3LayerNorm2d(input_channels),
                     nn.Conv2d(input_channels, output_channels, kernel_size=2, stride=2),
                 )
-                for input_channels, output_channels in zip(
-                    widths[:-1], widths[1:], strict=True
-                )
+                for input_channels, output_channels in zip(widths[:-1], widths[1:], strict=True)
             ]
         )
         self.head_norm = nn.LayerNorm(widths[-1])

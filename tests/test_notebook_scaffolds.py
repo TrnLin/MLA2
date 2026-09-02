@@ -20,7 +20,7 @@ TASK_SPECS = {
     "04_task3_gender_usage.ipynb": {
         "title": "Task 3 — Gender and Usage Classification",
         "tokens": ("gender", "usage", "negative transfer", "label-mask"),
-        "sections": 27,
+        "sections": 29,
     },
     "05_task4_visual_search.ipynb": {
         "title": "Task 4 — Fashion Visual Search",
@@ -52,6 +52,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04g_task3_tinyconvnext_tinyhrnet_e7_experiments.ipynb",
         "04h_task3_early_stopping_translation_e8_experiments.ipynb",
         "04i_task3_semantic_filter_exception_balance_e9_experiments.ipynb",
+        "04j_task3_audience_aux_e10_experiment.ipynb",
         *TASK_SPECS,
     }
     present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
@@ -148,8 +149,8 @@ def test_task3_e4_runner_only_trains_tinyresnet_children() -> None:
     assert '"usage_tinyresnet18_pm"' in source
     assert "latest_completed_baseline_parent_run_ids" in source
     assert "latest_completed_usage_e2_parent_run_ids" in source
-    assert "parameter_count\"] > 410_000" in source
-    assert "architecture_macs\"] > 105_000_000" in source
+    assert 'parameter_count"] > 410_000' in source
+    assert 'architecture_macs"] > 105_000_000' in source
     assert "run_task3_baseline_cv" not in source
     assert 'run_task3_child_cv(\n    "gender_brightness"' not in source
     assert 'run_task3_child_cv(\n    "usage_class_balanced"' not in source
@@ -176,8 +177,7 @@ def test_task3_e5_runner_only_trains_frozen_e5_children() -> None:
     code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
 
     assert (
-        notebook.metadata["title"]
-        == "Task 3 — CompactBlurCNN and Label-Smoothing E5 Experiments"
+        notebook.metadata["title"] == "Task 3 — CompactBlurCNN and Label-Smoothing E5 Experiments"
     )
     assert source.count("folds=range(5)") == 2
     assert source.count("run_task3_child_cv(") == 2
@@ -243,10 +243,7 @@ def test_task3_e7_runner_only_trains_frozen_architecture_children() -> None:
     source = _source(notebook)
     code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
 
-    assert (
-        notebook.metadata["title"]
-        == "Task 3 — TinyConvNeXt and TinyHRNet E7 Experiments"
-    )
+    assert notebook.metadata["title"] == "Task 3 — TinyConvNeXt and TinyHRNet E7 Experiments"
     assert source.count("folds=range(5)") == 2
     assert source.count("run_task3_child_cv(") == 2
     assert source.index('run_task3_child_cv(\n    "usage_tinyconvnext18"') < source.index(
@@ -281,10 +278,7 @@ def test_task3_e8_runner_only_trains_early_stopping_and_translation() -> None:
     source = _source(notebook)
     code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
 
-    assert (
-        notebook.metadata["title"]
-        == "Task 3 — Early Stopping and Translation E8 Experiments"
-    )
+    assert notebook.metadata["title"] == "Task 3 — Early Stopping and Translation E8 Experiments"
     assert source.count("folds=range(5)") == 2
     assert source.count("run_task3_child_cv(") == 2
     assert source.index('run_task3_child_cv(\n    "gender_gem_p3_early_stopping"') < source.index(
@@ -339,6 +333,38 @@ def test_task3_e9_runner_trains_only_e9_with_deterministic_gender_audit() -> Non
     assert "latest_completed_usage_e2_parent_run_ids" in source
     assert "no switch or merge was attempted" in source
     assert source.count("audit_completed_registry_rows(") == 2
+    assert "run_task3_baseline_cv" not in source
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_e10_runner_trains_only_the_gender_audience_child() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/04j_task3_audience_aux_e10_experiment.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == ("Task 3 — Gender Audience-Auxiliary E10 Experiment")
+    assert source.count("folds=range(5)") == 1
+    assert source.count("run_task3_child_cv(") == 1
+    assert 'run_task3_child_cv(\n    "gender_audience_aux"' in source
+    assert "latest_completed_gender_e6_parent_run_ids" in source
+    assert "write_task3_e10_prerun_evidence" in source
+    assert source.index("write_task3_e10_prerun_evidence(") < source.index(
+        'run_task3_child_cv(\n    "gender_audience_aux"'
+    )
+    assert source.count("audit_completed_registry_rows(") == 1
+    assert "usage_exception_balance" not in source
+    assert "gender_semantic_filter" not in source
     assert "run_task3_baseline_cv" not in source
     assert "nohup" not in code
     assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
@@ -417,6 +443,9 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
                 "t3-e9-prerun-audits",
                 "t3-e9-prerun-plots",
                 "t3-e9-deterministic-gate",
+                "t3-e9-results-load",
+                "t3-e9-gates",
+                "t3-e9-plots",
             }
             assert all(
                 cell.cell_type == "markdown" or cell.id in code_ids for cell in notebook.cells
@@ -571,20 +600,14 @@ def test_task_metric_contracts_are_explicit() -> None:
     assert "04b_task3_smallcnn_child_experiments.ipynb` loads those saved parents" in task3
     assert "04c_task3_smallcnn_e3_experiments.ipynb` loads the accepted E1/E2 parents" in task3
     assert (
-        "04d_task3_tinyresnet18_pm_e4_experiments.ipynb` loads the same accepted parents"
-        in task3
+        "04d_task3_tinyresnet18_pm_e4_experiments.ipynb` loads the same accepted parents" in task3
     )
-    assert (
-        "04e_task3_compactblurcnn_label_smoothing_e5_experiments.ipynb` loads E1/E2"
-        in task3
-    )
+    assert "04e_task3_compactblurcnn_label_smoothing_e5_experiments.ipynb` loads E1/E2" in task3
     assert "run_task3_baseline_cv" not in task3
 
     notebook = nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4)
     child_cells = "\n".join(
-        cell.source
-        for cell in notebook.cells
-        if cell.id.startswith("t3-child-")
+        cell.source for cell in notebook.cells if cell.id.startswith("t3-child-")
     )
     assert "DRIVE_TASK_DIR" in child_cells
     assert "google.colab" not in child_cells

@@ -9,8 +9,11 @@ from PIL import Image
 
 from fashion.train.augmentation import apply_training_augmentation
 from fashion.train.task3_experiments import (
+    GENDER_E10_AUXILIARY_LOSS_WEIGHT,
+    GENDER_E10_PRIMARY_LOSS_WEIGHT,
     audit_completed_registry_rows,
     effective_number_class_weights,
+    gender_audience_aux_spec,
     gender_brightness_spec,
     gender_class_balanced_spec,
     gender_compact_blur_cnn_spec,
@@ -252,6 +255,24 @@ def test_usage_e8_changes_only_training_translation_from_e2() -> None:
         replace(spec, checkpoint_policy="best_validation_macro_f1")
 
 
+def test_gender_e10_adds_only_a_training_audience_head_to_e6() -> None:
+    parents = tuple(f"gender-e6-parent-{fold}" for fold in range(5))
+    spec = gender_audience_aux_spec(parents)
+
+    assert spec.target == "gender"
+    assert spec.parent_artifact_dir == "experiments/t3_gender_e6_gem_p3"
+    assert spec.changed_factor == "training_only_audience_auxiliary_head"
+    assert spec.model_family == "task3_small_cnn_gem_p3_audience_aux"
+    assert spec.run_model_token == "smallcnngem3aux3"
+    assert spec.training_selection_strategy == "all"
+    assert spec.auxiliary_target == "gender_audience_3way"
+    assert spec.primary_loss_weight == pytest.approx(GENDER_E10_PRIMARY_LOSS_WEIGHT)
+    assert spec.auxiliary_loss_weight == pytest.approx(GENDER_E10_AUXILIARY_LOSS_WEIGHT)
+
+    with pytest.raises(ValueError, match="more than its predeclared factor"):
+        replace(spec, training_selection_strategy="gender_semantic_conflicts_v1")
+
+
 def test_registry_audit_requires_complete_hashed_rows(tmp_path) -> None:
     registry = tmp_path / "runs.csv"
     registry.write_text(
@@ -315,9 +336,7 @@ def test_latest_parent_lookup_requires_one_complete_baseline_per_fold(tmp_path) 
         (run_dir / "config.json").write_text("{}\n", encoding="utf-8")
         (run_dir / "final_epoch.pt").write_bytes(b"checkpoint")
         (run_dir / "oof_predictions.csv").write_text("id\n", encoding="utf-8")
-        (run_dir / "robustness.csv").write_text(
-            "corruption,macro_f1_change\n", encoding="utf-8"
-        )
+        (run_dir / "robustness.csv").write_text("corruption,macro_f1_change\n", encoding="utf-8")
         (run_dir / "metrics.json").write_text(
             json.dumps({"run_id": run_id, "validation_fold": fold}),
             encoding="utf-8",
@@ -339,13 +358,9 @@ def test_latest_usage_e2_lookup_requires_the_accepted_parent_chain(tmp_path) -> 
         (run_dir / "config.json").write_text("{}\n", encoding="utf-8")
         (run_dir / "final_epoch.pt").write_bytes(b"checkpoint")
         (run_dir / "oof_predictions.csv").write_text("id\n", encoding="utf-8")
-        (run_dir / "robustness.csv").write_text(
-            "corruption,macro_f1_change\n", encoding="utf-8"
-        )
+        (run_dir / "robustness.csv").write_text("corruption,macro_f1_change\n", encoding="utf-8")
         (run_dir / "metrics.json").write_text(
-            json.dumps(
-                {"run_id": run_id, "target": "usage", "validation_fold": fold}
-            ),
+            json.dumps({"run_id": run_id, "target": "usage", "validation_fold": fold}),
             encoding="utf-8",
         )
 
@@ -365,13 +380,9 @@ def test_latest_gender_e6_lookup_uses_the_gem_run_token(tmp_path) -> None:
         (run_dir / "config.json").write_text("{}\n", encoding="utf-8")
         (run_dir / "final_epoch.pt").write_bytes(b"checkpoint")
         (run_dir / "oof_predictions.csv").write_text("id\n", encoding="utf-8")
-        (run_dir / "robustness.csv").write_text(
-            "corruption,macro_f1_change\n", encoding="utf-8"
-        )
+        (run_dir / "robustness.csv").write_text("corruption,macro_f1_change\n", encoding="utf-8")
         (run_dir / "metrics.json").write_text(
-            json.dumps(
-                {"run_id": run_id, "target": "gender", "validation_fold": fold}
-            ),
+            json.dumps({"run_id": run_id, "target": "gender", "validation_fold": fold}),
             encoding="utf-8",
         )
 

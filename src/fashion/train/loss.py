@@ -7,6 +7,47 @@ from torch import nn
 from torch.nn import functional as F
 
 
+class GenderAudienceAuxiliaryCrossEntropy(nn.Module):
+    """Combine the five-way Gender loss with a derived three-way audience loss."""
+
+    def __init__(
+        self,
+        *,
+        primary_weight: float = 0.5,
+        auxiliary_weight: float = 0.5 * 1.6094379124341003 / 1.0986122886681098,
+    ) -> None:
+        super().__init__()
+        if primary_weight <= 0.0 or auxiliary_weight <= 0.0:
+            raise ValueError("auxiliary loss weights must be positive")
+        self.primary_weight = float(primary_weight)
+        self.auxiliary_weight = float(auxiliary_weight)
+        self.register_buffer(
+            "audience_index",
+            torch.tensor([0, 1, 0, 2, 1], dtype=torch.long),
+        )
+
+    def forward(
+        self,
+        primary_logits: torch.Tensor,
+        audience_logits: torch.Tensor,
+        target: torch.Tensor,
+    ) -> torch.Tensor:
+        if primary_logits.ndim != 2 or primary_logits.shape[1] != 5:
+            raise ValueError("the Gender primary head must have five logits")
+        if audience_logits.ndim != 2 or audience_logits.shape[1] != 3:
+            raise ValueError("the audience helper head must have three logits")
+        if target.ndim != 1 or len(target) != len(primary_logits):
+            raise ValueError("targets must contain one class index per logit row")
+        if len(audience_logits) != len(target):
+            raise ValueError("primary and audience logits must contain the same rows")
+        if torch.any(target < 0) or torch.any(target >= len(self.audience_index)):
+            raise ValueError("Gender targets must use the fixed five-class index order")
+        audience_target = self.audience_index[target]
+        primary_loss = F.cross_entropy(primary_logits, target)
+        audience_loss = F.cross_entropy(audience_logits, audience_target)
+        return self.primary_weight * primary_loss + self.auxiliary_weight * audience_loss
+
+
 class SampleWeightedCrossEntropy(nn.Module):
     """Cross-entropy normalised by combined class and per-example weights."""
 
@@ -20,18 +61,14 @@ class SampleWeightedCrossEntropy(nn.Module):
             raise ValueError("at least one class weight must be positive")
         self.register_buffer("class_weights", class_weights.detach().clone())
 
-    def _combined_weights(
-        self, target: torch.Tensor, sample_weight: torch.Tensor
-    ) -> torch.Tensor:
+    def _combined_weights(self, target: torch.Tensor, sample_weight: torch.Tensor) -> torch.Tensor:
         if sample_weight.ndim != 1 or len(sample_weight) != len(target):
             raise ValueError("sample weights must contain one value per target")
         if not torch.isfinite(sample_weight).all() or torch.any(sample_weight <= 0):
             raise ValueError("sample weights must be finite and strictly positive")
         return self.class_weights[target] * sample_weight
 
-    def loss_denominator(
-        self, target: torch.Tensor, sample_weight: torch.Tensor
-    ) -> torch.Tensor:
+    def loss_denominator(self, target: torch.Tensor, sample_weight: torch.Tensor) -> torch.Tensor:
         """Return the combined example-weight sum used by this batch."""
         return self._combined_weights(target, sample_weight).sum()
 

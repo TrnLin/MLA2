@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Literal, Sequence
@@ -30,6 +31,7 @@ Task3ChildName = Literal[
     "usage_translation_2px",
     "gender_semantic_filter",
     "usage_exception_balance",
+    "gender_audience_aux",
 ]
 Task3ModelFamily = Literal[
     "task3_small_cnn",
@@ -38,6 +40,7 @@ Task3ModelFamily = Literal[
     "task3_compact_blur_cnn",
     "task3_tinyhrnet20",
     "task3_tinyconvnext18",
+    "task3_small_cnn_gem_p3_audience_aux",
 ]
 Task3RunModelToken = Literal[
     "smallcnn",
@@ -46,7 +49,12 @@ Task3RunModelToken = Literal[
     "compactblurcnn",
     "tinyhrnet20",
     "tinyconvnext18",
+    "smallcnngem3aux3",
 ]
+
+GENDER_E10_PRIMARY_LOSS_WEIGHT = 0.5
+GENDER_E10_AUXILIARY_LOSS_WEIGHT = 0.5 * math.log(5.0) / math.log(3.0)
+GENDER_E10_PEAK_MEMORY_LIMIT_BYTES = 2 * 1024**3
 
 
 @dataclass
@@ -116,6 +124,9 @@ class Task3ChildSpec:
         "gender_semantic_conflicts_v1",
         "usage_article_type_exception_balance_v1",
     ] = "all"
+    auxiliary_target: Literal["none", "gender_audience_3way"] = "none"
+    primary_loss_weight: float = 1.0
+    auxiliary_loss_weight: float = 0.0
 
     def __post_init__(self) -> None:
         if len(set(self.parent_run_ids)) != 5 or any(not run_id for run_id in self.parent_run_ids):
@@ -422,6 +433,32 @@ class Task3ChildSpec:
                 "early_stopping_min_delta": 0.0,
                 "training_selection_strategy": "usage_article_type_exception_balance_v1",
             },
+            "gender_audience_aux": {
+                "target": "gender",
+                "experiment_id": "t3_gender_audience_aux_gem_p3",
+                "hypothesis_id": "t3_gender_e10_audience_aux",
+                "artifact_dir": "experiments/t3_gender_e10_audience_aux",
+                "run_prefix": "t3_gender_e10_audience_aux",
+                "changed_factor": "training_only_audience_auxiliary_head",
+                "training_augmentation": "none",
+                "loss_name": "gender_audience_auxiliary_cross_entropy",
+                "parent_artifact_dir": "experiments/t3_gender_e6_gem_p3",
+                "class_weight_beta": None,
+                "class_weight_cap": None,
+                "classifier_dropout": 0.0,
+                "label_smoothing": 0.0,
+                "focal_gamma": 0.0,
+                "model_family": "task3_small_cnn_gem_p3_audience_aux",
+                "run_model_token": "smallcnngem3aux3",
+                "checkpoint_policy": "final_epoch",
+                "early_stopping_min_epoch": 0,
+                "early_stopping_patience": 0,
+                "early_stopping_min_delta": 0.0,
+                "training_selection_strategy": "all",
+                "auxiliary_target": "gender_audience_3way",
+                "primary_loss_weight": GENDER_E10_PRIMARY_LOSS_WEIGHT,
+                "auxiliary_loss_weight": GENDER_E10_AUXILIARY_LOSS_WEIGHT,
+            },
         }[self.name]
         expected.setdefault("focal_gamma", 0.0)
         expected.setdefault("checkpoint_policy", "final_epoch")
@@ -429,6 +466,9 @@ class Task3ChildSpec:
         expected.setdefault("early_stopping_patience", 0)
         expected.setdefault("early_stopping_min_delta", 0.0)
         expected.setdefault("training_selection_strategy", "all")
+        expected.setdefault("auxiliary_target", "none")
+        expected.setdefault("primary_loss_weight", 1.0)
+        expected.setdefault("auxiliary_loss_weight", 0.0)
         actual = asdict(self)
         actual.pop("name")
         actual.pop("parent_run_ids")
@@ -504,6 +544,10 @@ class Task3ChildSpec:
                 payload.pop(field)
         elif payload["training_selection_strategy"] == "all":
             payload.pop("training_selection_strategy")
+        if payload["auxiliary_target"] == "none":
+            payload.pop("auxiliary_target")
+            payload.pop("primary_loss_weight")
+            payload.pop("auxiliary_loss_weight")
         return payload
 
 
@@ -816,6 +860,28 @@ def usage_exception_balance_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpe
     )
 
 
+def gender_audience_aux_spec(parent_run_ids: Sequence[str]) -> Task3ChildSpec:
+    """Add only three-way audience supervision to the exact Gender E6 parent."""
+    return Task3ChildSpec(
+        name="gender_audience_aux",
+        target="gender",
+        experiment_id="t3_gender_audience_aux_gem_p3",
+        hypothesis_id="t3_gender_e10_audience_aux",
+        artifact_dir="experiments/t3_gender_e10_audience_aux",
+        run_prefix="t3_gender_e10_audience_aux",
+        changed_factor="training_only_audience_auxiliary_head",
+        training_augmentation="none",
+        loss_name="gender_audience_auxiliary_cross_entropy",
+        parent_artifact_dir="experiments/t3_gender_e6_gem_p3",
+        parent_run_ids=tuple(parent_run_ids),  # type: ignore[arg-type]
+        model_family="task3_small_cnn_gem_p3_audience_aux",
+        run_model_token="smallcnngem3aux3",
+        auxiliary_target="gender_audience_3way",
+        primary_loss_weight=GENDER_E10_PRIMARY_LOSS_WEIGHT,
+        auxiliary_loss_weight=GENDER_E10_AUXILIARY_LOSS_WEIGHT,
+    )
+
+
 def effective_number_class_weights(
     counts: Sequence[int], *, beta: float = 0.999, cap: float = 5.0
 ) -> np.ndarray:
@@ -948,6 +1014,8 @@ def _spec(name: Task3ChildName, parent_run_ids: Sequence[str]) -> Task3ChildSpec
         return gender_semantic_filter_spec(parent_run_ids)
     if name == "usage_exception_balance":
         return usage_exception_balance_spec(parent_run_ids)
+    if name == "gender_audience_aux":
+        return gender_audience_aux_spec(parent_run_ids)
     raise ValueError(f"unsupported Task 3 child: {name}")
 
 
@@ -969,6 +1037,7 @@ def check_task3_child_setup(
         "task3_compact_blur_cnn",
         "task3_tinyhrnet20",
         "task3_tinyconvnext18",
+        "task3_small_cnn_gem_p3_audience_aux",
     }:
         import torch
 
@@ -977,6 +1046,7 @@ def check_task3_child_setup(
             baseline_parameter_count,
             compact_blur_cnn_macs,
             compact_blur_cnn_parameter_count,
+            gender_audience_aux_parameter_count,
             tinyconvnext18_macs,
             tinyconvnext18_parameter_count,
             tinyhrnet20_macs,
@@ -986,6 +1056,7 @@ def check_task3_child_setup(
         )
         from fashion.train.model import (
             Task3CompactBlurCNN,
+            Task3GeM3AudienceCNN,
             Task3GeM3CNN,
             Task3TinyConvNeXt18,
             Task3TinyHRNet20,
@@ -997,6 +1068,10 @@ def check_task3_child_setup(
         if spec.model_family == "task3_small_cnn_gem_p3":
             model = Task3GeM3CNN(config).to(device)
             parameter_count = baseline_parameter_count(spec.target)
+            architecture_macs = None
+        elif spec.model_family == "task3_small_cnn_gem_p3_audience_aux":
+            model = Task3GeM3AudienceCNN(config).to(device)
+            parameter_count = gender_audience_aux_parameter_count()
             architecture_macs = None
         elif spec.model_family == "task3_tinyresnet18_pm":
             model = Task3TinyResNet18PM(config).to(device)
@@ -1020,12 +1095,54 @@ def check_task3_child_setup(
             )
         if tuple(output.shape) != (2, config.num_classes):
             raise RuntimeError(f"unexpected child model output shape: {tuple(output.shape)}")
+        if spec.auxiliary_target == "gender_audience_3way":
+            from fashion.train.loss import GenderAudienceAuxiliaryCrossEntropy
+
+            if device.type != "cuda":
+                raise RuntimeError("E10 preflight requires CUDA for its memory check")
+            primary_output, auxiliary_output = model.forward_with_auxiliary(  # type: ignore[attr-defined]
+                torch.zeros(2, 3, config.image_height, config.image_width, device=device)
+            )
+            if tuple(primary_output.shape) != (2, 5):
+                raise RuntimeError("E10 changed the fixed five-way Gender output shape")
+            if tuple(auxiliary_output.shape) != (2, 3):
+                raise RuntimeError("E10 audience helper output must have three logits")
+            baseline["auxiliary_output_shape"] = list(auxiliary_output.shape)
+            torch.cuda.reset_peak_memory_stats(device)
+            memory_images = torch.zeros(
+                config.batch_size,
+                3,
+                config.image_height,
+                config.image_width,
+                device=device,
+            )
+            memory_labels = torch.arange(config.batch_size, device=device) % 5
+            memory_primary, memory_auxiliary = model.forward_with_auxiliary(memory_images)  # type: ignore[attr-defined]
+            memory_loss = GenderAudienceAuxiliaryCrossEntropy(
+                primary_weight=spec.primary_loss_weight,
+                auxiliary_weight=spec.auxiliary_loss_weight,
+            )(memory_primary, memory_auxiliary, memory_labels)
+            memory_loss.backward()
+            peak_memory_bytes = int(torch.cuda.max_memory_allocated(device))
+            model.zero_grad(set_to_none=True)
+            del memory_images, memory_labels, memory_primary, memory_auxiliary, memory_loss
+            torch.cuda.empty_cache()
+            if peak_memory_bytes >= GENDER_E10_PEAK_MEMORY_LIMIT_BYTES:
+                raise RuntimeError(
+                    "E10 zero-step memory check exceeded the frozen 2 GiB limit: "
+                    f"{peak_memory_bytes:,} bytes"
+                )
+            baseline["zero_step_peak_memory_bytes"] = peak_memory_bytes
+            baseline["peak_memory_limit_bytes"] = GENDER_E10_PEAK_MEMORY_LIMIT_BYTES
         baseline["parameter_count"] = parameter_count
         baseline["architecture_macs"] = architecture_macs
     baseline["model_family"] = spec.model_family
     baseline["label_smoothing"] = spec.label_smoothing
     baseline["focal_gamma"] = spec.focal_gamma
     baseline["training_selection_strategy"] = spec.training_selection_strategy
+    baseline["auxiliary_target"] = spec.auxiliary_target
+    baseline["primary_loss_weight"] = spec.primary_loss_weight
+    baseline["auxiliary_loss_weight"] = spec.auxiliary_loss_weight
     baseline["gender_deterministic_audit_required"] = (
         spec.training_selection_strategy == "gender_semantic_conflicts_v1"
     )

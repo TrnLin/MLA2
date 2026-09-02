@@ -100,6 +100,11 @@ def baseline_parameter_count(target: Task3Target) -> int:
     return convolutions + batch_norm + output_head
 
 
+def gender_audience_aux_parameter_count() -> int:
+    """Return E10's E6 parameters plus one training-only three-way head."""
+    return baseline_parameter_count("gender") + 256 * 3 + 3
+
+
 def tinyresnet18_pm_parameter_count(target: Task3Target) -> int:
     """Calculate the parameter-matched TinyResNet contract without PyTorch."""
     if target not in TARGET_CLASS_COUNTS:
@@ -232,9 +237,7 @@ def tinyhrnet20_macs(target: Task3Target) -> int:
     macs += 2 * residual_macs(high, high_area)
     macs += conv_macs(high, middle, 3, middle_area)
 
-    two_branch_blocks = residual_macs(high, high_area) + residual_macs(
-        middle, middle_area
-    )
+    two_branch_blocks = residual_macs(high, high_area) + residual_macs(middle, middle_area)
     two_branch_fusion = conv_macs(high, middle, 3, middle_area) + conv_macs(
         middle, high, 1, middle_area
     )
@@ -282,9 +285,7 @@ def tinyconvnext18_macs(target: Task3Target) -> int:
     widths = TINYCONVNEXT18_WIDTHS
     height, width = 80, 60
     macs = height * width * 3 * widths[0] * 3 * 3
-    for stage, (channels, depth) in enumerate(
-        zip(widths, TINYCONVNEXT18_DEPTHS, strict=True)
-    ):
+    for stage, (channels, depth) in enumerate(zip(widths, TINYCONVNEXT18_DEPTHS, strict=True)):
         area = height * width
         block_macs = area * (channels * 7 * 7 + 8 * channels * channels)
         macs += depth * block_macs
