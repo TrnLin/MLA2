@@ -20,20 +20,27 @@ Reusable project code lives here. Notebooks import it instead of copying shared 
   - `taxonomy.py` describes and validates development target labels.
 
 - `task1/` owns reusable Task 1 article-type classification code.
-  - `models.py` defines the scratch small-CNN architecture.
+  - `image_contract.py` defines the shared image size, padding colour, and tensor shape.
+  - `analysis.py` turns prepared EDA and completed runs into decision and failure evidence.
+  - `preprocessing.py` defines deterministic image transforms and fold-fitted normalization.
   - `dataset.py` builds validated Task 1 tensor samples.
+  - `models.py` defines the scratch small-CNN architecture.
+  - `cnn_engine.py` runs one CNN fold while `training.py` keeps the public training facade.
+  - `cnn_experiments.py` runs the controlled CNN comparison and writes full-run evidence.
+  - `classical_features.py` defines and caches grayscale HOG features.
+  - `classical_models.py` defines the approved classic-model settings.
+  - `classical_training.py` runs one classic fold and registers it.
+  - `classical_experiments.py` stages classic smoke, tuning, and selected five-fold evidence.
   - `evaluation.py` calculates fixed-124-class metrics and checks out-of-fold predictions.
-  - `training.py` trains and registers one fold at a time.
-  - `classical.py` extracts and caches grayscale HOG features and runs fixed-class KNN
-    and Linear SVM fold candidates.
-  - `experiments.py` orchestrates both the CNN comparison and staged classic-model
-    tuning/five-fold evidence.
+  - `plotting.py` writes report figures from completed evidence.
+  - `classical.py` and `experiments.py` are compatibility facades for earlier imports.
 - `train/` owns shared artifacts, reproducibility seeds, and the run registry.
 
 ### Task 1 classic-run handoff
 
 Run the controller in [`notebooks/02_task1_article_type.ipynb`](../../notebooks/02_task1_article_type.ipynb).
-It defaults to `CLASSICAL_STAGE = "smoke"`. After smoke passes, run it once with
+It defaults both `RUN_MODE` and `CLASSICAL_STAGE` to `"smoke"`. After smoke passes, run
+the CNN controller once with `RUN_MODE = "full"`, then run the classic controller once with
 `CLASSICAL_STAGE = "tune"`, then with `CLASSICAL_STAGE = "final"`. The final run
 requires `results/evidence/task1/classical_selection.json` from tuning and writes
 registered five-fold evidence. HOG uses scikit-image; KNN and LinearSVC use
