@@ -412,9 +412,13 @@ def build_fixed_feature_cache(
         finally:
             del matrix
 
-        _log(f"copying completed feature view={view} to durable storage")
-        shutil.copyfile(local_temporary, durable_staging)
-        os.replace(durable_staging, matrix_path)
+        if local_temporary.stat().st_dev == output.stat().st_dev:
+            _log(f"moving completed feature view={view} into the local artifact store")
+            os.replace(local_temporary, matrix_path)
+        else:
+            _log(f"copying completed feature view={view} to durable storage")
+            shutil.copyfile(local_temporary, durable_staging)
+            os.replace(durable_staging, matrix_path)
     finally:
         local_temporary.unlink(missing_ok=True)
         durable_staging.unlink(missing_ok=True)
@@ -757,6 +761,7 @@ def _run_gender_fold(
             registry_path=registry_path,
         )
     ):
+        _log(f"gender fold={fold}: reusing completed run {completed['run_id']}")
         return completed
 
     timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
@@ -792,23 +797,32 @@ def _run_gender_fold(
         if len(inner_splits) != config.inner_folds:
             raise RuntimeError("gender inner-fold count changed")
         history: list[dict[str, Any]] = []
+        total_inner_fits = len(config.c_grid) * len(inner_splits)
+        completed_inner_fits = 0
+        _log(f"gender fold={fold}: starting {total_inner_fits} inner SVM fits")
         for c_value in config.c_grid:
             for inner_fold, (inner_training, inner_validation) in enumerate(inner_splits):
                 estimator = _gender_estimator(c_value, config.seed + fold + inner_fold)
                 estimator.fit(x_train[inner_training], y_train[inner_training])
                 predicted = estimator.predict(x_train[inner_validation]).astype(str)
+                inner_macro_f1 = f1_score(
+                    y_train[inner_validation],
+                    predicted,
+                    labels=classes,
+                    average="macro",
+                    zero_division=0,
+                )
                 history.append(
                     {
                         "candidate_c": c_value,
                         "inner_fold": inner_fold,
-                        "macro_f1": f1_score(
-                            y_train[inner_validation],
-                            predicted,
-                            labels=classes,
-                            average="macro",
-                            zero_division=0,
-                        ),
+                        "macro_f1": inner_macro_f1,
                     }
+                )
+                completed_inner_fits += 1
+                _log(
+                    f"gender fold={fold}: inner fit {completed_inner_fits}/"
+                    f"{total_inner_fits}, C={c_value:g}, macro_f1={inner_macro_f1:.4f}"
                 )
         history_frame = pd.DataFrame(history)
         means = history_frame.groupby("candidate_c")["macro_f1"].mean()
@@ -823,6 +837,7 @@ def _run_gender_fold(
             cv=inner_splits,
             ensemble=True,
         )
+        _log(f"gender fold={fold}: selected C={best_c:g}; fitting calibrated outer model")
         model.fit(x_train, y_train)
         validation_probabilities = _expand_probabilities(
             model.predict_proba(x_validation), model.classes_, classes
@@ -898,6 +913,7 @@ def _run_gender_fold(
                 "last_completed_stage": "screen_fold_complete",
             },
         )
+        _log(f"gender fold={fold}: complete, validation_macro_f1={metrics['macro_f1']:.4f}")
         return {
             "run_id": run_id,
             "run_dir": str(paths["run_dir"]),
@@ -951,6 +967,7 @@ def _run_usage_fold(
             registry_path=registry_path,
         )
     ):
+        _log(f"usage fold={fold}: reusing completed run {completed['run_id']}")
         return completed
 
     timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
@@ -987,6 +1004,9 @@ def _run_usage_fold(
         if len(inner_splits) != config.inner_folds:
             raise RuntimeError("usage inner-fold count changed")
         history: list[dict[str, Any]] = []
+        total_inner_fits = len(config.alpha_grid) * len(inner_splits)
+        completed_inner_fits = 0
+        _log(f"usage fold={fold}: starting {total_inner_fits} inner article-type fits")
         for alpha in config.alpha_grid:
             for inner_fold, (inner_training, inner_validation) in enumerate(inner_splits):
                 model = _usage_type_estimator(alpha, config.seed + fold + inner_fold)
@@ -1006,18 +1026,24 @@ def _run_usage_fold(
                 )
                 usage_probabilities = type_probabilities @ mapping
                 predicted = np.asarray(usage_classes)[usage_probabilities.argmax(axis=1)]
+                inner_macro_f1 = f1_score(
+                    usage_train[inner_validation],
+                    predicted,
+                    labels=usage_classes,
+                    average="macro",
+                    zero_division=0,
+                )
                 history.append(
                     {
                         "candidate_alpha": alpha,
                         "inner_fold": inner_fold,
-                        "end_to_end_usage_macro_f1": f1_score(
-                            usage_train[inner_validation],
-                            predicted,
-                            labels=usage_classes,
-                            average="macro",
-                            zero_division=0,
-                        ),
+                        "end_to_end_usage_macro_f1": inner_macro_f1,
                     }
+                )
+                completed_inner_fits += 1
+                _log(
+                    f"usage fold={fold}: inner fit {completed_inner_fits}/"
+                    f"{total_inner_fits}, alpha={alpha:g}, macro_f1={inner_macro_f1:.4f}"
                 )
         history_frame = pd.DataFrame(history)
         means = history_frame.groupby("candidate_alpha")["end_to_end_usage_macro_f1"].mean()
@@ -1027,6 +1053,7 @@ def _run_usage_fold(
         registry.update(run_id, {"last_completed_stage": last_stage})
 
         model = _usage_type_estimator(best_alpha, config.seed + fold)
+        _log(f"usage fold={fold}: selected alpha={best_alpha:g}; fitting outer article-type model")
         model.fit(x_train, article_train)
         mapping = smoothed_type_usage_mapping(
             article_train,
@@ -1126,6 +1153,7 @@ def _run_usage_fold(
                 "last_completed_stage": "screen_fold_complete",
             },
         )
+        _log(f"usage fold={fold}: complete, validation_macro_f1={metrics['macro_f1']:.4f}")
         return {
             "run_id": run_id,
             "run_dir": str(paths["run_dir"]),
