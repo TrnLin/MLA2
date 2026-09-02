@@ -1176,6 +1176,9 @@ def _aggregate_screen(
     experiment_id: str,
     hypothesis_id: str,
     anchor_prediction_path: str | Path | None,
+    artifact_root: str = CLEAN_SLATE_ARTIFACT_ROOT,
+    seconds_per_fold_limit: float = SCREEN_SECONDS_PER_FOLD_LIMIT,
+    memory_limit_bytes: int = HOST_MEMORY_LIMIT_BYTES,
 ) -> dict[str, Any]:
     label_maps = load_label_maps(root / LABEL_MAPS_JSON.relative_to(ROOT))
     classes = _classes(label_maps, target)
@@ -1213,7 +1216,7 @@ def _aggregate_screen(
             np.mean([row["f1"] for row in metrics["per_class"] if row["class_name"] != "Home"])
         )
 
-    aggregate_dir = output_root / CLEAN_SLATE_ARTIFACT_ROOT / target / "aggregate_folds_0_4"
+    aggregate_dir = output_root / artifact_root / target / "aggregate_folds_0_4"
     aggregate_dir.mkdir(parents=True, exist_ok=True)
     predictions_path = aggregate_dir / "oof_predictions.csv"
     metrics_path = aggregate_dir / "metrics.json"
@@ -1235,8 +1238,8 @@ def _aggregate_screen(
         "status": "not_evaluated_anchor_missing",
         "training_scope_integrity": True,
         "resource_limit_pass": all(
-            float(result["metrics"]["train_seconds"]) <= SCREEN_SECONDS_PER_FOLD_LIMIT
-            and int(result["metrics"]["peak_memory_bytes"]) <= HOST_MEMORY_LIMIT_BYTES
+            float(result["metrics"]["train_seconds"]) <= seconds_per_fold_limit
+            and int(result["metrics"]["peak_memory_bytes"]) <= memory_limit_bytes
             for result in fold_results
         ),
         "probability_integrity": bool(

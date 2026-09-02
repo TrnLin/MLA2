@@ -55,6 +55,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04j_task3_audience_aux_e10_experiment.ipynb",
         "04k_task3_clean_slate_eda.ipynb",
         "04l_task3_clean_slate_screen_1.ipynb",
+        "04m_task3_micro_swin_clean_slate_screen_2.ipynb",
         *TASK_SPECS,
     }
     present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
@@ -89,6 +90,40 @@ def test_task3_clean_slate_eda_is_separate_and_label_safe() -> None:
         "t3-clean-eda-neighbourhoods",
         "t3-clean-eda-folds",
         "t3-clean-eda-gate",
+    } == {cell.id for cell in notebook.cells if cell.cell_type == "code"}
+
+
+def test_task3_micro_swin_screen_is_separate_colab_gpu_work() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/04m_task3_micro_swin_clean_slate_screen_2.ipynb", as_version=4
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == "Task 3 — Scratch Micro-Swin Clean-Slate Screen 2"
+    assert "Run All starts four fits" in source
+    assert "check_micro_swin_screen_setup" in code
+    assert code.count("run_micro_swin_screen(") == 2
+    assert "device_name=\"cuda\"" in code
+    assert "reuse_completed=True" in code
+    assert "folds 0 and 4" in source
+    assert "train_test_split" not in source
+    assert "pretrained=True" not in source
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+    assert {
+        "t3-cs2-config",
+        "t3-cs2-repository",
+        "t3-cs2-data",
+        "t3-cs2-check",
+        "t3-cs2-usage",
+        "t3-cs2-gender",
+        "t3-cs2-summary",
     } == {cell.id for cell in notebook.cells if cell.cell_type == "code"}
 
 
