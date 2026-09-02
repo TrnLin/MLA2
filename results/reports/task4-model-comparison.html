@@ -446,6 +446,10 @@
     <i>embedding</i>). To search, we compare the query's 128 numbers against every stored product's
     128 numbers using <b>exact cosine search</b> — no approximation, no shortcuts — then keep the
     top 10 <b>distinct</b> products.</p>
+    <p><b>Image size.</b> Original teacher photos start at <b>60&times;80</b>, while V1 photos and
+    user uploads can be larger. Before training or search, <b>every</b> photo is resized with its
+    shape preserved and placed on a white <b>240&times;320</b> canvas (width &times; height).
+    The models receive this prepared 240&times;320 image, <b>not</b> the raw 60&times;80 file.</p>
     <p><b>What we are graded on.</b> Not one big score. We are graded on <b>how many different
     ideas we compared</b>, <b>how well we justified each choice</b>, and <b>how honestly we
     explained the failures</b>. So this report keeps the ugly parts in.</p>
@@ -477,9 +481,9 @@
   <figure>
     <svg viewBox="0 0 940 130" role="img" aria-labelledby="pipe-t pipe-d">
       <title id="pipe-t">The search pipeline</title>
-      <desc id="pipe-d">A query photo goes into the model, becomes 128 numbers, is compared to every
-      stored product's 128 numbers by exact cosine similarity, and the ten most similar distinct
-      products come out.</desc>
+      <desc id="pipe-d">A query photo is prepared as a 240 by 320 pixel image, goes into the model,
+      becomes 128 numbers, is compared to every stored product's 128 numbers by exact cosine
+      similarity, and the ten most similar distinct products come out.</desc>
       <g fill="none" stroke="#16181d" stroke-width="1.5">
         <rect x="4" y="34" width="126" height="60" rx="6" fill="#f7f8fa"></rect>
         <rect x="182" y="34" width="150" height="60" rx="6" fill="#f7f8fa"></rect>
@@ -499,8 +503,8 @@
         </marker>
       </defs>
       <g font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="13" fill="#16181d" text-anchor="middle">
-        <text x="67" y="60" font-weight="650">One photo</text>
-        <text x="67" y="78" font-size="11.5" fill="#6b7280">60&times;80 pixels</text>
+        <text x="67" y="60" font-weight="650">Prepared photo</text>
+        <text x="67" y="78" font-size="11.5" fill="#6b7280">240&times;320 input</text>
         <text x="257" y="60" font-weight="650">Model (encoder)</text>
         <text x="257" y="78" font-size="11.5" fill="#6b7280">trained from scratch</text>
         <text x="459" y="60" font-weight="650">128 numbers</text>
@@ -511,7 +515,9 @@
         <text x="867" y="78" font-size="11.5" fill="#6b7280">distinct products</text>
       </g>
     </svg>
-    <figcaption>The pipeline is the same for every learned model. Only the middle box changes.</figcaption>
+    <figcaption>The pipeline is the same for every learned model. Teacher files begin at
+    60&times;80, but preprocessing makes every model input 240&times;320. Only the middle box
+    changes.</figcaption>
   </figure>
 
   <div class="card">
