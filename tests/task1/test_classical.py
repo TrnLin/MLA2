@@ -11,6 +11,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from fashion.config import SPLITS_CSV
 from fashion.data.dataset import load_splits
 from fashion.data.splits import validate_splits
+from fashion.task1.image_contract import TASK1_IMAGE_SIZE
 from fashion.task1.classical import (
     TASK1_HOG_COARSE,
     TASK1_HOG_FINE,
@@ -42,7 +43,7 @@ def test_hog_specs_have_fixed_ids_and_feature_lengths() -> None:
         assert spec.cells_per_block == (2, 2)
         assert spec.block_norm == "L2-Hys"
         assert spec.transform_sqrt is True
-        assert spec.image_size == (80, 60)
+        assert spec.image_size == TASK1_IMAGE_SIZE
 
 
 @pytest.mark.parametrize("spec", [TASK1_HOG_COARSE, TASK1_HOG_FINE])

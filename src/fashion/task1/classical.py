@@ -26,6 +26,7 @@ from fashion.data.dataset import load_splits
 from fashion.data.hashing import compute_sha256
 from fashion.data.images import transform_image_with_mask
 from fashion.task1.dataset import get_task1_fold_rows
+from fashion.task1.image_contract import TASK1_IMAGE_SIZE, TASK1_PAD_COLOR
 from fashion.task1.evaluation import (
     TASK1_NUM_CLASSES,
     build_prediction_frame,
@@ -53,8 +54,8 @@ class Task1HogSpec:
     cells_per_block: tuple[int, int] = (2, 2)
     block_norm: str = "L2-Hys"
     transform_sqrt: bool = True
-    image_size: tuple[int, int] = (80, 60)
-    pad_color: tuple[int, int, int] = (255, 255, 255)
+    image_size: tuple[int, int] = TASK1_IMAGE_SIZE
+    pad_color: tuple[int, int, int] = TASK1_PAD_COLOR
 
     def __post_init__(self) -> None:
         if not self.hog_id.strip():

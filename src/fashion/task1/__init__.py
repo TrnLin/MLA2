@@ -11,6 +11,11 @@ from fashion.task1.classical import (
     Task1LinearSVMConfig,
 )
 from fashion.task1.dataset import Task1TorchDataset, get_task1_fold_rows
+from fashion.task1.image_contract import (
+    TASK1_IMAGE_SIZE,
+    TASK1_PAD_COLOR,
+    TASK1_TENSOR_SHAPE,
+)
 from fashion.task1.evaluation import (
     aggregate_fold_metrics,
     build_prediction_frame,
@@ -48,6 +53,9 @@ from fashion.task1.training import (
 __all__ = [
     "DEFAULT_TASK1_PREPROCESSING",
     "TASK1_CONTROL_PREPROCESSING",
+    "TASK1_IMAGE_SIZE",
+    "TASK1_PAD_COLOR",
+    "TASK1_TENSOR_SHAPE",
     "Task1ImageTransform",
     "Task1Normalization",
     "Task1PreprocessingConfig",

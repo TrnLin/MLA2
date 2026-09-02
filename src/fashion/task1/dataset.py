@@ -11,6 +11,7 @@ import torch
 
 from fashion.config import ROOT
 from fashion.data.dataset import get_cv_split, get_samples
+from fashion.task1.image_contract import TASK1_TENSOR_SHAPE
 
 
 class Task1TorchDataset(torch.utils.data.Dataset):
@@ -48,8 +49,10 @@ class Task1TorchDataset(torch.utils.data.Dataset):
     def __getitem__(self, index: int) -> dict[str, torch.Tensor]:
         row = self.rows.iloc[index]
         array = self.transform(self.root / str(row["path"]))
-        if array.shape != (3, 80, 60) or array.dtype != np.float32:
-            raise ValueError("Task 1 transform must return float32 shape (3, 80, 60)")
+        if array.shape != TASK1_TENSOR_SHAPE or array.dtype != np.float32:
+            raise ValueError(
+                f"Task 1 transform must return float32 shape {TASK1_TENSOR_SHAPE}"
+            )
         return {
             "image": torch.from_numpy(array),
             "label": torch.tensor(self.label_to_index[str(row["articleType"])], dtype=torch.long),

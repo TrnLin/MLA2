@@ -14,6 +14,7 @@ from PIL import Image, ImageEnhance, ImageOps
 
 from fashion.config import CV_FOLD_COUNT, ROOT
 from fashion.data.images import StreamingStats, transform_image_with_mask
+from fashion.task1.image_contract import TASK1_IMAGE_SIZE, TASK1_PAD_COLOR
 
 
 @dataclass(frozen=True)
@@ -21,8 +22,8 @@ class Task1PreprocessingConfig:
     """Fixed geometry and mild Option B augmentation settings."""
 
     preprocessing_id: str = "task1_rgb_60x80_mild_aug_v1"
-    image_size: tuple[int, int] = (80, 60)
-    pad_color: tuple[int, int, int] = (255, 255, 255)
+    image_size: tuple[int, int] = TASK1_IMAGE_SIZE
+    pad_color: tuple[int, int, int] = TASK1_PAD_COLOR
     horizontal_flip_probability: float = 0.5
     max_rotation_degrees: float = 5.0
     max_translation_fraction: float = 0.05

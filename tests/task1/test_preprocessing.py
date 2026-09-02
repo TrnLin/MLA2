@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 from PIL import Image
 
+from fashion.task1.image_contract import TASK1_TENSOR_SHAPE
 from fashion.task1.preprocessing import (
     TASK1_CONTROL_PREPROCESSING,
     Task1Normalization,
@@ -32,7 +33,7 @@ def test_validation_transform_converts_letterboxed_grayscale_to_normalized_chw(t
 
     transformed = build_task1_validation_transform(normalization)(image_path)
 
-    assert transformed.shape == (3, 80, 60)
+    assert transformed.shape == TASK1_TENSOR_SHAPE
     assert transformed.dtype == np.float32
     assert np.all(transformed[:, :, :15] == 0.0)
     assert np.all(transformed[:, :, 15:45] == -2.0)
