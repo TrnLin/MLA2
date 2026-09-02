@@ -12,6 +12,9 @@ from fashion.config import SPLITS_CSV
 from fashion.data.dataset import load_splits
 from fashion.data.splits import validate_splits
 from fashion.task1.classical import (
+    HOG_CACHE_SCHEMA_VERSION as facade_hog_cache_schema_version,
+)
+from fashion.task1.classical import (
     TASK1_HOG_COARSE,
     Task1ClassicalRunConfig,
     Task1HogSpec,
@@ -25,12 +28,16 @@ from fashion.task1.classical import (
     run_task1_classical_fold,
 )
 from fashion.task1.classical import TASK1_HOG_COARSE as facade_hog
+from fashion.task1.classical_features import (
+    HOG_CACHE_SCHEMA_VERSION as owned_hog_cache_schema_version,
+)
 from fashion.task1.classical_features import TASK1_HOG_COARSE as owned_hog
 from fashion.train.registry import RunRegistry
 
 
 def test_classical_facade_reexports_hog_contract() -> None:
     assert facade_hog is owned_hog
+    assert facade_hog_cache_schema_version is owned_hog_cache_schema_version
 
 
 def _label_map() -> dict[str, object]:

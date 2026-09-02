@@ -21,6 +21,7 @@ from fashion.config import RANDOM_SEED, ROOT, SPLITS_CSV, TASK1_HOG_CACHE_DIR, T
 from fashion.data.dataset import load_splits
 from fashion.data.hashing import compute_sha256
 from fashion.task1.classical_features import (
+    HOG_CACHE_SCHEMA_VERSION,  # noqa: F401
     TASK1_HOG_COARSE,  # noqa: F401
     TASK1_HOG_FINE,  # noqa: F401
     TASK1_HOG_SPECS,
