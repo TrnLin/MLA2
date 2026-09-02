@@ -7,8 +7,9 @@ Date: 2026-09-02
 **Pass. No automatable blocker remains.**
 
 The automated EDA code, saved evidence, notebook, and figures are current and consistent.
-The only unfinished step is the planned human review: two people must fill the two blank forms
-independently.
+The planned human review is unfinished. On 2026-09-02, the project deferred it because the
+367-image form is not practical to complete now. It remains useful future evidence, but it is not a
+training blocker.
 
 No model was trained. No implementation file was edited during this review.
 
@@ -61,12 +62,13 @@ Two temporary attacks passed safely:
 - `pip check` passes. Ruff passes. The focused tests pass 10/10. The full suite passes 111 tests,
   with 1 expected skip.
 
-## Only remaining action
+## Deferred action
 
-Two people must complete these files independently:
+Two people may later complete these files independently:
 
 - `results/evidence/task3/clean_slate_eda/observability_review/observability_reviewer_1.csv`
 - `results/evidence/task3/clean_slate_eda/observability_review/observability_reviewer_2.csv`
 
-Then run the existing review analysis and rebuild the notebook evidence. This is a human gate, not
-an automated defect.
+Then run the existing review analysis and rebuild the notebook evidence. Until then, report the
+human label ceiling as unknown. The completed automated audits are enough to start the frozen model
+screens.
