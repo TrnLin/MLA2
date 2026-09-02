@@ -54,6 +54,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04i_task3_semantic_filter_exception_balance_e9_experiments.ipynb",
         "04j_task3_audience_aux_e10_experiment.ipynb",
         "04k_task3_clean_slate_eda.ipynb",
+        "04l_task3_clean_slate_screen_1.ipynb",
         *TASK_SPECS,
     }
     present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
