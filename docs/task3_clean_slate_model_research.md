@@ -255,11 +255,15 @@ available as Task 3 inference inputs. The result shows that common usage labels 
 product type, while long-tail classes remain unsolved. It motivates an image-derived type-posterior
 cascade rather than use of hidden metadata.
 
-## 5. EDA that must happen before model selection
+## 5. Design-changing EDA before or alongside model selection
 
 The next EDA must be allowed to change the design. It is not another descriptive chart pack.
 
 ### 5.1 Audit A — visual observability and label ceiling
+
+**Deferred on 2026-09-02.** The full blind review is not practical to complete now. Keep the forms
+and protocol for later, do not invent answers, and report the human label ceiling as unknown. This
+does not block the automated model screens below.
 
 Review all 143 rows in `NA`, `Smart Casual`, `Travel`, `Party`, and `Home`, plus a family-stratified
 sample from common usage and all gender classes.
@@ -618,11 +622,12 @@ Exit: one canonical evidence index exists and reproduces the score tables in Sec
 
 ### Stage 1 — design-changing audits, no model selection
 
-Complete the five teacher-only audits in Section 5. Freeze the crop rule, blank rule, human-review
-protocol, diagnostic views, and compute limits.
+Complete the four automatable teacher-only audits in Section 5. Prepare and freeze the human-review
+protocol, but allow the actual reviews to remain deferred. Freeze the crop rule, blank rule,
+diagnostic views, and compute limits.
 
-Exit: every proposed input can be rebuilt without target labels or protected data, and label
-knowability limits are documented.
+Exit: every proposed input can be rebuilt without target labels or protected data. If the human
+review is deferred, label knowability stays explicitly unknown and does not block Stage 2.
 
 ### Stage 2 — fold-0 smoke tests, not rankings
 
