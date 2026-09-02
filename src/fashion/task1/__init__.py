@@ -7,6 +7,11 @@ from fashion.task1.analysis import (
     build_task1_problem_profile,
     build_task1_weak_class_table,
 )
+from fashion.task1.classical_experiments import (
+    Task1ClassicalExperimentResult,
+    Task1ClassicalSelection,
+    run_task1_classical_experiment,
+)
 from fashion.task1.classical_features import (
     TASK1_HOG_COARSE,
     TASK1_HOG_FINE,
@@ -24,6 +29,10 @@ from fashion.task1.classical_training import (
     Task1ClassicalRunConfig,
     run_task1_classical_fold,
 )
+from fashion.task1.cnn_experiments import (
+    Task1ExperimentResult,
+    run_task1_experiment,
+)
 from fashion.task1.dataset import Task1TorchDataset, get_task1_fold_rows
 from fashion.task1.evaluation import (
     aggregate_fold_metrics,
@@ -32,21 +41,16 @@ from fashion.task1.evaluation import (
     per_class_metrics,
     validate_oof_predictions,
 )
-from fashion.task1.experiments import (
-    Task1ClassicalExperimentResult,
-    Task1ClassicalSelection,
-    Task1ExperimentResult,
-    run_task1_classical_experiment,
-    run_task1_experiment,
-    write_task1_comparison_figure,
-    write_task1_confusion_figure,
-)
 from fashion.task1.image_contract import (
     TASK1_IMAGE_SIZE,
     TASK1_PAD_COLOR,
     TASK1_TENSOR_SHAPE,
 )
 from fashion.task1.models import Task1ModelConfig, Task1SmallCNN, count_trainable_parameters
+from fashion.task1.plotting import (
+    write_task1_comparison_figure,
+    write_task1_confusion_figure,
+)
 from fashion.task1.preprocessing import (
     DEFAULT_TASK1_PREPROCESSING,
     TASK1_CONTROL_PREPROCESSING,
