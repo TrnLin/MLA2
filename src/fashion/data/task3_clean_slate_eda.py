@@ -376,7 +376,8 @@ def build_observability_review_pack(
 
     All ultra-rare usage rows are included.  The remaining rows are selected one
     product family at a time for common usage and every gender class.  No human
-    answer is fabricated; the returned status stays ``pending_human_review``.
+    answer is fabricated.  The pack remains available for later review, but the
+    project currently records it as deferred and non-blocking for model screens.
     """
 
     development = _teacher_only_development(splits, root=root)
@@ -474,7 +475,7 @@ def build_observability_review_pack(
     summary = pd.DataFrame(
         [
             {
-                "review_status": "pending_human_review",
+                "review_status": "deferred_non_blocking",
                 "unique_images": int(len(review)),
                 **counts,
                 "reviewers_required": 2,
@@ -2196,9 +2197,14 @@ def write_clean_slate_eda_tables(
         "artifact_manifest_sha256": compute_sha256(manifest_path),
         "artifact_count": int(len(artifact_manifest)),
         "automated_audits_complete": True,
+        "training_screen_ready": True,
+        "training_blockers": [],
         "human_observability_review_complete": human_complete,
         "human_observability_review_status": (
-            "complete" if human_complete else "pending_two_independent_reviewers"
+            "complete" if human_complete else "deferred_non_blocking"
+        ),
+        "deferred_items": (
+            [] if human_complete else ["two_independent_human_observability_reviews"]
         ),
         "holdout_targets_read": False,
         "image_scope": "teacher_development_images_only",
