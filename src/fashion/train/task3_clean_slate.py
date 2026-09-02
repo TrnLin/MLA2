@@ -1259,15 +1259,37 @@ def _aggregate_screen(
         )
         if anchor[probability_columns].isna().any().any():
             raise ValueError("matched historical anchor is missing screen IDs")
-        if (
-            not anchor["true_label_candidate"]
-            .astype(str)
-            .eq(anchor["true_label_anchor"].astype(str))
-            .all()
-        ):
+
+        candidate_indices = pd.to_numeric(anchor["true_index_candidate"], errors="coerce")
+        anchor_indices = pd.to_numeric(anchor["true_index_anchor"], errors="coerce")
+        valid_indices = (
+            candidate_indices.notna()
+            & anchor_indices.notna()
+            & candidate_indices.eq(candidate_indices.round())
+            & anchor_indices.eq(anchor_indices.round())
+            & candidate_indices.between(0, len(classes) - 1)
+            & anchor_indices.between(0, len(classes) - 1)
+        )
+        if not valid_indices.all():
+            raise ValueError("historical anchor contains an invalid numeric label index")
+        candidate_indices = candidate_indices.astype(np.int64)
+        anchor_indices = anchor_indices.astype(np.int64)
+        if not candidate_indices.eq(anchor_indices).all():
             raise ValueError("historical anchor labels disagree with the screen labels")
+
+        canonical_labels = candidate_indices.map(dict(enumerate(classes)))
+        candidate_labels = anchor["true_label_candidate"].astype(str)
+        anchor_labels = anchor["true_label_anchor"].astype(str)
+        if not candidate_labels.eq(canonical_labels).all():
+            raise ValueError("screen labels disagree with their fixed numeric indices")
+        legacy_na_labels = anchor_labels.eq("") & canonical_labels.eq("NA")
+        anchor_label_matches = anchor_labels.eq(canonical_labels) | legacy_na_labels
+        if not anchor_label_matches.all():
+            raise ValueError("historical anchor labels disagree with the screen labels")
+        anchor.loc[legacy_na_labels, "true_label_anchor"] = "NA"
+
         anchor_metrics = classification_metrics(
-            anchor["true_index_candidate"].to_numpy(dtype=np.int64),
+            candidate_indices.to_numpy(dtype=np.int64),
             anchor[probability_columns].to_numpy(dtype=np.float64),
             classes,
         )
@@ -1310,6 +1332,8 @@ def _aggregate_screen(
                 "macro_f1_delta": float(metrics["macro_f1"] - anchor_metrics["macro_f1"]),
                 "score_noninferiority_pass": score_pass,
                 "supported_class_noninferiority_pass": class_pass,
+                "anchor_label_integrity": "canonical_index_verified",
+                "anchor_literal_na_label_repairs": int(legacy_na_labels.sum()),
             }
         )
     _json_dump(gate, gate_path)
