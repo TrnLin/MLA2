@@ -49,6 +49,7 @@ models/*.ckpt
 
 # Generated experiment registry; report-selected figures remain trackable.
 results/runs.csv
+results/runs.csv.lock
 
 # Local copies of downloaded Task 3 training evidence. Keep report-selected figures trackable.
 results/evidence/task3/
