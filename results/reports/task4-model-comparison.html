@@ -419,16 +419,17 @@
   <h2 id="toc-h">On this page</h2>
   <ol>
     <li><a href="#purpose">1. Why this report exists</a></li>
-    <li><a href="#story">2. The story in one sentence</a></li>
-    <li><a href="#words">3. Words we use</a></li>
-    <li><a href="#truths">4. The two core truths</a></li>
-    <li><a href="#compare">5. Model comparison</a></li>
-    <li><a href="#models">6. Model by model, honestly</a></li>
-    <li><a href="#stability">7. Stability progress</a></li>
-    <li><a href="#gates">8. Practical gates</a></li>
-    <li><a href="#failures">9. Known failures &amp; audit trail</a></li>
-    <li><a href="#next">10. What happens next</a></li>
-    <li><a href="#sources">11. Evidence sources</a></li>
+    <li><a href="#origin">2. Why we chose these models</a></li>
+    <li><a href="#story">3. The story in one sentence</a></li>
+    <li><a href="#words">4. Words we use</a></li>
+    <li><a href="#truths">5. The two core truths</a></li>
+    <li><a href="#compare">6. Model comparison</a></li>
+    <li><a href="#models">7. Model by model, honestly</a></li>
+    <li><a href="#stability">8. Stability progress</a></li>
+    <li><a href="#gates">9. Practical gates</a></li>
+    <li><a href="#failures">10. Known failures &amp; audit trail</a></li>
+    <li><a href="#next">11. What happens next</a></li>
+    <li><a href="#sources">12. Evidence sources</a></li>
   </ol>
 </nav>
 
@@ -462,8 +463,153 @@
 
 <hr class="rule">
 
+<section id="origin" aria-labelledby="origin-h">
+  <h2 id="origin-h">2. Why we chose these models</h2>
+  <p class="lede">The model list was not picked at random, and it was not changed after seeing the
+  scores. Each model was chosen to answer one small question. Together, those questions tell a
+  clear story about what makes visual search work.</p>
+
+  <div class="card tint">
+    <h3>First, start from what the assignment asks for</h3>
+    <p>Task 4 asks: <b>&ldquo;Given one fashion picture, which products look most similar?&rdquo;</b>
+    It also asks us to compare methods, explain our choices, study failures, and make one final
+    judgement. The submitted model must be trained from scratch. A pretrained model may only be a
+    comparison.</p>
+    <p>That gave our model list four jobs:</p>
+    <ol>
+      <li>Give us a simple floor, so we know whether learning is actually useful.</li>
+      <li>Change one thing at a time, so we know why a result moved.</li>
+      <li>Try more than one family of learning method, not five copies of the same idea.</li>
+      <li>Keep one pretrained yardstick, while making it impossible to select that model.</li>
+    </ol>
+  </div>
+
+  <h3 style="margin-top:24px;">The model-selection path, from the beginning</h3>
+
+  <div class="card">
+    <span class="kind">Starting floor &middot; no learning</span>
+    <h3>Random, spatial HSV-edge, and HOG</h3>
+    <p><b>The child-sized question:</b> &ldquo;Before building a brain, how well can simple rules
+    do?&rdquo;</p>
+    <p><b>Random</b> tells us the useless floor. <b>Spatial HSV-edge</b> describes colour and rough
+    layout using only 400 numbers. It is cheap, easy to explain, and was frozen before learned
+    results existed. <b>HOG</b> came from the researched image-search article and describes the
+    directions of edges, so it tests shape without colour or training.</p>
+    <p>Using both HSV-edge and HOG matters. One mostly asks &ldquo;are the colours and rough layout
+    alike?&rdquo; The other asks &ldquo;do the outlines point the same way?&rdquo; If a learned model
+    cannot beat these cheap rules, the extra training cost needs a very good explanation.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="kind">R1 &middot; the base question</span>
+      <h3>Can the model learn that two sources show the same product?</h3>
+      <p>Every development product has a low-detail <b>teacher</b> view and a higher-detail
+      <b>V1</b> view. R1 shows the model both views and says, &ldquo;these are the same item; place
+      their 128-number descriptions close together.&rdquo;</p>
+      <p>We chose a scratch <b>ResNet-18</b> because it is a standard, understandable CNN that is
+      large enough to learn useful shapes but small enough to train repeatedly. We chose
+      <b>VICReg</b> because it can match the pair without treating every other product as an enemy.
+      That matters in fashion: two different blue shirts may genuinely be similar.</p>
+      <p><b>Why R1 exists:</b> it is the clean starting line. Later models can be compared against
+      it one change at a time.</p>
+    </div>
+
+    <div class="card">
+      <span class="kind">R2 &middot; capacity question</span>
+      <h3>Does a bigger brain help?</h3>
+      <p>R2 keeps R1's data, loss, 128-number output, and training rules. It changes only
+      ResNet-18 to the deeper <b>ResNet-34</b>.</p>
+      <p>This is important even if it fails. Without R2, we could only guess whether R1 needed a
+      larger network. Because just one main thing changes, a better or worse score gives a clean
+      answer about depth instead of mixing depth with a new loss or new data.</p>
+      <p><b>Question answered:</b> more layers alone did not help this search task.</p>
+    </div>
+
+    <div class="card">
+      <span class="kind">R3 &middot; measured failure question</span>
+      <h3>Can we teach the model not to panic when the clothing moves?</h3>
+      <p>The early baseline tests found a real weakness: search broke when the clothing became
+      small, moved around, or sat inside a wide or tall white canvas. R3 was created from that
+      measured failure, not from a random augmentation list.</p>
+      <p>R3 copies the better R1/R2 parent. One teacher/V1 view stays clean. The other may be
+      cropped, resized, moved, or placed on a normal, wide, or tall canvas. It deliberately avoids
+      colour changes and blur, so <b>geometry is the one main new factor</b>.</p>
+      <p><b>Why R3 exists:</b> it tests whether showing the model the exact failure during training
+      makes it robust. The evidence says yes: it is our strongest canvas model.</p>
+    </div>
+
+    <div class="card">
+      <span class="kind">R4 &middot; similarity question</span>
+      <h3>Can we teach &ldquo;similar product,&rdquo; not only &ldquo;same product&rdquo;?</h3>
+      <p>R1 and R3 only know that two pictures share one product ID. But a shopper wants another
+      similar product, not another file of the exact same product.</p>
+      <p>R4 keeps VICReg and adds a <b>triplet lesson</b>: pull an item toward a different product
+      from the same family, and push a different family farther away. We kept VICReg because only
+      about 41.9% of training rows have a usable family partner.</p>
+      <p><b>Why R4 exists:</b> it tests cheap, weak similarity labels already present in the
+      metadata. The labels mostly come from cleaned product names, so they are incomplete and
+      sometimes wrong. The result tells us that this extra noisy lesson did not improve R3.</p>
+    </div>
+
+    <div class="card">
+      <span class="kind">R5 &middot; different-family question</span>
+      <h3>What if matching pairs is the wrong learning idea?</h3>
+      <p>R1&ndash;R4 all belong to the same VICReg family. Comparing only those models would give
+      us many knobs, but not much breadth. R5 is deliberately different: an
+      <b>autoencoder</b> squashes a picture into 128 numbers and then tries to redraw it from those
+      numbers.</p>
+      <p>We chose this instead of an <code>articleType</code> classifier embedding. A classifier
+      would repeat Task 1 and would train directly toward part of our evaluation label. The
+      autoencoder remains label-free and asks a genuinely different question.</p>
+      <p><b>Why R5 exists:</b> it checks whether learning to preserve the whole image creates a
+      better search description. It became the strongest average-quality model, while also
+      revealing a serious canvas weakness.</p>
+    </div>
+
+    <div class="card">
+      <span class="kind">B1 &middot; comparison only</span>
+      <h3>How much would outside ImageNet experience help?</h3>
+      <p>B1 is R1 with exactly one intended change: its ResNet-18 starts from pretrained ImageNet
+      weights instead of random scratch weights. Keeping the same architecture and VICReg recipe
+      isolates the value of pretraining.</p>
+      <p><b>Why B1 exists:</b> it is a yardstick. It tells us whether our scratch methods are
+      competitive with a model that has already seen many outside images.</p>
+      <p><b>Hard stop:</b> the assignment requires our submitted model to be trained from scratch.
+      B1 can never become a finalist, deployed model, or submitted model, even if it scores first.</p>
+    </div>
+  </div>
+
+  <div class="card tint">
+    <h3>Why use a ladder instead of changing everything at once?</h3>
+    <p>Imagine changing the engine, tyres, fuel, and driver before one race. If the car becomes
+    faster, you do not know which change helped. Our <b>adaptive ladder</b> avoids that problem:</p>
+    <ol>
+      <li>Run R1 and R2. The higher score becomes R3's parent.</li>
+      <li>R3 changes geometry only. The best R1&ndash;R3 model becomes R4's parent.</li>
+      <li>R4 changes the family lesson. R5 separately tests another model family.</li>
+      <li>Rank all scratch candidates using the same fold-1 score.</li>
+      <li>Retrain only the best two scratch choices across all five folds to check that they were
+      not lucky.</li>
+    </ol>
+    <p>This makes every result explainable. R2 tells us depth did not help. R3 tells us targeted
+    geometry did help canvas behaviour. R4 tells us the family proxy did not help. R5 tells us a
+    different learning objective changed the result much more than the small VICReg edits.</p>
+  </div>
+
+  <div class="band">
+    <b>What we deliberately did not do.</b> We did not use the sealed holdout to choose models.
+    We did not allow pretrained B1 to enter selection. We did not train an
+    <code>articleType</code> search model that repeats Task 1. We also did not mix literal
+    60&times;80 and 240&times;320 tensor shapes: teacher and V1 views carry different levels of
+    detail, but every Task 4 image is prepared as the same 240&times;320 model input.
+  </div>
+</section>
+
+<hr class="rule">
+
 <section id="story" aria-labelledby="story-h">
-  <h2 id="story-h">2. The story in one sentence</h2>
+  <h2 id="story-h">3. The story in one sentence</h2>
   <div class="card">
     <p style="font-size:1.16rem;margin:0;"><b>A plain from-scratch autoencoder (R5) finds matching
     products far better than everything else we built — including the pretrained reference — but it
@@ -475,7 +621,7 @@
 <hr class="rule">
 
 <section id="words" aria-labelledby="words-h">
-  <h2 id="words-h">3. Words we use</h2>
+  <h2 id="words-h">4. Words we use</h2>
   <p class="lede">Short, exact meanings. Everything later in the report uses these.</p>
 
   <figure>
@@ -599,7 +745,7 @@
 <hr class="rule">
 
 <section id="truths" aria-labelledby="truths-h">
-  <h2 id="truths-h">4. The two core truths</h2>
+  <h2 id="truths-h">5. The two core truths</h2>
   <p class="lede">If you remember only two things from this report, remember these.</p>
   <div class="truths">
     <div class="truth">
@@ -628,7 +774,7 @@
 <hr class="rule">
 
 <section id="compare" aria-labelledby="compare-h">
-  <h2 id="compare-h">5. Model comparison</h2>
+  <h2 id="compare-h">6. Model comparison</h2>
   <p class="lede">Two different kinds of number live in this section, and mixing them up would be a
   mistake — so they are drawn separately.</p>
 
@@ -812,7 +958,7 @@
 <hr class="rule">
 
 <section id="models" aria-labelledby="models-h">
-  <h2 id="models-h">6. Model by model, honestly</h2>
+  <h2 id="models-h">7. Model by model, honestly</h2>
   <p class="lede">Each card gives the method, why we tried it, the intended advantage, the
   disadvantage, the measured evidence, and whether it could ever be submitted.
   <b>Design intent</b> (what we hoped) is marked separately from <b>observed fact</b> (what the
@@ -1239,7 +1385,7 @@
         <div class="facet">
           <dt>Eligibility</dt>
           <dd><p><span class="pill neutral">Baseline</span> Reported as a comparison, with one open
-          lint issue noted in section 9.</p></dd>
+          lint issue noted in section 10.</p></dd>
         </div>
       </dl>
     </div>
@@ -1249,7 +1395,7 @@
 <hr class="rule">
 
 <section id="stability" aria-labelledby="stability-h">
-  <h2 id="stability-h">7. Stability progress</h2>
+  <h2 id="stability-h">8. Stability progress</h2>
   <p class="lede">One good run can be luck. So for the two finalists we train <b>five fresh
   from-scratch runs</b>, each holding out a different fold, and look at whether the numbers stay
   boringly close together.</p>
@@ -1295,7 +1441,7 @@
     <h3>What was running at snapshot time</h3>
     <p>The fifth R5 run — <span class="mono">f05</span>, the runner holding out <b>fold&nbsp;4</b> —
     was <b>alive at epoch 52 of 100</b>. Queue process <b>PID&nbsp;1249394</b>, worker process
-    <b>PID&nbsp;1332547</b>. Live progress is written to the queue log listed in section&nbsp;11.
+    <b>PID&nbsp;1332547</b>. Live progress is written to the queue log listed in section&nbsp;12.
     Nothing in this report touched, paused, or restarted that job.</p>
   </div>
 
@@ -1308,7 +1454,7 @@
 <hr class="rule">
 
 <section id="gates" aria-labelledby="gates-h">
-  <h2 id="gates-h">8. Practical gates</h2>
+  <h2 id="gates-h">9. Practical gates</h2>
   <p class="lede">A model has to be usable, not just accurate. These are hard pass/fail rules,
   fixed in advance.</p>
 
@@ -1371,7 +1517,7 @@
 <hr class="rule">
 
 <section id="failures" aria-labelledby="failures-h">
-  <h2 id="failures-h">9. Known failures &amp; audit trail</h2>
+  <h2 id="failures-h">10. Known failures &amp; audit trail</h2>
   <p class="lede">Things that went wrong, and exactly what we did about them. None of this is hidden,
   because honest failure analysis is part of what the work is judged on.</p>
 
@@ -1425,7 +1571,7 @@
 <hr class="rule">
 
 <section id="next" aria-labelledby="next-h">
-  <h2 id="next-h">10. What happens next</h2>
+  <h2 id="next-h">11. What happens next</h2>
   <p class="lede">In order. Nothing later starts before the step above it is done.</p>
   <ol class="steps">
     <li>
@@ -1467,7 +1613,7 @@
 <hr class="rule">
 
 <section id="sources" aria-labelledby="sources-h">
-  <h2 id="sources-h">11. Evidence sources</h2>
+  <h2 id="sources-h">12. Evidence sources</h2>
   <p class="lede">Every claim above traces back to one of these. Links are relative to this file's
   folder (<span class="mono">results/reports/</span>).</p>
 
