@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Task 4 Model Comparison — Provisional Snapshot</title>
-<meta name="description" content="Provisional snapshot of the Task 4 Top-K fashion visual search model comparison: five learned candidates, one pretrained reference, two untrained baselines, stability progress, and deployment gates.">
+<meta name="description" content="Provisional snapshot of the Task 4 Top-K fashion visual search model comparison: five learned candidates, one pretrained reference, three untrained methods, stability progress, and deployment gates.">
 <style>
   :root{
     --ink:#16181d;
@@ -387,13 +387,13 @@
 
 <header class="top">
   <p class="eyebrow">MLA2 &middot; Task 4 &middot; Top-K visual search</p>
-  <h1>Which picture-search model should we keep?</h1>
+  <h1>Which picture-search method should we keep?</h1>
   <p class="subtitle">A plain-words comparison of five from-scratch models, one pretrained reference,
-  and two untrained baselines. Written so anyone can read it, with the exact numbers kept intact.</p>
+  and three untrained methods. Written so anyone can read it, with the exact numbers kept intact.</p>
 
   <div class="stamp" role="group" aria-label="Snapshot details">
-    <div><span>Snapshot taken:</span> <b><time datetime="2026-09-02T18:06:54Z">2026-09-02 18:06:54 UTC</time></b></div>
-    <div><span>Local time:</span> <b>2026-09-03 01:06:54 (UTC+7)</b></div>
+    <div><span>Snapshot updated:</span> <b><time datetime="2026-09-02T19:21:37Z">2026-09-02 19:21:37 UTC</time></b></div>
+    <div><span>Local time:</span> <b>2026-09-03 02:21:37 (UTC+7)</b></div>
     <div><span>Status:</span> <b>Provisional</b></div>
     <div><span>Sealed:</span> <b>holdout &amp; quarantine unopened</b></div>
   </div>
@@ -403,7 +403,7 @@
     <span class="txt">
       <strong>Provisional — final R5 fold still running</strong>
       <p>The last of R5's five repeat runs (fold&nbsp;4, run <span class="mono">…stability-r5-a1-fold-4</span>) was
-      still training at epoch&nbsp;52 of&nbsp;100 when this snapshot was taken. So there is
+      had completed epoch&nbsp;62 and started epoch&nbsp;63 of&nbsp;100 when this snapshot was updated. So there is
       <b>no final five-fold R5 number yet</b>, and <b>no winner is declared</b>. Nothing here is frozen.</p>
     </span>
   </div>
@@ -422,7 +422,7 @@
     <li><a href="#origin">2. Why we chose these models</a></li>
     <li><a href="#story">3. The story in one sentence</a></li>
     <li><a href="#words">4. Words we use</a></li>
-    <li><a href="#truths">5. The two core truths</a></li>
+    <li><a href="#truths">5. The three core truths</a></li>
     <li><a href="#compare">6. Model comparison</a></li>
     <li><a href="#models">7. Model by model, honestly</a></li>
     <li><a href="#stability">8. Stability progress</a></li>
@@ -488,16 +488,37 @@
 
   <div class="card">
     <span class="kind">Starting floor &middot; no learning</span>
-    <h3>Random, spatial HSV-edge, and HOG</h3>
+    <h3>Random, spatial HSV-edge, HOG, and their fusion</h3>
     <p><b>The child-sized question:</b> &ldquo;Before building a brain, how well can simple rules
     do?&rdquo;</p>
     <p><b>Random</b> tells us the useless floor. <b>Spatial HSV-edge</b> describes colour and rough
     layout using only 400 numbers. It is cheap, easy to explain, and was frozen before learned
     results existed. <b>HOG</b> came from the researched image-search article and describes the
-    directions of edges, so it tests shape without colour or training.</p>
+    directions of edges, so it tests shape without colour or training. Finally, the
+    <b>HOG + HSV-edge fusion</b> gives shape and colour equal influence, testing whether the two
+    useful hand-written descriptions complement each other.</p>
     <p>Using both HSV-edge and HOG matters. One mostly asks &ldquo;are the colours and rough layout
     alike?&rdquo; The other asks &ldquo;do the outlines point the same way?&rdquo; If a learned model
     cannot beat these cheap rules, the extra training cost needs a very good explanation.</p>
+  </div>
+
+  <div class="card">
+    <span class="kind">Research article &middot; safe use</span>
+    <h3>Yes, the HOG article is doing the same kind of recommendation</h3>
+    <p>The article turns each fashion image into HOG numbers, stores those numbers, then uses
+    <b>brute-force nearest neighbours</b> to return the top matching images. That is the same core
+    recommendation idea as Task&nbsp;4: describe a query, compare it with the gallery, and return
+    the closest items. A KNN &ldquo;fit&rdquo; here mostly stores the gallery; it does not train HOG
+    weights.</p>
+    <p>We can use the article as <b>motivation and a literature reference</b>. Our version keeps the
+    idea but strengthens the experiment: frozen 240&times;320 preprocessing, a content mask, exact
+    cosine ranking, distinct product IDs, four source directions, nDCG@10, timing, storage, and
+    canvas-failure tests.</p>
+    <p><b>What we must not copy:</b> the article creates a fresh <code>train_test_split</code> and
+    fits a MinMax scaler over all HOG features. Our project must use
+    <code>data/processed/splits.csv</code> only, and fitting on validation/gallery data would leak
+    information. We therefore use fixed L2-normalised descriptors and the approved split.</p>
+    <p><a href="https://medium.com/swlh/histogram-of-oriented-gradients-hog-for-multiclass-image-classification-and-image-recommendation-cf0ea2caaae8">Read the HOG classification and image-recommendation article</a>.</p>
   </div>
 
   <div class="grid-2">
@@ -611,10 +632,9 @@
 <section id="story" aria-labelledby="story-h">
   <h2 id="story-h">3. The story in one sentence</h2>
   <div class="card">
-    <p style="font-size:1.16rem;margin:0;"><b>A plain from-scratch autoencoder (R5) finds matching
-    products far better than everything else we built — including the pretrained reference — but it
-    breaks badly when the photo shape changes, which is exactly the thing R3 fixes; so we keep both
-    truths on the table until R5's last repeat run finishes.</b></p>
+    <p style="font-size:1.16rem;margin:0;"><b>R5 is the best learned model at 0.50289, but an
+    untrained equal HOG + HSV-edge fusion reaches 0.50267 — only 0.00022 lower — while both still
+    break badly when the photo canvas changes; R3 remains the clear canvas-robust choice.</b></p>
   </div>
 </section>
 
@@ -745,19 +765,28 @@
 <hr class="rule">
 
 <section id="truths" aria-labelledby="truths-h">
-  <h2 id="truths-h">5. The two core truths</h2>
-  <p class="lede">If you remember only two things from this report, remember these.</p>
+  <h2 id="truths-h">5. The three core truths</h2>
+  <p class="lede">If you remember only three things from this report, remember these.</p>
   <div class="truths">
     <div class="truth">
       <span class="tag">Truth 1 &middot; best average</span>
-      <h3>R5 finds matching products best</h3>
+      <h3>R5 is the best learned model</h3>
       <span class="big">0.50289</span>
       <p>Candidate score (equal mean of teacher&rarr;teacher and V1&rarr;V1 nDCG@10).
       That is <b>1.62&times; R3</b>, and it also beats the <b>pretrained</b> reference B1
-      (0.31335) — a from-scratch model beating a pretrained start.</p>
+      (0.31335) — a from-scratch model beating a pretrained start. It is also the highest measured
+      same-source value, but only narrowly after the new fusion result.</p>
     </div>
     <div class="truth">
-      <span class="tag">Truth 2 &middot; best canvas robustness</span>
+      <span class="tag">Truth 2 &middot; zero-training near-match</span>
+      <h3>HOG + HSV-edge almost matches R5</h3>
+      <span class="big">0.50267</span>
+      <p>Same-source mean with <b>zero learned weights</b>. It is only <b>0.00022</b> below R5,
+      while its source robustness is <b>0.97831</b>. Shape and colour clearly carry complementary
+      information.</p>
+    </div>
+    <div class="truth">
+      <span class="tag">Truth 3 &middot; best canvas robustness</span>
       <h3>R3 survives shape changes best</h3>
       <span class="big">~0.685</span>
       <p>Top-10 overlap on the <b>tall</b> canvas test — by far the strongest of any learned model.
@@ -765,18 +794,18 @@
       R5 is leaning on <b>where pixels sit</b> rather than what the product is.</p>
     </div>
   </div>
-  <p class="band">These two facts do not cancel out and we are not averaging them into one
-  &ldquo;winner&rdquo; number. R5 wins the score we pre-registered as the candidate score; R3 wins
-  the robustness behaviour we actually care about for real use. The final call waits for the fifth
-  R5 fold plus the formal gate and gallery checks.</p>
+  <p class="band">These facts do not cancel out. R5 remains the learned stability finalist under
+  the frozen selection plan. The fusion is a powerful untrained comparison, not a late replacement
+  candidate. R3 wins the canvas behaviour we care about for awkward user photos. The final learned
+  deployment call still waits for the fifth R5 fold plus the formal gate and gallery checks.</p>
 </section>
 
 <hr class="rule">
 
 <section id="compare" aria-labelledby="compare-h">
   <h2 id="compare-h">6. Model comparison</h2>
-  <p class="lede">Two different kinds of number live in this section, and mixing them up would be a
-  mistake — so they are drawn separately.</p>
+  <p class="lede">The learned and untrained rows use the same same-source nDCG@10 calculation, but
+  they have different roles in the frozen study, so they are drawn separately.</p>
 
   <div class="card">
     <h3>Learned candidates — candidate score</h3>
@@ -829,12 +858,17 @@
   </div>
 
   <div class="card">
-    <h3>Untrained baselines — same-source mean (a different measurement)</h3>
+    <h3>Untrained methods — same-source mean</h3>
     <p style="font-size:.92rem;color:var(--ink-soft);margin-top:.2rem;">These are
-    <b>same-source means</b>, not candidate scores. They are <b>comparable-but-not-identical</b>
-    quantities, so they get their own chart. Do not read a baseline bar as if it were a candidate
-    score.</p>
+    the same fold-1 same-source nDCG@10 calculation and are directly useful comparisons. They are
+    shown separately because they have <b>no learned weights</b>, do not enter the training registry,
+    and were not eligible for the pre-registered learned-finalist selection.</p>
     <div class="chart">
+      <div class="row">
+        <div class="name">HOG + HSV-edge <small>2,128 values, equal fusion, untrained</small></div>
+        <div class="track"><div class="fill star" style="--w:91.39" role="img" aria-label="HOG plus HSV-edge same-source mean 0.50267"></div></div>
+        <div class="val">0.50267</div>
+      </div>
       <div class="row">
         <div class="name">Spatial HSV-edge <small>400 values, untrained</small></div>
         <div class="track"><div class="fill base" style="--w:89.07" role="img" aria-label="Spatial HSV-edge same-source mean 0.48988"></div></div>
@@ -846,9 +880,9 @@
         <div class="val">0.46467</div>
       </div>
     </div>
-    <p class="chart-cap">Both baselines are <b>hand-written maths with zero training</b>, and both
-    beat R1, R2, R3, R4 and the pretrained B1. That is a genuinely humbling result and we report it
-    as-is: only R5 clears them.</p>
+    <p class="chart-cap">All three are <b>hand-written maths with zero training</b>, and all three
+    beat R1, R2, R3, R4 and the pretrained B1. The equal HOG + HSV-edge fusion is only
+    <b>0.00022</b> below R5 (about <b>0.04%</b>), a much stronger result than either part alone.</p>
   </div>
 
   <div class="tablewrap">
@@ -920,6 +954,15 @@
           <td class="num">&mdash;</td>
           <td>Bad</td>
           <td><span class="pill no">Comparison only</span></td>
+        </tr>
+        <tr>
+          <th scope="row">HOG + HSV-edge</th>
+          <td>Equal untrained fusion of shape and colour/edge, 2,128 values</td>
+          <td class="num"><b>0.50267</b></td>
+          <td>same-source mean</td>
+          <td class="num">0.97831</td>
+          <td>Catastrophic (wide 0.03295)</td>
+          <td><span class="pill neutral">Baseline</span></td>
         </tr>
         <tr>
           <th scope="row">HSV-edge</th>
@@ -1002,10 +1045,11 @@
         </div>
         <div class="facet">
           <dt>Observed result</dt>
-          <dd><p class="observed">Candidate score <b>0.50289</b> — <b>1.62&times; R3</b>, beats the
-          pretrained B1, and is the best average of every method we tried. Recall@10
-          <b>0.39170</b>. Source robustness <b>0.99984</b> (changing picture source costs almost
-          nothing). Strong on <b>rare-item</b> slices, where the others struggle.</p></dd>
+          <dd><p class="observed">Candidate score <b>0.50289</b> — <b>1.62&times; R3</b> and it
+          beats the pretrained B1. It is the highest same-source result measured, but the untrained
+          HOG + HSV-edge fusion is only <b>0.00022</b> behind. Recall@10 <b>0.39170</b>. Source
+          robustness <b>0.99984</b> (changing picture source costs almost nothing). Strong on
+          <b>rare-item</b> slices, where the others struggle.</p></dd>
         </div>
         <div class="facet">
           <dt>Disadvantage</dt>
@@ -1177,7 +1221,7 @@
         </div>
         <div class="facet">
           <dt>Disadvantage</dt>
-          <dd><p>Low absolute quality; loses to both untrained baselines.</p></dd>
+          <dd><p>Low absolute quality; loses to every untrained descriptor comparison.</p></dd>
         </div>
         <div class="facet">
           <dt>Eligibility</dt>
@@ -1319,9 +1363,9 @@
           <dt>Observed result</dt>
           <dd><p class="observed">Same-source mean <b>0.48988</b>, cross-source <b>0.46171</b>,
           source robustness <b>0.94250</b> — <b>below</b> our 0.95 aim. It is a <b>very strong</b>
-          cheap baseline: it beats R1, R2, R3, R4 <b>and</b> the pretrained B1. Only R5 clears it.
-          But it is sensitive to both source change and canvas change. Timing and storage gates
-          pass.</p></dd>
+          cheap baseline: it beats R1, R2, R3, R4 <b>and</b> the pretrained B1. R5 and the new
+          HOG + HSV-edge fusion clear it. But it is sensitive to both source change and canvas
+          change. Timing and storage gates pass.</p></dd>
         </div>
         <div class="facet">
           <dt>Disadvantage</dt>
@@ -1331,6 +1375,63 @@
         <div class="facet">
           <dt>Eligibility</dt>
           <dd><p><span class="pill neutral">Baseline</span> Reported as a floor for comparison.</p></dd>
+        </div>
+      </dl>
+    </div>
+  </details>
+
+  <details class="model base" open>
+    <summary>
+      <span class="who">
+        <strong>HOG + HSV-edge</strong>
+        <span class="desc">Equal untrained shape + colour fusion, 2,128 values</span>
+      </span>
+      <span class="meta">
+        <span class="score">0.50267</span>
+        <span class="pill neutral">Baseline &middot; same-source mean</span>
+        <span class="caret" aria-hidden="true"></span>
+      </span>
+    </summary>
+    <div class="body">
+      <dl class="facets">
+        <div class="facet">
+          <dt>Method</dt>
+          <dd><p>No training. First L2-normalise the 1,728-value HOG shape descriptor and the
+          400-value spatial HSV-edge descriptor. Multiply each block by
+          <b>1/&radic;2</b>, then join them into one <b>2,128-value</b> unit vector. Exact cosine
+          search therefore gives shape and colour equal total influence.</p></dd>
+        </div>
+        <div class="facet">
+          <dt>Why we tried it</dt>
+          <dd><p class="intent"><b>Design intent.</b> HOG is source-robust shape but loses colour.
+          HSV-edge has strong colour quality but weaker source robustness. Combining them tests
+          whether their useful information is complementary without tuning a weight after seeing
+          results.</p></dd>
+        </div>
+        <div class="facet">
+          <dt>Observed result</dt>
+          <dd><p class="observed">Same-source mean <b>0.50267</b>, cross-source mean
+          <b>0.49177</b>, source robustness <b>0.97831</b>. This beats HOG alone
+          (<b>0.46467</b>) and HSV-edge alone (<b>0.48988</b>), and sits only <b>0.00022</b>
+          below R5's learned candidate score. The fusion hypothesis worked.</p></dd>
+        </div>
+        <div class="facet">
+          <dt>Disadvantage</dt>
+          <dd><p>Canvas behaviour is still bad: clean V1&rarr;V1 <b>0.50025</b> falls to
+          <b>0.03295</b> wide and <b>0.17080</b> tall. Each index is
+          <b>223,368,840 bytes</b> (about 0.208&nbsp;GiB), much larger than a learned 128-value
+          index, although still below the 1&nbsp;GiB gate.</p></dd>
+        </div>
+        <div class="facet">
+          <dt>Practical result</dt>
+          <dd><p>All speed and storage gates pass. Worst p95 end-to-end time is
+          <b>0.24047&nbsp;s</b>. It has zero parameters, zero checkpoint, and did not append a
+          training-registry row.</p></dd>
+        </div>
+        <div class="facet">
+          <dt>Eligibility</dt>
+          <dd><p><span class="pill neutral">Baseline</span> A strong comparison and possible
+          non-learned search method, but not one of the frozen learned stability finalists.</p></dd>
         </div>
       </dl>
     </div>
@@ -1360,8 +1461,9 @@
         <div class="facet">
           <dt>Why we use it</dt>
           <dd><p class="intent"><b>Design intent.</b> An <b>independent shape</b> baseline taken from
-          the motivating article, so we can ask &ldquo;<b>shape or colour</b> — which matters more
-          here?&rdquo; with <b>zero</b> training on either side.</p></dd>
+          the motivating article, which also uses HOG plus brute-force nearest neighbours to return
+          similar fashion images. This lets us ask &ldquo;<b>shape or colour</b> — which matters
+          more here?&rdquo; with <b>zero</b> training on either side.</p></dd>
         </div>
         <div class="facet">
           <dt>Intended advantage</dt>
@@ -1440,7 +1542,7 @@
   <div class="card tint">
     <h3>What was running at snapshot time</h3>
     <p>The fifth R5 run — <span class="mono">f05</span>, the runner holding out <b>fold&nbsp;4</b> —
-    was <b>alive at epoch 52 of 100</b>. Queue process <b>PID&nbsp;1249394</b>, worker process
+    had <b>completed epoch 62 and started epoch 63 of 100</b>. Queue process <b>PID&nbsp;1249394</b>, worker process
     <b>PID&nbsp;1332547</b>. Live progress is written to the queue log listed in section&nbsp;12.
     Nothing in this report touched, paused, or restarted that job.</p>
   </div>
@@ -1484,8 +1586,9 @@
       <span>
         <h4>Size: each searchable index under 1 GiB</h4>
         <p><b>Status:</b> pass. A learned index is <b>17,041,960&nbsp;bytes</b> (about
-        16&nbsp;MiB) — tiny. HOG's index is fatter at <b>0.16896&nbsp;GiB</b> but still passes, and
-        HSV-edge passes too.</p>
+        16&nbsp;MiB) — tiny. HOG's index is <b>0.16896&nbsp;GiB</b>; the fused index is
+        <b>223,368,840 bytes</b> (about <b>0.208&nbsp;GiB</b>). Both still pass, and HSV-edge
+        passes too.</p>
       </span>
     </div>
     <div class="gate">
@@ -1557,7 +1660,8 @@
         <li><b>R2:</b> bigger network, worse result.</li>
         <li><b>R1:</b> white-canvas collapse.</li>
         <li><b>HOG:</b> collapses to 0.01723 on wide canvas.</li>
-        <li><b>Both untrained baselines beat five of our six learned models.</b></li>
+        <li><b>HOG + HSV-edge:</b> nearly matches R5, but still collapses to 0.03295 on wide canvas.</li>
+        <li><b>All three untrained methods beat five of our six learned models.</b></li>
       </ul>
     </div>
     <div class="card">
@@ -1614,8 +1718,8 @@
 
 <section id="sources" aria-labelledby="sources-h">
   <h2 id="sources-h">12. Evidence sources</h2>
-  <p class="lede">Every claim above traces back to one of these. Links are relative to this file's
-  folder (<span class="mono">results/reports/</span>).</p>
+  <p class="lede">Every claim above traces back to one of these. Local links are relative to this
+  file's folder (<span class="mono">results/reports/</span>).</p>
 
   <div class="card">
     <ul class="sources">
@@ -1640,9 +1744,24 @@
         <span class="path"><a href="../evidence/task4/stability/">../evidence/task4/stability/</a></span>
       </li>
       <li>
+        <span class="what">HOG + HSV-edge fusion manifest
+          <small>Completed fusion settings, quality, robustness, canvas, timing and storage evidence.</small></span>
+        <span class="path"><a href="../evidence/task4/hog_fusion/manifest.json">../evidence/task4/hog_fusion/manifest.json</a></span>
+      </li>
+      <li>
+        <span class="what">HOG + HSV-edge example searches (figure)
+          <small>What the completed equal fusion actually returns.</small></span>
+        <span class="path"><a href="../figures/task4/hog_fusion/hog_fusion_examples.png">../figures/task4/hog_fusion/hog_fusion_examples.png</a></span>
+      </li>
+      <li>
         <span class="what">HOG baseline manifest
           <small>Descriptor settings and measured HOG results.</small></span>
         <span class="path"><a href="../evidence/task4/hog/manifest.json">../evidence/task4/hog/manifest.json</a></span>
+      </li>
+      <li>
+        <span class="what">HOG classification and image-recommendation article
+          <small>External motivation for HOG descriptors plus brute-force nearest-neighbour recommendations.</small></span>
+        <span class="path"><a href="https://medium.com/swlh/histogram-of-oriented-gradients-hog-for-multiclass-image-classification-and-image-recommendation-cf0ea2caaae8">Medium article by Anirban Malick</a></span>
       </li>
       <li>
         <span class="what">Decision record 0022 &mdash; Task 4 baseline search
@@ -1676,9 +1795,9 @@
 </main>
 
 <footer class="end">
-  <p><b>Provisional snapshot</b> &middot; generated <time datetime="2026-09-02T18:06:54Z">2026-09-02
-  18:06:54 UTC</time> (2026-09-03 01:06:54 UTC+7) &middot; R5 stability fold&nbsp;4 was still
-  training at epoch&nbsp;52/100. Holdout and quarantine pixels remain unopened. No winner is
+  <p><b>Provisional snapshot</b> &middot; updated <time datetime="2026-09-02T19:21:37Z">2026-09-02
+  19:21:37 UTC</time> (2026-09-03 02:21:37 UTC+7) &middot; R5 stability fold&nbsp;4 had completed
+  epoch&nbsp;62 and started 63/100. Holdout and quarantine pixels remain unopened. No winner is
   declared in this document. This file is self-contained: no network or CDN resources are
   loaded.</p>
 </footer>
