@@ -118,7 +118,7 @@ def test_observability_pack_keeps_labels_out_of_reviewer_files(tmp_path: Path) -
         sample_per_class=1,
     )
 
-    assert pack["summary"].iloc[0]["review_status"] == "pending_human_review"
+    assert pack["summary"].iloc[0]["review_status"] == "deferred_non_blocking"
     assert int(pack["summary"].iloc[0]["ultra_rare_usage_rows"]) == 5
     for path in pack["reviewer_paths"]:
         reviewer = pd.read_csv(path, keep_default_na=False)
@@ -298,6 +298,12 @@ def test_teacher_only_orchestrator_writes_hashed_completion_manifest(
 
     completion = result["completion"]
     assert completion["automated_audits_complete"] is True
+    assert completion["training_screen_ready"] is True
+    assert completion["training_blockers"] == []
+    assert completion["human_observability_review_status"] == "deferred_non_blocking"
+    assert completion["deferred_items"] == [
+        "two_independent_human_observability_reviews"
+    ]
     assert completion["image_scope"] == "teacher_development_images_only"
     assert completion["audit_contract_hash"]
     assert completion["artifact_manifest_sha256"]
@@ -359,6 +365,8 @@ def test_label_change_invalidates_completed_human_review(tmp_path: Path) -> None
     )
 
     assert rerun["completion"]["human_observability_review_complete"] is False
+    assert rerun["completion"]["training_screen_ready"] is True
+    assert rerun["completion"]["training_blockers"] == []
     assert not (output / "observability_review/observability_review_lock.json").exists()
     assert not (
         output / "observability_review/answer_key/observability_answer_key.csv"
