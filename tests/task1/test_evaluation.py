@@ -170,7 +170,7 @@ def test_aggregate_fold_metrics_requires_five_folds() -> None:
 def test_aggregate_fold_metrics_requires_unique_fold_labels() -> None:
     rows = [{"fold": fold, "macro_f1": 0.1} for fold in [0, 1, 2, 3, 3]]
     with pytest.raises(ValueError, match="unique labels"):
-        from fashion.task1.experiments import _aggregate_comparison
+        from fashion.task1.cnn_experiments import _aggregate_comparison
 
         _aggregate_comparison(
             pd.DataFrame(
