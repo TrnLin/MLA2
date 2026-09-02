@@ -23,18 +23,22 @@ from fashion.config import (
 )
 from fashion.data.dataset import get_samples
 from fashion.data.hashing import compute_sha256
-from fashion.task1.classical import (
-    TASK1_DEFAULT_KNN,
-    TASK1_DEFAULT_SVM,
+from fashion.task1.classical_features import (
     TASK1_HOG_COARSE,
     TASK1_HOG_SPECS,
+    Task1HogSpec,
+)
+from fashion.task1.classical_models import (
+    TASK1_DEFAULT_KNN,
+    TASK1_DEFAULT_SVM,
     TASK1_KNN_GRID,
     TASK1_SVM_GRID,
-    Task1ClassicalFoldResult,
     Task1ClassicalModelConfig,
-    Task1ClassicalRunConfig,
-    Task1HogSpec,
     Task1LinearSVMConfig,
+)
+from fashion.task1.classical_training import (
+    Task1ClassicalFoldResult,
+    Task1ClassicalRunConfig,
     _classical_implementation_sha256,
     run_task1_classical_fold,
 )

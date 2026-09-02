@@ -7,15 +7,22 @@ from fashion.task1.analysis import (
     build_task1_problem_profile,
     build_task1_weak_class_table,
 )
-from fashion.task1.classical import (
+from fashion.task1.classical_features import (
     TASK1_HOG_COARSE,
     TASK1_HOG_FINE,
     TASK1_HOG_SPECS,
+    Task1HogSpec,
+)
+from fashion.task1.classical_models import (
     TASK1_KNN_GRID,
     TASK1_SVM_GRID,
-    Task1HogSpec,
     Task1KNNConfig,
     Task1LinearSVMConfig,
+)
+from fashion.task1.classical_training import (
+    Task1ClassicalFoldResult,
+    Task1ClassicalRunConfig,
+    run_task1_classical_fold,
 )
 from fashion.task1.dataset import Task1TorchDataset, get_task1_fold_rows
 from fashion.task1.evaluation import (
@@ -84,6 +91,9 @@ __all__ = [
     "Task1HogSpec",
     "Task1KNNConfig",
     "Task1LinearSVMConfig",
+    "Task1ClassicalRunConfig",
+    "Task1ClassicalFoldResult",
+    "run_task1_classical_fold",
     "Task1ClassicalExperimentResult",
     "Task1ClassicalSelection",
     "run_task1_classical_experiment",
