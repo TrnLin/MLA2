@@ -743,7 +743,7 @@ def run_task3_baseline_fold(
         criterion: nn.Module = GenderAudienceAuxiliaryCrossEntropy(
             primary_weight=child_spec.primary_loss_weight,
             auxiliary_weight=child_spec.auxiliary_loss_weight,
-        )
+        ).to(device)
         evaluation_criterion: nn.Module = criterion
     elif selection_strategy == "usage_article_type_exception_balance_v1":
         if class_weight_tensor is None:

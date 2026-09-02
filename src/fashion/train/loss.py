@@ -42,7 +42,8 @@ class GenderAudienceAuxiliaryCrossEntropy(nn.Module):
             raise ValueError("primary and audience logits must contain the same rows")
         if torch.any(target < 0) or torch.any(target >= len(self.audience_index)):
             raise ValueError("Gender targets must use the fixed five-class index order")
-        audience_target = self.audience_index[target]
+        audience_index = self.audience_index.to(device=target.device)
+        audience_target = audience_index[target]
         primary_loss = F.cross_entropy(primary_logits, target)
         audience_loss = F.cross_entropy(audience_logits, audience_target)
         return self.primary_weight * primary_loss + self.auxiliary_weight * audience_loss

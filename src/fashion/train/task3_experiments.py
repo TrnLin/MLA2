@@ -1121,7 +1121,7 @@ def check_task3_child_setup(
             memory_loss = GenderAudienceAuxiliaryCrossEntropy(
                 primary_weight=spec.primary_loss_weight,
                 auxiliary_weight=spec.auxiliary_loss_weight,
-            )(memory_primary, memory_auxiliary, memory_labels)
+            ).to(device)(memory_primary, memory_auxiliary, memory_labels)
             memory_loss.backward()
             peak_memory_bytes = int(torch.cuda.max_memory_allocated(device))
             model.zero_grad(set_to_none=True)
