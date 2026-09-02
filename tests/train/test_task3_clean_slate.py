@@ -163,6 +163,13 @@ def test_clean_slate_screen_notebook_keeps_models_and_folds_separate() -> None:
     assert "load_splits_for_final_evaluation" not in source
     assert "human observability review is deferred" in source.lower()
     assert "reuse_completed=True" in code
+    assert "google.colab" not in source
+    assert "/content" not in source
+    assert "DRIVE_" not in source
+    assert "LOCAL_TASK_DIR = REPO_DIR / 'results/task3'" in code
+    assert code.count("output_root=LOCAL_TASK_DIR") == 3
+    assert code.count("registry_path=LOCAL_REGISTRY") == 2
+    assert "LOCAL_EVIDENCE_DIR" in code
     assert not any(
         output.output_type == "error"
         for cell in notebook.cells
