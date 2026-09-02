@@ -8,8 +8,10 @@ import pandas as pd
 import pytest
 
 from fashion.config import ROOT
+from fashion.data import load_label_maps
 from fashion.train.task3_clean_slate import (
     CLEAN_SLATE_SCREEN_FOLDS,
+    _aggregate_screen,
     _canonical_inner_splits,
     _expand_probabilities,
     _screen_folds,
@@ -61,6 +63,81 @@ def test_probability_expansion_obeys_fixed_class_order() -> None:
 
     assert np.allclose(expanded, [[0.3, 0.7, 0.0]])
     assert expanded.sum(axis=1).tolist() == pytest.approx([1.0])
+
+
+def test_screen_anchor_accepts_only_legacy_blank_na_label(prepared_project, tmp_path) -> None:
+    classes = [
+        str(value) for value in load_label_maps(prepared_project.label_maps)["usage"]["classes"]
+    ]
+    label_to_index = {name: index for index, name in enumerate(classes)}
+    probability_columns = [f"probability_{index}_{name}" for index, name in enumerate(classes)]
+
+    rows = []
+    for item_id, fold, label in ((100, 0, "NA"), (101, 4, "Casual")):
+        probabilities = np.full(len(classes), 0.01 / (len(classes) - 1))
+        probabilities[label_to_index[label]] = 0.99
+        rows.append(
+            {
+                "id": item_id,
+                "cv_fold": fold,
+                "true_index": label_to_index[label],
+                "true_label": label,
+                "predicted_label": label,
+                **dict(zip(probability_columns, probabilities, strict=True)),
+            }
+        )
+
+    fold_results = []
+    for row in rows:
+        prediction_path = tmp_path / f"fold_{row['cv_fold']}.csv"
+        pd.DataFrame([row]).to_csv(prediction_path, index=False)
+        fold_results.append(
+            {
+                "run_id": f"fold-{row['cv_fold']}",
+                "prediction_path": prediction_path,
+                "metrics": {
+                    "macro_f1": 1.0,
+                    "train_seconds": 1.0,
+                    "peak_memory_bytes": 1,
+                },
+            }
+        )
+
+    anchor = pd.DataFrame(rows).drop(columns=["cv_fold", "predicted_label"])
+    anchor.loc[anchor["true_label"].eq("NA"), "true_label"] = ""
+    anchor_path = tmp_path / "anchor.csv"
+    anchor.to_csv(anchor_path, index=False)
+
+    result = _aggregate_screen(
+        "usage",
+        fold_results,
+        output_root=tmp_path / "output",
+        root=prepared_project.root,
+        model_family="TestModel",
+        experiment_id="test_experiment",
+        hypothesis_id="test_hypothesis",
+        anchor_prediction_path=anchor_path,
+        artifact_root="test_artifacts",
+    )
+
+    gate = result["metrics"]["screen_gate"]
+    assert gate["anchor_label_integrity"] == "canonical_index_verified"
+    assert gate["anchor_literal_na_label_repairs"] == 1
+
+    anchor.loc[anchor["true_index"].eq(label_to_index["NA"]), "true_label"] = "Casual"
+    anchor.to_csv(anchor_path, index=False)
+    with pytest.raises(ValueError, match="historical anchor labels disagree"):
+        _aggregate_screen(
+            "usage",
+            fold_results,
+            output_root=tmp_path / "invalid-output",
+            root=prepared_project.root,
+            model_family="TestModel",
+            experiment_id="test_experiment",
+            hypothesis_id="test_hypothesis",
+            anchor_prediction_path=anchor_path,
+            artifact_root="test_artifacts",
+        )
 
 
 def test_first_screen_rejects_a_five_fold_run() -> None:
