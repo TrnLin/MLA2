@@ -53,10 +53,42 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04h_task3_early_stopping_translation_e8_experiments.ipynb",
         "04i_task3_semantic_filter_exception_balance_e9_experiments.ipynb",
         "04j_task3_audience_aux_e10_experiment.ipynb",
+        "04k_task3_clean_slate_eda.ipynb",
         *TASK_SPECS,
     }
     present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
     assert present == allowed
+
+
+def test_task3_clean_slate_eda_is_separate_and_label_safe() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/04k_task3_clean_slate_eda.ipynb", as_version=4
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == "Task 3 — Clean-Slate EDA"
+    assert "write_clean_slate_eda_tables" in code
+    assert "load_splits" in code
+    assert "train_test_split" not in source
+    assert "load_splits_for_final_evaluation" not in source
+    assert "pretrained=True" not in source
+    assert "observability gate" in source.lower()
+    assert "high-resolution" not in source.lower()
+    assert "external_image" not in source
+    assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
+    assert {
+        "t3-clean-eda-setup",
+        "t3-clean-eda-run",
+        "t3-clean-eda-observability",
+        "t3-clean-eda-foreground",
+        "t3-clean-eda-nuisance",
+        "t3-clean-eda-family",
+        "t3-clean-eda-neighbourhoods",
+        "t3-clean-eda-folds",
+        "t3-clean-eda-gate",
+    } == {cell.id for cell in notebook.cells if cell.cell_type == "code"}
 
 
 def test_task3_baseline_training_runner_is_foreground_and_complete() -> None:
