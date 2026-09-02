@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import nbformat
 import numpy as np
 import pandas as pd
@@ -98,27 +100,47 @@ def test_preflight_is_zero_fit_and_human_review_is_non_blocking(prepared_project
     assert check["gender_model"] != check["usage_model"]
 
 
-def test_teacher_feature_cache_is_verified_before_reuse(prepared_project, tmp_path) -> None:
+def test_teacher_feature_cache_is_built_locally_then_verified_before_reuse(
+    prepared_project, tmp_path, monkeypatch
+) -> None:
     from fashion.data import load_splits
 
     splits = load_splits(prepared_project.splits)
+    durable_dir = tmp_path / "drive" / "features"
+    local_work_dir = tmp_path / "content" / "feature-work"
+    opened_paths: list[Path] = []
+    original_open_memmap = np.lib.format.open_memmap
+
+    def record_open_memmap(filename, *args, **kwargs):
+        opened_paths.append(Path(filename))
+        return original_open_memmap(filename, *args, **kwargs)
+
+    monkeypatch.setattr(np.lib.format, "open_memmap", record_open_memmap)
     first = build_fixed_feature_cache(
         splits,
         view="full",
         audit_contract_hash="fixed-test-audit",
-        output_dir=tmp_path / "features",
+        output_dir=durable_dir,
         root=prepared_project.root,
         workers=2,
+        local_work_dir=local_work_dir,
     )
+    build_paths = list(opened_paths)
     second = build_fixed_feature_cache(
         splits,
         view="full",
         audit_contract_hash="fixed-test-audit",
-        output_dir=tmp_path / "features",
+        output_dir=durable_dir,
         root=prepared_project.root,
         workers=2,
+        local_work_dir=local_work_dir,
     )
 
+    assert build_paths
+    assert all(path.parent == local_work_dir for path in build_paths)
+    assert Path(first["matrix_path"]).parent == durable_dir
+    assert not list(local_work_dir.glob("*.npy"))
+    assert not list(durable_dir.glob("*.tmp.npy"))
     assert first["reused"] is False
     assert second["reused"] is True
     assert first["rows"] == second["rows"]
