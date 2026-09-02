@@ -104,6 +104,12 @@ def test_problem_profile_rejects_missing_article_type_summary() -> None:
         build_task1_problem_profile(_splits(), _class_summary().query("target != 'articleType'"))
 
 
+@pytest.mark.parametrize("column", ["target", "untrainable_fold_count", "rare_warning"])
+def test_problem_profile_rejects_missing_class_summary_columns(column: str) -> None:
+    with pytest.raises(ValueError, match="class summary is missing columns"):
+        build_task1_problem_profile(_splits(), _class_summary().drop(columns=column))
+
+
 def test_problem_profile_rejects_negative_untrainable_count() -> None:
     summary = _class_summary()
     summary.loc[0, "untrainable_fold_count"] = -1

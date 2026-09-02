@@ -35,6 +35,9 @@ def build_task1_problem_profile(
         raise ValueError("Task 1 EDA requires unique development products")
     if not set(splits["partition"]).issubset({"development", "holdout", "quarantine"}):
         raise ValueError("Task 1 EDA contains an unknown partition")
+    summary_required = {"target", "rare_warning", "untrainable_fold_count"}
+    if missing := summary_required.difference(class_summary.columns):
+        raise ValueError(f"Task 1 class summary is missing columns: {sorted(missing)}")
     summary = class_summary.loc[class_summary["target"].eq("articleType")].copy()
     if summary.empty:
         raise ValueError("Task 1 EDA requires the articleType class summary")
