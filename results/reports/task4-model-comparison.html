@@ -43,7 +43,7 @@
     line-height:1.62;
   }
 
-  .wrap{max-width:1000px;margin:0 auto;padding:0 20px 72px;}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 28px 72px;}
 
   a{color:var(--focus);text-decoration:underline;text-underline-offset:2px;}
   a:hover{text-decoration-thickness:2px;}
@@ -343,6 +343,13 @@
     padding:7px 14px;cursor:pointer;
   }
   button.btn:hover{background:var(--panel);}
+  a.btn{
+    display:inline-block;font-size:.88rem;font-weight:600;text-decoration:none;
+    background:var(--page);color:var(--ink);
+    border:1px solid var(--line);border-radius:6px;
+    padding:7px 14px;cursor:pointer;
+  }
+  a.btn:hover{background:var(--panel);}
 
   footer.end{
     margin-top:40px;padding-top:18px;border-top:1px solid var(--line);
@@ -351,6 +358,7 @@
 
   @media (max-width:620px){
     body{font-size:16px;}
+    .wrap{padding-left:18px;padding-right:18px;}
     h1{font-size:1.6rem;}
     .chart .row{grid-template-columns:1fr;gap:3px;padding:8px 0;}
     .chart .val{text-align:left;}
@@ -402,13 +410,14 @@
     <span class="dot" aria-hidden="true"></span>
     <span class="txt">
       <strong>Provisional — final R5 fold still running</strong>
-      <p>The last of R5's five repeat runs (fold&nbsp;4, run <span class="mono">…stability-r5-a1-fold-4</span>) was
+      <p>The last of R5's five repeat runs (fold&nbsp;4, run <span class="mono">…stability-r5-a1-fold-4</span>)
       had completed epoch&nbsp;62 and started epoch&nbsp;63 of&nbsp;100 when this snapshot was updated. So there is
       <b>no final five-fold R5 number yet</b>, and <b>no winner is declared</b>. Nothing here is frozen.</p>
     </span>
   </div>
 
   <div class="toolbar">
+    <a class="btn" href="task4-method-guide.html">Open the plain-language method guide</a>
     <button class="btn" type="button" data-action="open-all">Open all model details</button>
     <button class="btn" type="button" data-action="close-all">Close all model details</button>
     <button class="btn" type="button" data-action="print">Print / save as PDF</button>
@@ -642,7 +651,9 @@
 
 <section id="words" aria-labelledby="words-h">
   <h2 id="words-h">4. Words we use</h2>
-  <p class="lede">Short, exact meanings. Everything later in the report uses these.</p>
+  <p class="lede">Short, exact meanings. Everything later in the report uses these. For diagrams and
+  full explanations of VICReg, HOG, HSV-edge, fusion, and the R5 autoencoder, open the
+  <a href="task4-method-guide.html">separate plain-language method guide</a>.</p>
 
   <figure>
     <svg viewBox="0 0 940 130" role="img" aria-labelledby="pipe-t pipe-d">
