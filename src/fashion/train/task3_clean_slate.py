@@ -15,6 +15,8 @@ import os
 import pickle
 import platform
 import resource
+import shutil
+import tempfile
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -326,8 +328,9 @@ def build_fixed_feature_cache(
     output_dir: str | Path,
     root: str | Path = ROOT,
     workers: int | None = None,
+    local_work_dir: str | Path | None = None,
 ) -> dict[str, Any]:
-    """Build or verify one teacher-only, label-blind feature matrix."""
+    """Build locally, then publish one teacher-only, label-blind feature matrix."""
 
     root = Path(root)
     output = Path(output_dir)
@@ -373,25 +376,48 @@ def build_fixed_feature_cache(
             return fixed_feature_vector(source, view=view)
 
     first = extract(records[0])
-    temporary = matrix_path.with_suffix(".tmp.npy")
-    matrix = np.lib.format.open_memmap(
-        temporary,
-        mode="w+",
-        dtype=np.float32,
-        shape=(len(records), len(first)),
+    work_dir = (
+        Path(local_work_dir)
+        if local_work_dir is not None
+        else Path(tempfile.gettempdir()) / "fashion-task3-clean-slate"
     )
-    matrix[0] = first
-    worker_count = workers or min(12, (os.cpu_count() or 4) * 2)
-    with ThreadPoolExecutor(max_workers=worker_count) as executor:
-        for position, vector in enumerate(executor.map(extract, records[1:]), start=1):
-            if vector.shape != first.shape:
-                raise ValueError("fixed feature dimensions changed between teacher images")
-            matrix[position] = vector
-            if position % 2500 == 0:
-                _log(f"feature view={view}: {position:,}/{len(records):,} images")
-    matrix.flush()
-    del matrix
-    os.replace(temporary, matrix_path)
+    work_dir.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary_name = tempfile.mkstemp(
+        prefix=f"{view}_{audit_contract_hash[:16]}_",
+        suffix=".npy",
+        dir=work_dir,
+    )
+    os.close(descriptor)
+    local_temporary = Path(temporary_name)
+    durable_staging = matrix_path.with_suffix(".tmp.npy")
+    _log(f"building feature view={view} on local disk: {local_temporary}")
+    try:
+        matrix = np.lib.format.open_memmap(
+            local_temporary,
+            mode="w+",
+            dtype=np.float32,
+            shape=(len(records), len(first)),
+        )
+        try:
+            matrix[0] = first
+            worker_count = workers or min(12, (os.cpu_count() or 4) * 2)
+            with ThreadPoolExecutor(max_workers=worker_count) as executor:
+                for position, vector in enumerate(executor.map(extract, records[1:]), start=1):
+                    if vector.shape != first.shape:
+                        raise ValueError("fixed feature dimensions changed between teacher images")
+                    matrix[position] = vector
+                    if position % 2500 == 0:
+                        _log(f"feature view={view}: {position:,}/{len(records):,} images")
+            matrix.flush()
+        finally:
+            del matrix
+
+        _log(f"copying completed feature view={view} to durable storage")
+        shutil.copyfile(local_temporary, durable_staging)
+        os.replace(durable_staging, matrix_path)
+    finally:
+        local_temporary.unlink(missing_ok=True)
+        durable_staging.unlink(missing_ok=True)
     write_deterministic_csv(development[["id"]], ids_path, index=False)
     _json_dump(
         {
@@ -421,6 +447,7 @@ def prepare_clean_slate_screen_features(
     root: str | Path = ROOT,
     output_root: str | Path,
     workers: int | None = None,
+    local_work_dir: str | Path | None = None,
 ) -> dict[str, Any]:
     """Hash the teacher scope once and prepare both separate model inputs."""
 
@@ -435,6 +462,7 @@ def prepare_clean_slate_screen_features(
         output_dir=cache_dir,
         root=root,
         workers=workers,
+        local_work_dir=local_work_dir,
     )
     usage = build_fixed_feature_cache(
         splits,
@@ -443,6 +471,7 @@ def prepare_clean_slate_screen_features(
         output_dir=cache_dir,
         root=root,
         workers=workers,
+        local_work_dir=local_work_dir,
     )
     return {"audit_contract": audit, "gender": gender, "usage": usage}
 
