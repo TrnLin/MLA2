@@ -1,0 +1,299 @@
+{
+  "checkpoint_bytes": 0,
+  "contract": {
+    "colour_mode": "RGB",
+    "height": 320,
+    "pad_color": [
+      255,
+      255,
+      255
+    ],
+    "resample": "LANCZOS",
+    "resize": "aspect_preserving_letterbox",
+    "width": 240
+  },
+  "descriptor_config": {
+    "block_size_cells": 2,
+    "block_stride_cells": 1,
+    "cell_size_pixels": 32,
+    "descriptor_dimension": 1728,
+    "gaussian_kernel": [
+      1,
+      4,
+      6,
+      4,
+      1
+    ],
+    "gaussian_kernel_normalizer": 16,
+    "grayscale": "rec709-luminance",
+    "input_height": 320,
+    "input_width": 240,
+    "l2_hys_clip": 0.2,
+    "mask_policy": "normalized-blur-and-valid-central-differences",
+    "schema_version": "1.0.0",
+    "unsigned_orientation_bins": 8,
+    "zero_gradient_policy": "canonical-unit-sentinel"
+  },
+  "descriptor_fingerprint": "c4604537474ff5ed8889a9e480053b225064fb20027e147582960bb3afd3a848",
+  "fold": 1,
+  "hardware": {
+    "cpu": "AMD Ryzen Threadripper 3970X 32-Core Processor",
+    "logical_cores": 64,
+    "numpy_version": "2.5.2",
+    "operating_system": "Linux-5.15.0-190-generic-x86_64-with-glibc2.35",
+    "python_version": "3.12.7",
+    "thread_count": 1,
+    "thread_environment": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  "index_under_one_gibibyte": true,
+  "method": "hog-luma-g5-u8-c32-b2-s1-l2hys02-v1",
+  "p95_end_to_end_under_one_second": true,
+  "parameters": 0,
+  "per_source_index_cost": {
+    "teacher": {
+      "build_seconds": 131.26475967594888,
+      "contract": {
+        "colour_mode": "RGB",
+        "height": 320,
+        "pad_color": [
+          255,
+          255,
+          255
+        ],
+        "resample": "LANCZOS",
+        "resize": "aspect_preserving_letterbox",
+        "width": 240
+      },
+      "dimension": 1728,
+      "index_bytes": 181421640,
+      "payload_bytes": 181211904,
+      "peak_rss_bytes": 3583860736,
+      "rows": 26217,
+      "source": "teacher"
+    },
+    "v1": {
+      "build_seconds": 225.33454807603266,
+      "contract": {
+        "colour_mode": "RGB",
+        "height": 320,
+        "pad_color": [
+          255,
+          255,
+          255
+        ],
+        "resample": "LANCZOS",
+        "resize": "aspect_preserving_letterbox",
+        "width": 240
+      },
+      "dimension": 1728,
+      "index_bytes": 181421640,
+      "payload_bytes": 181211904,
+      "peak_rss_bytes": 3583860736,
+      "rows": 26217,
+      "source": "v1"
+    }
+  },
+  "schema_version": 1,
+  "scope": "development",
+  "timed_queries": 6556,
+  "timing_summary": [
+    {
+      "gallery_source": "teacher",
+      "metric": "encoding",
+      "percentile": "p50",
+      "query_source": "teacher",
+      "timed_queries": 6556,
+      "value_seconds": 0.008862846
+    },
+    {
+      "gallery_source": "teacher",
+      "metric": "encoding",
+      "percentile": "p95",
+      "query_source": "teacher",
+      "timed_queries": 6556,
+      "value_seconds": 0.0091988805
+    },
+    {
+      "gallery_source": "teacher",
+      "metric": "search",
+      "percentile": "p50",
+      "query_source": "teacher",
+      "timed_queries": 6556,
+      "value_seconds": 0.12702831250000002
+    },
+    {
+      "gallery_source": "teacher",
+      "metric": "search",
+      "percentile": "p95",
+      "query_source": "teacher",
+      "timed_queries": 6556,
+      "value_seconds": 0.13348393825
+    },
+    {
+      "gallery_source": "teacher",
+      "metric": "end_to_end",
+      "percentile": "p50",
+      "query_source": "teacher",
+      "timed_queries": 6556,
+      "value_seconds": 0.13588673299999998
+    },
+    {
+      "gallery_source": "teacher",
+      "metric": "end_to_end",
+      "percentile": "p95",
+      "query_source": "teacher",
+      "timed_queries": 6556,
+      "value_seconds": 0.1423706165
+    },
+    {
+      "gallery_source": "v1",
+      "metric": "encoding",
+      "percentile": "p50",
+      "query_source": "v1",
+      "timed_queries": 6556,
+      "value_seconds": 0.0579771385
+    },
+    {
+      "gallery_source": "v1",
+      "metric": "encoding",
+      "percentile": "p95",
+      "query_source": "v1",
+      "timed_queries": 6556,
+      "value_seconds": 0.0684625015
+    },
+    {
+      "gallery_source": "v1",
+      "metric": "search",
+      "percentile": "p50",
+      "query_source": "v1",
+      "timed_queries": 6556,
+      "value_seconds": 0.132601126
+    },
+    {
+      "gallery_source": "v1",
+      "metric": "search",
+      "percentile": "p95",
+      "query_source": "v1",
+      "timed_queries": 6556,
+      "value_seconds": 0.14074364475
+    },
+    {
+      "gallery_source": "v1",
+      "metric": "end_to_end",
+      "percentile": "p50",
+      "query_source": "v1",
+      "timed_queries": 6556,
+      "value_seconds": 0.18468139249999999
+    },
+    {
+      "gallery_source": "v1",
+      "metric": "end_to_end",
+      "percentile": "p95",
+      "query_source": "v1",
+      "timed_queries": 6556,
+      "value_seconds": 0.202354869
+    },
+    {
+      "gallery_source": "v1",
+      "metric": "encoding",
+      "percentile": "p50",
+      "query_source": "teacher",
+      "timed_queries": 6556,
+      "value_seconds": 0.008807554
+    },
+    {
+      "gallery_source": "v1",
+      "metric": "encoding",
+      "percentile": "p95",
+      "query_source": "teacher",
+      "timed_queries": 6556,
+      "value_seconds": 0.0091392845
+    },
+    {
+      "gallery_source": "v1",
+      "metric": "search",
+      "percentile": "p50",
+      "query_source": "teacher",
+      "timed_queries": 6556,
+      "value_seconds": 0.1303940395
+    },
+    {
+      "gallery_source": "v1",
+      "metric": "search",
+      "percentile": "p95",
+      "query_source": "teacher",
+      "timed_queries": 6556,
+      "value_seconds": 0.13627286025
+    },
+    {
+      "gallery_source": "v1",
+      "metric": "end_to_end",
+      "percentile": "p50",
+      "query_source": "teacher",
+      "timed_queries": 6556,
+      "value_seconds": 0.139175721
+    },
+    {
+      "gallery_source": "v1",
+      "metric": "end_to_end",
+      "percentile": "p95",
+      "query_source": "teacher",
+      "timed_queries": 6556,
+      "value_seconds": 0.145148552
+    },
+    {
+      "gallery_source": "teacher",
+      "metric": "encoding",
+      "percentile": "p50",
+      "query_source": "v1",
+      "timed_queries": 6556,
+      "value_seconds": 0.0575789105
+    },
+    {
+      "gallery_source": "teacher",
+      "metric": "encoding",
+      "percentile": "p95",
+      "query_source": "v1",
+      "timed_queries": 6556,
+      "value_seconds": 0.07043397825
+    },
+    {
+      "gallery_source": "teacher",
+      "metric": "search",
+      "percentile": "p50",
+      "query_source": "v1",
+      "timed_queries": 6556,
+      "value_seconds": 0.13079766199999998
+    },
+    {
+      "gallery_source": "teacher",
+      "metric": "search",
+      "percentile": "p95",
+      "query_source": "v1",
+      "timed_queries": 6556,
+      "value_seconds": 0.18058875200000002
+    },
+    {
+      "gallery_source": "teacher",
+      "metric": "end_to_end",
+      "percentile": "p50",
+      "query_source": "v1",
+      "timed_queries": 6556,
+      "value_seconds": 0.19009242650000002
+    },
+    {
+      "gallery_source": "teacher",
+      "metric": "end_to_end",
+      "percentile": "p95",
+      "query_source": "v1",
+      "timed_queries": 6556,
+      "value_seconds": 0.23053560575
+    }
+  ],
+  "warmup_queries": 100
+}

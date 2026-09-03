@@ -92,21 +92,67 @@ def _single_value(series: pd.Series, *, label: str) -> object:
 def _pair_context(
     direction: Direction,
     evaluation: PairEvaluation,
-) -> tuple[int, str]:
+) -> tuple[int, str, str, str | None, str | None, str | None]:
     _require_columns(
         evaluation.summary,
-        {"fold", "size", "query_source", "gallery_source", "protocol"},
+        {
+            "method",
+            "fold",
+            "checkpoint_fingerprint",
+            "config_fingerprint",
+            "descriptor_fingerprint",
+            "size",
+            "query_source",
+            "gallery_source",
+            "protocol",
+        },
         label="pair summary",
     )
     fold = int(_single_value(evaluation.summary["fold"], label="fold"))
+    method = str(_single_value(evaluation.summary["method"], label="method"))
+    checkpoint_fingerprint = _single_value(
+        evaluation.summary["checkpoint_fingerprint"],
+        label="checkpoint fingerprint",
+    )
+    config_fingerprint = _single_value(
+        evaluation.summary["config_fingerprint"],
+        label="config fingerprint",
+    )
+    descriptor_fingerprint = _single_value(
+        evaluation.summary["descriptor_fingerprint"],
+        label="descriptor fingerprint",
+    )
     size = str(_single_value(evaluation.summary["size"], label="size"))
+    summary_identity = (
+        method,
+        fold,
+        checkpoint_fingerprint,
+        config_fingerprint,
+        descriptor_fingerprint,
+    )
+    evaluation_identity = (
+        evaluation.method,
+        evaluation.fold,
+        evaluation.checkpoint_fingerprint,
+        evaluation.config_fingerprint,
+        evaluation.descriptor_fingerprint,
+    )
+    if summary_identity != evaluation_identity:
+        raise ValueError("pair summary provenance disagrees with its evaluation")
     if (
         set(evaluation.summary["query_source"]) != {direction[0]}
         or set(evaluation.summary["gallery_source"]) != {direction[1]}
         or set(evaluation.summary["protocol"]) != {"primary", "family"}
     ):
         raise ValueError("pair summary source or protocol metadata is malformed")
-    return fold, size
+    return (
+        fold,
+        size,
+        method,
+        checkpoint_fingerprint,
+        config_fingerprint,
+        descriptor_fingerprint,
+    )
 
 
 def _prefix(
@@ -118,8 +164,27 @@ def _prefix(
     query_source: str,
     gallery_source: str,
     protocol: str | None = None,
+    checkpoint_fingerprint: str | None = None,
+    config_fingerprint: str | None = None,
+    descriptor_fingerprint: str | None = None,
 ) -> pd.DataFrame:
     labelled = frame.copy()
+    legacy_probe_identity = (
+        method == PROBE_VERSION
+        and fold == 1
+        and checkpoint_fingerprint is None
+        and config_fingerprint is None
+        and descriptor_fingerprint is None
+    )
+    if legacy_probe_identity:
+        labelled = labelled.drop(
+            columns=[
+                "checkpoint_fingerprint",
+                "config_fingerprint",
+                "descriptor_fingerprint",
+            ],
+            errors="ignore",
+        )
     values: dict[str, object] = {
         "method": method,
         "fold": int(fold),
@@ -135,6 +200,23 @@ def _prefix(
             labelled[column] = value
         else:
             labelled.insert(position, column, value)
+    if not legacy_probe_identity:
+        identity_values = [
+            ("checkpoint_fingerprint", checkpoint_fingerprint),
+            ("config_fingerprint", config_fingerprint),
+        ]
+        if descriptor_fingerprint is not None:
+            identity_values.append(
+                ("descriptor_fingerprint", descriptor_fingerprint)
+            )
+        for position, (column, value) in enumerate(
+            identity_values,
+            start=len(_PREFIX_COLUMNS),
+        ):
+            if column in labelled:
+                labelled[column] = value
+            else:
+                labelled.insert(position, column, value)
     prefix = [column for column in _PREFIX_COLUMNS if column in labelled]
     remaining = [column for column in labelled if column not in prefix]
     return labelled.loc[:, [*prefix, *remaining]]
@@ -174,13 +256,29 @@ def build_random_primary_rankings(
 
 def build_query_metrics(
     pair_evaluations: Mapping[Direction, PairEvaluation],
+    *,
+    method: str | None = None,
 ) -> pd.DataFrame:
     """Combine per-query values with their frozen baseline context."""
     _require_directions(pair_evaluations)
     frames: list[pd.DataFrame] = []
+    contexts: set[
+        tuple[int, str, str, str | None, str | None, str | None]
+    ] = set()
     for direction in _DIRECTIONS:
         evaluation = pair_evaluations[direction]
-        fold, size = _pair_context(direction, evaluation)
+        context = _pair_context(direction, evaluation)
+        contexts.add(context)
+        (
+            fold,
+            size,
+            derived_method,
+            checkpoint_fingerprint,
+            config_fingerprint,
+            descriptor_fingerprint,
+        ) = context
+        if method is not None and method != derived_method:
+            raise ValueError("summary method disagrees with feature provenance")
         for protocol, per_query in (
             ("primary", evaluation.primary_per_query),
             ("family", evaluation.family_per_query),
@@ -188,14 +286,19 @@ def build_query_metrics(
             frames.append(
                 _prefix(
                     per_query,
-                    method=PROBE_VERSION,
+                    method=derived_method,
                     fold=fold,
                     size=size,
                     query_source=direction[0],
                     gallery_source=direction[1],
                     protocol=protocol,
+                    checkpoint_fingerprint=checkpoint_fingerprint,
+                    config_fingerprint=config_fingerprint,
+                    descriptor_fingerprint=descriptor_fingerprint,
                 )
             )
+    if len(contexts) != 1:
+        raise ValueError("query metrics require one shared feature provenance")
     return pd.concat(frames, ignore_index=True)
 
 
@@ -308,28 +411,45 @@ def build_baseline_summary(
     pair_evaluations: Mapping[Direction, PairEvaluation],
     random_rankings: pd.DataFrame,
     primary_views: RetrievalViews,
+    *,
+    method: str | None = None,
 ) -> pd.DataFrame:
     """Combine four directions, the random floor, and headline checks."""
     _require_directions(pair_evaluations)
     pair_frames: list[pd.DataFrame] = []
-    contexts: set[tuple[int, str]] = set()
+    contexts: set[
+        tuple[int, str, str, str | None, str | None, str | None]
+    ] = set()
     for direction in _DIRECTIONS:
         evaluation = pair_evaluations[direction]
-        fold, size = _pair_context(direction, evaluation)
-        contexts.add((fold, size))
+        context = _pair_context(direction, evaluation)
+        contexts.add(context)
+        (
+            fold,
+            size,
+            derived_method,
+            checkpoint_fingerprint,
+            config_fingerprint,
+            descriptor_fingerprint,
+        ) = context
+        if method is not None and method != derived_method:
+            raise ValueError("summary method disagrees with feature provenance")
         pair_frames.append(
             _prefix(
                 evaluation.summary,
-                method=PROBE_VERSION,
+                method=derived_method,
                 fold=fold,
                 size=size,
                 query_source=direction[0],
                 gallery_source=direction[1],
+                checkpoint_fingerprint=checkpoint_fingerprint,
+                config_fingerprint=config_fingerprint,
+                descriptor_fingerprint=descriptor_fingerprint,
             )
         )
     if len(contexts) != 1:
-        raise ValueError("baseline pair summaries must share one fold and size")
-    fold, size = contexts.pop()
+        raise ValueError("baseline pair summaries must share one feature provenance and size")
+    fold, size, _, _, _, _ = contexts.pop()
     pair_summary = pd.concat(pair_frames, ignore_index=True)
 
     primary_rows = pair_summary.loc[pair_summary["protocol"].eq("primary")]
@@ -394,6 +514,7 @@ def evaluate_baseline(
     fold: int = 1,
     k_values: tuple[int, ...] = (5, 10, 20),
     family_k: int = 10,
+    method: str | None = None,
 ) -> BaselineEvaluation:
     """Evaluate the frozen probe in all four approved source directions."""
     if fold != 1:
@@ -427,8 +548,13 @@ def evaluate_baseline(
         max_k=max(k_values),
     )
     return BaselineEvaluation(
-        summary=build_baseline_summary(pairs, random_rankings, primary),
-        query_metrics=build_query_metrics(pairs),
+        summary=build_baseline_summary(
+            pairs,
+            random_rankings,
+            primary,
+            method=method,
+        ),
+        query_metrics=build_query_metrics(pairs, method=method),
         pair_evaluations=pairs,
         random_rankings=random_rankings,
     )

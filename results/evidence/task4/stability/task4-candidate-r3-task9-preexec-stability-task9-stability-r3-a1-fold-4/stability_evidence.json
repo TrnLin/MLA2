@@ -1,0 +1,31 @@
+{
+  "artifact_type": "task4_stability_evidence",
+  "checkpoint": {
+    "epoch": 20,
+    "path": "results/evidence/task4/checkpoints/task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-4/epoch-020.pt",
+    "score": 0.3040556020140911
+  },
+  "coverage": {
+    "primary_coverage": 0.999389964922983,
+    "scorable_query_count": 6553,
+    "total_query_count": 6557
+  },
+  "identity": {
+    "checkpoint_sha256": "a91fbcf1ebcde0dded58c583c21c958b49d1e1a66856038366b0e8a9924b6982",
+    "config_hash": "62eac816291fd68fe8859720774c3ad717e764d67a878e7aeacfa1624a472481",
+    "fold": 4,
+    "method": "R3",
+    "parent_run_id": "task4-candidate-r3-task9-preexec",
+    "run_id": "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-4",
+    "run_kind": "stability",
+    "split_fingerprint": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd"
+  },
+  "schema_version": "1.0.0",
+  "selected_metrics": {
+    "development_winner_score": 0.3040556020140911
+  },
+  "source_feature_manifests": {
+    "teacher": "results/cache/task4/features/stability/task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-4/a91fbcf1ebcde0dd/62eac816291fd68f/fold-4/teacher/fcd06b8fa7dbdd49605a/manifest.json",
+    "v1": "results/cache/task4/features/stability/task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-4/a91fbcf1ebcde0dd/62eac816291fd68f/fold-4/v1/a60f2d9cc9bffb3068bc/manifest.json"
+  }
+}

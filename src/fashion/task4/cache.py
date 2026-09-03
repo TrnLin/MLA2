@@ -20,12 +20,15 @@ import pandas as pd
 
 from fashion.config import ROOT
 from fashion.data.images import StreamingStats
+from fashion.data.splits import cv_assignment_digest, validate_split_structure
 from fashion.task4.preprocessing import (
     PreprocessingContract,
     load_preprocessed_image,
 )
 
 CACHE_SCHEMA_VERSION = "1.0.0"
+_SHA256_LENGTH = 64
+_HEX_DIGITS = frozenset("0123456789abcdef")
 
 __all__ = (
     "CACHE_SCHEMA_VERSION",
@@ -314,13 +317,64 @@ def ensure_development_image_cache(
         return load_development_image_cache(cache_dir)
 
 
+def _validated_split_digest(value: object) -> str:
+    if (
+        not isinstance(value, str)
+        or len(value) != _SHA256_LENGTH
+        or not _HEX_DIGITS.issuperset(value)
+    ):
+        raise ValueError("split_fingerprint must be a lowercase SHA-256 digest")
+    return value
+
+
+def _canonical_split_digest(
+    working: pd.DataFrame,
+    canonical_splits: pd.DataFrame,
+) -> str:
+    validate_split_structure(canonical_splits)
+    development = canonical_splits.loc[
+        canonical_splits["partition"].eq("development")
+    ]
+    canonical_folds = pd.Series(
+        pd.to_numeric(development["cv_fold"], errors="coerce").astype(int).to_numpy(),
+        index=development["id"].astype(np.int64).to_numpy(),
+    )
+    statistics_folds = pd.Series(
+        working["cv_fold"].astype(int).to_numpy(),
+        index=working["id"].astype(np.int64).to_numpy(),
+    )
+    if not statistics_folds.index.isin(canonical_folds.index).all():
+        raise ValueError("statistics IDs are not canonical development rows")
+    if not statistics_folds.equals(canonical_folds.reindex(statistics_folds.index)):
+        raise ValueError("statistics folds disagree with the canonical splits")
+    return cv_assignment_digest(canonical_splits)
+
+
+def _resolve_split_fingerprint(
+    working: pd.DataFrame,
+    *,
+    canonical_splits: pd.DataFrame | None,
+    split_fingerprint: str | None,
+) -> str:
+    if (canonical_splits is None) == (split_fingerprint is None):
+        raise ValueError(
+            "cached RGB statistics require exactly one of canonical_splits "
+            "or an already validated split_fingerprint"
+        )
+    if canonical_splits is None:
+        return _validated_split_digest(split_fingerprint)
+    return _canonical_split_digest(working, canonical_splits)
+
+
 def fit_cached_fold_rgb_statistics(
     cache: DevelopmentImageCache,
     frame: pd.DataFrame,
     *,
     validation_fold: int,
+    canonical_splits: pd.DataFrame | None = None,
+    split_fingerprint: str | None = None,
 ) -> dict[str, object]:
-    """Fit current-round RGB statistics from a validated development cache."""
+    """Fit current-round RGB statistics bound to the canonical split identity."""
     if (
         isinstance(validation_fold, bool)
         or not isinstance(validation_fold, Integral)
@@ -349,6 +403,11 @@ def fit_cached_fold_rgb_statistics(
         raise ValueError("cached RGB statistics require CV folds in range(5)")
     if set(working["id"]) != set(int(value) for value in cache.ids):
         raise ValueError("statistics frame IDs must exactly match the cache")
+    fingerprint = _resolve_split_fingerprint(
+        working,
+        canonical_splits=canonical_splits,
+        split_fingerprint=split_fingerprint,
+    )
 
     folds_by_id = working.set_index("id")["cv_fold"]
     stats = StreamingStats()
@@ -369,6 +428,7 @@ def fit_cached_fold_rgb_statistics(
         raise ValueError("cached RGB statistics have no training rows")
     return {
         "validation_fold": int(validation_fold),
+        "split_fingerprint": fingerprint,
         "training_rows": len(training_ids),
         "training_id_sha256": _digest_lines([str(value) for value in training_ids]),
         "content_pixels": stats.total_pixels,

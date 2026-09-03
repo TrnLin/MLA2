@@ -6,15 +6,23 @@ import pytest
 
 import fashion.task4.baseline as baseline_module
 from fashion.task4.baseline import (
+    Direction,
+    build_baseline_summary,
     build_headline_summary,
+    build_query_metrics,
     build_random_primary_rankings,
     evaluate_baseline,
     verify_preprocessing_reproduction,
 )
 from fashion.task4.preprocessing import PreprocessingContract
-from fashion.task4.preprocessing_experiment import FeatureIndex
+from fashion.task4.preprocessing_experiment import (
+    FeatureIndex,
+    PairEvaluation,
+    evaluate_source_pair,
+    source_directions,
+)
 from fashion.task4.probe import PROBE_VERSION
-from fashion.task4.protocol import RetrievalViews
+from fashion.task4.protocol import RetrievalViews, build_development_views
 
 
 def _retrieval_views() -> RetrievalViews:
@@ -77,7 +85,15 @@ def _baseline_splits() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def _feature_index(source: str, *, width: int = 240) -> FeatureIndex:
+def _feature_index(
+    source: str,
+    *,
+    width: int = 240,
+    method: str = PROBE_VERSION,
+    fold: int = 1,
+    checkpoint_fingerprint: str | None = None,
+    config_fingerprint: str | None = None,
+) -> FeatureIndex:
     ids = np.array([*range(100, 111), *range(200, 220)], dtype=np.int64)
     features = np.ones((len(ids), 1), dtype=np.float32)
     return FeatureIndex(
@@ -87,6 +103,10 @@ def _feature_index(source: str, *, width: int = 240) -> FeatureIndex:
         features=features,
         transform_seconds=1.0,
         source_bytes=100,
+        method=method,
+        fold=fold,
+        checkpoint_fingerprint=checkpoint_fingerprint,
+        config_fingerprint=config_fingerprint,
     )
 
 
@@ -140,6 +160,72 @@ def test_baseline_runs_all_four_source_directions_and_labels_evidence() -> None:
         "passed",
     ]
     assert random_floor.item() is False
+
+
+def _learned_pair_evaluations() -> tuple[
+    RetrievalViews,
+    dict[Direction, PairEvaluation],
+]:
+    primary, family = build_development_views(_baseline_splits())
+    indexes = {
+        source: _feature_index(
+            source,
+            method="r1-vicreg",
+            checkpoint_fingerprint="checkpoint-a",
+            config_fingerprint="config-a",
+        )
+        for source in ("teacher", "v1")
+    }
+    pairs = {
+        direction: evaluate_source_pair(
+            indexes[direction[0]],
+            indexes[direction[1]],
+            primary_views=primary,
+            family_views=family,
+            fold=1,
+            k_values=(5, 10, 20),
+            family_k=10,
+        )
+        for direction in source_directions()
+    }
+    return primary, pairs
+
+
+def test_summary_builders_derive_real_learned_provenance() -> None:
+    primary, pairs = _learned_pair_evaluations()
+    random_rankings = build_random_primary_rankings(primary)
+
+    query_metrics = build_query_metrics(pairs)
+    summary = build_baseline_summary(
+        pairs,
+        random_rankings,
+        primary,
+    )
+
+    assert set(query_metrics["method"]) == {"r1-vicreg"}
+    pair_methods = summary.loc[
+        summary["query_source"].isin(("teacher", "v1")), "method"
+    ]
+    assert set(pair_methods) == {"r1-vicreg"}
+    assert set(query_metrics["fold"]) == {1}
+    assert set(summary["fold"]) == {1}
+    assert set(query_metrics["checkpoint_fingerprint"]) == {"checkpoint-a"}
+    assert set(query_metrics["config_fingerprint"]) == {"config-a"}
+
+
+def test_summary_builders_reject_a_free_method_label_that_disagrees() -> None:
+    primary, pairs = _learned_pair_evaluations()
+    random_rankings = build_random_primary_rankings(primary)
+
+    with pytest.raises(ValueError, match="method.*provenance"):
+        build_query_metrics(pairs, method=PROBE_VERSION)
+    with pytest.raises(ValueError, match="method.*provenance"):
+        build_baseline_summary(
+            pairs,
+            random_rankings,
+            primary,
+            method=PROBE_VERSION,
+        )
 
 
 def test_baseline_passes_frozen_quality_chunk_size_to_all_four_pairs(

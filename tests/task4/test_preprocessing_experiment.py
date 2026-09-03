@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import importlib.util
+import json
 import subprocess
 import sys
+from dataclasses import replace
 
 import numpy as np
 import pandas as pd
@@ -10,6 +13,7 @@ from PIL import Image
 
 import fashion.task4.preprocessing_experiment as preprocessing_experiment
 from fashion.config import ROOT
+from fashion.data.splits import cv_assignment_digest
 from fashion.task4.preprocessing import PreprocessingContract
 from fashion.task4.preprocessing_experiment import (
     FeatureIndex,
@@ -25,6 +29,40 @@ from fashion.task4.preprocessing_experiment import (
     summarize_stability,
 )
 from fashion.task4.protocol import RetrievalViews
+
+
+def _learned_extract(pixels: np.ndarray, _mask: np.ndarray) -> np.ndarray:
+    feature = np.zeros(128, dtype=np.float32)
+    feature[int(pixels[0, 0, 0]) % 128] = 1.0
+    return feature
+
+
+def _nan_extract(_pixels: np.ndarray, _mask: np.ndarray) -> np.ndarray:
+    return np.array([np.nan, 0.0], dtype=np.float32)
+
+
+def _nonconvertible_extract(_pixels: np.ndarray, _mask: np.ndarray) -> np.ndarray:
+    return np.array(["not-a-number"], dtype=object)
+
+
+def _wrong_rank_extract(_pixels: np.ndarray, _mask: np.ndarray) -> np.ndarray:
+    return np.array([[1.0, 0.0]], dtype=np.float32)
+
+
+def _zero_extract(_pixels: np.ndarray, _mask: np.ndarray) -> np.ndarray:
+    return np.zeros(2, dtype=np.float32)
+
+
+def _bad_norm_extract(_pixels: np.ndarray, _mask: np.ndarray) -> np.ndarray:
+    return np.ones(2, dtype=np.float32)
+
+
+def _inconsistent_extract(pixels: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    red = int(pixels[mask][0, 0])
+    size = 2 if red == 1 else 3
+    feature = np.zeros(size, dtype=np.float32)
+    feature[0] = 1.0
+    return feature
 
 
 def test_feature_extraction_rejects_non_development_rows_before_file_access(
@@ -160,9 +198,149 @@ def test_feature_cache_reuses_an_exact_source_and_contract(tmp_path) -> None:
     second = ensure_feature_index(frame, **arguments)
 
     assert second.cache_dir == first.cache_dir
+    assert second.cache_dir == (
+        arguments["cache_root"] / arguments["contract"].key / arguments["source"]
+    )
+    assert {
+        "method",
+        "fold",
+        "checkpoint_fingerprint",
+        "config_fingerprint",
+    }.isdisjoint(second.manifest)
     assert features_path.stat().st_mtime_ns == first_mtime
     assert np.array_equal(second.index.ids, first.index.ids)
     assert np.array_equal(second.index.features, first.index.features)
+
+
+@pytest.mark.parametrize(
+    ("changed_argument", "changed_value"),
+    [
+        ("checkpoint_fingerprint", "checkpoint-b"),
+        ("config_fingerprint", "config-b"),
+    ],
+)
+def test_learned_feature_cache_identity_includes_checkpoint_and_config(
+    tmp_path,
+    changed_argument: str,
+    changed_value: str,
+) -> None:
+    Image.new("RGB", (2, 2), (7, 0, 0)).save(tmp_path / "image.png")
+    frame = pd.DataFrame(
+        {
+            "id": [1],
+            "partition": ["development"],
+            "source_path": ["image.png"],
+        }
+    )
+    arguments = {
+        "path_column": "source_path",
+        "source": "teacher",
+        "contract": PreprocessingContract(width=4, height=4),
+        "cache_root": tmp_path / "feature-cache",
+        "root": tmp_path,
+        "workers": 1,
+        "extract": _learned_extract,
+        "method": "r1-vicreg",
+        "checkpoint_fingerprint": "checkpoint-a",
+        "config_fingerprint": "config-a",
+        "fold": 2,
+    }
+
+    first = ensure_feature_index(frame, **arguments)
+    second = ensure_feature_index(frame, **{**arguments, changed_argument: changed_value})
+
+    assert first.cache_dir != second.cache_dir
+    assert first.index.features.shape == (1, 128)
+    assert first.manifest["method"] == "r1-vicreg"
+    assert first.manifest["fold"] == 2
+    assert first.manifest["checkpoint_fingerprint"] == "checkpoint-a"
+    assert first.manifest["config_fingerprint"] == "config-a"
+
+
+@pytest.mark.parametrize(
+    ("checkpoint_fingerprint", "config_fingerprint", "message"),
+    [
+        (None, "config-a", "checkpoint fingerprint is required"),
+        ("checkpoint-a", None, "config fingerprint is required"),
+        ("", "config-a", "checkpoint fingerprint is required"),
+        ("checkpoint-a", " ", "config fingerprint is required"),
+    ],
+)
+def test_nonlegacy_cache_requires_both_fingerprints_before_file_access(
+    tmp_path,
+    checkpoint_fingerprint: str | None,
+    config_fingerprint: str | None,
+    message: str,
+) -> None:
+    frame = pd.DataFrame(
+        {
+            "id": [1],
+            "partition": ["development"],
+            "source_path": ["does-not-exist.png"],
+        }
+    )
+
+    with pytest.raises(ValueError, match=message):
+        ensure_feature_index(
+            frame,
+            path_column="source_path",
+            source="teacher",
+            contract=PreprocessingContract(width=4, height=4),
+            cache_root=tmp_path / "feature-cache",
+            root=tmp_path,
+            workers=1,
+            extract=_learned_extract,
+            method="r1-vicreg",
+            checkpoint_fingerprint=checkpoint_fingerprint,
+            config_fingerprint=config_fingerprint,
+            fold=1,
+        )
+
+
+@pytest.mark.parametrize(
+    ("extract", "message"),
+    [
+        (_nonconvertible_extract, "float32-convertible"),
+        (_nan_extract, "finite"),
+        (_wrong_rank_extract, "one-dimensional"),
+        (_zero_extract, "non-zero"),
+        (_bad_norm_extract, "unit norm"),
+        (_inconsistent_extract, "consistent dimension"),
+    ],
+)
+def test_feature_cache_rejects_invalid_extracted_vectors_before_write(
+    tmp_path,
+    extract,
+    message: str,
+) -> None:
+    Image.new("RGB", (2, 2), (1, 0, 0)).save(tmp_path / "first.png")
+    Image.new("RGB", (2, 2), (2, 0, 0)).save(tmp_path / "second.png")
+    frame = pd.DataFrame(
+        {
+            "id": [1, 2],
+            "partition": ["development", "development"],
+            "source_path": ["first.png", "second.png"],
+        }
+    )
+    cache_root = tmp_path / "feature-cache"
+
+    with pytest.raises(ValueError, match=message):
+        ensure_feature_index(
+            frame,
+            path_column="source_path",
+            source="teacher",
+            contract=PreprocessingContract(width=4, height=4),
+            cache_root=cache_root,
+            root=tmp_path,
+            workers=1,
+            extract=extract,
+            method="r1-vicreg",
+            checkpoint_fingerprint="checkpoint-a",
+            config_fingerprint="config-a",
+            fold=1,
+        )
+
+    assert not cache_root.exists()
 
 
 def test_source_matrix_contains_four_directions() -> None:
@@ -232,6 +410,84 @@ def test_source_pair_uses_both_frozen_protocols() -> None:
     assert evaluation.primary_rankings.groupby("query_id").size().to_dict() == {1: 1, 4: 1}
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("method", "r2-vicreg"),
+        ("fold", 2),
+        ("checkpoint_fingerprint", "checkpoint-b"),
+        ("config_fingerprint", "config-b"),
+    ],
+)
+def test_source_pair_rejects_mismatched_feature_provenance(
+    field: str,
+    value: object,
+) -> None:
+    primary, family = _evaluation_views()
+    common = {
+        "method": "r1-vicreg",
+        "fold": 1,
+        "checkpoint_fingerprint": "checkpoint-a",
+        "config_fingerprint": "config-a",
+    }
+    query_index = replace(
+        _feature_index("teacher"),
+        **common,
+    )
+    gallery_index = replace(
+        _feature_index("v1"),
+        **{**common, field: value},
+    )
+
+    with pytest.raises(ValueError, match="provenance"):
+        evaluate_source_pair(
+            query_index,
+            gallery_index,
+            primary_views=primary,
+            family_views=family,
+            fold=1,
+            k_values=(1,),
+            family_k=1,
+        )
+
+
+def test_source_pair_rejects_free_fold_and_derives_identity_labels() -> None:
+    primary, family = _evaluation_views()
+    identity = {
+        "method": "r1-vicreg",
+        "fold": 2,
+        "checkpoint_fingerprint": "checkpoint-a",
+        "config_fingerprint": "config-a",
+    }
+    query_index = replace(_feature_index("teacher"), **identity)
+    gallery_index = replace(_feature_index("v1"), **identity)
+
+    with pytest.raises(ValueError, match="fold.*provenance"):
+        evaluate_source_pair(
+            query_index,
+            gallery_index,
+            primary_views=primary,
+            family_views=family,
+            fold=1,
+            k_values=(1,),
+            family_k=1,
+        )
+
+    evaluation = evaluate_source_pair(
+        query_index,
+        gallery_index,
+        primary_views=primary,
+        family_views=family,
+        fold=2,
+        k_values=(1,),
+        family_k=1,
+    )
+    assert set(evaluation.summary["method"]) == {"r1-vicreg"}
+    assert set(evaluation.summary["fold"]) == {2}
+    assert set(evaluation.summary["checkpoint_fingerprint"]) == {"checkpoint-a"}
+    assert set(evaluation.summary["config_fingerprint"]) == {"config-a"}
+
+
 def test_full_experiment_runs_matrix_and_top_two_stability(tmp_path) -> None:
     rows: list[dict[str, object]] = []
     variants: list[dict[str, object]] = []
@@ -298,6 +554,98 @@ def test_full_experiment_runs_matrix_and_top_two_stability(tmp_path) -> None:
     }
     assert set(experiment.stability["fold"]) == set(range(5))
     assert len(experiment.top_sizes) == 2
+
+
+def _preprocessing_runner_module():
+    spec = importlib.util.spec_from_file_location(
+        "task4_run_preprocessing_for_tests",
+        ROOT / "scripts/task4/run_preprocessing.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _runner_development_frame() -> pd.DataFrame:
+    ids = [1, 2, 3]
+    return pd.DataFrame(
+        {
+            "id": ids,
+            "partition": ["development"] * 3,
+            "cv_fold": [0, 2, 1],
+            "teacher_path": [f"teacher/{value}.png" for value in ids],
+            "teacher_sha256": [f"teacher-{value}" for value in ids],
+            "external_path": [f"v1/{value}.png" for value in ids],
+            "external_sha256": [f"v1-{value}" for value in ids],
+        }
+    )
+
+
+def _runner_splits() -> pd.DataFrame:
+    ids = [1, 2, 3]
+    return pd.DataFrame(
+        {
+            "id": ids,
+            "path": [f"teacher/{value}.png" for value in ids],
+            "sha256": [f"teacher-{value}" for value in ids],
+            "duplicate_group": [f"duplicate-{value}" for value in ids],
+            "product_name_key": [f"name-{value}" for value in ids],
+            "product_family_group": [f"family-{value}" for value in ids],
+            "partition": ["development"] * 3,
+            "cv_fold": [0, 2, 1],
+            "is_cross_role_exact_duplicate": [False] * 3,
+            "is_cross_role_near_duplicate": [False] * 3,
+            "has_conflicting_target_labels": [False] * 3,
+            "conflicting_targets": [""] * 3,
+            "quarantine_reason": [""] * 3,
+        }
+    )
+
+
+def test_preprocessing_runner_normalization_binds_the_canonical_split_digest(
+    tmp_path,
+) -> None:
+    module = _preprocessing_runner_module()
+    development = _runner_development_frame()
+    splits = _runner_splits()
+    colours = {1: (0, 0, 0), 2: (255, 255, 255), 3: (255, 0, 0)}
+    for source in ("teacher", "v1"):
+        (tmp_path / source).mkdir()
+        for product_id, colour in colours.items():
+            Image.new("RGB", (24, 32), colour).save(
+                tmp_path / source / f"{product_id}.png"
+            )
+
+    normalization, cache_manifests = module.build_normalization_evidence(
+        splits,
+        development,
+        cache_root=tmp_path / "cache",
+        root=tmp_path,
+    )
+
+    digest = cv_assignment_digest(splits)
+    assert normalization["split_fingerprint"] == digest
+    assert normalization["validation_fold"] == 1
+    assert set(normalization["sources"]) == {"teacher", "v1"}
+    assert set(cache_manifests) == {"teacher", "v1"}
+    for source in ("teacher", "v1"):
+        assert normalization["sources"][source]["split_fingerprint"] == digest
+        assert normalization["sources"][source]["validation_fold"] == 1
+
+
+def test_committed_normalization_artifact_carries_the_canonical_split_digest() -> None:
+    artifact = json.loads(
+        (ROOT / "results/evidence/task4/preprocessing_normalization_fold1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    splits = pd.read_csv(ROOT / "data/processed/splits.csv", keep_default_na=False)
+    digest = cv_assignment_digest(splits)
+
+    assert artifact["split_fingerprint"] == digest
+    assert set(artifact["sources"]) == {"teacher", "v1"}
+    for source in ("teacher", "v1"):
+        assert artifact["sources"][source]["split_fingerprint"] == digest
 
 
 def test_preprocessing_evidence_runner_has_a_help_entrypoint() -> None:

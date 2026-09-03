@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 from PIL import Image
 
+from fashion.data.splits import cv_assignment_digest
 from fashion.task4.cache import (
     ensure_development_image_cache,
     fit_cached_fold_rgb_statistics,
@@ -272,14 +273,8 @@ def test_cache_rebuilds_when_source_fingerprint_changes(tmp_path) -> None:
     assert second.images[0, 0, 0].tolist() == [255, 0, 0]
 
 
-def test_cached_statistics_use_only_training_content_pixels(tmp_path) -> None:
-    for name, colour in (
-        ("black.png", (0, 0, 0)),
-        ("white.png", (255, 255, 255)),
-        ("validation.png", (255, 0, 0)),
-    ):
-        Image.new("RGB", (1, 1), colour).save(tmp_path / name)
-    frame = pd.DataFrame(
+def _statistics_frame() -> pd.DataFrame:
+    return pd.DataFrame(
         {
             "id": [1, 2, 3],
             "partition": ["development"] * 3,
@@ -288,8 +283,38 @@ def test_cached_statistics_use_only_training_content_pixels(tmp_path) -> None:
             "source_sha256": ["black", "white", "validation"],
         }
     )
-    cache = ensure_development_image_cache(
-        frame,
+
+
+def _statistics_splits() -> pd.DataFrame:
+    ids = [1, 2, 3]
+    return pd.DataFrame(
+        {
+            "id": ids,
+            "path": [f"teacher/{value}.png" for value in ids],
+            "sha256": [f"teacher-{value}" for value in ids],
+            "duplicate_group": [f"duplicate-{value}" for value in ids],
+            "product_name_key": [f"name-{value}" for value in ids],
+            "product_family_group": [f"family-{value}" for value in ids],
+            "partition": ["development"] * 3,
+            "cv_fold": [0, 2, 1],
+            "is_cross_role_exact_duplicate": [False] * 3,
+            "is_cross_role_near_duplicate": [False] * 3,
+            "has_conflicting_target_labels": [False] * 3,
+            "conflicting_targets": [""] * 3,
+            "quarantine_reason": [""] * 3,
+        }
+    )
+
+
+def _statistics_cache(tmp_path):
+    for name, colour in (
+        ("black.png", (0, 0, 0)),
+        ("white.png", (255, 255, 255)),
+        ("validation.png", (255, 0, 0)),
+    ):
+        Image.new("RGB", (1, 1), colour).save(tmp_path / name)
+    return ensure_development_image_cache(
+        _statistics_frame(),
         path_column="source_path",
         sha_column="source_sha256",
         source="teacher",
@@ -298,8 +323,102 @@ def test_cached_statistics_use_only_training_content_pixels(tmp_path) -> None:
         root=tmp_path,
     )
 
-    result = fit_cached_fold_rgb_statistics(cache, frame, validation_fold=1)
+
+def test_cached_statistics_use_only_training_content_pixels(tmp_path) -> None:
+    cache = _statistics_cache(tmp_path)
+
+    result = fit_cached_fold_rgb_statistics(
+        cache,
+        _statistics_frame(),
+        validation_fold=1,
+        canonical_splits=_statistics_splits(),
+    )
 
     assert result["training_rows"] == 2
     assert result["mean"] == pytest.approx([0.5, 0.5, 0.5])
     assert result["std"] == pytest.approx([0.5, 0.5, 0.5])
+    assert result["split_fingerprint"] == cv_assignment_digest(_statistics_splits())
+
+
+def test_cached_statistics_accept_an_already_validated_split_digest(tmp_path) -> None:
+    cache = _statistics_cache(tmp_path)
+    digest = cv_assignment_digest(_statistics_splits())
+
+    result = fit_cached_fold_rgb_statistics(
+        cache,
+        _statistics_frame(),
+        validation_fold=1,
+        split_fingerprint=digest,
+    )
+
+    assert result["split_fingerprint"] == digest
+    assert result["mean"] == pytest.approx([0.5, 0.5, 0.5])
+
+
+def test_cached_statistics_require_canonical_split_identity(tmp_path) -> None:
+    cache = _statistics_cache(tmp_path)
+
+    with pytest.raises(ValueError, match="split_fingerprint|canonical_splits"):
+        fit_cached_fold_rgb_statistics(
+            cache,
+            _statistics_frame(),
+            validation_fold=1,
+        )
+
+
+def test_cached_statistics_reject_both_split_inputs_together(tmp_path) -> None:
+    cache = _statistics_cache(tmp_path)
+
+    with pytest.raises(ValueError, match="exactly one"):
+        fit_cached_fold_rgb_statistics(
+            cache,
+            _statistics_frame(),
+            validation_fold=1,
+            canonical_splits=_statistics_splits(),
+            split_fingerprint=cv_assignment_digest(_statistics_splits()),
+        )
+
+
+@pytest.mark.parametrize("digest", ["not-a-digest", "A" * 64, "0" * 63])
+def test_cached_statistics_reject_malformed_split_digest(tmp_path, digest: str) -> None:
+    cache = _statistics_cache(tmp_path)
+
+    with pytest.raises(ValueError, match="SHA-256 digest"):
+        fit_cached_fold_rgb_statistics(
+            cache,
+            _statistics_frame(),
+            validation_fold=1,
+            split_fingerprint=digest,
+        )
+
+
+def test_cached_statistics_reject_folds_that_disagree_with_canonical_splits(
+    tmp_path,
+) -> None:
+    cache = _statistics_cache(tmp_path)
+    frame = _statistics_frame()
+    frame.loc[frame["id"].eq(2), "cv_fold"] = 3
+
+    with pytest.raises(ValueError, match="canonical"):
+        fit_cached_fold_rgb_statistics(
+            cache,
+            frame,
+            validation_fold=1,
+            canonical_splits=_statistics_splits(),
+        )
+
+
+def test_cached_statistics_reject_ids_absent_from_canonical_development(
+    tmp_path,
+) -> None:
+    cache = _statistics_cache(tmp_path)
+    splits = _statistics_splits()
+    splits.loc[splits["id"].eq(2), "id"] = 9
+
+    with pytest.raises(ValueError, match="canonical"):
+        fit_cached_fold_rgb_statistics(
+            cache,
+            _statistics_frame(),
+            validation_fold=1,
+            canonical_splits=splits,
+        )

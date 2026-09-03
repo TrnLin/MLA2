@@ -28,6 +28,7 @@ __all__ = (
     "HSV_BINS",
     "PROBE_VERSION",
     "extract_spatial_probe",
+    "rank_embeddings",
     "rank_probe_embeddings",
 )
 
@@ -195,7 +196,7 @@ def _view_by_numeric_id(frame: pd.DataFrame, label: str) -> pd.DataFrame:
     return result.set_index("_numeric_id", drop=False)
 
 
-def rank_probe_embeddings(
+def rank_embeddings(
     *,
     query_ids: np.ndarray,
     query_features: np.ndarray,
@@ -271,4 +272,28 @@ def rank_probe_embeddings(
         views,
         protocol=protocol,
         max_k=max_k,
+    )
+
+
+def rank_probe_embeddings(
+    *,
+    query_ids: np.ndarray,
+    query_features: np.ndarray,
+    gallery_ids: np.ndarray,
+    gallery_features: np.ndarray,
+    views: RetrievalViews,
+    protocol: Literal["primary", "family"],
+    max_k: int = 20,
+    chunk_size: int = 128,
+) -> pd.DataFrame:
+    """Compatibility wrapper for the method-agnostic embedding ranker."""
+    return rank_embeddings(
+        query_ids=query_ids,
+        query_features=query_features,
+        gallery_ids=gallery_ids,
+        gallery_features=gallery_features,
+        views=views,
+        protocol=protocol,
+        max_k=max_k,
+        chunk_size=chunk_size,
     )

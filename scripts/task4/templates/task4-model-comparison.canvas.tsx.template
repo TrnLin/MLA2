@@ -1,0 +1,256 @@
+// Generated from strict final freeze SHA-256: {{FREEZE_SHA256}}
+// Regenerate with: ./.venv/bin/python -m scripts.task4.generate_model_comparison_canvas
+import {
+  BarChart,
+  Callout,
+  Code,
+  Divider,
+  Grid,
+  H1,
+  H2,
+  H3,
+  LineChart,
+  Row,
+  Stack,
+  Stat,
+  Table,
+  Text,
+} from "cursor/canvas";
+
+const candidates = {{CANDIDATES}};
+
+const stability = {
+  folds: {{FOLD_LABELS}},
+  r5: {{R5_FOLDS}},
+  r3: {{R3_FOLDS}},
+  r5Mean: {{R5_MEAN}},
+  r5Sd: {{R5_SD}},
+  r3Mean: {{R3_MEAN}},
+  r3Sd: {{R3_SD}},
+  gap: {{MEAN_GAP}},
+  pooledSpread: {{POOLED_SPREAD}},
+};
+
+const canvas = {
+  categories: {{CANVAS_CATEGORIES}},
+  r5: {{R5_CANVAS}},
+  r3: {{R3_CANVAS}},
+};
+
+const gallery = {{GALLERY}};
+
+const attempts = {{ATTEMPTS}};
+
+const f = (value: number, digits = 4) => value.toFixed(digits);
+
+export default function Task4ModelComparison() {
+  return (
+    <Stack gap={24} style={{ maxWidth: 1180, margin: "0 auto", padding: 32 }}>
+      <Stack gap={6}>
+        <Text tone="secondary" size="small" weight="semibold">
+          DEVELOPMENT-ONLY EVIDENCE FREEZE
+        </Text>
+        <H1>Task 4 learned model comparison</H1>
+        <Text tone="secondary">
+          {{METHOD_COUNT_WORD_TITLE}} final methods, {{STABILITY_RUN_COUNT_WORD}} stability runs,
+          and one {{GALLERY_POLICY_COUNT_WORD}}-policy gallery
+          study. Inline values were generated from the strict validated final
+          freeze and remain embedded for the Canvas runtime.
+        </Text>
+      </Stack>
+
+      <Callout tone="success" title="Frozen decision">
+        Scratch {{WINNER}} is the development winner. Use exact cosine search,
+        product-level minimum-distance collapse, and a {{GALLERY_POLICY_LOWER}} gallery.
+      </Callout>
+
+      <Grid columns={4} gap={16}>
+        <Stat value="{{WINNER}}" label="Final scratch method" tone="success" />
+        <Stat value={f(stability.r5Mean, 6)} label="Five-fold mean nDCG@10" />
+        <Stat value={f(stability.r5Sd, 6)} label="Sample SD across five folds" />
+        <Stat value="{{GALLERY_POLICY_SHORT}}" label="Final gallery policy" tone="success" />
+      </Grid>
+
+      <Divider />
+      <Stack gap={10}>
+        <H2>Candidate breadth</H2>
+        <Text tone="secondary" size="small">
+          Unit: mean linear nDCG@10. Source: {{METHOD_COUNT_WORD}} final learned manifests,
+          development fold 1. Higher is better.
+        </Text>
+        <Text tone="secondary" size="small">
+          X-axis: Candidate method (method code) · Y-axis: Mean linear nDCG@10 (unitless score)
+        </Text>
+        <BarChart
+          categories={candidates.map((item) => item.method)}
+          series={[{ name: "Development nDCG@10", data: candidates.map((item) => item.score) }]}
+          height={280}
+          showValues
+          yMax={0.55}
+        />
+        <Table
+          headers={["Method", "Eligibility", "nDCG@10", "Cross-source nDCG@10", "Source ratio"]}
+          rows={candidates.map((item) => [
+            item.method,
+            item.kind,
+            f(item.score, 6),
+            f(item.cross, 6),
+            f(item.ratio, 4),
+          ])}
+          columnAlign={["left", "left", "right", "right", "right"]}
+          striped
+        />
+        <Callout tone="info" title="Benchmark boundary">
+          B1 uses pretrained weights. It is useful comparison evidence, but it
+          is not eligible for stability selection, final refit, or submission.
+        </Callout>
+      </Stack>
+
+      <Divider />
+      <Grid columns="1.4fr 1fr" gap={24}>
+        <Stack gap={10}>
+          <H2>Five-fold stability</H2>
+          <Text tone="secondary" size="small">
+            Unit: mean nDCG@10 by validation fold. Source:
+            task9-post-stability-deployment.json.
+          </Text>
+          <Text tone="secondary" size="small">
+            X-axis: Validation fold (fold number) · Y-axis: Mean linear nDCG@10 (unitless score)
+          </Text>
+          <LineChart
+            categories={stability.folds}
+            series={[
+              { name: "R5 scratch", data: stability.r5, tone: "success" },
+              { name: "R3 scratch", data: stability.r3, tone: "info" },
+            ]}
+            height={300}
+            showValues
+            yMin={0.28}
+            yMax={0.52}
+          />
+        </Stack>
+        <Stack gap={14}>
+          <H2>Mean and spread</H2>
+          <Table
+            headers={["Method", "Mean nDCG@10", "Sample SD"]}
+            rows={[
+              ["R5", f(stability.r5Mean, 9), f(stability.r5Sd, 9)],
+              ["R3", f(stability.r3Mean, 9), f(stability.r3Sd, 9)],
+            ]}
+            columnAlign={["left", "right", "right"]}
+            rowTone={["success", "info"]}
+          />
+          <Row gap={20} wrap>
+            <Stat value={f(stability.gap, 6)} label="Mean gap, nDCG@10" tone="success" />
+            <Stat value={f(stability.pooledSpread, 6)} label="Pooled spread, nDCG@10" />
+          </Row>
+          <Text>
+            The mean gap is much larger than pooled spread. The deployment
+            stability rule passes.
+          </Text>
+        </Stack>
+      </Grid>
+
+      <Divider />
+      <Stack gap={10}>
+        <H2>Canvas behavior</H2>
+        <Text tone="secondary" size="small">
+          Unit: mean nDCG@10 for V1 queries against the V1 gallery. Source:
+          each R5/R3 canvas_summary.csv, {{QUERY_COUNT}} development queries.
+        </Text>
+        <Text tone="secondary" size="small">
+          X-axis: Query canvas (canvas variant) · Y-axis: Mean linear nDCG@10 (unitless score)
+        </Text>
+        <BarChart
+          categories={canvas.categories}
+          series={[
+            { name: "R5", data: canvas.r5, tone: "success" },
+            { name: "R3", data: canvas.r3, tone: "info" },
+          ]}
+          height={300}
+          showValues
+          yMax={0.55}
+        />
+        <Callout tone="warning" title="R5 is sensitive to large backgrounds">
+          R5 wins clean retrieval, but its tall and wide white-canvas quality
+          falls sharply. This stays a deployment limit.
+        </Callout>
+      </Stack>
+
+      <Divider />
+      <Stack gap={10}>
+        <H2>Gallery quality, speed, and storage</H2>
+        <Text tone="secondary" size="small">
+          Quality unit: equal teacher/V1 mean nDCG@10. Speed unit: CPU
+          batch-one p95 seconds. Storage unit: decimal MB. Source:
+          task9-final-gallery-decision.json.
+        </Text>
+        <Table
+          headers={["Policy", "Query normalization", "Quality nDCG@10", "CPU p95 (s)", "Index (MB)", "Decision"]}
+          rows={gallery.map((item) => [
+            item.policy,
+            item.normalization,
+            f(item.quality, 9),
+            f(item.p95, 6),
+            f(item.bytes / 1_000_000, 2),
+            item.decision,
+          ])}
+          columnAlign={["left", "left", "right", "right", "right", "left"]}
+          rowTone={["success", "neutral", "neutral"]}
+          striped
+        />
+        <Grid columns={3} gap={16}>
+          <Stat value="{{SCRATCH_GATE}}" label="Scratch-training gate" tone="success" />
+          <Stat value="{{SPEED_GATE}}" label="CPU p95 under 1 second" tone="success" />
+          <Stat value="{{INDEX_GATE}}" label="Index under 1 GiB" tone="success" />
+        </Grid>
+        <Callout tone="info" title="Gallery provenance">
+          The original R5 <Code>cost.json</Code> V1 field is a pre-study cost
+          assumption. The canonical post-study choice is {{GALLERY_POLICY_LOWER}} in{" "}
+          <Code>task9-final-gallery-decision.json</Code>.
+        </Callout>
+      </Stack>
+
+      <Divider />
+      <Stack gap={10}>
+        <H2>Failures and bounded retries</H2>
+        <Text tone="secondary">
+          Failed and abandoned attempts stay in <Code>results/runs.csv</Code>.
+        </Text>
+        <Table
+          headers={["Attempt", "Method", "Outcome", "Evidence"]}
+          rows={attempts}
+          rowTone={["danger", "danger", "danger", "success", "success", "warning", "warning"]}
+          striped
+        />
+        <Callout tone="warning" title="Shutdown cause remains unknown">
+          The real gallery process wrote valid durable artifacts and then did
+          not exit. Bounded supervision prevents false command success, but it
+          does not explain the native interpreter-shutdown fault.
+        </Callout>
+      </Stack>
+
+      <Divider />
+      <Grid columns={2} gap={24}>
+        <Stack gap={8}>
+          <H3>Decision</H3>
+          <Text>Choose scratch {{WINNER}} and {{GALLERY_POLICY_LOWER}}. Keep R1–R4 and B1 as breadth evidence.</Text>
+          <Text>Use the saved teacher normalization for arbitrary user queries.</Text>
+        </Stack>
+        <Stack gap={8}>
+          <H3>Limits</H3>
+          <Text>Metadata relevance is not human similarity ground truth.</Text>
+          <Text>V1 is another view of the same products, not independent data.</Text>
+          <Text>CPU timing is machine- and route-specific.</Text>
+        </Stack>
+      </Grid>
+
+      <Callout tone="success" title="Holdout is sealed">
+        Only <Code>{{SPLIT_PATH}}</Code> defines membership. The
+        holdout, quarantine, and official teacher-test images were not opened.
+        Notebook 06 may evaluate the holdout once after the exact {{WINNER}} final
+        refit is registered.
+      </Callout>
+    </Stack>
+  );
+}

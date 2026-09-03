@@ -31,7 +31,7 @@ from fashion.task4.preprocessing_experiment import (
 from fashion.task4.probe import (
     PROBE_VERSION,
     extract_spatial_probe,
-    rank_probe_embeddings,
+    rank_embeddings,
 )
 from fashion.task4.protocol import FIXED_VALIDATION_FOLD, RetrievalViews
 
@@ -129,10 +129,13 @@ def benchmark_source_direction(
     search: Callable[[int, np.ndarray], pd.DataFrame],
     policy: TimingPolicy = TimingPolicy(),
     clock_ns: Callable[[], int] = time.perf_counter_ns,
+    fold: int = FIXED_VALIDATION_FOLD,
 ) -> pd.DataFrame:
     """Warm up, then retain one batch-one timing sample per sorted query."""
     query_source = _validate_source(query_source)
     gallery_source = _validate_source(gallery_source)
+    if isinstance(fold, bool) or not isinstance(fold, int) or fold not in range(5):
+        raise ValueError("timing fold must be an integer from 0 through 4")
     ordered = _ordered_query_rows(query_rows)
     for _, row in ordered.iloc[: policy.warmup_queries].iterrows():
         search(int(row["_numeric_id"]), encode(row))
@@ -147,7 +150,7 @@ def benchmark_source_direction(
         records.append(
             {
                 "scope": "development",
-                "fold": FIXED_VALIDATION_FOLD,
+                "fold": fold,
                 "query_id": int(row["_numeric_id"]),
                 "query_source": query_source,
                 "gallery_source": gallery_source,
@@ -186,12 +189,15 @@ def summarize_timings(samples: pd.DataFrame) -> pd.DataFrame:
         raise ValueError("timing samples must not be empty")
     if set(samples["scope"].astype(str)) != {"development"}:
         raise ValueError("timing samples scope must be development")
-    if set(pd.to_numeric(samples["fold"], errors="coerce")) != {
-        FIXED_VALIDATION_FOLD
-    }:
-        raise ValueError(
-            f"timing samples must use frozen fold {FIXED_VALIDATION_FOLD}"
-        )
+    fold_values = pd.to_numeric(samples["fold"], errors="coerce")
+    valid_folds = (
+        fold_values.notna()
+        & np.isfinite(fold_values)
+        & fold_values.mod(1).eq(0)
+        & fold_values.between(0, 4)
+    )
+    if not valid_folds.all() or fold_values.nunique() != 1:
+        raise ValueError("timing samples must use exactly one fold from 0 through 4")
     directions = samples.loc[:, ["query_source", "gallery_source"]].drop_duplicates()
     if len(directions) != 1:
         raise ValueError("timing samples must describe exactly one source direction")
@@ -293,7 +299,7 @@ def build_protocol_a_search(
         if query_id not in ordered_queries.index:
             raise ValueError(f"query ID {query_id} is outside the retrieval view")
         one_query = ordered_queries.loc[[query_id]].drop(columns="_numeric_id")
-        return rank_probe_embeddings(
+        return rank_embeddings(
             query_ids=np.asarray([query_id], dtype=np.int64),
             query_features=np.asarray(feature, dtype=np.float32).reshape(1, -1),
             gallery_ids=ranked_gallery_ids,
@@ -314,6 +320,13 @@ def _index_build_worker(
     path_column: str,
     contract: PreprocessingContract,
     root: str | Path,
+    extract: Callable[[np.ndarray, np.ndarray], np.ndarray],
+    method: str,
+    checkpoint_fingerprint: str | None,
+    config_fingerprint: str | None,
+    descriptor_fingerprint: str | None,
+    fold: int,
+    workers: int,
 ) -> None:
     try:
         started = time.perf_counter()
@@ -323,7 +336,13 @@ def _index_build_worker(
             source=source,
             contract=contract,
             root=root,
-            workers=1,
+            workers=workers,
+            extract=extract,
+            method=method,
+            checkpoint_fingerprint=checkpoint_fingerprint,
+            config_fingerprint=config_fingerprint,
+            descriptor_fingerprint=descriptor_fingerprint,
+            fold=fold,
         )
         build_seconds = time.perf_counter() - started
         peak_rss_bytes = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024
@@ -355,18 +374,41 @@ def measure_index_build(
     path_column: str,
     contract: PreprocessingContract,
     root: str | Path = ROOT,
+    extract: Callable[[np.ndarray, np.ndarray], np.ndarray] = extract_spatial_probe,
+    method: str = PROBE_VERSION,
+    checkpoint_fingerprint: str | None = None,
+    config_fingerprint: str | None = None,
+    descriptor_fingerprint: str | None = None,
+    fold: int = FIXED_VALIDATION_FOLD,
+    workers: int = 1,
 ) -> IndexCost:
     """Build one gallery index in a spawned child and return its measured cost."""
     from multiprocessing import get_context
 
     source = _validate_source(source)
+    if isinstance(workers, bool) or not isinstance(workers, int) or workers <= 0:
+        raise ValueError("index build workers must be a positive integer")
     if contract != _BASELINE_CONTRACT:
         raise ValueError("index measurement requires the frozen 240x320 contract")
     context = get_context("spawn")
     receiving, sending = context.Pipe(duplex=False)
     process = context.Process(
         target=_index_build_worker,
-        args=(sending, gallery_rows, source, path_column, contract, root),
+        args=(
+            sending,
+            gallery_rows,
+            source,
+            path_column,
+            contract,
+            root,
+            extract,
+            method,
+            checkpoint_fingerprint,
+            config_fingerprint,
+            descriptor_fingerprint,
+            fold,
+            workers,
+        ),
     )
     process.start()
     sending.close()

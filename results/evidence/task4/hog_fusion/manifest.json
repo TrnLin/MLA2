@@ -1,0 +1,642 @@
+{
+  "artifacts": {
+    "canvas_per_query": {
+      "bytes": 3613920,
+      "path": "results/evidence/task4/hog_fusion/canvas_per_query.csv",
+      "sha256": "29fa5e0233fe0b99d2a36919f91a3e0399d6f5c82477edc5eddff39f531c68c1"
+    },
+    "canvas_summary": {
+      "bytes": 665,
+      "path": "results/evidence/task4/hog_fusion/canvas_summary.csv",
+      "sha256": "ef8ccfe4aaf99bfad532c874fba08c0ba4086c19c75835cc0565ab6783486192"
+    },
+    "cost": {
+      "bytes": 7844,
+      "path": "results/evidence/task4/hog_fusion/cost.json",
+      "sha256": "8e02d7564ae6b3f9732473ba47a2401bd12e9b673f2a266ea57fcacdad9e3e2b"
+    },
+    "examples": {
+      "bytes": 7998,
+      "path": "results/evidence/task4/hog_fusion/examples.csv",
+      "sha256": "1b24d8852ecde355320b8f25621f38e33458fcdc1b9f921a514de73b44cc844c"
+    },
+    "examples_figure": {
+      "bytes": 1387080,
+      "path": "results/figures/task4/hog_fusion/hog_fusion_examples.png",
+      "sha256": "537c85c067a19e1f7039ac3e950eded789b8c800eac7b026289a869b4b2e19bf"
+    },
+    "failure_slices": {
+      "bytes": 5707,
+      "path": "results/evidence/task4/hog_fusion/failure_slices.csv",
+      "sha256": "a5070893b2f1f47188536fd91512ed986eb15d329c51514b4901144a45777743"
+    },
+    "quality_summary": {
+      "bytes": 42287,
+      "path": "results/evidence/task4/hog_fusion/quality_summary.csv",
+      "sha256": "d05366dff0f9de4c71c1e520d883a2ead8a57ec317acc0e90596a789b0b52e73"
+    },
+    "query_metrics": {
+      "bytes": 12547625,
+      "path": "results/evidence/task4/hog_fusion/query_metrics.csv",
+      "sha256": "161b391ae36aade442340f795772512618ff9eedae2f993268402ae1dd46a0e9"
+    },
+    "timing_samples": {
+      "bytes": 4296065,
+      "path": "results/evidence/task4/hog_fusion/timing_samples.csv",
+      "sha256": "4ed461babd6734c203c7e801c4d5c7eaf4089ed4d8e2e19b78f1685085da117a"
+    },
+    "timing_summary": {
+      "bytes": 3811,
+      "path": "results/evidence/task4/hog_fusion/timing_summary.csv",
+      "sha256": "fcaa2e8792fdf665a5fd17bd2d5da1ff7c93ae903ca477fb1b7d4ba2a6dc0292"
+    }
+  },
+  "checkpoint_sha256": null,
+  "config_fingerprint": null,
+  "descriptor_config": {
+    "components": [
+      {
+        "descriptor_fingerprint": "c4604537474ff5ed8889a9e480053b225064fb20027e147582960bb3afd3a848",
+        "dimension": 1728,
+        "method": "hog-luma-g5-u8-c32-b2-s1-l2hys02-v1",
+        "name": "hog",
+        "weight": 0.7071067811865475
+      },
+      {
+        "descriptor_fingerprint": null,
+        "dimension": 400,
+        "method": "spatial-hsv-edge-4x4-v2",
+        "name": "spatial_hsv_edge",
+        "weight": 0.7071067811865475
+      }
+    ],
+    "concatenation_rule": "hog_then_spatial_hsv_edge",
+    "descriptor_dimension": 2128,
+    "method": "hog-plus-spatial-hsv-edge-equal-v1",
+    "normalization_rule": "independent_unit_components_then_equal_weight_concat",
+    "preprocessing_contract": {
+      "colour_mode": "RGB",
+      "height": 320,
+      "pad_color": [
+        255,
+        255,
+        255
+      ],
+      "resample": "LANCZOS",
+      "resize": "aspect_preserving_letterbox",
+      "width": 240
+    },
+    "schema_version": "1.0.0"
+  },
+  "descriptor_fingerprint": "beddc2defcc98515aab246abd33dd1810b93c84c82f34cf7481af85cde59ffc6",
+  "fold": 1,
+  "fused_caches": {
+    "teacher": {
+      "manifest": {
+        "checkpoint_fingerprint": null,
+        "config_fingerprint": null,
+        "contract": {
+          "colour_mode": "RGB",
+          "height": 320,
+          "pad_color": [
+            255,
+            255,
+            255
+          ],
+          "resample": "LANCZOS",
+          "resize": "aspect_preserving_letterbox",
+          "width": 240
+        },
+        "descriptor_config": {
+          "components": [
+            {
+              "descriptor_fingerprint": "c4604537474ff5ed8889a9e480053b225064fb20027e147582960bb3afd3a848",
+              "dimension": 1728,
+              "method": "hog-luma-g5-u8-c32-b2-s1-l2hys02-v1",
+              "name": "hog",
+              "weight": 0.7071067811865475
+            },
+            {
+              "descriptor_fingerprint": null,
+              "dimension": 400,
+              "method": "spatial-hsv-edge-4x4-v2",
+              "name": "spatial_hsv_edge",
+              "weight": 0.7071067811865475
+            }
+          ],
+          "concatenation_rule": "hog_then_spatial_hsv_edge",
+          "descriptor_dimension": 2128,
+          "method": "hog-plus-spatial-hsv-edge-equal-v1",
+          "normalization_rule": "independent_unit_components_then_equal_weight_concat",
+          "preprocessing_contract": {
+            "colour_mode": "RGB",
+            "height": 320,
+            "pad_color": [
+              255,
+              255,
+              255
+            ],
+            "resample": "LANCZOS",
+            "resize": "aspect_preserving_letterbox",
+            "width": 240
+          },
+          "schema_version": "1.0.0"
+        },
+        "descriptor_fingerprint": "beddc2defcc98515aab246abd33dd1810b93c84c82f34cf7481af85cde59ffc6",
+        "dimension": 2128,
+        "feature_dtype": "float32",
+        "features_file_sha256": "2443d2acd515a705719834a567909fc0bc189efd305c6743ebb3d3a6bbdb2cba",
+        "fold": 1,
+        "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+        "method": "hog-plus-spatial-hsv-edge-equal-v1",
+        "parents": {
+          "hog": {
+            "component": "hog",
+            "features_file_sha256": "3320770e56f80c189431a81c7750166c06535dcba23ec9deb4a4c180234adfa4",
+            "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+            "manifest": {
+              "checkpoint_fingerprint": null,
+              "config_fingerprint": null,
+              "contract": {
+                "colour_mode": "RGB",
+                "height": 320,
+                "pad_color": [
+                  255,
+                  255,
+                  255
+                ],
+                "resample": "LANCZOS",
+                "resize": "aspect_preserving_letterbox",
+                "width": 240
+              },
+              "descriptor_config": {
+                "block_size_cells": 2,
+                "block_stride_cells": 1,
+                "cell_size_pixels": 32,
+                "descriptor_dimension": 1728,
+                "gaussian_kernel": [
+                  1,
+                  4,
+                  6,
+                  4,
+                  1
+                ],
+                "gaussian_kernel_normalizer": 16,
+                "grayscale": "rec709-luminance",
+                "input_height": 320,
+                "input_width": 240,
+                "l2_hys_clip": 0.2,
+                "mask_policy": "normalized-blur-and-valid-central-differences",
+                "schema_version": "1.0.0",
+                "unsigned_orientation_bins": 8,
+                "zero_gradient_policy": "canonical-unit-sentinel"
+              },
+              "descriptor_fingerprint": "c4604537474ff5ed8889a9e480053b225064fb20027e147582960bb3afd3a848",
+              "dimension": 1728,
+              "features_file_sha256": "3320770e56f80c189431a81c7750166c06535dcba23ec9deb4a4c180234adfa4",
+              "fold": 1,
+              "id_sha256": "2639d731f89942fd9598f9552bb092dd634830c3e6a63d0b569cfc2aa4362d01",
+              "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+              "image_cache_manifest_sha256": "3764e0549e9bafd23d950c29c50a948f8cc1adec2ed4cea1357f2cc3b48433b3",
+              "method": "hog-luma-g5-u8-c32-b2-s1-l2hys02-v1",
+              "rows": 32773,
+              "schema_version": "1.0.0",
+              "scope": "development",
+              "source": "teacher",
+              "source_bytes": 7550899200,
+              "source_fingerprint": "9537d2dc78a30b3bd1f6fb61c9cf7fc1c55d1ff03cbdd8b50a03df1c1c72b8a0",
+              "transform_seconds": 242.09224685002118
+            },
+            "manifest_sha256": "9f2a3b5646de29e3f4ff2b54b4b706c10dda7a118af421e6598db8d467f35884"
+          },
+          "spatial_hsv_edge": {
+            "component": "spatial_hsv_edge",
+            "features_file_sha256": "e0e3cd69959ffe4116ccb9d79901eadb738222347095936fc719cb228b76cd62",
+            "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+            "manifest": {
+              "contract": {
+                "colour_mode": "RGB",
+                "height": 320,
+                "pad_color": [
+                  255,
+                  255,
+                  255
+                ],
+                "resample": "LANCZOS",
+                "resize": "aspect_preserving_letterbox",
+                "width": 240
+              },
+              "feature_dtype": "float32",
+              "feature_shape": [
+                32773,
+                400
+              ],
+              "path_column": "teacher_path",
+              "probe": "spatial-hsv-edge-4x4-v2",
+              "rows": 32773,
+              "schema_version": "1.0.0",
+              "scope": "development",
+              "sha_column": "teacher_sha256",
+              "source": "teacher",
+              "source_bytes": 409687427,
+              "source_fingerprint": "9537d2dc78a30b3bd1f6fb61c9cf7fc1c55d1ff03cbdd8b50a03df1c1c72b8a0",
+              "transform_seconds": 767.2595831690123
+            },
+            "manifest_sha256": "1ca88d9758774cf4a02d8131d9aa2171aac101234d1f59c2a0a815a025063516"
+          }
+        },
+        "rows": 32773,
+        "schema_version": "1.0.0",
+        "scope": "development",
+        "source": "teacher",
+        "source_bytes": 7550899200,
+        "source_fingerprint": "9537d2dc78a30b3bd1f6fb61c9cf7fc1c55d1ff03cbdd8b50a03df1c1c72b8a0",
+        "transform_seconds": 1009.3518300190335
+      },
+      "path": "results/cache/task4/hog_fusion/features/teacher/688c6ada71e717a981e9/manifest.json",
+      "sha256": "bf4a089a736f93b87e6b952139cedd74bfe3e076b4642e0083d2cf44d4888fb1"
+    },
+    "v1": {
+      "manifest": {
+        "checkpoint_fingerprint": null,
+        "config_fingerprint": null,
+        "contract": {
+          "colour_mode": "RGB",
+          "height": 320,
+          "pad_color": [
+            255,
+            255,
+            255
+          ],
+          "resample": "LANCZOS",
+          "resize": "aspect_preserving_letterbox",
+          "width": 240
+        },
+        "descriptor_config": {
+          "components": [
+            {
+              "descriptor_fingerprint": "c4604537474ff5ed8889a9e480053b225064fb20027e147582960bb3afd3a848",
+              "dimension": 1728,
+              "method": "hog-luma-g5-u8-c32-b2-s1-l2hys02-v1",
+              "name": "hog",
+              "weight": 0.7071067811865475
+            },
+            {
+              "descriptor_fingerprint": null,
+              "dimension": 400,
+              "method": "spatial-hsv-edge-4x4-v2",
+              "name": "spatial_hsv_edge",
+              "weight": 0.7071067811865475
+            }
+          ],
+          "concatenation_rule": "hog_then_spatial_hsv_edge",
+          "descriptor_dimension": 2128,
+          "method": "hog-plus-spatial-hsv-edge-equal-v1",
+          "normalization_rule": "independent_unit_components_then_equal_weight_concat",
+          "preprocessing_contract": {
+            "colour_mode": "RGB",
+            "height": 320,
+            "pad_color": [
+              255,
+              255,
+              255
+            ],
+            "resample": "LANCZOS",
+            "resize": "aspect_preserving_letterbox",
+            "width": 240
+          },
+          "schema_version": "1.0.0"
+        },
+        "descriptor_fingerprint": "beddc2defcc98515aab246abd33dd1810b93c84c82f34cf7481af85cde59ffc6",
+        "dimension": 2128,
+        "feature_dtype": "float32",
+        "features_file_sha256": "a029460c750f5515b4dc6b1e59d2f5903cff5d1f547f64c15ecb7d2507685a78",
+        "fold": 1,
+        "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+        "method": "hog-plus-spatial-hsv-edge-equal-v1",
+        "parents": {
+          "hog": {
+            "component": "hog",
+            "features_file_sha256": "75f4b7efad83e96a98dcd10dcbb8fe7575ca4b3e51728a5ce75d17aa906ca498",
+            "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+            "manifest": {
+              "checkpoint_fingerprint": null,
+              "config_fingerprint": null,
+              "contract": {
+                "colour_mode": "RGB",
+                "height": 320,
+                "pad_color": [
+                  255,
+                  255,
+                  255
+                ],
+                "resample": "LANCZOS",
+                "resize": "aspect_preserving_letterbox",
+                "width": 240
+              },
+              "descriptor_config": {
+                "block_size_cells": 2,
+                "block_stride_cells": 1,
+                "cell_size_pixels": 32,
+                "descriptor_dimension": 1728,
+                "gaussian_kernel": [
+                  1,
+                  4,
+                  6,
+                  4,
+                  1
+                ],
+                "gaussian_kernel_normalizer": 16,
+                "grayscale": "rec709-luminance",
+                "input_height": 320,
+                "input_width": 240,
+                "l2_hys_clip": 0.2,
+                "mask_policy": "normalized-blur-and-valid-central-differences",
+                "schema_version": "1.0.0",
+                "unsigned_orientation_bins": 8,
+                "zero_gradient_policy": "canonical-unit-sentinel"
+              },
+              "descriptor_fingerprint": "c4604537474ff5ed8889a9e480053b225064fb20027e147582960bb3afd3a848",
+              "dimension": 1728,
+              "features_file_sha256": "75f4b7efad83e96a98dcd10dcbb8fe7575ca4b3e51728a5ce75d17aa906ca498",
+              "fold": 1,
+              "id_sha256": "2639d731f89942fd9598f9552bb092dd634830c3e6a63d0b569cfc2aa4362d01",
+              "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+              "image_cache_manifest_sha256": "b82c3e3d96a03e919c589cc27745c1dab655649e6300177d003324c62f1218fc",
+              "method": "hog-luma-g5-u8-c32-b2-s1-l2hys02-v1",
+              "rows": 32773,
+              "schema_version": "1.0.0",
+              "scope": "development",
+              "source": "v1",
+              "source_bytes": 7550899200,
+              "source_fingerprint": "2d03079c521908b802d95a5bf7f8f57e5a16759a27cb781456fe42fed91f0f84",
+              "transform_seconds": 241.76933653303422
+            },
+            "manifest_sha256": "9cf7c64348d6f43c3c26fea4716c589a8fd70a2393fc767f0c407cce3396b15e"
+          },
+          "spatial_hsv_edge": {
+            "component": "spatial_hsv_edge",
+            "features_file_sha256": "d5344a617caab349d98db2303e9f0631fbc2a74fa300d9657b783e5d2f0813b8",
+            "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+            "manifest": {
+              "contract": {
+                "colour_mode": "RGB",
+                "height": 320,
+                "pad_color": [
+                  255,
+                  255,
+                  255
+                ],
+                "resample": "LANCZOS",
+                "resize": "aspect_preserving_letterbox",
+                "width": 240
+              },
+              "feature_dtype": "float32",
+              "feature_shape": [
+                32773,
+                400
+              ],
+              "path_column": "external_path",
+              "probe": "spatial-hsv-edge-4x4-v2",
+              "rows": 32773,
+              "schema_version": "1.0.0",
+              "scope": "development",
+              "sha_column": "external_sha256",
+              "source": "v1",
+              "source_bytes": 11525856401,
+              "source_fingerprint": "2d03079c521908b802d95a5bf7f8f57e5a16759a27cb781456fe42fed91f0f84",
+              "transform_seconds": 774.7498661470017
+            },
+            "manifest_sha256": "d952cb9011c9a92e6f49e4e7b33a67b2b1685449d0346f7883e2a66ae2ffa689"
+          }
+        },
+        "rows": 32773,
+        "schema_version": "1.0.0",
+        "scope": "development",
+        "source": "v1",
+        "source_bytes": 11525856401,
+        "source_fingerprint": "2d03079c521908b802d95a5bf7f8f57e5a16759a27cb781456fe42fed91f0f84",
+        "transform_seconds": 1016.519202680036
+      },
+      "path": "results/cache/task4/hog_fusion/features/v1/7c97bf48e8245482100e/manifest.json",
+      "sha256": "9f1e4aab506f3b19cf7b03b8bf5bf6379c681232dbf28aed7a7f4e6c5074fd7c"
+    }
+  },
+  "gates": {
+    "index_under_one_gibibyte": true,
+    "p95_end_to_end_under_one_second": true
+  },
+  "holdout_opened": false,
+  "method": "hog-plus-spatial-hsv-edge-equal-v1",
+  "parents": {
+    "teacher": {
+      "hog": {
+        "features_file_sha256": "3320770e56f80c189431a81c7750166c06535dcba23ec9deb4a4c180234adfa4",
+        "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+        "manifest": {
+          "checkpoint_fingerprint": null,
+          "config_fingerprint": null,
+          "contract": {
+            "colour_mode": "RGB",
+            "height": 320,
+            "pad_color": [
+              255,
+              255,
+              255
+            ],
+            "resample": "LANCZOS",
+            "resize": "aspect_preserving_letterbox",
+            "width": 240
+          },
+          "descriptor_config": {
+            "block_size_cells": 2,
+            "block_stride_cells": 1,
+            "cell_size_pixels": 32,
+            "descriptor_dimension": 1728,
+            "gaussian_kernel": [
+              1,
+              4,
+              6,
+              4,
+              1
+            ],
+            "gaussian_kernel_normalizer": 16,
+            "grayscale": "rec709-luminance",
+            "input_height": 320,
+            "input_width": 240,
+            "l2_hys_clip": 0.2,
+            "mask_policy": "normalized-blur-and-valid-central-differences",
+            "schema_version": "1.0.0",
+            "unsigned_orientation_bins": 8,
+            "zero_gradient_policy": "canonical-unit-sentinel"
+          },
+          "descriptor_fingerprint": "c4604537474ff5ed8889a9e480053b225064fb20027e147582960bb3afd3a848",
+          "dimension": 1728,
+          "features_file_sha256": "3320770e56f80c189431a81c7750166c06535dcba23ec9deb4a4c180234adfa4",
+          "fold": 1,
+          "id_sha256": "2639d731f89942fd9598f9552bb092dd634830c3e6a63d0b569cfc2aa4362d01",
+          "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+          "image_cache_manifest_sha256": "3764e0549e9bafd23d950c29c50a948f8cc1adec2ed4cea1357f2cc3b48433b3",
+          "method": "hog-luma-g5-u8-c32-b2-s1-l2hys02-v1",
+          "rows": 32773,
+          "schema_version": "1.0.0",
+          "scope": "development",
+          "source": "teacher",
+          "source_bytes": 7550899200,
+          "source_fingerprint": "9537d2dc78a30b3bd1f6fb61c9cf7fc1c55d1ff03cbdd8b50a03df1c1c72b8a0",
+          "transform_seconds": 242.09224685002118
+        },
+        "path": "results/cache/task4/hog/features/teacher/3a2e0292f2158541bac2/manifest.json",
+        "sha256": "9f2a3b5646de29e3f4ff2b54b4b706c10dda7a118af421e6598db8d467f35884"
+      },
+      "spatial_hsv_edge": {
+        "features_file_sha256": "e0e3cd69959ffe4116ccb9d79901eadb738222347095936fc719cb228b76cd62",
+        "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+        "manifest": {
+          "contract": {
+            "colour_mode": "RGB",
+            "height": 320,
+            "pad_color": [
+              255,
+              255,
+              255
+            ],
+            "resample": "LANCZOS",
+            "resize": "aspect_preserving_letterbox",
+            "width": 240
+          },
+          "feature_dtype": "float32",
+          "feature_shape": [
+            32773,
+            400
+          ],
+          "path_column": "teacher_path",
+          "probe": "spatial-hsv-edge-4x4-v2",
+          "rows": 32773,
+          "schema_version": "1.0.0",
+          "scope": "development",
+          "sha_column": "teacher_sha256",
+          "source": "teacher",
+          "source_bytes": 409687427,
+          "source_fingerprint": "9537d2dc78a30b3bd1f6fb61c9cf7fc1c55d1ff03cbdd8b50a03df1c1c72b8a0",
+          "transform_seconds": 767.2595831690123
+        },
+        "path": "data/processed/task4/preprocessing/features/rgb-letterbox-lanczos-240x320/teacher/manifest.json",
+        "sha256": "1ca88d9758774cf4a02d8131d9aa2171aac101234d1f59c2a0a815a025063516"
+      }
+    },
+    "v1": {
+      "hog": {
+        "features_file_sha256": "75f4b7efad83e96a98dcd10dcbb8fe7575ca4b3e51728a5ce75d17aa906ca498",
+        "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+        "manifest": {
+          "checkpoint_fingerprint": null,
+          "config_fingerprint": null,
+          "contract": {
+            "colour_mode": "RGB",
+            "height": 320,
+            "pad_color": [
+              255,
+              255,
+              255
+            ],
+            "resample": "LANCZOS",
+            "resize": "aspect_preserving_letterbox",
+            "width": 240
+          },
+          "descriptor_config": {
+            "block_size_cells": 2,
+            "block_stride_cells": 1,
+            "cell_size_pixels": 32,
+            "descriptor_dimension": 1728,
+            "gaussian_kernel": [
+              1,
+              4,
+              6,
+              4,
+              1
+            ],
+            "gaussian_kernel_normalizer": 16,
+            "grayscale": "rec709-luminance",
+            "input_height": 320,
+            "input_width": 240,
+            "l2_hys_clip": 0.2,
+            "mask_policy": "normalized-blur-and-valid-central-differences",
+            "schema_version": "1.0.0",
+            "unsigned_orientation_bins": 8,
+            "zero_gradient_policy": "canonical-unit-sentinel"
+          },
+          "descriptor_fingerprint": "c4604537474ff5ed8889a9e480053b225064fb20027e147582960bb3afd3a848",
+          "dimension": 1728,
+          "features_file_sha256": "75f4b7efad83e96a98dcd10dcbb8fe7575ca4b3e51728a5ce75d17aa906ca498",
+          "fold": 1,
+          "id_sha256": "2639d731f89942fd9598f9552bb092dd634830c3e6a63d0b569cfc2aa4362d01",
+          "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+          "image_cache_manifest_sha256": "b82c3e3d96a03e919c589cc27745c1dab655649e6300177d003324c62f1218fc",
+          "method": "hog-luma-g5-u8-c32-b2-s1-l2hys02-v1",
+          "rows": 32773,
+          "schema_version": "1.0.0",
+          "scope": "development",
+          "source": "v1",
+          "source_bytes": 7550899200,
+          "source_fingerprint": "2d03079c521908b802d95a5bf7f8f57e5a16759a27cb781456fe42fed91f0f84",
+          "transform_seconds": 241.76933653303422
+        },
+        "path": "results/cache/task4/hog/features/v1/c7276e6d847a18d122a9/manifest.json",
+        "sha256": "9cf7c64348d6f43c3c26fea4716c589a8fd70a2393fc767f0c407cce3396b15e"
+      },
+      "spatial_hsv_edge": {
+        "features_file_sha256": "d5344a617caab349d98db2303e9f0631fbc2a74fa300d9657b783e5d2f0813b8",
+        "ids_file_sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041",
+        "manifest": {
+          "contract": {
+            "colour_mode": "RGB",
+            "height": 320,
+            "pad_color": [
+              255,
+              255,
+              255
+            ],
+            "resample": "LANCZOS",
+            "resize": "aspect_preserving_letterbox",
+            "width": 240
+          },
+          "feature_dtype": "float32",
+          "feature_shape": [
+            32773,
+            400
+          ],
+          "path_column": "external_path",
+          "probe": "spatial-hsv-edge-4x4-v2",
+          "rows": 32773,
+          "schema_version": "1.0.0",
+          "scope": "development",
+          "sha_column": "external_sha256",
+          "source": "v1",
+          "source_bytes": 11525856401,
+          "source_fingerprint": "2d03079c521908b802d95a5bf7f8f57e5a16759a27cb781456fe42fed91f0f84",
+          "transform_seconds": 774.7498661470017
+        },
+        "path": "data/processed/task4/preprocessing/features/rgb-letterbox-lanczos-240x320/v1/manifest.json",
+        "sha256": "d952cb9011c9a92e6f49e4e7b33a67b2b1685449d0346f7883e2a66ae2ffa689"
+      }
+    }
+  },
+  "preprocessing_contract": {
+    "colour_mode": "RGB",
+    "height": 320,
+    "pad_color": [
+      255,
+      255,
+      255
+    ],
+    "resample": "LANCZOS",
+    "resize": "aspect_preserving_letterbox",
+    "width": 240
+  },
+  "quarantine_opened": false,
+  "registry_appended": false,
+  "schema_version": "1.0.0",
+  "scope": "development",
+  "split_fingerprint": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd"
+}

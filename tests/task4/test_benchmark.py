@@ -34,6 +34,40 @@ class FakeClock:
         return next(self._values)
 
 
+def _learned_extract(_pixels: np.ndarray, _mask: np.ndarray) -> np.ndarray:
+    feature = np.zeros(128, dtype=np.float32)
+    feature[0] = 1.0
+    return feature
+
+
+def _nan_extract(_pixels: np.ndarray, _mask: np.ndarray) -> np.ndarray:
+    return np.array([np.nan, 0.0], dtype=np.float32)
+
+
+def _nonconvertible_extract(_pixels: np.ndarray, _mask: np.ndarray) -> np.ndarray:
+    return np.array(["not-a-number"], dtype=object)
+
+
+def _wrong_rank_extract(_pixels: np.ndarray, _mask: np.ndarray) -> np.ndarray:
+    return np.array([[1.0, 0.0]], dtype=np.float32)
+
+
+def _zero_extract(_pixels: np.ndarray, _mask: np.ndarray) -> np.ndarray:
+    return np.zeros(2, dtype=np.float32)
+
+
+def _bad_norm_extract(_pixels: np.ndarray, _mask: np.ndarray) -> np.ndarray:
+    return np.ones(2, dtype=np.float32)
+
+
+def _inconsistent_extract(pixels: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    red = int(pixels[mask][0, 0])
+    size = 2 if red == 1 else 3
+    feature = np.zeros(size, dtype=np.float32)
+    feature[0] = 1.0
+    return feature
+
+
 def test_benchmark_api_is_exported_from_task4_package() -> None:
     assert task4.TimingPolicy is TimingPolicy
     assert task4.IndexCost is IndexCost
@@ -140,6 +174,22 @@ def test_benchmark_keeps_a_slow_sample() -> None:
 
     assert samples["query_id"].tolist() == [1, 2, 3]
     assert samples["end_to_end_seconds"].tolist() == pytest.approx([0.2, 10.0, 0.2])
+
+
+def test_benchmark_fold_label_is_parameterized() -> None:
+    samples = benchmark_source_direction(
+        pd.DataFrame({"id": [1]}),
+        query_source="teacher",
+        gallery_source="v1",
+        encode=lambda _row: np.array([1.0], dtype=np.float32),
+        search=lambda _query_id, _feature: pd.DataFrame(),
+        policy=TimingPolicy(warmup_queries=0),
+        clock_ns=FakeClock([0, 1, 2]),
+        fold=3,
+    )
+
+    assert samples["fold"].tolist() == [3]
+    assert summarize_timings(samples)["timed_queries"].tolist() == [1] * 6
 
 
 def test_query_encoder_reads_the_row_path_then_runs_the_frozen_probe(tmp_path: Path) -> None:
@@ -332,6 +382,74 @@ def test_measure_index_build_reports_payload_index_and_spawn_peak_rss(
     assert cost.index_bytes == cost.payload_bytes + 2 * np.dtype(np.int64).itemsize
     assert cost.build_seconds >= 0.0
     assert cost.peak_rss_bytes > cost.index_bytes
+
+
+def test_measure_index_build_accepts_a_learned_encoder(tmp_path: Path) -> None:
+    Image.new("RGB", (10, 8), (255, 0, 0)).save(tmp_path / "image.png")
+    rows = pd.DataFrame(
+        {
+            "id": [1],
+            "partition": ["development"],
+            "path": ["image.png"],
+        }
+    )
+
+    cost = measure_index_build(
+        rows,
+        source="teacher",
+        path_column="path",
+        contract=PreprocessingContract(width=240, height=320),
+        root=tmp_path,
+        extract=_learned_extract,
+        method="r1-vicreg",
+        checkpoint_fingerprint="checkpoint-a",
+        config_fingerprint="config-a",
+        fold=2,
+    )
+
+    assert cost.dimension == 128
+    assert cost.payload_bytes == 128 * np.dtype(np.float32).itemsize
+
+
+@pytest.mark.parametrize(
+    ("extract", "message"),
+    [
+        (_nonconvertible_extract, "float32-convertible"),
+        (_nan_extract, "finite"),
+        (_wrong_rank_extract, "one-dimensional"),
+        (_zero_extract, "non-zero"),
+        (_bad_norm_extract, "unit norm"),
+        (_inconsistent_extract, "consistent dimension"),
+    ],
+)
+def test_measure_index_build_rejects_invalid_extracted_vectors(
+    tmp_path: Path,
+    extract,
+    message: str,
+) -> None:
+    Image.new("RGB", (3, 4), (1, 0, 0)).save(tmp_path / "first.png")
+    Image.new("RGB", (3, 4), (2, 0, 0)).save(tmp_path / "second.png")
+    rows = pd.DataFrame(
+        {
+            "id": [1, 2],
+            "partition": ["development", "development"],
+            "path": ["first.png", "second.png"],
+        }
+    )
+
+    with pytest.raises(RuntimeError, match=message):
+        measure_index_build(
+            rows,
+            source="teacher",
+            path_column="path",
+            contract=PreprocessingContract(width=240, height=320),
+            root=tmp_path,
+            extract=extract,
+            method="r1-vicreg",
+            checkpoint_fingerprint="checkpoint-a",
+            config_fingerprint="config-a",
+            fold=1,
+        )
 
 
 def test_measure_index_build_rejects_non_frozen_contract() -> None:

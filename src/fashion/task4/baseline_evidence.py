@@ -316,6 +316,8 @@ def render_baseline_examples(
     image_rows: pd.DataFrame,
     example_rankings: Mapping[str, pd.DataFrame],
     destination: str | Path,
+    *,
+    title: str = "Task 4 fixed probe — V1 query to V1 Top-5",
 ) -> None:
     """Render fixed V1-to-V1 query and Top-5 rows from selected evidence."""
     ordered = _validate_examples(examples)
@@ -379,7 +381,7 @@ def render_baseline_examples(
         for axis in axes[row_index]:
             axis.set_xticks([])
             axis.set_yticks([])
-    figure.suptitle("Task 4 fixed probe — V1 query to V1 Top-5", fontsize=11)
+    figure.suptitle(title, fontsize=11)
     output = Path(destination)
     output.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(output, dpi=180, metadata={"Software": "MLA2"})

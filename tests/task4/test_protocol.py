@@ -606,6 +606,46 @@ def test_metric_evaluators_reject_duplicate_candidate_products() -> None:
         protocol.evaluate_primary_rankings(rankings, _small_primary_views(), (3,))
 
 
+@pytest.mark.parametrize(
+    ("query_ids", "message"),
+    [
+        ([1], "missing query IDs.*5"),
+        ([1, 5, 99], "unknown query IDs.*99"),
+    ],
+)
+def test_metric_evaluators_require_exactly_every_expected_query(
+    query_ids: list[int],
+    message: str,
+) -> None:
+    views = RetrievalViews(
+        queries=pd.DataFrame(
+            {
+                "id": [1, 5],
+                "articleType": ["Tshirts", "Tshirts"],
+                "baseColour": ["Blue", "Blue"],
+            }
+        ),
+        gallery=pd.DataFrame(
+            {
+                "id": [2],
+                "articleType": ["Tshirts"],
+                "baseColour": ["Blue"],
+            }
+        ),
+    )
+    rankings = pd.DataFrame(
+        {
+            "query_id": query_ids,
+            "candidate_id": [2] * len(query_ids),
+            "distance": [0.1] * len(query_ids),
+            "rank": [1] * len(query_ids),
+        }
+    )
+
+    with pytest.raises(ValueError, match=message):
+        protocol.evaluate_primary_rankings(rankings, views, (1,))
+
+
 @pytest.mark.parametrize("k_values", [(0,), (-1,), (1, 1), (1.5,)])
 def test_primary_metric_rejects_invalid_k_values(
     k_values: tuple[object, ...],
@@ -734,6 +774,42 @@ def test_primary_metric_uses_linear_gain_and_reports_undefined_coverage() -> Non
     assert ndcg_macro["value"] == pytest.approx((3 + expected) / 4)
     assert ndcg_macro["value"] != pytest.approx(ndcg_query_mean["value"])
     assert ndcg_macro["class_count"] == 2
+
+
+def test_primary_ndcg_snaps_only_tiny_upper_bound_roundoff() -> None:
+    views = RetrievalViews(
+        queries=pd.DataFrame(
+            {
+                "id": [1],
+                "articleType": ["Nail Polish"],
+                "baseColour": ["Orange"],
+            }
+        ),
+        gallery=pd.DataFrame(
+            {
+                "id": list(range(10, 23)),
+                "articleType": ["Nail Polish"] * 13,
+                "baseColour": ["Blue"] * 13,
+            }
+        ),
+    )
+    rankings = pd.DataFrame(
+        {
+            "query_id": [1] * 13,
+            "candidate_id": list(range(10, 23)),
+            "distance": [float(index) for index in range(13)],
+            "rank": list(range(1, 14)),
+        }
+    )
+
+    per_query, summary = protocol.evaluate_primary_rankings(
+        rankings,
+        views,
+        k_values=(20,),
+    )
+
+    assert per_query["ndcg_at_20"].item() == 1.0
+    assert summary.loc[summary["metric"].eq("ndcg"), "value"].max() == 1.0
 
 
 @pytest.mark.parametrize(

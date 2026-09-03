@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
+import fashion.task4 as task4
+import fashion.task4.probe as probe
 from fashion.task4.probe import (
     COLOUR_FEATURE_DIM,
     EDGE_FEATURE_DIM,
@@ -97,6 +99,29 @@ def test_ranker_uses_cosine_distance_and_numeric_id_ties() -> None:
 
     assert ranked["candidate_id"].tolist() == [2, 10]
     assert ranked["distance"].tolist() == [0.0, 0.0]
+
+
+def test_generic_ranker_accepts_learned_embeddings_through_the_frozen_path() -> None:
+    query_features = np.zeros((1, 128), dtype=np.float32)
+    query_features[0, 0] = 1.0
+    gallery_features = np.zeros((3, 128), dtype=np.float32)
+    gallery_features[0, 0] = 1.0
+    gallery_features[1, 1] = 1.0
+    gallery_features[2, :2] = 2**-0.5
+
+    ranked = probe.rank_embeddings(
+        query_ids=np.array([1]),
+        query_features=query_features,
+        gallery_ids=np.array([10, 2, 3]),
+        gallery_features=gallery_features,
+        views=_primary_views([1], [10, 2, 3]),
+        protocol="primary",
+        max_k=3,
+    )
+
+    assert ranked["candidate_id"].tolist() == [10, 3, 2]
+    assert ranked["distance"].tolist() == pytest.approx([0.0, 1 - 2**-0.5, 1.0])
+    assert task4.rank_embeddings is probe.rank_embeddings
 
 
 def test_ranker_filters_family_candidates_before_top_k() -> None:

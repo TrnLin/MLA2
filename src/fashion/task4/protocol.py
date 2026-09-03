@@ -233,6 +233,9 @@ def prepare_rankings(
     unknown_queries = set(ranking_query_ids).difference(query_ids)
     if unknown_queries:
         raise ValueError(f"rankings contain unknown query IDs: {sorted(unknown_queries)}")
+    missing_queries = set(query_ids).difference(ranking_query_ids)
+    if missing_queries:
+        raise ValueError(f"rankings are missing query IDs: {sorted(missing_queries)}")
     unknown_candidates = set(ranking_candidate_ids).difference(candidate_ids)
     if unknown_candidates:
         raise ValueError(
@@ -314,6 +317,9 @@ def _metric_lookups(
     unknown_candidates = set(ranking_candidate_ids).difference(candidate_ids)
     if unknown_queries:
         raise ValueError(f"rankings contain unknown query IDs: {sorted(unknown_queries)}")
+    missing_queries = set(query_ids).difference(ranking_query_ids)
+    if missing_queries:
+        raise ValueError(f"rankings are missing query IDs: {sorted(missing_queries)}")
     if unknown_candidates:
         raise ValueError(
             f"rankings contain unknown candidate IDs: {sorted(unknown_candidates)}"
@@ -381,6 +387,20 @@ def _append_summary_rows(
     )
 
 
+def _bounded_metric(value: float, *, label: str, atol: float = 1e-12) -> float:
+    if not np.isfinite(value):
+        raise ValueError(f"{label} must be finite")
+    if value < 0.0:
+        if np.isclose(value, 0.0, rtol=0.0, atol=atol):
+            return 0.0
+        raise ValueError(f"{label} must be at least 0")
+    if value > 1.0:
+        if np.isclose(value, 1.0, rtol=0.0, atol=atol):
+            return 1.0
+        raise ValueError(f"{label} must be at most 1")
+    return float(value)
+
+
 def evaluate_primary_rankings(
     rankings: pd.DataFrame,
     views: RetrievalViews,
@@ -413,7 +433,7 @@ def evaluate_primary_rankings(
             ideal_at_k = ideal_grades[:k]
             idcg = float((ideal_at_k / discounts[: len(ideal_at_k)]).sum())
             if idcg > 0:
-                result[f"ndcg_at_{k}"] = dcg / idcg
+                result[f"ndcg_at_{k}"] = _bounded_metric(dcg / idcg, label=f"nDCG@{k}")
                 result[f"precision_any_at_{k}"] = float(
                     (observed_grades[:k] > 0).sum() / k
                 )

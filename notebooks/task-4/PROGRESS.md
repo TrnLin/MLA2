@@ -88,30 +88,47 @@ and all eight qualitative examples are tracked under `results/`.
 
 ## 5. Model comparisons
 
-- [ ] Pick several reasonable model families
-- [ ] Check scratch-training compliance
-- [ ] Freeze the experiment matrix and training budget
+- [x] Pick several reasonable model families
+- [x] Check scratch-training compliance
+- [x] Freeze the experiment matrix and training budget
 
 Done when: we know exactly which comparisons answer each project question.
 
+Evidence: scratch R1–R5, comparison-only pretrained B1, and the approved
+incremental matrix in `results/evidence/task4/learned/`.
+
 ## 6. Train and validate
 
-- [ ] Build the run registry
-- [ ] Train models from scratch
-- [ ] Validate with the frozen evaluation rules
-- [ ] Compare teacher images against V1 images
-- [ ] Save checkpoints, figures, timings, and run records
+- [x] Build the run registry
+- [x] Train models from scratch
+- [x] Validate with the frozen evaluation rules
+- [x] Compare teacher images against V1 images
+- [x] Save checkpoints, figures, timings, and run records
 
 Done when: all planned runs are repeatable and recorded.
 
+Evidence: `results/runs.csv`, six final learned manifests, and ten R5/R3
+stability records.
+
 ## 7. Error analysis and final choice
 
-- [ ] Review good and bad search results
-- [ ] Check rare products, colours, image quality, and query-size failures
-- [ ] Compare quality against runtime and storage cost
-- [ ] Choose and freeze the final method
+- [x] Review good and bad search results
+- [x] Check rare products, colours, image quality, and query-size failures
+- [x] Compare quality against runtime and storage cost
+- [x] Choose and freeze the final method
 
 Done when: the winner is justified by evidence, not only one score.
+
+Decision 0023 freezes scratch R5 with a teacher-only gallery. R5 beat R3 over
+five fresh folds, passed the scratch/speed/storage gates, and won the
+teacher/V1/two-view gallery study. Canvas sensitivity and failed/abandoned
+attempts remain visible.
+
+Task 10 fix round 1/5 restored the full HOG/fusion comparison and added the
+final learned appendix. The notebook and report now read the compact,
+strictly validated `results/evidence/task4/final/task4-final-comparison.json`.
+Its source and template are ready to track, but they are not staged or
+committed. The holdout remains sealed.
 
 ## 8. Final test
 
@@ -133,6 +150,6 @@ final choice.
 
 ## Current next milestone
 
-**Milestone 5 — Model comparisons**
+**Milestone 8 — Final test**
 
 The holdout remains sealed until Milestone 8.

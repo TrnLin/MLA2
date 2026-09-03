@@ -8,8 +8,9 @@ import os
 import shutil
 import tempfile
 import time
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Literal
 
@@ -26,7 +27,7 @@ from fashion.task4.preprocessing import (
 from fashion.task4.probe import (
     PROBE_VERSION,
     extract_spatial_probe,
-    rank_probe_embeddings,
+    rank_embeddings,
 )
 from fashion.task4.protocol import (
     RetrievalViews,
@@ -67,6 +68,12 @@ class FeatureIndex:
     features: np.ndarray
     transform_seconds: float
     source_bytes: int
+    method: str = PROBE_VERSION
+    fold: int = 1
+    checkpoint_fingerprint: str | None = None
+    config_fingerprint: str | None = None
+    descriptor_fingerprint: str | None = None
+    provenance: object | None = None
 
 
 @dataclass(frozen=True)
@@ -78,6 +85,11 @@ class PairEvaluation:
     family_rankings: pd.DataFrame
     primary_per_query: pd.DataFrame
     family_per_query: pd.DataFrame
+    method: str = PROBE_VERSION
+    fold: int = 1
+    checkpoint_fingerprint: str | None = None
+    config_fingerprint: str | None = None
+    descriptor_fingerprint: str | None = None
 
 
 @dataclass(frozen=True)
@@ -125,6 +137,92 @@ def _resolve_path(value: object, root: Path) -> Path:
     return path if path.is_absolute() else root / path
 
 
+def _validate_feature_identity(
+    *,
+    extract: Callable[[np.ndarray, np.ndarray], np.ndarray] | None,
+    method: str,
+    fold: int,
+    checkpoint_fingerprint: str | None,
+    config_fingerprint: str | None,
+    descriptor_fingerprint: str | None,
+) -> bool:
+    if not isinstance(method, str) or not method.strip():
+        raise ValueError("feature method must be a non-empty string")
+    if isinstance(fold, bool) or not isinstance(fold, int) or fold not in range(5):
+        raise ValueError("feature fold must be an integer from 0 through 4")
+    legacy_probe_identity = (
+        (extract is None or extract is extract_spatial_probe)
+        and method == PROBE_VERSION
+        and fold == 1
+        and checkpoint_fingerprint is None
+        and config_fingerprint is None
+        and descriptor_fingerprint is None
+    )
+    if legacy_probe_identity:
+        return True
+    if descriptor_fingerprint is not None:
+        if not isinstance(descriptor_fingerprint, str) or not descriptor_fingerprint.strip():
+            raise ValueError("descriptor fingerprint must be a non-empty string")
+        if checkpoint_fingerprint is not None or config_fingerprint is not None:
+            raise ValueError(
+                "untrained descriptor provenance must not contain checkpoint "
+                "or model config fingerprints"
+            )
+        return False
+    if not isinstance(checkpoint_fingerprint, str) or not checkpoint_fingerprint.strip():
+        raise ValueError("checkpoint fingerprint is required for non-legacy features")
+    if not isinstance(config_fingerprint, str) or not config_fingerprint.strip():
+        raise ValueError("config fingerprint is required for non-legacy features")
+    return False
+
+
+def _feature_identity(
+    index: FeatureIndex,
+) -> tuple[str, int, str | None, str | None, str | None]:
+    _validate_feature_identity(
+        extract=None,
+        method=index.method,
+        fold=index.fold,
+        checkpoint_fingerprint=index.checkpoint_fingerprint,
+        config_fingerprint=index.config_fingerprint,
+        descriptor_fingerprint=index.descriptor_fingerprint,
+    )
+    return (
+        index.method,
+        index.fold,
+        index.checkpoint_fingerprint,
+        index.config_fingerprint,
+        index.descriptor_fingerprint,
+    )
+
+
+def _stack_validated_features(features: list[object]) -> np.ndarray:
+    validated: list[np.ndarray] = []
+    dimension: int | None = None
+    for raw_feature in features:
+        try:
+            feature = np.asarray(raw_feature, dtype=np.float32)
+        except (TypeError, ValueError, OverflowError) as error:
+            raise ValueError("extracted features must be float32-convertible") from error
+        if feature.ndim != 1:
+            raise ValueError("each extracted feature must be one-dimensional")
+        if feature.size == 0:
+            raise ValueError("extracted features must have a positive dimension")
+        if dimension is None:
+            dimension = int(feature.size)
+        elif feature.size != dimension:
+            raise ValueError("extracted features must have one consistent dimension")
+        if not np.isfinite(feature).all():
+            raise ValueError("extracted features must be finite")
+        norm = float(np.linalg.norm(feature))
+        if norm == 0:
+            raise ValueError("extracted features must have non-zero norm")
+        if not np.isclose(norm, 1.0, atol=1e-5):
+            raise ValueError("extracted features must have unit norm")
+        validated.append(feature)
+    return np.stack(validated).astype(np.float32, copy=False)
+
+
 def extract_feature_index(
     frame: pd.DataFrame,
     *,
@@ -133,8 +231,22 @@ def extract_feature_index(
     contract: PreprocessingContract,
     root: str | Path = ROOT,
     workers: int | None = None,
+    extract: Callable[[np.ndarray, np.ndarray], np.ndarray] = extract_spatial_probe,
+    method: str = PROBE_VERSION,
+    checkpoint_fingerprint: str | None = None,
+    config_fingerprint: str | None = None,
+    descriptor_fingerprint: str | None = None,
+    fold: int = 1,
 ) -> FeatureIndex:
     """Transform and describe one complete development image source."""
+    _validate_feature_identity(
+        extract=extract,
+        method=method,
+        fold=fold,
+        checkpoint_fingerprint=checkpoint_fingerprint,
+        config_fingerprint=config_fingerprint,
+        descriptor_fingerprint=descriptor_fingerprint,
+    )
     working = _development_frame(frame, path_column)
     root_path = Path(root)
     paths = [_resolve_path(value, root_path) for value in working[path_column]]
@@ -144,7 +256,7 @@ def extract_feature_index(
 
     def transform(path: Path) -> np.ndarray:
         image = load_preprocessed_image(path, contract)
-        return extract_spatial_probe(image.pixels, image.content_mask)
+        return extract(image.pixels, image.content_mask)
 
     started = time.perf_counter()
     if worker_count == 1:
@@ -157,9 +269,14 @@ def extract_feature_index(
         source=source,
         contract=contract,
         ids=working["id"].to_numpy(dtype=np.int64),
-        features=np.stack(features).astype(np.float32, copy=False),
+        features=_stack_validated_features(features),
         transform_seconds=elapsed,
         source_bytes=sum(path.stat().st_size for path in paths),
+        method=method,
+        fold=fold,
+        checkpoint_fingerprint=checkpoint_fingerprint,
+        config_fingerprint=config_fingerprint,
+        descriptor_fingerprint=descriptor_fingerprint,
     )
 
 
@@ -172,8 +289,22 @@ def extract_canvas_feature_index(
     contract: PreprocessingContract,
     root: str | Path = ROOT,
     workers: int = 1,
+    extract: Callable[[np.ndarray, np.ndarray], np.ndarray] = extract_spatial_probe,
+    method: str = PROBE_VERSION,
+    checkpoint_fingerprint: str | None = None,
+    config_fingerprint: str | None = None,
+    descriptor_fingerprint: str | None = None,
+    fold: int = 1,
 ) -> FeatureIndex:
     """Extract sorted probe features after deterministic wide/tall canvassing."""
+    _validate_feature_identity(
+        extract=extract,
+        method=method,
+        fold=fold,
+        checkpoint_fingerprint=checkpoint_fingerprint,
+        config_fingerprint=config_fingerprint,
+        descriptor_fingerprint=descriptor_fingerprint,
+    )
     working = _development_frame(query_rows, path_column)
     if orientation not in {"wide", "tall"}:
         raise ValueError("orientation must be 'wide' or 'tall'")
@@ -187,7 +318,7 @@ def extract_canvas_feature_index(
         with Image.open(path) as image:
             canvas = build_odd_aspect_canvas(image, orientation)
             transformed = preprocess_image(canvas, contract)
-        return extract_spatial_probe(
+        return extract(
             transformed.pixels,
             transformed.content_mask,
         )
@@ -199,11 +330,16 @@ def extract_canvas_feature_index(
         source=source,
         contract=contract,
         ids=working["id"].to_numpy(dtype=np.int64),
-        features=np.stack(features).astype(np.float32, copy=False),
+        features=_stack_validated_features(features),
         transform_seconds=time.perf_counter() - started,
         source_bytes=sum(
             _resolve_path(value, root_path).stat().st_size for value in working[path_column]
         ),
+        method=method,
+        fold=fold,
+        checkpoint_fingerprint=checkpoint_fingerprint,
+        config_fingerprint=config_fingerprint,
+        descriptor_fingerprint=descriptor_fingerprint,
     )
 
 
@@ -247,6 +383,11 @@ def _load_cached_feature_index(
         features=features,
         transform_seconds=float(manifest["transform_seconds"]),
         source_bytes=int(manifest["source_bytes"]),
+        method=str(manifest.get("method", PROBE_VERSION)),
+        fold=int(manifest.get("fold", 1)),
+        checkpoint_fingerprint=manifest.get("checkpoint_fingerprint"),
+        config_fingerprint=manifest.get("config_fingerprint"),
+        descriptor_fingerprint=manifest.get("descriptor_fingerprint"),
     )
     return CachedFeatureIndex(cache_dir=cache_dir, index=index, manifest=manifest)
 
@@ -261,8 +402,22 @@ def ensure_feature_index(
     root: str | Path = ROOT,
     sha_column: str | None = None,
     workers: int | None = None,
+    extract: Callable[[np.ndarray, np.ndarray], np.ndarray] = extract_spatial_probe,
+    method: str = PROBE_VERSION,
+    checkpoint_fingerprint: str | None = None,
+    config_fingerprint: str | None = None,
+    descriptor_fingerprint: str | None = None,
+    fold: int = 1,
 ) -> CachedFeatureIndex:
     """Reuse or extract one exact local probe-feature index."""
+    legacy_probe_identity = _validate_feature_identity(
+        extract=extract,
+        method=method,
+        fold=fold,
+        checkpoint_fingerprint=checkpoint_fingerprint,
+        config_fingerprint=config_fingerprint,
+        descriptor_fingerprint=descriptor_fingerprint,
+    )
     working = _development_frame(frame, path_column)
     if sha_column is not None:
         _require_columns(working, {sha_column})
@@ -286,6 +441,29 @@ def ensure_feature_index(
         "contract": contract.to_dict(),
     }
     cache_dir = Path(cache_root) / contract.key / source
+    if not legacy_probe_identity:
+        expected.update(
+            {
+                "method": method,
+                "fold": fold,
+                "checkpoint_fingerprint": checkpoint_fingerprint,
+                "config_fingerprint": config_fingerprint,
+                "descriptor_fingerprint": descriptor_fingerprint,
+            }
+        )
+        cache_identity = hashlib.sha256(
+            json.dumps(
+                {
+                    "method": method,
+                    "fold": fold,
+                    "checkpoint_fingerprint": checkpoint_fingerprint,
+                    "config_fingerprint": config_fingerprint,
+                    "descriptor_fingerprint": descriptor_fingerprint,
+                },
+                sort_keys=True,
+            ).encode()
+        ).hexdigest()[:16]
+        cache_dir = cache_dir / cache_identity
     if cache_dir.is_dir():
         try:
             cached = _load_cached_feature_index(cache_dir, contract)
@@ -303,6 +481,12 @@ def ensure_feature_index(
         contract=contract,
         root=root_path,
         workers=workers,
+        extract=extract,
+        method=method,
+        checkpoint_fingerprint=checkpoint_fingerprint,
+        config_fingerprint=config_fingerprint,
+        descriptor_fingerprint=descriptor_fingerprint,
+        fold=fold,
     )
     manifest = {
         **expected,
@@ -340,6 +524,27 @@ def source_directions() -> tuple[tuple[SourceName, SourceName], ...]:
     )
 
 
+def _probe_index_for_fold(index: FeatureIndex, fold: int) -> FeatureIndex:
+    if index.fold == fold:
+        return index
+    descriptor_fingerprint = hashlib.sha256(
+        json.dumps(
+            {
+                "method": PROBE_VERSION,
+                "contract": index.contract.to_dict(),
+            },
+            sort_keys=True,
+        ).encode()
+    ).hexdigest()
+    return replace(
+        index,
+        fold=fold,
+        checkpoint_fingerprint=None,
+        config_fingerprint=None,
+        descriptor_fingerprint=descriptor_fingerprint,
+    )
+
+
 def _features_for_ids(
     index: FeatureIndex,
     ids: pd.Series,
@@ -366,12 +571,15 @@ def _label_summary(
     protocol: str,
     query_index: FeatureIndex,
     gallery_index: FeatureIndex,
-    fold: int,
 ) -> pd.DataFrame:
     contract = query_index.contract
     labelled = summary.copy()
     metadata: dict[str, object] = {
-        "fold": int(fold),
+        "method": query_index.method,
+        "fold": query_index.fold,
+        "checkpoint_fingerprint": query_index.checkpoint_fingerprint,
+        "config_fingerprint": query_index.config_fingerprint,
+        "descriptor_fingerprint": query_index.descriptor_fingerprint,
         "size": f"{contract.width}x{contract.height}",
         "width": contract.width,
         "height": contract.height,
@@ -404,6 +612,12 @@ def evaluate_source_pair(
     chunk_size: int = 128,
 ) -> PairEvaluation:
     """Evaluate one teacher/V1 query-gallery direction under both protocols."""
+    query_identity = _feature_identity(query_index)
+    gallery_identity = _feature_identity(gallery_index)
+    if query_identity != gallery_identity:
+        raise ValueError("query and gallery feature provenance must match")
+    if fold != query_index.fold:
+        raise ValueError("evaluation fold must match feature provenance")
     if query_index.contract != gallery_index.contract:
         raise ValueError("query and gallery feature indexes must share one contract")
     primary_query_ids, primary_query_features = _features_for_ids(
@@ -412,7 +626,7 @@ def evaluate_source_pair(
     primary_gallery_ids, primary_gallery_features = _features_for_ids(
         gallery_index, primary_views.gallery["id"]
     )
-    primary_rankings = rank_probe_embeddings(
+    primary_rankings = rank_embeddings(
         query_ids=primary_query_ids,
         query_features=primary_query_features,
         gallery_ids=primary_gallery_ids,
@@ -434,7 +648,7 @@ def evaluate_source_pair(
     family_gallery_ids, family_gallery_features = _features_for_ids(
         gallery_index, family_views.gallery["id"]
     )
-    family_rankings = rank_probe_embeddings(
+    family_rankings = rank_embeddings(
         query_ids=family_query_ids,
         query_features=family_query_features,
         gallery_ids=family_gallery_ids,
@@ -454,14 +668,12 @@ def evaluate_source_pair(
         protocol="primary",
         query_index=query_index,
         gallery_index=gallery_index,
-        fold=fold,
     )
     labelled_family = _label_summary(
         family_summary,
         protocol="family",
         query_index=query_index,
         gallery_index=gallery_index,
-        fold=fold,
     )
     return PairEvaluation(
         summary=pd.concat([labelled_primary, labelled_family], ignore_index=True),
@@ -469,6 +681,11 @@ def evaluate_source_pair(
         family_rankings=family_rankings,
         primary_per_query=primary_per_query,
         family_per_query=family_per_query,
+        method=query_index.method,
+        fold=query_index.fold,
+        checkpoint_fingerprint=query_index.checkpoint_fingerprint,
+        config_fingerprint=query_index.config_fingerprint,
+        descriptor_fingerprint=query_index.descriptor_fingerprint,
     )
 
 
@@ -744,9 +961,13 @@ def run_preprocessing_experiment(
                 splits, validation_fold=fold
             )
             for source in ("teacher", "v1"):
+                fold_index = _probe_index_for_fold(
+                    feature_indexes[(size, source)],
+                    fold,
+                )
                 evaluation = evaluate_source_pair(
-                    feature_indexes[(size, source)],
-                    feature_indexes[(size, source)],
+                    fold_index,
+                    fold_index,
                     primary_views=primary_fold,
                     family_views=family_fold,
                     fold=fold,

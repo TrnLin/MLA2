@@ -17,6 +17,7 @@ import pandas as pd
 from fashion.config import ROOT
 from fashion.data.dataset import load_splits
 from fashion.data.hashing import write_deterministic_csv
+from fashion.data.splits import cv_assignment_digest
 from fashion.task4.cache import (
     ensure_development_image_cache,
     fit_cached_fold_rgb_statistics,
@@ -267,6 +268,48 @@ def _write_figure(
     plt.close(fig)
 
 
+def build_normalization_evidence(
+    splits: pd.DataFrame,
+    development: pd.DataFrame,
+    *,
+    cache_root: Path,
+    root: Path = ROOT,
+    validation_fold: int = 1,
+) -> tuple[dict[str, object], dict[str, object]]:
+    """Build fold-safe source statistics bound to the canonical split digest."""
+    split_fingerprint = cv_assignment_digest(splits)
+    normalization: dict[str, object] = {
+        "schema_version": "1.1.0",
+        "scope": "development training folds only",
+        "validation_fold": int(validation_fold),
+        "split_fingerprint": split_fingerprint,
+        "contract": SELECTED_CONTRACT.to_dict(),
+        "sources": {},
+    }
+    cache_manifests: dict[str, object] = {}
+    for source, (path_column, sha_column) in SOURCE_SPECS.items():
+        cache = ensure_development_image_cache(
+            development,
+            path_column=path_column,
+            sha_column=sha_column,
+            source=source,
+            contract=SELECTED_CONTRACT,
+            cache_root=cache_root,
+            root=root,
+        )
+        cache_manifests[source] = cache.manifest
+        statistics = fit_cached_fold_rgb_statistics(
+            cache,
+            development,
+            validation_fold=validation_fold,
+            canonical_splits=splits,
+        )
+        if statistics["split_fingerprint"] != split_fingerprint:
+            raise ValueError(f"{source} statistics split fingerprint does not match")
+        normalization["sources"][source] = statistics
+    return normalization, cache_manifests
+
+
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     if args.workers <= 0:
@@ -343,30 +386,12 @@ def main(argv: list[str] | None = None) -> int:
         float_format="%.8f",
     )
 
-    normalization: dict[str, object] = {
-        "schema_version": "1.0.0",
-        "scope": "development training folds only",
-        "validation_fold": 1,
-        "contract": SELECTED_CONTRACT.to_dict(),
-        "sources": {},
-    }
-    cache_manifests: dict[str, object] = {}
-    for source, (path_column, sha_column) in SOURCE_SPECS.items():
-        cache = ensure_development_image_cache(
-            development,
-            path_column=path_column,
-            sha_column=sha_column,
-            source=source,
-            contract=SELECTED_CONTRACT,
-            cache_root=local_dir / "images",
-            root=ROOT,
-        )
-        cache_manifests[source] = cache.manifest
-        normalization["sources"][source] = fit_cached_fold_rgb_statistics(
-            cache,
-            development,
-            validation_fold=1,
-        )
+    normalization, cache_manifests = build_normalization_evidence(
+        splits,
+        development,
+        cache_root=local_dir / "images",
+        root=ROOT,
+    )
     (evidence_dir / "preprocessing_normalization_fold1.json").write_text(
         json.dumps(normalization, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",

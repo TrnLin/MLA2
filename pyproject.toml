@@ -13,6 +13,9 @@ dependencies = [
     "numpy==2.5.2",
     "pandas==3.0.5",
     "pillow==12.3.0",
+    "threadpoolctl==3.6.0",
+    "torch==2.13.0",
+    "torchvision==0.28.0",
 ]
 
 [project.optional-dependencies]
@@ -31,3 +34,8 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+"notebooks/01_data_preparation.ipynb" = ["E501"]
+"notebooks/task-4/01_v1_eda.ipynb" = ["F401"]
+"scripts/task4/run_model_comparisons.py" = ["E402"]
