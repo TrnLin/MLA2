@@ -37,7 +37,12 @@ from fashion.task4.training import (
     TrainingResult,
     TrainingSessionConfig,
 )
-from fashion.train.registry import RUN_COLUMNS, RunRegistry
+from fashion.train.registry import (
+    TASK4_RUN_COLUMNS as RUN_COLUMNS,
+)
+from fashion.train.registry import (
+    Task4RunRegistry as RunRegistry,
+)
 
 CONTRACT = PreprocessingContract(width=240, height=320)
 SPLIT_SHA = "b" * 64

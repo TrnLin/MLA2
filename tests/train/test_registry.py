@@ -12,7 +12,22 @@ from typing import Any
 import pytest
 
 import fashion.train.registry as registry_module
-from fashion.train.registry import RUN_COLUMNS, RunRegistry, RunRegistryError
+from fashion.train.recovery import interrupt_orphaned_run
+from fashion.train.registry import (
+    RUN_COLUMNS,
+    TASK2_RUN_COLUMNS,
+    TASK4_RUN_COLUMNS,
+    DuplicateRunError,
+    ImmutableRunError,
+    RunRecord,
+    RunRegistryError,
+    new_run_id,
+    tracked_run,
+)
+from fashion.train.registry import RunRegistry as Task2RunRegistry
+from fashion.train.registry import (
+    Task4RunRegistry as RunRegistry,
+)
 
 
 def _running_row(run_id: str, **overrides: object) -> dict[str, object]:
@@ -376,7 +391,10 @@ def test_pretrained_comparison_only_run_is_valid(tmp_path: Path) -> None:
     "contents",
     [
         "wrong,header\nvalue,value\n",
-        ",".join(RUN_COLUMNS) + "\n" + ",".join([""] * len(RUN_COLUMNS)) + "\n",
+        ",".join(TASK4_RUN_COLUMNS)
+        + "\n"
+        + ",".join([""] * len(TASK4_RUN_COLUMNS))
+        + "\n",
     ],
 )
 def test_read_rejects_malformed_existing_csv(tmp_path: Path, contents: str) -> None:
@@ -404,7 +422,7 @@ def _write_malformed_quote_registry(tmp_path: Path) -> tuple[RunRegistry, bytes]
     registry = RunRegistry(csv_path)
     registry.append(_running_row("quoted-run"))
     valid = csv_path.read_bytes()
-    malformed = valid.replace(b",quoted-run,", b',"quoted-run"x,')
+    malformed = valid.replace(b"quoted-run,", b'"quoted-run"x,')
     assert malformed != valid
     csv_path.write_bytes(malformed)
     return registry, malformed
@@ -507,3 +525,178 @@ def test_two_process_contention_preserves_both_complete_rows(tmp_path: Path) -> 
     rows = RunRegistry(csv_path).read()
     assert {row["run_id"] for row in rows} == {"run-0", "run-1"}
     assert all(row["status"] == "running" for row in rows)
+
+
+DIGESTS = {
+    "config_sha256": "a" * 64,
+    "split_sha256": "b" * 64,
+    "label_map_sha256": "c" * 64,
+    "implementation_sha256": "d" * 64,
+}
+
+
+def _record(run_id: str = "c1-f0-s2753-test") -> RunRecord:
+    return RunRecord(
+        run_id=run_id,
+        experiment_id="c1-screen",
+        fold=0,
+        seed=2753,
+        model_family="smallcnn",
+        **DIGESTS,
+    )
+
+
+def test_tracked_run_records_completed_metrics(tmp_path: Path) -> None:
+    registry = Task2RunRegistry(tmp_path / "runs.csv")
+
+    with tracked_run(registry, _record()) as run:
+        run.epochs_completed = 2
+        run.primary_metric_name = "macro_f1"
+        run.primary_metric_value = 0.625
+        run.metrics = {"macro_f1": 0.625, "loss": 0.8}
+
+    rows = registry.read()
+    assert tuple(rows.columns) == TASK2_RUN_COLUMNS
+    assert len(rows) == 1
+    assert rows.loc[0, "status"] == "completed"
+    assert rows.loc[0, "primary_metric_value"] == "0.625"
+    assert rows.loc[0, "metrics"] == '{"loss":0.8,"macro_f1":0.625}'
+    assert rows.loc[0, "git_commit"]
+    assert rows.loc[0, "finished_at_utc"].endswith("Z")
+
+
+def test_tracked_run_records_failure_and_reraises(tmp_path: Path) -> None:
+    registry = Task2RunRegistry(tmp_path / "runs.csv")
+
+    with pytest.raises(RuntimeError, match="out of memory"):
+        with tracked_run(registry, _record()) as run:
+            run.epochs_completed = 1
+            raise RuntimeError("out of memory")
+
+    rows = registry.read()
+    assert rows.loc[0, "status"] == "failed"
+    assert rows.loc[0, "error_type"] == "RuntimeError"
+    assert rows.loc[0, "error_message"] == "out of memory"
+
+
+def test_orphaned_running_run_can_be_marked_interrupted(tmp_path: Path) -> None:
+    registry = Task2RunRegistry(tmp_path / "runs.csv")
+    record = _record("p1-f1-s2753-orphaned")
+    record.started_at_utc = "2026-08-26T17:42:28Z"
+    registry.append(record)
+
+    interrupt_orphaned_run(
+        registry,
+        record.run_id,
+        reason="training host process exited before Python cleanup",
+    )
+
+    row = registry.read().iloc[0]
+    assert row["status"] == "interrupted"
+    assert row["error_type"] == "ExternalProcessTermination"
+    assert row["error_message"] == "training host process exited before Python cleanup"
+    assert row["started_at_utc"] == "2026-08-26T17:42:28Z"
+    assert row["finished_at_utc"].endswith("Z")
+
+
+def test_duplicate_ids_and_final_rewrites_are_rejected(tmp_path: Path) -> None:
+    registry = Task2RunRegistry(tmp_path / "runs.csv")
+    with tracked_run(registry, _record()):
+        pass
+
+    with pytest.raises(DuplicateRunError):
+        registry.append(_record())
+
+    finished = _record()
+    finished.status = "completed"
+    finished.finished_at_utc = "2026-08-26T00:00:00Z"
+    with pytest.raises(ImmutableRunError):
+        registry.finalize(finished)
+
+
+def test_start_identity_cannot_change(tmp_path: Path) -> None:
+    registry = Task2RunRegistry(tmp_path / "runs.csv")
+    record = _record()
+    registry.append(record)
+    record.fold = 1
+    record.status = "completed"
+    record.finished_at_utc = "2026-08-26T00:00:00Z"
+
+    with pytest.raises(ImmutableRunError, match="fold"):
+        registry.finalize(record)
+
+
+def test_new_run_ids_are_readable_and_unique() -> None:
+    first = new_run_id("C1 screen", fold=2, seed=2753)
+    second = new_run_id("C1 screen", fold=2, seed=2753)
+
+    assert first.startswith("C1-screen-f2-s2753-")
+    assert first != second
+
+
+def test_record_rejects_invalid_provenance_hash() -> None:
+    record = _record()
+    record.split_sha256 = "not-a-digest"
+    with pytest.raises(ValueError, match="split_sha256"):
+        record.to_row()
+
+
+def test_registry_retries_transient_windows_write_denial(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    real_write = registry_module.atomic_write_csv
+    attempts = 0
+
+    def deny_once(path: Path, frame: object) -> None:
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            error = PermissionError(5, "Access is denied", str(path))
+            error.winerror = 5
+            raise error
+        real_write(path, frame)
+
+    monkeypatch.setattr(registry_module, "atomic_write_csv", deny_once)
+    registry = Task2RunRegistry(tmp_path / "runs.csv")
+
+    registry.append(_record())
+
+    assert attempts == 2
+    assert registry.read().loc[0, "status"] == "running"
+
+
+def test_task2_and_task4_rows_share_one_union_schema(tmp_path: Path) -> None:
+    csv_path = tmp_path / "runs.csv"
+    task4_registry = RunRegistry(csv_path)
+    task2_registry = Task2RunRegistry(csv_path)
+
+    task4_registry.append(_running_row("task4-run"))
+    task2_registry.append(_record("task2-run"))
+
+    with csv_path.open(newline="", encoding="utf-8") as handle:
+        assert tuple(csv.DictReader(handle).fieldnames or ()) == RUN_COLUMNS
+    assert RUN_COLUMNS == registry_module.RUN_COLUMNS
+    assert task4_registry.read()[0]["run_id"] == "task4-run"
+    assert task2_registry.read().loc[0, "run_id"] == "task2-run"
+
+
+def test_run_ids_are_unique_across_task_registry_views(tmp_path: Path) -> None:
+    csv_path = tmp_path / "runs.csv"
+    RunRegistry(csv_path).append(_running_row("shared-id"))
+
+    with pytest.raises(DuplicateRunError, match="shared-id"):
+        Task2RunRegistry(csv_path).append(_record("shared-id"))
+
+
+def test_task2_orphan_recovery_preserves_task4_rows(tmp_path: Path) -> None:
+    csv_path = tmp_path / "runs.csv"
+    task4_registry = RunRegistry(csv_path)
+    task2_registry = Task2RunRegistry(csv_path)
+    task4_registry.append(_running_row("task4-run"))
+    task2_registry.append(_record("task2-run"))
+
+    interrupt_orphaned_run(task2_registry, "task2-run", reason="host stopped")
+
+    assert task4_registry.read()[0]["run_id"] == "task4-run"
+    assert task2_registry.read().loc[0, "status"] == "interrupted"

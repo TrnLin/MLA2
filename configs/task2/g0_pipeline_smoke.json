@@ -1,0 +1,30 @@
+{
+  "augmentation": "a0",
+  "batch_size": 32,
+  "device": "auto",
+  "effective_batch_size": 128,
+  "experiment_id": "g0-pipeline-smoke",
+  "gradient_clip_norm": 1.0,
+  "image_size": [
+    80,
+    60
+  ],
+  "integration_epochs": 2,
+  "integration_train_per_class": 128,
+  "integration_validation_per_class": 32,
+  "learning_rate": 0.001,
+  "maximum_tiny_loss_ratio": 0.2,
+  "minimum_tiny_accuracy": 0.95,
+  "model_family": "smallcnn",
+  "num_workers": 0,
+  "schema_version": "1.0.0",
+  "seed": 2753,
+  "stage": "g0_smoke",
+  "tiny_learning_rate": 0.003,
+  "tiny_per_class": 16,
+  "tiny_steps": 100,
+  "use_amp": true,
+  "validation_batch_size": 64,
+  "validation_fold": 0,
+  "weight_decay": 0.0001
+}

@@ -30,7 +30,12 @@ from fashion.task4.training import (
     TrainingHyperparameters,
     TrainingSessionConfig,
 )
-from fashion.train.registry import RUN_COLUMNS, RunRegistry
+from fashion.train.registry import (
+    TASK4_RUN_COLUMNS as RUN_COLUMNS,
+)
+from fashion.train.registry import (
+    Task4RunRegistry as RunRegistry,
+)
 from tests.task4.test_learned_evidence import (  # reuse the frozen canonical fixtures
     CONTRACT,
     _splits,

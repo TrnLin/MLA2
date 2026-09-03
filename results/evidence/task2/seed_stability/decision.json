@@ -1,0 +1,25 @@
+{
+  "candidate_experiment_id_seed_2026": "g5-i2-article-type-lambda-0-3-c1-s2026",
+  "candidate_experiment_id_seed_2753": "g4-i2-article-type-lambda-0-3-c1",
+  "candidate_selection_affected": false,
+  "candidate_status": "supported_across_two_seeds",
+  "comparator_experiment_id_seed_2026": "g5-c2-t0-resnet18-s2026",
+  "comparator_experiment_id_seed_2753": "g3-c2-t0-resnet18",
+  "current_candidate": "I2",
+  "decision_status": "closed",
+  "gate": "G5-SEED",
+  "i2_minus_c2_macro_f1_seed_2026": 0.011606670104498784,
+  "i2_minus_c2_macro_f1_seed_2753": 0.017651448325659236,
+  "interpretation_rule": "The primary I2 candidate is seed-stable only if it remains above the retained C2 comparator at both complete five-fold seeds. A reversal weakens the claim and does not trigger post-hoc tuning.",
+  "limitations": [
+    "Two seeds support a stability check but do not describe every random start.",
+    "Grouped bootstrap uncertainty is still pending.",
+    "I2 and C2 differ in architecture and loss, so ordering is not a causal ablation.",
+    "Current softmax probabilities are uncalibrated."
+  ],
+  "next_question": "Keep the frozen candidates and run shortcut, error, robustness, cost, calibration, grouped-bootstrap, and Grad-CAM analysis.",
+  "ordering_stable": true,
+  "primary_metric": "pooled_five_fold_oof_macro_f1",
+  "schema_version": "1.0.0",
+  "ultimate_winner_frozen": false
+}

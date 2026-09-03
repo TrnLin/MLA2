@@ -1,0 +1,77 @@
+{
+  "artifacts": {
+    "class_weights_by_fold": {
+      "path": "results/evidence/task2/i1_class_balance/class_weights_by_fold.csv",
+      "sha256": "7c356ef3b5ec9dbd70dca587c2e7193b046a148f38a2d81001ea84b7c088b4af"
+    },
+    "comparison": {
+      "path": "results/evidence/task2/i1_class_balance/comparison.csv",
+      "sha256": "71b3d32376c85758eee1338e833e4bea16ad3d5ac0aacb435e0e51c0d7020f45"
+    },
+    "decision": {
+      "path": "results/evidence/task2/i1_class_balance/decision.json",
+      "sha256": "746a650efa25a0c80e62ee354b84210a16ce1b96ae9df3187bb676b7e455b853"
+    },
+    "learning_curve_summary": {
+      "path": "results/evidence/task2/i1_class_balance/learning_curve_summary.csv",
+      "sha256": "908a5755abc8d188dfb637d1d7858ac4f334eab41be3835ad6a210bb7875b3c6"
+    },
+    "learning_curves": {
+      "path": "results/figures/task2/i1_effective_number_learning_curves.png",
+      "sha256": "a005c051fe15b781a37d285529f91167f7a3b519f575ee53e70257334afb00ef"
+    },
+    "learning_curves_by_fold": {
+      "path": "results/evidence/task2/i1_class_balance/learning_curves_by_fold.csv",
+      "sha256": "06c7fa3ae0c2b196d946e3c1acc17c9f27ac72212d2bb72dd411fa331f6114c1"
+    },
+    "paired_fold_metrics": {
+      "path": "results/evidence/task2/i1_class_balance/paired_fold_metrics.csv",
+      "sha256": "a57831e55d7917a5a49634a6e4919f7f786fb908fb99a0d2855e39dd5f128e4c"
+    },
+    "per_class_comparison": {
+      "path": "results/evidence/task2/i1_class_balance/per_class_comparison.csv",
+      "sha256": "6ebedcacd4d0dc5deaca3b3e559d2073283606bfe94f5bb9d4f7e7fc2aa92dc8"
+    },
+    "per_class_f1_delta": {
+      "path": "results/figures/task2/i1_per_class_f1_delta.png",
+      "sha256": "d680d5b6664e6708f9509b807b76471aced80f1ddbd84cee2ca21f3cccfc5505"
+    },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/i1_class_balance/registry_snapshot.csv",
+      "sha256": "bd98286b7ebaf2a2f8bc5306d97e784622171f4a58c2e21664b39dc2ffe808d7"
+    }
+  },
+  "coverage_sha256": "5abf2d57d9959d9eea327149a70503b222ec98a487bc8de75d8bdc7ee8b47272",
+  "decision_status": "closed",
+  "gate": "G4-I1",
+  "input_configs": {
+    "g3-c1-t1-smallcnn": {
+      "path": "configs/task2/g3_c1_t1_smallcnn.json",
+      "sha256": "d97d7f01b8a4be435c9cfa51dbfad206d590d7e1c79a69713b659069de9def08"
+    },
+    "g4-i1-effective-number-c1": {
+      "path": "configs/task2/g4_i1_effective_number_c1.json",
+      "sha256": "f845f66f5687699c248d97f58735cee25dd7d53d0bbf7a31f027fde2aa7ff840"
+    }
+  },
+  "input_manifests": {
+    "g3-c1-t1-smallcnn": {
+      "path": "results/evidence/task2/g3_c1_t1_smallcnn/manifest.json",
+      "sha256": "2f487c4147f7f6e117c1cf77cec6ec445755ef083b4e9857e821618c83abc3eb"
+    },
+    "g4-i1-effective-number-c1": {
+      "path": "results/evidence/task2/g4_i1_effective_number_c1/manifest.json",
+      "sha256": "7cadbb28b0ee79a1e31ee6ee97211d9bb0390373420774145be5c4be53a67fb0"
+    }
+  },
+  "intervention_experiment_id": "g4-i1-effective-number-c1",
+  "keep_i1": false,
+  "matched_protocol_sha256": "d23484a4979c7685e6e05ae96767417635dea7589df8e50c5c56637600deb34b",
+  "maximum_macro_f1_loss": 0.002,
+  "maximum_other_class_loss": 0.02,
+  "reference_experiment_id": "g3-c1-t1-smallcnn",
+  "schema_version": "1.0.0",
+  "selected_experiment_id": "g3-c1-t1-smallcnn",
+  "spring_minimum_gain": 0.01,
+  "ultimate_winner_frozen": false
+}

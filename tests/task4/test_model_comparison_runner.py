@@ -14,7 +14,7 @@ import pandas as pd
 import pytest
 import torch
 
-from fashion.train.registry import RunRegistry
+from fashion.train.registry import Task4RunRegistry as RunRegistry
 
 RUNNER_PATH = Path(__file__).parents[2] / "scripts/task4/run_model_comparisons.py"
 

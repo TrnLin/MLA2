@@ -1,0 +1,13 @@
+variant,experiment_id,auxiliary_weight,shortcut_slice,support,macro_f1,accuracy
+G3-C1 reference,g3-c1-t1-smallcnn,0.0,aligned,21115,0.8552210002538511,0.8684347620175231
+G3-C1 reference,g3-c1-t1-smallcnn,0.0,conflict,11619,0.4026130815536992,0.5313710302091402
+G3-C1 reference,g3-c1-t1-smallcnn,0.0,unseen_article_type,19,0.23214285714285715,0.3684210526315789
+G3-C1 reference,g3-c1-t1-smallcnn,0.0,missing_article_type,0,,
+I2 lambda=0.1,g4-i2-article-type-lambda-0-1-c1,0.1,aligned,21115,0.865685502094609,0.8789012550319678
+I2 lambda=0.1,g4-i2-article-type-lambda-0-1-c1,0.1,conflict,11619,0.43453014634965786,0.5469489629055857
+I2 lambda=0.1,g4-i2-article-type-lambda-0-1-c1,0.1,unseen_article_type,19,0.20714285714285713,0.3157894736842105
+I2 lambda=0.1,g4-i2-article-type-lambda-0-1-c1,0.1,missing_article_type,0,,
+I2 lambda=0.3,g4-i2-article-type-lambda-0-3-c1,0.3,aligned,21115,0.8690131829249004,0.8831162680558844
+I2 lambda=0.3,g4-i2-article-type-lambda-0-3-c1,0.3,conflict,11619,0.43021100203044355,0.5439366554780962
+I2 lambda=0.3,g4-i2-article-type-lambda-0-3-c1,0.3,unseen_article_type,19,0.23214285714285715,0.3684210526315789
+I2 lambda=0.3,g4-i2-article-type-lambda-0-3-c1,0.3,missing_article_type,0,,

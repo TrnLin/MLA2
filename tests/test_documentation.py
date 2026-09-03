@@ -185,7 +185,9 @@ def test_task4_baseline_decision_and_handoffs_are_frozen() -> None:
 def test_locked_setup_and_single_split_rule_are_documented() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     assert "requirements/constraints-py312.txt" in readme
-    assert 'python -m pip install -c requirements/constraints-py312.txt -e ".[dev]"' in readme
+    assert "--torch-backend cu126" in readme
+    assert "--torch-backend cpu" in readme
+    assert '-c requirements/constraints-py312.txt -e ".[app,dev]"' in readme
 
     searched_files = [
         *sorted((ROOT / "src").rglob("*.py")),

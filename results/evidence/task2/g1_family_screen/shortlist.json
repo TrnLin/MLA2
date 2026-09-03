@@ -1,0 +1,15 @@
+{
+  "decision_status": "closed",
+  "gate": "G1",
+  "next_question": "Run P0-P1 and A0-A1 transform ablations on leading C2 while retaining C1 for the full-budget G3 comparison.",
+  "primary_metric": "pooled_five_fold_oof_macro_f1",
+  "rejected_experiment_ids": [
+    "g1-c3-mobilenetv3"
+  ],
+  "schema_version": "1.0.0",
+  "selected_experiment_ids": [
+    "g1-c2-resnet18",
+    "g1-c1-smallcnn"
+  ],
+  "selection_rule": "Select the two deep families with the highest pooled OOF macro-F1."
+}

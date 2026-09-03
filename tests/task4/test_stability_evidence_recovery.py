@@ -19,7 +19,7 @@ import pytest
 
 import fashion.task4.learned_evidence as learned
 import fashion.task4.training as training
-from fashion.train.registry import RunRegistry
+from fashion.train.registry import Task4RunRegistry as RunRegistry
 from tests.task4.test_stability_evidence_coverage import (  # reuse the frozen fold fixture
     _StabilityFixture,
     _undefined_query_splits,

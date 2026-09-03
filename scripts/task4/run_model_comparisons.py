@@ -117,7 +117,13 @@ from fashion.task4.training import (
     save_checkpoint,
     train_epochs,
 )
-from fashion.train.registry import RUN_COLUMNS, RunRegistry
+from fashion.train.registry import (
+    RUN_COLUMNS,
+    TASK4_RUN_COLUMNS,
+)
+from fashion.train.registry import (
+    Task4RunRegistry as RunRegistry,
+)
 
 PHASES = (
     "smoke",
@@ -492,7 +498,7 @@ def _session_for(config: Any, *, run_id: str, split_fingerprint: str) -> Trainin
 
 def _base_registry_row(session: TrainingSessionConfig) -> dict[str, object]:
     commit, dirty = current_git_identity()
-    row: dict[str, object] = {column: "" for column in RUN_COLUMNS}
+    row: dict[str, object] = {column: "" for column in TASK4_RUN_COLUMNS}
     row.update(
         {
             "schema_version": "1",
@@ -658,9 +664,13 @@ def _dry_run_registry_rows(registry: RunRegistry) -> list[dict[str, str]]:
         return []
     with registry.path.open(newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
-        if tuple(reader.fieldnames or ()) != RUN_COLUMNS:
+        if tuple(reader.fieldnames or ()) not in {TASK4_RUN_COLUMNS, RUN_COLUMNS}:
             raise ValueError("registry header does not match the run schema")
-        return [dict(row) for row in reader]
+        return [
+            {column: row.get(column, "") for column in TASK4_RUN_COLUMNS}
+            for row in reader
+            if row.get("task") == "task4"
+        ]
 
 
 def _candidate_matrix_status(registry: RunRegistry) -> str:

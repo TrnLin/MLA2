@@ -80,7 +80,7 @@ from fashion.task4.training import (
     load_checkpoint,
     select_best_checkpoint,
 )
-from fashion.train.registry import RunRegistry
+from fashion.train.registry import Task4RunRegistry as RunRegistry
 
 LEARNED_EVIDENCE_SCHEMA_VERSION = "1.0.0"
 TEACHER_SLICE_CAVEAT = (

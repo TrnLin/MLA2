@@ -1,0 +1,4 @@
+model_id,class,parameters,trainable_parameters,initial_state_sha256,training_origin,benchmark_only,final_eligible,weights,p0_forward_pass,p1_forward_pass
+C1,SmallSeasonCNN,1174244,1174244,6a4b761ee246405c2cc5f642160b961b9fb459a647b7d1b10c67ef07ffa46d53,scratch,False,True,,True,True
+C2,ScratchSmallStemResNet18,11170884,11170884,1f01887973b739c477d19d9f08c9bc19b45a6c995776f99205727a85357f5377,scratch,False,True,,True,True
+C3,ScratchMobileNetV3Small,1521956,1521956,d16f06681d4444e52241cf1b57064631be62cd53b417e7c3b23ef254f00050ee,scratch,False,True,,True,True

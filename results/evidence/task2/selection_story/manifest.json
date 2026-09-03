@@ -1,0 +1,46 @@
+{
+  "artifacts": {
+    "eda_reflection": {
+      "path": "results/evidence/task2/selection_story/eda_reflection.csv",
+      "sha256": "a754990c774a47196f254d4c5ef49576ee48e2e5fd824ce07e9e0bdb6acdd6a8"
+    },
+    "incremental_model_selection": {
+      "path": "results/evidence/task2/selection_story/incremental_model_selection.csv",
+      "sha256": "7dab1922a18ec8311dcede105386ec9fc036c0917866c031329058ddf01e3b04"
+    }
+  },
+  "claim_boundary": "The ladder and reflection explain hash-linked development evidence; they do not add a new training result or open the holdout.",
+  "decision_status": "measured_through_g2_tuning",
+  "gate": "Task2-selection-story",
+  "input_manifests": {
+    "B0": {
+      "path": "results/evidence/task2/b0_majority/manifest.json",
+      "sha256": "07da81144fe37bdd9624f37b075b38ec4ea526e7f3da9748c0459f4f152e2d11"
+    },
+    "B1": {
+      "path": "results/evidence/task2/b1_hog_hsv_svm/manifest.json",
+      "sha256": "039b619327986a8e72a89f0193cc3e84fe973ea13240ebb41b62065f24d7d46b"
+    },
+    "G1": {
+      "path": "results/evidence/task2/g1_family_screen/manifest.json",
+      "sha256": "ded0aae82b26ca992ce6f4f580a300401eb2a2c0b712875735d613e67c63af16"
+    },
+    "G2-A": {
+      "path": "results/evidence/task2/g2_augmentation_ablation/manifest.json",
+      "sha256": "0a077254c445d15f87ceb7459ce034795a4f05ed551e8cab4b75e93460fadd38"
+    },
+    "G2-P": {
+      "path": "results/evidence/task2/g2_input_size_ablation/manifest.json",
+      "sha256": "eecb2026f82a51e932e3ece2545d790fcf20be7ffaa33c3c512b3e71768ddac1"
+    },
+    "G2-T": {
+      "path": "results/evidence/task2/g2_compact_tuning/manifest.json",
+      "sha256": "0bac681541d3b6a38d67dae531171cdac01b03159dc57a1f2f271e6cce27c280"
+    }
+  },
+  "schema_version": "1.0.0",
+  "selected_finalist_experiment_ids": [
+    "g2-t1-c1-smallcnn",
+    "g1-c2-resnet18"
+  ]
+}

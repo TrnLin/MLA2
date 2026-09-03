@@ -31,7 +31,12 @@ from fashion.task4.models import (
     SCRATCH_WEIGHT_ORIGIN,
     build_retrieval_encoder,
 )
-from fashion.train.registry import RUN_COLUMNS, RunRegistry
+from fashion.train.registry import (
+    TASK4_RUN_COLUMNS as RUN_COLUMNS,
+)
+from fashion.train.registry import (
+    Task4RunRegistry as RunRegistry,
+)
 
 training = importlib.import_module("fashion.task4.training")
 

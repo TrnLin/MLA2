@@ -12,12 +12,47 @@ The shared data workflow is teacher-only, repeatable, and keeps the internal hol
 
 ## Setup
 
-Python 3.12 is the shared locked baseline.
+Python 3.12 is the shared locked baseline. The checked development machine uses an
+NVIDIA driver that supports CUDA 12.6.
+
+Recommended cross-platform setup with `uv`:
+
+```bash
+uv venv --python 3.12 --seed .venv
+uv pip install --python .venv --torch-backend cu126 \
+  -c requirements/constraints-py312.txt -e ".[app,dev]"
+```
+
+Equivalent Linux or macOS `venv` setup for CUDA-capable machines:
 
 ```bash
 cd MLA2-eda
 python3.12 -m venv .venv
-./.venv/bin/python -m pip install -c requirements/constraints-py312.txt -e ".[dev]"
+./.venv/bin/python -m pip install \
+  --extra-index-url https://download.pytorch.org/whl/cu126 \
+  -c requirements/constraints-py312.txt -e ".[app,dev]"
+```
+
+Windows PowerShell uses the same constraints with this interpreter path:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install `
+  --extra-index-url https://download.pytorch.org/whl/cu126 `
+  -c requirements\constraints-py312.txt -e ".[app,dev]"
+```
+
+For a machine without a compatible NVIDIA GPU, select the CPU wheel explicitly:
+
+```bash
+uv pip install --python .venv --torch-backend cpu \
+  -c requirements/constraints-py312.txt -e ".[app,dev]"
+```
+
+Verify the environment before running a notebook:
+
+```bash
+uv pip check --python .venv
+uv run --python .venv python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 ```
 
 For a wheel install, point the package at this checkout:

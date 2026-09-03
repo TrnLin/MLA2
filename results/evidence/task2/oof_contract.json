@@ -1,0 +1,25 @@
+{
+  "coverage_rule": "each valid development ID appears exactly once; protected IDs appear zero times",
+  "expected_id_sha256": "6f8540aff2511b2d63e23bea6d5aad24060cbbf3f352d40a8419248d4cdbcc54",
+  "expected_row_count": 32753,
+  "expected_unique_ids": 32753,
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "probability_rule": "finite values in [0,1], four columns present, each row sums to one",
+  "required_columns": [
+    "id",
+    "fold",
+    "y_true",
+    "y_pred",
+    "prob_Fall",
+    "prob_Spring",
+    "prob_Summer",
+    "prob_Winter"
+  ],
+  "schema_version": "1.0.0",
+  "validator": "fashion.train.metrics.validate_oof"
+}

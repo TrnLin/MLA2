@@ -35,7 +35,8 @@ from fashion.task4.models import (
     build_b1_encoder,
     build_retrieval_encoder,
 )
-from fashion.train.registry import RUN_KINDS, RunRegistry
+from fashion.train.registry import RUN_KINDS
+from fashion.train.registry import Task4RunRegistry as RunRegistry
 
 CandidateName: TypeAlias = Literal["R1", "R2", "R3", "R4", "R5", "B1"]
 PairObjective: TypeAlias = Literal["R1", "R2", "R3", "R4", "R5", "B1"]

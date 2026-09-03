@@ -1,0 +1,77 @@
+{
+  "artifacts": {
+    "c1_learning_curves": {
+      "path": "results/figures/task2/g3_c1_t1_learning_curves.png",
+      "sha256": "6e4e16d7ccd67c842cd8097c6d350aa9c24b85ed48e7eb6f5bb614604ebd204f"
+    },
+    "c2_learning_curves": {
+      "path": "results/figures/task2/g3_c2_t0_learning_curves.png",
+      "sha256": "f0fbcbeb1e78853f25992af9a47a68ec916dabd530ff92675265095f08f03afb"
+    },
+    "decision": {
+      "path": "results/evidence/task2/g3_full_budget/decision.json",
+      "sha256": "2a6ab0d76ecdd4320c0c60289ebe2fc728443dc14a6585554534909a417f7609"
+    },
+    "leaderboard": {
+      "path": "results/evidence/task2/g3_full_budget/leaderboard.csv",
+      "sha256": "31322aae18e78516a6186c6f2e05ab6e01e0c54ff6cbd9fac2250c101fc72bb3"
+    },
+    "learning_curve_summary": {
+      "path": "results/evidence/task2/g3_full_budget/learning_curve_summary.csv",
+      "sha256": "e44fc1352198318bc6c39485edbd0b2a0405195b7f299af063275cbacc10bd15"
+    },
+    "learning_curves_by_fold": {
+      "path": "results/evidence/task2/g3_full_budget/learning_curves_by_fold.csv",
+      "sha256": "01670b7be142f3a8d978499f79b3f82062bedd8efac92be15b3aea3172ed5c42"
+    },
+    "paired_fold_metrics": {
+      "path": "results/evidence/task2/g3_full_budget/paired_fold_metrics.csv",
+      "sha256": "30ab5ff2a88d781dac1ada939370c288e1ba239c372504308ba2d4faa6a54145"
+    },
+    "per_class_comparison": {
+      "path": "results/evidence/task2/g3_full_budget/per_class_comparison.csv",
+      "sha256": "1e75f13f181c63a24d79133d3c0885921afb9bf0f234e16b6051d2554cd897f0"
+    },
+    "screen_to_full_budget": {
+      "path": "results/evidence/task2/g3_full_budget/screen_to_full_budget.csv",
+      "sha256": "12750259a81549ef9b4e0139aea2e1310170a4bf1fa7e17fb18e1722ac8bf98d"
+    }
+  },
+  "coverage_sha256": "5abf2d57d9959d9eea327149a70503b222ec98a487bc8de75d8bdc7ee8b47272",
+  "decision_status": "closed",
+  "gate": "G3-F",
+  "input_configs": {
+    "g3-c1-t1-smallcnn": {
+      "path": "configs/task2/g3_c1_t1_smallcnn.json",
+      "selected_g2_config_path": "configs/task2/g2_t1_c1_smallcnn.json",
+      "selected_g2_config_sha256": "0624a158b8e10890a57e13b3c6c47fec282572cda705bd90418b50e0df6f72e2",
+      "sha256": "d97d7f01b8a4be435c9cfa51dbfad206d590d7e1c79a69713b659069de9def08"
+    },
+    "g3-c2-t0-resnet18": {
+      "path": "configs/task2/g3_c2_t0_resnet18.json",
+      "selected_g2_config_path": "configs/task2/g1_c2_resnet18.json",
+      "selected_g2_config_sha256": "f4bbaf32f0742613afb1b7c8f4d10ce760722137cd311c5c32a7f1d0f3c534b1",
+      "sha256": "dfc15dcd1f2190768e4a1e7b304a9954bf1a5926155b19eb247252c6e1fc6e71"
+    }
+  },
+  "input_manifests": {
+    "g3-c1-t1-smallcnn": {
+      "path": "results/evidence/task2/g3_c1_t1_smallcnn/manifest.json",
+      "sha256": "2f487c4147f7f6e117c1cf77cec6ec445755ef083b4e9857e821618c83abc3eb"
+    },
+    "g3-c2-t0-resnet18": {
+      "path": "results/evidence/task2/g3_c2_t0_resnet18/manifest.json",
+      "sha256": "fa99e1d4500610c69e56a0a7412bba7fde3455c68b3be8de338bbac4f34e59ca"
+    }
+  },
+  "matched_protocol_sha256": "31ca52cd12c44c0eceb243e018be1274562a504990a571fae5ca6d391a4dd533",
+  "near_tie": true,
+  "near_tie_threshold": 0.005,
+  "provisional_reference_experiment_id": "g3-c1-t1-smallcnn",
+  "schema_version": "1.0.0",
+  "tuning_manifest": {
+    "path": "results/evidence/task2/g2_compact_tuning/manifest.json",
+    "sha256": "0bac681541d3b6a38d67dae531171cdac01b03159dc57a1f2f271e6cce27c280"
+  },
+  "ultimate_winner_frozen": false
+}
