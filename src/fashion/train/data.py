@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import torch
 from PIL import Image, ImageEnhance, ImageOps
+from scipy.ndimage import binary_propagation
 from torch.utils.data import Dataset
 
 from fashion.config import ROOT
@@ -25,6 +26,11 @@ CORE_CORRUPTIONS = (
     "translation_003",
     "grayscale",
 )
+
+TASK3_INPUT_VIEWS = ("full", "foreground_masked")
+FOREGROUND_WHITE_THRESHOLD = 245
+FOREGROUND_MIN_FRACTION = 0.005
+FOREGROUND_MAX_FRACTION = 0.95
 
 
 def _load_corrupted(path: Path, corruption: str | None) -> Image.Image:
@@ -53,6 +59,29 @@ def _load_corrupted(path: Path, corruption: str | None) -> Image.Image:
     raise ValueError(f"unknown core corruption: {corruption}")
 
 
+def apply_task3_input_view(image: Image.Image, image_view: str) -> Image.Image:
+    """Apply one frozen, label-free Task 3 input view without changing its canvas."""
+    if image_view == "full":
+        return image
+    if image_view == "foreground_masked":
+        array = np.asarray(image.convert("RGB"), dtype=np.uint8)
+        near_white = np.all(array >= FOREGROUND_WHITE_THRESHOLD, axis=2)
+        seeds = np.zeros_like(near_white)
+        seeds[0, :] = near_white[0, :]
+        seeds[-1, :] = near_white[-1, :]
+        seeds[:, 0] |= near_white[:, 0]
+        seeds[:, -1] |= near_white[:, -1]
+        foreground = ~binary_propagation(seeds, mask=near_white)
+        fraction = float(foreground.mean())
+        valid_fraction = FOREGROUND_MIN_FRACTION <= fraction <= FOREGROUND_MAX_FRACTION
+        if not foreground.any() or not valid_fraction:
+            return image
+        masked = np.full_like(array, 255)
+        masked[foreground] = array[foreground]
+        return Image.fromarray(masked)
+    raise ValueError(f"unknown Task 3 input view: {image_view}")
+
+
 def task3_target_frames(
     splits: pd.DataFrame,
     *,
@@ -76,6 +105,7 @@ def fit_fold_rgb_stats(
     *,
     root: str | Path = ROOT,
     image_size: tuple[int, int] = (80, 60),
+    image_view: str = "full",
     progress: Callable[[int, int], None] | None = None,
 ) -> dict[str, object]:
     """Fit RGB mean/std on training content pixels, excluding letterbox padding."""
@@ -86,8 +116,10 @@ def fit_fold_rgb_stats(
         path = root / str(relative_path)
         if not path.is_file():
             raise FileNotFoundError(path)
-        with Image.open(path) as image:
-            array, mask = transform_image_with_mask(image, image_size=image_size)
+        with Image.open(path) as source:
+            image = ImageOps.exif_transpose(source).convert("RGB")
+        image = apply_task3_input_view(image, image_view)
+        array, mask = transform_image_with_mask(image, image_size=image_size)
         stats.update(array, content_mask=mask)
         if progress is not None:
             progress(position, total)
@@ -112,6 +144,7 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
         image_size: tuple[int, int] = (80, 60),
         corruption: str | None = None,
         augmentation: str = "none",
+        image_view: str = "full",
         sample_weight_column: str | None = None,
     ) -> None:
         if corruption not in (None, *CORE_CORRUPTIONS):
@@ -120,6 +153,8 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
             raise ValueError(f"unknown Task 3 training augmentation: {augmentation}")
         if corruption is not None and augmentation != "none":
             raise ValueError("training augmentation and diagnostic corruption cannot be combined")
+        if image_view not in TASK3_INPUT_VIEWS:
+            raise ValueError(f"unknown Task 3 input view: {image_view}")
         self.frame = frame.reset_index(drop=True)
         self.target = target
         self.label_to_index = dict(label_to_index)
@@ -129,6 +164,7 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
         self.image_size = image_size
         self.corruption = corruption
         self.augmentation = augmentation
+        self.image_view = image_view
         self.sample_weight_column = sample_weight_column
         unknown = sorted(set(self.frame[target]).difference(self.label_to_index))
         if unknown:
@@ -149,6 +185,7 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
         row = self.frame.iloc[index]
         image = _load_corrupted(self.root / str(row["path"]), self.corruption)
         image = apply_training_augmentation(image, self.augmentation)
+        image = apply_task3_input_view(image, self.image_view)
         array = transform_image(
             image,
             image_size=self.image_size,
