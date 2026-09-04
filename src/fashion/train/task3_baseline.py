@@ -540,6 +540,12 @@ def run_task3_baseline_fold(
         "validation_unchanged": True,
     }
     selection_strategy = child_spec.training_selection_strategy if child_spec is not None else "all"
+    input_view = getattr(child_spec, "input_view", "full") if child_spec is not None else "full"
+    sample_weight_strategy = (
+        getattr(child_spec, "sample_weight_strategy", "none")
+        if child_spec is not None
+        else "none"
+    )
     if selection_strategy == "gender_semantic_conflicts_v1":
         training, excluded, selection_metadata = prepare_gender_e9_training(training)
         expected_removed = GENDER_E9_EXPECTED_TRAINING_REMOVALS[str(validation_fold)]
@@ -575,6 +581,31 @@ def run_task3_baseline_fold(
         ].copy()
     elif selection_strategy != "all":
         raise ValueError(f"unknown Task 3 training-selection strategy: {selection_strategy}")
+    if sample_weight_strategy == "accepted_visual_component_v1":
+        from fashion.train.task3_dataset_v2 import add_visual_component_weights
+
+        training, component_contract = add_visual_component_weights(
+            training,
+            splits,
+            target=target,
+            candidates_path=root / "data/processed/audit/near_duplicate_candidates.csv.gz",
+        )
+        selection_metadata["sample_weight_contract"] = component_contract
+        training_selection = training.loc[
+            :,
+            [
+                "id",
+                "cv_fold",
+                "product_family_group",
+                target,
+                "visual_component_id",
+                "visual_component_rows",
+                "target_valid_component_rows",
+                "visual_component_weight",
+            ],
+        ].copy()
+    elif sample_weight_strategy != "none":
+        raise ValueError(f"unknown Task 3 sample-weight strategy: {sample_weight_strategy}")
     _log(
         f"preparing target={target} fold={validation_fold}: "
         f"train={len(training):,} (before selection={original_training_rows:,}), "
@@ -591,6 +622,7 @@ def run_task3_baseline_fold(
         "effective_number_label_smoothed_cross_entropy",
         "effective_number_focal_cross_entropy",
         "effective_number_group_balanced_cross_entropy",
+        "effective_number_visual_component_cross_entropy",
     }:
         if child_spec.class_weight_beta is None or child_spec.class_weight_cap is None:
             raise ValueError("class-balanced loss requires beta and cap")
@@ -636,6 +668,8 @@ def run_task3_baseline_fold(
     config_payload["parameter_count"] = parameter_count
     config_payload["architecture_macs"] = architecture_macs
     config_payload["training_selection_contract"] = selection_metadata
+    config_payload["input_view"] = input_view
+    config_payload["sample_weight_strategy"] = sample_weight_strategy
     if child_spec is None:
         digest = config_digest(config)
         experiment_id = BASELINE_EXPERIMENT_ID
@@ -698,6 +732,7 @@ def run_task3_baseline_fold(
         training,
         root=root,
         image_size=(config.image_height, config.image_width),
+        image_view=input_view,
     )
     _json_dump(
         {
@@ -705,6 +740,7 @@ def run_task3_baseline_fold(
             "fit_scope": "fold_training_content_pixels_only",
             "validation_fold": validation_fold,
             "padding_excluded": True,
+            "input_view": input_view,
         },
         normalization_path,
     )
@@ -717,14 +753,19 @@ def run_task3_baseline_fold(
         "std": stats["std"],
         "root": root,
         "image_size": (config.image_height, config.image_width),
+        "image_view": input_view,
     }
     train_dataset = Task3ImageDataset(
         training,
         augmentation=training_augmentation,
         sample_weight_column=(
-            "e9_group_factor"
-            if selection_strategy == "usage_article_type_exception_balance_v1"
-            else None
+            "visual_component_weight"
+            if sample_weight_strategy == "accepted_visual_component_v1"
+            else (
+                "e9_group_factor"
+                if selection_strategy == "usage_article_type_exception_balance_v1"
+                else None
+            )
         ),
         **dataset_kwargs,
     )
@@ -749,6 +790,14 @@ def run_task3_baseline_fold(
         if class_weight_tensor is None:
             raise ValueError("usage exception balancing requires fold-only class weights")
         criterion = SampleWeightedCrossEntropy(class_weight_tensor)
+        evaluation_criterion = nn.CrossEntropyLoss(weight=class_weight_tensor)
+    elif sample_weight_strategy == "accepted_visual_component_v1":
+        training_class_weights = (
+            class_weight_tensor
+            if class_weight_tensor is not None
+            else torch.ones(len(classes), dtype=torch.float32, device=device)
+        )
+        criterion = SampleWeightedCrossEntropy(training_class_weights)
         evaluation_criterion = nn.CrossEntropyLoss(weight=class_weight_tensor)
     elif child_spec is not None and child_spec.focal_gamma > 0.0:
         if class_weight_tensor is None:
@@ -928,6 +977,8 @@ def run_task3_baseline_fold(
         metrics["hypothesis_id"] = hypothesis_id
         metrics["parent_run_ids"] = parent_run_ids
         metrics["training_augmentation"] = training_augmentation
+        metrics["input_view"] = input_view
+        metrics["sample_weight_strategy"] = sample_weight_strategy
         metrics["loss_name"] = loss_name
         metrics["training_selection_strategy"] = selection_strategy
         metrics["training_selection_contract"] = selection_metadata
