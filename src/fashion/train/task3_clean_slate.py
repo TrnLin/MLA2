@@ -282,8 +282,8 @@ def fixed_feature_vector(
 ) -> np.ndarray:
     """Extract the frozen HOG, foreground-colour, and shape representation."""
 
-    if view not in {"full", "foreground_masked"}:
-        raise ValueError("view must be full or foreground_masked")
+    if view not in {"full", "foreground_masked", "full_rgb_hog"}:
+        raise ValueError("view must be full, foreground_masked, or full_rgb_hog")
     opened = (
         ImageOps.exif_transpose(image).convert("RGB")
         if isinstance(image, Image.Image)
@@ -291,7 +291,7 @@ def fixed_feature_vector(
     )
     opened = _corrupt(opened, corruption).resize((60, 80), Image.Resampling.BILINEAR)
     array = np.asarray(opened, dtype=np.uint8)
-    selected = foreground_views(array)[view]
+    selected = array if view == "full_rgb_hog" else foreground_views(array)[view]
     gradients = hog(
         selected.astype(np.float32) / 255.0,
         orientations=9,
@@ -301,6 +301,8 @@ def fixed_feature_vector(
         feature_vector=True,
         channel_axis=-1,
     ).astype(np.float32)
+    if view == "full_rgb_hog":
+        return gradients
     return np.concatenate([gradients, _colour_shape_features(array)]).astype(np.float32)
 
 
@@ -349,7 +351,11 @@ def build_fixed_feature_cache(
         "ordered_ids_sha256": hashlib.sha256(
             development["id"].astype("int64").to_numpy().tobytes()
         ).hexdigest(),
-        "configuration": "HOG9_cell8_block2_L2Hys_plus_HSV_grid_and_foreground_shape_v1",
+        "configuration": (
+            "HOG9_cell8_block2_L2Hys_full_RGB_v1"
+            if view == "full_rgb_hog"
+            else "HOG9_cell8_block2_L2Hys_plus_HSV_grid_and_foreground_shape_v1"
+        ),
     }
     if _feature_contract_valid(contract_path, expected):
         matrix = np.load(matrix_path, mmap_mode="r", allow_pickle=False)
@@ -679,13 +685,14 @@ def _registry_start(
     validation: pd.DataFrame,
     model_family: str,
     root: Path,
+    parent_run_ids: Sequence[str] = (),
 ) -> None:
     registry.start(
         {
             "run_id": run_id,
             "experiment_id": experiment_id,
             "hypothesis_id": hypothesis_id,
-            "parent_run_ids": [],
+            "parent_run_ids": list(parent_run_ids),
             "task": "task3",
             "target": target,
             "validation_fold": fold,
