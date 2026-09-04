@@ -20,7 +20,7 @@ TASK_SPECS = {
     "04_task3_gender_usage.ipynb": {
         "title": "Task 3 — Gender and Usage Classification",
         "tokens": ("gender", "usage", "negative transfer", "label-mask"),
-        "sections": 29,
+        "sections": 32,
     },
     "05_task4_visual_search.ipynb": {
         "title": "Task 4 — Fashion Visual Search",
@@ -56,6 +56,12 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04k_task3_clean_slate_eda.ipynb",
         "04l_task3_clean_slate_screen_1.ipynb",
         "04m_task3_micro_swin_clean_slate_screen_2.ipynb",
+        "04n_task3_gem_gender_v2_g1_foreground_mask.ipynb",
+        "04o_task3_gem_gender_v2_g2_translation.ipynb",
+        "04p_task3_gem_gender_v2_g3_component_weight.ipynb",
+        "04q_task3_smallcnn_usage_v2_u1_component_weight.ipynb",
+        "04r_task3_gem_gender_v2_g2_confirmation.ipynb",
+        "04s_task3_usage_v2_u2_full_rgb_hog_svm.ipynb",
         *TASK_SPECS,
     }
     present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
@@ -514,6 +520,11 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
                 "t3-e9-results-load",
                 "t3-e9-gates",
                 "t3-e9-plots",
+                "t3-e10-results-load",
+                "t3-e10-gates",
+                "t3-e10-plots",
+                "t3-v2-results-load",
+                "t3-v2-results-figures",
             }
             assert all(
                 cell.cell_type == "markdown" or cell.id in code_ids for cell in notebook.cells
@@ -646,6 +657,15 @@ def test_task_metric_contracts_are_explicit() -> None:
     assert "e9_prerun_audit_summary.png" in task3
     assert "training remains stopped" in task3
     assert "04i_task3_semantic_filter_exception_balance_e9_experiments.ipynb`" in task3
+    assert "E10 result: reject the auxiliary audience head" in task3
+    assert "Loaded completed E10 evidence from" in task3
+    assert "0.7269" in task3
+    assert "only fold 3 improves" in task3
+    assert "fails 10" in task3
+    assert "e10_learning_curves.png" in task3
+    assert "e10_fold_and_class_f1.png" in task3
+    assert "e10_mechanism_and_overfit.png" in task3
+    assert "e10_robustness.png" in task3
     assert "e6_learning_curves.png" in task3
     assert "e6_per_class_f1_comparison.png" in task3
     assert "E7 hypotheses — change the feature representation" in task3
