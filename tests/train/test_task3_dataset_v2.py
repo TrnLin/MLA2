@@ -10,6 +10,8 @@ import pytest
 from PIL import Image
 
 from fashion.train.task3_dataset_v2 import (
+    GENDER_G2_ALL_FOLDS,
+    GENDER_G2_CONFIRMATION_FOLDS,
     SCREEN_FOLDS,
     VISUAL_COMPONENT_STRATEGY,
     add_visual_component_weights,
@@ -102,6 +104,8 @@ def test_dataset_v2_keeps_exact_causal_parents() -> None:
     assert usage.class_weight_beta == pytest.approx(0.999)
     assert usage.class_weight_cap == pytest.approx(5.0)
     assert SCREEN_FOLDS == (0, 4)
+    assert GENDER_G2_CONFIRMATION_FOLDS == (1, 2, 3)
+    assert GENDER_G2_ALL_FOLDS == (0, 1, 2, 3, 4)
 
 
 def test_foreground_mask_keeps_the_canvas_and_removes_connected_white_background() -> None:
@@ -228,5 +232,33 @@ def test_dataset_v2_notebooks_run_only_their_two_fold_screen(
     assert "run_task3_baseline_cv" not in source
     assert "run_task3_child_cv" not in source
     assert "fashion_product_images_v1" not in source
-    assert all(cell.get("outputs", []) == [] for cell in notebook["cells"])
-    assert all(cell.get("execution_count") is None for cell in notebook["cells"])
+    saved_errors = [
+        output
+        for cell in notebook["cells"]
+        for output in cell.get("outputs", [])
+        if output.get("output_type") == "error"
+    ]
+    assert saved_errors == []
+
+
+def test_g2_confirmation_notebook_trains_only_missing_folds() -> None:
+    path = ROOT / "notebooks/04r_task3_gem_gender_v2_g2_confirmation.ipynb"
+    notebook = json.loads(path.read_text(encoding="utf-8"))
+    source = "\n".join("".join(cell["source"]) for cell in notebook["cells"])
+    code = "\n".join(
+        "".join(cell["source"])
+        for cell in notebook["cells"]
+        if cell["cell_type"] == "code"
+    )
+
+    assert source.count("run_task3_gender_v2_g2_confirmation(") == 1
+    assert source.count("check_task3_gender_v2_g2_confirmation_setup(") == 1
+    assert "folds=(1, 2, 3)" in code
+    assert "reuses completed G2 folds 0 and 4" in source
+    assert "run_task3_dataset_v2_screen(" not in code
+    assert "fashion_product_images_v1" not in source
+    assert not any(
+        output.get("output_type") == "error"
+        for cell in notebook["cells"]
+        for output in cell.get("outputs", [])
+    )
