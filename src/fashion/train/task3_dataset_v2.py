@@ -25,6 +25,8 @@ DatasetV2Name = Literal[
 ]
 
 SCREEN_FOLDS = (0, 4)
+GENDER_G2_CONFIRMATION_FOLDS = (1, 2, 3)
+GENDER_G2_ALL_FOLDS = (0, 1, 2, 3, 4)
 VISUAL_COMPONENT_STRATEGY = "accepted_visual_component_v1"
 
 
@@ -519,3 +521,167 @@ def run_task3_dataset_v2_screen(
     _write_json(aggregate_metrics, metrics_path)
     aggregate["metrics"] = aggregate_metrics
     return aggregate
+
+
+def check_task3_gender_v2_g2_confirmation_setup(
+    *,
+    parent_run_ids: Sequence[str],
+    output_root: str | Path,
+    root: str | Path = ROOT,
+    device_name: str = "cuda",
+) -> dict[str, object]:
+    """Confirm that G2 folds 0/4 exist before fitting only folds 1/2/3."""
+    check = check_task3_dataset_v2_setup(
+        "gender_v2_translation",
+        parent_run_ids=parent_run_ids,
+        output_root=output_root,
+        root=root,
+        device_name=device_name,
+    )
+    spec = dataset_v2_spec("gender_v2_translation", parent_run_ids)
+    completed_screen = {
+        fold: _reusable_fold(spec, fold, output_root=Path(output_root))
+        for fold in SCREEN_FOLDS
+    }
+    missing = [fold for fold, result in completed_screen.items() if result is None]
+    if missing:
+        raise FileNotFoundError(
+            f"G2 confirmation requires completed screen folds 0 and 4; missing {missing}"
+        )
+    return {
+        **check,
+        "completed_screen_fold_run_ids": {
+            str(fold): str(result["run_id"])
+            for fold, result in completed_screen.items()
+            if result is not None
+        },
+        "confirmation_folds_to_train": list(GENDER_G2_CONFIRMATION_FOLDS),
+        "five_fold_order": list(GENDER_G2_ALL_FOLDS),
+        "optimizer_steps": 0,
+        "ready": True,
+    }
+
+
+def _g2_aggregate(
+    spec: Task3DatasetV2Spec,
+    results: Sequence[dict[str, object]],
+    *,
+    output_root: Path,
+    root: Path,
+    directory_name: str,
+    scope: str,
+) -> dict[str, object]:
+    from fashion.train.task3_baseline import _aggregate_target
+
+    aggregate = _aggregate_target(
+        spec.target,
+        results,
+        output_root=output_root,
+        root=root,
+        artifact_dir=spec.artifact_dir,
+        experiment_id=spec.experiment_id,
+        hypothesis_id=spec.hypothesis_id,
+        model_family=spec.model_family,
+        parameter_count=baseline_parameter_count(spec.target),
+        architecture_macs=None,
+        child_spec=spec,  # type: ignore[arg-type]
+        aggregate_dir_name=directory_name,
+    )
+    fold_metrics = [dict(result["metrics"]) for result in results]
+    metrics = dict(aggregate["metrics"])
+    metrics.update(
+        {
+            "confirmation_scope": scope,
+            "validation_folds": [int(item["validation_fold"]) for item in fold_metrics],
+            "fold_macro_f1": [float(item["macro_f1"]) for item in fold_metrics],
+            "fold_macro_f1_sample_sd": float(
+                np.std([float(item["macro_f1"]) for item in fold_metrics], ddof=1)
+            ),
+            "mean_final_train_validation_gap": float(
+                np.mean(
+                    [float(item["final_train_validation_macro_f1_gap"]) for item in fold_metrics]
+                )
+            ),
+        }
+    )
+    _write_json(metrics, Path(str(aggregate["metrics_path"])))
+    aggregate["metrics"] = metrics
+    return aggregate
+
+
+def run_task3_gender_v2_g2_confirmation(
+    *,
+    parent_run_ids: Sequence[str],
+    output_root: str | Path,
+    folds: Sequence[int] = GENDER_G2_CONFIRMATION_FOLDS,
+    registry_path: str | Path = RUNS_CSV,
+    registry_mirrors: Sequence[str | Path] = (),
+    root: str | Path = ROOT,
+    device_name: str = "cuda",
+    reuse_completed: bool = True,
+) -> dict[str, object]:
+    """Train only missing G2 folds 1/2/3, then pool fresh and all-five evidence."""
+    from fashion.train.task3_baseline import run_task3_baseline_fold
+
+    fold_list = tuple(int(fold) for fold in folds)
+    if fold_list != GENDER_G2_CONFIRMATION_FOLDS:
+        raise ValueError("G2 confirmation must train folds 1, 2, and 3 in that order")
+    spec = dataset_v2_spec("gender_v2_translation", parent_run_ids)
+    output_root = Path(output_root)
+    root = Path(root)
+    _required_parent_artifacts(spec, output_root=output_root)
+
+    screen_results: dict[int, dict[str, object]] = {}
+    for fold in SCREEN_FOLDS:
+        result = _reusable_fold(spec, fold, output_root=output_root)
+        if result is None:
+            raise FileNotFoundError(f"completed G2 screen fold {fold} is required")
+        screen_results[fold] = result
+
+    fresh_results: list[dict[str, object]] = []
+    for fold in fold_list:
+        reusable = _reusable_fold(spec, fold, output_root=output_root) if reuse_completed else None
+        if reusable is not None:
+            print(f"[task3-v2] reusing completed G2 confirmation fold {fold}: {reusable['run_id']}")
+            fresh_results.append(reusable)
+        else:
+            fresh_results.append(
+                run_task3_baseline_fold(
+                    spec.target,
+                    fold,
+                    output_root=output_root,
+                    registry_path=registry_path,
+                    registry_mirrors=registry_mirrors,
+                    root=root,
+                    device_name=device_name,
+                    child_spec=spec,  # type: ignore[arg-type]
+                )
+            )
+
+    fresh = _g2_aggregate(
+        spec,
+        fresh_results,
+        output_root=output_root,
+        root=root,
+        directory_name="aggregate_fresh_folds_1_2_3",
+        scope="fresh_confirmation_folds_1_2_3",
+    )
+    by_fold = {int(result["metrics"]["validation_fold"]): result for result in fresh_results}
+    by_fold.update(screen_results)
+    all_results = [by_fold[fold] for fold in GENDER_G2_ALL_FOLDS]
+    all_five = _g2_aggregate(
+        spec,
+        all_results,
+        output_root=output_root,
+        root=root,
+        directory_name="aggregate_five_fold",
+        scope="all_canonical_folds_0_to_4",
+    )
+    return {
+        "target": "gender",
+        "trained_folds": list(fold_list),
+        "reused_screen_folds": list(SCREEN_FOLDS),
+        "fresh": fresh,
+        "all_five": all_five,
+        "fold_run_ids": [str(result["run_id"]) for result in all_results],
+    }
