@@ -1110,7 +1110,14 @@ def _aggregate_target(
     parameter_count: int | None = None,
     architecture_macs: int | None = None,
     child_spec: Task3ChildSpec | None = None,
+    aggregate_dir_name: str = "aggregate",
 ) -> dict[str, object]:
+    if Path(aggregate_dir_name).name != aggregate_dir_name or aggregate_dir_name in {
+        "",
+        ".",
+        "..",
+    }:
+        raise ValueError("aggregate_dir_name must be one safe directory name")
     label_maps = load_label_maps(root / LABEL_MAPS_JSON.relative_to(ROOT))
     classes, _ = _class_spec(label_maps, target)
     prediction_paths = [Path(str(result["prediction_path"])) for result in fold_results]
@@ -1133,7 +1140,7 @@ def _aggregate_target(
         metrics["macro_f1_without_home"] = float(
             np.mean([row["f1"] for row in metrics["per_class"] if row["class_name"] != "Home"])
         )
-    aggregate_dir = output_root / artifact_dir / target / "aggregate"
+    aggregate_dir = output_root / artifact_dir / target / aggregate_dir_name
     aggregate_dir.mkdir(parents=True, exist_ok=True)
     predictions_path = aggregate_dir / "oof_predictions.csv"
     metrics_path = aggregate_dir / "metrics.json"
