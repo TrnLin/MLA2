@@ -22,6 +22,7 @@ DatasetV2Name = Literal[
     "gender_v2_translation",
     "gender_translation_mild_darkening",
     "gender_weight_decay_001",
+    "gender_narrow64",
     "gender_v2_component_weight",
     "usage_v2_component_weight",
 ]
@@ -104,6 +105,10 @@ class Task3DatasetV2Spec:
             payload["weight_decay"] = self.weight_decay
             payload["execution_policy"] = "gpu_fp32_batch128_memory_under_3gb_no_speed_cap_v2"
             payload["screen_rule_version"] = "gwd1_gap_and_validation_v1"
+        if self.name == "gender_narrow64":
+            payload["channels"] = [32, 64, 128, 64]
+            payload["execution_policy"] = "g2_training_defaults_ieee_comparison_under_3gb_v1"
+            payload["screen_rule_version"] = "gn64_loss003_gap005_v1"
         return payload
 
 
@@ -142,6 +147,22 @@ def _spec_payload(name: DatasetV2Name, parent_run_ids: Sequence[str]) -> dict[st
             "class_weight_beta": None,
             "class_weight_cap": None,
         }
+    if name == "gender_narrow64":
+        payload = _spec_payload("gender_v2_translation", parent_run_ids)
+        payload.update(
+            {
+                "name": name,
+                "experiment_id": "t3_gender_narrow64",
+                "hypothesis_id": "t3_gender_narrow64",
+                "artifact_dir": "experiments/t3_gender_narrow64",
+                "run_prefix": "t3_gender_narrow64",
+                "changed_factor": "final_convolution_channels_256_to_64",
+                "parent_artifact_dir": "experiments/t3_gender_v2_g2_translation",
+                "model_family": "task3_small_cnn_gem_p3_narrow64",
+                "run_model_token": "smallcnngem3narrow64",
+            }
+        )
+        return payload
     if name == "gender_weight_decay_001":
         payload = _spec_payload("gender_v2_translation", parent_run_ids)
         payload.update(
@@ -394,6 +415,10 @@ def check_task3_dataset_v2_setup(
     device_name: str = "cuda",
 ) -> dict[str, object]:
     """Check one Dataset V2 screen without creating an optimizer or taking a step."""
+    if name == "gender_narrow64":
+        raise ValueError(
+            "use check_gender_narrow_sources for the frozen width and precision checks"
+        )
     import torch
 
     from fashion.train.model import Task3GeM3CNN
@@ -495,12 +520,14 @@ def run_task3_dataset_v2_screen(
     reuse_completed: bool = True,
 ) -> dict[str, object]:
     """Train folds 0 and 4 for one frozen Dataset V2 single-factor screen."""
-    from fashion.train.task3_baseline import _aggregate_target, run_task3_baseline_fold
-
     if name == "gender_translation_mild_darkening":
         raise ValueError("use run_gender_repair: G-D1 requires diagnostic and memory prerequisites")
     if name == "gender_weight_decay_001":
         raise ValueError("use run_gender_weight_decay_screen for the validation and gap gates")
+    if name == "gender_narrow64":
+        raise ValueError("use run_gender_narrow_screen for matched IEEE evaluation and gap gates")
+    from fashion.train.task3_baseline import _aggregate_target, run_task3_baseline_fold
+
     fold_list = tuple(int(fold) for fold in folds)
     if fold_list != SCREEN_FOLDS:
         raise ValueError("Dataset V2 screens must use folds 0 and 4 in that order")
