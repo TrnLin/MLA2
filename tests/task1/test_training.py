@@ -13,6 +13,12 @@ from fashion.config import SPLITS_CSV
 from fashion.data.dataset import load_splits
 from fashion.data.hashing import compute_sha256
 from fashion.data.splits import validate_splits
+from fashion.task1.candidates import (
+    TASK1_GENTLE_WEIGHTED_CANDIDATE,
+    TASK1_NO_AUG_CANDIDATE,
+    Task1CnnCandidate,
+)
+from fashion.task1.losses import TASK1_UNWEIGHTED_LOSS
 from fashion.task1.preprocessing import TASK1_CONTROL_PREPROCESSING
 from fashion.task1.training import (
     Task1TrainConfig,
@@ -118,7 +124,7 @@ def test_train_task1_fold_writes_best_checkpoint_and_registered_artifacts(tmp_pa
         splits,
         _label_map(),
         validation_fold=0,
-        preprocessing=TASK1_CONTROL_PREPROCESSING,
+        candidate=TASK1_NO_AUG_CANDIDATE,
         config=Task1TrainConfig.smoke(),
         registry=registry,
         root=tmp_path,
@@ -167,7 +173,7 @@ def test_train_task1_fold_finalizes_registry_when_model_raises(tmp_path: Path) -
             splits,
             _label_map(),
             validation_fold=0,
-            preprocessing=TASK1_CONTROL_PREPROCESSING,
+            candidate=TASK1_NO_AUG_CANDIDATE,
             config=Task1TrainConfig.smoke(),
             registry=registry,
             root=tmp_path,
@@ -203,7 +209,7 @@ def test_final_run_rejects_a_structurally_valid_split_frame_that_differs_from_ca
             changed,
             {},
             validation_fold=0,
-            preprocessing=TASK1_CONTROL_PREPROCESSING,
+            candidate=TASK1_NO_AUG_CANDIDATE,
             config=Task1TrainConfig.full(),
             split_path=SPLITS_CSV,
         )
@@ -224,7 +230,7 @@ def test_final_run_rejects_smoke_shaped_configuration() -> None:
             pd.DataFrame(),
             {},
             validation_fold=0,
-            preprocessing=TASK1_CONTROL_PREPROCESSING,
+            candidate=TASK1_NO_AUG_CANDIDATE,
             config=invalid_final_config,
             split_path=SPLITS_CSV,
         )
@@ -236,7 +242,7 @@ def test_final_run_rejects_custom_model_factory() -> None:
             pd.DataFrame(),
             {},
             validation_fold=0,
-            preprocessing=TASK1_CONTROL_PREPROCESSING,
+            candidate=TASK1_NO_AUG_CANDIDATE,
             config=Task1TrainConfig.full(),
             split_path=SPLITS_CSV,
             model_factory=lambda _: _ExplodingModel(),
@@ -255,19 +261,49 @@ def test_final_run_rejects_changed_sealed_training_setting(field: str) -> None:
     with pytest.raises(ValueError, match="final-eligible Task 1 runs require"):
         train_task1_fold(
             pd.DataFrame(), {}, validation_fold=0,
-            preprocessing=TASK1_CONTROL_PREPROCESSING,
+            candidate=TASK1_NO_AUG_CANDIDATE,
             config=invalid, split_path=SPLITS_CSV,
         )
 
 
-def test_final_run_rejects_unapproved_preprocessing() -> None:
+def test_final_run_rejects_unapproved_candidate() -> None:
     from fashion.task1.preprocessing import Task1PreprocessingConfig
 
     custom = Task1PreprocessingConfig(
         preprocessing_id="custom", horizontal_flip_probability=0.25
     )
-    with pytest.raises(ValueError, match="approved preprocessing"):
+    custom_candidate = Task1CnnCandidate("custom", custom, TASK1_UNWEIGHTED_LOSS)
+    with pytest.raises(ValueError, match="approved candidate"):
         train_task1_fold(
             pd.DataFrame(), {}, validation_fold=0,
-            preprocessing=custom, config=Task1TrainConfig.full(), split_path=SPLITS_CSV,
+            candidate=custom_candidate, config=Task1TrainConfig.full(), split_path=SPLITS_CSV,
         )
+
+
+def test_weighted_fold_records_loss_candidate_and_fold_only_weights(tmp_path: Path) -> None:
+    splits = _splits_with_images(tmp_path)
+    split_path = tmp_path / "splits.csv"
+    splits.to_csv(split_path, index=False)
+    registry = RunRegistry(tmp_path / "runs.csv")
+    result = train_task1_fold(
+        splits,
+        _label_map(),
+        validation_fold=0,
+        candidate=TASK1_GENTLE_WEIGHTED_CANDIDATE,
+        config=Task1TrainConfig.smoke(),
+        registry=registry,
+        root=tmp_path,
+        result_root=tmp_path / "results",
+        device=torch.device("cpu"),
+        split_path=split_path,
+    )
+
+    row = registry.read().iloc[0]
+    checkpoint = torch.load(result.checkpoint_path, map_location="cpu", weights_only=False)
+    assert result.candidate_id == "task1_cnn_no_aug_sqrt_weighted_v1"
+    assert result.loss_id == "cross_entropy_sqrt_class_weighted_v1"
+    assert row["loss_id"] == result.loss_id
+    assert row["experiment_id"] == "task1-cnn-task1_cnn_no_aug_sqrt_weighted_v1"
+    assert checkpoint["candidate_id"] == result.candidate_id
+    assert checkpoint["loss"]["config"]["loss_id"] == result.loss_id
+    assert len(checkpoint["loss"]["class_weights"]) == 124

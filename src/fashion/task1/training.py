@@ -15,16 +15,18 @@ from torch import nn
 from fashion.config import RANDOM_SEED, ROOT, SPLITS_CSV, TASK1_RESULT_DIR
 from fashion.data.dataset import load_splits
 from fashion.data.hashing import compute_sha256
+from fashion.task1.candidates import (
+    TASK1_GENTLE_WEIGHTED_CANDIDATE,
+    TASK1_MILD_AUG_CANDIDATE,
+    TASK1_NO_AUG_CANDIDATE,
+    Task1CnnCandidate,
+)
 from fashion.task1.cnn_engine import train_task1_cnn
 from fashion.task1.dataset import get_task1_fold_rows
 from fashion.task1.evaluation import validate_task1_label_map
+from fashion.task1.losses import build_task1_loss_weights
 from fashion.task1.models import Task1SmallCNN, count_trainable_parameters
-from fashion.task1.preprocessing import (
-    DEFAULT_TASK1_PREPROCESSING,
-    TASK1_CONTROL_PREPROCESSING,
-    Task1PreprocessingConfig,
-    fit_task1_normalization,
-)
+from fashion.task1.preprocessing import fit_task1_normalization
 from fashion.train.artifacts import atomic_write_bytes, atomic_write_csv, canonical_sha256
 from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
 from fashion.train.reproducibility import seed_everything
@@ -77,7 +79,9 @@ class Task1FoldResult:
 
     run_id: str
     fold: int
+    candidate_id: str
     preprocessing_id: str
+    loss_id: str
     status: Literal["completed"]
     metrics: dict[str, float]
     checkpoint_path: Path
@@ -111,9 +115,11 @@ def _implementation_hashes() -> dict[str, str]:
     """Hash all checked-in Task 1 code that defines one trained artifact."""
     relative_paths = (
         "src/fashion/task1/dataset.py",
+        "src/fashion/task1/candidates.py",
         "src/fashion/task1/cnn_engine.py",
         "src/fashion/task1/evaluation.py",
         "src/fashion/task1/image_contract.py",
+        "src/fashion/task1/losses.py",
         "src/fashion/task1/models.py",
         "src/fashion/task1/preprocessing.py",
         "src/fashion/task1/training.py",
@@ -126,7 +132,7 @@ def train_task1_fold(
     label_map: Mapping[str, object],
     *,
     validation_fold: int,
-    preprocessing: Task1PreprocessingConfig,
+    candidate: Task1CnnCandidate,
     config: Task1TrainConfig,
     registry: RunRegistry | None = None,
     root: str | Path = ROOT,
@@ -136,6 +142,7 @@ def train_task1_fold(
     model_factory: Callable[[int], nn.Module] = Task1SmallCNN,
 ) -> Task1FoldResult:
     """Train, select, reload, and register one sealed-development Task 1 fold."""
+    preprocessing = candidate.preprocessing
     if config.epochs <= 0 or config.batch_size <= 0:
         raise ValueError("epochs and batch_size must be positive")
     if config.max_train_batches is not None and config.max_train_batches <= 0:
@@ -159,8 +166,12 @@ def train_task1_fold(
                 "final-eligible Task 1 runs require stage='experiment', "
                 "fixed full-run optimization settings, and no batch limits"
             )
-        if preprocessing not in (TASK1_CONTROL_PREPROCESSING, DEFAULT_TASK1_PREPROCESSING):
-            raise ValueError("final-eligible Task 1 runs require approved preprocessing")
+        if candidate not in (
+            TASK1_NO_AUG_CANDIDATE,
+            TASK1_MILD_AUG_CANDIDATE,
+            TASK1_GENTLE_WEIGHTED_CANDIDATE,
+        ):
+            raise ValueError("final-eligible Task 1 runs require an approved candidate")
         if model_factory is not Task1SmallCNN:
             raise ValueError("final-eligible Task 1 runs require Task1SmallCNN")
         if Path(split_path).resolve() != SPLITS_CSV.resolve():
@@ -169,10 +180,12 @@ def train_task1_fold(
         if not splits.equals(canonical_splits):
             raise ValueError("supplied splits must match the canonical split file")
 
-    experiment_id = f"task1-cnn-{preprocessing.preprocessing_id}"
+    experiment_id = f"task1-cnn-{candidate.candidate_id}"
     run_config = {
         "validation_fold": validation_fold,
+        "candidate": asdict(candidate),
         "preprocessing": preprocessing.to_dict(),
+        "loss": candidate.loss.to_dict(),
         "training": asdict(config),
         "model_family": "task1_small_cnn_v1",
     }
@@ -189,7 +202,7 @@ def train_task1_fold(
         fold=validation_fold,
         seed=config.seed,
         transform_id=preprocessing.preprocessing_id,
-        loss_id="cross_entropy_unweighted_v1",
+        loss_id=candidate.loss.loss_id,
         epochs_requested=config.epochs,
         primary_metric_name="macro_f1_124",
         config_sha256=canonical_sha256(run_config),
@@ -208,6 +221,12 @@ def train_task1_fold(
         if config.stage == "smoke":
             training_rows = _smoke_rows(training_rows)
             validation_rows = _smoke_rows(validation_rows)
+        loss_weights = build_task1_loss_weights(
+            training_rows,
+            label_to_index,
+            validation_fold=validation_fold,
+            config=candidate.loss,
+        )
         normalization = fit_task1_normalization(
             training_rows,
             validation_fold=validation_fold,
@@ -225,6 +244,7 @@ def train_task1_fold(
             root=project_root,
             device=selected_device,
             model_factory=model_factory,
+            training_class_weights=loss_weights.tensor,
         )
         model = engine_result.model
         best_epoch = engine_result.best_epoch
@@ -240,7 +260,9 @@ def train_task1_fold(
             "model_state_dict": model.state_dict(),
             "model_config": model_config,
             "train_config": asdict(config),
+            "candidate_id": candidate.candidate_id,
             "preprocessing": preprocessing.to_dict(),
+            "loss": {"config": candidate.loss.to_dict(), **loss_weights.to_dict()},
             "normalization": normalization.to_dict(),
             "class_names": class_names,
             "label_map_sha256": run.label_map_sha256,
@@ -272,7 +294,9 @@ def train_task1_fold(
     return Task1FoldResult(
         run_id=record.run_id,
         fold=validation_fold,
+        candidate_id=candidate.candidate_id,
         preprocessing_id=preprocessing.preprocessing_id,
+        loss_id=candidate.loss.loss_id,
         status="completed",
         metrics=final_metrics,
         checkpoint_path=checkpoint_path,
