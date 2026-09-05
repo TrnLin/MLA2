@@ -18,7 +18,12 @@ from torch.utils.data import Dataset
 from fashion.config import ROOT
 from fashion.data.dataset import get_cv_split, get_samples
 from fashion.data.images import StreamingStats, transform_image, transform_image_with_mask
-from fashion.train.augmentation import TRAINING_AUGMENTATIONS, apply_training_augmentation
+from fashion.train.augmentation import (
+    GRAYSCALE_AUGMENTATION,
+    GRAYSCALE_SEED_XOR,
+    TRAINING_AUGMENTATIONS,
+    apply_training_augmentation,
+)
 
 CORE_CORRUPTIONS = (
     "jpeg_75",
@@ -166,6 +171,7 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
         self.corruption = corruption
         self.augmentation = augmentation
         self._darkening_rng: random.Random | None = None
+        self._grayscale_rng: random.Random | None = None
         self.image_view = image_view
         self.sample_weight_column = sample_weight_column
         unknown = sorted(set(self.frame[target]).difference(self.label_to_index))
@@ -186,13 +192,21 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
     def __getitem__(self, index: int) -> dict[str, Any]:
         row = self.frame.iloc[index]
         image = _load_corrupted(self.root / str(row["path"]), self.corruption)
-        if self.augmentation == "translation_2px_p05_mild_darkening_p025":
+        if self.augmentation in {
+            "translation_2px_p05_mild_darkening_p025",
+            GRAYSCALE_AUGMENTATION,
+        }:
             if self._darkening_rng is None:
                 # Persistent workers keep a separate stream. No global Python,
                 # NumPy, sampler or translation RNG draws are consumed here.
                 self._darkening_rng = random.Random(torch.initial_seed() ^ 0x474431)
+        if self.augmentation == GRAYSCALE_AUGMENTATION and self._grayscale_rng is None:
+            self._grayscale_rng = random.Random(torch.initial_seed() ^ GRAYSCALE_SEED_XOR)
         image = apply_training_augmentation(
-            image, self.augmentation, darkening_rng=self._darkening_rng
+            image,
+            self.augmentation,
+            darkening_rng=self._darkening_rng,
+            grayscale_rng=self._grayscale_rng,
         )
         image = apply_task3_input_view(image, self.image_view)
         array = transform_image(
