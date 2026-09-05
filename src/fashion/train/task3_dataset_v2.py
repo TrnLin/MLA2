@@ -24,6 +24,7 @@ DatasetV2Name = Literal[
     "gender_weight_decay_001",
     "gender_narrow64",
     "gender_dropout_030",
+    "gender_dropout_030_mild_darkening",
     "gender_v2_component_weight",
     "usage_v2_component_weight",
 ]
@@ -46,7 +47,7 @@ class Task3DatasetV2Spec:
     run_prefix: str
     changed_factor: str
     parent_artifact_dir: str
-    parent_run_ids: tuple[str, str, str, str, str]
+    parent_run_ids: tuple[str, ...]
     model_family: str
     run_model_token: str
     training_augmentation: str = "none"
@@ -68,8 +69,13 @@ class Task3DatasetV2Spec:
     auxiliary_loss_weight: float = 0.0
 
     def __post_init__(self) -> None:
-        if len(set(self.parent_run_ids)) != 5 or any(not item for item in self.parent_run_ids):
-            raise ValueError("a Dataset V2 screen requires five distinct completed parent IDs")
+        count = len(self.parent_folds)
+        if (
+            len(self.parent_run_ids) != count
+            or len(set(self.parent_run_ids)) != count
+            or any(not item for item in self.parent_run_ids)
+        ):
+            raise ValueError(f"a Dataset V2 screen requires {count} distinct completed parent IDs")
         for relative in (self.artifact_dir, self.parent_artifact_dir):
             path = Path(relative)
             if path.is_absolute() or ".." in path.parts:
@@ -86,6 +92,15 @@ class Task3DatasetV2Spec:
                 "Dataset V2 changes more than its predeclared factor: "
                 + json.dumps(mismatches, sort_keys=True)
             )
+
+    @property
+    def parent_folds(self) -> tuple[int, ...]:
+        return (0, 4) if self.name == "gender_dropout_030_mild_darkening" else tuple(range(5))
+
+    def parent_run_id_for_fold(self, fold: int) -> str:
+        if fold not in self.parent_folds:
+            raise ValueError(f"No completed parent for fold {fold}; allowed: {self.parent_folds}")
+        return self.parent_run_ids[self.parent_folds.index(fold)]
 
     @property
     def weight_decay(self) -> float:
@@ -113,6 +128,11 @@ class Task3DatasetV2Spec:
         if self.name == "gender_dropout_030":
             payload["execution_policy"] = "g2_training_defaults_ieee_comparison_under_3gb_v1"
             payload["screen_rule_version"] = "gdrop030_loss003_gap005_v1"
+        if self.name == "gender_dropout_030_mild_darkening":
+            payload["parent_folds"] = list(self.parent_folds)
+            payload["execution_policy"] = "g2_training_defaults_ieee_comparison_under_3gb_v1"
+            payload["screen_rule_version"] = "gdrop030dark_loss003_gap005_v1"
+            payload["darkening_rng"] = "persistent_worker_initial_seed_xor_0x474431"
         return payload
 
 
@@ -151,6 +171,19 @@ def _spec_payload(name: DatasetV2Name, parent_run_ids: Sequence[str]) -> dict[st
             "class_weight_beta": None,
             "class_weight_cap": None,
         }
+    if name == "gender_dropout_030_mild_darkening":
+        payload = _spec_payload("gender_dropout_030", parent_run_ids)
+        payload.update(
+            name=name,
+            experiment_id="t3_gender_dropout_030_mild_darkening",
+            hypothesis_id="t3_gender_dropout_030_mild_darkening",
+            artifact_dir="experiments/t3_gender_dropout_030_mild_darkening",
+            run_prefix="t3_gender_dropout_030_mild_darkening",
+            changed_factor="mild_darkening_after_translation_on_dropout_030",
+            parent_artifact_dir="experiments/t3_gender_dropout_030",
+            training_augmentation="translation_2px_p05_mild_darkening_p025",
+        )
+        return payload
     if name == "gender_dropout_030":
         payload = _spec_payload("gender_v2_translation", parent_run_ids)
         payload.update(
@@ -409,7 +442,7 @@ def add_visual_component_weights(
 
 
 def _required_parent_artifacts(spec: Task3DatasetV2Spec, *, output_root: Path) -> None:
-    for fold, run_id in enumerate(spec.parent_run_ids):
+    for fold, run_id in zip(spec.parent_folds, spec.parent_run_ids, strict=True):
         run_dir = output_root / spec.parent_artifact_dir / spec.target / run_id
         required = (
             run_dir / "config.json",
@@ -432,6 +465,8 @@ def check_task3_dataset_v2_setup(
     device_name: str = "cuda",
 ) -> dict[str, object]:
     """Check one Dataset V2 screen without creating an optimizer or taking a step."""
+    if name == "gender_dropout_030_mild_darkening":
+        raise ValueError("use check_gender_dropout_darkening_sources for the two-fold parents")
     if name == "gender_dropout_030":
         raise ValueError("use check_gender_dropout_sources for the frozen dropout screen")
     if name == "gender_narrow64":
@@ -539,6 +574,8 @@ def run_task3_dataset_v2_screen(
     reuse_completed: bool = True,
 ) -> dict[str, object]:
     """Train folds 0 and 4 for one frozen Dataset V2 single-factor screen."""
+    if name == "gender_dropout_030_mild_darkening":
+        raise ValueError("use run_gender_dropout_darkening_screen for its lineage and IEEE gates")
     if name == "gender_translation_mild_darkening":
         raise ValueError("use run_gender_repair: G-D1 requires diagnostic and memory prerequisites")
     if name == "gender_weight_decay_001":
