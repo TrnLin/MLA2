@@ -11,6 +11,7 @@ import platform
 import random
 import time
 import uuid
+from contextlib import nullcontext
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Iterable, Sequence
@@ -269,6 +270,7 @@ def _pass(
     device: torch.device,
     *,
     optimizer: torch.optim.Optimizer | None = None,
+    saved_tensors_on_cpu: bool = False,
 ) -> tuple[float, np.ndarray, np.ndarray, dict[str, list[Any]]]:
     training = optimizer is not None
     model.train(training)
@@ -290,22 +292,28 @@ def _pass(
             target = batch["label"].to(device, non_blocking=True)
             if training:
                 optimizer.zero_grad(set_to_none=True)
-            sample_weight = None
-            if isinstance(criterion, GenderAudienceAuxiliaryCrossEntropy):
-                forward_with_auxiliary = getattr(model, "forward_with_auxiliary", None)
-                if not callable(forward_with_auxiliary):
-                    raise ValueError("the auxiliary loss needs an auxiliary-head model")
-                logits, audience_logits = forward_with_auxiliary(images)
-                loss = criterion(logits, audience_logits, target)
-            else:
-                logits = model(images)
-            if isinstance(criterion, SampleWeightedCrossEntropy):
-                if "sample_weight" not in batch:
-                    raise ValueError("sample-weighted loss needs a sample_weight batch field")
-                sample_weight = batch["sample_weight"].to(device, non_blocking=True)
-                loss = criterion(logits, target, sample_weight)
-            elif not isinstance(criterion, GenderAudienceAuxiliaryCrossEntropy):
-                loss = criterion(logits, target)
+            offload = (
+                torch.autograd.graph.save_on_cpu(pin_memory=device.type == "cuda")
+                if training and saved_tensors_on_cpu
+                else nullcontext()
+            )
+            with offload:
+                sample_weight = None
+                if isinstance(criterion, GenderAudienceAuxiliaryCrossEntropy):
+                    forward_with_auxiliary = getattr(model, "forward_with_auxiliary", None)
+                    if not callable(forward_with_auxiliary):
+                        raise ValueError("the auxiliary loss needs an auxiliary-head model")
+                    logits, audience_logits = forward_with_auxiliary(images)
+                    loss = criterion(logits, audience_logits, target)
+                else:
+                    logits = model(images)
+                if isinstance(criterion, SampleWeightedCrossEntropy):
+                    if "sample_weight" not in batch:
+                        raise ValueError("sample-weighted loss needs a sample_weight batch field")
+                    sample_weight = batch["sample_weight"].to(device, non_blocking=True)
+                    loss = criterion(logits, target, sample_weight)
+                elif not isinstance(criterion, GenderAudienceAuxiliaryCrossEntropy):
+                    loss = criterion(logits, target)
             if training:
                 loss.backward()
                 optimizer.step()
@@ -481,6 +489,8 @@ def run_task3_baseline_fold(
     root: str | Path = ROOT,
     device_name: str = "cuda",
     child_spec: Task3ChildSpec | None = None,
+    parent_run_directory: str | Path | None = None,
+    prerequisite_path: str | Path | None = None,
 ) -> dict[str, object]:
     """Train one baseline fold or one locked single-factor child fold."""
     root = Path(root)
@@ -490,12 +500,23 @@ def run_task3_baseline_fold(
         raise ValueError("validation_fold must be one of 0,1,2,3,4")
     if child_spec is not None and child_spec.target != target:
         raise ValueError("child target and requested target disagree")
+    offload = bool(getattr(child_spec, "saved_tensors_on_cpu", False))
+    if offload:
+        from fashion.train.task3_gender_repair import require_prerequisites
+
+        require_prerequisites(
+            prerequisite_path, root=root, spec=child_spec, device_name=device_name
+        )
     model_family, run_model_token, parameter_count, architecture_macs = _task3_model_contract(
         config, child_spec
     )
     if child_spec is not None:
         parent_run_id = child_spec.parent_run_ids[validation_fold]
-        parent_dir = output_root / child_spec.parent_artifact_dir / target / parent_run_id
+        parent_dir = (
+            Path(parent_run_directory)
+            if parent_run_directory is not None
+            else output_root / child_spec.parent_artifact_dir / target / parent_run_id
+        )
         parent_metrics_path = parent_dir / "metrics.json"
         parent_checkpoint_path = parent_dir / "final_epoch.pt"
         parent_prediction_path = parent_dir / "oof_predictions.csv"
@@ -542,9 +563,7 @@ def run_task3_baseline_fold(
     selection_strategy = child_spec.training_selection_strategy if child_spec is not None else "all"
     input_view = getattr(child_spec, "input_view", "full") if child_spec is not None else "full"
     sample_weight_strategy = (
-        getattr(child_spec, "sample_weight_strategy", "none")
-        if child_spec is not None
-        else "none"
+        getattr(child_spec, "sample_weight_strategy", "none") if child_spec is not None else "none"
     )
     if selection_strategy == "gender_semantic_conflicts_v1":
         training, excluded, selection_metadata = prepare_gender_e9_training(training)
@@ -878,7 +897,12 @@ def run_task3_baseline_fold(
         for epoch in range(1, config.epochs + 1):
             learning_rate = float(optimizer.param_groups[0]["lr"])
             train_loss, train_labels, train_probabilities, _ = _pass(
-                model, train_loader, criterion, device, optimizer=optimizer
+                model,
+                train_loader,
+                criterion,
+                device,
+                optimizer=optimizer,
+                saved_tensors_on_cpu=offload,
             )
             validation_loss, validation_labels, validation_probabilities, _ = _pass(
                 model, validation_loader, evaluation_criterion, device
@@ -977,6 +1001,9 @@ def run_task3_baseline_fold(
         metrics["hypothesis_id"] = hypothesis_id
         metrics["parent_run_ids"] = parent_run_ids
         metrics["training_augmentation"] = training_augmentation
+        if offload:
+            metrics["saved_tensors_on_cpu"] = True
+            metrics["prerequisite_sha256"] = compute_sha256(prerequisite_path)
         metrics["input_view"] = input_view
         metrics["sample_weight_strategy"] = sample_weight_strategy
         metrics["loss_name"] = loss_name
