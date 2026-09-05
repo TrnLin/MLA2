@@ -501,7 +501,8 @@ def run_task3_baseline_fold(
     if child_spec is not None and child_spec.target != target:
         raise ValueError("child target and requested target disagree")
     offload = bool(getattr(child_spec, "saved_tensors_on_cpu", False))
-    if offload:
+    gender_repair = getattr(child_spec, "name", None) == "gender_translation_mild_darkening"
+    if gender_repair:
         from fashion.train.task3_gender_repair import require_prerequisites
 
         require_prerequisites(
@@ -1001,8 +1002,8 @@ def run_task3_baseline_fold(
         metrics["hypothesis_id"] = hypothesis_id
         metrics["parent_run_ids"] = parent_run_ids
         metrics["training_augmentation"] = training_augmentation
-        if offload:
-            metrics["saved_tensors_on_cpu"] = True
+        if gender_repair:
+            metrics["saved_tensors_on_cpu"] = offload
             metrics["prerequisite_sha256"] = compute_sha256(prerequisite_path)
         metrics["input_view"] = input_view
         metrics["sample_weight_strategy"] = sample_weight_strategy
