@@ -521,6 +521,7 @@ def run_task3_baseline_fold(
     if getattr(child_spec, "name", None) in {
         "gender_dropout_030_mild_darkening",
         "gender_dropout_045_mild_darkening",
+        "gender_dropout_030_mild_darkening_grayscale_010",
     }:
         from fashion.train.task3_gender_dropout_darkening import (
             dropout_darkening_config,
