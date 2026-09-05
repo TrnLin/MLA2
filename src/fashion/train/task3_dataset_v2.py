@@ -25,6 +25,7 @@ DatasetV2Name = Literal[
     "gender_narrow64",
     "gender_dropout_030",
     "gender_dropout_030_mild_darkening",
+    "gender_dropout_045_mild_darkening",
     "gender_v2_component_weight",
     "usage_v2_component_weight",
 ]
@@ -95,7 +96,9 @@ class Task3DatasetV2Spec:
 
     @property
     def parent_folds(self) -> tuple[int, ...]:
-        return (0, 4) if self.name == "gender_dropout_030_mild_darkening" else tuple(range(5))
+        if self.name in {"gender_dropout_030_mild_darkening", "gender_dropout_045_mild_darkening"}:
+            return (0, 4)
+        return tuple(range(5))
 
     def parent_run_id_for_fold(self, fold: int) -> str:
         if fold not in self.parent_folds:
@@ -128,10 +131,14 @@ class Task3DatasetV2Spec:
         if self.name == "gender_dropout_030":
             payload["execution_policy"] = "g2_training_defaults_ieee_comparison_under_3gb_v1"
             payload["screen_rule_version"] = "gdrop030_loss003_gap005_v1"
-        if self.name == "gender_dropout_030_mild_darkening":
+        if self.name in {"gender_dropout_030_mild_darkening", "gender_dropout_045_mild_darkening"}:
             payload["parent_folds"] = list(self.parent_folds)
             payload["execution_policy"] = "g2_training_defaults_ieee_comparison_under_3gb_v1"
-            payload["screen_rule_version"] = "gdrop030dark_loss003_gap005_v1"
+            payload["screen_rule_version"] = (
+                "gdrop045dark_loss003_gap005_v1"
+                if self.name == "gender_dropout_045_mild_darkening"
+                else "gdrop030dark_loss003_gap005_v1"
+            )
             payload["darkening_rng"] = "persistent_worker_initial_seed_xor_0x474431"
         return payload
 
@@ -171,6 +178,19 @@ def _spec_payload(name: DatasetV2Name, parent_run_ids: Sequence[str]) -> dict[st
             "class_weight_beta": None,
             "class_weight_cap": None,
         }
+    if name == "gender_dropout_045_mild_darkening":
+        payload = _spec_payload("gender_dropout_030_mild_darkening", parent_run_ids)
+        payload.update(
+            name=name,
+            experiment_id="t3_gender_dropout_045_mild_darkening",
+            hypothesis_id="t3_gender_dropout_045_mild_darkening",
+            artifact_dir="experiments/t3_gender_dropout_045_mild_darkening",
+            run_prefix="t3_gender_dropout_045_mild_darkening",
+            changed_factor="post_gem_classifier_dropout_030_to_045",
+            parent_artifact_dir="experiments/t3_gender_dropout_030_mild_darkening",
+            classifier_dropout=0.45,
+        )
+        return payload
     if name == "gender_dropout_030_mild_darkening":
         payload = _spec_payload("gender_dropout_030", parent_run_ids)
         payload.update(
@@ -465,6 +485,8 @@ def check_task3_dataset_v2_setup(
     device_name: str = "cuda",
 ) -> dict[str, object]:
     """Check one Dataset V2 screen without creating an optimizer or taking a step."""
+    if name == "gender_dropout_045_mild_darkening":
+        raise ValueError("use check_gender_stronger_dropout_sources for its completed parents")
     if name == "gender_dropout_030_mild_darkening":
         raise ValueError("use check_gender_dropout_darkening_sources for the two-fold parents")
     if name == "gender_dropout_030":
@@ -574,6 +596,8 @@ def run_task3_dataset_v2_screen(
     reuse_completed: bool = True,
 ) -> dict[str, object]:
     """Train folds 0 and 4 for one frozen Dataset V2 single-factor screen."""
+    if name == "gender_dropout_045_mild_darkening":
+        raise ValueError("use run_gender_stronger_dropout_screen for its lineage and IEEE gates")
     if name == "gender_dropout_030_mild_darkening":
         raise ValueError("use run_gender_dropout_darkening_screen for its lineage and IEEE gates")
     if name == "gender_translation_mild_darkening":
