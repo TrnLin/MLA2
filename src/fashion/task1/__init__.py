@@ -51,6 +51,7 @@ from fashion.task1.models import Task1ModelConfig, Task1SmallCNN, count_trainabl
 from fashion.task1.plotting import (
     write_task1_comparison_figure,
     write_task1_confusion_figure,
+    write_task1_learning_curve_figure,
 )
 from fashion.task1.preprocessing import (
     DEFAULT_TASK1_PREPROCESSING,
@@ -120,6 +121,7 @@ __all__ = [
     "run_task1_weighted_experiment",
     "write_task1_comparison_figure",
     "write_task1_confusion_figure",
+    "write_task1_learning_curve_figure",
     "classification_metrics",
     "per_class_metrics",
     "build_prediction_frame",
