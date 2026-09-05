@@ -198,6 +198,62 @@ def test_ieee_cache_rejects_changed_identity_or_file(tmp_path):
         )
 
 
+def test_ieee_float32_csv_round_trip_and_metric_validation(tmp_path, monkeypatch):
+    from fashion.data.hashing import compute_sha256
+    from fashion.train import task3_gender_ieee as ieee
+    from fashion.train.task3_decisions import probability_columns
+
+    child, _, classes = _case()
+    run = {**child[0], "fold": 0}
+    predictions = run["predictions"].copy()
+    rng = np.random.default_rng(6)
+    probabilities = rng.dirichlet(np.full(5, 0.2), size=len(predictions)).astype(np.float32)
+    predicted = probabilities.argmax(axis=1)
+    predictions[probability_columns(classes)] = probabilities
+    predictions["confidence"] = probabilities.max(axis=1)
+    predictions["predicted_index"] = predicted
+    predictions["predicted_label"] = [classes[i] for i in predicted]
+    original = oof_metrics(predictions, classes)
+    predictions.to_csv(tmp_path / "old.csv", index=False)
+    old = oof_metrics(pd.read_csv(tmp_path / "old.csv"), classes)
+    assert abs(original["nll"] - old["nll"]) > 1e-10
+
+    metrics = ieee.save_ieee_predictions(predictions, tmp_path / "oof_predictions.csv", classes)
+    saved = pd.read_csv(tmp_path / "oof_predictions.csv", float_precision="round_trip")
+    np.testing.assert_array_equal(saved[probability_columns(classes)].to_numpy(), probabilities)
+    for name in ("macro_f1", "nll", "ece_15"):
+        assert metrics[name] == original[name]
+    metrics["comparison_precision"] = POLICY
+    (tmp_path / "metrics.json").write_text(json.dumps(metrics))
+    robust = run["robustness"].copy()
+    robust["macro_f1"] = metrics["macro_f1"]
+    robust["macro_f1_change"] = 0.0
+    robust.to_csv(tmp_path / "robustness.csv", index=False)
+    extra = ["clean_train_predictions.csv", *(f"{c}_predictions.csv" for c in CORE_CORRUPTIONS)]
+    for name in extra:
+        ieee.save_ieee_predictions(predictions, tmp_path / name, classes)
+    files = ["metrics.json", "robustness.csv", "oof_predictions.csv", *extra]
+    manifest = {
+        "identity": {},
+        "weights_and_buffers_unchanged": True,
+        "precision_settings": {key: "ieee" for key in TRAINING_PRECISION},
+        "settings_restored": True,
+        "files": {name: compute_sha256(tmp_path / name) for name in files},
+    }
+    expected = predictions.assign(gender=predictions["true_label"], partition="development")
+    monkeypatch.setattr(ieee, "get_cv_split", lambda splits, fold: (None, expected))
+    monkeypatch.setattr(ieee, "get_samples", lambda frame, target: frame)
+    (tmp_path / "evaluation_manifest.json").write_text(json.dumps(manifest))
+    loaded = load_ieee_evaluation(tmp_path, run=run, splits=None, classes=classes, identity={})
+    assert loaded["metrics"]["nll"] == metrics["nll"]
+    metrics["nll"] += 0.001
+    (tmp_path / "metrics.json").write_text(json.dumps(metrics))
+    manifest["files"]["metrics.json"] = compute_sha256(tmp_path / "metrics.json")
+    (tmp_path / "evaluation_manifest.json").write_text(json.dumps(manifest))
+    with pytest.raises(ValueError, match="saved nll differs"):
+        load_ieee_evaluation(tmp_path, run=run, splits=None, classes=classes, identity={})
+
+
 def test_precision_failure_blocks_before_torch_import(tmp_path):
     status = {
         "status": "error",
