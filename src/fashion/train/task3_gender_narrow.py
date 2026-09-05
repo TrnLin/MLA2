@@ -179,6 +179,8 @@ def _screen_contract(name):
         return "gdrop045dark_loss003_gap005_v1", baseline_parameter_count("gender")
     if name == "gender_dropout_030_mild_darkening_grayscale_010":
         return "gdrop030darkgray010_loss003_gap005_v1", baseline_parameter_count("gender")
+    if name == "gender_name_truth_dropout_030_grayscale_010":
+        return "gname_truth_loss003_gap005_v1", baseline_parameter_count("gender")
     raise ValueError("Unknown frozen gender screen")
 
 
