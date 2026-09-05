@@ -33,6 +33,7 @@ from fashion.task1.cnn_experiments import (
     Task1ExperimentResult,
     run_task1_experiment,
 )
+from fashion.task1.weighted_experiments import run_task1_weighted_experiment
 from fashion.task1.dataset import Task1TorchDataset, get_task1_fold_rows
 from fashion.task1.evaluation import (
     aggregate_fold_metrics,
@@ -116,6 +117,7 @@ __all__ = [
     "run_task1_classical_experiment",
     "Task1ExperimentResult",
     "run_task1_experiment",
+    "run_task1_weighted_experiment",
     "write_task1_comparison_figure",
     "write_task1_confusion_figure",
     "classification_metrics",
