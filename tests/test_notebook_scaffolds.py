@@ -70,6 +70,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04y_task3_gender_dropout_screen.ipynb",
         "04aa_task3_gender_dropout_darkening_screen.ipynb",
         "04ab_task3_gender_stronger_dropout_screen.ipynb",
+        "04ac_task3_gender_grayscale_screen.ipynb",
         "04z_task3_usage_two_stage_screen.ipynb",
         *TASK_SPECS,
     }
