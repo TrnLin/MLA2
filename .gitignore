@@ -49,6 +49,8 @@ models/*.pth
 models/*.ckpt
 /models/task4_r5/
 /models/task4_r5_portable.zip
+/scripts/task4/queue_gpu0_r5_stability.sh
+/scripts/task4/queue_gpu1_r3_stability.sh
 
 
 # Generated Task 4 bulk; compact evidence and reports stay trackable.
