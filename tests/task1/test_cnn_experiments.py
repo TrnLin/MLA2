@@ -15,7 +15,9 @@ from fashion.task1.training import Task1FoldResult
 @dataclass(frozen=True)
 class _FoldCall:
     fold: int
+    candidate_id: str
     transform_id: str
+    loss_id: str
     stage: str
 
 
@@ -59,25 +61,33 @@ def _fake_fold_runner(
     _: dict[str, object],
     *,
     validation_fold: int,
-    preprocessing: Any,
+    candidate: Any,
     config: Any,
     result_root: str | Path,
     **__: object,
 ) -> Task1FoldResult:
     """Return a complete, fixed fold artifact without running a CNN."""
     _fake_fold_runner.calls.append(
-        _FoldCall(validation_fold, preprocessing.preprocessing_id, config.stage)
+        _FoldCall(
+            validation_fold,
+            candidate.candidate_id,
+            candidate.preprocessing.preprocessing_id,
+            candidate.loss.loss_id,
+            config.stage,
+        )
     )
-    prediction_path = Path(result_root) / f"{preprocessing.preprocessing_id}-{validation_fold}.csv"
+    prediction_path = Path(result_root) / f"{candidate.candidate_id}-{validation_fold}.csv"
     prediction_path.parent.mkdir(parents=True, exist_ok=True)
     _prediction_frame(splits.loc[splits["cv_fold"].eq(validation_fold), "id"].tolist()).to_csv(
         prediction_path,
         index=False,
     )
     return Task1FoldResult(
-        run_id=f"{preprocessing.preprocessing_id}-{validation_fold}",
+        run_id=f"{candidate.candidate_id}-{validation_fold}",
         fold=validation_fold,
-        preprocessing_id=preprocessing.preprocessing_id,
+        candidate_id=candidate.candidate_id,
+        preprocessing_id=candidate.preprocessing.preprocessing_id,
+        loss_id=candidate.loss.loss_id,
         status="completed",
         metrics={
             "macro_f1": 0.5,
@@ -122,18 +132,31 @@ def test_runner_uses_one_control_fold_for_smoke_and_ten_fixed_full_runs(
 
     assert len(calls) == 10
     assert {call.fold for call in calls} == set(range(5))
+    assert [call.candidate_id for call in calls] == [
+        "task1_cnn_no_aug_unweighted_v1"
+    ] * 5 + ["task1_cnn_mild_aug_unweighted_v1"] * 5
     assert [call.transform_id for call in calls] == [
         "task1_rgb_60x80_no_aug_v1"
     ] * 5 + ["task1_rgb_60x80_mild_aug_v1"] * 5
+    assert {call.loss_id for call in calls} == {"cross_entropy_unweighted_v1"}
     assert len(full.fold_metrics) == 10
+    assert list(full.fold_metrics.columns[:5]) == [
+        "run_id", "fold", "candidate_id", "preprocessing_id", "loss_id"
+    ]
     assert len(full.comparison) == 2
     assert list(full.oof_metrics.columns) == [
-        "preprocessing_id", "macro_f1_124", "weighted_f1", "top1_accuracy", "top5_accuracy"
+        "candidate_id",
+        "preprocessing_id",
+        "loss_id",
+        "macro_f1_124",
+        "weighted_f1",
+        "top1_accuracy",
+        "top5_accuracy",
     ]
     assert len(full.oof_metrics) == 2
     assert set(full.oof_predictions) == {
-        "task1_rgb_60x80_no_aug_v1",
-        "task1_rgb_60x80_mild_aug_v1",
+        "task1_cnn_no_aug_unweighted_v1",
+        "task1_cnn_mild_aug_unweighted_v1",
     }
     assert all(len(frame) == 124 for frame in full.per_class.values())
     assert (tmp_path / "evidence" / "fold_metrics.csv").is_file()
@@ -197,16 +220,16 @@ def test_full_runner_rejects_invalid_oof_coverage(
         )
 
 
-def test_full_runner_requires_five_fold_metrics_per_preprocessing(
+def test_full_runner_requires_five_fold_metrics_per_candidate(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """An incomplete candidate cannot be compared with a five-fold candidate."""
 
-    def wrong_preprocessing_runner(*args: object, **kwargs: object) -> Task1FoldResult:
+    def wrong_candidate_runner(*args: object, **kwargs: object) -> Task1FoldResult:
         result = _fake_fold_runner(*args, **kwargs)
         if result.fold == 4:
             return Task1FoldResult(
-                **{**result.__dict__, "preprocessing_id": "unexpected-preprocessing"}
+                **{**result.__dict__, "candidate_id": "unexpected-candidate"}
             )
         return result
 
@@ -216,6 +239,6 @@ def test_full_runner_requires_five_fold_metrics_per_preprocessing(
             _splits(),
             _label_map(),
             mode="full",
-            fold_runner=wrong_preprocessing_runner,
+            fold_runner=wrong_candidate_runner,
             result_root=tmp_path / "runs",
         )
