@@ -10,10 +10,20 @@ TRAINING_AUGMENTATIONS = (
     "none",
     "brightness_uniform_085_115",
     "translation_uniform_2px_p05",
+    "translation_2px_p05_mild_darkening_p025",
 )
 
 
-def apply_training_augmentation(image: Image.Image, augmentation: str) -> Image.Image:
+def apply_training_augmentation(
+    image: Image.Image, augmentation: str, *, darkening_rng: random.Random | None = None
+) -> Image.Image:
+    if augmentation == "translation_2px_p05_mild_darkening_p025":
+        if darkening_rng is None:
+            raise ValueError("mild darkening requires its own seeded random stream")
+        image = apply_training_augmentation(image, "translation_uniform_2px_p05")
+        if darkening_rng.random() < 0.25:
+            image = ImageEnhance.Brightness(image).enhance(darkening_rng.uniform(0.90, 1.00))
+        return image
     if augmentation == "none":
         return image
     if augmentation == "brightness_uniform_085_115":
