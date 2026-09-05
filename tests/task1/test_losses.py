@@ -44,6 +44,27 @@ def test_unweighted_loss_returns_no_training_tensor() -> None:
     assert result.tensor is None
 
 
+def test_gentle_weights_apply_both_configured_clamps() -> None:
+    labels = ["rare"] + [label for label in "bcdefghij" for _ in range(10_000)]
+    rows = pd.DataFrame(
+        {
+            "id": range(len(labels)),
+            "partition": ["development"] * len(labels),
+            "cv_fold": [1] * len(labels),
+            "articleType": labels,
+        }
+    )
+    result = build_task1_loss_weights(
+        rows,
+        {label: index for index, label in enumerate(["rare", *"bcdefghij"])},
+        validation_fold=0,
+        config=TASK1_GENTLE_WEIGHTED_LOSS,
+    )
+
+    assert result.class_weights[0] == pytest.approx(4.0)
+    assert result.class_weights[1:] == pytest.approx((0.25,) * 9)
+
+
 @pytest.mark.parametrize("mutation", [{"partition": "holdout"}, {"cv_fold": 0}])
 def test_weights_reject_rows_outside_the_fold_training_set(mutation: dict[str, object]) -> None:
     rows = _training_rows()
