@@ -152,7 +152,10 @@ def evaluate_gender_ieee(run, *, splits, classes, output, root):
     verify_checkpoint_metadata(
         checkpoint, run_id=run["run_id"], config=payload, classes=classes, normalization=stats
     )
-    model = Task3GeM3CNN(config)
+    model = Task3GeM3CNN(
+        config,
+        classifier_dropout=payload.get("child_experiment", {}).get("classifier_dropout", 0.0),
+    )
     model.load_state_dict(checkpoint["model_state_dict"], strict=True)
     del checkpoint
     device = torch.device("cuda")
