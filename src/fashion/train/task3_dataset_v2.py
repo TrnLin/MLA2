@@ -23,6 +23,7 @@ DatasetV2Name = Literal[
     "gender_translation_mild_darkening",
     "gender_weight_decay_001",
     "gender_narrow64",
+    "gender_dropout_030",
     "gender_v2_component_weight",
     "usage_v2_component_weight",
 ]
@@ -109,6 +110,9 @@ class Task3DatasetV2Spec:
             payload["channels"] = [32, 64, 128, 64]
             payload["execution_policy"] = "g2_training_defaults_ieee_comparison_under_3gb_v1"
             payload["screen_rule_version"] = "gn64_loss003_gap005_v1"
+        if self.name == "gender_dropout_030":
+            payload["execution_policy"] = "g2_training_defaults_ieee_comparison_under_3gb_v1"
+            payload["screen_rule_version"] = "gdrop030_loss003_gap005_v1"
         return payload
 
 
@@ -147,6 +151,19 @@ def _spec_payload(name: DatasetV2Name, parent_run_ids: Sequence[str]) -> dict[st
             "class_weight_beta": None,
             "class_weight_cap": None,
         }
+    if name == "gender_dropout_030":
+        payload = _spec_payload("gender_v2_translation", parent_run_ids)
+        payload.update(
+            name=name,
+            experiment_id="t3_gender_dropout_030",
+            hypothesis_id="t3_gender_dropout_030",
+            artifact_dir="experiments/t3_gender_dropout_030",
+            run_prefix="t3_gender_dropout_030",
+            changed_factor="post_gem_classifier_dropout_0_to_030",
+            parent_artifact_dir="experiments/t3_gender_v2_g2_translation",
+            classifier_dropout=0.30,
+        )
+        return payload
     if name == "gender_narrow64":
         payload = _spec_payload("gender_v2_translation", parent_run_ids)
         payload.update(
@@ -415,6 +432,8 @@ def check_task3_dataset_v2_setup(
     device_name: str = "cuda",
 ) -> dict[str, object]:
     """Check one Dataset V2 screen without creating an optimizer or taking a step."""
+    if name == "gender_dropout_030":
+        raise ValueError("use check_gender_dropout_sources for the frozen dropout screen")
     if name == "gender_narrow64":
         raise ValueError(
             "use check_gender_narrow_sources for the frozen width and precision checks"
@@ -524,6 +543,8 @@ def run_task3_dataset_v2_screen(
         raise ValueError("use run_gender_repair: G-D1 requires diagnostic and memory prerequisites")
     if name == "gender_weight_decay_001":
         raise ValueError("use run_gender_weight_decay_screen for the validation and gap gates")
+    if name == "gender_dropout_030":
+        raise ValueError("use run_gender_dropout_screen for matched IEEE evaluation and gap gates")
     if name == "gender_narrow64":
         raise ValueError("use run_gender_narrow_screen for matched IEEE evaluation and gap gates")
     from fashion.train.task3_baseline import _aggregate_target, run_task3_baseline_fold
