@@ -116,8 +116,8 @@ class FixedGeMPool2d(nn.Module):
 class Task3GeM3CNN(Task3BaselineCNN):
     """The accepted SmallCNN with only average pooling changed to fixed GeM p=3."""
 
-    def __init__(self, config: Task3BaselineConfig) -> None:
-        super().__init__(config)
+    def __init__(self, config: Task3BaselineConfig, *, classifier_dropout: float = 0.0) -> None:
+        super().__init__(config, classifier_dropout=classifier_dropout)
         self.pool = FixedGeMPool2d(power=3.0)
 
 
