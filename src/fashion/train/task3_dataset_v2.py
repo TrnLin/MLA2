@@ -21,6 +21,7 @@ DatasetV2Name = Literal[
     "gender_v2_foreground_mask",
     "gender_v2_translation",
     "gender_translation_mild_darkening",
+    "gender_weight_decay_001",
     "gender_v2_component_weight",
     "usage_v2_component_weight",
 ]
@@ -85,6 +86,10 @@ class Task3DatasetV2Spec:
             )
 
     @property
+    def weight_decay(self) -> float:
+        return 0.01 if self.name == "gender_weight_decay_001" else 0.0001
+
+    @property
     def saved_tensors_on_cpu(self) -> bool:
         return False
 
@@ -95,6 +100,10 @@ class Task3DatasetV2Spec:
             payload["saved_tensors_on_cpu"] = False
             payload["darkening_rng"] = "persistent_worker_initial_seed_xor_0x474431"
             payload["execution_policy"] = "gpu_fp32_batch128_memory_under_3gb_no_speed_cap_v2"
+        if self.name == "gender_weight_decay_001":
+            payload["weight_decay"] = self.weight_decay
+            payload["execution_policy"] = "gpu_fp32_batch128_memory_under_3gb_no_speed_cap_v2"
+            payload["screen_rule_version"] = "gwd1_gap_and_validation_v1"
         return payload
 
 
@@ -133,6 +142,20 @@ def _spec_payload(name: DatasetV2Name, parent_run_ids: Sequence[str]) -> dict[st
             "class_weight_beta": None,
             "class_weight_cap": None,
         }
+    if name == "gender_weight_decay_001":
+        payload = _spec_payload("gender_v2_translation", parent_run_ids)
+        payload.update(
+            {
+                "name": name,
+                "experiment_id": "t3_gender_weight_decay_001",
+                "hypothesis_id": "t3_gender_weight_decay_001",
+                "artifact_dir": "experiments/t3_gender_weight_decay_001",
+                "run_prefix": "t3_gender_weight_decay_001",
+                "changed_factor": "adamw_weight_decay_0001_to_001",
+                "parent_artifact_dir": "experiments/t3_gender_v2_g2_translation",
+            }
+        )
+        return payload
     if name == "gender_translation_mild_darkening":
         payload = _spec_payload("gender_v2_translation", parent_run_ids)
         payload.update(
@@ -476,6 +499,8 @@ def run_task3_dataset_v2_screen(
 
     if name == "gender_translation_mild_darkening":
         raise ValueError("use run_gender_repair: G-D1 requires diagnostic and memory prerequisites")
+    if name == "gender_weight_decay_001":
+        raise ValueError("use run_gender_weight_decay_screen for the validation and gap gates")
     fold_list = tuple(int(fold) for fold in folds)
     if fold_list != SCREEN_FOLDS:
         raise ValueError("Dataset V2 screens must use folds 0 and 4 in that order")
