@@ -67,6 +67,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04v_task3_gender_saved_model_diagnostic.ipynb",
         "04w_task3_gender_precision_check.ipynb",
         "04x_task3_gender_narrow64_screen.ipynb",
+        "04y_task3_gender_dropout_screen.ipynb",
         *TASK_SPECS,
     }
     present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
