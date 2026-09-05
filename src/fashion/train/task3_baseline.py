@@ -518,6 +518,27 @@ def run_task3_baseline_fold(
         from fashion.train.task3_gender_weight_decay import weight_decay_config
 
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
+    name_truth = getattr(child_spec, "name", None) == "gender_name_truth_dropout_030_grayscale_010"
+    if name_truth:
+        from fashion.train.task3_gender_name_truth import (
+            name_truth_config,
+            require_name_truth_prerequisites,
+            training_splits,
+        )
+
+        config = name_truth_config(
+            child_spec, fold=validation_fold, device_name=device_name, root=root
+        )
+        refinement_evidence = require_name_truth_prerequisites(
+            prerequisite_path,
+            spec=child_spec,
+            fold=validation_fold,
+            parent_run_directory=parent_run_directory,
+            root=root,
+            device_name=device_name,
+        )
+        narrow_evidence = refinement_evidence["precision"]
+        parent_run_directory = refinement_evidence["parent_directory"]
     if getattr(child_spec, "name", None) in {
         "gender_dropout_030_mild_darkening",
         "gender_dropout_045_mild_darkening",
@@ -603,6 +624,8 @@ def run_task3_baseline_fold(
     splits_path = root / SPLITS_CSV.relative_to(ROOT)
     label_maps_path = root / LABEL_MAPS_JSON.relative_to(ROOT)
     splits = load_splits(splits_path)
+    if name_truth:
+        splits = training_splits(child_spec, root=root)
     label_maps = load_label_maps(label_maps_path)
     classes, label_to_index = _class_spec(label_maps, target)
     training, validation = task3_target_frames(
@@ -740,6 +763,8 @@ def run_task3_baseline_fold(
         ].copy()
 
     config_payload = config.to_dict()
+    if name_truth:
+        config_payload["gender_label_variant"] = child_spec.to_dict()["gender_label_variant"]
     if refinement_evidence is not None:
         config_payload["refinement_prerequisite_sha256"] = refinement_evidence[
             "prerequisite_sha256"
@@ -925,7 +950,7 @@ def run_task3_baseline_fold(
             "seed": config.seed,
             "debug": False,
             "scratch": True,
-            "submission_eligible": True,
+            "submission_eligible": not name_truth,
             "config_hash": digest,
             "config_path": config_path,
             "split_digest": split_digest,
