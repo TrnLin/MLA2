@@ -26,12 +26,14 @@ from fashion.config import LABEL_MAPS_JSON, ROOT, RUNS_CSV, SPLITS_CSV
 from fashion.data import load_label_maps, load_splits
 from fashion.data.hashing import compute_sha256
 from fashion.train.config import (
+    NARROW_GEM3_FAMILY,
     Task3BaselineConfig,
     baseline_parameter_count,
     compact_blur_cnn_macs,
     compact_blur_cnn_parameter_count,
     config_digest,
     gender_audience_aux_parameter_count,
+    narrow_gem3_parameter_count,
     tinyconvnext18_macs,
     tinyconvnext18_parameter_count,
     tinyhrnet20_macs,
@@ -449,6 +451,8 @@ def _task3_model_contract(
             tinyconvnext18_parameter_count(config.target),
             tinyconvnext18_macs(config.target),
         )
+    if model_family == NARROW_GEM3_FAMILY:
+        return model_family, run_model_token, narrow_gem3_parameter_count(), None
     if model_family == "task3_small_cnn_gem_p3":
         return model_family, run_model_token, baseline_parameter_count(config.target), None
     if model_family == "task3_small_cnn_gem_p3_audience_aux":
@@ -471,7 +475,7 @@ def _build_task3_model(
         return Task3TinyHRNet20(config)
     if model_family == "task3_tinyconvnext18":
         return Task3TinyConvNeXt18(config)
-    if model_family == "task3_small_cnn_gem_p3":
+    if model_family in {"task3_small_cnn_gem_p3", NARROW_GEM3_FAMILY}:
         return Task3GeM3CNN(config)
     if model_family == "task3_small_cnn_gem_p3_audience_aux":
         return Task3GeM3AudienceCNN(config)
@@ -496,6 +500,7 @@ def run_task3_baseline_fold(
     root = Path(root)
     output_root = Path(output_root)
     config = Task3BaselineConfig(target=target)  # type: ignore[arg-type]
+    narrow_evidence = None
     if validation_fold not in range(5):
         raise ValueError("validation_fold must be one of 0,1,2,3,4")
     if child_spec is not None and child_spec.target != target:
@@ -504,6 +509,18 @@ def run_task3_baseline_fold(
         from fashion.train.task3_gender_weight_decay import weight_decay_config
 
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
+    if getattr(child_spec, "name", None) == "gender_narrow64":
+        from fashion.train.task3_gender_narrow import narrow_config, require_narrow_prerequisites
+
+        config = narrow_config(child_spec, fold=validation_fold, device_name=device_name)
+        narrow_evidence = require_narrow_prerequisites(prerequisite_path, root=root)
+        matched = {
+            run["fold"]: run["run_id"]
+            for run in narrow_evidence["status"]["runs"]
+            if run["model"] == "G2"
+        }
+        if child_spec.parent_run_ids[validation_fold] != matched[validation_fold]:
+            raise ValueError("Narrow G2 parent differs from its completed precision evidence")
     offload = bool(getattr(child_spec, "saved_tensors_on_cpu", False))
     gender_repair = getattr(child_spec, "name", None) == "gender_translation_mild_darkening"
     if gender_repair:
@@ -688,6 +705,11 @@ def run_task3_baseline_fold(
         ].copy()
 
     config_payload = config.to_dict()
+    if narrow_evidence is not None:
+        config_payload["training_precision_settings"] = narrow_evidence["status"][
+            "runtime_default_settings"
+        ]
+        config_payload["precision_evidence_sha256"] = narrow_evidence["artifact_sha256"]
     config_payload["effective_model_family"] = model_family
     config_payload["parameter_count"] = parameter_count
     config_payload["architecture_macs"] = architecture_macs
