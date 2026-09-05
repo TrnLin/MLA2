@@ -518,7 +518,10 @@ def run_task3_baseline_fold(
         from fashion.train.task3_gender_weight_decay import weight_decay_config
 
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
-    if getattr(child_spec, "name", None) == "gender_dropout_030_mild_darkening":
+    if getattr(child_spec, "name", None) in {
+        "gender_dropout_030_mild_darkening",
+        "gender_dropout_045_mild_darkening",
+    }:
         from fashion.train.task3_gender_dropout_darkening import (
             dropout_darkening_config,
             require_dropout_darkening_prerequisites,
