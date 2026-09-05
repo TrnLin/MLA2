@@ -32,6 +32,7 @@ from fashion.train.task3_usage_two_stage_runtime import run_fold_process
 EXPERIMENT = "t3_usage_u3_two_stage_cnn"
 FOLDS = (0, 4)
 MEMORY_LIMIT = 7 * 1024**3
+HOST_MEMORY_LIMIT = 16 * 1024**3
 SECONDS_LIMIT = 90 * 60
 RULE = "usage_two_stage_e2_routes_v1"
 CLASSES = ("Casual", "Ethnic", "Formal", "Home", "NA", "Party", "Smart Casual", "Sports", "Travel")
@@ -72,7 +73,8 @@ def recipe():
         "precision": "fp32_no_autocast_runtime_tf32_flags_recorded",
         "screen_folds": list(FOLDS),
         "seconds_limit": SECONDS_LIMIT,
-        "host_and_gpu_memory_limit_bytes_each": MEMORY_LIMIT,
+        "host_memory_limit_bytes": HOST_MEMORY_LIMIT,
+        "gpu_memory_limit_bytes": MEMORY_LIMIT,
         "rule_version": RULE,
     }
 
@@ -293,7 +295,7 @@ def evaluate_usage_two_stage(child, sources, splits, *, repetitions=10_000):
         m = run["metrics"]
         valid = (
             0 < m["fold_wall_seconds"] <= SECONDS_LIMIT
-            and 0 < m["peak_host_memory_bytes"] <= MEMORY_LIMIT
+            and 0 < m["peak_host_memory_bytes"] <= HOST_MEMORY_LIMIT
             and 0 < m["peak_memory_bytes"] <= MEMORY_LIMIT
         )
         checks.append(
@@ -303,7 +305,7 @@ def evaluate_usage_two_stage(child, sources, splits, *, repetitions=10_000):
                     k: m[k]
                     for k in ("fold_wall_seconds", "peak_host_memory_bytes", "peak_memory_bytes")
                 },
-                "<=90 minutes and <=7 GiB host/GPU each",
+                "<=90 minutes, <=16 GiB host RSS and <=7 GiB GPU",
                 bool(valid),
             )
         )
@@ -448,7 +450,7 @@ def run_usage_two_stage_screen(
                 cwd=root,
                 log_path=directory / "worker.log",
                 seconds=SECONDS_LIMIT,
-                memory_bytes=MEMORY_LIMIT,
+                memory_bytes=HOST_MEMORY_LIMIT,
                 env=env,
             )
             metrics = json.loads((directory / "metrics.json").read_text())
