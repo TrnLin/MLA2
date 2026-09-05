@@ -86,15 +86,15 @@ class Task3DatasetV2Spec:
 
     @property
     def saved_tensors_on_cpu(self) -> bool:
-        return self.name == "gender_translation_mild_darkening"
+        return False
 
     def to_dict(self) -> dict[str, object]:
         payload = asdict(self)
         payload["parent_run_ids"] = list(self.parent_run_ids)
-        if self.saved_tensors_on_cpu:
-            payload["saved_tensors_on_cpu"] = True
+        if self.name == "gender_translation_mild_darkening":
+            payload["saved_tensors_on_cpu"] = False
             payload["darkening_rng"] = "persistent_worker_initial_seed_xor_0x474431"
-            payload["execution_policy"] = "save_on_cpu_pin_memory_fp32_batch128_v1"
+            payload["execution_policy"] = "gpu_fp32_batch128_memory_under_3gb_no_speed_cap_v2"
         return payload
 
 
@@ -140,9 +140,9 @@ def _spec_payload(name: DatasetV2Name, parent_run_ids: Sequence[str]) -> dict[st
                 "name": name,
                 "experiment_id": "t3_gender_translation_mild_darkening",
                 "hypothesis_id": "t3_gender_translation_mild_darkening",
-                "artifact_dir": "experiments/t3_gender_translation_mild_darkening",
+                "artifact_dir": "experiments/t3_gender_translation_mild_darkening_gpu_v2",
                 "run_prefix": "t3_gender_translation_mild_darkening",
-                "changed_factor": "mild_darkening_after_translation_with_parity_checked_offload",
+                "changed_factor": "mild_darkening_after_translation_gpu_execution_v2",
                 "parent_artifact_dir": "experiments/t3_gender_v2_g2_translation",
                 "training_augmentation": "translation_2px_p05_mild_darkening_p025",
             }
