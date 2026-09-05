@@ -355,8 +355,9 @@ def test_precision_evidence_is_checked_against_real_arrays(precision_evidence, c
 
 
 @pytest.mark.parametrize("failure", [None, "memory", "reference"])
+@pytest.mark.parametrize("experiment_name", [NAME, "gender_dropout_030"])
 def test_runner_evaluates_references_before_two_fits_and_stops_on_failure(
-    tmp_path, monkeypatch, failure
+    tmp_path, monkeypatch, failure, experiment_name
 ):
     import sys
     from types import ModuleType
@@ -364,8 +365,8 @@ def test_runner_evaluates_references_before_two_fits_and_stops_on_failure(
     import fashion.train.task3_gender_narrow as module
 
     child, sources, classes = _case()
-    spec = dataset_v2_spec(NAME, [f"G2-{f}" for f in range(5)])
-    expected = narrow_config(spec, fold=0, device_name="cuda").to_dict()
+    spec = dataset_v2_spec(experiment_name, [f"G2-{f}" for f in range(5)])
+    expected = module._screen_config(spec, fold=0, device_name="cuda").to_dict()
     for fold, run in child.items():
         run["config"] = {
             **expected,
@@ -428,6 +429,7 @@ def test_runner_evaluates_references_before_two_fits_and_stops_on_failure(
         output_root=tmp_path,
         registry_path=registry,
         root=tmp_path,
+        experiment_name=experiment_name,
     )
     if failure == "reference":
         with pytest.raises(ValueError, match="reference failed"):
@@ -474,3 +476,131 @@ def test_notebook_compiles_and_runs_only_the_frozen_screen():
     for cell in n["cells"]:
         if cell["cell_type"] == "code":
             compile("".join(cell["source"]), "04x", "exec")
+
+
+def test_dropout_recipe_changes_only_dropout_and_keeps_full_width():
+    from fashion.train.task3_gender_dropout import NAME as DROPOUT_NAME
+    from fashion.train.task3_gender_dropout import dropout_config
+
+    ids = [f"G2-{f}" for f in range(5)]
+    spec = dataset_v2_spec(DROPOUT_NAME, ids)
+    base = dataset_v2_spec("gender_v2_translation", ids)
+    excluded = {
+        "name",
+        "experiment_id",
+        "hypothesis_id",
+        "artifact_dir",
+        "run_prefix",
+        "changed_factor",
+        "parent_artifact_dir",
+        "classifier_dropout",
+    }
+    for key, value in base.__dict__.items():
+        if key not in excluded:
+            assert spec.__dict__[key] == value
+    assert spec.classifier_dropout == 0.30
+    assert dropout_config(spec, fold=0, device_name="cuda") == Task3BaselineConfig(target="gender")
+    with pytest.raises(ValueError, match="predeclared factor"):
+        replace(spec, classifier_dropout=0.2)
+    for fold, device in [(1, "cuda"), (0, "cpu")]:
+        with pytest.raises(ValueError, match="only folds"):
+            dropout_config(spec, fold=fold, device_name=device)
+    with pytest.raises(ValueError, match="run_gender_dropout_screen"):
+        run_task3_dataset_v2_screen(DROPOUT_NAME, parent_run_ids=ids, output_root="unused")
+
+
+def test_dropout_gates_keep_score_gap_and_corruption_limits():
+    from fashion.train.task3_gender_dropout import evaluate_gender_dropout_screen
+
+    child, sources, classes = _case()
+    for run in child.values():
+        run["metrics"]["parameter_count"] = 390181
+    result = evaluate_gender_dropout_screen(child, sources, classes, repetitions=20)
+    assert result["status"] == "pass"
+    assert result["rule_version"] == "gdrop030_loss003_gap005_v1"
+    child[0]["metrics"]["parameter_count"] = 167653
+    assert (
+        _gates(evaluate_gender_dropout_screen(child, sources, classes, repetitions=20))[
+            "fold_0.parameters"
+        ]
+        == "fail"
+    )
+    child[0]["metrics"]["parameter_count"] = 390181
+    for run in child.values():
+        run["metrics"]["final_train_eval_macro_f1"] += 0.08
+        run["metrics"]["final_train_validation_macro_f1_gap"] += 0.08
+    gates = _gates(evaluate_gender_dropout_screen(child, sources, classes, repetitions=20))
+    assert gates["mean_gap_reduction"] == "fail"
+    assert gates["validation_delta"] == "pass"
+
+
+def test_gem_builder_passes_dropout_to_model_without_torch():
+    import ast
+
+    root = Path(__file__).resolve().parents[2]
+    tree = ast.parse((root / "src/fashion/train/task3_baseline.py").read_text())
+    function = next(
+        n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "_build_task3_model"
+    )
+    spec = dataset_v2_spec("gender_dropout_030", [f"G2-{f}" for f in range(5)])
+    calls = []
+    scope = {
+        "_task3_model_contract": lambda *args: ("task3_small_cnn_gem_p3", "", 390181, None),
+        "NARROW_GEM3_FAMILY": NARROW_GEM3_FAMILY,
+        "Task3GeM3CNN": lambda config, **kwargs: calls.append(kwargs),
+    }
+    module = ast.Module(
+        body=[
+            ast.ImportFrom(module="__future__", names=[ast.alias(name="annotations")], level=0),
+            function,
+        ],
+        type_ignores=[],
+    )
+    exec(compile(ast.fix_missing_locations(module), "builder", "exec"), scope)
+    scope["_build_task3_model"](Task3BaselineConfig(target="gender"), spec)
+    scope["_build_task3_model"](Task3BaselineConfig(target="gender"), None)
+    assert calls == [{"classifier_dropout": 0.30}, {"classifier_dropout": 0.0}]
+
+
+def test_actual_dropout_is_between_gem_and_classifier_and_off_in_eval():
+    torch = pytest.importorskip("torch")
+    from fashion.train.task3_baseline import _build_task3_model
+
+    config = Task3BaselineConfig(target="gender")
+    spec = dataset_v2_spec("gender_dropout_030", [f"G2-{f}" for f in range(5)])
+    model = _build_task3_model(config, spec)
+    assert sum(p.numel() for p in model.parameters()) == 390181
+    assert model.classifier_dropout.p == 0.30
+    assert model.pool.power == 3.0
+    features = torch.ones(32, 256)
+    model.train()
+    assert (model.classifier_dropout(features) == 0).any()
+    model.eval()
+    assert torch.equal(model.classifier_dropout(features), features)
+    order = []
+    handles = [
+        getattr(model, name).register_forward_hook(
+            lambda m, args, out, name=name: order.append(name)
+        )
+        for name in ("pool", "classifier_dropout", "classifier")
+    ]
+    with torch.inference_mode():
+        assert model(torch.zeros(2, 3, 80, 60)).shape == (2, 5)
+    for handle in handles:
+        handle.remove()
+    assert order == ["pool", "classifier_dropout", "classifier"]
+
+
+def test_dropout_notebook_has_only_the_frozen_screen():
+    import nbformat
+
+    root = Path(__file__).resolve().parents[2]
+    n = nbformat.read(root / "notebooks/04y_task3_gender_dropout_screen.ipynb", as_version=4)
+    nbformat.validate(n)
+    code = "\n".join(c.source for c in n.cells if c.cell_type == "code")
+    assert code.count("run_gender_dropout_screen(") == 1
+    assert "run_gender_narrow_screen" not in code
+    for c in n.cells:
+        if c.cell_type == "code":
+            assert not c.outputs
+            compile(c.source, "04y", "exec")
