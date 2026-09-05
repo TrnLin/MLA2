@@ -7,14 +7,13 @@ import pytest
 torch = pytest.importorskip("torch")
 
 
-def test_offload_preserves_logits_gradients_and_batchnorm_on_cpu():
-    from fashion.train.task3_gender_repair_preflight import compare_offload
+def test_cpu_probe_cannot_pass_gpu_memory_guard():
+    from fashion.train.task3_gender_repair_preflight import profile_gpu
 
-    torch.manual_seed(2753)
-    report = compare_offload(torch.randn(2, 3, 80, 60), torch.tensor([0, 1]))
-    assert all(report["parity"].values())
+    report = profile_gpu(torch.randn(2, 3, 80, 60), torch.tensor([0, 1]))
+    assert report["passed"] is False
     assert report["optimizer_steps"] == 0
-    assert report["passed"] is False  # CPU never qualifies as a GPU memory result.
+    assert report["speed_cap"] is None
 
 
 def test_lower_level_training_refuses_missing_prerequisite_before_fitting(tmp_path):
