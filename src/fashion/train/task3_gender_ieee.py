@@ -33,7 +33,7 @@ def save_ieee_predictions(predictions, path, classes):
     return oof_metrics(saved, classes)
 
 
-def evaluation_identity(run, *, root):
+def evaluation_identity(run, *, root, label_variant=None):
     """Tie a reusable evaluation to its source files, data and evaluation code."""
     root = Path(root)
     dependencies = (
@@ -50,12 +50,38 @@ def evaluation_identity(run, *, root):
         "data/processed/splits.csv",
         "data/processed/label_maps.json",
     )
-    return {
+    identity = {
         "policy": POLICY,
         "run_id": run["run_id"],
         "source_sha256": run["sha256"],
         "dependencies": {name: compute_sha256(root / name) for name in dependencies},
     }
+    if label_variant is not None:
+        identity["label_variant"] = label_variant
+        for name in (
+            "src/fashion/data/gender_name_truth.py",
+            "src/fashion/train/task3_gender_name_truth.py",
+        ):
+            identity["dependencies"][name] = compute_sha256(root / name)
+    return identity
+
+
+def verify_evaluation_labels(splits, *, label_variant, root):
+    """A variant must be named explicitly and match the verified label artifact."""
+    if label_variant is None:
+        if splits.attrs.get("gender_label_variant") is not None:
+            raise ValueError("Name-truth evaluation requires an explicit label variant")
+        return
+    from fashion.data.gender_name_truth import load_gender_name_truth_variant
+    from fashion.train.task3_gender_name_truth import label_contract
+
+    if label_variant != label_contract(root):
+        raise ValueError("Evaluation label variant differs from the verified dataset")
+    expected = load_gender_name_truth_variant(root)
+    try:
+        pd.testing.assert_frame_equal(splits, expected)
+    except AssertionError as error:
+        raise ValueError("Evaluation frame differs from the name-truth dataset") from error
 
 
 def load_ieee_evaluation(directory, *, run, splits, classes, identity):
@@ -115,8 +141,9 @@ def load_ieee_evaluation(directory, *, run, splits, classes, identity):
     }
 
 
-def evaluate_gender_ieee(run, *, splits, classes, output, root):
+def evaluate_gender_ieee(run, *, splits, classes, output, root, label_variant=None):
     """No optimizer: score clean train/validation and every standard corruption."""
+    verify_evaluation_labels(splits, label_variant=label_variant, root=root)
     import torch
 
     from fashion.train.data import CORE_CORRUPTIONS, Task3ImageDataset
@@ -126,7 +153,7 @@ def evaluate_gender_ieee(run, *, splits, classes, output, root):
 
     root, output = Path(root), Path(output)
     source = Path(run["directory"])
-    identity = evaluation_identity(run, root=root)
+    identity = evaluation_identity(run, root=root, label_variant=label_variant)
     identity["runtime"] = {
         "torch": str(torch.__version__),
         "cuda": torch.version.cuda,
@@ -225,6 +252,8 @@ def evaluate_gender_ieee(run, *, splits, classes, output, root):
         "historical_registered_macro_f1": run["metrics"]["macro_f1"],
         "historical_registered_train_macro_f1": run["metrics"]["final_train_eval_macro_f1"],
     }
+    if label_variant is not None:
+        metrics["evaluation_label_variant"] = label_variant
     _json_dump(metrics, output / "metrics.json")
     pd.DataFrame(rows).to_csv(output / "robustness.csv", index=False)
     files.extend(["metrics.json", "robustness.csv"])
