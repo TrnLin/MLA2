@@ -476,7 +476,9 @@ def _build_task3_model(
     if model_family == "task3_tinyconvnext18":
         return Task3TinyConvNeXt18(config)
     if model_family in {"task3_small_cnn_gem_p3", NARROW_GEM3_FAMILY}:
-        return Task3GeM3CNN(config)
+        return Task3GeM3CNN(
+            config, classifier_dropout=child_spec.classifier_dropout if child_spec else 0.0
+        )
     if model_family == "task3_small_cnn_gem_p3_audience_aux":
         return Task3GeM3AudienceCNN(config)
     classifier_dropout = child_spec.classifier_dropout if child_spec is not None else 0.0
@@ -509,10 +511,15 @@ def run_task3_baseline_fold(
         from fashion.train.task3_gender_weight_decay import weight_decay_config
 
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
-    if getattr(child_spec, "name", None) == "gender_narrow64":
+    if getattr(child_spec, "name", None) in {"gender_narrow64", "gender_dropout_030"}:
         from fashion.train.task3_gender_narrow import narrow_config, require_narrow_prerequisites
 
-        config = narrow_config(child_spec, fold=validation_fold, device_name=device_name)
+        if child_spec.name == "gender_dropout_030":
+            from fashion.train.task3_gender_dropout import dropout_config
+
+            config = dropout_config(child_spec, fold=validation_fold, device_name=device_name)
+        else:
+            config = narrow_config(child_spec, fold=validation_fold, device_name=device_name)
         narrow_evidence = require_narrow_prerequisites(prerequisite_path, root=root)
         matched = {
             run["fold"]: run["run_id"]
@@ -520,7 +527,7 @@ def run_task3_baseline_fold(
             if run["model"] == "G2"
         }
         if child_spec.parent_run_ids[validation_fold] != matched[validation_fold]:
-            raise ValueError("Narrow G2 parent differs from its completed precision evidence")
+            raise ValueError("G2 parent differs from its completed precision evidence")
     offload = bool(getattr(child_spec, "saved_tensors_on_cpu", False))
     gender_repair = getattr(child_spec, "name", None) == "gender_translation_mild_darkening"
     if gender_repair:
