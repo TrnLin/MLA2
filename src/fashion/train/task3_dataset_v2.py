@@ -20,6 +20,7 @@ from fashion.train.config import Task3BaselineConfig, baseline_parameter_count
 DatasetV2Name = Literal[
     "gender_v2_foreground_mask",
     "gender_v2_translation",
+    "gender_translation_mild_darkening",
     "gender_v2_component_weight",
     "usage_v2_component_weight",
 ]
@@ -83,15 +84,21 @@ class Task3DatasetV2Spec:
                 + json.dumps(mismatches, sort_keys=True)
             )
 
+    @property
+    def saved_tensors_on_cpu(self) -> bool:
+        return self.name == "gender_translation_mild_darkening"
+
     def to_dict(self) -> dict[str, object]:
         payload = asdict(self)
         payload["parent_run_ids"] = list(self.parent_run_ids)
+        if self.saved_tensors_on_cpu:
+            payload["saved_tensors_on_cpu"] = True
+            payload["darkening_rng"] = "persistent_worker_initial_seed_xor_0x474431"
+            payload["execution_policy"] = "save_on_cpu_pin_memory_fp32_batch128_v1"
         return payload
 
 
-def _spec_payload(
-    name: DatasetV2Name, parent_run_ids: Sequence[str]
-) -> dict[str, object]:
+def _spec_payload(name: DatasetV2Name, parent_run_ids: Sequence[str]) -> dict[str, object]:
     common = {
         "parent_run_ids": tuple(parent_run_ids),
         "classifier_dropout": 0.0,
@@ -126,6 +133,21 @@ def _spec_payload(
             "class_weight_beta": None,
             "class_weight_cap": None,
         }
+    if name == "gender_translation_mild_darkening":
+        payload = _spec_payload("gender_v2_translation", parent_run_ids)
+        payload.update(
+            {
+                "name": name,
+                "experiment_id": "t3_gender_translation_mild_darkening",
+                "hypothesis_id": "t3_gender_translation_mild_darkening",
+                "artifact_dir": "experiments/t3_gender_translation_mild_darkening",
+                "run_prefix": "t3_gender_translation_mild_darkening",
+                "changed_factor": "mild_darkening_after_translation_with_parity_checked_offload",
+                "parent_artifact_dir": "experiments/t3_gender_v2_g2_translation",
+                "training_augmentation": "translation_2px_p05_mild_darkening_p025",
+            }
+        )
+        return payload
     if name == "gender_v2_translation":
         return {
             **common,
@@ -189,9 +211,7 @@ def _spec_payload(
     raise ValueError(f"unsupported Dataset V2 screen: {name}")
 
 
-def dataset_v2_spec(
-    name: DatasetV2Name, parent_run_ids: Sequence[str]
-) -> Task3DatasetV2Spec:
+def dataset_v2_spec(name: DatasetV2Name, parent_run_ids: Sequence[str]) -> Task3DatasetV2Spec:
     """Build one frozen Dataset V2 single-factor contract."""
     return Task3DatasetV2Spec(**_spec_payload(name, parent_run_ids))  # type: ignore[arg-type]
 
@@ -327,9 +347,7 @@ def add_visual_component_weights(
     return weighted, contract
 
 
-def _required_parent_artifacts(
-    spec: Task3DatasetV2Spec, *, output_root: Path
-) -> None:
+def _required_parent_artifacts(spec: Task3DatasetV2Spec, *, output_root: Path) -> None:
     for fold, run_id in enumerate(spec.parent_run_ids):
         run_dir = output_root / spec.parent_artifact_dir / spec.target / run_id
         required = (
@@ -366,9 +384,7 @@ def check_task3_dataset_v2_setup(
     config = Task3BaselineConfig(target=spec.target)
     device = torch.device(device_name)
     model = (
-        Task3GeM3CNN(config).to(device)
-        if spec.model_family == "task3_small_cnn_gem_p3"
-        else None
+        Task3GeM3CNN(config).to(device) if spec.model_family == "task3_small_cnn_gem_p3" else None
     )
     if model is not None:
         with torch.inference_mode():
@@ -458,6 +474,8 @@ def run_task3_dataset_v2_screen(
     """Train folds 0 and 4 for one frozen Dataset V2 single-factor screen."""
     from fashion.train.task3_baseline import _aggregate_target, run_task3_baseline_fold
 
+    if name == "gender_translation_mild_darkening":
+        raise ValueError("use run_gender_repair: G-D1 requires diagnostic and memory prerequisites")
     fold_list = tuple(int(fold) for fold in folds)
     if fold_list != SCREEN_FOLDS:
         raise ValueError("Dataset V2 screens must use folds 0 and 4 in that order")
@@ -540,8 +558,7 @@ def check_task3_gender_v2_g2_confirmation_setup(
     )
     spec = dataset_v2_spec("gender_v2_translation", parent_run_ids)
     completed_screen = {
-        fold: _reusable_fold(spec, fold, output_root=Path(output_root))
-        for fold in SCREEN_FOLDS
+        fold: _reusable_fold(spec, fold, output_root=Path(output_root)) for fold in SCREEN_FOLDS
     }
     missing = [fold for fold, result in completed_screen.items() if result is None]
     if missing:
