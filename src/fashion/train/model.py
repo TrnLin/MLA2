@@ -10,6 +10,7 @@ from torch.nn import functional as F
 
 from fashion.train.config import (
     COMPACT_BLUR_CNN_WIDTHS,
+    NARROW_GEM3_FAMILY,
     TINYCONVNEXT18_DEPTHS,
     TINYCONVNEXT18_WIDTHS,
     TINYHRNET20_WIDTHS,
@@ -18,6 +19,7 @@ from fashion.train.config import (
     baseline_parameter_count,
     compact_blur_cnn_parameter_count,
     gender_audience_aux_parameter_count,
+    narrow_gem3_parameter_count,
     tinyconvnext18_parameter_count,
     tinyhrnet20_parameter_count,
     tinyresnet18_pm_parameter_count,
@@ -60,7 +62,11 @@ class Task3BaselineCNN(nn.Module):
         actual = sum(
             parameter.numel() for parameter in self.parameters() if parameter.requires_grad
         )
-        expected = baseline_parameter_count(config.target)
+        expected = (
+            narrow_gem3_parameter_count()
+            if config.model_family == NARROW_GEM3_FAMILY
+            else baseline_parameter_count(config.target)
+        )
         if actual != expected:
             raise RuntimeError(
                 f"baseline parameter contract failed: expected {expected}, found {actual}"
