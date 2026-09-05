@@ -14,6 +14,7 @@ from fashion.train.config import (
     NARROW_GEM3_CHANNELS,
     NARROW_GEM3_FAMILY,
     Task3BaselineConfig,
+    baseline_parameter_count,
     narrow_gem3_parameter_count,
 )
 from fashion.train.task3_dataset_v2 import dataset_v2_spec
@@ -167,8 +168,28 @@ def require_narrow_prerequisites(path, *, root=ROOT):
     return evidence
 
 
-def evaluate_gender_narrow_screen(child, sources, classes, *, repetitions=10_000):
+def _screen_contract(name):
+    if name == NAME:
+        return RULE_VERSION, narrow_gem3_parameter_count()
+    if name == "gender_dropout_030":
+        return "gdrop030_loss003_gap005_v1", baseline_parameter_count("gender")
+    raise ValueError("Unknown frozen gender screen")
+
+
+def _screen_config(spec, *, fold, device_name):
+    _screen_contract(spec.name)
+    if spec.name == "gender_dropout_030":
+        from fashion.train.task3_gender_dropout import dropout_config
+
+        return dropout_config(spec, fold=fold, device_name=device_name)
+    return narrow_config(spec, fold=fold, device_name=device_name)
+
+
+def evaluate_gender_narrow_screen(
+    child, sources, classes, *, repetitions=10_000, experiment_name=NAME
+):
     """All comparisons use matched IEEE snapshots, with unchanged class/corruption guards."""
+    rule, parameters = _screen_contract(experiment_name)
     if set(child) != set(FOLDS) or any(set(sources[n]) != set(FOLDS) for n in ("G2", "E6")):
         raise ValueError("G-N64 screen requires exactly folds 0 and 4")
     for group in (child, sources["G2"], sources["E6"]):
@@ -228,8 +249,8 @@ def evaluate_gender_narrow_screen(child, sources, classes, *, repetitions=10_000
         add(
             f"fold_{fold}.parameters",
             c["parameter_count"],
-            "== 167653",
-            c["parameter_count"] == narrow_gem3_parameter_count(),
+            f"== {parameters}",
+            c["parameter_count"] == parameters,
         )
         folds.append(
             {
@@ -266,7 +287,7 @@ def evaluate_gender_narrow_screen(child, sources, classes, *, repetitions=10_000
     return {
         "status": decision(checks),
         "phase": "screen",
-        "rule_version": RULE_VERSION,
+        "rule_version": rule,
         "checks": checks,
         "candidate": candidate,
         "comparison": parent,
@@ -288,8 +309,15 @@ def evaluate_gender_narrow_screen(child, sources, classes, *, repetitions=10_000
 
 
 def check_gender_narrow_sources(
-    *, g2_directory, e6_directory, source_registry_path, precision_directory, root=ROOT
+    *,
+    g2_directory,
+    e6_directory,
+    source_registry_path,
+    precision_directory,
+    root=ROOT,
+    experiment_name=NAME,
 ):
+    _screen_contract(experiment_name)
     evidence = read_precision_prerequisites(precision_directory, root=root)
     sources, classes = load_sources(
         g2_directory=g2_directory,
@@ -303,7 +331,7 @@ def check_gender_narrow_sources(
     for run in evidence["status"]["runs"]:
         if run["model"] == "G2" and run["source_sha256"] != sources["G2"][run["fold"]]["sha256"]:
             raise ValueError("G2 source differs from the completed precision diagnostic")
-    spec = dataset_v2_spec(NAME, [sources["G2"][f]["run_id"] for f in range(5)])
+    spec = dataset_v2_spec(experiment_name, [sources["G2"][f]["run_id"] for f in range(5)])
     return sources, classes, spec, evidence
 
 
@@ -318,11 +346,13 @@ def run_gender_narrow_screen(
     root=ROOT,
     registry_mirrors=(),
     device_name="cuda",
+    experiment_name=NAME,
 ):
     """Evaluate references, fit only folds 0/4, then score the same-precision snapshots."""
     from fashion.train.task3_baseline import _json_dump, run_task3_baseline_fold
     from fashion.train.task3_dataset_v2 import _reusable_fold
 
+    rule, _ = _screen_contract(experiment_name)
     root, output_root = Path(root), Path(output_root)
     sources, classes, spec, evidence = check_gender_narrow_sources(
         g2_directory=g2_directory,
@@ -330,8 +360,9 @@ def run_gender_narrow_screen(
         source_registry_path=source_registry_path,
         precision_directory=precision_directory,
         root=root,
+        experiment_name=experiment_name,
     )
-    expected = narrow_config(spec, fold=0, device_name=device_name)
+    expected = _screen_config(spec, fold=0, device_name=device_name)
     require_narrow_prerequisites(precision_directory, root=root)
     splits = load_splits(root / "data/processed/splits.csv")
     destination = output_root / spec.artifact_dir / "gender"
@@ -347,7 +378,7 @@ def run_gender_narrow_screen(
             "precision_evidence_sha256": evidence["artifact_sha256"],
             "folds": list(FOLDS),
             "optimizer_steps": 0,
-            "rule_version": RULE_VERSION,
+            "rule_version": rule,
             "training_precision": TRAINING_PRECISION,
             "comparison_precision": POLICY,
         },
@@ -416,7 +447,7 @@ def run_gender_narrow_screen(
             root=root,
             output=destination / "comparison_ieee_v2" / run["run_id"],
         )
-    report = evaluate_gender_narrow_screen(child, matched, classes)
+    report = evaluate_gender_narrow_screen(child, matched, classes, experiment_name=experiment_name)
     report["registry_and_artifact_integrity"] = True
     report["run_ids"] = {str(f): child[f]["run_id"] for f in FOLDS}
     _json_dump(report, destination / "screen_decision.json")
