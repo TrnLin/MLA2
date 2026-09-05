@@ -485,6 +485,12 @@ def _build_task3_model(
     return Task3BaselineCNN(config, classifier_dropout=classifier_dropout)
 
 
+def _child_parent_run_id(child_spec, fold):
+    """Resolve sparse screen parents without assigning them to the wrong fold."""
+    resolver = getattr(child_spec, "parent_run_id_for_fold", None)
+    return resolver(fold) if callable(resolver) else child_spec.parent_run_ids[fold]
+
+
 def run_task3_baseline_fold(
     target: str,
     validation_fold: int,
@@ -503,6 +509,7 @@ def run_task3_baseline_fold(
     output_root = Path(output_root)
     config = Task3BaselineConfig(target=target)  # type: ignore[arg-type]
     narrow_evidence = None
+    refinement_evidence = None
     if validation_fold not in range(5):
         raise ValueError("validation_fold must be one of 0,1,2,3,4")
     if child_spec is not None and child_spec.target != target:
@@ -511,6 +518,23 @@ def run_task3_baseline_fold(
         from fashion.train.task3_gender_weight_decay import weight_decay_config
 
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
+    if getattr(child_spec, "name", None) == "gender_dropout_030_mild_darkening":
+        from fashion.train.task3_gender_dropout_darkening import (
+            dropout_darkening_config,
+            require_dropout_darkening_prerequisites,
+        )
+
+        config = dropout_darkening_config(child_spec, fold=validation_fold, device_name=device_name)
+        refinement_evidence = require_dropout_darkening_prerequisites(
+            prerequisite_path,
+            spec=child_spec,
+            fold=validation_fold,
+            parent_run_directory=parent_run_directory,
+            root=root,
+            device_name=device_name,
+        )
+        narrow_evidence = refinement_evidence["precision"]
+        parent_run_directory = refinement_evidence["parent_directory"]
     if getattr(child_spec, "name", None) in {"gender_narrow64", "gender_dropout_030"}:
         from fashion.train.task3_gender_narrow import narrow_config, require_narrow_prerequisites
 
@@ -540,7 +564,7 @@ def run_task3_baseline_fold(
         config, child_spec
     )
     if child_spec is not None:
-        parent_run_id = child_spec.parent_run_ids[validation_fold]
+        parent_run_id = _child_parent_run_id(child_spec, validation_fold)
         parent_dir = (
             Path(parent_run_directory)
             if parent_run_directory is not None
@@ -712,6 +736,10 @@ def run_task3_baseline_fold(
         ].copy()
 
     config_payload = config.to_dict()
+    if refinement_evidence is not None:
+        config_payload["refinement_prerequisite_sha256"] = refinement_evidence[
+            "prerequisite_sha256"
+        ]
     if narrow_evidence is not None:
         config_payload["training_precision_settings"] = narrow_evidence["status"][
             "runtime_default_settings"
@@ -735,7 +763,7 @@ def run_task3_baseline_fold(
     else:
         experiment_id = child_spec.experiment_id
         hypothesis_id = child_spec.hypothesis_id
-        parent_run_ids = [child_spec.parent_run_ids[validation_fold]]
+        parent_run_ids = [_child_parent_run_id(child_spec, validation_fold)]
         artifact_dir = child_spec.artifact_dir
         run_prefix = child_spec.run_prefix
         training_augmentation = child_spec.training_augmentation
