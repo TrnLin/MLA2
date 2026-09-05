@@ -362,7 +362,7 @@ def run_gender_narrow_screen(
                 splits=splits,
                 classes=classes,
                 root=root,
-                output=destination / "comparison_ieee" / run["run_id"],
+                output=destination / "comparison_ieee_v2" / run["run_id"],
             )
     child = {}
     for fold in FOLDS:
@@ -414,7 +414,7 @@ def run_gender_narrow_screen(
             splits=splits,
             classes=classes,
             root=root,
-            output=destination / "comparison_ieee" / run["run_id"],
+            output=destination / "comparison_ieee_v2" / run["run_id"],
         )
     report = evaluate_gender_narrow_screen(child, matched, classes)
     report["registry_and_artifact_integrity"] = True
