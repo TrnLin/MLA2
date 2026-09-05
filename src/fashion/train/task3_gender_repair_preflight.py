@@ -5,7 +5,6 @@ from __future__ import annotations
 import gc
 import json
 import time
-from contextlib import nullcontext
 from pathlib import Path
 
 import numpy as np
@@ -68,98 +67,65 @@ def _data_hashes(root):
     }
 
 
-def compare_offload(images, labels, *, initial_state=None):
-    """Compare disposable scratch copies; never create an optimizer or take a step.
+def memory_profile_passes(profile):
+    """A GPU-only, strict decimal 3 GB cap; speed is recorded without a limit."""
+    peak = profile.get("peak_memory_bytes")
+    return (
+        profile.get("execution_policy") == "gpu_fp32_batch128_memory_under_3gb_no_speed_cap_v2"
+        and profile.get("device_type") == "cuda"
+        and profile.get("batch_size") == 128
+        and profile.get("optimizer_steps") == 0
+        and isinstance(peak, (int, float))
+        and np.isfinite(peak)
+        and 0 < peak < MEMORY_LIMIT
+    )
 
-    CUDA peak includes three parameter-sized reserves for two AdamW moments and
-    a conservative foreach temporary. Actual-run peak/time gates still apply.
-    CPU supports unit parity tests, but never passes the GPU prerequisite.
-    """
+
+def profile_gpu(images, labels):
+    """Probe normal GPU execution with AdamW reserves and zero optimizer steps."""
     import torch
 
     from fashion.train.config import Task3BaselineConfig
     from fashion.train.model import Task3GeM3CNN
 
     device = images.device
-    if initial_state is None:
-        initial = Task3GeM3CNN(Task3BaselineConfig(target="gender"))
-        initial_state = {k: v.detach().clone() for k, v in initial.state_dict().items()}
-        del initial
-    observations = {}
-    for enabled in (False, True):
-        gc.collect()
+    gc.collect()
+    if device.type == "cuda":
+        torch.cuda.empty_cache()
+    model = Task3GeM3CNN(Task3BaselineConfig(target="gender")).to(device)
+    model.train()
+    reserves = [torch.zeros_like(p) for p in model.parameters() for _ in range(3)]
+    timings = []
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
+    for _ in range(4):
+        model.zero_grad(set_to_none=True)
         if device.type == "cuda":
-            torch.cuda.empty_cache()
-        model = Task3GeM3CNN(Task3BaselineConfig(target="gender")).to(device)
-        model.load_state_dict(initial_state)
-        model.train()
-        reserves = [torch.zeros_like(p) for p in model.parameters() for _ in range(3)]
-        # First batch gives parity evidence; later batches warm the runtime and
-        # supply the median forward/backward time without optimizer updates.
-        timings = []
-        observation = {}
+            torch.cuda.synchronize(device)
+        started = time.perf_counter()
+        logits = model(images)
+        loss = torch.nn.functional.cross_entropy(logits, labels)
+        loss.backward()
         if device.type == "cuda":
-            torch.cuda.reset_peak_memory_stats(device)
-        for repeat in range(4):
-            model.zero_grad(set_to_none=True)
-            if device.type == "cuda":
-                torch.cuda.synchronize(device)
-            started = time.perf_counter()
-            context = (
-                torch.autograd.graph.save_on_cpu(pin_memory=device.type == "cuda")
-                if enabled
-                else nullcontext()
-            )
-            with context:
-                logits = model(images)
-                loss = torch.nn.functional.cross_entropy(logits, labels)
-            loss.backward()
-            if device.type == "cuda":
-                torch.cuda.synchronize(device)
-            timings.append(time.perf_counter() - started)
-            if repeat == 0:
-                observation = {
-                    "logits": logits.detach().cpu().clone(),
-                    "loss": loss.detach().cpu().clone(),
-                    "gradients": {
-                        k: p.grad.detach().cpu().clone() for k, p in model.named_parameters()
-                    },
-                    "buffers": {k: b.detach().cpu().clone() for k, b in model.named_buffers()},
-                }
-            del logits, loss
-        observation["seconds"] = float(np.median(timings[1:]))
-        observation["peak_memory_bytes"] = (
+            torch.cuda.synchronize(device)
+        timings.append(time.perf_counter() - started)
+        del logits, loss
+    report = {
+        "execution_policy": "gpu_fp32_batch128_memory_under_3gb_no_speed_cap_v2",
+        "device_type": device.type,
+        "peak_memory_bytes": (
             int(torch.cuda.max_memory_allocated(device)) if device.type == "cuda" else None
-        )
-        observations[enabled] = observation
-        del model, reserves
-    plain, offload = observations[False], observations[True]
-    parity = {}
-    for name in ("logits", "loss"):
-        parity[name] = bool(torch.allclose(plain[name], offload[name], atol=1e-6, rtol=1e-5))
-    for name in ("gradients", "buffers"):
-        parity[name] = all(
-            torch.allclose(plain[name][k], offload[name][k], atol=1e-6, rtol=1e-5)
-            for k in plain[name]
-        )
-    ratio = offload["seconds"] / plain["seconds"]
-    peak = offload["peak_memory_bytes"]
-    return {
-        "parity": parity,
-        "plain_seconds": plain["seconds"],
-        "offload_seconds": offload["seconds"],
-        "time_ratio": ratio,
-        "plain_peak_bytes": plain["peak_memory_bytes"],
-        "offload_peak_bytes": peak,
+        ),
+        "forward_backward_seconds": float(np.median(timings[1:])),
+        "speed_cap": None,
+        "memory_limit_bytes": MEMORY_LIMIT,
         "batch_size": len(images),
         "optimizer_steps": 0,
         "adamw_memory_reserve": "three parameter-sized tensors",
-        "passed": all(parity.values())
-        and device.type == "cuda"
-        and len(images) == 128
-        and peak <= MEMORY_LIMIT
-        and ratio <= 1.5,
     }
+    report["passed"] = bool(memory_profile_passes(report))
+    del model, reserves
+    return report
 
 
 def _predict_view(model, dataset, classes, run_id, view, device):
@@ -214,7 +180,7 @@ def prepare_gender_repair(
     root=ROOT,
     device_name="cuda",
 ):
-    """Run no training: reproduce clean OOF, audit perturbations, test offload parity."""
+    """Run no training: reproduce clean OOF, audit perturbations, probe GPU memory."""
     import torch
 
     from fashion.train.config import Task3BaselineConfig
@@ -227,7 +193,7 @@ def prepare_gender_repair(
     sources, classes = load_sources(
         g2_directory=g2_directory, e6_directory=e6_directory, registry_path=registry_path, root=root
     )
-    # Runtime-dependent time and latency claims require the same GPU and build.
+    # Keep the saved-source runtime for reproducible checkpoint diagnostics.
     for run in sources["G2"].values():
         for key in ("gpu", "torch", "cuda_runtime"):
             if run["environment"][key] != environment[key]:
@@ -257,11 +223,11 @@ def prepare_gender_repair(
     batch = [probe_dataset[i] for i in range(len(probe_dataset))]
     probe_input = torch.stack([b["image"] for b in batch]).to(device)
     probe_labels = torch.tensor([b["label"] for b in batch], device=device)
-    profile = compare_offload(probe_input, probe_labels)
+    profile = profile_gpu(probe_input, probe_labels)
     _json_write(profile, report_directory / "memory_profile.json")
     del probe_input, probe_labels, probe_dataset, batch
     if not profile["passed"]:
-        raise RuntimeError("G-D1 memory/time/parity prerequisite failed; stop before training")
+        raise RuntimeError("G-D1 GPU memory prerequisite failed; stop before training")
     summaries = []
     for group in ("E6", "G2"):
         for fold, run in sources[group].items():
@@ -349,7 +315,7 @@ def prepare_gender_repair(
     _json_write(summaries, summary_path)
     artifact_hashes[str(summary_path.resolve())] = compute_sha256(summary_path)
     report = {
-        "version": 1,
+        "version": 2,
         "ready": profile["passed"],
         "spec": spec.to_dict(),
         "environment": environment,
@@ -365,7 +331,7 @@ def prepare_gender_repair(
     }
     _json_write(report, destination)
     if not report["ready"]:
-        raise RuntimeError(f"G-D1 memory/time/parity prerequisite failed; see {destination}")
+        raise RuntimeError(f"G-D1 GPU memory prerequisite failed; see {destination}")
     return report
 
 
@@ -374,7 +340,7 @@ def verify_prerequisites(path, *, root, spec, device_name):
         raise ValueError("G-D1 requires completed diagnostic and memory prerequisites")
     report = json.loads(Path(path).read_text())
     if (
-        report.get("version") != 1
+        report.get("version") != 2
         or report.get("ready") is not True
         or report.get("optimizer_steps") != 0
     ):
@@ -386,14 +352,8 @@ def verify_prerequisites(path, *, root, spec, device_name):
     ):
         raise ValueError("G-D1 prerequisite code or GPU runtime changed")
     profile = report["memory_profile"]
-    if not (
-        profile["passed"]
-        and all(profile["parity"].values())
-        and profile["batch_size"] == 128
-        and 0 < profile["offload_peak_bytes"] <= MEMORY_LIMIT
-        and profile["time_ratio"] <= 1.5
-    ):
-        raise ValueError("G-D1 prerequisite memory/time/parity check failed")
+    if not profile.get("passed") or not memory_profile_passes(profile):
+        raise ValueError("G-D1 prerequisite GPU memory check failed")
     if (
         report["diagnostic_views"] != list(DIAGNOSTICS)
         or len(report["clean_reproduction"]) != 10
