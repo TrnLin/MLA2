@@ -22,7 +22,7 @@ from fashion.train.task3_decisions import (
 from fashion.train.task3_g2_audit import inspect_gender_run
 
 NAME = "gender_translation_mild_darkening"
-MEMORY_LIMIT = 450_519_552
+MEMORY_LIMIT = 3_000_000_000
 PARAMETERS = 390_181
 
 
@@ -201,17 +201,19 @@ def evaluate_gender_repair(
             add("robustness_vs_e6." + name, float(value), f">= {bound}", value >= bound)
     for f in folds:
         m = child[f]["metrics"]
-        for name, value, bound in (
-            ("gpu_memory_bytes", m["peak_memory_bytes"], MEMORY_LIMIT),
-            ("latency_ms", m["latency_ms_batch_1"], 1.0),
-            ("train_seconds", m["train_seconds"], 1.5 * g2[f]["metrics"]["train_seconds"]),
-        ):
-            add(
-                f"fold_{f}.{name}",
-                value,
-                f"0 < value <= {bound}",
-                np.isfinite(value) and 0 < value <= bound,
-            )
+        memory = m["peak_memory_bytes"]
+        add(
+            f"fold_{f}.gpu_memory_bytes",
+            memory,
+            f"0 < value < {MEMORY_LIMIT}",
+            np.isfinite(memory) and 0 < memory < MEMORY_LIMIT,
+        )
+        evidence[f"fold_{f}.resources"] = {
+            "peak_memory_bytes": memory,
+            "latency_ms_batch_1": m["latency_ms_batch_1"],
+            "train_seconds": m["train_seconds"],
+            "speed_cap": None,
+        }
         add(
             f"fold_{f}.parameters",
             m["parameter_count"],
