@@ -31,6 +31,7 @@ PARENT_RUN_IDS = (
     "t3_gender_dropout_030_gender_smallcnngem3_f4_s2753_2ab5e633206b_20260905T112541Z8145b5",
 )
 STRONGER_NAME = "gender_dropout_045_mild_darkening"
+GRAYSCALE_NAME = "gender_dropout_030_mild_darkening_grayscale_010"
 DARKENING_RUN_IDS = (
     "t3_gender_dropout_030_mild_darkening_gender_smallcnngem3_f0_s2753_cfbed3f0fed4_20260905T123721Z5d546f",
     "t3_gender_dropout_030_mild_darkening_gender_smallcnngem3_f4_s2753_cfbed3f0fed4_20260905T124728Z7dfb12",
@@ -40,7 +41,7 @@ DARKENING_RUN_IDS = (
 def _direct_parent_group(name):
     if name == NAME:
         return "Drop30", PARENT_RUN_IDS
-    if name == STRONGER_NAME:
+    if name in {STRONGER_NAME, GRAYSCALE_NAME}:
         return "Drop30Dark", DARKENING_RUN_IDS
     raise ValueError("Unknown frozen dropout refinement")
 
@@ -82,7 +83,7 @@ def check_gender_dropout_darkening_sources(
 ):
     """Check all saved evidence without fitting; failed research parents are allowed."""
     _, parents = _direct_parent_group(experiment_name)
-    if experiment_name == STRONGER_NAME and darkening_directory is None:
+    if experiment_name in {STRONGER_NAME, GRAYSCALE_NAME} and darkening_directory is None:
         raise ValueError("The completed 04aa darkening directory is required")
     if experiment_name == NAME and darkening_directory is not None:
         raise ValueError("The original 04aa recipe does not take darkening parents")
@@ -107,7 +108,7 @@ def check_gender_dropout_darkening_sources(
         _verify_training_evidence(run, parent_spec, sources["G2"][fold]["run_id"], evidence)
         run["directory"] = str(directory)
         sources["Drop30"][fold] = run
-    if experiment_name == STRONGER_NAME:
+    if experiment_name in {STRONGER_NAME, GRAYSCALE_NAME}:
         _add_completed_darkening_parents(
             sources,
             classes=classes,
@@ -130,7 +131,7 @@ def _add_completed_darkening_parents(
     splits,
     root,
 ):
-    """Bind stronger dropout to both exact 04aa runs and their original source audit."""
+    """Bind further refinements to both exact 04aa runs and their original source audit."""
     directory = Path(directory)
     audit = directory / "source_audit.json"
     previous = json.loads(audit.read_text())["identity"]
@@ -418,11 +419,11 @@ def run_gender_dropout_darkening_screen(
     report["registry_and_artifact_integrity"] = True
     report["run_ids"] = {str(f): child[f]["run_id"] for f in FOLDS}
     report["incremental_comparison"] = compare_with_dropout(child, matched[parent_group], classes)
-    if experiment_name == STRONGER_NAME:
+    if experiment_name in {STRONGER_NAME, GRAYSCALE_NAME}:
         report["direct_parent_comparison"] = {
             "name": "Drop30Dark",
             "classifier_dropout": 0.30,
-            "training_augmentation": spec.training_augmentation,
+            "training_augmentation": dataset_v2_spec(NAME, PARENT_RUN_IDS).training_augmentation,
             "run_ids": {str(f): matched[parent_group][f]["run_id"] for f in FOLDS},
         }
         report["incremental_comparison"]["comparison"] = (
