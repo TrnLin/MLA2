@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import tempfile
 from collections.abc import Callable, Mapping, Sequence
@@ -32,7 +33,7 @@ from fashion.task1.evaluation import (
     validate_task1_label_map,
 )
 from fashion.task1.training import Task1FoldResult, Task1TrainConfig, train_task1_fold
-from fashion.train.artifacts import atomic_write_csv, canonical_sha256
+from fashion.train.artifacts import atomic_write_bytes, atomic_write_csv, canonical_sha256
 from fashion.train.registry import RunRegistry
 
 _OLD_CANDIDATES = (TASK1_NO_AUG_CANDIDATE, TASK1_MILD_AUG_CANDIDATE)
@@ -113,6 +114,18 @@ def _verified_result(
         metrics[name] > 1 for name in _METRIC_COLUMNS if name != "validation_loss"
     ):
         raise ValueError(f"Task 1 fold metrics are invalid: {run_id}")
+    try:
+        recorded = json.loads(row["metrics"])
+        recorded_metrics = {name: float(recorded[name]) for name in _METRIC_COLUMNS}
+    except (ValueError, TypeError, KeyError) as error:
+        raise ValueError(f"Task 1 registry metrics are invalid: {run_id}") from error
+    # CSV parsing can round a float slightly; allow only 1e-12 absolute/relative error.
+    if any(
+        not np.isfinite(recorded_metrics[name])
+        or not np.isclose(value, recorded_metrics[name], rtol=1e-12, atol=1e-12)
+        for name, value in metrics.items()
+    ):
+        raise ValueError(f"Task 1 fold metrics do not match registry metrics: {run_id}")
     return Task1FoldResult(
         run_id=run_id,
         fold=fold,
@@ -250,7 +263,7 @@ def _build_full_evidence(
 
 
 def _write_full_evidence(result: Task1ExperimentResult, *, evidence_root: Path) -> None:
-    """Stage all CSVs beside their destinations before atomically replacing files."""
+    """Stage CSVs and backups; restore the prior evidence if publication fails."""
     frames = {
         "fold_metrics.csv": result.fold_metrics,
         "comparison.csv": result.comparison,
@@ -262,6 +275,9 @@ def _write_full_evidence(result: Task1ExperimentResult, *, evidence_root: Path) 
     }
     evidence_root.mkdir(parents=True, exist_ok=True)
     staged: list[tuple[Path, Path]] = []
+    backups: dict[Path, Path | None] = {}
+    published: list[Path] = []
+    rollback_failed = False
     try:
         for name, frame in frames.items():
             with tempfile.NamedTemporaryFile(
@@ -271,13 +287,49 @@ def _write_full_evidence(result: Task1ExperimentResult, *, evidence_root: Path) 
                 delete=False,
             ) as handle:
                 temporary = Path(handle.name)
-            staged.append((temporary, evidence_root / name))
+            destination = evidence_root / name
+            staged.append((temporary, destination))
             atomic_write_csv(temporary, frame)
-        for temporary, destination in staged:
-            os.replace(temporary, destination)
+            backups[destination] = None
+            if destination.exists():
+                with tempfile.NamedTemporaryFile(
+                    dir=evidence_root,
+                    prefix=f".{name}.",
+                    suffix=".bak",
+                    delete=False,
+                ) as handle:
+                    backup = Path(handle.name)
+                backups[destination] = backup
+                atomic_write_bytes(backup, destination.read_bytes())
+        try:
+            for temporary, destination in staged:
+                os.replace(temporary, destination)
+                published.append(destination)
+        except BaseException as publish_error:
+            failed_restores: list[str] = []
+            for destination in reversed(published):
+                try:
+                    backup = backups[destination]
+                    if backup is None:
+                        destination.unlink(missing_ok=True)
+                    else:
+                        os.replace(backup, destination)
+                except BaseException as restore_error:
+                    failed_restores.append(f"{destination}: {restore_error}")
+            if failed_restores:
+                rollback_failed = True
+                raise RuntimeError(
+                    "Task 1 evidence rollback failed; recovery backups retained in "
+                    f"{evidence_root}: {'; '.join(failed_restores)}"
+                ) from publish_error
+            raise
     finally:
         for temporary, _ in staged:
             temporary.unlink(missing_ok=True)
+        if not rollback_failed:
+            for backup in backups.values():
+                if backup is not None:
+                    backup.unlink(missing_ok=True)
 
 
 def run_task1_weighted_experiment(

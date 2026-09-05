@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import replace
 from pathlib import Path
 from typing import Any
@@ -394,3 +395,91 @@ def test_all_tables_stage_before_shared_files_are_replaced(
     with pytest.raises(OSError, match="disk full"):
         _run(tmp_path, registry, evidence)
     assert _snapshot(evidence) == before
+
+
+@pytest.mark.parametrize("failed_replacement", [2, 5])
+def test_failed_publish_restores_every_shared_file(
+    tmp_path: Path,
+    old_evidence: tuple[RunRegistry, Path],
+    monkeypatch: pytest.MonkeyPatch,
+    failed_replacement: int,
+) -> None:
+    """A late replace error must restore old bytes and remove newly created tables."""
+    registry, evidence = old_evidence
+    before = _snapshot(evidence)
+    original_replace = os.replace
+    final_replacements = 0
+
+    def fail_final_replace(source: Any, destination: Any) -> None:
+        nonlocal final_replacements
+        path = Path(destination)
+        if path.parent == evidence and not path.name.startswith("."):
+            final_replacements += 1
+            if final_replacements == failed_replacement:
+                raise PermissionError("shared file is locked")
+        original_replace(source, destination)
+
+    monkeypatch.setattr(os, "replace", fail_final_replace)
+    with pytest.raises(PermissionError, match="shared file is locked"):
+        _run(tmp_path, registry, evidence)
+    assert _snapshot(evidence) == before
+
+
+@pytest.mark.parametrize(
+    ("metric", "value"),
+    [
+        ("macro_f1", 0.999),
+        ("weighted_f1", 0.25),
+        ("top1_accuracy", 0.25),
+        ("top5_accuracy", 0.25),
+        ("validation_loss", 0.5),
+    ],
+)
+def test_tampered_old_metric_cannot_replace_shared_evidence(
+    tmp_path: Path,
+    old_evidence: tuple[RunRegistry, Path],
+    metric: str,
+    value: float,
+) -> None:
+    """Plausible metrics must still agree with the recorded training run."""
+    registry, evidence = old_evidence
+    path = evidence / "fold_metrics.csv"
+    frame = pd.read_csv(path)
+    frame.loc[0, metric] = value
+    frame.to_csv(path, index=False)
+    before = _snapshot(evidence)
+    with pytest.raises(ValueError, match="registry metrics"):
+        _run(tmp_path, registry, evidence)
+    assert _snapshot(evidence) == before
+    assert len(registry.read()) == 10
+
+
+@pytest.mark.parametrize("metrics_json", ["not-json", "{}", "null", "[]"])
+def test_missing_or_invalid_registry_metrics_block_publication(
+    tmp_path: Path,
+    old_evidence: tuple[RunRegistry, Path],
+    metrics_json: str,
+) -> None:
+    """Missing or malformed recorded metrics cannot be treated as a valid comparison."""
+    registry, evidence = old_evidence
+    rows = registry.read()
+    rows.loc[0, "metrics"] = metrics_json
+    rows.to_csv(registry.path, index=False)
+    before = _snapshot(evidence)
+    with pytest.raises(ValueError, match="registry metrics"):
+        _run(tmp_path, registry, evidence)
+    assert _snapshot(evidence) == before
+
+
+def test_registry_metric_check_allows_tiny_csv_rounding(
+    tmp_path: Path,
+    old_evidence: tuple[RunRegistry, Path],
+) -> None:
+    """The registry check must allow CSV float rounding, with a stated tolerance."""
+    registry, evidence = old_evidence
+    path = evidence / "fold_metrics.csv"
+    frame = pd.read_csv(path)
+    frame.loc[0, "macro_f1"] += 5e-13
+    frame.to_csv(path, index=False)
+    result = _run(tmp_path, registry, evidence)
+    assert len(result.fold_metrics) == 15
