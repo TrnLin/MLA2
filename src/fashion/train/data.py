@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import random
 from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any
@@ -164,6 +165,7 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
         self.image_size = image_size
         self.corruption = corruption
         self.augmentation = augmentation
+        self._darkening_rng: random.Random | None = None
         self.image_view = image_view
         self.sample_weight_column = sample_weight_column
         unknown = sorted(set(self.frame[target]).difference(self.label_to_index))
@@ -184,7 +186,14 @@ class Task3ImageDataset(Dataset[dict[str, Any]]):
     def __getitem__(self, index: int) -> dict[str, Any]:
         row = self.frame.iloc[index]
         image = _load_corrupted(self.root / str(row["path"]), self.corruption)
-        image = apply_training_augmentation(image, self.augmentation)
+        if self.augmentation == "translation_2px_p05_mild_darkening_p025":
+            if self._darkening_rng is None:
+                # Persistent workers keep a separate stream. No global Python,
+                # NumPy, sampler or translation RNG draws are consumed here.
+                self._darkening_rng = random.Random(torch.initial_seed() ^ 0x474431)
+        image = apply_training_augmentation(
+            image, self.augmentation, darkening_rng=self._darkening_rng
+        )
         image = apply_task3_input_view(image, self.image_view)
         array = transform_image(
             image,
