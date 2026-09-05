@@ -13,6 +13,7 @@ from fashion.train.config import NARROW_GEM3_FAMILY, Task3BaselineConfig
 from fashion.train.task3_decisions import (
     CORE_CORRUPTIONS,
     oof_metrics,
+    probability_columns,
     robustness_changes,
     validate_oof,
 )
@@ -20,6 +21,16 @@ from fashion.train.task3_gender_diagnostic import verify_checkpoint_metadata, ve
 from fashion.train.task3_gender_precision import PRECISION_PATHS
 
 POLICY = "saved_checkpoint_ieee_fp32_batch128_v1"
+
+
+def save_ieee_predictions(predictions, path, classes):
+    """Preserve FP32 values in CSV and score the exact persisted probabilities."""
+    predictions = predictions.copy()
+    columns = ["confidence", *probability_columns(classes)]
+    predictions[columns] = predictions[columns].astype(np.float64)
+    predictions.to_csv(path, index=False)
+    saved = pd.read_csv(path, keep_default_na=False, float_precision="round_trip")
+    return oof_metrics(saved, classes)
 
 
 def evaluation_identity(run, *, root):
@@ -76,7 +87,9 @@ def load_ieee_evaluation(directory, *, run, splits, classes, identity):
     _, expected = get_cv_split(splits, run["fold"])
     expected = get_samples(expected, target="gender")
     predictions = validate_oof(
-        pd.read_csv(directory / "oof_predictions.csv", keep_default_na=False),
+        pd.read_csv(
+            directory / "oof_predictions.csv", keep_default_na=False, float_precision="round_trip"
+        ),
         expected,
         target="gender",
         classes=classes,
@@ -107,7 +120,6 @@ def evaluate_gender_ieee(run, *, splits, classes, output, root):
     import torch
 
     from fashion.train.data import CORE_CORRUPTIONS, Task3ImageDataset
-    from fashion.train.metrics import classification_metrics
     from fashion.train.model import Task3GeM3CNN
     from fashion.train.task3_baseline import _json_dump, _loader, _pass, _prediction_frame
     from fashion.train.task3_gender_precision import ieee_precision, precision_settings
@@ -167,9 +179,9 @@ def evaluate_gender_ieee(run, *, splits, classes, output, root):
             model, loader, torch.nn.CrossEntropyLoss(), device
         )
         predictions = _prediction_frame(labels, probabilities, trace, classes, run["run_id"])
-        predictions.to_csv(output / filename, index=False)
+        metrics = save_ieee_predictions(predictions, output / filename, classes)
         files.append(filename)
-        return {**classification_metrics(labels, probabilities, classes), "loss": loss}
+        return {**metrics, "loss": loss}
 
     print(f"IEEE evaluation: {run['run_id']}", flush=True)
     with ieee_precision(torch), torch.autocast(device_type="cuda", enabled=False):
