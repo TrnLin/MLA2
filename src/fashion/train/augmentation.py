@@ -6,17 +6,35 @@ import random
 
 from PIL import Image, ImageEnhance
 
+GRAYSCALE_AUGMENTATION = "translation_2px_p05_mild_darkening_p025_grayscale_p010"
+GRAYSCALE_PROBABILITY = 0.10
+GRAYSCALE_SEED_XOR = 0x47524159
+
 TRAINING_AUGMENTATIONS = (
     "none",
     "brightness_uniform_085_115",
     "translation_uniform_2px_p05",
     "translation_2px_p05_mild_darkening_p025",
+    GRAYSCALE_AUGMENTATION,
 )
 
 
 def apply_training_augmentation(
-    image: Image.Image, augmentation: str, *, darkening_rng: random.Random | None = None
+    image: Image.Image,
+    augmentation: str,
+    *,
+    darkening_rng: random.Random | None = None,
+    grayscale_rng: random.Random | None = None,
 ) -> Image.Image:
+    if augmentation == GRAYSCALE_AUGMENTATION:
+        if grayscale_rng is None:
+            raise ValueError("occasional grayscale requires its own seeded random stream")
+        image = apply_training_augmentation(
+            image, "translation_2px_p05_mild_darkening_p025", darkening_rng=darkening_rng
+        )
+        if grayscale_rng.random() < GRAYSCALE_PROBABILITY:
+            image = image.convert("L").convert("RGB")
+        return image
     if augmentation == "translation_2px_p05_mild_darkening_p025":
         if darkening_rng is None:
             raise ValueError("mild darkening requires its own seeded random stream")
