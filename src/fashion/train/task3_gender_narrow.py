@@ -173,6 +173,8 @@ def _screen_contract(name):
         return RULE_VERSION, narrow_gem3_parameter_count()
     if name == "gender_dropout_030":
         return "gdrop030_loss003_gap005_v1", baseline_parameter_count("gender")
+    if name == "gender_dropout_030_mild_darkening":
+        return "gdrop030dark_loss003_gap005_v1", baseline_parameter_count("gender")
     raise ValueError("Unknown frozen gender screen")
 
 
