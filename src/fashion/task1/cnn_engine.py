@@ -53,6 +53,13 @@ def _limited_batches(loader: DataLoader[dict[str, torch.Tensor]], maximum: int |
     return batches if maximum is None else min(batches, maximum)
 
 
+def task1_validation_cross_entropy(
+    logits: torch.Tensor, target: torch.Tensor
+) -> torch.Tensor:
+    """Return the unweighted loss used for validation evidence."""
+    return functional.cross_entropy(logits, target)
+
+
 def _evaluate(
     model: nn.Module,
     loader: DataLoader[dict[str, torch.Tensor]],
@@ -74,7 +81,7 @@ def _evaluate(
             images = batch["image"].to(device)
             target = batch["label"].to(device)
             logits = model(images)
-            loss = functional.cross_entropy(logits, target)
+            loss = task1_validation_cross_entropy(logits, target)
             if not torch.isfinite(loss):
                 raise ValueError("validation loss must be finite")
             scores = torch.softmax(logits, dim=1).detach().cpu().numpy()
@@ -134,8 +141,21 @@ def train_task1_cnn(
     root: Path,
     device: torch.device,
     model_factory: Callable[[int], nn.Module] = Task1SmallCNN,
+    training_class_weights: torch.Tensor | None = None,
 ) -> Task1CnnEngineResult:
     """Train a CNN and return its selected model with validation evidence."""
+    device_class_weights: torch.Tensor | None = None
+    if training_class_weights is not None:
+        if training_class_weights.shape != (TASK1_NUM_CLASSES,):
+            raise ValueError(
+                f"training class weights must have shape ({TASK1_NUM_CLASSES},)"
+            )
+        if not torch.isfinite(training_class_weights).all():
+            raise ValueError("training class weights must be finite")
+        if (training_class_weights < 0).any():
+            raise ValueError("training class weights must be non-negative")
+        device_class_weights = training_class_weights.to(device)
+
     validation_dataset = Task1TorchDataset(
         validation_rows,
         build_task1_validation_transform(normalization, config=preprocessing),
@@ -196,7 +216,7 @@ def train_task1_cnn(
             target = batch["label"].to(device)
             optimizer.zero_grad(set_to_none=True)
             logits = model(images)
-            loss = functional.cross_entropy(logits, target)
+            loss = functional.cross_entropy(logits, target, weight=device_class_weights)
             if not torch.isfinite(loss):
                 raise ValueError("training loss must be finite")
             loss.backward()
