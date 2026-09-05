@@ -15,6 +15,8 @@ COMPACT_BLUR_CNN_WIDTHS = (24, 48, 96, 128)
 TINYHRNET20_WIDTHS = (20, 40, 80)
 TINYCONVNEXT18_WIDTHS = (18, 36, 72, 144)
 TINYCONVNEXT18_DEPTHS = (1, 1, 3, 1)
+NARROW_GEM3_FAMILY = "task3_small_cnn_gem_p3_narrow64"
+NARROW_GEM3_CHANNELS = (32, 64, 128, 64)
 
 
 @dataclass(frozen=True)
@@ -48,7 +50,10 @@ class Task3BaselineConfig:
             raise ValueError(f"unsupported Task 3 target: {self.target}")
         if (self.image_height, self.image_width) != (80, 60):
             raise ValueError("the primary baseline input must stay at 80x60")
-        if self.channels != (32, 64, 128, 256):
+        if self.model_family == NARROW_GEM3_FAMILY:
+            if self.target != "gender" or self.channels != NARROW_GEM3_CHANNELS:
+                raise ValueError("narrow GeM requires gender and channels 32,64,128,64")
+        elif self.channels != (32, 64, 128, 256):
             raise ValueError("the primary baseline channels must stay at 32,64,128,256")
         for field_name in ("batch_size", "epochs", "num_workers"):
             if getattr(self, field_name) < 0:
@@ -83,6 +88,13 @@ def config_digest(config: Task3BaselineConfig, *, length: int = 12) -> str:
         raise ValueError("config digest length must be at least 8")
     payload = json.dumps(config.to_dict(), sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:length]
+
+
+def narrow_gem3_parameter_count() -> int:
+    """Four scratch convolutions, BatchNorm, fixed GeM and a five-class head."""
+    widths = (3, *NARROW_GEM3_CHANNELS)
+    convolution = sum(a * b * 9 for a, b in zip(widths[:-1], widths[1:], strict=True))
+    return convolution + 2 * sum(widths[1:]) + widths[-1] * 5 + 5
 
 
 def baseline_parameter_count(target: Task3Target) -> int:
