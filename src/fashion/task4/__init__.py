@@ -200,6 +200,11 @@ from .models import (
     build_b1_encoder,
     build_retrieval_encoder,
 )
+from .portable_model import (
+    PORTABLE_R5_SCHEMA_VERSION,
+    export_r5_inference_package,
+    load_r5_inference_package,
+)
 from .preprocessing import (
     PreprocessedImage,
     PreprocessingContract,
@@ -306,6 +311,7 @@ __all__ = (
     "HOG_METHOD",
     "INDEX_LIMIT_BYTES",
     "PREPROCESSING_REPRODUCTION_ATOL",
+    "PORTABLE_R5_SCHEMA_VERSION",
     "R1_CONFIG",
     "R2_CONFIG",
     "R4_TRIPLET_WEIGHT",
@@ -427,6 +433,7 @@ __all__ = (
     "evaluate_canvas_stress",
     "evaluate_primary_rankings",
     "evaluate_source_pair",
+    "export_r5_inference_package",
     "extract_feature_index",
     "extract_canvas_feature_index",
     "extract_spatial_probe",
@@ -447,6 +454,7 @@ __all__ = (
     "learning_rate_at_step",
     "link_gallery_result_to_final_decision",
     "load_checkpoint",
+    "load_r5_inference_package",
     "load_preprocessed_image",
     "mark_failure_slices",
     "measure_index_build",

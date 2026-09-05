@@ -47,6 +47,8 @@ tmp/
 models/*.pt
 models/*.pth
 models/*.ckpt
+/models/task4_r5/
+/models/task4_r5_portable.zip
 
 
 # Generated Task 4 bulk; compact evidence and reports stay trackable.
