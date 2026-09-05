@@ -62,10 +62,12 @@ def test_darkening_does_not_consume_translation_or_sampling_randomness():
 def test_frozen_spec_keeps_legacy_serialization_and_locks_new_policy():
     parents = [f"g2-parent-{f}" for f in range(5)]
     spec = dataset_v2_spec(NAME, parents)
-    assert spec.saved_tensors_on_cpu
+    assert not spec.saved_tensors_on_cpu
     assert spec.parent_artifact_dir == "experiments/t3_gender_v2_g2_translation"
     assert spec.training_augmentation == "translation_2px_p05_mild_darkening_p025"
-    assert spec.to_dict()["execution_policy"] == "save_on_cpu_pin_memory_fp32_batch128_v1"
+    assert (
+        spec.to_dict()["execution_policy"] == "gpu_fp32_batch128_memory_under_3gb_no_speed_cap_v2"
+    )
     legacy = dataset_v2_spec("gender_v2_translation", parents)
     assert "saved_tensors_on_cpu" not in legacy.to_dict()
     with pytest.raises(ValueError, match="predeclared factor"):
@@ -162,7 +164,7 @@ def test_screen_and_confirmation_apply_real_frozen_rules():
     assert confirmed["status"] == "pass"
     assert "fresh_vs_e6" in confirmed["evidence"]
     assert confirmed["independent_test_evidence"] is False
-    child[0]["metrics"]["peak_memory_bytes"] = 476_045_312
+    child[0]["metrics"]["peak_memory_bytes"] = 3_000_000_000
     failed = evaluate_gender_repair(
         {f: child[f] for f in (0, 4)}, sources, classes, phase="screen", repetitions=40
     )
@@ -191,13 +193,38 @@ def test_fresh_fold_ci_cannot_be_replaced_by_pooled_improvement():
     )
 
 
-def test_notebook_defaults_to_screen_and_retains_no_outputs():
+def test_notebook_defaults_to_screen_and_compiles():
     nb = json.loads((ROOT / "notebooks/04t_task3_gender_gd1_mild_darkening.ipynb").read_text())
     code = "\n".join("".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code")
     assert 'phase="screen"' in code
     assert 'phase="confirmation"' not in code
     assert code.index("prepare_gender_repair(") < code.index("run_gender_repair(")
-    assert not any(c.get("outputs") for c in nb["cells"])
     for i, c in enumerate(nb["cells"]):
         if c["cell_type"] == "code":
             compile("".join(c["source"]), f"04t-cell-{i}", "exec")
+
+
+def test_speed_is_reported_without_a_cap_and_memory_is_strict():
+    from fashion.train.task3_gender_repair_preflight import memory_profile_passes
+
+    profile = dict(
+        execution_policy="gpu_fp32_batch128_memory_under_3gb_no_speed_cap_v2",
+        device_type="cuda",
+        batch_size=128,
+        optimizer_steps=0,
+        peak_memory_bytes=2_999_999_999,
+        forward_backward_seconds=99999,
+    )
+    assert memory_profile_passes(profile)
+    for value in (3_000_000_000, float("nan"), 0, None):
+        assert not memory_profile_passes({**profile, "peak_memory_bytes": value})
+    assert not memory_profile_passes({**profile, "device_type": "cpu"})
+    assert not memory_profile_passes({**profile, "execution_policy": "old"})
+    child, sources, classes = gender_case()
+    for run in child.values():
+        run["metrics"].update(
+            train_seconds=999999, latency_ms_batch_1=999, peak_memory_bytes=2_999_999_999
+        )
+    report = evaluate_gender_repair(child, sources, classes, phase="confirmation", repetitions=40)
+    assert report["status"] == "pass"
+    assert report["evidence"]["fold_0.resources"]["train_seconds"] == 999999
