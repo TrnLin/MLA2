@@ -24,6 +24,25 @@ def verify_input_images(frame, root):
     return checked
 
 
+def verify_checkpoint_metadata(checkpoint, *, run_id, config, classes, normalization):
+    """Compare the trainer's checkpoint fields with their audited JSON equivalents."""
+    # normalization.json adds scope notes to StreamingStats.to_dict(); the
+    # checkpoint contains only the original statistics returned by that method.
+    expected = {
+        "run_id": run_id,
+        "config": config,
+        "class_names": classes,
+        "normalization": {
+            key: normalization[key] for key in ("channels", "mean", "std", "total_pixels")
+        },
+    }
+    for field, value in expected.items():
+        if field not in checkpoint or checkpoint[field] != value:
+            raise ValueError(
+                f"Checkpoint metadata differs from verified source: {run_id}, field={field}"
+            )
+
+
 def run_gender_diagnostic(*, g2_directory, compact_directory, registry_path, output, root):
     """Read four verified checkpoints; never fit, alter weights, or write the registry."""
     import torch
@@ -101,13 +120,13 @@ def run_gender_diagnostic(*, g2_directory, compact_directory, registry_path, out
             set_reproducible_seed(config.seed)
             checkpoint = torch.load(path / "final_epoch.pt", map_location="cpu", weights_only=True)
             stats = json.loads((path / "normalization.json").read_text())
-            if (
-                checkpoint["run_id"] != audit["run_id"]
-                or checkpoint["config"] != payload
-                or checkpoint["class_names"] != classes
-                or checkpoint["normalization"] != stats
-            ):
-                raise ValueError("Checkpoint metadata differs from verified source")
+            verify_checkpoint_metadata(
+                checkpoint,
+                run_id=audit["run_id"],
+                config=payload,
+                classes=classes,
+                normalization=stats,
+            )
             model = constructor(config)
             model.load_state_dict(checkpoint["model_state_dict"], strict=True)
             del checkpoint
