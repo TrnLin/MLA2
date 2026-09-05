@@ -67,6 +67,19 @@ from fashion.task1.training import (
     select_training_device,
     train_task1_fold,
 )
+from fashion.task1.losses import (
+    TASK1_GENTLE_WEIGHTED_LOSS,
+    TASK1_UNWEIGHTED_LOSS,
+    Task1LossConfig,
+    Task1LossWeights,
+    build_task1_loss_weights,
+)
+from fashion.task1.candidates import (
+    TASK1_GENTLE_WEIGHTED_CANDIDATE,
+    TASK1_MILD_AUG_CANDIDATE,
+    TASK1_NO_AUG_CANDIDATE,
+    Task1CnnCandidate,
+)
 
 __all__ = [
     "DEFAULT_TASK1_PREPROCESSING",
@@ -117,4 +130,13 @@ __all__ = [
     "Task1TrainConfig",
     "select_training_device",
     "train_task1_fold",
+    "Task1LossConfig",
+    "Task1LossWeights",
+    "build_task1_loss_weights",
+    "TASK1_UNWEIGHTED_LOSS",
+    "TASK1_GENTLE_WEIGHTED_LOSS",
+    "Task1CnnCandidate",
+    "TASK1_NO_AUG_CANDIDATE",
+    "TASK1_MILD_AUG_CANDIDATE",
+    "TASK1_GENTLE_WEIGHTED_CANDIDATE",
 ]
