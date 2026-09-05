@@ -39,13 +39,40 @@ __pycache__/
 !/data/processed/audit/product_family_groups.csv.gz
 !/data/processed/audit/product_family_summary.json
 !/data/processed/audit/target_class_counts.csv
+.agents/
+/docs/superpowers/
 
 # Local scratch material and generated model weights.
 tmp/
 models/*.pt
 models/*.pth
 models/*.ckpt
+/models/task4_r5/
+/models/task4_r5_portable.zip
+/scripts/task4/queue_gpu0_r5_stability.sh
+/scripts/task4/queue_gpu1_r3_stability.sh
 
 
-# Generated experiment registry; report-selected figures remain trackable.
-results/runs.csv
+# Generated Task 4 bulk; compact evidence and reports stay trackable.
+/results/cache/task4/
+/results/evidence/task4/checkpoints/
+/results/evidence/task4/smoke/
+/results/evidence/task4/.model_comparison_budget-*/
+/results/evidence/task4/learned/*/*
+/results/evidence/task4/phase_requests/
+/results/evidence/task4/phase_results/*
+!/results/evidence/task4/phase_results/task9-final-gallery-decision.json
+!/results/evidence/task4/phase_results/task9-gallery-result.json
+!/results/evidence/task4/phase_results/task9-post-stability-deployment.json
+/results/evidence/task4/logs/*
+/results/evidence/task4/model_comparison_budget*.json
+/results/evidence/task4/baseline_query_metrics.csv
+/results/evidence/task4/baseline_timing.csv
+/results/evidence/task4/hog/canvas_per_query.csv
+/results/evidence/task4/hog/query_metrics.csv
+/results/evidence/task4/hog/timing_samples.csv
+/results/evidence/task4/hog_fusion/canvas_per_query.csv
+/results/evidence/task4/hog_fusion/query_metrics.csv
+/results/evidence/task4/hog_fusion/timing_samples.csv
+/results/evidence/task4/**/*.lock
+/results/runs.csv.lock

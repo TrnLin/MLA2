@@ -1,0 +1,82 @@
+{
+  "contract": {
+    "colour_mode": "RGB",
+    "height": 320,
+    "pad_color": [
+      255,
+      255,
+      255
+    ],
+    "resample": "LANCZOS",
+    "resize": "aspect_preserving_letterbox",
+    "width": 240
+  },
+  "schema_version": "1.1.0",
+  "scope": "development training folds only",
+  "sources": {
+    "teacher": {
+      "content_pixels": 2013351360,
+      "contract": {
+        "colour_mode": "RGB",
+        "height": 320,
+        "pad_color": [
+          255,
+          255,
+          255
+        ],
+        "resample": "LANCZOS",
+        "resize": "aspect_preserving_letterbox",
+        "width": 240
+      },
+      "mean": [
+        0.8494915774200574,
+        0.8328844031806432,
+        0.8272534088835429
+      ],
+      "source": "teacher",
+      "source_fingerprint": "9537d2dc78a30b3bd1f6fb61c9cf7fc1c55d1ff03cbdd8b50a03df1c1c72b8a0",
+      "split_fingerprint": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd",
+      "std": [
+        0.27053314339590606,
+        0.28183214124938766,
+        0.2853922125735141
+      ],
+      "training_id_sha256": "d73cf2a11e8f20334c449c32dd85e7ecde10202bfcf54339ebe9c950f42a1e25",
+      "training_rows": 26217,
+      "validation_fold": 1
+    },
+    "v1": {
+      "content_pixels": 2013351600,
+      "contract": {
+        "colour_mode": "RGB",
+        "height": 320,
+        "pad_color": [
+          255,
+          255,
+          255
+        ],
+        "resample": "LANCZOS",
+        "resize": "aspect_preserving_letterbox",
+        "width": 240
+      },
+      "mean": [
+        0.8513904877617415,
+        0.8344878955547186,
+        0.8292236720243502
+      ],
+      "source": "v1",
+      "source_fingerprint": "2d03079c521908b802d95a5bf7f8f57e5a16759a27cb781456fe42fed91f0f84",
+      "split_fingerprint": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd",
+      "std": [
+        0.27683603345993774,
+        0.28803339518666904,
+        0.2916936612796755
+      ],
+      "training_id_sha256": "d73cf2a11e8f20334c449c32dd85e7ecde10202bfcf54339ebe9c950f42a1e25",
+      "training_rows": 26217,
+      "validation_fold": 1
+    }
+  },
+  "split_fingerprint": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd",
+  "validation_fold": 1
+}

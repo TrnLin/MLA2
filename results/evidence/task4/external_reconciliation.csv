@@ -1,0 +1,9 @@
+measure,count
+V1 catalogue IDs,44446
+V1 JPEG files,44441
+teacher train IDs,38617
+teacher test IDs,5829
+V1 ∩ teacher train,38617
+V1 ∩ teacher test,5829
+listed but missing images,5
+files outside catalogue,0

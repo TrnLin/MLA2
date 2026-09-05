@@ -1,0 +1,4 @@
+partition,v1_images
+development,32773
+holdout,5778
+quarantine,61

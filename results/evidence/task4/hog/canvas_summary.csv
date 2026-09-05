@@ -1,0 +1,4 @@
+scope,fold,method,descriptor_fingerprint,size,query_source,gallery_source,query_variant,queries,ndcg_at_10,ndcg_change_from_clean,mean_top10_overlap
+development,1,hog-luma-g5-u8-c32-b2-s1-l2hys02-v1,c4604537474ff5ed8889a9e480053b225064fb20027e147582960bb3afd3a848,240x320,v1,v1,clean,6556,0.46703987,0.00000000,1.00000000
+development,1,hog-luma-g5-u8-c32-b2-s1-l2hys02-v1,c4604537474ff5ed8889a9e480053b225064fb20027e147582960bb3afd3a848,240x320,v1,v1,wide,6556,0.01723178,-0.44980809,0.00155583
+development,1,hog-luma-g5-u8-c32-b2-s1-l2hys02-v1,c4604537474ff5ed8889a9e480053b225064fb20027e147582960bb3afd3a848,240x320,v1,v1,tall,6556,0.14462870,-0.32241117,0.01302624

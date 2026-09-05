@@ -1,80 +1,72 @@
-"""Reusable training, evaluation, artifact, and experiment contracts."""
+"""Reusable training contracts exposed without importing heavy ML libraries."""
 
-from fashion.train.artifacts import (
-    ArtifactVerificationError,
-    atomic_write_bytes,
-    atomic_write_csv,
-    atomic_write_json,
-    atomic_write_text,
-    canonical_json_bytes,
-    canonical_sha256,
-    verify_artifact,
-)
-from fashion.train.cache import (
-    CachedRun,
-    RunCacheKey,
-    build_run_cache_key,
-    find_cached_run,
-    implementation_sha256,
-)
-from fashion.train.engine import FoldResult, TrainConfig, train_fold
-from fashion.train.metrics import (
-    OOFValidationError,
-    cross_fit_temperature,
-    fit_temperature,
-    multiclass_metrics,
-    paired_group_bootstrap,
-    temperature_scale_probabilities,
-    validate_oof,
-)
-from fashion.train.multitask import (
-    RefitResult,
-    RefitTrainConfig,
-    train_masked_multitask_refit,
-)
-from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
-from fashion.train.reproducibility import (
-    capture_git_state,
-    capture_runtime,
-    make_torch_generator,
-    seed_everything,
-    seed_worker,
-)
+from __future__ import annotations
 
-__all__ = [
-    "ArtifactVerificationError",
-    "atomic_write_bytes",
-    "atomic_write_csv",
-    "atomic_write_json",
-    "atomic_write_text",
-    "build_run_cache_key",
-    "CachedRun",
-    "canonical_json_bytes",
-    "canonical_sha256",
-    "capture_git_state",
-    "capture_runtime",
-    "cross_fit_temperature",
-    "FoldResult",
-    "find_cached_run",
-    "fit_temperature",
-    "implementation_sha256",
-    "make_torch_generator",
-    "multiclass_metrics",
-    "new_run_id",
-    "OOFValidationError",
-    "paired_group_bootstrap",
-    "RunRecord",
-    "RunRegistry",
-    "RunCacheKey",
-    "RefitResult",
-    "RefitTrainConfig",
-    "seed_everything",
-    "seed_worker",
-    "tracked_run",
-    "temperature_scale_probabilities",
-    "TrainConfig",
-    "train_fold",
-    "train_masked_multitask_refit",
-    "validate_oof",
-    "verify_artifact",
-]
+from importlib import import_module
+from typing import Any
+
+_EXPORT_MODULES = {
+    "ArtifactVerificationError": "artifacts",
+    "atomic_write_bytes": "artifacts",
+    "atomic_write_csv": "artifacts",
+    "atomic_write_json": "artifacts",
+    "atomic_write_text": "artifacts",
+    "canonical_json_bytes": "artifacts",
+    "canonical_sha256": "artifacts",
+    "verify_artifact": "artifacts",
+    "CachedRun": "cache",
+    "RunCacheKey": "cache",
+    "build_run_cache_key": "cache",
+    "find_cached_run": "cache",
+    "implementation_sha256": "cache",
+    "FoldResult": "engine",
+    "TrainConfig": "engine",
+    "train_fold": "engine",
+    "OOFValidationError": "metrics",
+    "cross_fit_temperature": "metrics",
+    "fit_temperature": "metrics",
+    "multiclass_metrics": "metrics",
+    "paired_group_bootstrap": "metrics",
+    "temperature_scale_probabilities": "metrics",
+    "validate_oof": "metrics",
+    "RefitResult": "multitask",
+    "RefitTrainConfig": "multitask",
+    "train_masked_multitask_refit": "multitask",
+    "DuplicateRunError": "registry",
+    "ImmutableRunError": "registry",
+    "RegistryError": "registry",
+    "RegistrySchemaError": "registry",
+    "RUN_COLUMNS": "registry",
+    "RUN_KINDS": "registry",
+    "RunRecord": "registry",
+    "RunRegistry": "registry",
+    "RunRegistryError": "registry",
+    "TASK2_RUN_COLUMNS": "registry",
+    "TASK4_RUN_COLUMNS": "registry",
+    "Task4RunRegistry": "registry",
+    "new_run_id": "registry",
+    "tracked_run": "registry",
+    "capture_git_state": "reproducibility",
+    "capture_runtime": "reproducibility",
+    "make_torch_generator": "reproducibility",
+    "seed_everything": "reproducibility",
+    "seed_worker": "reproducibility",
+}
+
+__all__ = sorted(_EXPORT_MODULES)
+
+
+def __getattr__(name: str) -> Any:
+    """Load an exported contract only when a caller requests it."""
+
+    try:
+        module_name = _EXPORT_MODULES[name]
+    except KeyError as error:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from error
+    value = getattr(import_module(f"{__name__}.{module_name}"), name)
+    globals()[name] = value
+    return value
+
+
+def __dir__() -> list[str]:
+    return sorted({*globals(), *__all__})

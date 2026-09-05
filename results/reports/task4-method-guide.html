@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Task 4 Method Guide — Plain Meanings</title>
+<meta name="description" content="Plain-language explanations of the visual-search methods used in MLA2 Task 4.">
+<style>
+  :root{
+    --ink:#16181d;
+    --soft:#424854;
+    --faint:#6b7280;
+    --line:#d7dae0;
+    --line-soft:#e8eaee;
+    --panel:#f7f8fa;
+    --panel-2:#f0f2f5;
+    --page:#fff;
+    --accent:#1a4b8f;
+    --good:#1f5132;
+    --warn:#7a4a09;
+    --radius:8px;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--page);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px;line-height:1.62;
+  }
+  .wrap{max-width:1280px;margin:0 auto;padding:0 28px 72px;}
+  a{color:var(--accent);text-underline-offset:2px;}
+  a:hover{text-decoration-thickness:2px;}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+  .skip{position:absolute;left:-9999px;top:0;background:#fff;padding:10px 14px;border:2px solid var(--accent);}
+  .skip:focus{left:12px;top:12px;z-index:10;}
+  h1,h2,h3,h4{line-height:1.25;margin:0;font-weight:650;}
+  h1{font-size:2rem;letter-spacing:-.01em;}
+  h2{font-size:1.45rem;margin-bottom:.4rem;}
+  h3{font-size:1.08rem;}
+  p{margin:.65rem 0;}
+  code{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:.87em;background:var(--panel-2);padding:.1em .35em;border-radius:4px;
+  }
+  header{padding:34px 0 22px;border-bottom:1px solid var(--line);}
+  .eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:650;margin:0 0 8px;}
+  .subtitle{max-width:72ch;color:var(--soft);}
+  .back{
+    display:inline-block;margin-top:12px;padding:7px 12px;border:1px solid var(--line);
+    border-radius:6px;text-decoration:none;font-weight:600;font-size:.9rem;
+  }
+  .back:hover{background:var(--panel);}
+  nav{
+    margin:24px 0 0;padding:14px 16px;background:var(--panel);
+    border:1px solid var(--line);border-radius:var(--radius);
+  }
+  nav h2{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
+  nav ul{list-style:none;padding:0;margin:8px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:4px 18px;}
+  nav li{margin:0;}
+  nav a{text-decoration:none;color:var(--soft);}
+  nav a:hover{text-decoration:underline;color:var(--ink);}
+  section{padding-top:38px;scroll-margin-top:14px;}
+  .lede{max-width:74ch;color:var(--soft);}
+  .rule{border:0;border-top:1px solid var(--line-soft);margin:38px 0 0;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:16px;}
+  .card{border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;background:#fff;}
+  .card.tint{background:var(--panel);}
+  .card h3{margin-bottom:6px;}
+  .tag{display:inline-block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:6px;}
+  .good{border-left:4px solid var(--good);}
+  .warn{border-left:4px solid var(--warn);}
+  .flow{
+    display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:26px;
+    align-items:stretch;margin:18px 0;
+  }
+  .step{
+    position:relative;border:1px solid var(--line);border-radius:var(--radius);
+    background:var(--panel);padding:14px;text-align:center;display:grid;place-content:center;
+    min-height:84px;
+  }
+  .step:not(:last-child)::after{
+    content:"";position:absolute;right:-20px;top:50%;width:13px;border-top:2px solid var(--faint);
+  }
+  .step:not(:last-child)::before{
+    content:"";position:absolute;right:-20px;top:calc(50% - 4px);
+    border-left:7px solid var(--faint);border-top:4px solid transparent;border-bottom:4px solid transparent;
+  }
+  .step b{display:block;}
+  .step small{display:block;color:var(--faint);line-height:1.35;margin-top:3px;}
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;}
+  .rulebox{border:1px solid var(--line);border-radius:var(--radius);padding:14px;background:var(--panel);}
+  .rulebox b{display:block;margin-bottom:4px;}
+  .rulebox p{font-size:.92rem;color:var(--soft);margin:0;}
+  .compare{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);margin-top:16px;}
+  table{width:100%;border-collapse:collapse;min-width:920px;font-size:.9rem;}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+  thead th{background:var(--panel);font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;color:var(--soft);}
+  tbody tr:last-child th,tbody tr:last-child td{border-bottom:0;}
+  tbody th{white-space:nowrap;}
+  .formula{
+    margin:14px 0;padding:14px 16px;background:var(--panel);
+    border:1px solid var(--line);border-radius:var(--radius);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    overflow-wrap:anywhere;
+  }
+  .plain{font-family:inherit;color:var(--soft);font-size:.9rem;margin-top:5px;}
+  dl{margin:14px 0 0;}
+  dl div{padding:11px 0;border-bottom:1px solid var(--line-soft);}
+  dl div:last-child{border-bottom:0;}
+  dt{font-weight:650;}
+  dd{margin:.2rem 0 0;color:var(--soft);}
+  footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);font-size:.85rem;color:var(--faint);}
+  @media(max-width:760px){
+    body{font-size:16px;}
+    .wrap{padding-left:18px;padding-right:18px;}
+    .flow,.three{grid-template-columns:1fr;}
+    .step:not(:last-child)::after,.step:not(:last-child)::before{display:none;}
+  }
+  @media print{
+    body{font-size:11pt;line-height:1.45;}
+    .wrap{max-width:none;padding:0;}
+    nav,.back,.skip{display:none;}
+    section{padding-top:20px;}
+    .card,.rulebox,.compare{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to guide</a>
+<div class="wrap">
+<header>
+  <p class="eyebrow">MLA2 &middot; Task 4 &middot; Method dictionary</p>
+  <h1>What do all these visual-search words mean?</h1>
+  <p class="subtitle">A small-page guide to VICReg, HOG, HSV-edge, the R5 autoencoder, and the other
+  parts used in our Task&nbsp;4 visual search. Each section says what the method sees, how it works,
+  why we used it, and what it can miss.</p>
+  <a class="back" href="task4-model-comparison.html">&larr; Back to the model comparison</a>
+</header>
+
+<nav aria-label="Guide contents">
+  <h2>Jump to a method</h2>
+  <ul>
+    <li><a href="#pipeline">The whole search pipeline</a></li>
+    <li><a href="#embedding">Embedding and ResNet</a></li>
+    <li><a href="#vicreg">VICReg</a></li>
+    <li><a href="#geometry">R3 geometry training</a></li>
+    <li><a href="#triplet">R4 triplet loss</a></li>
+    <li><a href="#autoencoder">R5 autoencoder</a></li>
+    <li><a href="#hog">HOG</a></li>
+    <li><a href="#hsv">Spatial HSV-edge</a></li>
+    <li><a href="#fusion">HOG + HSV-edge fusion</a></li>
+    <li><a href="#ranking">Cosine, Top-K and nDCG</a></li>
+    <li><a href="#quick">Quick comparison</a></li>
+    <li><a href="#glossary">Small glossary</a></li>
+  </ul>
+</nav>
+
+<main id="main">
+<section id="pipeline">
+  <h2>1. The whole search pipeline</h2>
+  <p class="lede">Every method has the same job: turn a picture into numbers that are easy to
+  compare. Only the middle description method changes.</p>
+  <div class="flow" aria-label="Visual search pipeline">
+    <div class="step"><b>Raw photo</b><small>teacher, V1, or user upload</small></div>
+    <div class="step"><b>Prepare it</b><small>RGB, resize and white letterbox to 240&times;320</small></div>
+    <div class="step"><b>Describe it</b><small>R5, VICReg model, HOG, HSV-edge, or fusion</small></div>
+    <div class="step"><b>Compare</b><small>exact cosine similarity against the gallery</small></div>
+    <div class="step"><b>Return Top 10</b><small>ten distinct product IDs</small></div>
+  </div>
+  <div class="card tint">
+    <b>Important size rule.</b> Raw teacher files begin at 60&times;80. The model does not train on
+    that raw size. Every Task&nbsp;4 method receives the frozen 240&times;320 prepared image.
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="embedding">
+  <h2>2. Embedding and ResNet</h2>
+  <div class="grid">
+    <article class="card">
+      <span class="tag">Word meaning</span>
+      <h3>Embedding</h3>
+      <p>An embedding is a short list of numbers that describes a picture. Our learned models make
+      <b>128 numbers</b>. Similar products should make similar lists.</p>
+      <p>Think of it like placing every product on a large map. Similar clothes should stand close
+      together.</p>
+    </article>
+    <article class="card">
+      <span class="tag">Model part</span>
+      <h3>ResNet encoder</h3>
+      <p>A ResNet is a convolutional neural network, or CNN. It learns small visual detectors such
+      as edges first, then larger patterns such as sleeves, collars, shapes, and textures.</p>
+      <p>The <b>encoder</b> is the part that changes a 240&times;320 image into the compact
+      description. R1, R3, R4 and B1 add a projection head; R5 uses a 128-number bottleneck.</p>
+    </article>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="vicreg">
+  <h2>3. VICReg — used by R1, R2, R3, R4 and B1</h2>
+  <p class="lede">VICReg learns without category labels. We show it two pictures of the same product:
+  the teacher view and the V1 view. It follows three rules at once.</p>
+  <div class="three">
+    <div class="rulebox">
+      <b>1. Invariance: pull together</b>
+      <p>Make the two views of the same product produce similar numbers.</p>
+    </div>
+    <div class="rulebox">
+      <b>2. Variance: do not collapse</b>
+      <p>Do not give every picture the same answer. Different products must spread out.</p>
+    </div>
+    <div class="rulebox">
+      <b>3. Covariance: do not repeat yourself</b>
+      <p>Do not let all 128 numbers copy one another. Each number should add information.</p>
+    </div>
+  </div>
+  <div class="grid">
+    <article class="card good">
+      <h3>Why we used it</h3>
+      <p>Every development product already has a teacher/V1 pair. VICReg can learn that both sources
+      show the same item without saying every other fashion item is wrong.</p>
+    </article>
+    <article class="card warn">
+      <h3>What it can miss</h3>
+      <p>It mainly learns &ldquo;these two files are the same product.&rdquo; That does not directly
+      teach which different products a person considers similar. A clean teacher/V1 pair may also
+      be too easy.</p>
+    </article>
+  </div>
+  <p class="formula">VICReg loss = 25 &times; match-pair loss + 25 &times; spread-out loss + 1 &times; no-copy loss</p>
+</section>
+
+<hr class="rule">
+
+<section id="geometry">
+  <h2>4. R3 geometry training</h2>
+  <p class="lede">R3 still uses VICReg. Its one main change is what one picture in the pair looks
+  like during training.</p>
+  <div class="flow" style="grid-template-columns:repeat(4,minmax(140px,1fr));" aria-label="R3 geometry augmentation">
+    <div class="step"><b>Same product pair</b><small>teacher + V1</small></div>
+    <div class="step"><b>Keep one clean</b><small>normal prepared image</small></div>
+    <div class="step"><b>Change one</b><small>crop, scale, move, wide or tall canvas</small></div>
+    <div class="step"><b>VICReg</b><small>learn that both are still the same product</small></div>
+  </div>
+  <div class="grid">
+    <article class="card good"><h3>Strength</h3><p>It teaches the exact failure we measured. R3 keeps
+    a tall-canvas nDCG@10 of about <b>0.301</b>, very close to its clean <b>0.311</b>.</p></article>
+    <article class="card warn"><h3>Weakness</h3><p>Its normal average quality is far below R5 and the
+    HOG + HSV-edge fusion. Robust does not automatically mean accurate.</p></article>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="triplet">
+  <h2>5. Triplet loss — added by R4</h2>
+  <p class="lede">Triplet loss uses three products at a time.</p>
+  <div class="three">
+    <div class="rulebox"><b>Anchor</b><p>The product we start from.</p></div>
+    <div class="rulebox"><b>Positive</b><p>A different product from the same product-family group. Pull it closer.</p></div>
+    <div class="rulebox"><b>Negative</b><p>A product from another family. Push it farther away.</p></div>
+  </div>
+  <p>It sounds closer to what shoppers want: similar products, not duplicate files. But only about
+  <b>41.9%</b> of fold-1 training rows have a valid family positive, and the family groups mostly
+  come from cleaned product names. That signal is incomplete and noisy. R4 scored slightly below
+  R3, so this extra lesson did not help here.</p>
+</section>
+
+<hr class="rule">
+
+<section id="autoencoder">
+  <h2>6. Autoencoder — used by R5</h2>
+  <p class="lede">An autoencoder learns by playing &ldquo;squash and redraw.&rdquo; It does not use
+  category labels or teacher/V1 matching pairs.</p>
+  <div class="flow" style="grid-template-columns:repeat(4,minmax(140px,1fr));" aria-label="R5 autoencoder">
+    <div class="step"><b>240&times;320 photo</b><small>teacher or V1 as a separate example</small></div>
+    <div class="step"><b>Encoder</b><small>scratch ResNet-18 compresses the photo</small></div>
+    <div class="step"><b>128-number bottleneck</b><small>the only information allowed through</small></div>
+    <div class="step"><b>Decoder redraws</b><small>compare redraw with the original content pixels</small></div>
+  </div>
+  <div class="card tint">
+    <h3>Why exactly 128 numbers?</h3>
+    <p>All learned candidates must return the same size description. The decoder has no shortcut
+    around the bottleneck, so it must rebuild the image using only those 128 numbers. After
+    training, we discard the redraw and use the bottleneck for search.</p>
+  </div>
+  <div class="grid">
+    <article class="card good"><h3>Strength</h3><p>R5 reached <b>0.50289</b>, the best learned score.
+    It preserved far more useful visual detail than the VICReg candidates.</p></article>
+    <article class="card warn"><h3>Weakness</h3><p>Redrawing rewards pixel layout. R5 can remember
+    where an item sits instead of only what it is. Its score falls badly when the white canvas
+    changes. Training is also slower and the decoder makes the checkpoint larger.</p></article>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="hog">
+  <h2>7. HOG — Histogram of Oriented Gradients</h2>
+  <p class="lede">HOG is hand-written maths, not a learned model. It asks where edges are and which
+  way they point.</p>
+  <div class="flow" style="grid-template-columns:repeat(4,minmax(140px,1fr));" aria-label="HOG feature extraction">
+    <div class="step"><b>Make luminance</b><small>turn RGB into Rec.709 brightness</small></div>
+    <div class="step"><b>Find gradients</b><small>measure edge strength and direction</small></div>
+    <div class="step"><b>Count directions</b><small>8 bins inside 32&times;32 cells</small></div>
+    <div class="step"><b>Normalise blocks</b><small>2&times;2 cells, one-cell stride, L2-Hys</small></div>
+  </div>
+  <p>The final HOG description has <b>1,728 numbers</b>. It ignores colour. It is content-mask aware,
+  so preprocessing padding does not become a fake edge.</p>
+  <div class="grid">
+    <article class="card good"><h3>Strength</h3><p>Fast, explainable, no GPU training, and good source
+    robustness: <b>0.97165</b>.</p></article>
+    <article class="card warn"><h3>Weakness</h3><p>Its grid is tied to edge location. Move or shrink
+    the clothing and the edges land in different cells. Clean V1 nDCG@10 <b>0.467</b> falls to
+    <b>0.017</b> on the wide-canvas test.</p></article>
+  </div>
+  <div class="card tint">
+    <h3>How this relates to the HOG recommendation article</h3>
+    <p>The article also makes HOG vectors and uses brute-force nearest neighbours to return similar
+    fashion images. We use that core idea. We do <b>not</b> copy its new
+    <code>train_test_split</code> or its scaler fitted over all features, because our one approved
+    split is <code>data/processed/splits.csv</code> and validation information must not leak into
+    fitting.</p>
+    <p><a href="https://medium.com/swlh/histogram-of-oriented-gradients-hog-for-multiclass-image-classification-and-image-recommendation-cf0ea2caaae8">Open the motivating HOG article</a>.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="hsv">
+  <h2>8. Spatial HSV-edge</h2>
+  <p class="lede">This is another fixed, untrained description. It keeps colour and rough location.</p>
+  <div class="grid">
+    <article class="card">
+      <h3>HSV colour</h3>
+      <p><b>Hue</b> means the colour family, such as red or blue. <b>Saturation</b> means strong or
+      grey-looking colour. <b>Value</b> means brightness. HSV separates these ideas more clearly
+      than raw red, green and blue values.</p>
+    </article>
+    <article class="card">
+      <h3>Spatial edge</h3>
+      <p>The image is divided into a <b>4&times;4 grid</b>. Each area records colour and edge
+      information. Keeping the grid means &ldquo;blue near the top&rdquo; is different from
+      &ldquo;blue near the bottom.&rdquo;</p>
+    </article>
+  </div>
+  <p>All parts form one <b>400-number</b> descriptor. It scores strongly at <b>0.48988</b>, but
+  colour and spatial location make it more sensitive to source changes and canvas changes.</p>
+</section>
+
+<hr class="rule">
+
+<section id="fusion">
+  <h2>9. Equal HOG + HSV-edge fusion</h2>
+  <p class="lede">Fusion joins HOG shape information with HSV-edge colour and layout information.
+  It still has zero learned weights.</p>
+  <div class="formula">
+    fused = [HOG &times; 1/&radic;2, HSV-edge &times; 1/&radic;2]
+    <div class="plain">Each part is first normalised to length 1. The equal weights make each whole
+    block contribute half of the final cosine similarity, even though HOG has more numbers.</div>
+  </div>
+  <div class="grid">
+    <article class="card good"><h3>Why it works</h3><p>HOG supplies shape. HSV-edge supplies colour
+    and rough layout. Their mistakes are not identical, so one can add information the other
+    missed. The fusion reaches <b>0.50267</b>, only <b>0.00022</b> below R5.</p></article>
+    <article class="card warn"><h3>What it still cannot fix</h3><p>Both parts use fixed spatial
+    grids. The fusion still falls from clean <b>0.50025</b> to wide <b>0.03295</b> and tall
+    <b>0.17080</b>. Its 2,128-value index is also much larger than a learned 128-value index.</p></article>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="ranking">
+  <h2>10. Cosine search, Top-K and nDCG@10</h2>
+  <div class="grid">
+    <article class="card">
+      <h3>Cosine similarity</h3>
+      <p>Imagine each number list as an arrow. Cosine similarity asks whether two arrows point in
+      the same direction. Same direction means more similar. Because our vectors have length 1,
+      size cannot cheat the comparison.</p>
+    </article>
+    <article class="card">
+      <h3>Top-K</h3>
+      <p>Sort every gallery product from most similar to least similar and keep the first K. For
+      Task&nbsp;4, K is usually 10. We collapse duplicate views so one product can occupy only one
+      result slot.</p>
+    </article>
+    <article class="card">
+      <h3>nDCG@10</h3>
+      <p>A score for the quality and order of the first 10 results. A useful match near position 1
+      earns more than the same match near position 10. <b>1.0</b> is perfect; <b>0.0</b> is useless.</p>
+    </article>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="quick">
+  <h2>11. Quick comparison</h2>
+  <div class="compare">
+    <table>
+      <thead>
+        <tr><th>Method</th><th>Learns?</th><th>Main information</th><th>Main strength</th><th>Main weakness</th></tr>
+      </thead>
+      <tbody>
+        <tr><th>VICReg</th><td>Yes</td><td>What stays the same across teacher/V1 pairs</td><td>Label-free source matching</td><td>Same-product pairs do not fully define similarity</td></tr>
+        <tr><th>R3 geometry + VICReg</th><td>Yes</td><td>Product identity across moved/scaled canvases</td><td>Best canvas robustness</td><td>Lower normal score</td></tr>
+        <tr><th>R4 triplet</th><td>Yes</td><td>Name-derived product families</td><td>Targets different-but-similar items</td><td>Sparse, noisy family labels</td></tr>
+        <tr><th>R5 autoencoder</th><td>Yes</td><td>Enough pixels and layout to redraw the image</td><td>Best learned average</td><td>Very canvas-sensitive</td></tr>
+        <tr><th>HOG</th><td>No</td><td>Edge directions and local shape</td><td>Explainable and source-robust</td><td>No colour; fixed-grid canvas failure</td></tr>
+        <tr><th>HSV-edge</th><td>No</td><td>Colour, brightness and rough spatial edges</td><td>Strong cheap baseline</td><td>Source and canvas sensitivity</td></tr>
+        <tr><th>HOG + HSV-edge</th><td>No</td><td>Equal shape plus colour/layout</td><td>Nearly matches R5 without training</td><td>Large index and canvas failure</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="glossary">
+  <h2>12. Small glossary</h2>
+  <dl>
+    <div><dt>Augmentation</dt><dd>A changed training copy, such as moving or resizing the clothing, used to teach robustness.</dd></div>
+    <div><dt>Bottleneck</dt><dd>A deliberately small information path. R5 must squeeze the whole picture through 128 numbers.</dd></div>
+    <div><dt>Canvas</dt><dd>The white area around the product inside the photo. This is not an HTML canvas.</dd></div>
+    <div><dt>Decoder</dt><dd>The R5 part that tries to redraw the image from the bottleneck.</dd></div>
+    <div><dt>Descriptor</dt><dd>A list of numbers made by fixed maths, such as HOG or HSV-edge.</dd></div>
+    <div><dt>Encoder</dt><dd>A model part that turns an image into a compact number list.</dd></div>
+    <div><dt>Fold</dt><dd>One of five fixed data parts. A different fold is held out during each stability run.</dd></div>
+    <div><dt>From scratch</dt><dd>Every trainable weight starts without pretrained knowledge.</dd></div>
+    <div><dt>Gallery</dt><dd>The stored product images or embeddings that a query is searched against.</dd></div>
+    <div><dt>L2 normalisation</dt><dd>Rescale a vector so its total length is 1 before cosine search.</dd></div>
+    <div><dt>MSE</dt><dd>Mean squared error: R5's average squared pixel difference between its redraw and the original.</dd></div>
+    <div><dt>Source</dt><dd>Where a product view came from. This project compares teacher and V1 sources.</dd></div>
+  </dl>
+</section>
+</main>
+
+<footer>
+  <p>This guide explains the methods used by the provisional
+  <a href="task4-model-comparison.html">Task 4 model-comparison report</a>. It does not change the
+  frozen experiment results or declare a final winner.</p>
+</footer>
+</div>
+</body>
+</html>
