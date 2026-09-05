@@ -49,20 +49,26 @@ models/*.pth
 models/*.ckpt
 
 
-# Generated Task 4 bulk; compact evidence, reports, and source stay trackable.
+# Generated Task 4 bulk; compact evidence and reports stay trackable.
 /results/cache/task4/
 /results/evidence/task4/checkpoints/
 /results/evidence/task4/smoke/
 /results/evidence/task4/.model_comparison_budget-*/
 /results/evidence/task4/learned/*/*
-!/results/evidence/task4/learned/*/manifest.json
 /results/evidence/task4/phase_requests/
 /results/evidence/task4/phase_results/*
-!/results/evidence/task4/phase_results/gallery_policy_timing.json
 !/results/evidence/task4/phase_results/task9-final-gallery-decision.json
 !/results/evidence/task4/phase_results/task9-gallery-result.json
 !/results/evidence/task4/phase_results/task9-post-stability-deployment.json
 /results/evidence/task4/logs/*
-!/results/evidence/task4/logs/gpu0-r5-stability.log
+/results/evidence/task4/model_comparison_budget*.json
+/results/evidence/task4/baseline_query_metrics.csv
+/results/evidence/task4/baseline_timing.csv
+/results/evidence/task4/hog/canvas_per_query.csv
+/results/evidence/task4/hog/query_metrics.csv
+/results/evidence/task4/hog/timing_samples.csv
+/results/evidence/task4/hog_fusion/canvas_per_query.csv
+/results/evidence/task4/hog_fusion/query_metrics.csv
+/results/evidence/task4/hog_fusion/timing_samples.csv
 /results/evidence/task4/**/*.lock
 /results/runs.csv.lock

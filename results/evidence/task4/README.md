@@ -81,13 +81,17 @@ writes:
 The probe is untrained, so this run creates no checkpoint and no
 `results/runs.csv` row. All files have `scope=development`; the holdout remains
 sealed. Timing, build time, and peak RSS are measurements from one machine and
-may differ on another machine.
+may differ on another machine. The per-query metrics and timing samples are
+rebuildable local artifacts and stay outside Git; the summaries, costs, failure
+slices, examples, and report figures remain tracked.
 
 ## Frozen learned-model comparison
 
-Task 10 freezes the final development-only comparison:
+Task 10 freezes the final development-only comparison. The full learned
+packages and raw gallery timing samples are rebuildable local artifacts and
+stay outside Git:
 
-- `learned/*/manifest.json` contains the six final R1–R5/B1 evidence packages.
+- `learned/*/manifest.json` describes the six final R1–R5/B1 evidence packages.
   B1 is pretrained, comparison-only, and not eligible for submission.
 - `stability/*/stability_evidence.json` contains all five fresh folds for R5
   and all five for R3.
@@ -104,9 +108,10 @@ R5's learned `cost.json` keeps `v1` as a
 canonical final policy is teacher-only in
 `task9-final-gallery-decision.json`.
 
-`final/task4-final-comparison.json` is the compact final freeze. Its producer
-first validates the full sources above with the public strict validators. The
-notebook and report then validate this compact artifact before display.
+`final/task4-final-comparison.json` is the tracked compact final freeze. Its
+producer first validates the full local sources above with the public strict
+validators. The notebook and report then validate this compact artifact before
+display, including in a clean checkout without the raw source packages.
 `results/reports/task4-model-comparison.html` keeps the full HOG/fusion report
 and adds the final learned appendix. Failed and abandoned registry attempts
 remain visible. No holdout, quarantine, or official teacher-test image is part
