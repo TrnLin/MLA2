@@ -500,6 +500,10 @@ def run_task3_baseline_fold(
         raise ValueError("validation_fold must be one of 0,1,2,3,4")
     if child_spec is not None and child_spec.target != target:
         raise ValueError("child target and requested target disagree")
+    if getattr(child_spec, "name", None) == "gender_weight_decay_001":
+        from fashion.train.task3_gender_weight_decay import weight_decay_config
+
+        config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
     offload = bool(getattr(child_spec, "saved_tensors_on_cpu", False))
     gender_repair = getattr(child_spec, "name", None) == "gender_translation_mild_darkening"
     if gender_repair:
