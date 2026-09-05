@@ -30,11 +30,25 @@ PARENT_RUN_IDS = (
     "t3_gender_dropout_030_gender_smallcnngem3_f0_s2753_2ab5e633206b_20260905T111550Zce42ad",
     "t3_gender_dropout_030_gender_smallcnngem3_f4_s2753_2ab5e633206b_20260905T112541Z8145b5",
 )
+STRONGER_NAME = "gender_dropout_045_mild_darkening"
+DARKENING_RUN_IDS = (
+    "t3_gender_dropout_030_mild_darkening_gender_smallcnngem3_f0_s2753_cfbed3f0fed4_20260905T123721Z5d546f",
+    "t3_gender_dropout_030_mild_darkening_gender_smallcnngem3_f4_s2753_cfbed3f0fed4_20260905T124728Z7dfb12",
+)
+
+
+def _direct_parent_group(name):
+    if name == NAME:
+        return "Drop30", PARENT_RUN_IDS
+    if name == STRONGER_NAME:
+        return "Drop30Dark", DARKENING_RUN_IDS
+    raise ValueError("Unknown frozen dropout refinement")
 
 
 def dropout_darkening_config(spec, *, fold, device_name):
     """Keep full-width G2 controls; dropout and darkening live in the child spec."""
-    if spec.to_dict() != dataset_v2_spec(NAME, PARENT_RUN_IDS).to_dict():
+    _, parents = _direct_parent_group(spec.name)
+    if spec.to_dict() != dataset_v2_spec(spec.name, parents).to_dict():
         raise ValueError("Dropout plus darkening requires the frozen recipe and completed parents")
     if fold not in FOLDS or device_name != "cuda":
         raise ValueError("Dropout plus darkening requires CUDA and only folds 0 and 4")
@@ -63,8 +77,15 @@ def check_gender_dropout_darkening_sources(
     source_registry_path,
     precision_directory,
     root=ROOT,
+    darkening_directory=None,
+    experiment_name=NAME,
 ):
     """Check all saved evidence without fitting; failed research parents are allowed."""
+    _, parents = _direct_parent_group(experiment_name)
+    if experiment_name == STRONGER_NAME and darkening_directory is None:
+        raise ValueError("The completed 04aa darkening directory is required")
+    if experiment_name == NAME and darkening_directory is not None:
+        raise ValueError("The original 04aa recipe does not take darkening parents")
     sources, classes, parent_spec, evidence = check_gender_narrow_sources(
         g2_directory=g2_directory,
         e6_directory=e6_directory,
@@ -86,7 +107,58 @@ def check_gender_dropout_darkening_sources(
         _verify_training_evidence(run, parent_spec, sources["G2"][fold]["run_id"], evidence)
         run["directory"] = str(directory)
         sources["Drop30"][fold] = run
-    return sources, classes, dataset_v2_spec(NAME, PARENT_RUN_IDS), evidence
+    if experiment_name == STRONGER_NAME:
+        _add_completed_darkening_parents(
+            sources,
+            classes=classes,
+            evidence=evidence,
+            directory=darkening_directory,
+            registry=registry,
+            splits=splits,
+            root=root,
+        )
+    return sources, classes, dataset_v2_spec(experiment_name, parents), evidence
+
+
+def _add_completed_darkening_parents(
+    sources,
+    *,
+    classes,
+    evidence,
+    directory,
+    registry,
+    splits,
+    root,
+):
+    """Bind stronger dropout to both exact 04aa runs and their original source audit."""
+    directory = Path(directory)
+    audit = directory / "source_audit.json"
+    previous = json.loads(audit.read_text())["identity"]
+    spec = dataset_v2_spec(NAME, PARENT_RUN_IDS)
+    if _source_identity(sources, spec, evidence, previous["paths"], root=root) != previous:
+        raise ValueError("The completed 04aa source audit differs from the verified parents")
+    audit_sha256 = compute_sha256(audit)
+    direct = {}
+    for fold, run_id in zip(FOLDS, DARKENING_RUN_IDS, strict=True):
+        run = inspect_gender_run(
+            directory / run_id,
+            registry=registry,
+            splits=splits,
+            classes=classes,
+            root=root,
+        )
+        if run["fold"] != fold or run["run_id"] != run_id:
+            raise ValueError("Completed darkening parent is assigned to the wrong fold")
+        _verify_training_evidence(
+            run,
+            spec,
+            sources["Drop30"][fold]["run_id"],
+            evidence,
+            audit_sha256=audit_sha256,
+        )
+        run["directory"] = str(directory / run_id)
+        direct[fold] = run
+    sources["Drop30Dark"] = direct
 
 
 def _source_identity(sources, spec, evidence, paths, *, root):
@@ -101,7 +173,7 @@ def _source_identity(sources, spec, evidence, paths, *, root):
         "precision_evidence_sha256": evidence["artifact_sha256"],
         "split_sha256": compute_sha256(Path(root) / "data/processed/splits.csv"),
         "folds": list(FOLDS),
-        "rule_version": RULE_VERSION,
+        "rule_version": spec.to_dict()["screen_rule_version"],
         "training_precision": TRAINING_PRECISION,
         "comparison_precision": POLICY,
     }
@@ -140,14 +212,19 @@ def require_dropout_darkening_prerequisites(
     identity = json.loads(Path(path).read_text())["identity"]
     paths = identity["paths"]
     precision = require_narrow_prerequisites(paths["precision_directory"], root=root)
-    sources, _, checked_spec, evidence = check_gender_dropout_darkening_sources(**paths, root=root)
+    sources, _, checked_spec, evidence = check_gender_dropout_darkening_sources(
+        **paths,
+        root=root,
+        experiment_name=spec.name,
+    )
     if (
         checked_spec.to_dict() != spec.to_dict()
         or precision["artifact_sha256"] != evidence["artifact_sha256"]
         or _source_identity(sources, spec, evidence, paths, root=root) != identity
     ):
         raise ValueError("Dropout refinement prerequisite evidence changed")
-    parent = Path(sources["Drop30"][fold]["directory"])
+    parent_group, _ = _direct_parent_group(spec.name)
+    parent = Path(sources[parent_group][fold]["directory"])
     if (
         parent_run_directory is not None
         and Path(parent_run_directory).resolve() != parent.resolve()
@@ -248,6 +325,8 @@ def run_gender_dropout_darkening_screen(
     registry_mirrors=(),
     root=ROOT,
     device_name="cuda",
+    darkening_directory=None,
+    experiment_name=NAME,
 ):
     """Fit or verify two registered runs, evaluate matched references, and stop for review."""
     root, output_root = Path(root), Path(output_root)
@@ -258,7 +337,14 @@ def run_gender_dropout_darkening_screen(
         source_registry_path=source_registry_path,
         precision_directory=precision_directory,
     )
-    sources, classes, spec, evidence = check_gender_dropout_darkening_sources(**paths, root=root)
+    parent_group, _ = _direct_parent_group(experiment_name)
+    if darkening_directory is not None:
+        paths["darkening_directory"] = darkening_directory
+    sources, classes, spec, evidence = check_gender_dropout_darkening_sources(
+        **paths,
+        root=root,
+        experiment_name=experiment_name,
+    )
     dropout_darkening_config(spec, fold=0, device_name=device_name)
     require_narrow_prerequisites(precision_directory, root=root)
     destination = output_root / spec.artifact_dir / "gender"
@@ -271,7 +357,7 @@ def run_gender_dropout_darkening_screen(
     )
     audit_sha256 = compute_sha256(audit)
     splits = load_splits(root / "data/processed/splits.csv")
-    matched = {name: {} for name in ("G2", "E6", "Drop30")}
+    matched = {name: {} for name in ("G2", "E6", parent_group)}
 
     def evaluate(run):
         return evaluate_gender_ieee(
@@ -297,7 +383,7 @@ def run_gender_dropout_darkening_screen(
                 root=root,
                 device_name=device_name,
                 child_spec=spec,
-                parent_run_directory=sources["Drop30"][fold]["directory"],
+                parent_run_directory=sources[parent_group][fold]["directory"],
                 prerequisite_path=audit,
             )
         run = inspect_gender_run(
@@ -312,7 +398,7 @@ def run_gender_dropout_darkening_screen(
         _verify_training_evidence(
             run,
             spec,
-            sources["Drop30"][fold]["run_id"],
+            sources[parent_group][fold]["run_id"],
             evidence,
             audit_sha256=audit_sha256,
         )
@@ -328,10 +414,21 @@ def run_gender_dropout_darkening_screen(
             return stopped
         run["directory"] = result["run_dir"]
         child[fold] = evaluate(run)
-    report = evaluate_gender_narrow_screen(child, matched, classes, experiment_name=NAME)
+    report = evaluate_gender_narrow_screen(child, matched, classes, experiment_name=experiment_name)
     report["registry_and_artifact_integrity"] = True
     report["run_ids"] = {str(f): child[f]["run_id"] for f in FOLDS}
-    report["incremental_comparison"] = compare_with_dropout(child, matched["Drop30"], classes)
+    report["incremental_comparison"] = compare_with_dropout(child, matched[parent_group], classes)
+    if experiment_name == STRONGER_NAME:
+        report["direct_parent_comparison"] = {
+            "name": "Drop30Dark",
+            "classifier_dropout": 0.30,
+            "training_augmentation": spec.training_augmentation,
+            "run_ids": {str(f): matched[parent_group][f]["run_id"] for f in FOLDS},
+        }
+        report["incremental_comparison"]["comparison"] = (
+            "candidate minus matched IEEE Drop30Dark (dropout 0.30 plus mild darkening); "
+            "descriptive, no extra acceptance gates"
+        )
     _write_json(report, destination / "screen_decision.json")
     _write_json(report["incremental_comparison"], destination / "incremental_comparison.json")
     pd.DataFrame(report["folds"]).to_csv(destination / "clean_gap_comparison.csv", index=False)
