@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "images": 120,
+  "source_families": 109,
+  "numpy_batches": {
+    "train": {
+      "images": 96,
+      "batches": 6
+    },
+    "validation": {
+      "images": 24,
+      "batches": 2
+    }
+  },
+  "torch_dataloader_check": "not run: torch is not installed in .venv",
+  "statistics_recomputed": true,
+  "canonical_teacher_hashes_unchanged": true,
+  "model_fit_performed": false,
+  "scope": "Prepared images, source-only targets, partitions, statistics and CPU minibatches"
+}
