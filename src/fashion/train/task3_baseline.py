@@ -274,8 +274,13 @@ def _pass(
     optimizer: torch.optim.Optimizer | None = None,
     saved_tensors_on_cpu: bool = False,
     mixup=None,
+    sam=None,
 ) -> tuple[float, np.ndarray, np.ndarray, dict[str, list[Any]]]:
     training = optimizer is not None
+    if sam is not None and (
+        not training or mixup is None or sam.optimizer is not optimizer or sam.model is not model
+    ):
+        raise ValueError("SAM requires its own model and optimizer with training-only MixUp")
     if mixup is not None and (
         not training
         or type(criterion) is not nn.CrossEntropyLoss
@@ -312,7 +317,17 @@ def _pass(
             )
             with offload:
                 sample_weight = None
-                if isinstance(criterion, GenderAudienceAuxiliaryCrossEntropy):
+                if sam is not None:
+
+                    def closure():
+                        output = model(images)
+                        mixed_loss = mix_lambda * criterion(output, target) + (
+                            1.0 - mix_lambda
+                        ) * criterion(output, partner_target)
+                        return output, mixed_loss
+
+                    logits, loss = sam.step(closure, rows=len(target))
+                elif isinstance(criterion, GenderAudienceAuxiliaryCrossEntropy):
                     forward_with_auxiliary = getattr(model, "forward_with_auxiliary", None)
                     if not callable(forward_with_auxiliary):
                         raise ValueError("the auxiliary loss needs an auxiliary-head model")
@@ -320,7 +335,9 @@ def _pass(
                     loss = criterion(logits, audience_logits, target)
                 else:
                     logits = model(images)
-                if isinstance(criterion, SampleWeightedCrossEntropy):
+                if sam is not None:
+                    pass  # Both gradient passes and the single AdamW update are complete.
+                elif isinstance(criterion, SampleWeightedCrossEntropy):
                     if "sample_weight" not in batch:
                         raise ValueError("sample-weighted loss needs a sample_weight batch field")
                     sample_weight = batch["sample_weight"].to(device, non_blocking=True)
@@ -331,7 +348,7 @@ def _pass(
                         loss = mix_lambda * loss + (1.0 - mix_lambda) * criterion(
                             logits, partner_target
                         )
-            if training:
+            if training and sam is None:
                 loss.backward()
                 optimizer.step()
             rows = len(target)
@@ -536,8 +553,11 @@ def run_task3_baseline_fold(
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
     group_weight = getattr(child_spec, "name", None) == "gender_name_truth_article_weight_sqrt_cap3"
     stronger_mixup = getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha040"
-    use_mixup = stronger_mixup or (
-        getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020"
+    use_sam = getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020_sam005"
+    use_mixup = (
+        use_sam
+        or stronger_mixup
+        or (getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020")
     )
     expanded_usage = getattr(child_spec, "name", None) == "usage_expanded_e8"
     expanded_contract = None
@@ -547,7 +567,13 @@ def run_task3_baseline_fold(
         or (getattr(child_spec, "name", None) == "gender_name_truth_dropout_030_grayscale_010")
     )
     if use_mixup:
-        if stronger_mixup:
+        if use_sam:
+            from fashion.train.task3_gender_sam import (
+                require_sam_prerequisites as require_mixup_prerequisites,
+            )
+            from fashion.train.task3_gender_sam import sam_config as mixup_config
+            from fashion.train.task3_gender_sam import training_splits
+        elif stronger_mixup:
             from fashion.train.task3_gender_stronger_mixup import (
                 mixup40_config as mixup_config,
             )
@@ -859,6 +885,8 @@ def run_task3_baseline_fold(
         ].copy()
 
     config_payload = config.to_dict()
+    if use_sam:
+        config_payload["sam_policy"] = child_spec.to_dict()["sam_policy"]
     if expanded_contract is not None:
         config_payload["expanded_dataset"] = expanded_contract
     mixup = None
@@ -1042,6 +1070,11 @@ def run_task3_baseline_fold(
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay
     )
+    sam = None
+    if use_sam:
+        from fashion.train.sam import SAMStep
+
+        sam = SAMStep(model, optimizer)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer, T_max=config.epochs, eta_min=config.minimum_learning_rate
     )
@@ -1080,6 +1113,7 @@ def run_task3_baseline_fold(
     _log(f"registered {run_id}; the first optimiser step may now run")
 
     history: list[dict[str, object]] = []
+    clean_diagnostics = []
     checkpoint_policy = child_spec.checkpoint_policy if child_spec is not None else "final_epoch"
     early_stopping = None
     if checkpoint_policy == "best_validation_macro_f1":
@@ -1100,6 +1134,8 @@ def run_task3_baseline_fold(
             learning_rate = float(optimizer.param_groups[0]["lr"])
             if mixup is not None:
                 mixup.begin_epoch(epoch)
+            if sam is not None:
+                sam.begin_epoch(epoch)
             train_loss, train_labels, train_probabilities, _ = _pass(
                 model,
                 train_loader,
@@ -1108,10 +1144,14 @@ def run_task3_baseline_fold(
                 optimizer=optimizer,
                 saved_tensors_on_cpu=offload,
                 mixup=mixup,
+                sam=sam,
             )
             if mixup is not None:
                 mixup.end_epoch()
                 _json_dump(mixup.receipt(), run_dir / "mixup_training.json")
+            if sam is not None:
+                sam_epoch = sam.end_epoch(mixup.epochs[-1])
+                _json_dump(sam.receipt(), run_dir / "sam_training.json")
             validation_loss, validation_labels, validation_probabilities, _ = _pass(
                 model, validation_loader, evaluation_criterion, device
             )
@@ -1135,6 +1175,35 @@ def run_task3_baseline_fold(
             )
             if mixup is not None:
                 history[-1]["train_metric_scope"] = "not_applicable_mixed_inputs"
+            if sam is not None:
+                history[-1]["sam_second_loss"] = sam_epoch["second_loss"]
+                if epoch in config_payload["sam_policy"]["diagnostic_epochs"]:
+                    # Keep extra read-only diagnostics out of the training RNG stream.
+                    with torch.random.fork_rng(devices=sam.cuda_devices):
+                        clean_loader = _loader(
+                            Task3ImageDataset(training, **dataset_kwargs),
+                            config=config,
+                            shuffle=False,
+                            device=device,
+                        )
+                        _, clean_labels, clean_probabilities, _ = _pass(
+                            model, clean_loader, evaluation_criterion, device
+                        )
+                        del clean_loader
+                    clean_metrics = classification_metrics(
+                        clean_labels, clean_probabilities, classes
+                    )
+                    clean_diagnostics.append(
+                        {
+                            "epoch": epoch,
+                            "checkpoint_selection": "diagnostic_only",
+                            "clean_training": clean_metrics,
+                            "validation": validation_metrics,
+                            "gap": clean_metrics["macro_f1"] - validation_metrics["macro_f1"],
+                        }
+                    )
+                    _json_dump(clean_diagnostics, run_dir / "clean_epoch_diagnostics.json")
+                    history[-1]["clean_train_macro_f1"] = clean_metrics["macro_f1"]
             if early_stopping is not None and early_stopping.update(
                 epoch, float(validation_metrics["macro_f1"])
             ):
@@ -1249,6 +1318,11 @@ def run_task3_baseline_fold(
         metrics["sample_weight_strategy"] = sample_weight_strategy
         if mixup is not None:
             metrics["mixup_receipt_sha256"] = compute_sha256(run_dir / "mixup_training.json")
+        if sam is not None:
+            metrics["sam_receipt_sha256"] = compute_sha256(run_dir / "sam_training.json")
+            metrics["clean_epoch_diagnostics_sha256"] = compute_sha256(
+                run_dir / "clean_epoch_diagnostics.json"
+            )
         metrics["loss_name"] = loss_name
         metrics["training_selection_strategy"] = selection_strategy
         metrics["training_selection_contract"] = selection_metadata
