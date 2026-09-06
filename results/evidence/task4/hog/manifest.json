@@ -1,0 +1,112 @@
+{
+  "artifacts": {
+    "canvas_per_query": {
+      "bytes": 3633624,
+      "path": "results/evidence/task4/hog/canvas_per_query.csv",
+      "sha256": "b1bd0fa4d0d65893e42f275c96b5783d7c0bfc1993a4e6991d8b5d6711799f0e"
+    },
+    "canvas_summary": {
+      "bytes": 668,
+      "path": "results/evidence/task4/hog/canvas_summary.csv",
+      "sha256": "87f3beddc422cd4a2c0ddde9a6da7d98bd87d0baadbd71f7387ec56bd0b05c74"
+    },
+    "cost": {
+      "bytes": 7385,
+      "path": "results/evidence/task4/hog/cost.json",
+      "sha256": "bafbec467bfbf1a4206cd084a1e0e52175575aea663fe4a143426834cce28ad9"
+    },
+    "examples": {
+      "bytes": 8040,
+      "path": "results/evidence/task4/hog/examples.csv",
+      "sha256": "ad9d296bc913545123d15997d714f277fcb705a89973ad6b7f590ee4abff4a78"
+    },
+    "examples_figure": {
+      "bytes": 1403830,
+      "path": "results/figures/task4/hog/hog_examples.png",
+      "sha256": "f5f05cc6ac33f7280ffa72e83b68b6d9ad09d8765e3dfba82e5378ce540c6755"
+    },
+    "failure_slices": {
+      "bytes": 5734,
+      "path": "results/evidence/task4/hog/failure_slices.csv",
+      "sha256": "e9b8e24e97637f98404b5124057c86f53a50ab972154a54eda379c12f0b98601"
+    },
+    "quality_summary": {
+      "bytes": 42055,
+      "path": "results/evidence/task4/hog/quality_summary.csv",
+      "sha256": "dc6dac5297b24014cca623679ec5c49e8419d05b23cf0a4bb6cc624907d7cdc4"
+    },
+    "query_metrics": {
+      "bytes": 12600073,
+      "path": "results/evidence/task4/hog/query_metrics.csv",
+      "sha256": "3882d844f71d9f29a7b3d1de3bdb1a996438cb3cebeda59d04460f052bbbc9f4"
+    },
+    "timing_samples": {
+      "bytes": 4322289,
+      "path": "results/evidence/task4/hog/timing_samples.csv",
+      "sha256": "07aba693da47571d5a7cf940db930eb5d98ce1dd5148f3a13898e568fe7079f5"
+    },
+    "timing_summary": {
+      "bytes": 3835,
+      "path": "results/evidence/task4/hog/timing_summary.csv",
+      "sha256": "a5381b295bf9711d1096594e24aadf7107db0197132008c3270253fc335db699"
+    }
+  },
+  "checkpoint_sha256": null,
+  "descriptor_config": {
+    "block_size_cells": 2,
+    "block_stride_cells": 1,
+    "cell_size_pixels": 32,
+    "descriptor_dimension": 1728,
+    "gaussian_kernel": [
+      1,
+      4,
+      6,
+      4,
+      1
+    ],
+    "gaussian_kernel_normalizer": 16,
+    "grayscale": "rec709-luminance",
+    "input_height": 320,
+    "input_width": 240,
+    "l2_hys_clip": 0.2,
+    "mask_policy": "normalized-blur-and-valid-central-differences",
+    "schema_version": "1.0.0",
+    "unsigned_orientation_bins": 8,
+    "zero_gradient_policy": "canonical-unit-sentinel"
+  },
+  "descriptor_fingerprint": "c4604537474ff5ed8889a9e480053b225064fb20027e147582960bb3afd3a848",
+  "fold": 1,
+  "gates": {
+    "index_under_one_gibibyte": true,
+    "p95_end_to_end_under_one_second": true
+  },
+  "holdout_opened": false,
+  "method": "hog-luma-g5-u8-c32-b2-s1-l2hys02-v1",
+  "preprocessing_contract": {
+    "colour_mode": "RGB",
+    "height": 320,
+    "pad_color": [
+      255,
+      255,
+      255
+    ],
+    "resample": "LANCZOS",
+    "resize": "aspect_preserving_letterbox",
+    "width": 240
+  },
+  "quarantine_opened": false,
+  "registry_appended": false,
+  "schema_version": "1.0.0",
+  "scope": "development",
+  "source_identity": {
+    "teacher": {
+      "image_cache_manifest_sha256": "3764e0549e9bafd23d950c29c50a948f8cc1adec2ed4cea1357f2cc3b48433b3",
+      "source_fingerprint": "9537d2dc78a30b3bd1f6fb61c9cf7fc1c55d1ff03cbdd8b50a03df1c1c72b8a0"
+    },
+    "v1": {
+      "image_cache_manifest_sha256": "b82c3e3d96a03e919c589cc27745c1dab655649e6300177d003324c62f1218fc",
+      "source_fingerprint": "2d03079c521908b802d95a5bf7f8f57e5a16759a27cb781456fe42fed91f0f84"
+    }
+  },
+  "split_fingerprint": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd"
+}

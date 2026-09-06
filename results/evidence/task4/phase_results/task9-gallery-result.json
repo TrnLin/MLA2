@@ -1,0 +1,64 @@
+{
+  "candidate": "",
+  "config_artifact_run_ids": [
+    "task4-benchmark-b1-task9-preexec",
+    "task4-candidate-r1-task9-retry2",
+    "task4-candidate-r2-task9-retry2",
+    "task4-candidate-r3-task9-preexec",
+    "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-0",
+    "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-1",
+    "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-3",
+    "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-4",
+    "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a2-fold-2",
+    "task4-candidate-r4-task9-preexec",
+    "task4-candidate-r5-task9-preexec",
+    "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-0",
+    "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-2",
+    "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-3",
+    "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-4",
+    "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a2-fold-1"
+  ],
+  "dry_run": false,
+  "gate": {
+    "budget_gpu_hours": 98.0,
+    "decision": "passed",
+    "fits_budget": true,
+    "path": "results/evidence/task4/model_comparison_budget_gate.json",
+    "selected_device": "cuda:0",
+    "selected_estimated_full_matrix_gpu_hours": 97.72401394494065,
+    "sha256": "a44206598e7a2dfc0e20d55725b82b78c620ba39c12b8a9ddd8dcf0ac4e75d2e"
+  },
+  "manifest": "",
+  "matrix_status": "resolved",
+  "phase": "gallery",
+  "phase_request": "results/evidence/task4/phase_requests/task9-gallery-request.json",
+  "phase_result": {
+    "candidate_cost_policy": {
+      "path": "results/evidence/task4/learned/task4-candidate-r5-task9-preexec/cost.json",
+      "policy": "v1",
+      "role": "pre_study_cost_assumption",
+      "sha256": "4331fedde2674226141a6522c9f5e106daa969c07464a045d700a39ad8186129"
+    },
+    "deployment_winner": "task4-candidate-r5-task9-preexec",
+    "final_decision": {
+      "path": "/localhome/local-lintran/MLA2/results/evidence/task4/phase_results/task9-final-gallery-decision.json",
+      "policy": "teacher",
+      "sha256": "5c8fd3b7c188a9b5f0df6d93a6f219b9e95181ca622ad2dca2022c818aceae31",
+      "source": "three_policy_development_study"
+    },
+    "selected_gallery": "teacher",
+    "selected_gallery_index_bytes": 17041960,
+    "selected_gallery_p95_seconds": 0.1220367405
+  },
+  "resolved_candidates": [
+    "B1",
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5"
+  ],
+  "restartable": true,
+  "run_id": "",
+  "schema_version": 1
+}

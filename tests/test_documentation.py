@@ -3,6 +3,8 @@ from __future__ import annotations
 import ast
 import subprocess
 
+import nbformat
+
 from fashion.config import ROOT
 from fashion.data.pipeline import _BASE_ARTIFACTS, CACHE_FILENAME
 
@@ -59,12 +61,125 @@ def test_assignment_breakdown_lists_the_canonical_notebooks() -> None:
         "02_task1_article_type.ipynb",
         "03_task2_season.ipynb",
         "04_task3_gender_usage.ipynb",
+        "01_v1_eda.ipynb",
         "05_task4_visual_search.ipynb",
         "06_final_evaluation.ipynb",
     ):
         assert name in document
     for fixed_metric in ("Macro-F1", "nDCG@5", "Recall@5"):
         assert fixed_metric not in document
+
+
+def test_task4_preprocessing_decision_and_progress_are_frozen() -> None:
+    decision_index = (ROOT / "docs/decisions/README.md").read_text(encoding="utf-8")
+    old_decision = (
+        ROOT / "docs/decisions/0020-task4-image-preprocessing.md"
+    ).read_text(encoding="utf-8")
+    decision = (
+        ROOT / "docs/decisions/0021-task4-high-resolution-input.md"
+    ).read_text(encoding="utf-8")
+    progress = (ROOT / "notebooks/task-4/PROGRESS.md").read_text(encoding="utf-8")
+    evidence_readme = (
+        ROOT / "results/evidence/task4/README.md"
+    ).read_text(encoding="utf-8")
+    figure_readme = (
+        ROOT / "results/figures/task4/README.md"
+    ).read_text(encoding="utf-8")
+    open_decisions = (ROOT / "docs/reviews/open_decisions.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "0021-task4-high-resolution-input.md" in decision_index
+    assert "- Status: Accepted; size choice superseded by 0021" in old_decision
+    assert "- Status: Accepted" in decision
+    assert "- Supersedes: size choice in 0020" in decision
+    assert "holdout" in decision.lower() and "sealed" in decision.lower()
+    assert "240×320" in decision
+    assert "96×128" in decision and "probe" in decision.lower()
+    assert "Decision: `240×320`" in progress
+    for completed in (
+        "- [x] Compare useful image sizes",
+        "- [x] Choose resize, padding, and colour handling",
+        "- [x] Define arbitrary query-image handling",
+        "- [x] Fit any learned image values on training folds only",
+    ):
+        assert completed in progress
+    for artifact in (
+        "preprocessing_comparison.csv",
+        "preprocessing_size_selection.csv",
+        "preprocessing_stability.csv",
+        "preprocessing_robustness.csv",
+        "preprocessing_contract.json",
+        "preprocessing_normalization_fold1.json",
+    ):
+        assert artifact in evidence_readme
+    assert "preprocessing_comparison.png" in figure_readme
+    assert "scripts/task4/run_preprocessing.py" in evidence_readme
+    assert "scripts/task4/run_preprocessing.py" in figure_readme
+    assert "addition to ADR 0019" in old_decision
+    assert "does not reopen" in old_decision
+    assert "arbitrary-query image policy" not in open_decisions
+
+
+def test_task4_baseline_decision_and_handoffs_are_frozen() -> None:
+    decision_index = (ROOT / "docs/decisions/README.md").read_text(encoding="utf-8")
+    decision = (
+        ROOT / "docs/decisions/0022-task4-baseline-search.md"
+    ).read_text(encoding="utf-8")
+    package_readme = (ROOT / "src/fashion/README.md").read_text(encoding="utf-8")
+    scripts_readme = (ROOT / "scripts/README.md").read_text(encoding="utf-8")
+    evidence_readme = (
+        ROOT / "results/evidence/task4/README.md"
+    ).read_text(encoding="utf-8")
+    figure_readme = (
+        ROOT / "results/figures/task4/README.md"
+    ).read_text(encoding="utf-8")
+    plan = (
+        ROOT / "docs/superpowers/plans/2026-08-27-task4-baseline-search.md"
+    ).read_text(encoding="utf-8")
+
+    assert "0022-task4-baseline-search.md" in decision_index
+    assert "- Status: Accepted" in decision
+    assert "spatial-hsv-edge-4x4-v2" in decision
+    assert "0.94250242" in decision
+    assert "rejected" in decision.lower()
+    assert "1e-5" in decision
+    assert "fashion.task4" in package_readme
+    assert "fashion.retrieval" in package_readme
+    for runner in (
+        "scripts/task4/run_preprocessing.py",
+        "scripts/task4/run_baseline.py",
+    ):
+        assert runner in scripts_readme
+        assert runner in evidence_readme
+    for artifact in (
+        "baseline_summary.csv",
+        "baseline_query_metrics.csv",
+        "baseline_failure_slices.csv",
+        "baseline_timing.csv",
+        "baseline_cost.json",
+        "baseline_examples.csv",
+    ):
+        assert artifact in evidence_readme
+    assert "baseline_examples.png" in figure_readme
+    assert "5e-8" not in plan
+    assert "1e-5" in plan
+    notebooks = [
+        nbformat.read(ROOT / "notebooks/task-4" / filename, as_version=4)
+        for filename in ("01_v1_eda.ipynb", "05_task4_visual_search.ipynb")
+    ]
+    code_sources = [
+        "\n".join(
+            cell.source for cell in notebook.cells if cell.cell_type == "code"
+        )
+        for notebook in notebooks
+    ]
+    assert all("fashion.retrieval" not in source for source in code_sources)
+    main_source = "\n".join(cell.source for cell in notebooks[1].cells)
+    assert (
+        "Model quality remains unknown until the baseline and learned search methods are run."
+        not in main_source
+    )
 
 
 def test_locked_setup_and_single_split_rule_are_documented() -> None:
@@ -110,6 +225,7 @@ def test_delivered_prepared_cache_is_not_ignored() -> None:
 def test_runtime_code_cannot_read_or_unseal_the_protected_split_directly() -> None:
     runtime_files = [
         *sorted((ROOT / "src/fashion/eda").rglob("*.py")),
+        *sorted((ROOT / "src/fashion/task4").rglob("*.py")),
         *sorted((ROOT / "src/fashion/retrieval").rglob("*.py")),
     ]
     for optional in (ROOT / "src/fashion/models", ROOT / "src/fashion/train"):

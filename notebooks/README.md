@@ -11,11 +11,11 @@ Notebooks tell the investigation story. Reusable code lives in `src/fashion/`.
 | 02 | `02_task1_article_type.ipynb` | planning scaffold | article-type comparisons and judgement |
 | 03 | `03_task2_season.ipynb` | complete and executed | season comparisons and judgement replayed from frozen evidence |
 | 04 | `04_task3_gender_usage.ipynb` | planning scaffold | separate gender and usage outputs |
-| 05 | `05_task4_visual_search.ipynb` | planning scaffold | Top-K search choices and comparisons |
+| 05a | `task-4/01_v1_eda.ipynb` | complete and executed | V1 provenance, geometry, and paired-image audit |
+| 05b | `task-4/05_task4_visual_search.ipynb` | baseline complete; model work open | Top-K search choices and comparisons |
 | 06 | `06_final_evaluation.ipynb` | locked scaffold | one holdout evaluation and ultimate judgement |
 
-Notebooks 02, 04, 05, and 06 remain Markdown-only planning or locked scaffolds. They
-make no model, metric, loss, sampler, transform, or Task 4 protocol choice. Each
+Notebooks 02, 04, and 06 remain Markdown-only planning or locked scaffolds. Each
 `TODO(owner)` belongs to the task owner.
 
 Notebook 03 is the completed Task 2 report notebook. It contains one code cell per leaf
@@ -26,6 +26,10 @@ artifact stops the notebook instead of starting a new run. Git-tracked SHA-256 l
 the replay roots and loose figures. Fold-0 preprocessing uses the already-frozen statistics,
 so it cannot fit or write a cache. Reusable implementations still belong in `src/fashion/`;
 the notebook only checks evidence and explains each output.
+
+The Task 4 EDA contains audit code only. The main Task 4 notebook has frozen its
+protocol, preprocessing, and untrained baseline from development evidence.
+Learned-model and final-winner choices remain open.
 
 ## Shared rules
 

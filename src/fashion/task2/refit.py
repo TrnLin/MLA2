@@ -56,7 +56,9 @@ from fashion.train.multitask import (
     train_masked_multitask_refit,
 )
 from fashion.train.registry import (
-    RUN_COLUMNS,
+    TASK2_RUN_COLUMNS as RUN_COLUMNS,
+)
+from fashion.train.registry import (
     RunRecord,
     RunRegistry,
     new_run_id,

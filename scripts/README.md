@@ -97,3 +97,16 @@ for both primary-seed finalists. It restores only each row's matching validation
 checkpoint, reconciles the raw OOF probabilities, and writes two contact sheets plus
 non-causal attention and failure tables. Metadata is review context only. Holdout stays
 sealed, and this command does not change or freeze the candidate.
+
+## Task 4 preprocessing and baseline runners
+
+Task 4 has two thin runners:
+
+```bash
+./.venv/bin/python scripts/task4/run_preprocessing.py
+./.venv/bin/python scripts/task4/run_baseline.py
+```
+
+The first rebuilds development-only preprocessing evidence. The second rebuilds
+the frozen untrained baseline evidence. Reusable work lives in `fashion.task4`;
+the scripts only parse arguments and call that package.

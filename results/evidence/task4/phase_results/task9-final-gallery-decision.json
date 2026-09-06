@@ -1,0 +1,60 @@
+{
+  "artifact_type": "task4_final_gallery_decision",
+  "candidate_cost_policy": {
+    "path": "results/evidence/task4/learned/task4-candidate-r5-task9-preexec/cost.json",
+    "policy": "v1",
+    "role": "pre_study_cost_assumption",
+    "sha256": "4331fedde2674226141a6522c9f5e106daa969c07464a045d700a39ad8186129"
+  },
+  "candidate_manifest": {
+    "path": "results/evidence/task4/learned/task4-candidate-r5-task9-preexec/manifest.json",
+    "sha256": "3e186ef13907b91df98bbad3bd04f731ae450a9ea8ab59dd897c082f29b7b9eb"
+  },
+  "decision_sha256": "99e97214ec181793f32facb6be6aae92660f08bd8298e01668424441f35a625c",
+  "deployment_decision": {
+    "method": "R5",
+    "run_id": "task4-candidate-r5-task9-preexec",
+    "sha256": "5ec61ace41c6da454a47edd053fac19f92b1509c174437ff0d5951ba2cbf8ee6"
+  },
+  "development_only": true,
+  "final_policy": {
+    "index_bytes": 17041960,
+    "p95_end_to_end_seconds": 0.1220367405,
+    "policy": "teacher",
+    "quality_at_10": 0.5029756263849006,
+    "query_normalization_source": "teacher",
+    "source": "three_policy_development_study"
+  },
+  "holdout_opened": false,
+  "official_teacher_test_opened": false,
+  "policies": [
+    {
+      "index_bytes": 17041960,
+      "p95_end_to_end_seconds": 0.1220367405,
+      "policy": "teacher",
+      "quality_at_10": 0.5029756263849006,
+      "query_normalization_source": "teacher"
+    },
+    {
+      "index_bytes": 17041960,
+      "p95_end_to_end_seconds": 0.1222021085,
+      "policy": "v1",
+      "quality_at_10": 0.5027202014047387,
+      "query_normalization_source": "v1"
+    },
+    {
+      "index_bytes": 34083920,
+      "p95_end_to_end_seconds": 0.20630940805,
+      "policy": "two_view",
+      "quality_at_10": 0.5028313756039005,
+      "query_normalization_source": "v1"
+    }
+  ],
+  "producer": "fashion.task4.experiments.write_final_gallery_decision_artifact",
+  "quarantine_opened": false,
+  "schema_version": 1,
+  "timing_artifact": {
+    "path": "/localhome/local-lintran/MLA2/results/evidence/task4/phase_results/gallery_policy_timing.json",
+    "sha256": "4d2343ceb7961ca6a8aa6994a6de4b8397be82552020b9141f7068cd8d4fb02b"
+  }
+}
