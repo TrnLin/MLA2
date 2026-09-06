@@ -1,0 +1,42 @@
+{
+  "prepared_on": "2026-09-05",
+  "status": "planned_data_intake_only_not_executed_or_training_ready",
+  "purpose": "Bound a possible separate source-tag learning pilot; do not replace teacher Usage labels",
+  "source": "PromptCloudHQ/flipkart-products",
+  "source_version": 1,
+  "source_archive_sha256": "54a91fcd0b3d1923e3adb52c27e4dde557a7cd948dba066e3cb5bca542da1b9f",
+  "input_candidates": "deduplicated_candidates.csv",
+  "source_labels": ["Casual", "Formal", "Party"],
+  "maximum_usable_images_per_label": 150,
+  "minimum_usable_metadata_groups_per_label": 100,
+  "maximum_usable_images_total": 450,
+  "download_cap_bytes": 500000000,
+  "maximum_products_to_attempt": 650,
+  "maximum_image_bytes": 2097152,
+  "maximum_workers": 4,
+  "selection_order": "Within each source label, ascending SHA256 of '2753:' plus source_id; one existing metadata-group representative; retain the first N usable rows per label where N=min(150, usable counts of all three labels). No selection by model scores or manual image labels.",
+  "image_access": "Reuse verified cached images; first source-listed URL; at most one HTTP-to-HTTPS scheme change; no guessed CDN paths, access bypass, or unofficial copies",
+  "required_exclusions": [
+    "Failed response, invalid image, or explicit source constraints incompatible with the intended use",
+    "Exact-byte or decoded-image duplicates within the selected source subset",
+    "All-role teacher exact and established near-duplicate matches, including development, holdout, quarantine and prediction",
+    "Source metadata groups linked to excluded overlaps",
+    "Known conflicting occasion sets or accepted type assignments within metadata groups"
+  ],
+  "source_rights_record": "Preserve PromptCloud's CC BY-SA 4.0 dataset declaration, attribution, source URLs, hashes and changes; document the basis and limits for the actual image use. Current release metadata alone does not establish blanket photo redistribution rights.",
+  "stop_conditions": [
+    "Any label has fewer than 100 retained groups after bounded access and duplicate checks",
+    "Download or product-attempt cap reached before minimum counts",
+    "Canonical split or source hashes change unexpectedly"
+  ],
+  "teacher_contract": {
+    "split": "data/processed/splits.csv",
+    "split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+    "teacher_labels_changed": false,
+    "protected_targets_read": false,
+    "submitted_models_from_scratch": true,
+    "every_fit_registered": true
+  },
+  "training_recipe_status": "Not fixed in this metadata audit. Before fitting, define the teacher-only control and separate source-head treatment, matched teacher exposure and optimiser steps, resource limits, canonical fold screen and all-nine-class evaluation. Record the task-specific external-data contract extension.",
+  "human_image_annotation_required": false
+}
