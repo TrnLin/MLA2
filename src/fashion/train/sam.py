@@ -31,12 +31,21 @@ def policy_for_epochs(epochs=30):
     return policy
 
 
+def usage_policy():
+    """Keep the two-pass SAM mechanics for the weighted Usage loss."""
+    return dict(
+        policy_for_epochs(30),
+        version="usage_sam005_weighted_adamw_v1",
+        gradient="mixed class-weighted cross-entropy before weight decay",
+    )
+
+
 class SAMStep:
     """Own the two backward passes; leave scheduling on the original AdamW."""
 
     def __init__(self, model, optimizer, *, policy=None):
         policy = policy_for_epochs() if policy is None else policy
-        if policy not in (policy_for_epochs(25), policy_for_epochs(30)):
+        if policy not in (policy_for_epochs(25), policy_for_epochs(30), usage_policy()):
             raise ValueError("SAM policy differs from the frozen trials")
         self.policy = copy.deepcopy(policy)
         if type(optimizer) is not torch.optim.AdamW:
@@ -76,6 +85,8 @@ class SAMStep:
             gradient_norm_min=math.inf,
             gradient_norm_max=0.0,
         )
+        if self.policy == usage_policy():
+            self.current["loss_denominator_sum"] = 0.0
 
     @staticmethod
     def _restore(values, originals):
@@ -97,9 +108,15 @@ class SAMStep:
             raise FloatingPointError("SAM encountered a non-finite gradient norm")
         return logits.detach(), loss.detach(), norm
 
-    def step(self, closure, *, rows):
+    def step(self, closure, *, rows, loss_denominator=None):
         if self.current is None or not self.model.training or rows <= 0:
             raise ValueError("SAM requires an active training epoch and a nonempty batch")
+        weighted = self.policy == usage_policy()
+        if weighted != (loss_denominator is not None):
+            raise ValueError("Usage SAM requires the weighted-loss denominator for this batch")
+        denominator = float(loss_denominator) if weighted else float(rows)
+        if not math.isfinite(denominator) or denominator <= 0:
+            raise ValueError("SAM loss denominator must be finite and positive")
         originals = [p.detach().clone() for p in self.parameters]
         initial_buffers = [b.clone() for b in self.buffers]
         cpu_rng = torch.get_rng_state()
@@ -133,8 +150,10 @@ class SAMStep:
         stats["batches"] += 1
         stats["forward_backward_passes"] += 2
         stats["optimizer_steps"] += 1
-        stats["first_loss_sum"] += float(first_loss) * rows
-        stats["second_loss_sum"] += float(second_loss) * rows
+        stats["first_loss_sum"] += float(first_loss) * denominator
+        stats["second_loss_sum"] += float(second_loss) * denominator
+        if weighted:
+            stats["loss_denominator_sum"] += denominator
         stats["gradient_norm_min"] = min(stats["gradient_norm_min"], float(norm))
         stats["gradient_norm_max"] = max(stats["gradient_norm_max"], float(norm))
         return logits, first_loss
@@ -146,7 +165,9 @@ class SAMStep:
             raise ValueError("SAM and MixUp batch coverage disagree")
         stats = dict(self.current)
         for name in ("first", "second"):
-            stats[name + "_loss"] = stats.pop(name + "_loss_sum") / stats["rows"]
+            stats[name + "_loss"] = stats.pop(name + "_loss_sum") / stats.get(
+                "loss_denominator_sum", stats["rows"]
+            )
         self.epochs.append(stats)
         self.current = None
         return stats
