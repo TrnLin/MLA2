@@ -1,0 +1,10 @@
+{
+  "validation_rows": 13110,
+  "parent_errors": 1196,
+  "weighted_errors": 1262,
+  "recovered": 218,
+  "newly_wrong": 284,
+  "persistent_errors": 978,
+  "high_confidence_errors": 244,
+  "high_confidence_rows": 9943
+}
