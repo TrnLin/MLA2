@@ -56,7 +56,52 @@ their own fixtures; no source checkout or remote asset store is changed.
   after 7 minutes 44 seconds. This was not a full-suite pass; later tests were
   not reached. No checkpoint was rebuilt to satisfy that test.
 
-Checks used the existing `./.venv/bin/python`; no dependency reinstall or
-training was performed.
+The earlier passing runs used the existing `./.venv/bin/python` with
+`PYTHONPATH=src:/tmp/mla2-mixup-torch`. The extra directory contains a real
+PyTorch 2.11.0+cpu installation, including its compiled CPython 3.14 extension;
+it is not installed in the base virtual environment. No dependency reinstall
+or training was performed during integration.
 The test environment is Python 3.14.7, NumPy 2.5.2, pandas 3.0.5 and SciPy
 1.16.3. A fresh install with main's SciPy 1.18.1 pin has not been tested here.
+
+## Registry ownership correction
+
+The initial merge still let Task 2 interrupt a running Task 3 row and let
+Task 4 append a row labelled Task 3. The earlier test attempted interruption
+only after completion and therefore missed the running-row bug.
+
+Task 2 read, append, finalize and interrupt now require `task2` ownership.
+Task 4 validation again requires exactly `task4`. New regressions exercise
+the running Task 3 case with a mirror and verify that neither CSV changes.
+They also check Task 2 append/finalize with wrong task labels and Task 4
+append with wrong labels against both missing and existing files. Nine of
+these cases failed before the fix; all 13 now pass. Existing legitimate
+Task 2 lifecycle and Task 4 checks remain enabled.
+
+Current validation, each in a fresh process from the repository root:
+
+```bash
+PYTHONPATH=src FASHION_PROJECT_ROOT="$PWD" ./.venv/bin/python -m pytest tests/train/test_registry.py tests/train/test_metrics.py tests/test_documentation.py tests/test_task3_frozen_sources.py tests/test_task3_layout.py -q
+```
+
+This base-environment command gives **116 passed, 4 failed**. All four failures
+are `ModuleNotFoundError: torch`: the parent Torch-module preservation test,
+both tracked-run lifecycle tests, and the duplicate/final-rewrite test.
+No test was skipped, weakened or supplied with a fake dependency.
+
+```bash
+PYTHONPATH=src:/tmp/mla2-mixup-torch FASHION_PROJECT_ROOT="$PWD" ./.venv/bin/python -m pytest tests/train/test_registry.py -q
+PYTHONPATH=src:/tmp/mla2-mixup-torch FASHION_PROJECT_ROOT="$PWD" ./.venv/bin/python -m pytest tests/train/test_registry.py tests/train/test_metrics.py tests/test_documentation.py tests/test_task3_frozen_sources.py tests/test_task3_layout.py -q
+```
+
+With the separate real Torch installation, the independent registry run gives
+**69 passed** and the focused suite gives **120 passed**. Its import path was
+verified as `/tmp/mla2-mixup-torch/torch/__init__.py`, with native extension
+`torch/_C.cpython-314-x86_64-linux-gnu.so`; a tensor sum also succeeded.
+This temporary dependency path is local test setup, not a portable installation
+instruction or evidence that main's Torch 2.13.0 pin was tested.
+
+Ruff and the focused diff check pass. The unchanged E1 manifest still verifies
+all 38 frozen references and both separately pinned current scripts. No
+training, model inference, registry-data changes or private checkpoint rebuild
+was performed for this correction.
