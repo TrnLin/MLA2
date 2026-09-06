@@ -66,7 +66,7 @@ def _normalise_manifest_frame(frame: pd.DataFrame) -> pd.DataFrame:
 
 def load_manifest(path: str | Path = SPLITS_CSV) -> pd.DataFrame:
     """Load a manifest, always redacting targets in protected partitions."""
-    frame = _normalise_manifest_frame(pd.read_csv(path, keep_default_na=False))
+    frame = _normalise_manifest_frame(pd.read_csv(path, keep_default_na=False, low_memory=False))
     if "partition" in frame:
         validate_splits(frame)
     return _redact_protected_targets(frame)
