@@ -1,0 +1,922 @@
+{
+  "registry_source": "https://drive.google.com/file/d/1wk8EvVnhkSqCHqUgSqkQKV5Wft54SUqr/view",
+  "registry_modified": "2026-09-06T12:15:48.239Z",
+  "baseline_selection": "Use the completed five-fold 2026-08-30 baseline pack; exclude the earlier superseded fold-0 run.",
+  "stages": {
+    "baseline": {
+      "label": "E1 \u00b7 SmallCNN",
+      "experiment_id": "t3_primary_baseline_smallcnn",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_baseline_gender_smallcnn_f0_s2753_e46cd00adf0a_20260830T082833Zf8c1e0",
+        "t3_baseline_gender_smallcnn_f1_s2753_e46cd00adf0a_20260830T083708Z143950",
+        "t3_baseline_gender_smallcnn_f2_s2753_e46cd00adf0a_20260830T084548Z5acbf0",
+        "t3_baseline_gender_smallcnn_f3_s2753_e46cd00adf0a_20260830T085427Z5d34f9",
+        "t3_baseline_gender_smallcnn_f4_s2753_e46cd00adf0a_20260830T090303Z41a843"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/baseline/gender/t3_baseline_gender_smallcnn_f0_s2753_e46cd00adf0a_20260830T082833Zf8c1e0/robustness.csv",
+        "results/evidence/task3/baseline/gender/t3_baseline_gender_smallcnn_f1_s2753_e46cd00adf0a_20260830T083708Z143950/robustness.csv",
+        "results/evidence/task3/baseline/gender/t3_baseline_gender_smallcnn_f2_s2753_e46cd00adf0a_20260830T084548Z5acbf0/robustness.csv",
+        "results/evidence/task3/baseline/gender/t3_baseline_gender_smallcnn_f3_s2753_e46cd00adf0a_20260830T085427Z5d34f9/robustness.csv",
+        "results/evidence/task3/baseline/gender/t3_baseline_gender_smallcnn_f4_s2753_e46cd00adf0a_20260830T090303Z41a843/robustness.csv"
+      ]
+    },
+    "brightness": {
+      "label": "E2 \u00b7 Brightness",
+      "experiment_id": "t3_gender_brightness_smallcnn",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_e2_brightness_gender_smallcnn_f0_s2753_579e2041b18e_20260830T111456Z3548b3",
+        "t3_gender_e2_brightness_gender_smallcnn_f1_s2753_579e2041b18e_20260830T112330Z3f360b",
+        "t3_gender_e2_brightness_gender_smallcnn_f2_s2753_579e2041b18e_20260830T113207Z867b25",
+        "t3_gender_e2_brightness_gender_smallcnn_f3_s2753_579e2041b18e_20260830T114049Z0fd6c0",
+        "t3_gender_e2_brightness_gender_smallcnn_f4_s2753_579e2041b18e_20260830T114932Z5f5682"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_gender_e2_brightness/gender/t3_gender_e2_brightness_gender_smallcnn_f0_s2753_579e2041b18e_20260830T111456Z3548b3/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e2_brightness/gender/t3_gender_e2_brightness_gender_smallcnn_f1_s2753_579e2041b18e_20260830T112330Z3f360b/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e2_brightness/gender/t3_gender_e2_brightness_gender_smallcnn_f2_s2753_579e2041b18e_20260830T113207Z867b25/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e2_brightness/gender/t3_gender_e2_brightness_gender_smallcnn_f3_s2753_579e2041b18e_20260830T114049Z0fd6c0/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e2_brightness/gender/t3_gender_e2_brightness_gender_smallcnn_f4_s2753_579e2041b18e_20260830T114932Z5f5682/robustness.csv"
+      ]
+    },
+    "balance": {
+      "label": "E3 \u00b7 Class weights",
+      "experiment_id": "t3_gender_class_balanced_smallcnn",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_e3_class_balanced_ce_gender_smallcnn_f0_s2753_5505bf0b6c74_20260830T143830Z3e324b",
+        "t3_gender_e3_class_balanced_ce_gender_smallcnn_f1_s2753_5505bf0b6c74_20260830T144710Z7eca8a",
+        "t3_gender_e3_class_balanced_ce_gender_smallcnn_f2_s2753_5505bf0b6c74_20260830T145555Z083177",
+        "t3_gender_e3_class_balanced_ce_gender_smallcnn_f3_s2753_5505bf0b6c74_20260830T150442Z0f9ad7",
+        "t3_gender_e3_class_balanced_ce_gender_smallcnn_f4_s2753_5505bf0b6c74_20260830T151330Z474944"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_gender_e3_class_balanced_ce/gender/t3_gender_e3_class_balanced_ce_gender_smallcnn_f0_s2753_5505bf0b6c74_20260830T143830Z3e324b/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e3_class_balanced_ce/gender/t3_gender_e3_class_balanced_ce_gender_smallcnn_f1_s2753_5505bf0b6c74_20260830T144710Z7eca8a/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e3_class_balanced_ce/gender/t3_gender_e3_class_balanced_ce_gender_smallcnn_f2_s2753_5505bf0b6c74_20260830T145555Z083177/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e3_class_balanced_ce/gender/t3_gender_e3_class_balanced_ce_gender_smallcnn_f3_s2753_5505bf0b6c74_20260830T150442Z0f9ad7/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e3_class_balanced_ce/gender/t3_gender_e3_class_balanced_ce_gender_smallcnn_f4_s2753_5505bf0b6c74_20260830T151330Z474944/robustness.csv"
+      ]
+    },
+    "resnet": {
+      "label": "E4 \u00b7 TinyResNet",
+      "experiment_id": "t3_gender_tinyresnet18_pm",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_e4_tinyresnet18_pm_gender_tinyresnet18pm_f0_s2753_561cdaebd672_20260831T024815Z283844",
+        "t3_gender_e4_tinyresnet18_pm_gender_tinyresnet18pm_f1_s2753_561cdaebd672_20260831T025651Z0a7819",
+        "t3_gender_e4_tinyresnet18_pm_gender_tinyresnet18pm_f2_s2753_561cdaebd672_20260831T030526Z4d4fab",
+        "t3_gender_e4_tinyresnet18_pm_gender_tinyresnet18pm_f3_s2753_561cdaebd672_20260831T031408Zb77db2",
+        "t3_gender_e4_tinyresnet18_pm_gender_tinyresnet18pm_f4_s2753_561cdaebd672_20260831T032249Z808172"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_gender_e4_tinyresnet18_pm/gender/t3_gender_e4_tinyresnet18_pm_gender_tinyresnet18pm_f0_s2753_561cdaebd672_20260831T024815Z283844/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e4_tinyresnet18_pm/gender/t3_gender_e4_tinyresnet18_pm_gender_tinyresnet18pm_f1_s2753_561cdaebd672_20260831T025651Z0a7819/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e4_tinyresnet18_pm/gender/t3_gender_e4_tinyresnet18_pm_gender_tinyresnet18pm_f2_s2753_561cdaebd672_20260831T030526Z4d4fab/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e4_tinyresnet18_pm/gender/t3_gender_e4_tinyresnet18_pm_gender_tinyresnet18pm_f3_s2753_561cdaebd672_20260831T031408Zb77db2/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e4_tinyresnet18_pm/gender/t3_gender_e4_tinyresnet18_pm_gender_tinyresnet18pm_f4_s2753_561cdaebd672_20260831T032249Z808172/robustness.csv"
+      ]
+    },
+    "blur": {
+      "label": "E5 \u00b7 CompactBlurCNN",
+      "experiment_id": "t3_gender_compact_blur_cnn",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f0_s2753_029107022917_20260831T060941Z1f0fc7",
+        "t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f1_s2753_029107022917_20260831T061823Z81907a",
+        "t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f2_s2753_029107022917_20260831T062704Zf23c53",
+        "t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f3_s2753_029107022917_20260831T063549Za32b4e",
+        "t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f4_s2753_029107022917_20260831T064434Z46c915"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_gender_e5_compact_blur_cnn/gender/t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f0_s2753_029107022917_20260831T060941Z1f0fc7/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e5_compact_blur_cnn/gender/t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f1_s2753_029107022917_20260831T061823Z81907a/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e5_compact_blur_cnn/gender/t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f2_s2753_029107022917_20260831T062704Zf23c53/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e5_compact_blur_cnn/gender/t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f3_s2753_029107022917_20260831T063549Za32b4e/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e5_compact_blur_cnn/gender/t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f4_s2753_029107022917_20260831T064434Z46c915/robustness.csv"
+      ]
+    },
+    "gem": {
+      "label": "E6 \u00b7 GeM pooling",
+      "experiment_id": "t3_gender_gem_p3_smallcnn",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_e6_gem_p3_gender_smallcnngem3_f0_s2753_a8c09286451b_20260831T090059Z0bab1f",
+        "t3_gender_e6_gem_p3_gender_smallcnngem3_f1_s2753_a8c09286451b_20260831T090940Z6e10b5",
+        "t3_gender_e6_gem_p3_gender_smallcnngem3_f2_s2753_a8c09286451b_20260831T091823Zabb677",
+        "t3_gender_e6_gem_p3_gender_smallcnngem3_f3_s2753_a8c09286451b_20260831T092710Zee7c6a",
+        "t3_gender_e6_gem_p3_gender_smallcnngem3_f4_s2753_a8c09286451b_20260831T093553Z63b5fd"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_gender_e6_gem_p3/gender/t3_gender_e6_gem_p3_gender_smallcnngem3_f0_s2753_a8c09286451b_20260831T090059Z0bab1f/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e6_gem_p3/gender/t3_gender_e6_gem_p3_gender_smallcnngem3_f1_s2753_a8c09286451b_20260831T090940Z6e10b5/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e6_gem_p3/gender/t3_gender_e6_gem_p3_gender_smallcnngem3_f2_s2753_a8c09286451b_20260831T091823Zabb677/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e6_gem_p3/gender/t3_gender_e6_gem_p3_gender_smallcnngem3_f3_s2753_a8c09286451b_20260831T092710Zee7c6a/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e6_gem_p3/gender/t3_gender_e6_gem_p3_gender_smallcnngem3_f4_s2753_a8c09286451b_20260831T093553Z63b5fd/robustness.csv"
+      ]
+    },
+    "hrnet": {
+      "label": "E7 \u00b7 TinyHRNet",
+      "experiment_id": "t3_gender_tinyhrnet20",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_e7_tinyhrnet20_gender_tinyhrnet20_f0_s2753_0a66578f8433_20260831T140631Z12ad21",
+        "t3_gender_e7_tinyhrnet20_gender_tinyhrnet20_f1_s2753_0a66578f8433_20260831T141543Z4f40ec",
+        "t3_gender_e7_tinyhrnet20_gender_tinyhrnet20_f2_s2753_0a66578f8433_20260831T142456Z391826",
+        "t3_gender_e7_tinyhrnet20_gender_tinyhrnet20_f3_s2753_0a66578f8433_20260831T143409Z11532f",
+        "t3_gender_e7_tinyhrnet20_gender_tinyhrnet20_f4_s2753_0a66578f8433_20260831T144320Zbbb2cb"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_gender_e7_tinyhrnet20/gender/t3_gender_e7_tinyhrnet20_gender_tinyhrnet20_f0_s2753_0a66578f8433_20260831T140631Z12ad21/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e7_tinyhrnet20/gender/t3_gender_e7_tinyhrnet20_gender_tinyhrnet20_f1_s2753_0a66578f8433_20260831T141543Z4f40ec/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e7_tinyhrnet20/gender/t3_gender_e7_tinyhrnet20_gender_tinyhrnet20_f2_s2753_0a66578f8433_20260831T142456Z391826/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e7_tinyhrnet20/gender/t3_gender_e7_tinyhrnet20_gender_tinyhrnet20_f3_s2753_0a66578f8433_20260831T143409Z11532f/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e7_tinyhrnet20/gender/t3_gender_e7_tinyhrnet20_gender_tinyhrnet20_f4_s2753_0a66578f8433_20260831T144320Zbbb2cb/robustness.csv"
+      ]
+    },
+    "early": {
+      "label": "E8 \u00b7 Early stopping",
+      "experiment_id": "t3_gender_gem_p3_early_stopping",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_e8_early_stopping_gender_smallcnngem3_f0_s2753_ff453782ef53_20260831T164841Z983ec7",
+        "t3_gender_e8_early_stopping_gender_smallcnngem3_f1_s2753_ff453782ef53_20260831T165721Z3a256d",
+        "t3_gender_e8_early_stopping_gender_smallcnngem3_f2_s2753_ff453782ef53_20260831T170603Zdaa448",
+        "t3_gender_e8_early_stopping_gender_smallcnngem3_f3_s2753_ff453782ef53_20260831T171445Z9426a0",
+        "t3_gender_e8_early_stopping_gender_smallcnngem3_f4_s2753_ff453782ef53_20260831T172328Z9bb1b2"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_gender_e8_early_stopping/gender/t3_gender_e8_early_stopping_gender_smallcnngem3_f0_s2753_ff453782ef53_20260831T164841Z983ec7/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e8_early_stopping/gender/t3_gender_e8_early_stopping_gender_smallcnngem3_f1_s2753_ff453782ef53_20260831T165721Z3a256d/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e8_early_stopping/gender/t3_gender_e8_early_stopping_gender_smallcnngem3_f2_s2753_ff453782ef53_20260831T170603Zdaa448/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e8_early_stopping/gender/t3_gender_e8_early_stopping_gender_smallcnngem3_f3_s2753_ff453782ef53_20260831T171445Z9426a0/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e8_early_stopping/gender/t3_gender_e8_early_stopping_gender_smallcnngem3_f4_s2753_ff453782ef53_20260831T172328Z9bb1b2/robustness.csv"
+      ]
+    },
+    "filter": {
+      "label": "E9 \u00b7 Semantic filter",
+      "experiment_id": "t3_gender_semantic_filter_gem_p3",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_e9_semantic_filter_gender_smallcnngem3_f0_s2753_1840d4857b63_20260902T012421Zee4aa5",
+        "t3_gender_e9_semantic_filter_gender_smallcnngem3_f1_s2753_1840d4857b63_20260902T013307Z85f9f6",
+        "t3_gender_e9_semantic_filter_gender_smallcnngem3_f2_s2753_1840d4857b63_20260902T014151Z301edf",
+        "t3_gender_e9_semantic_filter_gender_smallcnngem3_f3_s2753_1840d4857b63_20260902T015036Z5edcc7",
+        "t3_gender_e9_semantic_filter_gender_smallcnngem3_f4_s2753_1840d4857b63_20260902T015921Z58173c"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_gender_e9_semantic_filter/gender/t3_gender_e9_semantic_filter_gender_smallcnngem3_f0_s2753_1840d4857b63_20260902T012421Zee4aa5/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e9_semantic_filter/gender/t3_gender_e9_semantic_filter_gender_smallcnngem3_f1_s2753_1840d4857b63_20260902T013307Z85f9f6/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e9_semantic_filter/gender/t3_gender_e9_semantic_filter_gender_smallcnngem3_f2_s2753_1840d4857b63_20260902T014151Z301edf/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e9_semantic_filter/gender/t3_gender_e9_semantic_filter_gender_smallcnngem3_f3_s2753_1840d4857b63_20260902T015036Z5edcc7/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e9_semantic_filter/gender/t3_gender_e9_semantic_filter_gender_smallcnngem3_f4_s2753_1840d4857b63_20260902T015921Z58173c/robustness.csv"
+      ]
+    },
+    "aux": {
+      "label": "E10 \u00b7 Audience head",
+      "experiment_id": "t3_gender_audience_aux_gem_p3",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_e10_audience_aux_gender_smallcnngem3aux3_f0_s2753_2bcd937dd320_20260902T035554Z095899",
+        "t3_gender_e10_audience_aux_gender_smallcnngem3aux3_f1_s2753_2bcd937dd320_20260902T040430Z2d2901",
+        "t3_gender_e10_audience_aux_gender_smallcnngem3aux3_f2_s2753_2bcd937dd320_20260902T041309Z09a3c7",
+        "t3_gender_e10_audience_aux_gender_smallcnngem3aux3_f3_s2753_2bcd937dd320_20260902T042147Zd77574",
+        "t3_gender_e10_audience_aux_gender_smallcnngem3aux3_f4_s2753_2bcd937dd320_20260902T043025Zafdd44"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_gender_e10_audience_aux/gender/t3_gender_e10_audience_aux_gender_smallcnngem3aux3_f0_s2753_2bcd937dd320_20260902T035554Z095899/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e10_audience_aux/gender/t3_gender_e10_audience_aux_gender_smallcnngem3aux3_f1_s2753_2bcd937dd320_20260902T040430Z2d2901/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e10_audience_aux/gender/t3_gender_e10_audience_aux_gender_smallcnngem3aux3_f2_s2753_2bcd937dd320_20260902T041309Z09a3c7/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e10_audience_aux/gender/t3_gender_e10_audience_aux_gender_smallcnngem3aux3_f3_s2753_2bcd937dd320_20260902T042147Zd77574/robustness.csv",
+        "results/evidence/task3/experiments/t3_gender_e10_audience_aux/gender/t3_gender_e10_audience_aux_gender_smallcnngem3aux3_f4_s2753_2bcd937dd320_20260902T043025Zafdd44/robustness.csv"
+      ]
+    },
+    "translation": {
+      "label": "G2 \u00b7 Translation",
+      "experiment_id": "t3_gender_v2_g2_translation",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6",
+        "t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d",
+        "t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa",
+        "t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef",
+        "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1"
+      ]
+    },
+    "dropout": {
+      "label": "Dropout 0.30",
+      "experiment_id": "t3_gender_dropout_030",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_dropout_030_gender_smallcnngem3_f0_s2753_2ab5e633206b_20260905T111550Zce42ad",
+        "t3_gender_dropout_030_gender_smallcnngem3_f4_s2753_2ab5e633206b_20260905T112541Z8145b5"
+      ]
+    },
+    "dark": {
+      "label": "Add mild darkening",
+      "experiment_id": "t3_gender_dropout_030_mild_darkening",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_dropout_030_mild_darkening_gender_smallcnngem3_f0_s2753_cfbed3f0fed4_20260905T123721Z5d546f",
+        "t3_gender_dropout_030_mild_darkening_gender_smallcnngem3_f4_s2753_cfbed3f0fed4_20260905T124728Z7dfb12"
+      ]
+    },
+    "gray": {
+      "label": "Add grayscale 10%",
+      "experiment_id": "t3_gender_dropout_030_mild_darkening_grayscale_010",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_dropout_030_mild_darkening_grayscale_010_gender_smallcnngem3_f0_s2753_eb37119b7e68_20260905T144455Ze47ef6",
+        "t3_gender_dropout_030_mild_darkening_grayscale_010_gender_smallcnngem3_f4_s2753_eb37119b7e68_20260905T145521Z7d0a34"
+      ]
+    },
+    "name": {
+      "label": "Name-corrected labels",
+      "experiment_id": "t3_gender_name_truth_dropout_030_grayscale_010",
+      "target": "gender",
+      "labels": "Name-corrected",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_name_truth_dropout_030_grayscale_010_gender_smallcnngem3_f0_s2753_416e64f58f57_20260905T160634Z0acdc0",
+        "t3_gender_name_truth_dropout_030_grayscale_010_gender_smallcnngem3_f4_s2753_416e64f58f57_20260905T161722Za0a0f7"
+      ]
+    },
+    "mixup": {
+      "label": "MixUp alpha 0.20",
+      "experiment_id": "t3_gender_name_truth_mixup_alpha020",
+      "target": "gender",
+      "labels": "Name-corrected",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_name_truth_mixup_alpha020_gender_smallcnngem3_f0_s2753_4566a61e0e2d_20260906T070013Z8f7ca5",
+        "t3_gender_name_truth_mixup_alpha020_gender_smallcnngem3_f4_s2753_4566a61e0e2d_20260906T071118Z37920b"
+      ]
+    },
+    "mixup40": {
+      "label": "MixUp alpha 0.40",
+      "experiment_id": "t3_gender_name_truth_mixup_alpha040",
+      "target": "gender",
+      "labels": "Name-corrected",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_name_truth_mixup_alpha040_gender_smallcnngem3_f0_s2753_ab0d78c7d178_20260906T081236Zdcdaf6",
+        "t3_gender_name_truth_mixup_alpha040_gender_smallcnngem3_f4_s2753_ab0d78c7d178_20260906T082412Z418937"
+      ]
+    },
+    "sam30": {
+      "label": "SAM \u00b7 30 epochs",
+      "experiment_id": "t3_gender_name_truth_mixup_alpha020_sam005",
+      "target": "gender",
+      "labels": "Name-corrected",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_name_truth_mixup_alpha020_sam005_gender_smallcnngem3_f0_s2753_0f65d12d027f_20260906T091727Zb222b9",
+        "t3_gender_name_truth_mixup_alpha020_sam005_gender_smallcnngem3_f4_s2753_0f65d12d027f_20260906T092956Z3c39bb"
+      ]
+    },
+    "sam25": {
+      "label": "SAM \u00b7 25 epochs",
+      "experiment_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25",
+      "target": "gender",
+      "labels": "Name-corrected",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_gender_smallcnngem3_f0_s2753_5fcf4e0e0035_20260906T101038Z1eda8d",
+        "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_gender_smallcnngem3_f4_s2753_5fcf4e0e0035_20260906T102136Z29db40"
+      ]
+    },
+    "final": {
+      "label": "SAM25 \u00b7 Five folds",
+      "experiment_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
+      "target": "gender",
+      "labels": "Name-corrected",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f0_s2753_cebc4858f043_20260906T112202Z13e60c",
+        "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f1_s2753_cebc4858f043_20260906T113308Zefe5d2",
+        "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f2_s2753_cebc4858f043_20260906T114419Z1959d4",
+        "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f3_s2753_cebc4858f043_20260906T115531Z5216b9",
+        "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f4_s2753_cebc4858f043_20260906T120642Za83c66"
+      ]
+    },
+    "usage1": {
+      "label": "Usage E1 \u00b7 Baseline",
+      "experiment_id": "t3_primary_baseline_smallcnn",
+      "target": "usage",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_baseline_usage_smallcnn_f0_s2753_b0458638128b_20260830T091143Zc4f554",
+        "t3_baseline_usage_smallcnn_f1_s2753_b0458638128b_20260830T092019Z358580",
+        "t3_baseline_usage_smallcnn_f2_s2753_b0458638128b_20260830T092857Z8d67ab",
+        "t3_baseline_usage_smallcnn_f3_s2753_b0458638128b_20260830T093738Zdd75d3",
+        "t3_baseline_usage_smallcnn_f4_s2753_b0458638128b_20260830T094617Z1d2e79"
+      ]
+    },
+    "usage2": {
+      "label": "Usage E2 \u00b7 Class weights",
+      "experiment_id": "t3_usage_class_balanced_smallcnn",
+      "target": "usage",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_usage_e2_class_balanced_ce_usage_smallcnn_f0_s2753_5461e048c3b3_20260830T115815Z356f6d",
+        "t3_usage_e2_class_balanced_ce_usage_smallcnn_f1_s2753_5461e048c3b3_20260830T120645Z6d08cd",
+        "t3_usage_e2_class_balanced_ce_usage_smallcnn_f2_s2753_5461e048c3b3_20260830T121514Zd58aa0",
+        "t3_usage_e2_class_balanced_ce_usage_smallcnn_f3_s2753_5461e048c3b3_20260830T122347Z2cb06e",
+        "t3_usage_e2_class_balanced_ce_usage_smallcnn_f4_s2753_5461e048c3b3_20260830T123218Z94db47"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/t3_usage_e2_class_balanced_ce_usage_smallcnn_f0_s2753_5461e048c3b3_20260830T115815Z356f6d/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/t3_usage_e2_class_balanced_ce_usage_smallcnn_f1_s2753_5461e048c3b3_20260830T120645Z6d08cd/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/t3_usage_e2_class_balanced_ce_usage_smallcnn_f2_s2753_5461e048c3b3_20260830T121514Zd58aa0/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/t3_usage_e2_class_balanced_ce_usage_smallcnn_f3_s2753_5461e048c3b3_20260830T122347Z2cb06e/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/t3_usage_e2_class_balanced_ce_usage_smallcnn_f4_s2753_5461e048c3b3_20260830T123218Z94db47/robustness.csv"
+      ]
+    },
+    "usage8": {
+      "label": "Usage E8 \u00b7 Translation",
+      "experiment_id": "t3_usage_translation_2px_smallcnn",
+      "target": "usage",
+      "labels": "Original",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids": [
+        "t3_usage_e8_translation_usage_smallcnn_f0_s2753_be3cf562b9ab_20260831T173123Zd848db",
+        "t3_usage_e8_translation_usage_smallcnn_f1_s2753_be3cf562b9ab_20260831T174039Zabd68d",
+        "t3_usage_e8_translation_usage_smallcnn_f2_s2753_be3cf562b9ab_20260831T174953Z528158",
+        "t3_usage_e8_translation_usage_smallcnn_f3_s2753_be3cf562b9ab_20260831T175907Z3587b1",
+        "t3_usage_e8_translation_usage_smallcnn_f4_s2753_be3cf562b9ab_20260831T180832Z708926"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_usage_e8_translation/usage/t3_usage_e8_translation_usage_smallcnn_f0_s2753_be3cf562b9ab_20260831T173123Zd848db/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e8_translation/usage/t3_usage_e8_translation_usage_smallcnn_f1_s2753_be3cf562b9ab_20260831T174039Zabd68d/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e8_translation/usage/t3_usage_e8_translation_usage_smallcnn_f2_s2753_be3cf562b9ab_20260831T174953Z528158/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e8_translation/usage/t3_usage_e8_translation_usage_smallcnn_f3_s2753_be3cf562b9ab_20260831T175907Z3587b1/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e8_translation/usage/t3_usage_e8_translation_usage_smallcnn_f4_s2753_be3cf562b9ab_20260831T180832Z708926/robustness.csv"
+      ]
+    },
+    "baseline04": {
+      "label": "E1 \u00b7 SmallCNN",
+      "experiment_id": "t3_primary_baseline_smallcnn",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_baseline_gender_smallcnn_f0_s2753_e46cd00adf0a_20260830T082833Zf8c1e0",
+        "t3_baseline_gender_smallcnn_f4_s2753_e46cd00adf0a_20260830T090303Z41a843"
+      ]
+    },
+    "gem04": {
+      "label": "E6 \u00b7 GeM pooling",
+      "experiment_id": "t3_gender_gem_p3_smallcnn",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_e6_gem_p3_gender_smallcnngem3_f0_s2753_a8c09286451b_20260831T090059Z0bab1f",
+        "t3_gender_e6_gem_p3_gender_smallcnngem3_f4_s2753_a8c09286451b_20260831T093553Z63b5fd"
+      ]
+    },
+    "translation04": {
+      "label": "G2 \u00b7 Translation",
+      "experiment_id": "t3_gender_v2_g2_translation",
+      "target": "gender",
+      "labels": "Original",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6",
+        "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1"
+      ]
+    },
+    "usage3": {
+      "label": "Usage E3 \u00b7 Dropout 0.20",
+      "target": "usage",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_usage_e3_classifier_dropout_usage_smallcnn_f0_s2753_55b7a96c2617_20260830T152222Z130be4",
+        "t3_usage_e3_classifier_dropout_usage_smallcnn_f1_s2753_55b7a96c2617_20260830T153109Ze3f157",
+        "t3_usage_e3_classifier_dropout_usage_smallcnn_f2_s2753_55b7a96c2617_20260830T153955Z36ee4d",
+        "t3_usage_e3_classifier_dropout_usage_smallcnn_f3_s2753_55b7a96c2617_20260830T154844Z0738d5",
+        "t3_usage_e3_classifier_dropout_usage_smallcnn_f4_s2753_55b7a96c2617_20260830T155731Z30497c"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_usage_e3_classifier_dropout/usage/t3_usage_e3_classifier_dropout_usage_smallcnn_f0_s2753_55b7a96c2617_20260830T152222Z130be4/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e3_classifier_dropout/usage/t3_usage_e3_classifier_dropout_usage_smallcnn_f1_s2753_55b7a96c2617_20260830T153109Ze3f157/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e3_classifier_dropout/usage/t3_usage_e3_classifier_dropout_usage_smallcnn_f2_s2753_55b7a96c2617_20260830T153955Z36ee4d/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e3_classifier_dropout/usage/t3_usage_e3_classifier_dropout_usage_smallcnn_f3_s2753_55b7a96c2617_20260830T154844Z0738d5/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e3_classifier_dropout/usage/t3_usage_e3_classifier_dropout_usage_smallcnn_f4_s2753_55b7a96c2617_20260830T155731Z30497c/robustness.csv"
+      ]
+    },
+    "usage4": {
+      "label": "Usage E4 \u00b7 TinyResNet",
+      "target": "usage",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_usage_e4_tinyresnet18_pm_usage_tinyresnet18pm_f0_s2753_f87812b0c178_20260831T033129Z7d4ec1",
+        "t3_usage_e4_tinyresnet18_pm_usage_tinyresnet18pm_f1_s2753_f87812b0c178_20260831T034010Z7f733c",
+        "t3_usage_e4_tinyresnet18_pm_usage_tinyresnet18pm_f2_s2753_f87812b0c178_20260831T034851Z173f05",
+        "t3_usage_e4_tinyresnet18_pm_usage_tinyresnet18pm_f3_s2753_f87812b0c178_20260831T035732Zc5da9c",
+        "t3_usage_e4_tinyresnet18_pm_usage_tinyresnet18pm_f4_s2753_f87812b0c178_20260831T040612Z397d10"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_usage_e4_tinyresnet18_pm/usage/t3_usage_e4_tinyresnet18_pm_usage_tinyresnet18pm_f0_s2753_f87812b0c178_20260831T033129Z7d4ec1/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e4_tinyresnet18_pm/usage/t3_usage_e4_tinyresnet18_pm_usage_tinyresnet18pm_f1_s2753_f87812b0c178_20260831T034010Z7f733c/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e4_tinyresnet18_pm/usage/t3_usage_e4_tinyresnet18_pm_usage_tinyresnet18pm_f2_s2753_f87812b0c178_20260831T034851Z173f05/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e4_tinyresnet18_pm/usage/t3_usage_e4_tinyresnet18_pm_usage_tinyresnet18pm_f3_s2753_f87812b0c178_20260831T035732Zc5da9c/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e4_tinyresnet18_pm/usage/t3_usage_e4_tinyresnet18_pm_usage_tinyresnet18pm_f4_s2753_f87812b0c178_20260831T040612Z397d10/robustness.csv"
+      ]
+    },
+    "usage5": {
+      "label": "Usage E5 \u00b7 Label smoothing",
+      "target": "usage",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_usage_e5_label_smoothing_usage_smallcnn_f0_s2753_0ccaa3f16434_20260831T065319Z338806",
+        "t3_usage_e5_label_smoothing_usage_smallcnn_f1_s2753_0ccaa3f16434_20260831T070200Zba9896",
+        "t3_usage_e5_label_smoothing_usage_smallcnn_f2_s2753_0ccaa3f16434_20260831T071044Zb8469e",
+        "t3_usage_e5_label_smoothing_usage_smallcnn_f3_s2753_0ccaa3f16434_20260831T071926Z24011b",
+        "t3_usage_e5_label_smoothing_usage_smallcnn_f4_s2753_0ccaa3f16434_20260831T072807Z03061f"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_usage_e5_label_smoothing/usage/t3_usage_e5_label_smoothing_usage_smallcnn_f0_s2753_0ccaa3f16434_20260831T065319Z338806/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e5_label_smoothing/usage/t3_usage_e5_label_smoothing_usage_smallcnn_f1_s2753_0ccaa3f16434_20260831T070200Zba9896/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e5_label_smoothing/usage/t3_usage_e5_label_smoothing_usage_smallcnn_f2_s2753_0ccaa3f16434_20260831T071044Zb8469e/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e5_label_smoothing/usage/t3_usage_e5_label_smoothing_usage_smallcnn_f3_s2753_0ccaa3f16434_20260831T071926Z24011b/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e5_label_smoothing/usage/t3_usage_e5_label_smoothing_usage_smallcnn_f4_s2753_0ccaa3f16434_20260831T072807Z03061f/robustness.csv"
+      ]
+    },
+    "usage6": {
+      "label": "Usage E6 \u00b7 Focal loss",
+      "target": "usage",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_usage_e6_focal_gamma1_usage_smallcnn_f0_s2753_d78d360d01b2_20260831T094442Z22542c",
+        "t3_usage_e6_focal_gamma1_usage_smallcnn_f1_s2753_d78d360d01b2_20260831T095326Z8d3f13",
+        "t3_usage_e6_focal_gamma1_usage_smallcnn_f2_s2753_d78d360d01b2_20260831T100213Z453f7d",
+        "t3_usage_e6_focal_gamma1_usage_smallcnn_f3_s2753_d78d360d01b2_20260831T101101Z24818e",
+        "t3_usage_e6_focal_gamma1_usage_smallcnn_f4_s2753_d78d360d01b2_20260831T101946Z418c62"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_usage_e6_focal_gamma1/usage/t3_usage_e6_focal_gamma1_usage_smallcnn_f0_s2753_d78d360d01b2_20260831T094442Z22542c/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e6_focal_gamma1/usage/t3_usage_e6_focal_gamma1_usage_smallcnn_f1_s2753_d78d360d01b2_20260831T095326Z8d3f13/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e6_focal_gamma1/usage/t3_usage_e6_focal_gamma1_usage_smallcnn_f2_s2753_d78d360d01b2_20260831T100213Z453f7d/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e6_focal_gamma1/usage/t3_usage_e6_focal_gamma1_usage_smallcnn_f3_s2753_d78d360d01b2_20260831T101101Z24818e/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e6_focal_gamma1/usage/t3_usage_e6_focal_gamma1_usage_smallcnn_f4_s2753_d78d360d01b2_20260831T101946Z418c62/robustness.csv"
+      ]
+    },
+    "usage7": {
+      "label": "Usage E7 \u00b7 TinyConvNeXt",
+      "target": "usage",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_usage_e7_tinyconvnext18_usage_tinyconvnext18_f0_s2753_70abdddddebe_20260831T124841Zc7fa81",
+        "t3_usage_e7_tinyconvnext18_usage_tinyconvnext18_f1_s2753_70abdddddebe_20260831T130419Zdab5ca",
+        "t3_usage_e7_tinyconvnext18_usage_tinyconvnext18_f2_s2753_70abdddddebe_20260831T131953Zcc2b31",
+        "t3_usage_e7_tinyconvnext18_usage_tinyconvnext18_f3_s2753_70abdddddebe_20260831T133523Z777285",
+        "t3_usage_e7_tinyconvnext18_usage_tinyconvnext18_f4_s2753_70abdddddebe_20260831T135054Zd71995"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_usage_e7_tinyconvnext18/usage/t3_usage_e7_tinyconvnext18_usage_tinyconvnext18_f0_s2753_70abdddddebe_20260831T124841Zc7fa81/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e7_tinyconvnext18/usage/t3_usage_e7_tinyconvnext18_usage_tinyconvnext18_f1_s2753_70abdddddebe_20260831T130419Zdab5ca/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e7_tinyconvnext18/usage/t3_usage_e7_tinyconvnext18_usage_tinyconvnext18_f2_s2753_70abdddddebe_20260831T131953Zcc2b31/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e7_tinyconvnext18/usage/t3_usage_e7_tinyconvnext18_usage_tinyconvnext18_f3_s2753_70abdddddebe_20260831T133523Z777285/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e7_tinyconvnext18/usage/t3_usage_e7_tinyconvnext18_usage_tinyconvnext18_f4_s2753_70abdddddebe_20260831T135054Zd71995/robustness.csv"
+      ]
+    },
+    "usage9": {
+      "label": "Usage E9 \u00b7 Exception balance",
+      "target": "usage",
+      "folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_usage_e9_exception_balance_usage_smallcnn_f0_s2753_d22930bc1285_20260902T004030Zed2d5a",
+        "t3_usage_e9_exception_balance_usage_smallcnn_f1_s2753_d22930bc1285_20260902T004910Z10b181",
+        "t3_usage_e9_exception_balance_usage_smallcnn_f2_s2753_d22930bc1285_20260902T005754Z8e65ce",
+        "t3_usage_e9_exception_balance_usage_smallcnn_f3_s2753_d22930bc1285_20260902T010640Z1df42d",
+        "t3_usage_e9_exception_balance_usage_smallcnn_f4_s2753_d22930bc1285_20260902T011529Z920677"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_usage_e9_exception_balance/usage/t3_usage_e9_exception_balance_usage_smallcnn_f0_s2753_d22930bc1285_20260902T004030Zed2d5a/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e9_exception_balance/usage/t3_usage_e9_exception_balance_usage_smallcnn_f1_s2753_d22930bc1285_20260902T004910Z10b181/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e9_exception_balance/usage/t3_usage_e9_exception_balance_usage_smallcnn_f2_s2753_d22930bc1285_20260902T005754Z8e65ce/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e9_exception_balance/usage/t3_usage_e9_exception_balance_usage_smallcnn_f3_s2753_d22930bc1285_20260902T010640Z1df42d/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e9_exception_balance/usage/t3_usage_e9_exception_balance_usage_smallcnn_f4_s2753_d22930bc1285_20260902T011529Z920677/robustness.csv"
+      ]
+    },
+    "g1": {
+      "label": "G1 \u00b7 Foreground mask",
+      "target": "gender",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_gender_v2_g1_foreground_mask_gender_smallcnngem3_f0_s2753_473d124afa95_20260904T131930Z29e258",
+        "t3_gender_v2_g1_foreground_mask_gender_smallcnngem3_f4_s2753_473d124afa95_20260904T133343Zf2d8ba"
+      ]
+    },
+    "g3": {
+      "label": "G3 \u00b7 Component weights",
+      "target": "gender",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_gender_v2_g3_component_weight_gender_smallcnngem3_f0_s2753_37353d6ecf93_20260904T141021Z8ec76b",
+        "t3_gender_v2_g3_component_weight_gender_smallcnngem3_f4_s2753_37353d6ecf93_20260904T141902Z130df3"
+      ]
+    },
+    "gd1": {
+      "label": "GD1 \u00b7 Mild darkening",
+      "target": "gender",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_gender_translation_mild_darkening_gender_smallcnngem3_f0_s2753_a4cc8d75f3fb_20260905T051933Z2d5d0f",
+        "t3_gender_translation_mild_darkening_gender_smallcnngem3_f4_s2753_a4cc8d75f3fb_20260905T052851Z77fea4"
+      ]
+    },
+    "wd1": {
+      "label": "Weight decay 0.001",
+      "target": "gender",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_gender_weight_decay_001_gender_smallcnngem3_f0_s2753_7f11ebe1ad87_20260905T060619Z34fc37",
+        "t3_gender_weight_decay_001_gender_smallcnngem3_f4_s2753_7f11ebe1ad87_20260905T061526Zcc7738"
+      ]
+    },
+    "narrow": {
+      "label": "Narrow 64 channels",
+      "target": "gender",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_gender_narrow64_gender_smallcnngem3narrow64_f0_s2753_09393516bf60_20260905T101653Zb81718",
+        "t3_gender_narrow64_gender_smallcnngem3narrow64_f4_s2753_09393516bf60_20260905T102643Zc3b81a"
+      ]
+    },
+    "drop45": {
+      "label": "Dropout 0.45 + dark",
+      "target": "gender",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_gender_dropout_045_mild_darkening_gender_smallcnngem3_f0_s2753_3064b151dbc0_20260905T135011Zbbfef4",
+        "t3_gender_dropout_045_mild_darkening_gender_smallcnngem3_f4_s2753_3064b151dbc0_20260905T140032Zdfb0bc"
+      ]
+    },
+    "group": {
+      "label": "Article-group weights",
+      "target": "gender",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Name-corrected",
+      "run_ids": [
+        "t3_gender_name_truth_article_weight_sqrt_cap3_gender_smallcnngem3_f0_s2753_2b309c336f77_20260906T014600Z4b53f4",
+        "t3_gender_name_truth_article_weight_sqrt_cap3_gender_smallcnngem3_f4_s2753_2b309c336f77_20260906T015704Zce133f"
+      ]
+    },
+    "swin_g": {
+      "label": "Scratch Micro-Swin",
+      "target": "gender",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_cs2_micro_swin_gender_f0_s2753_2636e3521046_20260902T154822Z2cc20a",
+        "t3_cs2_micro_swin_gender_f4_s2753_bee406bd99e4_20260902T162150Z70bb81"
+      ]
+    },
+    "u1": {
+      "label": "U1 \u00b7 Component weights",
+      "target": "usage",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_usage_v2_u1_component_weight_usage_smallcnn_f0_s2753_1d1b2051d464_20260904T143317Zeb944e",
+        "t3_usage_v2_u1_component_weight_usage_smallcnn_f4_s2753_1d1b2051d464_20260904T144158Z283ddc"
+      ]
+    },
+    "swin_u": {
+      "label": "Usage \u00b7 Scratch Micro-Swin",
+      "target": "usage",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_cs2_micro_swin_usage_f0_s2753_a221b6c184a8_20260902T150141Z97d6bd",
+        "t3_cs2_micro_swin_usage_f4_s2753_2819a04bffe4_20260902T151806Z713ccf"
+      ]
+    },
+    "usage104": {
+      "label": "Usage E1 \u00b7 Baseline",
+      "experiment_id": "t3_primary_baseline_smallcnn",
+      "target": "usage",
+      "labels": "Original",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_baseline_usage_smallcnn_f0_s2753_b0458638128b_20260830T091143Zc4f554",
+        "t3_baseline_usage_smallcnn_f4_s2753_b0458638128b_20260830T094617Z1d2e79"
+      ]
+    },
+    "usage204": {
+      "label": "Usage E2 \u00b7 Class weights",
+      "experiment_id": "t3_usage_class_balanced_smallcnn",
+      "target": "usage",
+      "labels": "Original",
+      "folds": [
+        0,
+        4
+      ],
+      "run_ids": [
+        "t3_usage_e2_class_balanced_ce_usage_smallcnn_f0_s2753_5461e048c3b3_20260830T115815Z356f6d",
+        "t3_usage_e2_class_balanced_ce_usage_smallcnn_f4_s2753_5461e048c3b3_20260830T123218Z94db47"
+      ],
+      "robustness_paths": [
+        "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/t3_usage_e2_class_balanced_ce_usage_smallcnn_f0_s2753_5461e048c3b3_20260830T115815Z356f6d/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/t3_usage_e2_class_balanced_ce_usage_smallcnn_f1_s2753_5461e048c3b3_20260830T120645Z6d08cd/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/t3_usage_e2_class_balanced_ce_usage_smallcnn_f2_s2753_5461e048c3b3_20260830T121514Zd58aa0/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/t3_usage_e2_class_balanced_ce_usage_smallcnn_f3_s2753_5461e048c3b3_20260830T122347Z2cb06e/robustness.csv",
+        "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/t3_usage_e2_class_balanced_ce_usage_smallcnn_f4_s2753_5461e048c3b3_20260830T123218Z94db47/robustness.csv"
+      ]
+    },
+    "hog_g": {
+      "label": "Gender S1 \u00b7 HOG SVM",
+      "target": "gender",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_cs1_gender_hogsvm_f0_s2753_853bd96ec1f9_20260902T142015Z3823be",
+        "t3_cs1_gender_hogsvm_f4_s2753_2ea66771cd98_20260902T181124Z5ad3f1"
+      ]
+    },
+    "type_u": {
+      "label": "Usage S1 \u00b7 Type cascade",
+      "target": "usage",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_cs1_usage_typepost_f0_s2753_9c3ecb98c71c_20260902T215339Zd29481",
+        "t3_cs1_usage_typepost_f4_s2753_87354e7927ef_20260902T221350Zfb514f"
+      ]
+    },
+    "hog_u": {
+      "label": "Usage U2 \u00b7 HOG SVM",
+      "target": "usage",
+      "folds": [
+        0,
+        4
+      ],
+      "labels": "Original",
+      "run_ids": [
+        "t3_usage_v2_u2_hogsvm_usage_hogsvm_f0_s2753_a6ad243ce747_20260905T054052Z04fa8f",
+        "t3_usage_v2_u2_hogsvm_usage_hogsvm_f4_s2753_9e41360894cc_20260905T070228Z5803af"
+      ]
+    }
+  },
+  "figures": {
+    "cv": "reports/task3_gender_sam25_cv_result_20260906/fold_summary.png",
+    "curves": "reports/task3_gender_sam25_cv_result_20260906/learning_curves.png",
+    "holdout": "results/figures/task3/main_gender_holdout.png"
+  },
+  "files": {
+    "reports/task3_main_report_20260906/results/runs.csv": "aae3e2b64332a892548ad86eed7c1e0bbecf97340913c4ec1a3999ab179b7ba5",
+    "reports/task3_gender_sam25_cv_result_20260906/cv_summary.json": "cbc72db0f4f96cdcd28cd4f05d090e0849dcff27e716a6b2ed8bbbbee64cc78e",
+    "reports/task3_gender_sam25_cv_result_20260906/model_manifest.json": "7a65fb64f18221ddb11d2c43cb4f1200a1ed970f4a938ec53673a303fb766819",
+    "reports/task3_gender_sam25_cv_result_20260906/fold0/config.json": "18a4f91771d007c15c033c8c394d3f7a8ddd5de1da01a5f8c4dea9243edba75b",
+    "reports/task3_gender_sam25_cv_result_20260906/fold_summary.png": "9f75acb1cc4059b3fa18d76c1ea130e9502156c537377764d9b05c4cb4a72d77",
+    "reports/task3_gender_sam25_cv_result_20260906/learning_curves.png": "f871c449f37e8225b42231a0a99fa5979ad4b614cea61637ca887a1e83775156",
+    "reports/task3_main_report_20260906/holdout_summary.csv": "49a5155b5f13ede93b251503ec62df6d555bca954901bbfa3ee382dbd670f384",
+    "reports/task3_main_report_20260906/holdout_per_class.csv": "94f2f8b73a1b94de56ea544df3de0d4b0e91f435d22d3be34de3526cf8964b4a",
+    "reports/task3_main_report_20260906/holdout_confusion_matrix.csv": "058d8657d60098e5ab8085807e138d87c34f450371f2aea035b84315911a68e7",
+    "results/figures/task3/main_gender_holdout.png": "0f908ca4b4492d7a37f230fe0850cfb0390c6feac5663ab8803fc3cf5e2bb353"
+  }
+}
