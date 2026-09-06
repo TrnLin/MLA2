@@ -518,8 +518,31 @@ def run_task3_baseline_fold(
         from fashion.train.task3_gender_weight_decay import weight_decay_config
 
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
-    name_truth = getattr(child_spec, "name", None) == "gender_name_truth_dropout_030_grayscale_010"
-    if name_truth:
+    group_weight = getattr(child_spec, "name", None) == "gender_name_truth_article_weight_sqrt_cap3"
+    name_truth = group_weight or (
+        getattr(child_spec, "name", None) == "gender_name_truth_dropout_030_grayscale_010"
+    )
+    if group_weight:
+        from fashion.train.task3_gender_group_weight import (
+            group_weight_config,
+            require_group_weight_prerequisites,
+            training_splits,
+        )
+
+        config = group_weight_config(
+            child_spec, fold=validation_fold, device_name=device_name, root=root
+        )
+        refinement_evidence = require_group_weight_prerequisites(
+            prerequisite_path,
+            spec=child_spec,
+            fold=validation_fold,
+            parent_run_directory=parent_run_directory,
+            root=root,
+            device_name=device_name,
+        )
+        narrow_evidence = refinement_evidence["precision"]
+        parent_run_directory = refinement_evidence["parent_directory"]
+    elif name_truth:
         from fashion.train.task3_gender_name_truth import (
             name_truth_config,
             require_name_truth_prerequisites,
@@ -703,6 +726,19 @@ def run_task3_baseline_fold(
                 "visual_component_weight",
             ],
         ].copy()
+    elif sample_weight_strategy == "gender_article_sqrt_cap3_v1":
+        from fashion.train.task3_gender_group_weight import (
+            SELECTION_COLUMNS,
+            add_gender_article_weights,
+        )
+
+        if not group_weight or target != "gender" or selection_strategy != "all":
+            raise ValueError("Gender/article weights require the frozen single-factor recipe")
+        training, weight_contract = add_gender_article_weights(
+            training, validation_fold=validation_fold
+        )
+        selection_metadata["sample_weight_contract"] = weight_contract
+        training_selection = training[SELECTION_COLUMNS].copy()
     elif sample_weight_strategy != "none":
         raise ValueError(f"unknown Task 3 sample-weight strategy: {sample_weight_strategy}")
     _log(
@@ -865,18 +901,19 @@ def run_task3_baseline_fold(
         "image_size": (config.image_height, config.image_width),
         "image_view": input_view,
     }
+    sample_weight_column = {
+        "accepted_visual_component_v1": "visual_component_weight",
+        "gender_article_sqrt_cap3_v1": "gender_article_weight",
+    }.get(sample_weight_strategy)
+    if (
+        sample_weight_column is None
+        and selection_strategy == "usage_article_type_exception_balance_v1"
+    ):
+        sample_weight_column = "e9_group_factor"
     train_dataset = Task3ImageDataset(
         training,
         augmentation=training_augmentation,
-        sample_weight_column=(
-            "visual_component_weight"
-            if sample_weight_strategy == "accepted_visual_component_v1"
-            else (
-                "e9_group_factor"
-                if selection_strategy == "usage_article_type_exception_balance_v1"
-                else None
-            )
-        ),
+        sample_weight_column=sample_weight_column,
         **dataset_kwargs,
     )
     validation_dataset = Task3ImageDataset(validation, **dataset_kwargs)
@@ -901,7 +938,7 @@ def run_task3_baseline_fold(
             raise ValueError("usage exception balancing requires fold-only class weights")
         criterion = SampleWeightedCrossEntropy(class_weight_tensor)
         evaluation_criterion = nn.CrossEntropyLoss(weight=class_weight_tensor)
-    elif sample_weight_strategy == "accepted_visual_component_v1":
+    elif sample_weight_strategy in {"accepted_visual_component_v1", "gender_article_sqrt_cap3_v1"}:
         training_class_weights = (
             class_weight_tensor
             if class_weight_tensor is not None
