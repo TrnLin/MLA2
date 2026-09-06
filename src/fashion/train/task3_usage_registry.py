@@ -15,7 +15,7 @@ import numpy as np
 from fashion.config import ROOT
 from fashion.data.hashing import compute_sha256
 from fashion.train.config import Task3BaselineConfig, baseline_parameter_count
-from fashion.train.registry import REGISTRY_COLUMNS, RunRegistry
+from fashion.train.registry import REGISTRY_COLUMNS, RUN_COLUMNS, RunRegistry
 from fashion.train.task3_decisions import oof_metrics, validate_oof
 from fashion.train.task3_usage_expanded import (
     ARTIFACT_DIRECTORY,
@@ -42,9 +42,13 @@ def _read_csv(path):
         return []
     with path.open(newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
-        if tuple(reader.fieldnames or ()) != REGISTRY_COLUMNS:
+        if tuple(reader.fieldnames or ()) not in {REGISTRY_COLUMNS, RUN_COLUMNS}:
             raise ValueError(f"Unexpected registry columns: {path}")
-        rows = list(reader)
+        rows = [
+            {column: row[column] for column in REGISTRY_COLUMNS}
+            for row in reader
+            if row["task"] == "task3"
+        ]
     ids = [row["run_id"] for row in rows]
     if len(ids) != len(set(ids)):
         raise ValueError(f"Duplicate run IDs in {path}")
