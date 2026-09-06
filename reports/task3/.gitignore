@@ -1989,3 +1989,6 @@
 /usage_u3_review_20260905/saved/t3_usage_u3_two_stage_cnn_f4_s2753_124823bd1fcd_20260905T123959_6c0791/stage_a_train_predictions.csv
 /usage_u3_review_20260905/saved/t3_usage_u3_two_stage_cnn_f4_s2753_124823bd1fcd_20260905T123959_6c0791/worker.log
 /*/bootstrap_check_current.json
+
+# Duplicate publisher notices remain in the source archive.
+/rare_external_intake_20260906/sources/abo/raw/README.md
