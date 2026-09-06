@@ -1,0 +1,17 @@
+{
+  "date": "2026-09-06",
+  "passed": true,
+  "dataset": "teacher_plus_rare_usage_20260906",
+  "prepared_images": {
+    "count": 120,
+    "review": "All originals and saved PNGs were inspected during intake; image bytes are unchanged in the combined dataset"
+  },
+  "current_preview": {
+    "README.html": "Opening, complete class-count table, split checks and closing instructions",
+    "USAGE.html": "Opening, middle and ending views cover the shared loader example and usage notes",
+    "GALLERY.html": "Opening and the first combined contact sheet",
+    "combined_accepted_06.png": "Full final contact sheet, including Smart Casual and Travel fold captions"
+  },
+  "observations": "The inspected table, code and captions fit and are readable. Gallery captions now show combined CV folds.",
+  "scope_limit": "Only the stated report views and updated contact sheets were inspected this pass"
+}
