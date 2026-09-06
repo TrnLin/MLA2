@@ -20,7 +20,7 @@ TASK_SPECS = {
     "04_task3_gender_usage.ipynb": {
         "title": "Task 3 — Gender and Usage Classification",
         "tokens": ("gender", "usage", "negative transfer", "label-mask"),
-        "sections": 40,
+        "sections": 45,
     },
     "05_task4_visual_search.ipynb": {
         "title": "Task 4 — Fashion Visual Search",
@@ -512,8 +512,13 @@ def test_task_scaffolds_leave_owner_decisions_open() -> None:
             if (match := re.fullmatch(r"## (\d+)\. .+", heading))
         ] == list(range(1, spec["sections"] + 1))
 
-        for required in ("TODO(owner)", "data/processed/splits.csv", "results/runs.csv"):
+        for required in ("data/processed/splits.csv", "results/runs.csv"):
             assert required in source
+        if filename == "04_task3_gender_usage.ipynb":
+            assert "TODO(owner)" not in source
+            assert "0022-task3-usage-e1-final-model.md" in source
+        else:
+            assert "TODO(owner)" in source
         assert all(token.lower() in lowered for token in spec["tokens"])
         assert "train_test_split" not in source
         assert "pretrained=True" not in source
@@ -557,7 +562,12 @@ def test_task_metric_contracts_are_explicit() -> None:
         "teacher did not supply test labels",
         "146 of 311 Unisex",
         "id,gender,articleType,season,usage",
-        "TODO(owner)",
+        "0022-task3-usage-e1-final-model.md",
+        "original teacher-only E1",
+        "equal probability average of its five saved fold models",
+        "13,110 teacher images",
+        "E1 misses every test NA",
+        "final E1 acceptance followed holdout/test review",
     ):
         assert contract in task3
     assert "run_task3_baseline_cv" not in task3
