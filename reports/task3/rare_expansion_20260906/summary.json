@@ -1,0 +1,44 @@
+{
+  "status": "collected_and_audited_unassigned",
+  "accepted_images": 567,
+  "counts": [
+    {
+      "usage": "Home",
+      "images": 120,
+      "source_products": 120,
+      "family_groups": 118
+    },
+    {
+      "usage": "Party",
+      "images": 127,
+      "source_products": 127,
+      "family_groups": 126
+    },
+    {
+      "usage": "Smart Casual",
+      "images": 156,
+      "source_products": 156,
+      "family_groups": 81
+    },
+    {
+      "usage": "Travel",
+      "images": 164,
+      "source_products": 164,
+      "family_groups": 115
+    }
+  ],
+  "central_rejections": {
+    "duplicate_under_frozen_pixel_and_hash_rule": 2
+  },
+  "alpha_composited_images": 74,
+  "sealed_files": {
+    "data/processed/splits.csv": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+    "data/processed/prediction_manifest.csv": "8d1fdd27721fc8604203b99308ecda9773b1f7c89b8cf6b2a33c82587b14954b",
+    "data/processed/teacher_plus_rare_usage_20260906/splits.csv": "7d5f3a986ef8e00f53ee1c86d408f1c3a155d6b0a0ab99bef4c9f7eb27dbda77"
+  },
+  "no_na_collected": true,
+  "training_split_changed": false,
+  "training_run_started": false,
+  "internal_duplicate_edges": 2,
+  "internal_duplicate_images_removed": 2
+}
