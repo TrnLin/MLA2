@@ -71,7 +71,7 @@ The main sources are:
 - [main run registry](../results/runs.csv);
 - [Task 3 evidence registry](../results/evidence/task3/results/runs.csv);
 - [E9 pre-run audit](../results/evidence/task3/e9_prerun/e9_prerun_summary.json);
-- [E10 experiment notebook](../notebooks/04j_task3_audience_aux_e10_experiment.ipynb);
+- [E10 experiment notebook](../notebooks/task3_training/audience_aux_e10_experiment.ipynb);
 - [E10 evidence directory](../results/evidence/task3/experiments/t3_gender_e10_audience_aux/).
 
 **Repository evidence.** The evidence chain is not yet canonical:
