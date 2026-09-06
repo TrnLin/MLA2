@@ -553,7 +553,12 @@ def run_task3_baseline_fold(
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
     group_weight = getattr(child_spec, "name", None) == "gender_name_truth_article_weight_sqrt_cap3"
     stronger_mixup = getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha040"
-    sam25 = getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020_sam005_epoch25"
+    sam25_cv = (
+        getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020_sam005_epoch25_cv"
+    )
+    sam25 = sam25_cv or (
+        getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020_sam005_epoch25"
+    )
     use_sam = (
         sam25 or getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020_sam005"
     )
@@ -570,7 +575,13 @@ def run_task3_baseline_fold(
         or (getattr(child_spec, "name", None) == "gender_name_truth_dropout_030_grayscale_010")
     )
     if use_mixup:
-        if sam25:
+        if sam25_cv:
+            from fashion.train.task3_gender_sam25_cv import (
+                require_sam25_cv_prerequisites as require_mixup_prerequisites,
+            )
+            from fashion.train.task3_gender_sam25_cv import sam25_cv_config as mixup_config
+            from fashion.train.task3_gender_sam25_cv import training_splits
+        elif sam25:
             from fashion.train.task3_gender_sam25 import (
                 require_sam25_prerequisites as require_mixup_prerequisites,
             )
