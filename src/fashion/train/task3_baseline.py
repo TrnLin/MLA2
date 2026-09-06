@@ -273,8 +273,17 @@ def _pass(
     *,
     optimizer: torch.optim.Optimizer | None = None,
     saved_tensors_on_cpu: bool = False,
+    mixup=None,
 ) -> tuple[float, np.ndarray, np.ndarray, dict[str, list[Any]]]:
     training = optimizer is not None
+    if mixup is not None and (
+        not training
+        or type(criterion) is not nn.CrossEntropyLoss
+        or criterion.weight is not None
+        or criterion.label_smoothing != 0
+        or criterion.reduction != "mean"
+    ):
+        raise ValueError("MixUp requires training with plain unweighted mean cross-entropy")
     model.train(training)
     total_loss_numerator = 0.0
     total_loss_denominator = 0.0
@@ -292,6 +301,8 @@ def _pass(
         for batch in loader:
             images = batch["image"].to(device, non_blocking=True)
             target = batch["label"].to(device, non_blocking=True)
+            if mixup is not None:
+                images, partner_target, mix_lambda = mixup.apply(images, target, batch["id"])
             if training:
                 optimizer.zero_grad(set_to_none=True)
             offload = (
@@ -316,6 +327,10 @@ def _pass(
                     loss = criterion(logits, target, sample_weight)
                 elif not isinstance(criterion, GenderAudienceAuxiliaryCrossEntropy):
                     loss = criterion(logits, target)
+                    if mixup is not None:
+                        loss = mix_lambda * loss + (1.0 - mix_lambda) * criterion(
+                            logits, partner_target
+                        )
             if training:
                 loss.backward()
                 optimizer.step()
@@ -335,8 +350,9 @@ def _pass(
                 batch_loss_denominator = float(rows)
             total_loss_numerator += float(loss.detach()) * batch_loss_denominator
             total_loss_denominator += batch_loss_denominator
-            labels.append(target.detach().cpu().numpy())
-            probabilities.append(torch.softmax(logits.detach(), dim=1).cpu().numpy())
+            if mixup is None:
+                labels.append(target.detach().cpu().numpy())
+                probabilities.append(torch.softmax(logits.detach(), dim=1).cpu().numpy())
             if not training:
                 trace["id"].extend(batch["id"].tolist())
                 trace["cv_fold"].extend(batch["cv_fold"].tolist())
@@ -346,8 +362,8 @@ def _pass(
         raise ValueError("a data loader produced no rows")
     return (
         total_loss_numerator / total_loss_denominator,
-        np.concatenate(labels),
-        np.concatenate(probabilities),
+        np.concatenate(labels) if labels else np.empty(0, dtype=int),
+        np.concatenate(probabilities) if probabilities else np.empty((0, logits.shape[1])),
         trace,
     )
 
@@ -519,10 +535,31 @@ def run_task3_baseline_fold(
 
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
     group_weight = getattr(child_spec, "name", None) == "gender_name_truth_article_weight_sqrt_cap3"
-    name_truth = group_weight or (
-        getattr(child_spec, "name", None) == "gender_name_truth_dropout_030_grayscale_010"
+    use_mixup = getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020"
+    name_truth = (
+        use_mixup
+        or group_weight
+        or (getattr(child_spec, "name", None) == "gender_name_truth_dropout_030_grayscale_010")
     )
-    if group_weight:
+    if use_mixup:
+        from fashion.train.task3_gender_mixup import (
+            mixup_config,
+            require_mixup_prerequisites,
+            training_splits,
+        )
+
+        config = mixup_config(child_spec, fold=validation_fold, device_name=device_name, root=root)
+        refinement_evidence = require_mixup_prerequisites(
+            prerequisite_path,
+            spec=child_spec,
+            fold=validation_fold,
+            parent_run_directory=parent_run_directory,
+            root=root,
+            device_name=device_name,
+        )
+        narrow_evidence = refinement_evidence["precision"]
+        parent_run_directory = refinement_evidence["parent_directory"]
+    elif group_weight:
         from fashion.train.task3_gender_group_weight import (
             group_weight_config,
             require_group_weight_prerequisites,
@@ -799,6 +836,17 @@ def run_task3_baseline_fold(
         ].copy()
 
     config_payload = config.to_dict()
+    mixup = None
+    if use_mixup:
+        from fashion.train.mixup import TrainingMixUp
+
+        mixup = TrainingMixUp(
+            training,
+            validation_fold=validation_fold,
+            label_to_index=label_to_index,
+            seed=config.seed,
+        )
+        config_payload["mixup_contract"] = mixup.contract
     if name_truth:
         config_payload["gender_label_variant"] = child_spec.to_dict()["gender_label_variant"]
     if refinement_evidence is not None:
@@ -1024,6 +1072,8 @@ def run_task3_baseline_fold(
     try:
         for epoch in range(1, config.epochs + 1):
             learning_rate = float(optimizer.param_groups[0]["lr"])
+            if mixup is not None:
+                mixup.begin_epoch(epoch)
             train_loss, train_labels, train_probabilities, _ = _pass(
                 model,
                 train_loader,
@@ -1031,11 +1081,19 @@ def run_task3_baseline_fold(
                 device,
                 optimizer=optimizer,
                 saved_tensors_on_cpu=offload,
+                mixup=mixup,
             )
+            if mixup is not None:
+                mixup.end_epoch()
+                _json_dump(mixup.receipt(), run_dir / "mixup_training.json")
             validation_loss, validation_labels, validation_probabilities, _ = _pass(
                 model, validation_loader, evaluation_criterion, device
             )
-            train_metrics = classification_metrics(train_labels, train_probabilities, classes)
+            train_metrics = (
+                classification_metrics(train_labels, train_probabilities, classes)
+                if mixup is None
+                else {"macro_f1": None}
+            )
             validation_metrics = classification_metrics(
                 validation_labels, validation_probabilities, classes
             )
@@ -1049,6 +1107,8 @@ def run_task3_baseline_fold(
                     "validation_macro_f1": validation_metrics["macro_f1"],
                 }
             )
+            if mixup is not None:
+                history[-1]["train_metric_scope"] = "not_applicable_mixed_inputs"
             if early_stopping is not None and early_stopping.update(
                 epoch, float(validation_metrics["macro_f1"])
             ):
@@ -1059,9 +1119,12 @@ def run_task3_baseline_fold(
             scheduler.step()
             last_stage = f"epoch_{epoch}_complete"
             registry.update(run_id, {"last_completed_stage": last_stage})
+            train_f1_text = (
+                f"{train_metrics['macro_f1']:.4f}" if mixup is None else "n/a (mixed inputs)"
+            )
             _log(
                 f"target={target} fold={validation_fold} epoch={epoch}/{config.epochs} "
-                f"train_loss={train_loss:.4f} train_macro_f1={train_metrics['macro_f1']:.4f} "
+                f"train_loss={train_loss:.4f} train_macro_f1={train_f1_text} "
                 f"validation_loss={validation_loss:.4f} "
                 f"validation_macro_f1={validation_metrics['macro_f1']:.4f}"
             )
@@ -1134,6 +1197,8 @@ def run_task3_baseline_fold(
             metrics["prerequisite_sha256"] = compute_sha256(prerequisite_path)
         metrics["input_view"] = input_view
         metrics["sample_weight_strategy"] = sample_weight_strategy
+        if mixup is not None:
+            metrics["mixup_receipt_sha256"] = compute_sha256(run_dir / "mixup_training.json")
         metrics["loss_name"] = loss_name
         metrics["training_selection_strategy"] = selection_strategy
         metrics["training_selection_contract"] = selection_metadata
