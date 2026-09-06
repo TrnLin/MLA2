@@ -1,0 +1,20 @@
+gate,value,rule,status
+validation_gain,0.0029441437472182974,>= 0.010 versus matched G2,fail
+validation_ci_lower,-0.010378784402407104,> 0,fail
+fold_0.validation,-0.010882368336823878,>= -0.005,fail
+fold_0.gap_change,0.01128882374097906,<= 0,fail
+fold_0.gpu_memory_bytes,477093888,0 < value < 3000000000,pass
+fold_0.parameters,390181,== 390181,pass
+fold_4.validation,0.016800005491478864,>= -0.005,pass
+fold_4.gap_change,-0.017219692116172136,<= 0,pass
+fold_4.gpu_memory_bytes,477585408,0 < value < 3000000000,pass
+fold_4.parameters,390181,== 390181,pass
+mean_gap_reduction,0.0029654341875965384,>= 0.030 versus matched G2,fail
+class_f1,"{'Boys': 0.004830103145638365, 'Girls': 0.005825518613242431, 'Men': 0.001426431884549939, 'Unisex': 0.0012449655774456891, 'Women': 0.0013936995152151743}",every class >= -0.020,pass
+nll,-0.0017859487839385624,<= 0.02 versus matched G2,pass
+ece_15,-0.0010692951472159352,<= 0.01 versus matched G2,pass
+robustness_vs_e6.brightness_085,-0.057456109399991434,>= -0.02,fail
+robustness_vs_e6.brightness_115,0.002774003615715455,>= -0.02,pass
+robustness_vs_e6.grayscale,-0.009490757780032555,>= -0.02,pass
+robustness_vs_e6.jpeg_75,0.004800999859129254,>= -0.02,pass
+robustness_vs_e6.translation_003,0.10828826720657186,>= 0.03,pass
