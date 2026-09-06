@@ -1,6 +1,7 @@
 """Two-fold scratch refinement: add G-D1 darkening to completed G-Drop30."""
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -56,8 +57,12 @@ def dropout_darkening_config(spec, *, fold, device_name):
     return Task3BaselineConfig(target="gender")
 
 
-def _verify_training_evidence(run, spec, parent_id, evidence, *, audit_sha256=None):
-    _verify_baseline_controls(run["config"], Task3BaselineConfig(target="gender"))
+def _verify_training_evidence(
+    run, spec, parent_id, evidence, *, audit_sha256=None, expected_epochs=30
+):
+    _verify_baseline_controls(
+        run["config"], replace(Task3BaselineConfig(target="gender"), epochs=expected_epochs)
+    )
     config = run["config"]
     if config.get("child_experiment") != spec.to_dict() or config.get("parent_run_id") != parent_id:
         raise ValueError("Dropout refinement configuration or direct parent disagrees")
