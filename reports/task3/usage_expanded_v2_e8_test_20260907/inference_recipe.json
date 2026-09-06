@@ -1,0 +1,258 @@
+{
+  "declared_at_utc": "2026-09-06T17:44:53.254599+00:00",
+  "target": "usage",
+  "experiment_id": "t3_usage_expanded_v2_e8",
+  "dataset": {
+    "name": "teacher_plus_rare_usage_v2_20260906",
+    "split_path": "data/processed/teacher_plus_rare_usage_v2_20260906/splits.csv",
+    "split_sha256": "0bd490672543b7022fa7a883be9b006d63681d7c168e497e0388616836696776",
+    "label_map_sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
+    "teacher_split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+    "previous_split_sha256": "7d5f3a986ef8e00f53ee1c86d408f1c3a155d6b0a0ab99bef4c9f7eb27dbda77",
+    "source_geometry_sha256": "564f1141a475a321f6a7bb5661062957655bcad4c907ceb7b3bbc1c11fa1dc42",
+    "same_usage_target": true,
+    "teacher_folds_preserved": true,
+    "previous_external_folds_preserved": true,
+    "initialization": "fresh_scratch_weights",
+    "total_rows": 39299,
+    "usage_development_rows": 33459,
+    "teacher_rows": 38612,
+    "previous_added_rows": 120,
+    "new_added_rows": 567,
+    "holdout_rows": 5778,
+    "quarantine_rows": 61,
+    "folds": [
+      {
+        "fold": 0,
+        "training_rows": 26751,
+        "validation_rows": 6708,
+        "teacher_training_rows": 26219,
+        "teacher_validation_rows": 6553,
+        "previous_added_training_rows": 96,
+        "previous_added_validation_rows": 24,
+        "new_added_training_rows": 436,
+        "new_added_validation_rows": 131
+      },
+      {
+        "fold": 1,
+        "training_rows": 26771,
+        "validation_rows": 6688,
+        "teacher_training_rows": 26216,
+        "teacher_validation_rows": 6556,
+        "previous_added_training_rows": 97,
+        "previous_added_validation_rows": 23,
+        "new_added_training_rows": 458,
+        "new_added_validation_rows": 109
+      },
+      {
+        "fold": 2,
+        "training_rows": 26771,
+        "validation_rows": 6688,
+        "teacher_training_rows": 26219,
+        "teacher_validation_rows": 6553,
+        "previous_added_training_rows": 95,
+        "previous_added_validation_rows": 25,
+        "new_added_training_rows": 457,
+        "new_added_validation_rows": 110
+      },
+      {
+        "fold": 3,
+        "training_rows": 26772,
+        "validation_rows": 6687,
+        "teacher_training_rows": 26219,
+        "teacher_validation_rows": 6553,
+        "previous_added_training_rows": 97,
+        "previous_added_validation_rows": 23,
+        "new_added_training_rows": 456,
+        "new_added_validation_rows": 111
+      },
+      {
+        "fold": 4,
+        "training_rows": 26771,
+        "validation_rows": 6688,
+        "teacher_training_rows": 26215,
+        "teacher_validation_rows": 6557,
+        "previous_added_training_rows": 95,
+        "previous_added_validation_rows": 25,
+        "new_added_training_rows": 461,
+        "new_added_validation_rows": 106
+      }
+    ]
+  },
+  "test_rows": 5829,
+  "class_names": [
+    "Casual",
+    "Ethnic",
+    "Formal",
+    "Home",
+    "NA",
+    "Party",
+    "Smart Casual",
+    "Sports",
+    "Travel"
+  ],
+  "aggregation": "Equal arithmetic mean of five saved fold softmax probability vectors; argmax",
+  "fold_weights": [
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2
+  ],
+  "checkpoint_rule": "Saved final epoch 30; folds 0 through 4",
+  "preprocessing": "Same full RGB 80x60 transform; saved normalization per fold",
+  "device": "cpu",
+  "torch_version": "2.11.0+cpu",
+  "labels_used_for_inference": false,
+  "training_or_tuning": false,
+  "test_labels_previously_seen": true,
+  "test_exact_hash_matches_development": 0,
+  "test_exact_hash_matches_quarantine": 11,
+  "evaluation_reason": "User requested the official test result for E8 with all 687 additions",
+  "numerical_reproduction_tolerance": 0.005,
+  "checkpoints": [
+    {
+      "fold": 0,
+      "run_id": "t3_usage_expanded_v2_e8_usage_smallcnn_f0_s2753_3c4369c6ce6e_20260906T141147Zfb606e",
+      "path": "results/evidence/task3/usage_expanded_v2_e8_20260906/t3_usage_expanded_v2_e8_usage_smallcnn_f0_s2753_3c4369c6ce6e_20260906T141147Zfb606e/final_epoch.pt",
+      "sha256": "94a742836d7e8b392ef11c5bca75a130fc5f8ed9a22a6fc791f7c1152a741486",
+      "normalization": {
+        "channels": 3,
+        "total_pixels": 127888460,
+        "mean": [
+          0.8480309822092259,
+          0.8310955850393019,
+          0.8251461057005389
+        ],
+        "std": [
+          0.27207440370628727,
+          0.2836564265048032,
+          0.28738583563857906
+        ]
+      }
+    },
+    {
+      "fold": 1,
+      "run_id": "t3_usage_expanded_v2_e8_usage_smallcnn_f1_s2753_3c4369c6ce6e_20260906T142131Zb5daae",
+      "path": "results/evidence/task3/usage_expanded_v2_e8_20260906/t3_usage_expanded_v2_e8_usage_smallcnn_f1_s2753_3c4369c6ce6e_20260906T142131Zb5daae/final_epoch.pt",
+      "sha256": "f5831c4a8fe70ee7520073d6412fcf74c70578dfbc00193752bc1a4a1880846d",
+      "normalization": {
+        "channels": 3,
+        "total_pixels": 127920920,
+        "mean": [
+          0.8481049903765392,
+          0.8312113277634315,
+          0.8254218226418727
+        ],
+        "std": [
+          0.27202038156471336,
+          0.2834925869235544,
+          0.28714849409671295
+        ]
+      }
+    },
+    {
+      "fold": 2,
+      "run_id": "t3_usage_expanded_v2_e8_usage_smallcnn_f2_s2753_3c4369c6ce6e_20260906T143118Zfb9b48",
+      "path": "results/evidence/task3/usage_expanded_v2_e8_20260906/t3_usage_expanded_v2_e8_usage_smallcnn_f2_s2753_3c4369c6ce6e_20260906T143118Zfb9b48/final_epoch.pt",
+      "sha256": "409ead7cf355d06f5e82bde9fd940fb461ce89568e7de7d097c6a151157238d4",
+      "normalization": {
+        "channels": 3,
+        "total_pixels": 127914780,
+        "mean": [
+          0.8481341536642074,
+          0.8311275805671154,
+          0.8254483542375536
+        ],
+        "std": [
+          0.2719659063685207,
+          0.28370810788965833,
+          0.28729494802064687
+        ]
+      }
+    },
+    {
+      "fold": 3,
+      "run_id": "t3_usage_expanded_v2_e8_usage_smallcnn_f3_s2753_3c4369c6ce6e_20260906T144112Z005070",
+      "path": "results/evidence/task3/usage_expanded_v2_e8_20260906/t3_usage_expanded_v2_e8_usage_smallcnn_f3_s2753_3c4369c6ce6e_20260906T144112Z005070/final_epoch.pt",
+      "sha256": "b754d800ba74316c71a919b5d95eaa261df206afd8d25545a5c3dbd67d5142fe",
+      "normalization": {
+        "channels": 3,
+        "total_pixels": 127908920,
+        "mean": [
+          0.8484143273486875,
+          0.8310649162455238,
+          0.8252658613505921
+        ],
+        "std": [
+          0.27164821733616945,
+          0.28368937874352856,
+          0.287319958715348
+        ]
+      }
+    },
+    {
+      "fold": 4,
+      "run_id": "t3_usage_expanded_v2_e8_usage_smallcnn_f4_s2753_3c4369c6ce6e_20260906T145103Z229e7e",
+      "path": "results/evidence/task3/usage_expanded_v2_e8_20260906/t3_usage_expanded_v2_e8_usage_smallcnn_f4_s2753_3c4369c6ce6e_20260906T145103Z229e7e/final_epoch.pt",
+      "sha256": "763910c28a2a97d2007786ede37605bcceb70f538162d330e1e580d2a95c502f",
+      "normalization": {
+        "channels": 3,
+        "total_pixels": 127915640,
+        "mean": [
+          0.8476365718840614,
+          0.8307332491129884,
+          0.8249644792027306
+        ],
+        "std": [
+          0.2722989300902883,
+          0.28384668755098574,
+          0.28735862847093574
+        ]
+      }
+    }
+  ],
+  "reproduction_checks": [
+    {
+      "fold": 0,
+      "rows": 16,
+      "maximum_probability_drift": 0.0008204317136383255,
+      "all_class_decisions_match": true
+    },
+    {
+      "fold": 1,
+      "rows": 16,
+      "maximum_probability_drift": 0.0006488796638488559,
+      "all_class_decisions_match": true
+    },
+    {
+      "fold": 2,
+      "rows": 16,
+      "maximum_probability_drift": 0.001680890377807609,
+      "all_class_decisions_match": true
+    },
+    {
+      "fold": 3,
+      "rows": 16,
+      "maximum_probability_drift": 0.0014921157626342496,
+      "all_class_decisions_match": true
+    },
+    {
+      "fold": 4,
+      "rows": 17,
+      "maximum_probability_drift": 0.0012330704244232216,
+      "all_class_decisions_match": true
+    }
+  ],
+  "inputs": {
+    "data/processed/prediction_manifest.csv": "8d1fdd27721fc8604203b99308ecda9773b1f7c89b8cf6b2a33c82587b14954b",
+    "data/raw/teacher/test/styles_prediction.csv": "7f83f219d0fb7f2ec86b8b5c0ba28c2cfadd8f8e6e85a36c9919c9ab5c41315e",
+    "data/processed/teacher_plus_rare_usage_v2_20260906/splits.csv": "0bd490672543b7022fa7a883be9b006d63681d7c168e497e0388616836696776",
+    "results/evidence/task3/usage_expanded_v2_e8_20260906/results/runs.csv": "2e9b19adbd283c3e12524e89a59b63b76dc9ddfd8040f30fb339aa6992d34ccc",
+    "reports/task3_usage_expanded_v2_e8_test_20260907/predict_test.py": "161688fac59c0169378483b8c82f07f4df2dc2c404444daca8b7ffa931f5be7b",
+    "reports/task3_usage_expanded_e8_test_20260906/predict_test.py": "9227a42943fd338bc703b41f939eb79647476c5e2f80dae14291a71390e586ee",
+    "src/fashion/data/images.py": "2a5683d9ef66e7ebf4ab033aab5f586c0af7122a758752ea0059bd3e2868883d",
+    "src/fashion/train/model.py": "8e306a9588e5ba681f883b6eda143e63a592a9234665c4bd2f872d40de895cf1",
+    "src/fashion/train/config.py": "bd5bed89b110b2465e5b126ce20f1c31b8bcc710157c2a42bde49f2f9ad59361"
+  }
+}
