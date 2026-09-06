@@ -1,0 +1,19 @@
+{
+  "registry_stages_checked_against_sklearn": 47,
+  "executed_code_cells": 121,
+  "execution_counts_in_order": true,
+  "execution_errors": 0,
+  "numbered_sections": 40,
+  "maximum_code_cell_lines": 23,
+  "embedded_charts_visually_checked": 77,
+  "additional_pinned_sources": 136,
+  "development_images_hash_checked_and_decoded": 32773,
+  "analysis_runs_inside_notebook": true,
+  "external_analysis_helpers": false,
+  "notebook_scaffold_tests_passed": 15,
+  "ruff_check_passed": true,
+  "html_local_links_checked": true,
+  "html_layout_visually_checked": true,
+  "archive_byte_identical": true,
+  "registry_sha256": "aae3e2b64332a892548ad86eed7c1e0bbecf97340913c4ec1a3999ab179b7ba5"
+}
