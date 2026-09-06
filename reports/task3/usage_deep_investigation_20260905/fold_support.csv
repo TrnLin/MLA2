@@ -1,0 +1,42 @@
+cv_fold,usage,images,families
+0,Casual,5037,3497
+0,Ethnic,438,285
+0,Formal,383,197
+0,NA,11,10
+0,Party,3,3
+0,Smart Casual,9,6
+0,Sports,668,606
+0,Travel,4,4
+1,Casual,5031,3536
+1,Ethnic,436,280
+1,Formal,387,209
+1,NA,14,8
+1,Party,2,2
+1,Smart Casual,10,9
+1,Sports,671,596
+1,Travel,5,5
+2,Casual,5031,3530
+2,Ethnic,436,264
+2,Formal,390,204
+2,NA,13,11
+2,Party,2,2
+2,Smart Casual,9,7
+2,Sports,668,603
+2,Travel,4,4
+3,Casual,5024,3543
+3,Ethnic,438,279
+3,Formal,393,209
+3,NA,12,9
+3,Party,2,2
+3,Smart Casual,10,8
+3,Sports,669,596
+3,Travel,5,5
+4,Casual,5028,3531
+4,Ethnic,435,243
+4,Formal,396,197
+4,Home,1,1
+4,NA,11,11
+4,Party,3,1
+4,Smart Casual,9,7
+4,Sports,670,619
+4,Travel,4,4
