@@ -17,7 +17,7 @@ This later preference does not turn earlier failed macro-F1 gates into passes.
 
 - Select experiment `t3_primary_baseline_smallcnn`, target `usage`, teacher only.
 - Freeze exactly the five original `final_epoch.pt` checkpoints in
-  `reports/task3_usage_final_e1_20260907/model_manifest.json`. Their run IDs,
+  `reports/task3/usage_final_e1_20260907/model_manifest.json`. Their run IDs,
   SHA-256 hashes, configurations and fold normalizations define the artifact.
 - Keep the scratch 391,209-parameter SmallCNN: channels 32/64/128/256,
   global average pooling, no classifier dropout or augmentation, unweighted
@@ -81,11 +81,11 @@ The existing E1 `id,usage` predictions do not replace the complete required
 
 ## Evidence
 
-- [Frozen model manifest](../../reports/task3_usage_final_e1_20260907/model_manifest.json)
-- [Original validation ranking and test review](../../reports/task3_usage_teacher_vs_expanded_test_20260906/README.md)
-- [Original saved inference recipe](../../reports/task3_usage_teacher_vs_expanded_test_20260906/inference_recipe.json)
-- [Reserved holdout review](../../reports/task3_usage_holdout_20260906/README.md)
-- [Completed 687-image test comparison](../../reports/task3_usage_expanded_v2_e8_test_20260907/README.md)
-- [Two-fold v2 trial](../../reports/task3_usage_mixup_sam_result_20260906/README.md)
-- [Two-fold v3 replacement trial](../../reports/task3_usage_replaced_v3_mixup_sam_result_20260907/README.md)
+- [Frozen model manifest](../../reports/task3/usage_final_e1_20260907/model_manifest.json)
+- [Original validation ranking and test review](../../reports/task3/usage_teacher_vs_expanded_test_20260906/README.md)
+- [Original saved inference recipe](../../reports/task3/usage_teacher_vs_expanded_test_20260906/inference_recipe.json)
+- [Reserved holdout review](../../reports/task3/usage_holdout_20260906/README.md)
+- [Completed 687-image test comparison](../../reports/task3/usage_expanded_v2_e8_test_20260907/README.md)
+- [Two-fold v2 trial](../../reports/task3/usage_mixup_sam_result_20260906/README.md)
+- [Two-fold v3 replacement trial](../../reports/task3/usage_replaced_v3_mixup_sam_result_20260907/README.md)
 - [Main report notebook](../../notebooks/04_task3_gender_usage.ipynb)
