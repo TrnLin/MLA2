@@ -21,7 +21,6 @@ mark the old one as superseded, and link both records.
 - `0001-data-roles-and-raw-immutability.md`
 - `0005-conflicting-exact-duplicate-quarantine.md`
 - `0006-python-constraints-workflow.md`
-- `0014-development-holdout-cv-boundary.md`
 - `0015-teacher-only-shared-image-preparation.md`
 - `0016-development-label-scope.md`
 - `0017-product-name-na-and-cv-refreeze.md`
@@ -29,6 +28,8 @@ mark the old one as superseded, and link both records.
   direct Usage labels, unchanged teacher folds, grouped folds for added images.
 - `0019-task3-text-supported-usage-expansion.md` — a new combined version adds 567 reviewed
   product-text/collection-labelled images while preserving all earlier rows and folds.
+- `0020-task3-gender-sam25-final-model.md` — freeze the five SAM25 gender checkpoints
+  and their equal-probability ensemble; record evaluation limits and label bases.
 - `0021-task3-usage-gap-replacements.md` — replace 130 outside images in a new v3 dataset;
   fill reviewed type/photo gaps while preserving class totals and retained rows/folds.
 
@@ -43,6 +44,8 @@ mark the old one as superseded, and link both records.
 
 ## Accepted with later amendments
 
+- `0014-development-holdout-cv-boundary.md` — Task 3 combined-data exception in 0018;
+  gender final artifact is a five-fold ensemble under 0020. Other boundaries remain active.
 - `0002-single-split-and-duplicate-quarantine.md` — partition details superseded by 0014;
   the sole-split and duplicate-quarantine rules remain active.
 - `0011-auditable-family-review-boundary.md` — fixed partition counts superseded by 0014 and the
