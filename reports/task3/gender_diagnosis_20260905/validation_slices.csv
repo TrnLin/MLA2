@@ -1,0 +1,685 @@
+model,dimensions,slice,rows,families,errors,accuracy
+CompactBlurCNN,gender,Boys,274,161,101,0.6313868613138686
+CompactBlurCNN,gender,Girls,216,134,107,0.5046296296296297
+CompactBlurCNN,gender,Men,7102,4931,444,0.937482399324134
+CompactBlurCNN,gender,Unisex,708,578,376,0.4689265536723164
+CompactBlurCNN,gender,Women,4810,3331,448,0.9068607068607069
+CompactBlurCNN,articleType,Accessory Gift Set,35,13,0,1.0
+CompactBlurCNN,articleType,Backpacks,245,171,61,0.7510204081632653
+CompactBlurCNN,articleType,Bangle,31,2,9,0.7096774193548387
+CompactBlurCNN,articleType,Basketballs,5,5,2,0.6
+CompactBlurCNN,articleType,Belts,270,163,46,0.8296296296296296
+CompactBlurCNN,articleType,Blazers,3,3,1,0.6666666666666666
+CompactBlurCNN,articleType,Booties,4,2,4,0.0
+CompactBlurCNN,articleType,Boxers,14,11,0,1.0
+CompactBlurCNN,articleType,Bra,99,78,1,0.98989898989899
+CompactBlurCNN,articleType,Bracelet,23,3,13,0.43478260869565216
+CompactBlurCNN,articleType,Briefs,225,157,5,0.9777777777777777
+CompactBlurCNN,articleType,Camisoles,6,6,0,1.0
+CompactBlurCNN,articleType,Capris,53,40,23,0.5660377358490566
+CompactBlurCNN,articleType,Caps,91,82,45,0.5054945054945055
+CompactBlurCNN,articleType,Casual Shoes,909,710,134,0.8525852585258525
+CompactBlurCNN,articleType,Churidar,11,11,0,1.0
+CompactBlurCNN,articleType,Clothing Set,3,3,1,0.6666666666666666
+CompactBlurCNN,articleType,Clutches,75,61,7,0.9066666666666666
+CompactBlurCNN,articleType,Concealer,2,1,0,1.0
+CompactBlurCNN,articleType,Cufflinks,20,3,2,0.9
+CompactBlurCNN,articleType,Cushion Covers,1,1,1,0.0
+CompactBlurCNN,articleType,Deodorant,98,89,17,0.826530612244898
+CompactBlurCNN,articleType,Dresses,115,88,15,0.8695652173913043
+CompactBlurCNN,articleType,Duffel Bag,28,23,11,0.6071428571428571
+CompactBlurCNN,articleType,Dupatta,38,30,0,1.0
+CompactBlurCNN,articleType,Earrings,125,4,1,0.992
+CompactBlurCNN,articleType,Eyeshadow,3,2,0,1.0
+CompactBlurCNN,articleType,Flats,141,97,12,0.9148936170212766
+CompactBlurCNN,articleType,Flip Flops,296,244,66,0.777027027027027
+CompactBlurCNN,articleType,Footballs,3,3,2,0.3333333333333333
+CompactBlurCNN,articleType,Formal Shoes,205,88,2,0.9902439024390244
+CompactBlurCNN,articleType,Foundation and Primer,6,2,0,1.0
+CompactBlurCNN,articleType,Fragrance Gift Set,18,18,3,0.8333333333333334
+CompactBlurCNN,articleType,Free Gifts,21,13,6,0.7142857142857143
+CompactBlurCNN,articleType,Gloves,8,5,3,0.625
+CompactBlurCNN,articleType,Handbags,490,315,42,0.9142857142857143
+CompactBlurCNN,articleType,Headband,3,3,3,0.0
+CompactBlurCNN,articleType,Heels,362,185,6,0.9834254143646409
+CompactBlurCNN,articleType,Innerwear Vests,80,63,5,0.9375
+CompactBlurCNN,articleType,Jackets,76,69,9,0.881578947368421
+CompactBlurCNN,articleType,Jeans,189,92,20,0.8941798941798942
+CompactBlurCNN,articleType,Jeggings,8,6,0,1.0
+CompactBlurCNN,articleType,Jewellery Set,12,7,0,1.0
+CompactBlurCNN,articleType,Jumpsuit,4,4,0,1.0
+CompactBlurCNN,articleType,Kajal and Eyeliner,5,4,2,0.6
+CompactBlurCNN,articleType,Kurta Sets,25,23,0,1.0
+CompactBlurCNN,articleType,Kurtas,530,280,3,0.9943396226415094
+CompactBlurCNN,articleType,Kurtis,67,53,0,1.0
+CompactBlurCNN,articleType,Laptop Bag,25,19,12,0.52
+CompactBlurCNN,articleType,Leggings,53,46,4,0.9245283018867925
+CompactBlurCNN,articleType,Lehenga Choli,1,1,0,1.0
+CompactBlurCNN,articleType,Lip Gloss,2,2,0,1.0
+CompactBlurCNN,articleType,Lip Liner,6,2,0,1.0
+CompactBlurCNN,articleType,Lip Plumper,1,1,0,1.0
+CompactBlurCNN,articleType,Lipstick,4,1,0,1.0
+CompactBlurCNN,articleType,Lounge Pants,18,18,4,0.7777777777777778
+CompactBlurCNN,articleType,Lounge Shorts,12,10,2,0.8333333333333334
+CompactBlurCNN,articleType,Messenger Bag,14,14,9,0.35714285714285715
+CompactBlurCNN,articleType,Mobile Pouch,16,16,4,0.75
+CompactBlurCNN,articleType,Mufflers,13,10,6,0.5384615384615384
+CompactBlurCNN,articleType,Nail Polish,7,7,0,1.0
+CompactBlurCNN,articleType,Necklace and Chains,21,16,2,0.9047619047619048
+CompactBlurCNN,articleType,Nehru Jackets,1,1,0,1.0
+CompactBlurCNN,articleType,Night suits,23,17,4,0.8260869565217391
+CompactBlurCNN,articleType,Nightdress,14,11,0,1.0
+CompactBlurCNN,articleType,Patiala,9,6,0,1.0
+CompactBlurCNN,articleType,Pendant,33,4,0,1.0
+CompactBlurCNN,articleType,Perfume and Body Mist,190,163,43,0.7736842105263158
+CompactBlurCNN,articleType,Rain Trousers,1,1,0,1.0
+CompactBlurCNN,articleType,Ring,3,1,0,1.0
+CompactBlurCNN,articleType,Rompers,5,2,0,1.0
+CompactBlurCNN,articleType,Rucksacks,4,4,0,1.0
+CompactBlurCNN,articleType,Salwar,11,8,0,1.0
+CompactBlurCNN,articleType,Salwar and Dupatta,2,2,0,1.0
+CompactBlurCNN,articleType,Sandals,297,196,46,0.8451178451178452
+CompactBlurCNN,articleType,Sarees,50,44,0,1.0
+CompactBlurCNN,articleType,Scarves,36,30,13,0.6388888888888888
+CompactBlurCNN,articleType,Shirts,1047,606,20,0.9808978032473734
+CompactBlurCNN,articleType,Shoe Accessories,8,7,7,0.125
+CompactBlurCNN,articleType,Shorts,178,140,43,0.7584269662921348
+CompactBlurCNN,articleType,Skirts,38,32,14,0.631578947368421
+CompactBlurCNN,articleType,Socks,207,116,47,0.7729468599033816
+CompactBlurCNN,articleType,Sports Sandals,21,21,6,0.7142857142857143
+CompactBlurCNN,articleType,Sports Shoes,675,622,94,0.8607407407407407
+CompactBlurCNN,articleType,Stockings,12,3,0,1.0
+CompactBlurCNN,articleType,Stoles,29,21,2,0.9310344827586207
+CompactBlurCNN,articleType,Sunglasses,361,169,80,0.778393351800554
+CompactBlurCNN,articleType,Suspenders,13,9,0,1.0
+CompactBlurCNN,articleType,Sweaters,92,79,0,1.0
+CompactBlurCNN,articleType,Sweatshirts,93,81,8,0.9139784946236559
+CompactBlurCNN,articleType,Swimwear,6,5,2,0.6666666666666666
+CompactBlurCNN,articleType,Tablet Sleeve,1,1,1,0.0
+CompactBlurCNN,articleType,Ties,69,34,3,0.9565217391304348
+CompactBlurCNN,articleType,Ties and Cufflinks,1,1,0,1.0
+CompactBlurCNN,articleType,Tights,4,4,0,1.0
+CompactBlurCNN,articleType,Tops,549,389,58,0.8943533697632058
+CompactBlurCNN,articleType,Track Pants,98,78,9,0.9081632653061225
+CompactBlurCNN,articleType,Tracksuits,10,9,2,0.8
+CompactBlurCNN,articleType,Travel Accessory,5,4,3,0.4
+CompactBlurCNN,articleType,Trolley Bag,1,1,1,0.0
+CompactBlurCNN,articleType,Trousers,172,112,11,0.936046511627907
+CompactBlurCNN,articleType,Trunk,46,34,0,1.0
+CompactBlurCNN,articleType,Tshirts,2298,1847,148,0.9355961705831157
+CompactBlurCNN,articleType,Tunics,57,52,1,0.9824561403508771
+CompactBlurCNN,articleType,Umbrellas,3,2,1,0.6666666666666666
+CompactBlurCNN,articleType,Waist Pouch,6,5,3,0.5
+CompactBlurCNN,articleType,Waistcoat,5,3,0,1.0
+CompactBlurCNN,articleType,Wallets,280,164,28,0.9
+CompactBlurCNN,articleType,Watches,766,522,147,0.8080939947780679
+CompactBlurCNN,articleType,Water Bottle,4,4,3,0.25
+CompactBlurCNN,articleType,Wristbands,2,2,2,0.0
+CompactBlurCNN,family_size_bin,1,7588,7588,968,0.8724301528729573
+CompactBlurCNN,family_size_bin,2–3,2577,1148,298,0.8843616608459449
+CompactBlurCNN,family_size_bin,4+,2945,398,210,0.9286926994906621
+CompactBlurCNN,gender × articleType,Boys | Blazers,1,1,1,0.0
+CompactBlurCNN,gender × articleType,Boys | Booties,4,2,4,0.0
+CompactBlurCNN,gender × articleType,Boys | Capris,2,1,0,1.0
+CompactBlurCNN,gender × articleType,Boys | Casual Shoes,13,10,9,0.3076923076923077
+CompactBlurCNN,gender × articleType,Boys | Clothing Set,1,1,1,0.0
+CompactBlurCNN,gender × articleType,Boys | Flip Flops,5,5,2,0.6
+CompactBlurCNN,gender × articleType,Boys | Gloves,4,2,3,0.25
+CompactBlurCNN,gender × articleType,Boys | Jackets,4,2,4,0.0
+CompactBlurCNN,gender × articleType,Boys | Jeans,10,4,4,0.6
+CompactBlurCNN,gender × articleType,Boys | Kurtas,1,1,0,1.0
+CompactBlurCNN,gender × articleType,Boys | Rompers,2,1,0,1.0
+CompactBlurCNN,gender × articleType,Boys | Sandals,5,4,3,0.4
+CompactBlurCNN,gender × articleType,Boys | Shirts,25,8,8,0.68
+CompactBlurCNN,gender × articleType,Boys | Shorts,16,10,9,0.4375
+CompactBlurCNN,gender × articleType,Boys | Sweatshirts,2,2,2,0.0
+CompactBlurCNN,gender × articleType,Boys | Trousers,3,2,3,0.0
+CompactBlurCNN,gender × articleType,Boys | Tshirts,171,100,43,0.7485380116959064
+CompactBlurCNN,gender × articleType,Boys | Watches,5,5,5,0.0
+CompactBlurCNN,gender × articleType,Girls | Capris,16,7,13,0.1875
+CompactBlurCNN,gender × articleType,Girls | Casual Shoes,10,9,7,0.3
+CompactBlurCNN,gender × articleType,Girls | Clothing Set,2,2,0,1.0
+CompactBlurCNN,gender × articleType,Girls | Dresses,21,13,11,0.47619047619047616
+CompactBlurCNN,gender × articleType,Girls | Flip Flops,2,1,1,0.5
+CompactBlurCNN,gender × articleType,Girls | Gloves,2,1,0,1.0
+CompactBlurCNN,gender × articleType,Girls | Innerwear Vests,3,3,1,0.6666666666666666
+CompactBlurCNN,gender × articleType,Girls | Jeans,5,2,1,0.8
+CompactBlurCNN,gender × articleType,Girls | Leggings,3,3,3,0.0
+CompactBlurCNN,gender × articleType,Girls | Lehenga Choli,1,1,0,1.0
+CompactBlurCNN,gender × articleType,Girls | Rompers,3,2,0,1.0
+CompactBlurCNN,gender × articleType,Girls | Sandals,17,13,13,0.23529411764705882
+CompactBlurCNN,gender × articleType,Girls | Shorts,13,8,6,0.5384615384615384
+CompactBlurCNN,gender × articleType,Girls | Skirts,8,5,7,0.125
+CompactBlurCNN,gender × articleType,Girls | Tops,76,39,34,0.5526315789473685
+CompactBlurCNN,gender × articleType,Girls | Tshirts,33,24,10,0.696969696969697
+CompactBlurCNN,gender × articleType,Girls | Watches,1,1,0,1.0
+CompactBlurCNN,gender × articleType,Men | Accessory Gift Set,35,13,0,1.0
+CompactBlurCNN,gender × articleType,Men | Backpacks,22,12,22,0.0
+CompactBlurCNN,gender × articleType,Men | Bangle,13,1,9,0.3076923076923077
+CompactBlurCNN,gender × articleType,Men | Belts,178,100,16,0.9101123595505618
+CompactBlurCNN,gender × articleType,Men | Blazers,2,2,0,1.0
+CompactBlurCNN,gender × articleType,Men | Boxers,14,11,0,1.0
+CompactBlurCNN,gender × articleType,Men | Bracelet,16,1,12,0.25
+CompactBlurCNN,gender × articleType,Men | Briefs,175,117,0,1.0
+CompactBlurCNN,gender × articleType,Men | Caps,41,35,25,0.3902439024390244
+CompactBlurCNN,gender × articleType,Men | Casual Shoes,708,530,35,0.9505649717514124
+CompactBlurCNN,gender × articleType,Men | Cufflinks,20,3,2,0.9
+CompactBlurCNN,gender × articleType,Men | Deodorant,63,58,10,0.8412698412698413
+CompactBlurCNN,gender × articleType,Men | Duffel Bag,2,1,1,0.5
+CompactBlurCNN,gender × articleType,Men | Flip Flops,161,138,16,0.9006211180124224
+CompactBlurCNN,gender × articleType,Men | Formal Shoes,205,88,2,0.9902439024390244
+CompactBlurCNN,gender × articleType,Men | Fragrance Gift Set,14,14,3,0.7857142857142857
+CompactBlurCNN,gender × articleType,Men | Free Gifts,9,5,2,0.7777777777777778
+CompactBlurCNN,gender × articleType,Men | Gloves,2,2,0,1.0
+CompactBlurCNN,gender × articleType,Men | Handbags,3,2,2,0.3333333333333333
+CompactBlurCNN,gender × articleType,Men | Heels,1,1,0,1.0
+CompactBlurCNN,gender × articleType,Men | Innerwear Vests,77,60,4,0.948051948051948
+CompactBlurCNN,gender × articleType,Men | Jackets,44,40,1,0.9772727272727273
+CompactBlurCNN,gender × articleType,Men | Jeans,111,45,8,0.9279279279279279
+CompactBlurCNN,gender × articleType,Men | Kurtas,21,17,2,0.9047619047619048
+CompactBlurCNN,gender × articleType,Men | Laptop Bag,3,3,2,0.3333333333333333
+CompactBlurCNN,gender × articleType,Men | Lounge Pants,14,14,3,0.7857142857142857
+CompactBlurCNN,gender × articleType,Men | Lounge Shorts,9,8,1,0.8888888888888888
+CompactBlurCNN,gender × articleType,Men | Messenger Bag,3,3,3,0.0
+CompactBlurCNN,gender × articleType,Men | Mufflers,8,7,4,0.5
+CompactBlurCNN,gender × articleType,Men | Nehru Jackets,1,1,0,1.0
+CompactBlurCNN,gender × articleType,Men | Night suits,8,6,4,0.5
+CompactBlurCNN,gender × articleType,Men | Perfume and Body Mist,106,94,19,0.8207547169811321
+CompactBlurCNN,gender × articleType,Men | Rain Trousers,1,1,0,1.0
+CompactBlurCNN,gender × articleType,Men | Sandals,240,147,9,0.9625
+CompactBlurCNN,gender × articleType,Men | Scarves,13,11,5,0.6153846153846154
+CompactBlurCNN,gender × articleType,Men | Shirts,929,522,9,0.9903121636167922
+CompactBlurCNN,gender × articleType,Men | Shorts,128,102,23,0.8203125
+CompactBlurCNN,gender × articleType,Men | Socks,161,76,17,0.8944099378881988
+CompactBlurCNN,gender × articleType,Men | Sports Sandals,11,11,0,1.0
+CompactBlurCNN,gender × articleType,Men | Sports Shoes,521,473,20,0.9616122840690979
+CompactBlurCNN,gender × articleType,Men | Stoles,1,1,0,1.0
+CompactBlurCNN,gender × articleType,Men | Sunglasses,212,91,21,0.9009433962264151
+CompactBlurCNN,gender × articleType,Men | Suspenders,13,9,0,1.0
+CompactBlurCNN,gender × articleType,Men | Sweaters,61,52,0,1.0
+CompactBlurCNN,gender × articleType,Men | Sweatshirts,67,57,2,0.9701492537313433
+CompactBlurCNN,gender × articleType,Men | Ties,69,34,3,0.9565217391304348
+CompactBlurCNN,gender × articleType,Men | Tops,1,1,0,1.0
+CompactBlurCNN,gender × articleType,Men | Track Pants,71,52,4,0.9436619718309859
+CompactBlurCNN,gender × articleType,Men | Tracksuits,10,9,2,0.8
+CompactBlurCNN,gender × articleType,Men | Trousers,141,89,6,0.9574468085106383
+CompactBlurCNN,gender × articleType,Men | Trunk,46,34,0,1.0
+CompactBlurCNN,gender × articleType,Men | Tshirts,1730,1404,53,0.969364161849711
+CompactBlurCNN,gender × articleType,Men | Waistcoat,3,2,0,1.0
+CompactBlurCNN,gender × articleType,Men | Wallets,133,56,10,0.924812030075188
+CompactBlurCNN,gender × articleType,Men | Watches,449,278,51,0.8864142538975501
+CompactBlurCNN,gender × articleType,Men | Water Bottle,2,2,1,0.5
+CompactBlurCNN,gender × articleType,Unisex | Backpacks,214,152,34,0.8411214953271028
+CompactBlurCNN,gender × articleType,Unisex | Basketballs,5,5,2,0.6
+CompactBlurCNN,gender × articleType,Unisex | Belts,3,3,3,0.0
+CompactBlurCNN,gender × articleType,Unisex | Caps,43,41,16,0.627906976744186
+CompactBlurCNN,gender × articleType,Unisex | Casual Shoes,75,68,56,0.25333333333333335
+CompactBlurCNN,gender × articleType,Unisex | Cushion Covers,1,1,1,0.0
+CompactBlurCNN,gender × articleType,Unisex | Deodorant,1,1,1,0.0
+CompactBlurCNN,gender × articleType,Unisex | Duffel Bag,21,17,9,0.5714285714285714
+CompactBlurCNN,gender × articleType,Unisex | Flip Flops,48,44,29,0.3958333333333333
+CompactBlurCNN,gender × articleType,Unisex | Footballs,3,3,2,0.3333333333333333
+CompactBlurCNN,gender × articleType,Unisex | Handbags,20,19,13,0.35
+CompactBlurCNN,gender × articleType,Unisex | Headband,3,3,3,0.0
+CompactBlurCNN,gender × articleType,Unisex | Jeans,3,1,3,0.0
+CompactBlurCNN,gender × articleType,Unisex | Laptop Bag,21,15,10,0.5238095238095238
+CompactBlurCNN,gender × articleType,Unisex | Messenger Bag,11,11,6,0.45454545454545453
+CompactBlurCNN,gender × articleType,Unisex | Mobile Pouch,2,2,2,0.0
+CompactBlurCNN,gender × articleType,Unisex | Perfume and Body Mist,2,1,2,0.0
+CompactBlurCNN,gender × articleType,Unisex | Rucksacks,4,4,0,1.0
+CompactBlurCNN,gender × articleType,Unisex | Sandals,33,30,20,0.3939393939393939
+CompactBlurCNN,gender × articleType,Unisex | Scarves,4,4,4,0.0
+CompactBlurCNN,gender × articleType,Unisex | Shoe Accessories,8,7,7,0.125
+CompactBlurCNN,gender × articleType,Unisex | Socks,23,20,22,0.043478260869565216
+CompactBlurCNN,gender × articleType,Unisex | Sports Sandals,3,3,3,0.0
+CompactBlurCNN,gender × articleType,Unisex | Sports Shoes,17,17,16,0.058823529411764705
+CompactBlurCNN,gender × articleType,Unisex | Sunglasses,48,24,40,0.16666666666666666
+CompactBlurCNN,gender × articleType,Unisex | Swimwear,2,2,2,0.0
+CompactBlurCNN,gender × articleType,Unisex | Tablet Sleeve,1,1,1,0.0
+CompactBlurCNN,gender × articleType,Unisex | Travel Accessory,4,3,3,0.25
+CompactBlurCNN,gender × articleType,Unisex | Trolley Bag,1,1,1,0.0
+CompactBlurCNN,gender × articleType,Unisex | Tshirts,23,21,19,0.17391304347826086
+CompactBlurCNN,gender × articleType,Unisex | Waist Pouch,6,5,3,0.5
+CompactBlurCNN,gender × articleType,Unisex | Wallets,7,5,7,0.0
+CompactBlurCNN,gender × articleType,Unisex | Watches,44,40,32,0.2727272727272727
+CompactBlurCNN,gender × articleType,Unisex | Water Bottle,2,2,2,0.0
+CompactBlurCNN,gender × articleType,Unisex | Wristbands,2,2,2,0.0
+CompactBlurCNN,gender × articleType,Women | Backpacks,9,7,5,0.4444444444444444
+CompactBlurCNN,gender × articleType,Women | Bangle,18,1,0,1.0
+CompactBlurCNN,gender × articleType,Women | Belts,89,60,27,0.6966292134831461
+CompactBlurCNN,gender × articleType,Women | Bra,99,78,1,0.98989898989899
+CompactBlurCNN,gender × articleType,Women | Bracelet,7,2,1,0.8571428571428571
+CompactBlurCNN,gender × articleType,Women | Briefs,50,40,5,0.9
+CompactBlurCNN,gender × articleType,Women | Camisoles,6,6,0,1.0
+CompactBlurCNN,gender × articleType,Women | Capris,35,32,10,0.7142857142857143
+CompactBlurCNN,gender × articleType,Women | Caps,7,6,4,0.42857142857142855
+CompactBlurCNN,gender × articleType,Women | Casual Shoes,103,93,27,0.7378640776699029
+CompactBlurCNN,gender × articleType,Women | Churidar,11,11,0,1.0
+CompactBlurCNN,gender × articleType,Women | Clutches,75,61,7,0.9066666666666666
+CompactBlurCNN,gender × articleType,Women | Concealer,2,1,0,1.0
+CompactBlurCNN,gender × articleType,Women | Deodorant,34,30,6,0.8235294117647058
+CompactBlurCNN,gender × articleType,Women | Dresses,94,75,4,0.9574468085106383
+CompactBlurCNN,gender × articleType,Women | Duffel Bag,5,5,1,0.8
+CompactBlurCNN,gender × articleType,Women | Dupatta,38,30,0,1.0
+CompactBlurCNN,gender × articleType,Women | Earrings,125,4,1,0.992
+CompactBlurCNN,gender × articleType,Women | Eyeshadow,3,2,0,1.0
+CompactBlurCNN,gender × articleType,Women | Flats,141,97,12,0.9148936170212766
+CompactBlurCNN,gender × articleType,Women | Flip Flops,80,56,18,0.775
+CompactBlurCNN,gender × articleType,Women | Foundation and Primer,6,2,0,1.0
+CompactBlurCNN,gender × articleType,Women | Fragrance Gift Set,4,4,0,1.0
+CompactBlurCNN,gender × articleType,Women | Free Gifts,12,8,4,0.6666666666666666
+CompactBlurCNN,gender × articleType,Women | Handbags,467,294,27,0.9421841541755889
+CompactBlurCNN,gender × articleType,Women | Heels,361,184,6,0.9833795013850416
+CompactBlurCNN,gender × articleType,Women | Jackets,28,27,4,0.8571428571428571
+CompactBlurCNN,gender × articleType,Women | Jeans,60,40,4,0.9333333333333333
+CompactBlurCNN,gender × articleType,Women | Jeggings,8,6,0,1.0
+CompactBlurCNN,gender × articleType,Women | Jewellery Set,12,7,0,1.0
+CompactBlurCNN,gender × articleType,Women | Jumpsuit,4,4,0,1.0
+CompactBlurCNN,gender × articleType,Women | Kajal and Eyeliner,5,4,2,0.6
+CompactBlurCNN,gender × articleType,Women | Kurta Sets,25,23,0,1.0
+CompactBlurCNN,gender × articleType,Women | Kurtas,508,262,1,0.9980314960629921
+CompactBlurCNN,gender × articleType,Women | Kurtis,67,53,0,1.0
+CompactBlurCNN,gender × articleType,Women | Laptop Bag,1,1,0,1.0
+CompactBlurCNN,gender × articleType,Women | Leggings,50,43,1,0.98
+CompactBlurCNN,gender × articleType,Women | Lip Gloss,2,2,0,1.0
+CompactBlurCNN,gender × articleType,Women | Lip Liner,6,2,0,1.0
+CompactBlurCNN,gender × articleType,Women | Lip Plumper,1,1,0,1.0
+CompactBlurCNN,gender × articleType,Women | Lipstick,4,1,0,1.0
+CompactBlurCNN,gender × articleType,Women | Lounge Pants,4,4,1,0.75
+CompactBlurCNN,gender × articleType,Women | Lounge Shorts,3,2,1,0.6666666666666666
+CompactBlurCNN,gender × articleType,Women | Mobile Pouch,14,14,2,0.8571428571428571
+CompactBlurCNN,gender × articleType,Women | Mufflers,5,3,2,0.6
+CompactBlurCNN,gender × articleType,Women | Nail Polish,7,7,0,1.0
+CompactBlurCNN,gender × articleType,Women | Necklace and Chains,21,16,2,0.9047619047619048
+CompactBlurCNN,gender × articleType,Women | Night suits,15,11,0,1.0
+CompactBlurCNN,gender × articleType,Women | Nightdress,14,11,0,1.0
+CompactBlurCNN,gender × articleType,Women | Patiala,9,6,0,1.0
+CompactBlurCNN,gender × articleType,Women | Pendant,33,4,0,1.0
+CompactBlurCNN,gender × articleType,Women | Perfume and Body Mist,82,68,22,0.7317073170731707
+CompactBlurCNN,gender × articleType,Women | Ring,3,1,0,1.0
+CompactBlurCNN,gender × articleType,Women | Salwar,11,8,0,1.0
+CompactBlurCNN,gender × articleType,Women | Salwar and Dupatta,2,2,0,1.0
+CompactBlurCNN,gender × articleType,Women | Sandals,2,2,1,0.5
+CompactBlurCNN,gender × articleType,Women | Sarees,50,44,0,1.0
+CompactBlurCNN,gender × articleType,Women | Scarves,19,15,4,0.7894736842105263
+CompactBlurCNN,gender × articleType,Women | Shirts,93,76,3,0.967741935483871
+CompactBlurCNN,gender × articleType,Women | Shorts,21,20,5,0.7619047619047619
+CompactBlurCNN,gender × articleType,Women | Skirts,30,27,7,0.7666666666666667
+CompactBlurCNN,gender × articleType,Women | Socks,23,20,8,0.6521739130434783
+CompactBlurCNN,gender × articleType,Women | Sports Sandals,7,7,3,0.5714285714285714
+CompactBlurCNN,gender × articleType,Women | Sports Shoes,137,132,58,0.5766423357664233
+CompactBlurCNN,gender × articleType,Women | Stockings,12,3,0,1.0
+CompactBlurCNN,gender × articleType,Women | Stoles,28,20,2,0.9285714285714286
+CompactBlurCNN,gender × articleType,Women | Sunglasses,101,54,19,0.8118811881188119
+CompactBlurCNN,gender × articleType,Women | Sweaters,31,27,0,1.0
+CompactBlurCNN,gender × articleType,Women | Sweatshirts,24,22,4,0.8333333333333334
+CompactBlurCNN,gender × articleType,Women | Swimwear,4,3,0,1.0
+CompactBlurCNN,gender × articleType,Women | Ties and Cufflinks,1,1,0,1.0
+CompactBlurCNN,gender × articleType,Women | Tights,4,4,0,1.0
+CompactBlurCNN,gender × articleType,Women | Tops,472,349,24,0.9491525423728814
+CompactBlurCNN,gender × articleType,Women | Track Pants,27,26,5,0.8148148148148148
+CompactBlurCNN,gender × articleType,Women | Travel Accessory,1,1,0,1.0
+CompactBlurCNN,gender × articleType,Women | Trousers,28,21,2,0.9285714285714286
+CompactBlurCNN,gender × articleType,Women | Tshirts,341,298,23,0.9325513196480938
+CompactBlurCNN,gender × articleType,Women | Tunics,57,52,1,0.9824561403508771
+CompactBlurCNN,gender × articleType,Women | Umbrellas,3,2,1,0.6666666666666666
+CompactBlurCNN,gender × articleType,Women | Waistcoat,2,1,0,1.0
+CompactBlurCNN,gender × articleType,Women | Wallets,140,103,11,0.9214285714285714
+CompactBlurCNN,gender × articleType,Women | Watches,267,198,59,0.7790262172284644
+CompactBlurCNN,gender × family_size_bin,Boys | 1,104,104,42,0.5961538461538461
+CompactBlurCNN,gender × family_size_bin,Boys | 2–3,111,49,44,0.6036036036036037
+CompactBlurCNN,gender × family_size_bin,Boys | 4+,59,8,15,0.7457627118644068
+CompactBlurCNN,gender × family_size_bin,Girls | 1,88,88,44,0.5
+CompactBlurCNN,gender × family_size_bin,Girls | 2–3,90,39,49,0.45555555555555555
+CompactBlurCNN,gender × family_size_bin,Girls | 4+,38,7,14,0.631578947368421
+CompactBlurCNN,gender × family_size_bin,Men | 1,4109,4109,263,0.9359941591628134
+CompactBlurCNN,gender × family_size_bin,Men | 2–3,1351,605,83,0.9385640266469282
+CompactBlurCNN,gender × family_size_bin,Men | 4+,1642,217,98,0.9403166869671132
+CompactBlurCNN,gender × family_size_bin,Unisex | 1,516,516,293,0.4321705426356589
+CompactBlurCNN,gender × family_size_bin,Unisex | 2–3,110,50,52,0.5272727272727272
+CompactBlurCNN,gender × family_size_bin,Unisex | 4+,82,12,31,0.6219512195121951
+CompactBlurCNN,gender × family_size_bin,Women | 1,2771,2771,326,0.8823529411764706
+CompactBlurCNN,gender × family_size_bin,Women | 2–3,915,406,70,0.9234972677595629
+CompactBlurCNN,gender × family_size_bin,Women | 4+,1124,154,52,0.9537366548042705
+G2,gender,Boys,274,161,92,0.6642335766423357
+G2,gender,Girls,216,134,94,0.5648148148148148
+G2,gender,Men,7102,4931,348,0.9509997183891862
+G2,gender,Unisex,708,578,325,0.5409604519774012
+G2,gender,Women,4810,3331,411,0.9145530145530145
+G2,articleType,Accessory Gift Set,35,13,0,1.0
+G2,articleType,Backpacks,245,171,55,0.7755102040816326
+G2,articleType,Bangle,31,2,9,0.7096774193548387
+G2,articleType,Basketballs,5,5,1,0.8
+G2,articleType,Belts,270,163,38,0.8592592592592593
+G2,articleType,Blazers,3,3,1,0.6666666666666666
+G2,articleType,Booties,4,2,4,0.0
+G2,articleType,Boxers,14,11,0,1.0
+G2,articleType,Bra,99,78,0,1.0
+G2,articleType,Bracelet,23,3,12,0.4782608695652174
+G2,articleType,Briefs,225,157,5,0.9777777777777777
+G2,articleType,Camisoles,6,6,0,1.0
+G2,articleType,Capris,53,40,18,0.660377358490566
+G2,articleType,Caps,91,82,37,0.5934065934065934
+G2,articleType,Casual Shoes,909,710,117,0.8712871287128713
+G2,articleType,Churidar,11,11,0,1.0
+G2,articleType,Clothing Set,3,3,0,1.0
+G2,articleType,Clutches,75,61,5,0.9333333333333333
+G2,articleType,Concealer,2,1,0,1.0
+G2,articleType,Cufflinks,20,3,0,1.0
+G2,articleType,Cushion Covers,1,1,1,0.0
+G2,articleType,Deodorant,98,89,17,0.826530612244898
+G2,articleType,Dresses,115,88,16,0.8608695652173913
+G2,articleType,Duffel Bag,28,23,9,0.6785714285714286
+G2,articleType,Dupatta,38,30,0,1.0
+G2,articleType,Earrings,125,4,4,0.968
+G2,articleType,Eyeshadow,3,2,0,1.0
+G2,articleType,Flats,141,97,11,0.9219858156028369
+G2,articleType,Flip Flops,296,244,60,0.7972972972972973
+G2,articleType,Footballs,3,3,3,0.0
+G2,articleType,Formal Shoes,205,88,1,0.9951219512195122
+G2,articleType,Foundation and Primer,6,2,0,1.0
+G2,articleType,Fragrance Gift Set,18,18,3,0.8333333333333334
+G2,articleType,Free Gifts,21,13,5,0.7619047619047619
+G2,articleType,Gloves,8,5,2,0.75
+G2,articleType,Handbags,490,315,31,0.936734693877551
+G2,articleType,Headband,3,3,3,0.0
+G2,articleType,Heels,362,185,5,0.9861878453038674
+G2,articleType,Innerwear Vests,80,63,5,0.9375
+G2,articleType,Jackets,76,69,9,0.881578947368421
+G2,articleType,Jeans,189,92,17,0.91005291005291
+G2,articleType,Jeggings,8,6,0,1.0
+G2,articleType,Jewellery Set,12,7,0,1.0
+G2,articleType,Jumpsuit,4,4,0,1.0
+G2,articleType,Kajal and Eyeliner,5,4,1,0.8
+G2,articleType,Kurta Sets,25,23,0,1.0
+G2,articleType,Kurtas,530,280,2,0.9962264150943396
+G2,articleType,Kurtis,67,53,0,1.0
+G2,articleType,Laptop Bag,25,19,9,0.64
+G2,articleType,Leggings,53,46,4,0.9245283018867925
+G2,articleType,Lehenga Choli,1,1,0,1.0
+G2,articleType,Lip Gloss,2,2,0,1.0
+G2,articleType,Lip Liner,6,2,0,1.0
+G2,articleType,Lip Plumper,1,1,0,1.0
+G2,articleType,Lipstick,4,1,0,1.0
+G2,articleType,Lounge Pants,18,18,0,1.0
+G2,articleType,Lounge Shorts,12,10,1,0.9166666666666666
+G2,articleType,Messenger Bag,14,14,6,0.5714285714285714
+G2,articleType,Mobile Pouch,16,16,6,0.625
+G2,articleType,Mufflers,13,10,3,0.7692307692307693
+G2,articleType,Nail Polish,7,7,0,1.0
+G2,articleType,Necklace and Chains,21,16,2,0.9047619047619048
+G2,articleType,Nehru Jackets,1,1,0,1.0
+G2,articleType,Night suits,23,17,1,0.9565217391304348
+G2,articleType,Nightdress,14,11,0,1.0
+G2,articleType,Patiala,9,6,0,1.0
+G2,articleType,Pendant,33,4,0,1.0
+G2,articleType,Perfume and Body Mist,190,163,40,0.7894736842105263
+G2,articleType,Rain Trousers,1,1,0,1.0
+G2,articleType,Ring,3,1,0,1.0
+G2,articleType,Rompers,5,2,0,1.0
+G2,articleType,Rucksacks,4,4,0,1.0
+G2,articleType,Salwar,11,8,0,1.0
+G2,articleType,Salwar and Dupatta,2,2,0,1.0
+G2,articleType,Sandals,297,196,36,0.8787878787878788
+G2,articleType,Sarees,50,44,0,1.0
+G2,articleType,Scarves,36,30,10,0.7222222222222222
+G2,articleType,Shirts,1047,606,19,0.9818529130850048
+G2,articleType,Shoe Accessories,8,7,8,0.0
+G2,articleType,Shorts,178,140,36,0.797752808988764
+G2,articleType,Skirts,38,32,16,0.5789473684210527
+G2,articleType,Socks,207,116,45,0.782608695652174
+G2,articleType,Sports Sandals,21,21,4,0.8095238095238095
+G2,articleType,Sports Shoes,675,622,90,0.8666666666666667
+G2,articleType,Stockings,12,3,0,1.0
+G2,articleType,Stoles,29,21,2,0.9310344827586207
+G2,articleType,Sunglasses,361,169,65,0.8199445983379502
+G2,articleType,Suspenders,13,9,1,0.9230769230769231
+G2,articleType,Sweaters,92,79,0,1.0
+G2,articleType,Sweatshirts,93,81,6,0.9354838709677419
+G2,articleType,Swimwear,6,5,1,0.8333333333333334
+G2,articleType,Tablet Sleeve,1,1,1,0.0
+G2,articleType,Ties,69,34,0,1.0
+G2,articleType,Ties and Cufflinks,1,1,0,1.0
+G2,articleType,Tights,4,4,0,1.0
+G2,articleType,Tops,549,389,40,0.9271402550091075
+G2,articleType,Track Pants,98,78,8,0.9183673469387755
+G2,articleType,Tracksuits,10,9,0,1.0
+G2,articleType,Travel Accessory,5,4,3,0.4
+G2,articleType,Trolley Bag,1,1,1,0.0
+G2,articleType,Trousers,172,112,8,0.9534883720930233
+G2,articleType,Trunk,46,34,1,0.9782608695652174
+G2,articleType,Tshirts,2298,1847,125,0.9456048738033073
+G2,articleType,Tunics,57,52,1,0.9824561403508771
+G2,articleType,Umbrellas,3,2,0,1.0
+G2,articleType,Waist Pouch,6,5,3,0.5
+G2,articleType,Waistcoat,5,3,0,1.0
+G2,articleType,Wallets,280,164,24,0.9142857142857143
+G2,articleType,Watches,766,522,133,0.8263707571801566
+G2,articleType,Water Bottle,4,4,3,0.25
+G2,articleType,Wristbands,2,2,1,0.5
+G2,family_size_bin,1,7588,7588,849,0.8881128096995256
+G2,family_size_bin,2–3,2577,1148,253,0.9018238261544431
+G2,family_size_bin,4+,2945,398,168,0.9429541595925297
+G2,gender × articleType,Boys | Blazers,1,1,1,0.0
+G2,gender × articleType,Boys | Booties,4,2,4,0.0
+G2,gender × articleType,Boys | Capris,2,1,0,1.0
+G2,gender × articleType,Boys | Casual Shoes,13,10,7,0.46153846153846156
+G2,gender × articleType,Boys | Clothing Set,1,1,0,1.0
+G2,gender × articleType,Boys | Flip Flops,5,5,3,0.4
+G2,gender × articleType,Boys | Gloves,4,2,2,0.5
+G2,gender × articleType,Boys | Jackets,4,2,4,0.0
+G2,gender × articleType,Boys | Jeans,10,4,4,0.6
+G2,gender × articleType,Boys | Kurtas,1,1,0,1.0
+G2,gender × articleType,Boys | Rompers,2,1,0,1.0
+G2,gender × articleType,Boys | Sandals,5,4,3,0.4
+G2,gender × articleType,Boys | Shirts,25,8,2,0.92
+G2,gender × articleType,Boys | Shorts,16,10,12,0.25
+G2,gender × articleType,Boys | Sweatshirts,2,2,2,0.0
+G2,gender × articleType,Boys | Trousers,3,2,2,0.3333333333333333
+G2,gender × articleType,Boys | Tshirts,171,100,41,0.7602339181286549
+G2,gender × articleType,Boys | Watches,5,5,5,0.0
+G2,gender × articleType,Girls | Capris,16,7,7,0.5625
+G2,gender × articleType,Girls | Casual Shoes,10,9,7,0.3
+G2,gender × articleType,Girls | Clothing Set,2,2,0,1.0
+G2,gender × articleType,Girls | Dresses,21,13,12,0.42857142857142855
+G2,gender × articleType,Girls | Flip Flops,2,1,2,0.0
+G2,gender × articleType,Girls | Gloves,2,1,0,1.0
+G2,gender × articleType,Girls | Innerwear Vests,3,3,2,0.3333333333333333
+G2,gender × articleType,Girls | Jeans,5,2,2,0.6
+G2,gender × articleType,Girls | Leggings,3,3,2,0.3333333333333333
+G2,gender × articleType,Girls | Lehenga Choli,1,1,0,1.0
+G2,gender × articleType,Girls | Rompers,3,2,0,1.0
+G2,gender × articleType,Girls | Sandals,17,13,7,0.5882352941176471
+G2,gender × articleType,Girls | Shorts,13,8,4,0.6923076923076923
+G2,gender × articleType,Girls | Skirts,8,5,8,0.0
+G2,gender × articleType,Girls | Tops,76,39,22,0.7105263157894737
+G2,gender × articleType,Girls | Tshirts,33,24,18,0.45454545454545453
+G2,gender × articleType,Girls | Watches,1,1,1,0.0
+G2,gender × articleType,Men | Accessory Gift Set,35,13,0,1.0
+G2,gender × articleType,Men | Backpacks,22,12,22,0.0
+G2,gender × articleType,Men | Bangle,13,1,9,0.3076923076923077
+G2,gender × articleType,Men | Belts,178,100,9,0.949438202247191
+G2,gender × articleType,Men | Blazers,2,2,0,1.0
+G2,gender × articleType,Men | Boxers,14,11,0,1.0
+G2,gender × articleType,Men | Bracelet,16,1,10,0.375
+G2,gender × articleType,Men | Briefs,175,117,0,1.0
+G2,gender × articleType,Men | Caps,41,35,18,0.5609756097560976
+G2,gender × articleType,Men | Casual Shoes,708,530,27,0.961864406779661
+G2,gender × articleType,Men | Cufflinks,20,3,0,1.0
+G2,gender × articleType,Men | Deodorant,63,58,8,0.873015873015873
+G2,gender × articleType,Men | Duffel Bag,2,1,1,0.5
+G2,gender × articleType,Men | Flip Flops,161,138,14,0.9130434782608695
+G2,gender × articleType,Men | Formal Shoes,205,88,1,0.9951219512195122
+G2,gender × articleType,Men | Fragrance Gift Set,14,14,3,0.7857142857142857
+G2,gender × articleType,Men | Free Gifts,9,5,1,0.8888888888888888
+G2,gender × articleType,Men | Gloves,2,2,0,1.0
+G2,gender × articleType,Men | Handbags,3,2,2,0.3333333333333333
+G2,gender × articleType,Men | Heels,1,1,0,1.0
+G2,gender × articleType,Men | Innerwear Vests,77,60,3,0.961038961038961
+G2,gender × articleType,Men | Jackets,44,40,0,1.0
+G2,gender × articleType,Men | Jeans,111,45,4,0.963963963963964
+G2,gender × articleType,Men | Kurtas,21,17,0,1.0
+G2,gender × articleType,Men | Laptop Bag,3,3,2,0.3333333333333333
+G2,gender × articleType,Men | Lounge Pants,14,14,0,1.0
+G2,gender × articleType,Men | Lounge Shorts,9,8,1,0.8888888888888888
+G2,gender × articleType,Men | Messenger Bag,3,3,3,0.0
+G2,gender × articleType,Men | Mufflers,8,7,2,0.75
+G2,gender × articleType,Men | Nehru Jackets,1,1,0,1.0
+G2,gender × articleType,Men | Night suits,8,6,1,0.875
+G2,gender × articleType,Men | Perfume and Body Mist,106,94,21,0.8018867924528302
+G2,gender × articleType,Men | Rain Trousers,1,1,0,1.0
+G2,gender × articleType,Men | Sandals,240,147,9,0.9625
+G2,gender × articleType,Men | Scarves,13,11,2,0.8461538461538461
+G2,gender × articleType,Men | Shirts,929,522,15,0.9838536060279871
+G2,gender × articleType,Men | Shorts,128,102,17,0.8671875
+G2,gender × articleType,Men | Socks,161,76,16,0.9006211180124224
+G2,gender × articleType,Men | Sports Sandals,11,11,0,1.0
+G2,gender × articleType,Men | Sports Shoes,521,473,21,0.9596928982725528
+G2,gender × articleType,Men | Stoles,1,1,0,1.0
+G2,gender × articleType,Men | Sunglasses,212,91,11,0.9481132075471698
+G2,gender × articleType,Men | Suspenders,13,9,1,0.9230769230769231
+G2,gender × articleType,Men | Sweaters,61,52,0,1.0
+G2,gender × articleType,Men | Sweatshirts,67,57,1,0.9850746268656716
+G2,gender × articleType,Men | Ties,69,34,0,1.0
+G2,gender × articleType,Men | Tops,1,1,0,1.0
+G2,gender × articleType,Men | Track Pants,71,52,6,0.9154929577464789
+G2,gender × articleType,Men | Tracksuits,10,9,0,1.0
+G2,gender × articleType,Men | Trousers,141,89,2,0.9858156028368794
+G2,gender × articleType,Men | Trunk,46,34,1,0.9782608695652174
+G2,gender × articleType,Men | Tshirts,1730,1404,37,0.9786127167630058
+G2,gender × articleType,Men | Waistcoat,3,2,0,1.0
+G2,gender × articleType,Men | Wallets,133,56,8,0.9398496240601504
+G2,gender × articleType,Men | Watches,449,278,38,0.9153674832962138
+G2,gender × articleType,Men | Water Bottle,2,2,1,0.5
+G2,gender × articleType,Unisex | Backpacks,214,152,27,0.8738317757009346
+G2,gender × articleType,Unisex | Basketballs,5,5,1,0.8
+G2,gender × articleType,Unisex | Belts,3,3,3,0.0
+G2,gender × articleType,Unisex | Caps,43,41,13,0.6976744186046512
+G2,gender × articleType,Unisex | Casual Shoes,75,68,47,0.37333333333333335
+G2,gender × articleType,Unisex | Cushion Covers,1,1,1,0.0
+G2,gender × articleType,Unisex | Deodorant,1,1,1,0.0
+G2,gender × articleType,Unisex | Duffel Bag,21,17,8,0.6190476190476191
+G2,gender × articleType,Unisex | Flip Flops,48,44,27,0.4375
+G2,gender × articleType,Unisex | Footballs,3,3,3,0.0
+G2,gender × articleType,Unisex | Handbags,20,19,12,0.4
+G2,gender × articleType,Unisex | Headband,3,3,3,0.0
+G2,gender × articleType,Unisex | Jeans,3,1,3,0.0
+G2,gender × articleType,Unisex | Laptop Bag,21,15,7,0.6666666666666666
+G2,gender × articleType,Unisex | Messenger Bag,11,11,3,0.7272727272727273
+G2,gender × articleType,Unisex | Mobile Pouch,2,2,2,0.0
+G2,gender × articleType,Unisex | Perfume and Body Mist,2,1,2,0.0
+G2,gender × articleType,Unisex | Rucksacks,4,4,0,1.0
+G2,gender × articleType,Unisex | Sandals,33,30,16,0.5151515151515151
+G2,gender × articleType,Unisex | Scarves,4,4,4,0.0
+G2,gender × articleType,Unisex | Shoe Accessories,8,7,8,0.0
+G2,gender × articleType,Unisex | Socks,23,20,18,0.21739130434782608
+G2,gender × articleType,Unisex | Sports Sandals,3,3,2,0.3333333333333333
+G2,gender × articleType,Unisex | Sports Shoes,17,17,16,0.058823529411764705
+G2,gender × articleType,Unisex | Sunglasses,48,24,38,0.20833333333333334
+G2,gender × articleType,Unisex | Swimwear,2,2,1,0.5
+G2,gender × articleType,Unisex | Tablet Sleeve,1,1,1,0.0
+G2,gender × articleType,Unisex | Travel Accessory,4,3,3,0.25
+G2,gender × articleType,Unisex | Trolley Bag,1,1,1,0.0
+G2,gender × articleType,Unisex | Tshirts,23,21,12,0.4782608695652174
+G2,gender × articleType,Unisex | Waist Pouch,6,5,3,0.5
+G2,gender × articleType,Unisex | Wallets,7,5,7,0.0
+G2,gender × articleType,Unisex | Watches,44,40,29,0.3409090909090909
+G2,gender × articleType,Unisex | Water Bottle,2,2,2,0.0
+G2,gender × articleType,Unisex | Wristbands,2,2,1,0.5
+G2,gender × articleType,Women | Backpacks,9,7,6,0.3333333333333333
+G2,gender × articleType,Women | Bangle,18,1,0,1.0
+G2,gender × articleType,Women | Belts,89,60,26,0.7078651685393258
+G2,gender × articleType,Women | Bra,99,78,0,1.0
+G2,gender × articleType,Women | Bracelet,7,2,2,0.7142857142857143
+G2,gender × articleType,Women | Briefs,50,40,5,0.9
+G2,gender × articleType,Women | Camisoles,6,6,0,1.0
+G2,gender × articleType,Women | Capris,35,32,11,0.6857142857142857
+G2,gender × articleType,Women | Caps,7,6,6,0.14285714285714285
+G2,gender × articleType,Women | Casual Shoes,103,93,29,0.7184466019417476
+G2,gender × articleType,Women | Churidar,11,11,0,1.0
+G2,gender × articleType,Women | Clutches,75,61,5,0.9333333333333333
+G2,gender × articleType,Women | Concealer,2,1,0,1.0
+G2,gender × articleType,Women | Deodorant,34,30,8,0.7647058823529411
+G2,gender × articleType,Women | Dresses,94,75,4,0.9574468085106383
+G2,gender × articleType,Women | Duffel Bag,5,5,0,1.0
+G2,gender × articleType,Women | Dupatta,38,30,0,1.0
+G2,gender × articleType,Women | Earrings,125,4,4,0.968
+G2,gender × articleType,Women | Eyeshadow,3,2,0,1.0
+G2,gender × articleType,Women | Flats,141,97,11,0.9219858156028369
+G2,gender × articleType,Women | Flip Flops,80,56,14,0.825
+G2,gender × articleType,Women | Foundation and Primer,6,2,0,1.0
+G2,gender × articleType,Women | Fragrance Gift Set,4,4,0,1.0
+G2,gender × articleType,Women | Free Gifts,12,8,4,0.6666666666666666
+G2,gender × articleType,Women | Handbags,467,294,17,0.9635974304068522
+G2,gender × articleType,Women | Heels,361,184,5,0.9861495844875346
+G2,gender × articleType,Women | Jackets,28,27,5,0.8214285714285714
+G2,gender × articleType,Women | Jeans,60,40,4,0.9333333333333333
+G2,gender × articleType,Women | Jeggings,8,6,0,1.0
+G2,gender × articleType,Women | Jewellery Set,12,7,0,1.0
+G2,gender × articleType,Women | Jumpsuit,4,4,0,1.0
+G2,gender × articleType,Women | Kajal and Eyeliner,5,4,1,0.8
+G2,gender × articleType,Women | Kurta Sets,25,23,0,1.0
+G2,gender × articleType,Women | Kurtas,508,262,2,0.9960629921259843
+G2,gender × articleType,Women | Kurtis,67,53,0,1.0
+G2,gender × articleType,Women | Laptop Bag,1,1,0,1.0
+G2,gender × articleType,Women | Leggings,50,43,2,0.96
+G2,gender × articleType,Women | Lip Gloss,2,2,0,1.0
+G2,gender × articleType,Women | Lip Liner,6,2,0,1.0
+G2,gender × articleType,Women | Lip Plumper,1,1,0,1.0
+G2,gender × articleType,Women | Lipstick,4,1,0,1.0
+G2,gender × articleType,Women | Lounge Pants,4,4,0,1.0
+G2,gender × articleType,Women | Lounge Shorts,3,2,0,1.0
+G2,gender × articleType,Women | Mobile Pouch,14,14,4,0.7142857142857143
+G2,gender × articleType,Women | Mufflers,5,3,1,0.8
+G2,gender × articleType,Women | Nail Polish,7,7,0,1.0
+G2,gender × articleType,Women | Necklace and Chains,21,16,2,0.9047619047619048
+G2,gender × articleType,Women | Night suits,15,11,0,1.0
+G2,gender × articleType,Women | Nightdress,14,11,0,1.0
+G2,gender × articleType,Women | Patiala,9,6,0,1.0
+G2,gender × articleType,Women | Pendant,33,4,0,1.0
+G2,gender × articleType,Women | Perfume and Body Mist,82,68,17,0.7926829268292683
+G2,gender × articleType,Women | Ring,3,1,0,1.0
+G2,gender × articleType,Women | Salwar,11,8,0,1.0
+G2,gender × articleType,Women | Salwar and Dupatta,2,2,0,1.0
+G2,gender × articleType,Women | Sandals,2,2,1,0.5
+G2,gender × articleType,Women | Sarees,50,44,0,1.0
+G2,gender × articleType,Women | Scarves,19,15,4,0.7894736842105263
+G2,gender × articleType,Women | Shirts,93,76,2,0.978494623655914
+G2,gender × articleType,Women | Shorts,21,20,3,0.8571428571428571
+G2,gender × articleType,Women | Skirts,30,27,8,0.7333333333333333
+G2,gender × articleType,Women | Socks,23,20,11,0.5217391304347826
+G2,gender × articleType,Women | Sports Sandals,7,7,2,0.7142857142857143
+G2,gender × articleType,Women | Sports Shoes,137,132,53,0.6131386861313869
+G2,gender × articleType,Women | Stockings,12,3,0,1.0
+G2,gender × articleType,Women | Stoles,28,20,2,0.9285714285714286
+G2,gender × articleType,Women | Sunglasses,101,54,16,0.8415841584158416
+G2,gender × articleType,Women | Sweaters,31,27,0,1.0
+G2,gender × articleType,Women | Sweatshirts,24,22,3,0.875
+G2,gender × articleType,Women | Swimwear,4,3,0,1.0
+G2,gender × articleType,Women | Ties and Cufflinks,1,1,0,1.0
+G2,gender × articleType,Women | Tights,4,4,0,1.0
+G2,gender × articleType,Women | Tops,472,349,18,0.961864406779661
+G2,gender × articleType,Women | Track Pants,27,26,2,0.9259259259259259
+G2,gender × articleType,Women | Travel Accessory,1,1,0,1.0
+G2,gender × articleType,Women | Trousers,28,21,4,0.8571428571428571
+G2,gender × articleType,Women | Tshirts,341,298,17,0.9501466275659824
+G2,gender × articleType,Women | Tunics,57,52,1,0.9824561403508771
+G2,gender × articleType,Women | Umbrellas,3,2,0,1.0
+G2,gender × articleType,Women | Waistcoat,2,1,0,1.0
+G2,gender × articleType,Women | Wallets,140,103,9,0.9357142857142857
+G2,gender × articleType,Women | Watches,267,198,60,0.7752808988764045
+G2,gender × family_size_bin,Boys | 1,104,104,42,0.5961538461538461
+G2,gender × family_size_bin,Boys | 2–3,111,49,38,0.6576576576576577
+G2,gender × family_size_bin,Boys | 4+,59,8,12,0.7966101694915254
+G2,gender × family_size_bin,Girls | 1,88,88,49,0.4431818181818182
+G2,gender × family_size_bin,Girls | 2–3,90,39,33,0.6333333333333333
+G2,gender × family_size_bin,Girls | 4+,38,7,12,0.6842105263157895
+G2,gender × family_size_bin,Men | 1,4109,4109,203,0.9505962521294719
+G2,gender × family_size_bin,Men | 2–3,1351,605,76,0.9437453737971873
+G2,gender × family_size_bin,Men | 4+,1642,217,69,0.9579780755176613
+G2,gender × family_size_bin,Unisex | 1,516,516,251,0.5135658914728682
+G2,gender × family_size_bin,Unisex | 2–3,110,50,47,0.5727272727272728
+G2,gender × family_size_bin,Unisex | 4+,82,12,27,0.6707317073170732
+G2,gender × family_size_bin,Women | 1,2771,2771,304,0.8902923132443161
+G2,gender × family_size_bin,Women | 2–3,915,406,59,0.9355191256830601
+G2,gender × family_size_bin,Women | 4+,1124,154,48,0.9572953736654805
