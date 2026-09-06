@@ -1,0 +1,56 @@
+id,cv_fold,true_label,articleType,v2_prediction,predicted_label,path
+1557,0,Travel,Backpacks,Casual,Casual,data/raw/teacher/train/images_train/1557.jpg
+1599,4,Travel,Handbags,Casual,Casual,data/raw/teacher/train/images_train/1599.jpg
+2633,4,Smart Casual,Heels,Casual,Formal,data/raw/teacher/train/images_train/2633.jpg
+6834,4,NA,Shoe Accessories,NA,Casual,data/raw/teacher/train/images_train/6834.jpg
+6839,0,NA,Shoe Accessories,NA,NA,data/raw/teacher/train/images_train/6839.jpg
+6840,0,NA,Shoe Accessories,Casual,Casual,data/raw/teacher/train/images_train/6840.jpg
+7100,4,Travel,Duffel Bag,Casual,Casual,data/raw/teacher/train/images_train/7100.jpg
+8352,0,Travel,Backpacks,Casual,Casual,data/raw/teacher/train/images_train/8352.jpg
+8915,4,NA,Shoe Accessories,Casual,Casual,data/raw/teacher/train/images_train/8915.jpg
+9738,4,Smart Casual,Shirts,Casual,Casual,data/raw/teacher/train/images_train/9738.jpg
+10297,4,Smart Casual,Casual Shoes,Casual,Casual,data/raw/teacher/train/images_train/10297.jpg
+12348,0,Travel,Handbags,Formal,Formal,data/raw/teacher/train/images_train/12348.jpg
+12452,4,NA,Shoe Accessories,Casual,Casual,data/raw/teacher/train/images_train/12452.jpg
+20714,0,Smart Casual,Casual Shoes,Casual,Casual,data/raw/teacher/train/images_train/20714.jpg
+20715,0,Smart Casual,Casual Shoes,Casual,Formal,data/raw/teacher/train/images_train/20715.jpg
+22214,0,NA,Shoe Accessories,Casual,Casual,data/raw/teacher/train/images_train/22214.jpg
+22675,4,Travel,Backpacks,Casual,Casual,data/raw/teacher/train/images_train/22675.jpg
+25885,0,Travel,Backpacks,Travel,Casual,data/raw/teacher/train/images_train/25885.jpg
+26367,0,NA,Shirts,Casual,Casual,data/raw/teacher/train/images_train/26367.jpg
+26370,4,NA,Shirts,Casual,Casual,data/raw/teacher/train/images_train/26370.jpg
+33705,0,Smart Casual,Formal Shoes,Formal,Formal,data/raw/teacher/train/images_train/33705.jpg
+33787,0,Smart Casual,Shirts,Casual,Casual,data/raw/teacher/train/images_train/33787.jpg
+38122,4,Smart Casual,Trousers,Casual,Casual,data/raw/teacher/train/images_train/38122.jpg
+39414,0,Smart Casual,Shirts,Casual,Casual,data/raw/teacher/train/images_train/39414.jpg
+39921,4,Travel,Duffel Bag,Casual,Casual,data/raw/teacher/train/images_train/39921.jpg
+40826,4,Home,Cushion Covers,Casual,Party,data/raw/teacher/train/images_train/40826.jpg
+42217,0,Party,Dresses,Ethnic,Ethnic,data/raw/teacher/train/images_train/42217.jpg
+43116,4,NA,Perfume and Body Mist,Casual,Casual,data/raw/teacher/train/images_train/43116.jpg
+43119,0,NA,Perfume and Body Mist,Casual,Casual,data/raw/teacher/train/images_train/43119.jpg
+43120,0,NA,Perfume and Body Mist,Casual,Casual,data/raw/teacher/train/images_train/43120.jpg
+44680,0,Party,Tops,Casual,Casual,data/raw/teacher/train/images_train/44680.jpg
+45675,0,NA,Perfume and Body Mist,Casual,Casual,data/raw/teacher/train/images_train/45675.jpg
+45698,4,NA,Perfume and Body Mist,Casual,Casual,data/raw/teacher/train/images_train/45698.jpg
+46532,0,Party,Watches,Casual,Casual,data/raw/teacher/train/images_train/46532.jpg
+46536,0,Smart Casual,Watches,Casual,Casual,data/raw/teacher/train/images_train/46536.jpg
+46539,0,Smart Casual,Watches,Casual,Casual,data/raw/teacher/train/images_train/46539.jpg
+46540,0,Smart Casual,Watches,Casual,Casual,data/raw/teacher/train/images_train/46540.jpg
+46542,0,Smart Casual,Watches,Casual,Casual,data/raw/teacher/train/images_train/46542.jpg
+46549,4,Smart Casual,Watches,Casual,Casual,data/raw/teacher/train/images_train/46549.jpg
+46556,4,Smart Casual,Watches,Casual,Casual,data/raw/teacher/train/images_train/46556.jpg
+46557,4,Smart Casual,Watches,Casual,Casual,data/raw/teacher/train/images_train/46557.jpg
+46561,4,Smart Casual,Watches,Casual,Casual,data/raw/teacher/train/images_train/46561.jpg
+48466,4,Party,Dresses,Casual,Casual,data/raw/teacher/train/images_train/48466.jpg
+48479,4,Party,Dresses,Ethnic,Ethnic,data/raw/teacher/train/images_train/48479.jpg
+48480,4,Party,Dresses,Casual,Casual,data/raw/teacher/train/images_train/48480.jpg
+49073,0,NA,Nail Polish,NA,NA,data/raw/teacher/train/images_train/49073.jpg
+49074,4,NA,Nail Polish,NA,NA,data/raw/teacher/train/images_train/49074.jpg
+49075,4,NA,Nail Polish,NA,NA,data/raw/teacher/train/images_train/49075.jpg
+49077,4,NA,Eyeshadow,NA,NA,data/raw/teacher/train/images_train/49077.jpg
+49078,0,NA,Eyeshadow,NA,NA,data/raw/teacher/train/images_train/49078.jpg
+49084,0,NA,Nail Polish,Casual,Casual,data/raw/teacher/train/images_train/49084.jpg
+49147,4,NA,Nail Polish,NA,NA,data/raw/teacher/train/images_train/49147.jpg
+49157,0,NA,Kajal and Eyeliner,NA,NA,data/raw/teacher/train/images_train/49157.jpg
+49739,4,Smart Casual,Ties,Formal,Formal,data/raw/teacher/train/images_train/49739.jpg
+51334,4,NA,Rain Trousers,Casual,Casual,data/raw/teacher/train/images_train/51334.jpg
