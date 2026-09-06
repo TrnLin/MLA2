@@ -29,7 +29,8 @@ Class weights and image mean/std are fitted on combined training rows only.
 
 ## Saved output
 
-In Drive, `MyDrive/MLA2/task3/experiments/t3_usage_expanded_e8/usage/` contains:
+Retraining uses the separate Drive folder `MyDrive/MLA2/task3_usage_expanded_e8/`.
+Inside it, `experiments/t3_usage_expanded_e8/usage/` contains:
 
 - Each fold: checkpoint, config, normalization, epoch history, clean training
   predictions, validation predictions, source-specific scores and corruption checks.
@@ -37,9 +38,23 @@ In Drive, `MyDrive/MLA2/task3/experiments/t3_usage_expanded_e8/usage/` contains:
 - `aggregate/teacher_per_class.csv`: teacher class scores and changes.
 - Standard aggregate scores, confusion matrix and failure index.
 
-Every real run appends to `MyDrive/MLA2/task3/results/runs.csv`, mirrored into the
-local Colab `results/runs.csv`. A new execution gets a new ID. Resume reuses only
+Every real run appends to the Usage-owned
+`MyDrive/MLA2/task3_usage_expanded_e8/experiments/t3_usage_expanded_e8/usage/results/runs.csv`, mirrored
+into the local Colab `results/runs.csv`. Other notebooks may run in separate Colab
+sessions without writing this Usage log. A new execution gets a new ID. Resume reuses only
 complete runs with the exact recipe, dataset and intact saved files.
+
+## Retrain in the new folder
+
+Use the updated notebook and ZIP, start a fresh Colab GPU session, then Run All.
+The notebook starts new runs in `MyDrive/MLA2/task3_usage_expanded_e8/`. It does not
+read or recover earlier runs from `MyDrive/MLA2/task3/`, and no repair script is needed.
+The old output files remain in place.
+
+Two separate Colab sessions can overwrite each other's rows if both save the same
+whole CSV. The new Usage folder and log keep these runs separate from other notebooks.
+After a disconnect, rerunning this notebook can reuse verified complete folds from
+the new folder; an unfinished fold restarts from scratch.
 
 Compare **teacher-only** validation scores with E8. The combined score has a changed
 class mix. Added-source scores use small samples: Smart Casual has two added families,
