@@ -1,0 +1,186 @@
+{
+  "dataset": {
+    "folds": [
+      {
+        "fold": 0,
+        "new_added_training_rows": 81,
+        "new_added_validation_rows": 49,
+        "previous_added_training_rows": 467,
+        "previous_added_validation_rows": 90,
+        "teacher_training_rows": 26219,
+        "teacher_validation_rows": 6553,
+        "training_rows": 26767,
+        "validation_rows": 6692
+      },
+      {
+        "fold": 1,
+        "new_added_training_rows": 111,
+        "new_added_validation_rows": 19,
+        "previous_added_training_rows": 441,
+        "previous_added_validation_rows": 116,
+        "teacher_training_rows": 26216,
+        "teacher_validation_rows": 6556,
+        "training_rows": 26768,
+        "validation_rows": 6691
+      },
+      {
+        "fold": 2,
+        "new_added_training_rows": 112,
+        "new_added_validation_rows": 18,
+        "previous_added_training_rows": 436,
+        "previous_added_validation_rows": 121,
+        "teacher_training_rows": 26219,
+        "teacher_validation_rows": 6553,
+        "training_rows": 26767,
+        "validation_rows": 6692
+      },
+      {
+        "fold": 3,
+        "new_added_training_rows": 113,
+        "new_added_validation_rows": 17,
+        "previous_added_training_rows": 437,
+        "previous_added_validation_rows": 120,
+        "teacher_training_rows": 26219,
+        "teacher_validation_rows": 6553,
+        "training_rows": 26769,
+        "validation_rows": 6690
+      },
+      {
+        "fold": 4,
+        "new_added_training_rows": 103,
+        "new_added_validation_rows": 27,
+        "previous_added_training_rows": 447,
+        "previous_added_validation_rows": 110,
+        "teacher_training_rows": 26215,
+        "teacher_validation_rows": 6557,
+        "training_rows": 26765,
+        "validation_rows": 6694
+      }
+    ],
+    "initialization": "fresh_scratch_weights",
+    "label_map_sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
+    "name": "teacher_plus_rare_usage_v3_20260906",
+    "new_added_rows": 130,
+    "previous_split_sha256": "0bd490672543b7022fa7a883be9b006d63681d7c168e497e0388616836696776",
+    "replaced_images": 130,
+    "retained_external_folds_preserved": true,
+    "retained_external_rows": 557,
+    "same_external_class_totals": true,
+    "same_usage_target": true,
+    "source_cohort_meanings": {
+      "new_added": "130 reviewed replacement images",
+      "previous_added": "557 retained v2 outside images",
+      "teacher": "original teacher rows"
+    },
+    "source_geometry_sha256": "da01f7e831ac415d9a1ed398be43be35dd00afa8265da630b2a1baa9dd441f2b",
+    "split_path": "data/processed/teacher_plus_rare_usage_v3_20260906/splits.csv",
+    "split_sha256": "19d514fbd56f48459b3ec207f49bb3e59f1c23bc901804fa0c32f13eb3066ecc",
+    "teacher_folds_preserved": true,
+    "teacher_rows": 38612,
+    "teacher_split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+    "total_rows": 39299,
+    "usage_development_rows": 33459
+  },
+  "development_images_decoded_and_hash_checked": 33459,
+  "production_training_started": false,
+  "recipe": {
+    "artifact_dir": "experiments/t3_usage_replaced_v3_mixup_sam",
+    "auxiliary_loss_weight": 0.0,
+    "auxiliary_target": "none",
+    "changed_factor": "replace_130_external_images_with_reviewed_missing_forms",
+    "checkpoint_policy": "final_epoch",
+    "class_weight_beta": 0.999,
+    "class_weight_cap": 5.0,
+    "classifier_dropout": 0.0,
+    "dataset": {
+      "initialization": "fresh_scratch_weights",
+      "label_map_sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
+      "name": "teacher_plus_rare_usage_v3_20260906",
+      "previous_split_sha256": "0bd490672543b7022fa7a883be9b006d63681d7c168e497e0388616836696776",
+      "replaced_images": 130,
+      "retained_external_folds_preserved": true,
+      "same_external_class_totals": true,
+      "same_usage_target": true,
+      "source_cohort_meanings": {
+        "new_added": "130 reviewed replacement images",
+        "previous_added": "557 retained v2 outside images",
+        "teacher": "original teacher rows"
+      },
+      "source_geometry_sha256": "da01f7e831ac415d9a1ed398be43be35dd00afa8265da630b2a1baa9dd441f2b",
+      "split_path": "data/processed/teacher_plus_rare_usage_v3_20260906/splits.csv",
+      "split_sha256": "19d514fbd56f48459b3ec207f49bb3e59f1c23bc901804fa0c32f13eb3066ecc",
+      "teacher_folds_preserved": true,
+      "teacher_split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
+    },
+    "early_stopping_min_delta": 0.0,
+    "early_stopping_min_epoch": 0,
+    "early_stopping_patience": 0,
+    "experiment_id": "t3_usage_replaced_v3_mixup_sam",
+    "focal_gamma": 0.0,
+    "folds": [
+      0,
+      4
+    ],
+    "hypothesis_id": "t3_usage_replacements_with_fixed_mixup_sam",
+    "initialization": "fresh_random_weights_for_each_fold",
+    "label_smoothing": 0.0,
+    "loss_name": "effective_number_cross_entropy",
+    "mixup_policy": {
+      "alpha": 0.2,
+      "evaluation": "unmixed images; existing E8 weighted CE loss and ordinary classification metrics",
+      "lambda": "one Beta(alpha, alpha) draw per batch",
+      "loss": "lambda * weighted_CE(logits, y) + (1-lambda) * weighted_CE(logits, partner_y)",
+      "online_train_f1": "not_applicable_mixed_inputs",
+      "partners": "random permutation within the current training batch; self-pairs allowed",
+      "placement": "after existing image augmentation and RGB normalization",
+      "probability": 1.0,
+      "reduction": "each CE divides by sum of target weights; a batch permutation preserves this sum",
+      "rng": "dedicated numpy PCG64; seed XOR 0x4D495855; persists across epochs",
+      "version": "usage_mixup_alpha020_weighted_v1"
+    },
+    "model_family": "task3_small_cnn",
+    "name": "usage_replaced_v3_mixup_sam",
+    "parent_artifact_dir": "experiments/t3_usage_expanded_v2_mixup_sam",
+    "parent_run_ids": [
+      "t3_usage_expanded_v2_mixup_sam_usage_smallcnn_f0_s2753_dd6018a005e9_20260906T154107Z42a2aa",
+      "t3_usage_expanded_v2_mixup_sam_usage_smallcnn_f4_s2753_dd6018a005e9_20260906T155155Z92ec97"
+    ],
+    "primary_loss_weight": 1.0,
+    "reference_use": "comparison_only; no checkpoint weights are loaded",
+    "run_model_token": "smallcnn",
+    "run_prefix": "t3_usage_replaced_v3_mixup_sam",
+    "sam_policy": {
+      "adaptive": false,
+      "base_optimizer": "AdamW",
+      "batch": "same augmented mixed inputs and labels for both passes",
+      "batchnorm": "training statistics twice; retain first-pass running buffers only",
+      "checkpoint": "final_epoch",
+      "diagnostic_epochs": [
+        10,
+        15,
+        20,
+        25,
+        30
+      ],
+      "dropout": "same mask on both passes; advance torch RNG once",
+      "epsilon": 1e-12,
+      "gradient": "mixed class-weighted cross-entropy before weight decay",
+      "norm": "global L2 over all trainable parameters, including BatchNorm affine",
+      "rho": 0.05,
+      "update": "restore exact original weights; apply second gradient and AdamW decay once",
+      "version": "usage_sam005_weighted_adamw_v1"
+    },
+    "target": "usage",
+    "training_augmentation": "translation_uniform_2px_p05",
+    "training_selection_strategy": "all"
+  },
+  "reference_run_ids": {
+    "0": "t3_usage_expanded_v2_mixup_sam_usage_smallcnn_f0_s2753_dd6018a005e9_20260906T154107Z42a2aa",
+    "4": "t3_usage_expanded_v2_mixup_sam_usage_smallcnn_f4_s2753_dd6018a005e9_20260906T155155Z92ec97"
+  },
+  "reference_teacher_scores": {
+    "0": 0.3956621317848735,
+    "4": 0.38277988939343344
+  },
+  "reference_weights_not_loaded": true
+}
