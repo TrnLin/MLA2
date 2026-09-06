@@ -10,7 +10,7 @@ TASK_SPECS = {
     "02_task1_article_type.ipynb": {
         "title": "Task 1 — Article Type Classification",
         "tokens": ("articleType", "long-tail taxonomy", "rare-class error"),
-        "sections": 15,
+        "sections": 12,
     },
     "03_task2_season.ipynb": {
         "title": "Task 2 — Season Classification",
@@ -96,7 +96,7 @@ def test_task1_scaffold_has_a_complete_controller_structure() -> None:
         int(match.group(1))
         for heading in headings
         if (match := re.fullmatch(r"## (\d+)\. .+", heading))
-    ] == list(range(1, 16))
+    ] == list(range(1, 13))
 
 
 def test_task_metric_placeholders_are_explicit() -> None:
