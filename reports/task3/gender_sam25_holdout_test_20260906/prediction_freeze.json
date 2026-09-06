@@ -1,0 +1,28 @@
+{
+  "frozen_at_utc": "2026-09-06T12:43:26.100821+00:00",
+  "holdout_rows": 5778,
+  "test_rows": 5829,
+  "holdout_and_test_reference_labels_opened": false,
+  "weights_and_buffers_unchanged": true,
+  "outputs": {
+    "inference_recipe.json": "c9d83f43ad802e68916a9f64a879e5d37e8a122f85c5c6aacbd3cad956515c8c",
+    "cpu_reproduction_checks.json": "9655bd7379f5d54000cb95af4a951f95250a7dd60202ea25e1d3b692705c8539",
+    "holdout_image_manifest.csv": "e012a1fd46c27afd96d496da0be59c0d6c67309438953ac89c833d2bd90ff130",
+    "test_image_manifest.csv": "c508b9ebaf847115aaf4dad11cb1f757d03e87cc0a3617ca7c6b44d185c2671c",
+    "gender_holdout_fold_0.csv": "c7740c999608cb56afa18ca5299520f1ec2b9913aed1cc281bb7092c55a52526",
+    "gender_test_fold_0.csv": "631e2ef7370a76fce210ad5d7bcdc5c725143d31fdf20d9b5b760a09c1195673",
+    "gender_holdout_fold_1.csv": "b1f8391af76006115e73b6ea1ecedc86c0dfa20d876e309a66f2fa33f71621ae",
+    "gender_test_fold_1.csv": "dfbd6d77ff0796e8beee0d71f1238c89c572fae0152daa385430f9d583aa089a",
+    "gender_holdout_fold_2.csv": "c7d759c479b83ed4f6a7e3883ab1107203156259067040f193312789e97816c1",
+    "gender_test_fold_2.csv": "984b6608c0b508489205452186399d2e13ee4ef69c238a2f5dcc4e5ee8a390e4",
+    "gender_holdout_fold_3.csv": "f1fec21ad975829dbd025c91eb3e882aadfd2dea98324d624013e4251c56b920",
+    "gender_test_fold_3.csv": "57ff47f15a704d08f2b7aa97d7fe35ec28b17e261ad3b4da8932eb8cd25b00b1",
+    "gender_holdout_fold_4.csv": "366002df8f7f45be58b70d8dcb2336d4326272555ce15ef0287d2fc66d80cbc5",
+    "gender_test_fold_4.csv": "1409eac5522bf0de74c176f3d0c3459232b9d5e5a829763f3703638eb11ae29a",
+    "gender_holdout_probabilities.csv": "defcd35a526f2725ea2392ab40cbb0e94a02fd8f5eecb56ef48294a44eb2b066",
+    "gender_holdout_predictions.csv": "b785021fb32f6b8276996fd04c13f5a2c24b8298a349cd2befdfd88658c2de88",
+    "gender_test_probabilities.csv": "f7ca5ed1e149bf1e87a719f4e350213039c2dd59a2f61169117ac5fcfee87958",
+    "gender_test_predictions.csv": "3d59030f248b6f2c16afb732a051cf347f12f5d9e5900972d44f5412d5f1318e",
+    "inference_timing.json": "b47903d7336577123239d6152e708c49a367c05f8aa967be3ebf299dcb6b87e9"
+  }
+}
