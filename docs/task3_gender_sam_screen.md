@@ -1,6 +1,6 @@
 # SAM with MixUp 0.2
 
-Use `notebooks/04ai_task3_gender_sam_screen.ipynb` on a fresh Colab L4.
+Use `notebooks/task3_training/gender_sam_screen.ipynb` on a fresh Colab L4.
 Push the notebook and source changes first, then Run All. It uses the existing
 Drive paths for the completed 04af alpha 0.2 parents, earlier G2/E6 and refinement
 comparisons, registry and 04w precision evidence. The failed 04ah runs are not needed.
