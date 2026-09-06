@@ -1,6 +1,6 @@
 # Usage v3: repeat MixUp + SAM with the reviewed replacements
 
-Open [04an_task3_usage_replaced_v3_mixup_sam.ipynb](../../notebooks/04an_task3_usage_replaced_v3_mixup_sam.ipynb)
+Open [task3_training/usage_replaced_v3_mixup_sam.ipynb](../../../notebooks/task3_training/usage_replaced_v3_mixup_sam.ipynb)
 in VS Code. Select a fresh Colab GPU kernel and choose **Run All**.
 
 This repeats the completed v2 MixUp + SAM recipe on v3. It trains **folds 0 and 4 only**,
@@ -19,7 +19,7 @@ Keep these existing files and results:
 - `MyDrive/MLA2/task3_usage_mixup_sam/` — the completed fold-0/fold-4 reference results.
 
 Put the new **`teacher_plus_rare_usage_v3_delta.zip`** in `MyDrive/MLA2/data/` once.
-The local file is `reports/task3_rare_replacement_20260906/teacher_plus_rare_usage_v3_delta.zip`
+The local file is `reports/task3/rare_replacement_20260906/teacher_plus_rare_usage_v3_delta.zip`
 (about 10 MB). It contains new images and the v3 manifests, so this one data update is
 needed. It does not contain a new training-code bundle. Its SHA-256 is
 `e625d81fc993ecb607377478eea445b77eea56fc245029502bfafe2e0e2ba4c6`.
