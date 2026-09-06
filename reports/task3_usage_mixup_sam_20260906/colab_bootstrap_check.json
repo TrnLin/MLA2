@@ -1,0 +1,21 @@
+{
+  "folds": [
+    0,
+    4
+  ],
+  "baseline_folds_verified": 2,
+  "training_call_reached": true,
+  "production_training_started": false,
+  "separate_screen_registry": true,
+  "notebook_sha256": "0586b1b17b70f2012ba13a734a18f0af642d3b695ef556a5f2c47479e2c8f6ed",
+  "bundle_sha256": "48fdebf9f879fadea23e6a882612467a026357a69ddc16bc7a9e0d3090eb57c2",
+  "code_cells_executed": [
+    "usage-sam-02",
+    "usage-sam-04",
+    "usage-sam-06",
+    "usage-sam-08"
+  ],
+  "setup_rerun_passed": true,
+  "teacher_archive_fixture_images": 1,
+  "scope": "Local setup simulation only; real training is not simulated as complete"
+}
