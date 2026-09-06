@@ -1,0 +1,10 @@
+true_label,Casual,Ethnic,Formal,Home,NA,Party,Smart Casual,Sports,Travel
+Casual,9554,88,119,3,44,4,3,228,22
+Ethnic,153,719,1,0,0,0,0,0,0
+Formal,202,0,570,0,2,0,0,5,0
+Home,1,0,0,0,0,0,0,0,0
+NA,13,0,0,0,9,0,0,0,0
+Party,4,2,0,0,0,0,0,0,0
+Smart Casual,16,0,2,0,0,0,0,0,0
+Sports,553,0,0,1,0,1,0,777,6
+Travel,6,0,1,0,0,0,0,0,1
