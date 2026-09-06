@@ -1,6 +1,6 @@
 # Five-fold fixed SAM25 training
 
-Run `notebooks/04ak_task3_gender_sam25_five_fold.ipynb` on a fresh Colab L4.
+Run `notebooks/task3_training/gender_sam25_five_fold.ipynb` on a fresh Colab L4.
 Push the code first. Run All trains five new scratch models in canonical fold
 order 0, 1, 2, 3, 4. Expect about 40 minutes of training plus Drive checks and
 final evaluation, based on the completed two-fold timing.
