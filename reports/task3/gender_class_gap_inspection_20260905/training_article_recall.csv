@@ -1,0 +1,486 @@
+gender,articleType,n,correct,recall,fold
+Boys,Blazers,1,1,1.0,0
+Boys,Booties,3,3,1.0,0
+Boys,Capris,9,9,1.0,0
+Boys,Casual Shoes,17,16,0.9411764705882353,0
+Boys,Churidar,1,0,0.0,0
+Boys,Clothing Set,4,4,1.0,0
+Boys,Flip Flops,11,11,1.0,0
+Boys,Gloves,4,2,0.5,0
+Boys,Innerwear Vests,3,3,1.0,0
+Boys,Jackets,2,2,1.0,0
+Boys,Jeans,21,21,1.0,0
+Boys,Kurta Sets,2,2,1.0,0
+Boys,Kurtas,5,5,1.0,0
+Boys,Leggings,3,1,0.3333333333333333,0
+Boys,Rompers,4,4,1.0,0
+Boys,Sandals,8,8,1.0,0
+Boys,Shirts,52,52,1.0,0
+Boys,Shorts,39,37,0.9487179487179487,0
+Boys,Socks,1,0,0.0,0
+Boys,Sports Shoes,2,1,0.5,0
+Boys,Sweatshirts,1,1,1.0,0
+Boys,Trousers,2,2,1.0,0
+Boys,Tshirts,346,342,0.9884393063583815,0
+Boys,Waistcoat,2,2,1.0,0
+Boys,Watches,5,4,0.8,0
+Girls,Backpacks,1,0,0.0,0
+Girls,Booties,4,4,1.0,0
+Girls,Capris,21,20,0.9523809523809523,0
+Girls,Casual Shoes,8,8,1.0,0
+Girls,Clothing Set,2,2,1.0,0
+Girls,Dresses,42,39,0.9285714285714286,0
+Girls,Earrings,1,0,0.0,0
+Girls,Flip Flops,6,6,1.0,0
+Girls,Gloves,4,3,0.75,0
+Girls,Innerwear Vests,3,3,1.0,0
+Girls,Jeans,12,12,1.0,0
+Girls,Leggings,15,15,1.0,0
+Girls,Lehenga Choli,2,2,1.0,0
+Girls,Rompers,4,4,1.0,0
+Girls,Salwar,4,4,1.0,0
+Girls,Sandals,31,30,0.967741935483871,0
+Girls,Shirts,1,1,1.0,0
+Girls,Shorts,25,24,0.96,0
+Girls,Skirts,16,16,1.0,0
+Girls,Tops,154,149,0.9675324675324676,0
+Girls,Tshirts,72,70,0.9722222222222222,0
+Girls,Watches,8,8,1.0,0
+Men,Accessory Gift Set,74,74,1.0,0
+Men,Backpacks,36,15,0.4166666666666667,0
+Men,Bangle,14,13,0.9285714285714286,0
+Men,Belts,359,354,0.9860724233983287,0
+Men,Blazers,4,4,1.0,0
+Men,Body Wash and Scrub,1,1,1.0,0
+Men,Boxers,27,27,1.0,0
+Men,Briefs,349,348,0.997134670487106,0
+Men,Caps,74,66,0.8918918918918919,0
+Men,Casual Shoes,1432,1427,0.9965083798882681,0
+Men,Churidar,6,6,1.0,0
+Men,Cufflinks,25,25,1.0,0
+Men,Deodorant,124,123,0.9919354838709677,0
+Men,Duffel Bag,1,1,1.0,0
+Men,Flip Flops,323,319,0.9876160990712074,0
+Men,Formal Shoes,414,414,1.0,0
+Men,Fragrance Gift Set,20,20,1.0,0
+Men,Free Gifts,26,26,1.0,0
+Men,Gloves,6,6,1.0,0
+Men,Handbags,1,1,1.0,0
+Men,Heels,1,1,1.0,0
+Men,Innerwear Vests,158,157,0.9936708860759493,0
+Men,Jackets,120,120,1.0,0
+Men,Jeans,207,206,0.9951690821256038,0
+Men,Kurtas,45,45,1.0,0
+Men,Kurtis,2,2,1.0,0
+Men,Laptop Bag,12,6,0.5,0
+Men,Lounge Pants,22,22,1.0,0
+Men,Lounge Shorts,16,15,0.9375,0
+Men,Messenger Bag,9,6,0.6666666666666666,0
+Men,Mufflers,22,21,0.9545454545454546,0
+Men,Nehru Jackets,4,4,1.0,0
+Men,Night suits,10,10,1.0,0
+Men,Perfume and Body Mist,212,206,0.9716981132075472,0
+Men,Rain Trousers,1,1,1.0,0
+Men,Ring,25,25,1.0,0
+Men,Sandals,486,486,1.0,0
+Men,Scarves,27,25,0.9259259259259259,0
+Men,Shirts,1852,1851,0.9994600431965442,0
+Men,Shoe Accessories,2,2,1.0,0
+Men,Shorts,251,251,1.0,0
+Men,Socks,316,312,0.9873417721518988,0
+Men,Sports Sandals,18,18,1.0,0
+Men,Sports Shoes,1057,1050,0.9933774834437086,0
+Men,Sunglasses,412,408,0.9902912621359223,0
+Men,Suspenders,28,28,1.0,0
+Men,Sweaters,134,134,1.0,0
+Men,Sweatshirts,149,149,1.0,0
+Men,Ties,145,145,1.0,0
+Men,Tights,1,1,1.0,0
+Men,Tops,1,1,1.0,0
+Men,Track Pants,141,140,0.9929078014184397,0
+Men,Tracksuits,19,19,1.0,0
+Men,Trousers,282,281,0.9964539007092199,0
+Men,Trunk,96,96,1.0,0
+Men,Tshirts,3449,3439,0.9971006088721368,0
+Men,Tunics,1,1,1.0,0
+Men,Waist Pouch,1,1,1.0,0
+Men,Waistcoat,5,5,1.0,0
+Men,Wallets,277,269,0.9711191335740073,0
+Men,Watches,869,863,0.9930955120828538,0
+Men,Water Bottle,2,2,1.0,0
+Unisex,Backpacks,421,417,0.9904988123515439,0
+Unisex,Basketballs,9,9,1.0,0
+Unisex,Belts,7,0,0.0,0
+Unisex,Caps,95,93,0.9789473684210527,0
+Unisex,Casual Shoes,147,117,0.7959183673469388,0
+Unisex,Cushion Covers,1,1,1.0,0
+Unisex,Deodorant,2,0,0.0,0
+Unisex,Duffel Bag,54,50,0.9259259259259259,0
+Unisex,Flip Flops,101,84,0.8316831683168316,0
+Unisex,Footballs,5,5,1.0,0
+Unisex,Fragrance Gift Set,1,0,0.0,0
+Unisex,Free Gifts,1,1,1.0,0
+Unisex,Handbags,42,28,0.6666666666666666,0
+Unisex,Hat,2,2,1.0,0
+Unisex,Headband,4,3,0.75,0
+Unisex,Jackets,1,0,0.0,0
+Unisex,Key chain,1,0,0.0,0
+Unisex,Laptop Bag,35,32,0.9142857142857143,0
+Unisex,Messenger Bag,21,20,0.9523809523809523,0
+Unisex,Mobile Pouch,4,2,0.5,0
+Unisex,Mufflers,1,1,1.0,0
+Unisex,Perfume and Body Mist,5,1,0.2,0
+Unisex,Rain Jacket,1,1,1.0,0
+Unisex,Rucksacks,8,8,1.0,0
+Unisex,Sandals,63,51,0.8095238095238095,0
+Unisex,Scarves,4,3,0.75,0
+Unisex,Shoe Accessories,14,6,0.42857142857142855,0
+Unisex,Shoe Laces,1,1,1.0,0
+Unisex,Socks,47,32,0.6808510638297872,0
+Unisex,Sports Shoes,30,13,0.43333333333333335,0
+Unisex,Sunglasses,95,83,0.8736842105263158,0
+Unisex,Sweatshirts,1,0,0.0,0
+Unisex,Swimwear,4,2,0.5,0
+Unisex,Tablet Sleeve,1,0,0.0,0
+Unisex,Track Pants,1,0,0.0,0
+Unisex,Travel Accessory,6,6,1.0,0
+Unisex,Trolley Bag,3,3,1.0,0
+Unisex,Tshirts,48,40,0.8333333333333334,0
+Unisex,Waist Pouch,11,11,1.0,0
+Unisex,Wallets,15,3,0.2,0
+Unisex,Watches,88,62,0.7045454545454546,0
+Unisex,Water Bottle,6,5,0.8333333333333334,0
+Unisex,Wristbands,4,3,0.75,0
+Women,Baby Dolls,2,2,1.0,0
+Women,Backpacks,27,23,0.8518518518518519,0
+Women,Bangle,18,18,1.0,0
+Women,Belts,176,171,0.9715909090909091,0
+Women,Blazers,1,1,1.0,0
+Women,Bra,202,202,1.0,0
+Women,Bracelet,28,28,1.0,0
+Women,Briefs,107,106,0.9906542056074766,0
+Women,Camisoles,10,10,1.0,0
+Women,Capris,80,78,0.975,0
+Women,Caps,16,15,0.9375,0
+Women,Casual Shoes,215,205,0.9534883720930233,0
+Women,Churidar,14,14,1.0,0
+Women,Clutches,152,152,1.0,0
+Women,Compact,4,4,1.0,0
+Women,Concealer,2,2,1.0,0
+Women,Deodorant,73,68,0.9315068493150684,0
+Women,Dresses,190,187,0.9842105263157894,0
+Women,Duffel Bag,4,4,1.0,0
+Women,Dupatta,80,80,1.0,0
+Women,Earrings,125,125,1.0,0
+Women,Eyeshadow,2,2,1.0,0
+Women,Flats,287,284,0.9895470383275261,0
+Women,Flip Flops,146,144,0.9863013698630136,0
+Women,Foundation and Primer,7,7,1.0,0
+Women,Fragrance Gift Set,17,17,1.0,0
+Women,Free Gifts,19,17,0.8947368421052632,0
+Women,Handbags,935,933,0.9978609625668449,0
+Women,Heels,710,709,0.9985915492957746,0
+Women,Highlighter and Blush,4,4,1.0,0
+Women,Innerwear Vests,1,1,1.0,0
+Women,Ipad,1,1,1.0,0
+Women,Jackets,32,31,0.96875,0
+Women,Jeans,138,138,1.0,0
+Women,Jeggings,18,18,1.0,0
+Women,Jewellery Set,32,32,1.0,0
+Women,Jumpsuit,8,8,1.0,0
+Women,Kajal and Eyeliner,8,8,1.0,0
+Women,Kurta Sets,49,49,1.0,0
+Women,Kurtas,1009,1009,1.0,0
+Women,Kurtis,137,137,1.0,0
+Women,Laptop Bag,8,7,0.875,0
+Women,Leggings,91,91,1.0,0
+Women,Lip Gloss,4,4,1.0,0
+Women,Lip Liner,9,9,1.0,0
+Women,Lip Plumper,2,2,1.0,0
+Women,Lipstick,10,10,1.0,0
+Women,Lounge Pants,14,14,1.0,0
+Women,Lounge Shorts,7,7,1.0,0
+Women,Lounge Tshirts,1,1,1.0,0
+Women,Mobile Pouch,28,28,1.0,0
+Women,Mufflers,3,3,1.0,0
+Women,Nail Polish,12,12,1.0,0
+Women,Necklace and Chains,43,43,1.0,0
+Women,Night suits,38,38,1.0,0
+Women,Nightdress,27,27,1.0,0
+Women,Patiala,19,19,1.0,0
+Women,Pendant,100,100,1.0,0
+Women,Perfume and Body Mist,162,156,0.9629629629629629,0
+Women,Ring,54,54,1.0,0
+Women,Robe,2,2,1.0,0
+Women,Salwar,19,19,1.0,0
+Women,Salwar and Dupatta,5,5,1.0,0
+Women,Sandals,1,0,0.0,0
+Women,Sarees,104,104,1.0,0
+Women,Scarves,44,44,1.0,0
+Women,Shapewear,2,2,1.0,0
+Women,Shirts,186,186,1.0,0
+Women,Shorts,44,43,0.9772727272727273,0
+Women,Shrug,2,2,1.0,0
+Women,Skirts,64,64,1.0,0
+Women,Socks,54,51,0.9444444444444444,0
+Women,Sports Sandals,26,24,0.9230769230769231,0
+Women,Sports Shoes,263,247,0.9391634980988594,0
+Women,Stockings,14,14,1.0,0
+Women,Stoles,62,62,1.0,0
+Women,Sunglasses,204,201,0.9852941176470589,0
+Women,Sweaters,54,54,1.0,0
+Women,Sweatshirts,40,39,0.975,0
+Women,Swimwear,8,8,1.0,0
+Women,Tablet Sleeve,1,1,1.0,0
+Women,Tights,5,5,1.0,0
+Women,Tops,940,935,0.9946808510638298,0
+Women,Track Pants,58,57,0.9827586206896551,0
+Women,Travel Accessory,3,3,1.0,0
+Women,Trousers,66,66,1.0,0
+Women,Tshirts,682,673,0.9868035190615836,0
+Women,Tunics,119,119,1.0,0
+Women,Umbrellas,4,4,1.0,0
+Women,Waistcoat,2,2,1.0,0
+Women,Wallets,273,265,0.9706959706959707,0
+Women,Watches,553,536,0.969258589511754,0
+Boys,Booties,3,2,0.6666666666666666,4
+Boys,Capris,11,11,1.0,4
+Boys,Casual Shoes,18,14,0.7777777777777778,4
+Boys,Churidar,1,1,1.0,4
+Boys,Clothing Set,3,3,1.0,4
+Boys,Flip Flops,12,12,1.0,4
+Boys,Gloves,4,3,0.75,4
+Boys,Innerwear Vests,3,3,1.0,4
+Boys,Jackets,2,2,1.0,4
+Boys,Jeans,19,19,1.0,4
+Boys,Kurta Sets,2,2,1.0,4
+Boys,Kurtas,4,4,1.0,4
+Boys,Leggings,3,2,0.6666666666666666,4
+Boys,Rompers,6,6,1.0,4
+Boys,Sandals,9,9,1.0,4
+Boys,Shirts,53,53,1.0,4
+Boys,Shorts,37,35,0.9459459459459459,4
+Boys,Socks,1,0,0.0,4
+Boys,Sports Shoes,2,0,0.0,4
+Boys,Sweatshirts,1,1,1.0,4
+Boys,Trousers,3,3,1.0,4
+Boys,Tshirts,347,340,0.9798270893371758,4
+Boys,Waistcoat,2,2,1.0,4
+Girls,Backpacks,1,0,0.0,4
+Girls,Booties,4,4,1.0,4
+Girls,Capris,21,20,0.9523809523809523,4
+Girls,Casual Shoes,10,9,0.9,4
+Girls,Clothing Set,2,2,1.0,4
+Girls,Dresses,45,44,0.9777777777777777,4
+Girls,Earrings,1,0,0.0,4
+Girls,Flip Flops,4,4,1.0,4
+Girls,Gloves,6,6,1.0,4
+Girls,Innerwear Vests,4,4,1.0,4
+Girls,Jeans,9,9,1.0,4
+Girls,Leggings,14,14,1.0,4
+Girls,Lehenga Choli,1,1,1.0,4
+Girls,Rompers,3,3,1.0,4
+Girls,Salwar,4,4,1.0,4
+Girls,Sandals,30,28,0.9333333333333333,4
+Girls,Shirts,1,1,1.0,4
+Girls,Shorts,26,24,0.9230769230769231,4
+Girls,Skirts,16,14,0.875,4
+Girls,Tops,154,148,0.961038961038961,4
+Girls,Tshirts,71,70,0.9859154929577465,4
+Girls,Watches,7,7,1.0,4
+Men,Accessory Gift Set,73,73,1.0,4
+Men,Backpacks,36,11,0.3055555555555556,4
+Men,Bangle,1,1,1.0,4
+Men,Belts,349,346,0.9914040114613181,4
+Men,Blazers,4,4,1.0,4
+Men,Body Wash and Scrub,1,0,0.0,4
+Men,Boxers,27,27,1.0,4
+Men,Bracelet,16,16,1.0,4
+Men,Briefs,350,350,1.0,4
+Men,Caps,73,63,0.863013698630137,4
+Men,Casual Shoes,1432,1422,0.9930167597765364,4
+Men,Churidar,6,6,1.0,4
+Men,Cufflinks,31,31,1.0,4
+Men,Deodorant,127,126,0.9921259842519685,4
+Men,Duffel Bag,3,2,0.6666666666666666,4
+Men,Flip Flops,318,311,0.9779874213836478,4
+Men,Formal Shoes,415,414,0.9975903614457832,4
+Men,Fragrance Gift Set,20,20,1.0,4
+Men,Free Gifts,25,25,1.0,4
+Men,Gloves,4,4,1.0,4
+Men,Handbags,4,2,0.5,4
+Men,Innerwear Vests,157,155,0.9872611464968153,4
+Men,Jackets,124,124,1.0,4
+Men,Jeans,208,208,1.0,4
+Men,Kurtas,36,36,1.0,4
+Men,Kurtis,2,2,1.0,4
+Men,Laptop Bag,13,8,0.6153846153846154,4
+Men,Lounge Pants,22,22,1.0,4
+Men,Lounge Shorts,19,19,1.0,4
+Men,Messenger Bag,8,7,0.875,4
+Men,Mufflers,20,20,1.0,4
+Men,Nehru Jackets,3,3,1.0,4
+Men,Night suits,12,12,1.0,4
+Men,Perfume and Body Mist,214,207,0.9672897196261683,4
+Men,Ring,25,24,0.96,4
+Men,Sandals,478,476,0.99581589958159,4
+Men,Scarves,34,32,0.9411764705882353,4
+Men,Shirts,1859,1857,0.9989241527703067,4
+Men,Shoe Accessories,2,2,1.0,4
+Men,Shorts,253,251,0.9920948616600791,4
+Men,Socks,313,311,0.9936102236421726,4
+Men,Sports Sandals,19,19,1.0,4
+Men,Sports Shoes,1056,1048,0.9924242424242424,4
+Men,Stoles,1,1,1.0,4
+Men,Sunglasses,382,380,0.9947643979057592,4
+Men,Suspenders,27,27,1.0,4
+Men,Sweaters,129,129,1.0,4
+Men,Sweatshirts,148,148,1.0,4
+Men,Ties,144,143,0.9930555555555556,4
+Men,Tights,1,1,1.0,4
+Men,Track Pants,144,143,0.9930555555555556,4
+Men,Tracksuits,19,19,1.0,4
+Men,Trousers,285,285,1.0,4
+Men,Trunk,96,96,1.0,4
+Men,Tshirts,3455,3445,0.9971056439942113,4
+Men,Tunics,1,1,1.0,4
+Men,Waist Pouch,1,1,1.0,4
+Men,Waistcoat,4,4,1.0,4
+Men,Wallets,278,275,0.9892086330935251,4
+Men,Watches,892,887,0.9943946188340808,4
+Men,Water Bottle,2,2,1.0,4
+Unisex,Backpacks,417,410,0.9832134292565947,4
+Unisex,Basketballs,10,10,1.0,4
+Unisex,Belts,6,0,0.0,4
+Unisex,Caps,96,95,0.9895833333333334,4
+Unisex,Casual Shoes,150,115,0.7666666666666667,4
+Unisex,Deodorant,3,0,0.0,4
+Unisex,Duffel Bag,53,52,0.9811320754716981,4
+Unisex,Flip Flops,101,83,0.8217821782178217,4
+Unisex,Footballs,6,6,1.0,4
+Unisex,Fragrance Gift Set,1,0,0.0,4
+Unisex,Free Gifts,1,1,1.0,4
+Unisex,Handbags,38,33,0.868421052631579,4
+Unisex,Hat,2,2,1.0,4
+Unisex,Headband,5,3,0.6,4
+Unisex,Jackets,1,0,0.0,4
+Unisex,Jeans,3,3,1.0,4
+Unisex,Key chain,1,0,0.0,4
+Unisex,Laptop Bag,34,30,0.8823529411764706,4
+Unisex,Messenger Bag,22,20,0.9090909090909091,4
+Unisex,Mobile Pouch,6,6,1.0,4
+Unisex,Mufflers,1,1,1.0,4
+Unisex,Perfume and Body Mist,7,6,0.8571428571428571,4
+Unisex,Rain Jacket,1,1,1.0,4
+Unisex,Rucksacks,8,8,1.0,4
+Unisex,Sandals,64,54,0.84375,4
+Unisex,Scarves,2,1,0.5,4
+Unisex,Shoe Accessories,14,10,0.7142857142857143,4
+Unisex,Shoe Laces,1,1,1.0,4
+Unisex,Socks,46,32,0.6956521739130435,4
+Unisex,Sports Sandals,3,2,0.6666666666666666,4
+Unisex,Sports Shoes,29,8,0.27586206896551724,4
+Unisex,Sunglasses,95,80,0.8421052631578947,4
+Unisex,Sweatshirts,1,0,0.0,4
+Unisex,Swimwear,2,1,0.5,4
+Unisex,Track Pants,1,0,0.0,4
+Unisex,Travel Accessory,8,8,1.0,4
+Unisex,Trolley Bag,2,2,1.0,4
+Unisex,Tshirts,49,43,0.8775510204081632,4
+Unisex,Waist Pouch,11,9,0.8181818181818182,4
+Unisex,Wallets,14,1,0.07142857142857142,4
+Unisex,Watches,88,60,0.6818181818181818,4
+Unisex,Water Bottle,6,4,0.6666666666666666,4
+Unisex,Wristbands,4,4,1.0,4
+Women,Baby Dolls,2,2,1.0,4
+Women,Backpacks,24,20,0.8333333333333334,4
+Women,Bangle,36,35,0.9722222222222222,4
+Women,Belts,185,179,0.9675675675675676,4
+Women,Blazers,1,1,1.0,4
+Women,Bra,201,201,1.0,4
+Women,Bracelet,21,21,1.0,4
+Women,Briefs,105,104,0.9904761904761905,4
+Women,Camisoles,10,10,1.0,4
+Women,Capris,77,74,0.961038961038961,4
+Women,Caps,15,11,0.7333333333333333,4
+Women,Casual Shoes,214,201,0.9392523364485982,4
+Women,Churidar,13,13,1.0,4
+Women,Clutches,151,150,0.9933774834437086,4
+Women,Compact,4,4,1.0,4
+Women,Deodorant,69,65,0.9420289855072463,4
+Women,Dresses,186,183,0.9838709677419355,4
+Women,Duffel Bag,3,3,1.0,4
+Women,Dupatta,80,80,1.0,4
+Women,Earrings,160,160,1.0,4
+Women,Eyeshadow,3,3,1.0,4
+Women,Flats,284,279,0.9823943661971831,4
+Women,Flip Flops,150,144,0.96,4
+Women,Foundation and Primer,9,9,1.0,4
+Women,Fragrance Gift Set,17,17,1.0,4
+Women,Free Gifts,21,21,1.0,4
+Women,Handbags,934,931,0.9967880085653105,4
+Women,Heels,707,705,0.9971711456859972,4
+Women,Highlighter and Blush,4,4,1.0,4
+Women,Innerwear Vests,1,1,1.0,4
+Women,Ipad,1,1,1.0,4
+Women,Jackets,28,27,0.9642857142857143,4
+Women,Jeans,138,138,1.0,4
+Women,Jeggings,18,18,1.0,4
+Women,Jewellery Set,32,32,1.0,4
+Women,Jumpsuit,8,8,1.0,4
+Women,Kajal and Eyeliner,9,9,1.0,4
+Women,Kurta Sets,50,50,1.0,4
+Women,Kurtas,1015,1015,1.0,4
+Women,Kurtis,136,136,1.0,4
+Women,Laptop Bag,7,5,0.7142857142857143,4
+Women,Leggings,91,91,1.0,4
+Women,Lip Gloss,4,4,1.0,4
+Women,Lip Liner,7,7,1.0,4
+Women,Lip Plumper,3,3,1.0,4
+Women,Lipstick,6,6,1.0,4
+Women,Lounge Pants,14,14,1.0,4
+Women,Lounge Shorts,4,4,1.0,4
+Women,Lounge Tshirts,1,1,1.0,4
+Women,Mobile Pouch,26,24,0.9230769230769231,4
+Women,Mufflers,6,5,0.8333333333333334,4
+Women,Nail Polish,13,13,1.0,4
+Women,Necklace and Chains,42,42,1.0,4
+Women,Night suits,35,35,1.0,4
+Women,Nightdress,27,27,1.0,4
+Women,Patiala,18,18,1.0,4
+Women,Pendant,77,77,1.0,4
+Women,Perfume and Body Mist,158,145,0.9177215189873418,4
+Women,Ring,51,51,1.0,4
+Women,Robe,2,2,1.0,4
+Women,Salwar,18,18,1.0,4
+Women,Salwar and Dupatta,5,5,1.0,4
+Women,Sandals,3,3,1.0,4
+Women,Sarees,104,104,1.0,4
+Women,Scarves,39,39,1.0,4
+Women,Shapewear,2,2,1.0,4
+Women,Shirts,187,187,1.0,4
+Women,Shorts,41,39,0.9512195121951219,4
+Women,Shrug,2,2,1.0,4
+Women,Skirts,64,64,1.0,4
+Women,Socks,57,55,0.9649122807017544,4
+Women,Sports Sandals,21,21,1.0,4
+Women,Sports Shoes,268,251,0.9365671641791045,4
+Women,Stockings,18,18,1.0,4
+Women,Stoles,62,62,1.0,4
+Women,Sunglasses,223,220,0.9865470852017937,4
+Women,Sweaters,59,59,1.0,4
+Women,Sweatshirts,40,40,1.0,4
+Women,Swimwear,10,10,1.0,4
+Women,Tablet Sleeve,1,1,1.0,4
+Women,Ties and Cufflinks,1,1,1.0,4
+Women,Tights,5,5,1.0,4
+Women,Tops,940,935,0.9946808510638298,4
+Women,Track Pants,55,53,0.9636363636363636,4
+Women,Travel Accessory,2,2,1.0,4
+Women,Trousers,60,60,1.0,4
+Women,Tshirts,679,672,0.9896907216494846,4
+Women,Tunics,118,118,1.0,4
+Women,Umbrellas,3,3,1.0,4
+Women,Waistcoat,4,4,1.0,4
+Women,Wallets,271,265,0.977859778597786,4
+Women,Watches,546,522,0.9560439560439561,4
