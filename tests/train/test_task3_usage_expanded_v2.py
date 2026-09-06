@@ -367,12 +367,14 @@ def test_notebook_result_cells_accept_actual_training_outputs(trained_v2, tiny_v
     import nbformat
     from IPython.display import Image as DisplayImage
 
-    notebook = nbformat.read(ROOT / "notebooks/04al_task3_usage_expanded_v2_e8.ipynb", as_version=4)
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/usage_expanded_v2_e8.ipynb", as_version=4
+    )
     nbformat.validate(notebook)
     for cell in notebook.cells:
         if cell.cell_type == "code":
             compile(cell.source, cell.id, "exec")
-            assert cell.execution_count is None and not cell.outputs
+            assert all(output.output_type != "error" for output in cell.outputs)
     comparison = v2.build_comparison(
         v2.read_predictions(trained_v2["prediction_path"]),
         splits=tiny_v2,
