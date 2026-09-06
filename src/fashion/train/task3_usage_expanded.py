@@ -286,7 +286,7 @@ def reusable_fold(*, fold, output_root, registry_path, splits, spec):
             if compute_sha256(path / name) != digest:
                 raise ValueError(f"Completed expanded run artifact changed: {path / name}")
         metrics = json.loads((path / "metrics.json").read_text())
-        if metrics != json.loads(row.metrics_json) or metrics["selected_epoch"] != 30:
+        if metrics != json.loads(row.metrics_json) or metrics["selected_epoch"] != base["epochs"]:
             raise ValueError("Completed expanded run metrics changed")
         validate_oof(
             read_predictions(path / "oof_predictions.csv"),
@@ -331,6 +331,19 @@ def run_expanded_usage(
     if not torch.cuda.is_available():
         raise RuntimeError("Select a GPU runtime before running the expanded Usage experiment")
     root, output_root = Path(root), Path(output_root)
+    shared_registry = output_root / "results/runs.csv"
+    if any(Path(p).resolve() == shared_registry.resolve() for p in registry_mirrors):
+        raise ValueError("Use a local registry mirror; other notebooks write the shared Drive CSV")
+    if Path(registry_path).resolve() == shared_registry.resolve():
+        from fashion.train.task3_usage_registry import prepare_usage_registry
+
+        recovery = prepare_usage_registry(
+            output_root=output_root,
+            source_paths=(registry_path, *registry_mirrors),
+            root=root,
+        )
+        registry_path = Path(recovery["registry_path"])
+        print(f"Usage run log: {registry_path}", flush=True)
     splits, contract = validate_dataset(root=root)
     sources = check_e8_sources(
         directory=e8_directory, registry_path=source_registry_path, root=root
@@ -438,6 +451,7 @@ def run_expanded_usage(
         "aggregate": aggregate,
         "comparison": comparison,
         "comparison_path": str(summary_path),
+        "registry_path": str(registry_path),
     }
 
 
