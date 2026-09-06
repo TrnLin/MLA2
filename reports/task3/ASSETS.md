@@ -12,7 +12,9 @@ code, scores and useful failure evidence.
 - All training code remains under `src/fashion/`. The current untracked data
   extension, replacement, worker-budget and Usage HOG decision modules are included.
 - Reports live here in dated folders. Figures remain in `results/figures/task3/`.
-  JSON receipts and CSV records retain their original bytes, run IDs and hashes.
+  Historical JSON receipts and CSV records retain their original bytes, run IDs and hashes.
+  The live E1 report lock refreshes four README hashes after their link moves;
+  it records the approved original lock hash and keeps all model/evaluation hashes.
   `path-moves.json` maps the old paths. The main notebook translates the old
   `reports/task3_` prefix to `reports/task3/` when reading a receipt.
 - `asset-inventory.csv` records each original report file, its destination,
@@ -64,7 +66,9 @@ No code-only change requires another data ZIP upload.
   [the Gender manifest](gender_sam25_cv_result_20260906/model_manifest.json).
 - Usage: the original five teacher-only E1 SmallCNN fold checkpoints under
   `results/evidence/task3/baseline/usage/`, with their own configurations and
-  normalization. Use the selected five-fold recipe in the integrated E1 decision;
+  normalization. [The E1 manifest](usage_final_e1_20260907/model_manifest.json)
+  names the exact five runs; the baseline folder also has an older unused fold-0 run.
+  Use the selected five-fold recipe in [decision 0022](../../docs/decisions/0022-task3-usage-e1-final-model.md);
   do not substitute a two-fold screen or an expanded-dataset checkpoint.
 - Keep the canonical `data/processed/splits.csv`, `label_maps.json`, and the
   Gender name-label variant. Expanded experiments additionally need their
