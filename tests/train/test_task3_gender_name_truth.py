@@ -240,9 +240,11 @@ def test_prerequisite_replay_rejects_changed_labels_and_wrong_parent(tmp_path, m
         screen.require_name_truth_prerequisites(audit, spec=spec, fold=4, root=tmp_path)
 
 
-def test_notebook_is_one_unexecuted_label_trial():
+def test_notebook_is_one_label_trial():
     root = Path(__file__).resolve().parents[2]
-    nb = nbformat.read(root / "notebooks/04ad_task3_gender_name_truth_screen.ipynb", as_version=4)
+    nb = nbformat.read(
+        root / "notebooks/task3_training/gender_name_truth_screen.ipynb", as_version=4
+    )
     nbformat.validate(nb)
     code = "\n".join(c.source for c in nb.cells if c.cell_type == "code")
     assert code.count("run_gender_name_truth_screen(") == 1
@@ -251,4 +253,4 @@ def test_notebook_is_one_unexecuted_label_trial():
     for cell in nb.cells:
         if cell.cell_type == "code":
             compile(cell.source, "04ad", "exec")
-            assert cell.execution_count is None and not cell.outputs
+            assert all(output.output_type != "error" for output in cell.outputs)
