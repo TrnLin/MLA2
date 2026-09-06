@@ -1,0 +1,125 @@
+teacher_article_type,development_products,matched_product_rows,unique_product_ids,source_occasion_present_rows,exact_single_shared_occasion_rows,uncertain_candidate_rows,gap
+Accessory Gift Set,91,0,0,0,0,0,no_match_under_conservative_rules
+Baby Dolls,2,0,0,0,0,0,no_match_under_conservative_rules
+Backpacks,604,87,87,35,27,0,metadata_match_only
+Bangle,50,467,467,448,0,7,metadata_match_only
+Basketballs,12,26,26,0,0,0,metadata_match_only
+Belts,676,2,2,2,2,0,metadata_match_only
+Blazers,7,32,32,32,26,0,metadata_match_only
+Body Wash and Scrub,1,0,0,0,0,0,no_match_under_conservative_rules
+Booties,9,0,0,0,0,0,no_match_under_conservative_rules
+Boxers,34,18,18,17,15,0,metadata_match_only
+Bra,251,1053,1053,891,674,1,metadata_match_only
+Bracelet,44,262,262,255,0,7,metadata_match_only
+Briefs,568,35,35,1,1,0,metadata_match_only
+Camisoles,13,45,45,5,5,0,metadata_match_only
+Capris,136,5,5,3,2,0,metadata_match_only
+Caps,230,33,33,20,19,0,metadata_match_only
+Casual Shoes,2276,473,473,471,456,1,metadata_match_only
+Churidar,26,1,1,1,1,0,metadata_match_only
+Clothing Set,7,0,0,0,0,0,no_match_under_conservative_rules
+Clutches,189,16,16,13,5,0,metadata_match_only
+Compact,4,0,0,0,0,0,no_match_under_conservative_rules
+Concealer,2,0,0,0,0,0,no_match_under_conservative_rules
+Cufflinks,38,1,1,0,0,0,metadata_match_only
+Cushion Covers,1,89,89,0,0,0,metadata_match_only
+Deodorant,248,11,11,0,0,377,metadata_match_only
+Dresses,289,540,540,534,476,1,metadata_match_only
+Duffel Bag,73,0,0,0,0,0,no_match_under_conservative_rules
+Dupatta,99,6,6,6,6,0,metadata_match_only
+Earrings,206,95,95,94,0,0,metadata_match_only
+Eyeshadow,4,2,2,0,0,0,metadata_match_only
+Flats,356,175,175,145,137,3,metadata_match_only
+Flip Flops,734,19,19,0,0,0,metadata_match_only
+Footballs,7,2,2,0,0,0,metadata_match_only
+Formal Shoes,517,66,66,62,61,0,metadata_match_only
+Foundation and Primer,11,0,0,0,0,0,no_match_under_conservative_rules
+Fragrance Gift Set,47,0,0,0,0,0,no_match_under_conservative_rules
+Free Gifts,57,0,0,0,0,0,no_match_under_conservative_rules
+Gloves,18,11,11,0,0,0,metadata_match_only
+Handbags,1222,85,85,81,36,0,metadata_match_only
+Hat,2,1,1,0,0,0,metadata_match_only
+Headband,6,0,0,0,0,0,no_match_under_conservative_rules
+Heels,890,348,348,329,292,6,metadata_match_only
+Highlighter and Blush,4,0,0,0,0,0,no_match_under_conservative_rules
+Innerwear Vests,205,0,0,0,0,0,no_match_under_conservative_rules
+Ipad,1,0,0,0,0,0,no_match_under_conservative_rules
+Jackets,193,67,67,19,15,0,metadata_match_only
+Jeans,472,140,140,18,17,0,metadata_match_only
+Jeggings,22,9,9,8,7,0,metadata_match_only
+Jewellery Set,38,166,166,160,0,0,metadata_match_only
+Jumpsuit,10,20,20,1,1,0,metadata_match_only
+Kajal and Eyeliner,11,0,0,0,0,0,no_match_under_conservative_rules
+Key chain,1,11,11,0,0,0,metadata_match_only
+Kurta Sets,64,16,16,0,0,0,metadata_match_only
+Kurtas,1322,52,52,48,42,0,metadata_match_only
+Kurtis,172,183,183,168,141,0,metadata_match_only
+Laptop Bag,67,5,5,0,0,0,metadata_match_only
+Leggings,135,210,210,103,92,0,metadata_match_only
+Lehenga Choli,2,20,20,9,3,0,metadata_match_only
+Lip Gloss,5,0,0,0,0,0,no_match_under_conservative_rules
+Lip Liner,11,1,1,0,0,0,metadata_match_only
+Lip Plumper,3,0,0,0,0,0,no_match_under_conservative_rules
+Lipstick,10,13,13,0,0,0,metadata_match_only
+Lounge Pants,45,0,0,0,0,0,no_match_under_conservative_rules
+Lounge Shorts,29,0,0,0,0,0,no_match_under_conservative_rules
+Lounge Tshirts,1,0,0,0,0,0,no_match_under_conservative_rules
+Messenger Bag,37,0,0,0,0,0,no_match_under_conservative_rules
+Mobile Pouch,40,46,46,0,0,0,metadata_match_only
+Mufflers,33,5,5,4,4,0,metadata_match_only
+Nail Polish,16,0,0,0,0,0,no_match_under_conservative_rules
+Necklace and Chains,53,1603,1603,1468,0,3,metadata_match_only
+Nehru Jackets,4,0,0,0,0,0,no_match_under_conservative_rules
+Night suits,59,24,24,2,2,0,metadata_match_only
+Nightdress,34,37,37,5,4,0,metadata_match_only
+Patiala,23,11,11,7,7,0,metadata_match_only
+Pendant,105,34,34,34,0,0,metadata_match_only
+Perfume and Body Mist,474,3,3,0,0,0,metadata_match_only
+Rain Jacket,1,0,0,0,0,0,no_match_under_conservative_rules
+Rain Trousers,1,0,0,0,0,0,no_match_under_conservative_rules
+Ring,79,747,747,736,0,1,metadata_match_only
+Robe,2,0,0,0,0,0,no_match_under_conservative_rules
+Rompers,11,35,35,1,1,0,metadata_match_only
+Rucksacks,10,6,6,2,0,0,metadata_match_only
+Salwar,28,0,0,0,0,0,no_match_under_conservative_rules
+Salwar and Dupatta,6,16,16,0,0,0,metadata_match_only
+Sandals,735,12,12,12,12,3,metadata_match_only
+Sarees,129,40,40,33,16,0,metadata_match_only
+Scarves,93,0,0,0,0,0,no_match_under_conservative_rules
+Shapewear,2,9,9,0,0,0,metadata_match_only
+Shirts,2619,908,908,908,869,3,metadata_match_only
+Shoe Accessories,20,0,0,0,0,0,no_match_under_conservative_rules
+Shoe Laces,1,0,0,0,0,0,no_match_under_conservative_rules
+Shorts,447,66,66,47,30,0,metadata_match_only
+Shrug,2,14,14,12,11,0,metadata_match_only
+Skirts,99,77,77,77,70,0,metadata_match_only
+Socks,521,24,24,2,1,0,metadata_match_only
+Sports Sandals,54,12,12,12,10,3,metadata_match_only
+Sports Shoes,1691,50,50,49,48,0,metadata_match_only
+Stockings,22,2,2,0,0,0,metadata_match_only
+Stoles,77,0,0,0,0,0,no_match_under_conservative_rules
+Sunglasses,886,40,40,0,0,0,metadata_match_only
+Suspenders,34,15,15,0,0,0,metadata_match_only
+Sweaters,234,97,97,88,85,0,metadata_match_only
+Sweatshirts,237,100,100,87,87,0,metadata_match_only
+Swimwear,15,0,0,0,0,0,no_match_under_conservative_rules
+Tablet Sleeve,2,0,0,0,0,0,no_match_under_conservative_rules
+Ties,179,70,70,0,0,0,metadata_match_only
+Ties and Cufflinks,1,0,0,0,0,0,no_match_under_conservative_rules
+Tights,8,4,4,1,1,0,metadata_match_only
+Tops,1369,534,534,526,489,4,metadata_match_only
+Track Pants,249,49,49,19,17,0,metadata_match_only
+Tracksuits,24,6,6,2,2,0,metadata_match_only
+Travel Accessory,12,0,0,0,0,0,no_match_under_conservative_rules
+Trolley Bag,3,0,0,0,0,0,no_match_under_conservative_rules
+Trousers,435,80,80,77,70,0,metadata_match_only
+Trunk,119,0,0,0,0,0,no_match_under_conservative_rules
+Tshirts,5748,1049,1049,1047,1030,0,metadata_match_only
+Tunics,148,36,36,36,32,0,metadata_match_only
+Umbrellas,5,7,7,4,2,0,metadata_match_only
+Waist Pouch,15,0,0,0,0,0,no_match_under_conservative_rules
+Waistcoat,12,5,5,3,3,0,metadata_match_only
+Wallets,704,1,1,0,0,0,metadata_match_only
+Watches,1911,522,522,308,188,1,metadata_match_only
+Water Bottle,10,31,31,0,0,0,metadata_match_only
+Wristbands,5,1,1,0,0,5,metadata_match_only
