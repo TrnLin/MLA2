@@ -1,0 +1,62 @@
+{
+  "pre_commit_isolated_candidate": {
+    "passed": 83,
+    "skipped": 1,
+    "failed": 0,
+    "scope": "Only the selected Usage changes over the existing branch, including the task-only baseline patch",
+    "skip_reason": "The source-only test copy has no local combined dataset. The real dataset and E8 evidence passed during implementation.",
+    "ruff_check_and_format": "passed for all 12 selected Python files",
+    "notebook_schema_and_code_parse": "passed"
+  },
+  "new_usage_tests": {
+    "passed": 8,
+    "failed": 0,
+    "coverage": [
+      "Frozen E8 recipe and nine-class Usage map",
+      "Added images in each saved fold; holdout excluded",
+      "Exact teacher and added prediction membership, including literal NA",
+      "Original dataset and five registered E8 source bundles",
+      "Real one-epoch CPU training with combined batches and a temporary run registry",
+      "Prepared image padding excluded from training RGB statistics",
+      "Resume rejects incomplete or changed saved runs",
+      "Five-fold summary compares the exact same teacher image IDs"
+    ]
+  },
+  "broader_regression": {
+    "passed": 60,
+    "failed": 1,
+    "command": "PYTHONPATH=/tmp/mla2-mixup-torch:src ./.venv/bin/python -m pytest tests/train/test_task3_usage_expanded.py tests/train/test_task3_torch_contracts.py tests/train/test_task3_baseline_contracts.py tests/train/test_task3_child_experiments.py tests/data/test_expanded_usage.py -q",
+    "failure": "tests/train/test_task3_torch_contracts.py::test_e10_adds_only_the_three_way_training_head_to_gender_e6",
+    "reason": "The existing test asks pytest.approx to convert a gradient-tracking tensor to NumPy. PyTorch rejects that conversion.",
+    "pre_existing_evidence": "The failing test file and its model file are byte-identical to HEAD; neither was edited for this task.",
+    "runtime": "PyTorch 2.11.0 CPU from the existing temporary dependency directory"
+  },
+  "data_and_sources": {
+    "combined_rows": 38732,
+    "development_usage_image_hashes_checked": 32892,
+    "added_images": 120,
+    "teacher_rows_and_folds_preserved": true,
+    "e8_source_folds_verified": 5,
+    "e8_pooled_macro_f1": 0.41939320264210234
+  },
+  "notebook_and_bundle": {
+    "nbformat_validation": "passed",
+    "code_cells_parsed": 5,
+    "isolated_bootstrap_execution": "passed with a local Drive mount stub",
+    "isolated_bundle_module_import_and_data_validation": "passed",
+    "isolated_bundle_e8_reference_check": "passed",
+    "bundle_file_hash_readback": "passed; see bundle_receipt.json",
+    "real_colab_gpu_execution": "not run"
+  },
+  "visual_qa": {
+    "render": "training_notebook.html, exported with nbconvert",
+    "inspection": "Browser screenshots of the full recipe table, setup directions, final comparison notes and result-reading code",
+    "result": "Readable with no clipped text or overlapping table cells in inspected areas",
+    "limit": "Unexecuted notebook preview; future GPU output tables were not rendered"
+  },
+  "ruff_check": "passed for all five new or changed Python files",
+  "ruff_format_check": "passed for all five new or changed Python files",
+  "git_diff_check": "passed for both edited existing training files",
+  "full_dataset_training_started": false,
+  "git_writes_during_training_implementation": false
+}
