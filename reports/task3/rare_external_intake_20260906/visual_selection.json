@@ -1,0 +1,16 @@
+{
+  "observed_date": "2026-09-06",
+  "policy": "Keep a clear, prominent product or single worn garment at 60x80. Exclude collages, multiple competing products, flat print artwork without a clear product outline, promotional overlays, and unresolved gross product-type mismatches. Keep source labels unchanged; visual review does not assign Usage labels.",
+  "home_contact_index": "sources/amazon/contact_sheets/home_index.csv",
+  "home_keep_contact_numbers": [1, 3, 7, 8, 11, 13, 16, 19, 23, 24, 25, 29, 30, 31, 35, 38],
+  "home_artwork_exclusion_numbers": [2, 6],
+  "home_other_exclusion_reason": "Multiple products or competing scene context in the same photo",
+  "party_exclude_flags": ["collage", "review_type"],
+  "party_extra_exclude_contact_numbers": [6, 7, 15, 49, 69],
+  "party_extra_exclude_reason": "Unresolved source product-type mismatch (6,7), or small top competing with full outfit at 60x80 (15,49,69)",
+  "party_model_context": "A model wearing one prominent garment is allowed; retain the model-context flag for later analysis",
+  "abo_smart_casual": "All source originals visually checked; deduplicate repeated product views before splitting",
+  "travel": "Only the Flipkart singleton exact Occasion=Travel is admitted by the label gate; Amazon and ABO title/type/style phrases stay withheld",
+  "na": "No compatible source label established; no images admitted",
+  "final_prepared_sheet_check": "All 120 prepared PNGs were visually inspected alongside their originals in accepted_01.png through accepted_06.png; no clipping or new unsuitable images found"
+}
