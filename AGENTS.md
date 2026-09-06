@@ -17,6 +17,10 @@ analysis of the runs already done, choose the analysis.
 - **`data/processed/splits.csv` is the only split.** Every notebook, the search index, and
   the app read it. A `train_test_split` call anywhere else invalidates cross-model
   comparison and leaks evaluation images into the Task 4 index.
+  **Task 3 expanded dataset:** ADR 0018 permits
+  `data/processed/teacher_plus_rare_usage_20260906/splits.csv`: teacher rows plus admitted
+  external images using the same `usage` target and nine-class map. Select this version
+  explicitly; preserve the original teacher folds and keep the search gallery unchanged.
 - **Every training run appends a row to `results/runs.csv`** through
   `fashion.train.registry`. The report's comparison tables are generated from that file.
 - **`data/raw/teacher/test/styles_prediction.csv` format is fixed**:
