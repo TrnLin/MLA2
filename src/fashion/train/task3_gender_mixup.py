@@ -166,9 +166,9 @@ def require_mixup_prerequisites(
     }
 
 
-def verify_mixup_evidence(run, *, fold, splits, directory):
+def verify_mixup_evidence(run, *, fold, splits, directory, alpha=0.2):
     training = get_samples(get_cv_split(splits, fold)[0], target="gender")
-    expected = training_contract(training, validation_fold=fold)
+    expected = training_contract(training, validation_fold=fold, alpha=alpha)
     config = Task3BaselineConfig(target="gender")
     path = Path(directory) / "mixup_training.json"
     receipt = json.loads(path.read_text())
