@@ -64,8 +64,8 @@ do not require a fresh full archive for each experiment.
 
 - [Frozen v3 checks and MixUp + SAM recipe](../../src/fashion/train/task3_usage_replaced_v3.py)
 - [Training and comparison tests](../../tests/train/test_task3_usage_replaced_v3.py)
-- [Training guide](../../reports/task3_usage_replaced_v3_mixup_sam_20260907/README.md)
-- [Real-data preflight](../../reports/task3_usage_replaced_v3_mixup_sam_20260907/preflight.json)
+- [Training guide](../../reports/task3/usage_replaced_v3_mixup_sam_20260907/README.md)
+- [Real-data preflight](../../reports/task3/usage_replaced_v3_mixup_sam_20260907/preflight.json)
 - The local intake review, original source receipts and visual gallery remain under
-  `reports/task3_rare_replacement_20260906/`; product photos are distributed in the private
+  `reports/task3/rare_replacement_20260906/`; product photos are distributed in the private
   data archives rather than the public code repository.
