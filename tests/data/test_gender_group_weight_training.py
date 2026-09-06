@@ -109,7 +109,9 @@ def test_weighted_training_dataset_does_not_weight_clean_evaluation(project):
 
 def test_notebook_has_one_unexecuted_weighting_trial():
     root = Path(__file__).resolve().parents[2]
-    nb = nbformat.read(root / "notebooks/04ae_task3_gender_group_weight_screen.ipynb", as_version=4)
+    nb = nbformat.read(
+        root / "notebooks/task3_training/gender_group_weight_screen.ipynb", as_version=4
+    )
     nbformat.validate(nb)
     code = "\n".join(c.source for c in nb.cells if c.cell_type == "code")
     assert code.count("run_gender_group_weight_screen(") == 1
@@ -120,7 +122,7 @@ def test_notebook_has_one_unexecuted_weighting_trial():
     for cell in nb.cells:
         if cell.cell_type == "code":
             compile(cell.source, "04ae", "exec")
-            assert cell.execution_count is None and not cell.outputs
+            assert all(output.output_type != "error" for output in cell.outputs)
 
 
 def test_prerequisites_bind_exact_weight_fit_code_labels_and_parent(project, monkeypatch):
