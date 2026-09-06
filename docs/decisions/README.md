@@ -29,6 +29,8 @@ mark the old one as superseded, and link both records.
   direct Usage labels, unchanged teacher folds, grouped folds for added images.
 - `0019-task3-text-supported-usage-expansion.md` — a new combined version adds 567 reviewed
   product-text/collection-labelled images while preserving all earlier rows and folds.
+- `0021-task3-usage-gap-replacements.md` — replace 130 outside images in a new v3 dataset;
+  fill reviewed type/photo gaps while preserving class totals and retained rows/folds.
 
 ## Superseded decisions
 
