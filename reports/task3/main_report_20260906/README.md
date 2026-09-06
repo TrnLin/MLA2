@@ -1,9 +1,9 @@
 # Main Task 3 report evidence
 
-The main notebook contains 40 numbered sections covering the shared EDA,
+The main notebook contains 45 numbered sections covering the shared EDA,
 the five later Task 3 audits, both targets' E1–E10 experiments, classical
 and transformer screens, later Gender hypotheses, the frozen SAM25 recipe,
-reserved holdout results, and the open Usage data-expansion decision.
+reserved holdout results, Usage expansion trials, and the accepted E1 Usage recipe.
 All analysis and plotting code executes inside the notebook. There are no
 external analysis helper imports or hidden helper functions.
 
@@ -41,17 +41,19 @@ The notebook generates its charts directly with matplotlib, including
 contact sheets, transform examples, class/family support, fold checks,
 target relationships, nuisance probes, class comparisons, learning curves,
 corruption changes, fit gaps, error galleries, and holdout confusion counts.
-Final evaluation reads the three holdout-only CSV files in this directory.
-These contain no teacher-test rows.
-The internal Kaggle-label check remains outside the notebook and its HTML preview.
-The teacher supplied no correct labels for the official test set.
+Gender evaluation reads the three holdout-only CSV files in this directory.
+Usage also reads saved official-image test comparisons pinned in
+[the final E1 pack](../usage_final_e1_20260907/README.md).
+The teacher supplied no correct labels for the official test set; the saved
+Usage scores use recovered reference metadata. Final acceptance followed
+evaluation review. Run All does not run new inference or look up test labels.
 
 The generated report figures are in `results/figures/task3/main_analysis/`.
 
 The gender model selection is recorded in
-`docs/decisions/0020-task3-gender-sam25-final-model.md`. No new training,
-checkpoint changes, holdout prediction, submission writes, commits, or pushes
-are part of this report edit.
+`docs/decisions/0020-task3-gender-sam25-final-model.md`. Usage is recorded in
+`docs/decisions/0022-task3-usage-e1-final-model.md`. Report execution does not
+train, change checkpoints, or write submission predictions.
 
 ## Verification
 
