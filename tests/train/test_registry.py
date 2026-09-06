@@ -749,3 +749,49 @@ def test_task3_mirror_collision_is_rejected_before_writing(tmp_path: Path) -> No
         private.start({"run_id": "shared-id"})
     assert shared_path.read_bytes() == before
     assert not private_path.exists()
+
+
+def test_task2_interrupt_rejects_running_task3_without_changing_either_file(tmp_path: Path) -> None:
+    path, mirror = tmp_path / "runs.csv", tmp_path / "mirror.csv"
+    shared = Task2RunRegistry(path, mirrors=[mirror])
+    shared.start({"run_id": "task3-running", "target": "usage"})
+    before = path.read_bytes(), mirror.read_bytes()
+    assert before[0] == before[1]
+    with pytest.raises(RegistryError, match="run_id does not exist"):
+        shared.interrupt("task3-running", reason="wrong task interface")
+    assert (path.read_bytes(), mirror.read_bytes()) == before
+    with path.open(newline="") as stream:
+        assert next(csv.DictReader(stream))["status"] == "running"
+
+
+@pytest.mark.parametrize("operation", ["append", "finalize"])
+@pytest.mark.parametrize("wrong_task", ["task3", "task4", ""])
+def test_task2_record_writes_reject_other_task_labels(
+    tmp_path: Path, operation: str, wrong_task: str
+) -> None:
+    path, mirror = tmp_path / "runs.csv", tmp_path / "mirror.csv"
+    shared = Task2RunRegistry(path, mirrors=[mirror])
+    shared.start({"run_id": "task3-running", "target": "usage"})
+    before = path.read_bytes(), mirror.read_bytes()
+    record = _record("new-wrong-task" if operation == "append" else "task3-running")
+    record.task = wrong_task
+    if operation == "finalize":
+        record.status = "completed"
+        record.finished_at_utc = "2026-09-07T00:00:00Z"
+    with pytest.raises(ValueError, match="task must be task2"):
+        getattr(shared, operation)(record)
+    assert (path.read_bytes(), mirror.read_bytes()) == before
+
+
+@pytest.mark.parametrize("existing_file", [False, True])
+@pytest.mark.parametrize("wrong_task", ["task3", "task2", ""])
+def test_task4_append_rejects_other_task_labels_without_writing(
+    tmp_path: Path, existing_file: bool, wrong_task: str
+) -> None:
+    path = tmp_path / "runs.csv"
+    if existing_file:
+        Task2RunRegistry(path).append(_record())
+    before = path.read_bytes() if path.exists() else None
+    with pytest.raises(RunRegistryError, match="task must be task4"):
+        RunRegistry(path).append(_running_row("mislabelled", task=wrong_task))
+    assert (path.read_bytes() if path.exists() else None) == before
