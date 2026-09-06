@@ -1,0 +1,486 @@
+target,class,articleType,rows,families
+gender,Boys,Blazers,1,1
+gender,Boys,Booties,5,3
+gender,Boys,Capris,11,3
+gender,Boys,Casual Shoes,24,20
+gender,Boys,Churidar,1,1
+gender,Boys,Clothing Set,4,4
+gender,Boys,Flip Flops,14,13
+gender,Boys,Gloves,6,3
+gender,Boys,Innerwear Vests,3,1
+gender,Boys,Jackets,4,2
+gender,Boys,Jeans,25,10
+gender,Boys,Kurta Sets,2,2
+gender,Boys,Kurtas,5,4
+gender,Boys,Leggings,3,3
+gender,Boys,Rompers,6,4
+gender,Boys,Sandals,11,9
+gender,Boys,Shirts,65,25
+gender,Boys,Shorts,46,26
+gender,Boys,Socks,1,1
+gender,Boys,Sports Shoes,2,2
+gender,Boys,Sweatshirts,2,2
+gender,Boys,Trousers,4,3
+gender,Boys,Tshirts,432,249
+gender,Boys,Waistcoat,2,2
+gender,Boys,Watches,5,5
+gender,Girls,Backpacks,1,1
+gender,Girls,Booties,4,2
+gender,Girls,Capris,29,15
+gender,Girls,Casual Shoes,14,13
+gender,Girls,Clothing Set,3,3
+gender,Girls,Dresses,54,36
+gender,Girls,Earrings,1,1
+gender,Girls,Flip Flops,6,5
+gender,Girls,Gloves,6,3
+gender,Girls,Innerwear Vests,5,4
+gender,Girls,Jeans,13,5
+gender,Girls,Leggings,16,8
+gender,Girls,Lehenga Choli,2,2
+gender,Girls,Rompers,5,4
+gender,Girls,Salwar,4,4
+gender,Girls,Sandals,39,32
+gender,Girls,Shirts,1,1
+gender,Girls,Shorts,32,18
+gender,Girls,Skirts,20,11
+gender,Girls,Tops,192,99
+gender,Girls,Tshirts,88,67
+gender,Girls,Watches,8,2
+gender,Men,Accessory Gift Set,91,33
+gender,Men,Backpacks,47,28
+gender,Men,Bangle,14,2
+gender,Men,Belts,443,240
+gender,Men,Blazers,5,5
+gender,Men,Body Wash and Scrub,1,1
+gender,Men,Boxers,34,27
+gender,Men,Bracelet,16,1
+gender,Men,Briefs,437,307
+gender,Men,Caps,94,79
+gender,Men,Casual Shoes,1786,1318
+gender,Men,Churidar,6,5
+gender,Men,Cufflinks,38,17
+gender,Men,Deodorant,157,139
+gender,Men,Duffel Bag,3,2
+gender,Men,Flip Flops,401,350
+gender,Men,Formal Shoes,517,223
+gender,Men,Fragrance Gift Set,27,26
+gender,Men,Free Gifts,30,19
+gender,Men,Gloves,6,6
+gender,Men,Handbags,4,3
+gender,Men,Heels,1,1
+gender,Men,Innerwear Vests,196,155
+gender,Men,Jackets,144,127
+gender,Men,Jeans,263,117
+gender,Men,Kurtas,51,40
+gender,Men,Kurtis,2,2
+gender,Men,Laptop Bag,14,10
+gender,Men,Lounge Pants,29,27
+gender,Men,Lounge Shorts,22,17
+gender,Men,Messenger Bag,10,10
+gender,Men,Mufflers,25,22
+gender,Men,Nehru Jackets,4,3
+gender,Men,Night suits,15,10
+gender,Men,Perfume and Body Mist,266,231
+gender,Men,Rain Trousers,1,1
+gender,Men,Ring,25,1
+gender,Men,Sandals,602,377
+gender,Men,Scarves,37,28
+gender,Men,Shirts,2320,1301
+gender,Men,Shoe Accessories,2,2
+gender,Men,Shorts,316,253
+gender,Men,Socks,395,196
+gender,Men,Sports Sandals,24,23
+gender,Men,Sports Shoes,1317,1188
+gender,Men,Stoles,1,1
+gender,Men,Sunglasses,503,209
+gender,Men,Suspenders,34,19
+gender,Men,Sweaters,162,135
+gender,Men,Sweatshirts,182,151
+gender,Men,Ties,179,85
+gender,Men,Tights,1,1
+gender,Men,Tops,1,1
+gender,Men,Track Pants,178,135
+gender,Men,Tracksuits,24,20
+gender,Men,Trousers,354,216
+gender,Men,Trunk,119,86
+gender,Men,Tshirts,4317,3484
+gender,Men,Tunics,1,1
+gender,Men,Waist Pouch,1,1
+gender,Men,Waistcoat,6,5
+gender,Men,Wallets,344,156
+gender,Men,Watches,1105,701
+gender,Men,Water Bottle,3,3
+gender,Unisex,Backpacks,526,373
+gender,Unisex,Basketballs,12,12
+gender,Unisex,Belts,8,8
+gender,Unisex,Caps,117,104
+gender,Unisex,Casual Shoes,186,173
+gender,Unisex,Cushion Covers,1,1
+gender,Unisex,Deodorant,3,3
+gender,Unisex,Duffel Bag,64,49
+gender,Unisex,Flip Flops,125,114
+gender,Unisex,Footballs,7,7
+gender,Unisex,Fragrance Gift Set,1,1
+gender,Unisex,Free Gifts,1,1
+gender,Unisex,Handbags,50,46
+gender,Unisex,Hat,2,2
+gender,Unisex,Headband,6,6
+gender,Unisex,Jackets,1,1
+gender,Unisex,Jeans,3,1
+gender,Unisex,Key chain,1,1
+gender,Unisex,Laptop Bag,45,31
+gender,Unisex,Messenger Bag,27,26
+gender,Unisex,Mobile Pouch,6,5
+gender,Unisex,Mufflers,1,1
+gender,Unisex,Perfume and Body Mist,7,5
+gender,Unisex,Rain Jacket,1,1
+gender,Unisex,Rucksacks,10,10
+gender,Unisex,Sandals,80,73
+gender,Unisex,Scarves,5,5
+gender,Unisex,Shoe Accessories,18,15
+gender,Unisex,Shoe Laces,1,1
+gender,Unisex,Socks,58,42
+gender,Unisex,Sports Sandals,3,3
+gender,Unisex,Sports Shoes,38,38
+gender,Unisex,Sunglasses,119,71
+gender,Unisex,Sweatshirts,1,1
+gender,Unisex,Swimwear,4,4
+gender,Unisex,Tablet Sleeve,1,1
+gender,Unisex,Track Pants,1,1
+gender,Unisex,Travel Accessory,9,8
+gender,Unisex,Trolley Bag,3,2
+gender,Unisex,Tshirts,60,48
+gender,Unisex,Waist Pouch,14,13
+gender,Unisex,Wallets,18,14
+gender,Unisex,Watches,110,95
+gender,Unisex,Water Bottle,7,7
+gender,Unisex,Wristbands,5,5
+gender,Women,Baby Dolls,2,2
+gender,Women,Backpacks,30,26
+gender,Women,Bangle,36,16
+gender,Women,Belts,225,162
+gender,Women,Blazers,1,1
+gender,Women,Bra,251,196
+gender,Women,Bracelet,28,15
+gender,Women,Briefs,131,95
+gender,Women,Camisoles,13,13
+gender,Women,Capris,96,82
+gender,Women,Caps,19,18
+gender,Women,Casual Shoes,266,235
+gender,Women,Churidar,19,18
+gender,Women,Clutches,189,154
+gender,Women,Compact,4,1
+gender,Women,Concealer,2,1
+gender,Women,Deodorant,88,81
+gender,Women,Dresses,235,191
+gender,Women,Duffel Bag,6,6
+gender,Women,Dupatta,99,73
+gender,Women,Earrings,205,32
+gender,Women,Eyeshadow,4,3
+gender,Women,Flats,356,234
+gender,Women,Flip Flops,188,128
+gender,Women,Foundation and Primer,11,5
+gender,Women,Fragrance Gift Set,19,19
+gender,Women,Free Gifts,26,20
+gender,Women,Handbags,1168,744
+gender,Women,Heels,889,471
+gender,Women,Highlighter and Blush,4,1
+gender,Women,Innerwear Vests,1,1
+gender,Women,Ipad,1,1
+gender,Women,Jackets,44,40
+gender,Women,Jeans,168,93
+gender,Women,Jeggings,22,14
+gender,Women,Jewellery Set,38,16
+gender,Women,Jumpsuit,10,10
+gender,Women,Kajal and Eyeliner,11,9
+gender,Women,Kurta Sets,62,57
+gender,Women,Kurtas,1266,655
+gender,Women,Kurtis,170,132
+gender,Women,Laptop Bag,8,8
+gender,Women,Leggings,116,103
+gender,Women,Lip Gloss,5,5
+gender,Women,Lip Liner,11,7
+gender,Women,Lip Plumper,3,3
+gender,Women,Lipstick,10,2
+gender,Women,Lounge Pants,16,15
+gender,Women,Lounge Shorts,7,6
+gender,Women,Lounge Tshirts,1,1
+gender,Women,Mobile Pouch,34,34
+gender,Women,Mufflers,7,4
+gender,Women,Nail Polish,16,15
+gender,Women,Necklace and Chains,53,37
+gender,Women,Night suits,44,25
+gender,Women,Nightdress,34,26
+gender,Women,Patiala,23,19
+gender,Women,Pendant,105,10
+gender,Women,Perfume and Body Mist,201,169
+gender,Women,Ring,54,3
+gender,Women,Robe,2,2
+gender,Women,Salwar,24,20
+gender,Women,Salwar and Dupatta,6,6
+gender,Women,Sandals,3,3
+gender,Women,Sarees,129,106
+gender,Women,Scarves,51,41
+gender,Women,Shapewear,2,2
+gender,Women,Shirts,233,200
+gender,Women,Shorts,53,50
+gender,Women,Shrug,2,2
+gender,Women,Skirts,79,70
+gender,Women,Socks,67,56
+gender,Women,Sports Sandals,27,27
+gender,Women,Sports Shoes,334,316
+gender,Women,Stockings,22,10
+gender,Women,Stoles,76,51
+gender,Women,Sunglasses,264,146
+gender,Women,Sweaters,72,64
+gender,Women,Sweatshirts,52,49
+gender,Women,Swimwear,11,10
+gender,Women,Tablet Sleeve,1,1
+gender,Women,Ties and Cufflinks,1,1
+gender,Women,Tights,7,6
+gender,Women,Tops,1176,867
+gender,Women,Track Pants,70,64
+gender,Women,Travel Accessory,3,3
+gender,Women,Trousers,77,60
+gender,Women,Tshirts,851,755
+gender,Women,Tunics,147,131
+gender,Women,Umbrellas,5,4
+gender,Women,Waistcoat,4,3
+gender,Women,Wallets,342,252
+gender,Women,Watches,683,501
+usage,Casual,Accessory Gift Set,15,3
+usage,Casual,Backpacks,523,353
+usage,Casual,Bangle,42,14
+usage,Casual,Basketballs,2,2
+usage,Casual,Belts,564,375
+usage,Casual,Blazers,1,1
+usage,Casual,Body Wash and Scrub,1,1
+usage,Casual,Booties,9,5
+usage,Casual,Boxers,34,27
+usage,Casual,Bra,235,180
+usage,Casual,Bracelet,43,15
+usage,Casual,Briefs,566,402
+usage,Casual,Camisoles,13,13
+usage,Casual,Capris,92,63
+usage,Casual,Caps,166,144
+usage,Casual,Casual Shoes,2258,1743
+usage,Casual,Clothing Set,7,7
+usage,Casual,Clutches,185,150
+usage,Casual,Compact,4,1
+usage,Casual,Concealer,2,1
+usage,Casual,Cufflinks,1,1
+usage,Casual,Deodorant,248,223
+usage,Casual,Dresses,281,225
+usage,Casual,Duffel Bag,67,52
+usage,Casual,Earrings,111,11
+usage,Casual,Eyeshadow,1,1
+usage,Casual,Flats,345,231
+usage,Casual,Flip Flops,729,605
+usage,Casual,Footballs,1,1
+usage,Casual,Formal Shoes,12,10
+usage,Casual,Foundation and Primer,11,5
+usage,Casual,Fragrance Gift Set,47,46
+usage,Casual,Free Gifts,42,28
+usage,Casual,Gloves,18,12
+usage,Casual,Handbags,1211,782
+usage,Casual,Hat,2,2
+usage,Casual,Headband,2,2
+usage,Casual,Heels,862,449
+usage,Casual,Innerwear Vests,205,161
+usage,Casual,Ipad,1,1
+usage,Casual,Jackets,126,113
+usage,Casual,Jeans,472,226
+usage,Casual,Jeggings,22,14
+usage,Casual,Jewellery Set,35,13
+usage,Casual,Jumpsuit,10,10
+usage,Casual,Kajal and Eyeliner,9,8
+usage,Casual,Key chain,1,1
+usage,Casual,Kurtas,4,4
+usage,Casual,Kurtis,2,2
+usage,Casual,Laptop Bag,66,48
+usage,Casual,Leggings,108,87
+usage,Casual,Lip Gloss,5,5
+usage,Casual,Lip Liner,9,5
+usage,Casual,Lip Plumper,3,3
+usage,Casual,Lipstick,10,2
+usage,Casual,Lounge Pants,31,28
+usage,Casual,Lounge Shorts,25,22
+usage,Casual,Lounge Tshirts,1,1
+usage,Casual,Messenger Bag,37,36
+usage,Casual,Mobile Pouch,39,38
+usage,Casual,Mufflers,33,27
+usage,Casual,Nail Polish,8,8
+usage,Casual,Necklace and Chains,48,35
+usage,Casual,Night suits,59,35
+usage,Casual,Nightdress,33,25
+usage,Casual,Pendant,101,8
+usage,Casual,Perfume and Body Mist,463,395
+usage,Casual,Rain Jacket,1,1
+usage,Casual,Ring,79,4
+usage,Casual,Robe,2,2
+usage,Casual,Rompers,11,7
+usage,Casual,Rucksacks,6,6
+usage,Casual,Sandals,714,477
+usage,Casual,Scarves,93,74
+usage,Casual,Shapewear,2,2
+usage,Casual,Shirts,1872,1187
+usage,Casual,Shoe Accessories,3,3
+usage,Casual,Shoe Laces,1,1
+usage,Casual,Shorts,284,219
+usage,Casual,Shrug,2,2
+usage,Casual,Skirts,72,57
+usage,Casual,Socks,397,238
+usage,Casual,Sports Sandals,51,50
+usage,Casual,Sports Shoes,28,25
+usage,Casual,Stockings,22,10
+usage,Casual,Stoles,29,17
+usage,Casual,Sunglasses,881,422
+usage,Casual,Sweaters,227,192
+usage,Casual,Sweatshirts,209,181
+usage,Casual,Swimwear,6,6
+usage,Casual,Tablet Sleeve,2,2
+usage,Casual,Ties,39,7
+usage,Casual,Ties and Cufflinks,1,1
+usage,Casual,Tights,7,6
+usage,Casual,Tops,1320,923
+usage,Casual,Track Pants,91,78
+usage,Casual,Tracksuits,7,7
+usage,Casual,Travel Accessory,12,11
+usage,Casual,Trolley Bag,3,2
+usage,Casual,Trousers,229,148
+usage,Casual,Trunk,119,86
+usage,Casual,Tshirts,4938,3893
+usage,Casual,Tunics,124,110
+usage,Casual,Umbrellas,5,4
+usage,Casual,Waist Pouch,15,14
+usage,Casual,Waistcoat,11,9
+usage,Casual,Wallets,673,411
+usage,Casual,Watches,1837,1246
+usage,Casual,Water Bottle,5,5
+usage,Casual,Wristbands,2,2
+usage,Ethnic,Bangle,8,5
+usage,Ethnic,Bracelet,1,1
+usage,Ethnic,Capris,2,2
+usage,Ethnic,Churidar,26,24
+usage,Ethnic,Clutches,3,3
+usage,Ethnic,Dupatta,99,73
+usage,Ethnic,Earrings,95,25
+usage,Ethnic,Flats,9,3
+usage,Ethnic,Free Gifts,13,10
+usage,Ethnic,Handbags,1,1
+usage,Ethnic,Heels,5,5
+usage,Ethnic,Jewellery Set,3,3
+usage,Ethnic,Kurta Sets,64,59
+usage,Ethnic,Kurtas,1318,695
+usage,Ethnic,Kurtis,170,132
+usage,Ethnic,Leggings,26,26
+usage,Ethnic,Lehenga Choli,2,2
+usage,Ethnic,Lounge Pants,2,2
+usage,Ethnic,Necklace and Chains,5,4
+usage,Ethnic,Nehru Jackets,4,3
+usage,Ethnic,Patiala,23,19
+usage,Ethnic,Pendant,4,2
+usage,Ethnic,Perfume and Body Mist,1,1
+usage,Ethnic,Salwar,28,24
+usage,Ethnic,Salwar and Dupatta,6,6
+usage,Ethnic,Sarees,129,106
+usage,Ethnic,Shirts,12,11
+usage,Ethnic,Skirts,10,10
+usage,Ethnic,Stoles,48,35
+usage,Ethnic,Ties,1,1
+usage,Ethnic,Tops,37,33
+usage,Ethnic,Trousers,3,3
+usage,Ethnic,Tunics,24,23
+usage,Ethnic,Waistcoat,1,1
+usage,Formal,Accessory Gift Set,76,30
+usage,Formal,Belts,112,47
+usage,Formal,Blazers,6,6
+usage,Formal,Casual Shoes,3,3
+usage,Formal,Cufflinks,37,16
+usage,Formal,Dresses,1,1
+usage,Formal,Flats,1,1
+usage,Formal,Formal Shoes,498,217
+usage,Formal,Free Gifts,1,1
+usage,Formal,Heels,21,20
+usage,Formal,Laptop Bag,1,1
+usage,Formal,Sandals,8,6
+usage,Formal,Shirts,723,364
+usage,Formal,Skirts,12,9
+usage,Formal,Socks,37,21
+usage,Formal,Suspenders,34,19
+usage,Formal,Ties,138,84
+usage,Formal,Tops,1,1
+usage,Formal,Trousers,201,143
+usage,Formal,Tshirts,1,1
+usage,Formal,Wallets,21,12
+usage,Formal,Watches,16,15
+usage,Home,Cushion Covers,1,1
+usage,NA,Baby Dolls,2,2
+usage,NA,Briefs,2,2
+usage,NA,Eyeshadow,3,3
+usage,NA,Highlighter and Blush,4,1
+usage,NA,Kajal and Eyeliner,2,2
+usage,NA,Lip Liner,2,2
+usage,NA,Nail Polish,8,7
+usage,NA,Nightdress,1,1
+usage,NA,Perfume and Body Mist,9,8
+usage,NA,Rain Trousers,1,1
+usage,NA,Sandals,1,1
+usage,NA,Shirts,2,2
+usage,NA,Shoe Accessories,17,15
+usage,NA,Wallets,7,2
+usage,Party,Clutches,1,1
+usage,Party,Dresses,7,5
+usage,Party,Heels,1,1
+usage,Party,Perfume and Body Mist,1,1
+usage,Party,Tops,1,1
+usage,Party,Watches,1,1
+usage,Smart Casual,Casual Shoes,4,4
+usage,Smart Casual,Formal Shoes,7,6
+usage,Smart Casual,Heels,1,1
+usage,Smart Casual,Sandals,1,1
+usage,Smart Casual,Shirts,10,9
+usage,Smart Casual,Ties,1,1
+usage,Smart Casual,Trousers,2,2
+usage,Smart Casual,Wallets,3,1
+usage,Smart Casual,Watches,18,12
+usage,Sports,Backpacks,71,68
+usage,Sports,Basketballs,10,10
+usage,Sports,Bra,16,16
+usage,Sports,Capris,42,36
+usage,Sports,Caps,64,61
+usage,Sports,Casual Shoes,11,11
+usage,Sports,Duffel Bag,3,3
+usage,Sports,Flats,1,1
+usage,Sports,Flip Flops,5,5
+usage,Sports,Footballs,6,6
+usage,Sports,Free Gifts,1,1
+usage,Sports,Handbags,6,6
+usage,Sports,Headband,4,4
+usage,Sports,Jackets,67,59
+usage,Sports,Leggings,1,1
+usage,Sports,Lounge Pants,12,12
+usage,Sports,Lounge Shorts,4,3
+usage,Sports,Sandals,10,10
+usage,Sports,Shorts,163,136
+usage,Sports,Skirts,5,5
+usage,Sports,Socks,87,53
+usage,Sports,Sports Sandals,3,3
+usage,Sports,Sports Shoes,1663,1520
+usage,Sports,Sunglasses,5,3
+usage,Sports,Sweaters,7,7
+usage,Sports,Sweatshirts,28,27
+usage,Sports,Swimwear,9,8
+usage,Sports,Tights,1,1
+usage,Sports,Tops,10,10
+usage,Sports,Track Pants,158,133
+usage,Sports,Tracksuits,17,14
+usage,Sports,Tshirts,809,741
+usage,Sports,Watches,39,38
+usage,Sports,Water Bottle,5,5
+usage,Sports,Wristbands,3,3
+usage,Travel,Backpacks,10,10
+usage,Travel,Duffel Bag,3,3
+usage,Travel,Handbags,4,4
+usage,Travel,Mobile Pouch,1,1
+usage,Travel,Rucksacks,4,4
