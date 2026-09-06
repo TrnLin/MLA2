@@ -14,12 +14,12 @@ Travel case. Home has no test examples. On the reserved holdout, it gets
 
 - [Model manifest](model_manifest.json): the five checkpoint paths and hashes,
   full configurations, fold normalizations, classes and exact inference rule.
-- [Decision 0022](../../docs/decisions/0022-task3-usage-e1-final-model.md):
+- [Decision 0022](../../../docs/decisions/0022-task3-usage-e1-final-model.md):
   the accepted trade-off and the Usage exception to the refit rule.
 - [Evidence lock](evidence_lock.json): hashes for the saved final comparisons.
-- [Main notebook](../../notebooks/04_task3_gender_usage.ipynb): the complete
+- [Main notebook](../../../notebooks/04_task3_gender_usage.ipynb): the complete
   report, including the preserved Gender analysis and finished Usage sections.
-- [HTML preview](../task3_main_report_20260906/main_report.html): the executed
+- [HTML preview](../main_report_20260906/main_report.html): the executed
   notebook with working local links. This is a generated review artifact.
 - [Verification](verification.json): source hashes and completed checks.
 
@@ -34,7 +34,7 @@ Mixed teacher/outside scores stay separate from teacher-only results.
 With the existing data and evidence present, run from the project root:
 
 ```bash
-./.venv/bin/python reports/task3_main_report_20260906/render.py
+./.venv/bin/python reports/task3/main_report_20260906/render.py
 ```
 
 This runs 127 saved-evidence analysis cells and exports HTML. It checks
@@ -44,7 +44,7 @@ The main evidence pack and existing model files are required; no new ZIP
 or checkpoint is created by this report work.
 
 The original E1 inference recipe remains in
-`reports/task3_usage_teacher_vs_expanded_test_20260906/inference_recipe.json`.
+`reports/task3/usage_teacher_vs_expanded_test_20260906/inference_recipe.json`.
 Existing Usage-only predictions remain in that directory's
 `E1/usage_test_predictions.csv`. Do not replace them with predictions from
 a new fit. The four-target submission still requires integration.
@@ -72,7 +72,7 @@ including its uncommitted Gender report changes. The source notebook hash is
 recorded in `verification.json`. The source checkout, training notebooks,
 training code, registry, data and checkpoints were not edited.
 
-The final integration must include the existing source evidence packs and
-add decision 0022 to the decision index. Those shared packaging/index edits
-are outside this report change. The five-page submission report is a separate
+The combined cleanup includes the saved source evidence packs, moved report
+links, and decision 0022 in the decision index. See [asset setup](../ASSETS.md)
+for local checkpoints and data. The five-page submission report is a separate
 deliverable; this notebook retains the full analysis record.
