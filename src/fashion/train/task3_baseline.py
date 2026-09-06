@@ -284,11 +284,14 @@ def _pass(
     if mixup is not None and (
         not training
         or type(criterion) is not nn.CrossEntropyLoss
-        or criterion.weight is not None
+        or (criterion.weight is not None) != (mixup.contract.get("target") == "usage")
         or criterion.label_smoothing != 0
         or criterion.reduction != "mean"
     ):
-        raise ValueError("MixUp requires training with plain unweighted mean cross-entropy")
+        raise ValueError(
+            "MixUp requires training with plain unweighted mean cross-entropy for Gender "
+            "or fold-class-weighted mean cross-entropy for Usage"
+        )
     model.train(training)
     total_loss_numerator = 0.0
     total_loss_denominator = 0.0
@@ -326,7 +329,12 @@ def _pass(
                         ) * criterion(output, partner_target)
                         return output, mixed_loss
 
-                    logits, loss = sam.step(closure, rows=len(target))
+                    sam_loss_kwargs = (
+                        {"loss_denominator": float(criterion.weight[target].detach().sum().cpu())}
+                        if criterion.weight is not None
+                        else {}
+                    )
+                    logits, loss = sam.step(closure, rows=len(target), **sam_loss_kwargs)
                 elif isinstance(criterion, GenderAudienceAuxiliaryCrossEntropy):
                     forward_with_auxiliary = getattr(model, "forward_with_auxiliary", None)
                     if not callable(forward_with_auxiliary):
@@ -551,6 +559,11 @@ def run_task3_baseline_fold(
         from fashion.train.task3_gender_weight_decay import weight_decay_config
 
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
+    usage_sam = getattr(child_spec, "name", None) == "usage_expanded_v2_mixup_sam"
+    if usage_sam:
+        from fashion.train.task3_usage_mixup_sam import screen_config
+
+        config = screen_config(child_spec, fold=validation_fold, device_name=device_name)
     group_weight = getattr(child_spec, "name", None) == "gender_name_truth_article_weight_sqrt_cap3"
     stronger_mixup = getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha040"
     sam25_cv = (
@@ -560,7 +573,9 @@ def run_task3_baseline_fold(
         getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020_sam005_epoch25"
     )
     use_sam = (
-        sam25 or getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020_sam005"
+        usage_sam
+        or sam25
+        or getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020_sam005"
     )
     use_mixup = (
         use_sam
@@ -568,14 +583,17 @@ def run_task3_baseline_fold(
         or (getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020")
     )
     expanded_usage_name = getattr(child_spec, "name", None)
-    expanded_usage = expanded_usage_name in {"usage_expanded_e8", "usage_expanded_v2_e8"}
+    expanded_usage = usage_sam or expanded_usage_name in {
+        "usage_expanded_e8",
+        "usage_expanded_v2_e8",
+    }
     expanded_contract = None
     name_truth = (
-        use_mixup
+        (use_mixup and not usage_sam)
         or group_weight
         or (getattr(child_spec, "name", None) == "gender_name_truth_dropout_030_grayscale_010")
     )
-    if use_mixup:
+    if use_mixup and not usage_sam:
         if sam25_cv:
             from fashion.train.task3_gender_sam25_cv import (
                 require_sam25_cv_prerequisites as require_mixup_prerequisites,
@@ -747,7 +765,7 @@ def run_task3_baseline_fold(
     splits_path = root / SPLITS_CSV.relative_to(ROOT)
     label_maps_path = root / LABEL_MAPS_JSON.relative_to(ROOT)
     if expanded_usage:
-        if expanded_usage_name == "usage_expanded_v2_e8":
+        if usage_sam or expanded_usage_name == "usage_expanded_v2_e8":
             from fashion.train import task3_usage_expanded_v2 as expanded_module
         else:
             from fashion.train import task3_usage_expanded as expanded_module
@@ -925,6 +943,7 @@ def run_task3_baseline_fold(
             label_to_index=label_to_index,
             seed=config.seed,
             alpha=child_spec.to_dict()["mixup_policy"]["alpha"],
+            **({"target": "usage"} if usage_sam else {}),
         )
         config_payload["mixup_contract"] = mixup.contract
     if name_truth:
