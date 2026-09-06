@@ -1,0 +1,14 @@
+{
+  "date": "2026-09-06",
+  "method": "Image-only review; no teacher labels inspected",
+  "reviewed_pairs": [
+    {
+      "external_id": "flipkart_party:TOPEA6CKCHFHTUZ9",
+      "teacher_ids": [21113, 26895],
+      "decision": "Retain automatic rejection of duplicate signal",
+      "evidence": "External image shows a collared, button-front, long-sleeve blue blouse. The two teacher images show a sleeveless scoop-neck top and a short-sleeve ruffled top. Different garment construction is visible."
+    }
+  ],
+  "other_signals": "The foreground-view pass adds three weak dHash signals with much larger aHash and pixel differences; all fail the frozen rule. No visual-equivalence claim is made for those pairs.",
+  "limits": "Visual inspection corroborates these two product differences, not complete dataset independence."
+}
