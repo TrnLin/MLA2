@@ -1,0 +1,62 @@
+{
+  "sample_products": 41,
+  "usable_images": 37,
+  "failed_products": 4,
+  "reused_images": 0,
+  "network_requests": 45,
+  "response_body_bytes_read": 6932149,
+  "saved_new_image_bytes": 6932149,
+  "by_source_occasion": {
+    "Casual": {
+      "sampled": 8,
+      "usable": 7,
+      "reused": 0
+    },
+    "Ethnic": {
+      "sampled": 8,
+      "usable": 8,
+      "reused": 0
+    },
+    "Formal": {
+      "sampled": 8,
+      "usable": 6,
+      "reused": 0
+    },
+    "Party": {
+      "sampled": 8,
+      "usable": 7,
+      "reused": 0
+    },
+    "Sports": {
+      "sampled": 8,
+      "usable": 8,
+      "reused": 0
+    },
+    "Travel": {
+      "sampled": 1,
+      "usable": 1,
+      "reused": 0
+    }
+  },
+  "final_http_status_counts": {
+    "200": 37,
+    "403": 4
+  },
+  "teacher_cached_role_counts": {
+    "development": 32773,
+    "prediction": 5829,
+    "holdout": 5778,
+    "quarantine": 61
+  },
+  "duplicate_candidates": 0,
+  "limits": {
+    "products": 41,
+    "response_body_bytes": 40000000,
+    "per_file_bytes": 2097152,
+    "workers": 4,
+    "timeout_seconds": 15
+  },
+  "cache_verified_against_current_manifests": true,
+  "no_training_admission": true,
+  "scope": "Purposive representatives of exact-label/type metadata candidates; not a population estimate or leakage clearance."
+}
