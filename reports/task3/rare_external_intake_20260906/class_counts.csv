@@ -1,0 +1,6 @@
+class,images,families,train_images,validation_images,train_families,validation_families
+Home,16,16,13,3,13,3
+Party,97,90,79,18,72,18
+Smart Casual,6,2,3,3,1,1
+Travel,1,1,1,0,1,0
+NA,0,0,0,0,0,0
