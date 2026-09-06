@@ -1,0 +1,26 @@
+{
+  "scope": "post-hoc mechanism checks on development evidence; no model admission",
+  "training_allowed": false,
+  "protected_images_allowed": false,
+  "protected_labels_allowed": false,
+  "human_labels_required": false,
+  "fixed_prior_diagnostic": {
+    "models": ["E2", "E3", "E8"],
+    "rule": "multiply each non-Home probability by (outer_training_Casual_count / outer_training_class_count)^0.25 and renormalize the full nine-vector",
+    "home": "leave Home multiplier equal to one",
+    "tuning": "none; one fixed exponent; no threshold grid",
+    "interpretation": "decision-boundary sensitivity, not proof of a calibrated or deployable improvement"
+  },
+  "pixel_checks": {
+    "all_development": "decoded RGB hash and dimensions only",
+    "image_previews": "teacher images from canonical folds 1,2,3 only",
+    "external_previews": "same-ID local external pixels only for those preselected training IDs; do not open external labels",
+    "external_inventory": "filename IDs only; count overlaps against canonical split and prediction-manifest IDs; no extra split"
+  },
+  "resource_bounds": {
+    "no_training": true,
+    "no_new_image_download": true,
+    "per_diagnostic_wall_minutes": 10,
+    "target_host_memory_gib": 3
+  }
+}
