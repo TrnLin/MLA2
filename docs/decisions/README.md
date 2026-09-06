@@ -27,6 +27,8 @@ mark the old one as superseded, and link both records.
 - `0017-product-name-na-and-cv-refreeze.md`
 - `0018-task3-external-source-label-intake.md` — combined teacher + rare-class Task 3 dataset;
   direct Usage labels, unchanged teacher folds, grouped folds for added images.
+- `0019-task3-text-supported-usage-expansion.md` — a new combined version adds 567 reviewed
+  product-text/collection-labelled images while preserving all earlier rows and folds.
 
 ## Superseded decisions
 
