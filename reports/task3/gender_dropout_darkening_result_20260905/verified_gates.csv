@@ -1,0 +1,20 @@
+gate,value,rule,status
+validation_delta,-0.0035458563130223997,>= -0.030 versus matched IEEE G2,pass
+validation_ci_lower,-0.01821743387118467,>= -0.030,pass
+fold_0.validation_delta,-0.0057273452206918485,>= -0.030,pass
+fold_0.gap_reduction,0.02270180789685161,> 0,pass
+fold_0.gpu_memory_bytes,475258880,0 < value < 3000000000,pass
+fold_0.parameters,390181,== 390181,pass
+fold_4.validation_delta,-0.0019361065838000568,>= -0.030,pass
+fold_4.gap_reduction,0.027351324761055174,> 0,pass
+fold_4.gpu_memory_bytes,475029504,0 < value < 3000000000,pass
+fold_4.parameters,390181,== 390181,pass
+mean_gap_reduction,0.025026566328953392,>= 0.050,fail
+class_f1,"{'Boys': 5.507517761749181e-05, 'Girls': -0.0028011204481792618, 'Men': -0.0007052836173753185, 'Unisex': -0.013963517107890566, 'Women': -0.00031443556928423266}",every class >= -0.020,pass
+nll,0.004485732334959469,<= 0.02 versus matched IEEE G2,pass
+ece_15,-0.003927729124790117,<= 0.01 versus matched IEEE G2,pass
+robustness_vs_e6.brightness_085,0.09711209840522436,>= -0.02,pass
+robustness_vs_e6.brightness_115,0.0012803110645398033,>= -0.02,pass
+robustness_vs_e6.grayscale,-0.027436531883583297,>= -0.02,fail
+robustness_vs_e6.jpeg_75,0.007368928186432849,>= -0.02,pass
+robustness_vs_e6.translation_003,0.1050036921081782,>= 0.03,pass
