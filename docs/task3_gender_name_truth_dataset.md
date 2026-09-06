@@ -118,7 +118,7 @@ protocol is explicitly agreed.
 
 ## Training entry point
 
-`notebooks/04ad_task3_gender_name_truth_screen.ipynb` trains folds 0 and 4 from
+`notebooks/task3_training/gender_name_truth_screen.ipynb` trains folds 0 and 4 from
 scratch. It keeps the 04ac recipe: dropout 0.30, grayscale probability 0.10,
 the same mild darkening, 30 epochs and seed 2753. Run it on a fresh Colab L4
 after pushing the notebook and its source changes. The existing teacher ZIP
