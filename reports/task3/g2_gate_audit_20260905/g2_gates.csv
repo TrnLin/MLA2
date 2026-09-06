@@ -1,0 +1,25 @@
+gate,value,rule,status
+fresh_folds_1_2_3.macro_f1,0.012947355444896447,> 0 matched change,pass
+fresh_folds_1_2_3.family_bootstrap_lower,-0.003554448134064539,> 0,fail
+fresh_folds_1_2_3.improved_folds,3.0,>= 2,pass
+fresh_folds_1_2_3.worst_fold_change,0.0027574238982012167,>= -0.005,pass
+five_fold.macro_f1,0.7502173957741934,>= 0.7462,pass
+five_fold.family_bootstrap_lower,0.004105326804229178,> 0,pass
+five_fold.improved_folds,5.0,>= 4,pass
+five_fold.worst_fold_change,0.0027574238982012167,>= -0.005,pass
+fold_sd,0.012756575440245716,<= 0.0209,pass
+clean_gap,0.24419130400023703,<= 0.2466,pass
+gap_reduction,0.02241619468372541,>= 0.020,pass
+worst_fold_gap_worsening,-0.006762907978108634,<= 0.005,pass
+minority_mean_f1,0.632374617398714,>= 0.6013,pass
+Men_f1,0.9362779183934581,>= 0.9188,pass
+Women_f1,0.9176852082813669,>= 0.8950,pass
+nll,0.2904485219684803,<= 0.4525,pass
+ece_15,0.030258113141915594,<= 0.0842,pass
+robustness.brightness_085,-0.03199320751881343,>= -0.02,fail
+robustness.brightness_115,-0.007991478921811103,>= -0.02,pass
+robustness.grayscale,-0.005264073753007983,>= -0.02,pass
+robustness.jpeg_75,0.006682275268804376,>= -0.02,pass
+robustness.translation_003,0.11918995853022382,>= 0.03,pass
+model_size_fixed,390181.0,same 390181 trainable parameters as E6,pass
+registry_and_artifact_integrity,10.0,all five G2 and five matched E6 bundles verified,pass
