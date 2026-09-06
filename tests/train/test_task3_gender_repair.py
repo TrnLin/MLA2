@@ -194,7 +194,7 @@ def test_fresh_fold_ci_cannot_be_replaced_by_pooled_improvement():
 
 
 def test_notebook_defaults_to_screen_and_compiles():
-    nb = json.loads((ROOT / "notebooks/04t_task3_gender_gd1_mild_darkening.ipynb").read_text())
+    nb = json.loads((ROOT / "notebooks/task3_training/gender_gd1_mild_darkening.ipynb").read_text())
     code = "\n".join("".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code")
     assert 'phase="screen"' in code
     assert 'phase="confirmation"' not in code
