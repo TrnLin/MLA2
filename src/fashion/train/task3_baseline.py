@@ -1445,7 +1445,13 @@ def run_task3_baseline_fold(
             "metrics": metrics,
         }
     except BaseException as error:
-        registry.fail(run_id, error, last_completed_stage=last_stage)
+        try:
+            registry.fail(run_id, error, last_completed_stage=last_stage)
+        except Exception as registry_error:
+            error.add_note(
+                f"Could not record the failed run: {type(registry_error).__name__}: "
+                f"{registry_error}"
+            )
         _log(
             f"failed target={target} fold={validation_fold} after {last_stage}: "
             f"{type(error).__name__}: {error}"
