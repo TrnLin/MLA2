@@ -1,0 +1,57 @@
+{
+  "source_commit": "67e71e5cc762fcc2573f3a215c1f43ffd578b041",
+  "concurrent_live_source_changes_preserved": [
+    "src/fashion/train/task3_baseline.py"
+  ],
+  "source_code_files_verified": 17,
+  "manifest_file_hashes_verified": 38,
+  "maximum_metric_error": 3.469446951953614e-18,
+  "pooled_oof_rows": 13110,
+  "decision_matches_saved": true,
+  "maximum_decision_numeric_error": 2.220446049250313e-16,
+  "checks": [
+    {
+      "fold": 0,
+      "validated_prediction_files": 9,
+      "frozen_tensors_verified": 24,
+      "backbone_sha256": "41e2fd8f5abcc631409953a0dc8cbfe09db413eda7d01b3d64d0aa16e17ca212",
+      "normalization_matches_e2": true
+    },
+    {
+      "fold": 4,
+      "validated_prediction_files": 9,
+      "frozen_tensors_verified": 24,
+      "backbone_sha256": "0c6fbc3c050f5adae988fd81827626e729d4b352ad3ff251fe7cd9de0a43fff0",
+      "normalization_matches_e2": true
+    }
+  ],
+  "registry": [
+    {
+      "fold": 0,
+      "run_id": "t3_usage_u3_two_stage_cnn_f0_s2753_415911296044_20260905T122940_d95ccf",
+      "current_status": "complete",
+      "completion_proof": "complete_and_verified",
+      "checkpoint_sha256": "07620e8c725e4537ba3c41f3130e28516e93686b3741cdf08e29fbd7bd3107e5",
+      "prediction_sha256": "2db923bb33cb33260730571a28f36364d95b66b3014dc4aa8314a1c6950e788f",
+      "config_hash": "415911296044806013602f75ddceb752af8731dbeb507ec9b888afe1de3cc110"
+    },
+    {
+      "fold": 4,
+      "run_id": "t3_usage_u3_two_stage_cnn_f4_s2753_124823bd1fcd_20260905T123959_6c0791",
+      "current_status": "running",
+      "completion_proof": "Two-stage registry proof is missing",
+      "checkpoint_sha256": "44e9e6b4ca48fec9e8f782ec83cc24fb6c39457f8d879863a63ffcb1804363bf",
+      "prediction_sha256": "67d1f0576a7985f9be50a47ebb8010c04d95a28c793cef2dafd1cf718e795220",
+      "config_hash": "124823bd1fcd70f87d54bbc7feae69a941cacba78dd70e670dae70aa68d84383"
+    }
+  ],
+  "registry_sha256": "906e2e09db0442aada7a28c4baaaf4f026d5dee6abbb2700a6d0e7624b788de1",
+  "inference_repeated": false,
+  "training_started": false,
+  "limits": [
+    "Fold 4 completion is missing from the current and inspected prior Drive registry.",
+    "Cached feature values were not saved; their hash needs inference to reproduce.",
+    "Clean E2 training predictions are missing; the clean-gap route stays closed.",
+    "These folds have prior exposure; intervals do not remove selection bias."
+  ]
+}
