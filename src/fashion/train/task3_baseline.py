@@ -536,6 +536,8 @@ def run_task3_baseline_fold(
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
     group_weight = getattr(child_spec, "name", None) == "gender_name_truth_article_weight_sqrt_cap3"
     use_mixup = getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020"
+    expanded_usage = getattr(child_spec, "name", None) == "usage_expanded_e8"
+    expanded_contract = None
     name_truth = (
         use_mixup
         or group_weight
@@ -683,7 +685,14 @@ def run_task3_baseline_fold(
     device = torch.device(device_name)
     splits_path = root / SPLITS_CSV.relative_to(ROOT)
     label_maps_path = root / LABEL_MAPS_JSON.relative_to(ROOT)
-    splits = load_splits(splits_path)
+    if expanded_usage:
+        from fashion.train.task3_usage_expanded import DATA_DIRECTORY, validate_dataset
+
+        splits, expanded_contract = validate_dataset(root=root, check_images=False)
+        splits_path = root / DATA_DIRECTORY / "splits.csv"
+        label_maps_path = root / DATA_DIRECTORY / "label_maps.json"
+    else:
+        splits = load_splits(splits_path)
     if name_truth:
         splits = training_splits(child_spec, root=root)
     label_maps = load_label_maps(label_maps_path)
@@ -836,6 +845,8 @@ def run_task3_baseline_fold(
         ].copy()
 
     config_payload = config.to_dict()
+    if expanded_contract is not None:
+        config_payload["expanded_dataset"] = expanded_contract
     mixup = None
     if use_mixup:
         from fashion.train.mixup import TrainingMixUp
@@ -1175,13 +1186,34 @@ def run_task3_baseline_fold(
             shuffle=False,
             device=device,
         )
-        final_train_loss, final_train_labels, final_train_probabilities, _ = _pass(
+        final_train_loss, final_train_labels, final_train_probabilities, final_train_trace = _pass(
             model, training_evaluation_loader, evaluation_criterion, device
         )
         final_train_metrics = classification_metrics(
             final_train_labels, final_train_probabilities, classes
         )
         predictions = _prediction_frame(labels, probabilities, trace, classes, run_id)
+        expanded_scores = None
+        if expanded_usage:
+            from fashion.train.task3_usage_expanded import source_metrics, source_predictions
+
+            predictions = source_predictions(predictions, validation)
+            training_predictions = source_predictions(
+                _prediction_frame(
+                    final_train_labels,
+                    final_train_probabilities,
+                    final_train_trace,
+                    classes,
+                    run_id,
+                ),
+                training,
+            )
+            training_predictions.to_csv(run_dir / "training_predictions.csv", index=False)
+            expanded_scores = {
+                "validation": source_metrics(predictions),
+                "clean_training": source_metrics(training_predictions),
+            }
+            _json_dump(expanded_scores, run_dir / "source_metrics.json")
         predictions.to_csv(prediction_path, index=False)
         metrics = classification_metrics(labels, probabilities, classes)
         metrics["loss"] = clean_loss
@@ -1192,6 +1224,9 @@ def run_task3_baseline_fold(
         metrics["hypothesis_id"] = hypothesis_id
         metrics["parent_run_ids"] = parent_run_ids
         metrics["training_augmentation"] = training_augmentation
+        if expanded_scores is not None:
+            metrics["expanded_dataset"] = expanded_contract
+            metrics["source_metrics"] = expanded_scores
         if gender_repair:
             metrics["saved_tensors_on_cpu"] = offload
             metrics["prerequisite_sha256"] = compute_sha256(prerequisite_path)
@@ -1284,6 +1319,18 @@ def run_task3_baseline_fold(
         metrics["train_seconds"] = train_seconds
         metrics["diagnostic_seconds"] = diagnostic_seconds
         metrics["peak_memory_bytes"] = peak_memory
+        if expanded_usage:
+            metrics["expanded_artifact_sha256"] = {
+                name: compute_sha256(run_dir / name)
+                for name in (
+                    "config.json",
+                    "normalization.json",
+                    "history.csv",
+                    "robustness.csv",
+                    "training_predictions.csv",
+                    "source_metrics.json",
+                )
+            }
         _json_dump(metrics, metrics_path)
         registry.complete(
             run_id,
