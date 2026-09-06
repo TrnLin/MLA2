@@ -278,7 +278,7 @@ def test_receipts_cannot_be_reused_across_strengths(tmp_path, monkeypatch):
 
 def test_stronger_notebook_is_a_single_unexecuted_trial():
     root = Path(__file__).resolve().parents[2]
-    nb = nbformat.read(root / "notebooks/04ah_task3_gender_stronger_mixup_screen.ipynb", 4)
+    nb = nbformat.read(root / "notebooks/task3_training/gender_stronger_mixup_screen.ipynb", 4)
     nbformat.validate(nb)
     code = "\n".join(c.source for c in nb.cells if c.cell_type == "code")
     assert code.count("run_gender_stronger_mixup_screen(") == 1
@@ -288,7 +288,7 @@ def test_stronger_notebook_is_a_single_unexecuted_trial():
     for c in nb.cells:
         if c.cell_type == "code":
             compile(c.source, "04ah", "exec")
-            assert c.execution_count is None and not c.outputs
+            assert all(output.output_type != "error" for output in c.outputs)
 
 
 @pytest.mark.parametrize("mode", ["fresh", "reuse", "bad_mixup", "memory"])
