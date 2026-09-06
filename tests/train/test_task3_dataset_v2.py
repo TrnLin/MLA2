@@ -183,9 +183,9 @@ def test_visual_component_mapping_rejects_fold_crossing(tmp_path) -> None:
         }
     )
     path = tmp_path / "near.csv.gz"
-    pd.DataFrame(
-        columns=("id_1", "id_2", "role_1", "role_2", "accepted_near_duplicate")
-    ).to_csv(path, index=False)
+    pd.DataFrame(columns=("id_1", "id_2", "role_1", "role_2", "accepted_near_duplicate")).to_csv(
+        path, index=False
+    )
 
     with pytest.raises(ValueError, match="crosses canonical folds"):
         build_visual_component_mapping(splits, candidates_path=path)
@@ -195,22 +195,22 @@ def test_visual_component_mapping_rejects_fold_crossing(tmp_path) -> None:
     ("filename", "screen_name", "parent_lookup"),
     [
         (
-            "04n_task3_gem_gender_v2_g1_foreground_mask.ipynb",
+            "task3_training/gem_gender_v2_g1_foreground_mask.ipynb",
             "gender_v2_foreground_mask",
             "latest_completed_gender_e6_parent_run_ids",
         ),
         (
-            "04o_task3_gem_gender_v2_g2_translation.ipynb",
+            "task3_training/gem_gender_v2_g2_translation.ipynb",
             "gender_v2_translation",
             "latest_completed_gender_e6_parent_run_ids",
         ),
         (
-            "04p_task3_gem_gender_v2_g3_component_weight.ipynb",
+            "task3_training/gem_gender_v2_g3_component_weight.ipynb",
             "gender_v2_component_weight",
             "latest_completed_gender_e6_parent_run_ids",
         ),
         (
-            "04q_task3_smallcnn_usage_v2_u1_component_weight.ipynb",
+            "task3_training/smallcnn_usage_v2_u1_component_weight.ipynb",
             "usage_v2_component_weight",
             "latest_completed_usage_e2_parent_run_ids",
         ),
@@ -242,13 +242,11 @@ def test_dataset_v2_notebooks_run_only_their_two_fold_screen(
 
 
 def test_g2_confirmation_notebook_trains_only_missing_folds() -> None:
-    path = ROOT / "notebooks/04r_task3_gem_gender_v2_g2_confirmation.ipynb"
+    path = ROOT / "notebooks/task3_training/gem_gender_v2_g2_confirmation.ipynb"
     notebook = json.loads(path.read_text(encoding="utf-8"))
     source = "\n".join("".join(cell["source"]) for cell in notebook["cells"])
     code = "\n".join(
-        "".join(cell["source"])
-        for cell in notebook["cells"]
-        if cell["cell_type"] == "code"
+        "".join(cell["source"]) for cell in notebook["cells"] if cell["cell_type"] == "code"
     )
 
     assert source.count("run_task3_gender_v2_g2_confirmation(") == 1
