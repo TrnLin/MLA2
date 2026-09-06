@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "purpose": "Saved evidence for final Usage report; no training or new evaluation",
+  "original_registry": "reports/task3_main_report_20260906/evidence_lock.json",
+  "files": {
+    "reports/task3_usage_expanded_e8_result_20260906/pooled_from_recorded_confusions.json": "8307e00325c160d5b44395d93c719756d1ff1fdd79873358ba74a2252ada2674",
+    "reports/task3_usage_expanded_e8_result_20260906/verified_summary.json": "daa66c025eb8b6cf488b40b1dc4bd70f36dce86e758de0a23f634f2f2569547e",
+    "reports/task3_usage_expanded_v2_e8_result_20260906/verified_summary.json": "0bf16db596b7c93b7159a85ff882e7c9a3a83b1c3fdcee3e2151bb62655924be",
+    "reports/task3_usage_expanded_v2_e8_result_20260906/source_class_scores.csv": "9c512b2133aea941188959d8b3b48f8efb7aa481fbaeec0c0ec4541211c60bdc",
+    "reports/task3_usage_mixup_sam_result_20260906/verified_summary.json": "34d8affc137c42efcdcb700be53869fd6acf17e225ab687b0e9a1621fb55ad2f",
+    "reports/task3_usage_replaced_v3_mixup_sam_result_20260907/verified_summary.json": "64c5a3ec123c9833c8c4fa6f83dc9ea96088c82ef9e88bde2039515327569a05",
+    "reports/task3_usage_holdout_20260906/holdout_summary.csv": "682a9aa2c6aee148e9252ca2e1803810577657397735b8856a5b0268a789d181",
+    "reports/task3_usage_teacher_vs_expanded_test_20260906/test_per_class.csv": "12a209f91449bec2d6a2ae5d36d5152bf44d39d8d9d62511efa26f5b8d6a07a5",
+    "reports/task3_usage_expanded_v2_e8_test_20260907/test_summary.csv": "318f046678ebc9dee509409e4fb8f92febb410315872234da30ed704add2a16f",
+    "reports/task3_usage_deep_investigation_20260905/fit_summary.csv": "afb0a2f5ba39320b936734a06913a593dc4c59db68082b5b09148cb495deb19d",
+    "reports/task3_usage_final_e1_20260907/model_manifest.json": "79cec64647d7c37f3bb64af1307e3911333c6198dce41bfc5171bf9f06d72a34",
+    "reports/task3_usage_expanded_e8_result_20260906/README.md": "66d2576c4023ce7b9f77f1d59836e20ec41079b321410407c531b5097dad247d",
+    "reports/task3_usage_expanded_v2_e8_result_20260906/README.md": "f9dea8f6d242d43e39decc42721863c1bd4246f70c881a054e24f55f8d6e3fb9",
+    "reports/task3_usage_mixup_sam_result_20260906/README.md": "7b2dcce8173b5ce267b481027ae6408fc77b630b16e7f9d6bac6cff02f61bef8",
+    "reports/task3_usage_replaced_v3_mixup_sam_result_20260907/README.md": "97a0279bc8a25d2384af4f1160fb1e50d3fe4712d8be28e6733d7bf97b1d8de8"
+  },
+  "sources": {
+    "expanded120_confusions": "reports/task3/usage_expanded_e8_result_20260906/pooled_from_recorded_confusions.json",
+    "expanded120_summary": "reports/task3/usage_expanded_e8_result_20260906/verified_summary.json",
+    "expanded687_summary": "reports/task3/usage_expanded_v2_e8_result_20260906/verified_summary.json",
+    "source_classes": "reports/task3/usage_expanded_v2_e8_result_20260906/source_class_scores.csv",
+    "mixup_summary": "reports/task3/usage_mixup_sam_result_20260906/verified_summary.json",
+    "v3_summary": "reports/task3/usage_replaced_v3_mixup_sam_result_20260907/verified_summary.json",
+    "holdout_summary": "reports/task3/usage_holdout_20260906/holdout_summary.csv",
+    "test_classes": "reports/task3/usage_teacher_vs_expanded_test_20260906/test_per_class.csv",
+    "test_summary": "reports/task3/usage_expanded_v2_e8_test_20260907/test_summary.csv",
+    "fit_summary": "reports/task3/usage_deep_investigation_20260905/fit_summary.csv",
+    "manifest": "reports/task3/usage_final_e1_20260907/model_manifest.json"
+  },
+  "integration": {
+    "approved_commit": "85f7cdd35a8c88025e4f9fac52cf63bc8e5b597d",
+    "approved_lock_sha256": "b48a7300f419c44317f2f6c590d62f0a5396a8e54cbd04b38742797b2e3d20a8",
+    "reason": "Refresh hashes for four READMEs after live path moves; model and evaluation receipts are unchanged.",
+    "updated_live_readmes": [
+      "reports/task3_usage_expanded_e8_result_20260906/README.md",
+      "reports/task3_usage_expanded_v2_e8_result_20260906/README.md",
+      "reports/task3_usage_mixup_sam_result_20260906/README.md",
+      "reports/task3_usage_replaced_v3_mixup_sam_result_20260907/README.md"
+    ],
+    "live_source_paths_moved": true
+  }
+}
