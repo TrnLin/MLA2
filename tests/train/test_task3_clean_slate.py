@@ -225,7 +225,9 @@ def test_teacher_feature_cache_is_built_locally_then_verified_before_reuse(
 
 
 def test_clean_slate_screen_notebook_keeps_models_and_folds_separate() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/04l_task3_clean_slate_screen_1.ipynb", as_version=4)
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/clean_slate_screen_1.ipynb", as_version=4
+    )
     nbformat.validate(notebook)
     source = "\n".join(cell.source for cell in notebook.cells)
     code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
