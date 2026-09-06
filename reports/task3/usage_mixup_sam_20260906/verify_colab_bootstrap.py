@@ -1,6 +1,5 @@
 """Run the delivered Colab setup locally and stop before GPU training."""
 
-from fashion.task3_paths import resolve_task3_path
 
 import ast
 import csv
@@ -50,7 +49,7 @@ def main():
         with (ROOT / "data/processed/splits.csv").open() as handle:
             teacher = next(r for r in csv.DictReader(handle) if r["partition"] == "development")
         with zipfile.ZipFile(data / "task3-data.zip", "w") as archive:
-            archive.write(resolve_task3_path(teacher["path"], root=ROOT), teacher["path"])
+            archive.write((ROOT / teacher["path"]), teacher["path"])
         if "google" not in sys.modules:
             google = types.ModuleType("google")
             google.__path__ = []
@@ -104,7 +103,7 @@ def main():
             assert checked["training_call_reached"]
             execute(notebook["cells"][2])
             assert (namespace["REPO_DIR"] / teacher["path"]).read_bytes() == (
-                resolve_task3_path(teacher["path"], root=ROOT)
+                (ROOT / teacher["path"])
             ).read_bytes()
             checked.update(
                 notebook_sha256=hashlib.sha256(NOTEBOOK.read_bytes()).hexdigest(),
