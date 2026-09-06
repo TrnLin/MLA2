@@ -1,0 +1,93 @@
+{
+  "analysis_id": "g6-deterministic-gradcam-failure-review",
+  "attention_audit": {
+    "border_attention_lift_review_threshold": 1.25,
+    "border_band_fraction": 0.15,
+    "foreground_attention_lift_review_threshold": 0.75,
+    "foreground_proxy": "any_rgb_channel_below_white_threshold_inside_resized_content",
+    "foreground_white_threshold": 245,
+    "interpretation": "attention_location_diagnostic_not_causal_explanation"
+  },
+  "candidate_experiments": [
+    {
+      "candidate": "C2",
+      "experiment_id": "g3-c2-t0-resnet18",
+      "seed": 2753
+    },
+    {
+      "candidate": "I2",
+      "experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+      "seed": 2753
+    }
+  ],
+  "expected_row_count": 32753,
+  "failure_taxonomy": {
+    "allowed_diagnostic_tags": [
+      "label_ambiguity_requires_human_review",
+      "weak_data_proxy",
+      "article_type_shortcut_conflict",
+      "transform_or_background_attention",
+      "spring_imbalance_association",
+      "model_limitation_or_unmeasured_cause"
+    ],
+    "causal_claim_allowed": false,
+    "priority_for_primary_hypothesis": [
+      "weak_data_proxy",
+      "article_type_shortcut_conflict",
+      "transform_or_background_attention",
+      "spring_imbalance_association",
+      "model_limitation_or_unmeasured_cause"
+    ]
+  },
+  "gradcam": {
+    "device": "cpu",
+    "heatmap_normalisation": "relu_then_per_image_min_max",
+    "interpolation": "bilinear_align_corners_false",
+    "model_mode": "eval_float32",
+    "probability_reconciliation_max_absolute_delta": 0.0001,
+    "target_class": "frozen_oof_predicted_label",
+    "target_layer": "model_gradcam_target_layer",
+    "torch_threads": 1,
+    "zero_heatmap_policy": "retain_and_flag"
+  },
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "schema_version": "1.0.0",
+  "selection": {
+    "correctness_groups": [
+      "correct",
+      "incorrect"
+    ],
+    "examples_per_true_class_and_group": 3,
+    "probability_source": "five_fold_cross_fitted_calibrated_oof",
+    "ranking_rule": "descending_top_label_confidence_then_ascending_id",
+    "selection_scope": "primary_seed_oof_only"
+  },
+  "stage": "g6_explainability_and_failure_analysis",
+  "target": "season",
+  "visualisation": {
+    "class_order": [
+      "Fall",
+      "Spring",
+      "Summer",
+      "Winter"
+    ],
+    "columns": 3,
+    "heatmap_colormap": "magma",
+    "overlay_alpha": 0.45,
+    "row_order": "true_class_then_correct_before_incorrect"
+  },
+  "warnings": {
+    "analysis_cannot_reopen_g5_model_selection": true,
+    "gradcam_is_not_causal_proof": true,
+    "high_confidence_selection_is_not_population_prevalence": true,
+    "holdout_is_forbidden": true,
+    "image_metadata_is_review_context_not_an_inference_feature": true,
+    "primary_seed_only_because_g5_already_tests_random_seed_stability": true,
+    "ultimate_winner_remains_unfrozen": true
+  }
+}

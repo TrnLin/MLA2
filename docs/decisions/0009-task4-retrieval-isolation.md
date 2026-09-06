@@ -3,6 +3,11 @@
 - Status: Superseded in part by 0015
 - Date: 2026-08-21
 
+Decisions 0019 and 0022 supersede the stale fixed query counts and retired
+protocol, metric, and fusion wording below. This historical record is retained
+without rewriting its original evidence. Its self-match leakage rule remains
+active.
+
 ## Context
 
 Using evaluation queries inside the search index creates trivial self-matches and

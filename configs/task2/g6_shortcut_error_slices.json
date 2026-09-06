@@ -1,0 +1,105 @@
+{
+  "analysis_id": "g6-shortcut-error-slices",
+  "candidate_experiments": [
+    {
+      "candidate": "C2",
+      "experiment_id": "g3-c2-t0-resnet18",
+      "seed": 2753
+    },
+    {
+      "candidate": "C2",
+      "experiment_id": "g5-c2-t0-resnet18-s2026",
+      "seed": 2026
+    },
+    {
+      "candidate": "I2",
+      "experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+      "seed": 2753
+    },
+    {
+      "candidate": "I2",
+      "experiment_id": "g5-i2-article-type-lambda-0-3-c1-s2026",
+      "seed": 2026
+    }
+  ],
+  "error_analysis": {
+    "high_confidence_threshold": 0.8,
+    "maximum_ranked_confusions": 8
+  },
+  "expected_row_count": 32753,
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "metrics": [
+    "support",
+    "accuracy",
+    "macro_f1",
+    "balanced_accuracy",
+    "per_class_recall",
+    "mean_confidence",
+    "mean_true_probability",
+    "nll",
+    "brier",
+    "ece"
+  ],
+  "schema_version": "1.0.0",
+  "slice_protocols": {
+    "acquisition_year": {
+      "assignment_scope": "metadata_after_prediction_only",
+      "groups": [
+        "dominant_2011_2012",
+        "other_years",
+        "missing_year"
+      ]
+    },
+    "article_type_shortcut": {
+      "assignment_scope": "majority_mapping_fit_on_four_training_folds_only",
+      "groups": [
+        "aligned",
+        "conflict",
+        "unseen_article_type",
+        "missing_article_type"
+      ]
+    },
+    "file_size_quartile": {
+      "assignment_scope": "quartile_boundaries_fit_on_four_training_folds_only",
+      "groups": [
+        "q1_smallest",
+        "q2",
+        "q3",
+        "q4_largest"
+      ],
+      "quantiles": [
+        0.25,
+        0.5,
+        0.75
+      ]
+    },
+    "image_mode": {
+      "assignment_scope": "structural_audit_after_prediction_only",
+      "groups": [
+        "rgb",
+        "greyscale",
+        "other_mode"
+      ]
+    },
+    "product_family_size": {
+      "assignment_scope": "canonical_product_family_group_after_prediction_only",
+      "groups": [
+        "singleton",
+        "multirow"
+      ]
+    }
+  },
+  "stage": "g6_shortcut_error_analysis",
+  "target": "season",
+  "warnings": {
+    "confidence_is_uncalibrated": true,
+    "low_support_threshold": 100,
+    "metadata_is_never_an_inference_feature": true,
+    "slice_results_do_not_freeze_the_ultimate_winner": true
+  }
+}

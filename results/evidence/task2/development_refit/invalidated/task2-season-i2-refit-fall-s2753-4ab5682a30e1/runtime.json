@@ -1,0 +1,53 @@
+{
+  "device": "cuda",
+  "environment": {
+    "cuda_available": true,
+    "cuda_runtime": "12.6",
+    "cudnn_version": 91002,
+    "executable": "C:\\Users\\Khoai\\RMIT\\Machine_Learning\\Machine Learning at RMIT\\MLA2\\.venv\\Scripts\\python.exe",
+    "gpu": {
+      "capability": [
+        8,
+        9
+      ],
+      "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "total_memory_bytes": 8585216000
+    },
+    "logical_cpu_count": 32,
+    "packages": {
+      "numpy": "2.5.2",
+      "pandas": "3.0.5",
+      "pillow": "12.3.0",
+      "scikit-image": "0.26.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.18.1",
+      "torch": "2.13.0+cu126",
+      "torchvision": "0.28.0+cu126"
+    },
+    "physical_cpu_count": 24,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python": "3.12.13",
+    "python_implementation": "CPython",
+    "total_ram_bytes": 34070192128
+  },
+  "gate": "G8-DEVELOPMENT-REFIT",
+  "holdout_opened": false,
+  "parameter_count": 1206112,
+  "peak_vram_mb": 135.04052734375,
+  "primary_metric_name": null,
+  "run_id": "task2-season-i2-refit-fall-s2753-4ab5682a30e1",
+  "runtime_seconds": 249.7160608000122,
+  "schema_version": "1.0.0",
+  "training_metadata": {
+    "accumulation_steps": 4,
+    "amp_enabled": true,
+    "auxiliary_weight": 0.3,
+    "checkpoint_rule": "save_the_declared_final_epoch_state",
+    "early_stopping_used": false,
+    "selection_metric": null,
+    "updates_completed": 6144,
+    "validation_used": false
+  },
+  "validation_used": false
+}

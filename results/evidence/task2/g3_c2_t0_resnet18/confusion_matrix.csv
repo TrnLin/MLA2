@@ -1,0 +1,5 @@
+true_label,predicted_Fall,predicted_Spring,predicted_Summer,predicted_Winter
+Fall,5519,14,3041,354
+Spring,84,838,336,71
+Summer,1430,45,13751,1009
+Winter,278,16,1583,4384

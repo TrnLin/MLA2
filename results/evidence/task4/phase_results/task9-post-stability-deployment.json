@@ -1,0 +1,235 @@
+{
+  "artifact_type": "task4_post_stability_deployment_judgement",
+  "decision_sha256": "cd2f78993c2adf42421879c06fc68ce47cb7ae664396de987ca0eb57d0d82bae",
+  "development_only": true,
+  "holdout_opened": false,
+  "mean_gap": 0.20068899698563464,
+  "mean_gap_exceeds_pooled_spread": true,
+  "official_teacher_test_opened": false,
+  "pooled_spread": 0.005729338907911313,
+  "producer": "fashion.task4.experiments.write_post_stability_deployment_artifact",
+  "quarantine_opened": false,
+  "schema_version": 2,
+  "selected_model": {
+    "all_deployment_gates_passed": true,
+    "canvas_ndcg_at_10": {
+      "tall": 0.1120875317315455,
+      "wide": 0.0336930964488834
+    },
+    "cpu_measurement": {
+      "cpu": "AMD Ryzen Threadripper 3970X 32-Core Processor",
+      "measurement_sha256": "447a4f5b80db043f5319c843d3ca58e4ed4bad386d440116b64b17d75506f67c",
+      "operating_system": "Linux-5.15.0-190-generic-x86_64-with-glibc2.35",
+      "route": "spawned_batch_one_checkpoint_extraction_v1",
+      "thread_count": 1
+    },
+    "cpu_p95_end_to_end_seconds": {
+      "teacher_to_teacher": 0.11796635250000001,
+      "teacher_to_v1": 0.11751104849999999,
+      "v1_to_teacher": 0.17221664074999998,
+      "v1_to_v1": 0.17248713475
+    },
+    "cpu_p95_gate": true,
+    "index_size_gate": true,
+    "method": "R5",
+    "run_id": "task4-candidate-r5-task9-preexec",
+    "scratch_gate": true,
+    "source_index_bytes": {
+      "teacher": 17041960,
+      "v1": 17041960
+    },
+    "source_robustness_ratio": 0.999843704883488,
+    "stability_mean": 0.5042209564244887,
+    "stability_sample_standard_deviation": 0.004041090485220157
+  },
+  "source_artifacts": [
+    {
+      "candidate_manifest": {
+        "path": "results/evidence/task4/learned/task4-candidate-r5-task9-preexec/manifest.json",
+        "sha256": "3e186ef13907b91df98bbad3bd04f731ae450a9ea8ab59dd897c082f29b7b9eb"
+      },
+      "candidate_run_id": "task4-candidate-r5-task9-preexec",
+      "stability_manifests": [
+        {
+          "path": "results/evidence/task4/stability/task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-0/stability_evidence.json",
+          "run_id": "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-0",
+          "sha256": "a7f97b6c953703cfa5b410b61928427aa0f3b8bc3ab6e258e7584e92eca932a4"
+        },
+        {
+          "path": "results/evidence/task4/stability/task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a2-fold-1/stability_evidence.json",
+          "run_id": "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a2-fold-1",
+          "sha256": "47626eef2feac3997161244a6d60bd518a4d37dd3d4e073aae00562167405059"
+        },
+        {
+          "path": "results/evidence/task4/stability/task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-2/stability_evidence.json",
+          "run_id": "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-2",
+          "sha256": "8c78afc1ea6eaed5844453bc25adac729774442f55e7004340212dd8a824fc2c"
+        },
+        {
+          "path": "results/evidence/task4/stability/task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-3/stability_evidence.json",
+          "run_id": "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-3",
+          "sha256": "0144efbd6825759d448bf5960a97974af7af152b62e776fb21f09c4261291a26"
+        },
+        {
+          "path": "results/evidence/task4/stability/task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-4/stability_evidence.json",
+          "run_id": "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-4",
+          "sha256": "5e3fe44c6f8289c28adde3039e1d4bcbd89b13cee03615689bc24bd8204cbc89"
+        }
+      ]
+    },
+    {
+      "candidate_manifest": {
+        "path": "results/evidence/task4/learned/task4-candidate-r3-task9-preexec/manifest.json",
+        "sha256": "b63098399cf3574a8eef61575a62dc727c6cc279391e34cc9d6b59421077d712"
+      },
+      "candidate_run_id": "task4-candidate-r3-task9-preexec",
+      "stability_manifests": [
+        {
+          "path": "results/evidence/task4/stability/task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-0/stability_evidence.json",
+          "run_id": "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-0",
+          "sha256": "f314b3988644a70050f6f2a3438bf2f4f56fe5b1d53be0d861f4984a90fad161"
+        },
+        {
+          "path": "results/evidence/task4/stability/task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-1/stability_evidence.json",
+          "run_id": "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-1",
+          "sha256": "c3167f690936376a09ec065f57ca0affc90dea7b16127e444f8e72ca85b489e5"
+        },
+        {
+          "path": "results/evidence/task4/stability/task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a2-fold-2/stability_evidence.json",
+          "run_id": "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a2-fold-2",
+          "sha256": "5442fb7e3f19e76d852417968e993947e0ef9e0437f97babedd13a0f24343cc7"
+        },
+        {
+          "path": "results/evidence/task4/stability/task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-3/stability_evidence.json",
+          "run_id": "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-3",
+          "sha256": "44a3ba1e013bc87098b4918c2849035f6aff84009eff91a5f0bd2fc4dd39b90f"
+        },
+        {
+          "path": "results/evidence/task4/stability/task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-4/stability_evidence.json",
+          "run_id": "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-4",
+          "sha256": "e54f2564adfb0f7836a875a52d20621f8a68ae189ee78b7cbba8412685aab17f"
+        }
+      ]
+    }
+  ],
+  "split_fingerprint": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd",
+  "split_path": "data/processed/splits.csv",
+  "stability_summaries": [
+    {
+      "candidate_run_id": "task4-candidate-r5-task9-preexec",
+      "folds": [
+        {
+          "checkpoint_sha256": "600844473b9d6e40c29aac3e779a1e79b667065a3c74d275d8d069584ef59656",
+          "config_hash": "e7da348644df858ddbeb3e198667a391483ef9a119643f555f2890043fdeca95",
+          "coverage": 0.9998473981382573,
+          "fold": 0,
+          "run_id": "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-0",
+          "scorable_query_count": 6552,
+          "score": 0.507230331944694,
+          "total_query_count": 6553
+        },
+        {
+          "checkpoint_sha256": "0b7b90d6a39a094516d11b404881a3dbfaf327a390a3341a6295f58d08153f91",
+          "config_hash": "10eb918737baccd059b90d90bb0b76b6c8a8f4c5acc047270cc49f7df5d29b60",
+          "coverage": 0.9993898718730934,
+          "fold": 1,
+          "run_id": "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a2-fold-1",
+          "scorable_query_count": 6552,
+          "score": 0.5028872133026174,
+          "total_query_count": 6556
+        },
+        {
+          "checkpoint_sha256": "826ae1aa11457f729960fdf3cca151dcd844fbfce0110d01e4a1c7afd78c1bec",
+          "config_hash": "838a92c7007fa8c0da16f93e92baa9d47ee1c4b9cde98b3b19f1b629f5f897b1",
+          "coverage": 0.9992369906912865,
+          "fold": 2,
+          "run_id": "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-2",
+          "scorable_query_count": 6548,
+          "score": 0.49770189355926997,
+          "total_query_count": 6553
+        },
+        {
+          "checkpoint_sha256": "00c7d20b1388bfc13fee894abfbbd6d53beaf6b713ee9ee1db56ee55813e595c",
+          "config_hash": "6ebbe34f411bcb2657aba7f5e1d4076e5bc61973521c07adcd52d42eab07a5c9",
+          "coverage": 0.9992371071101618,
+          "fold": 3,
+          "run_id": "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-3",
+          "scorable_query_count": 6549,
+          "score": 0.5070024267953162,
+          "total_query_count": 6554
+        },
+        {
+          "checkpoint_sha256": "640d4edbc6e3cf870ba8aef64b9ab1a8fd270edc91cb6e2c5e3c615834f14767",
+          "config_hash": "3d10c454696eb9e53529ef3eeda73ac54a7b384fcd9b7687271901b2df1bfdb8",
+          "coverage": 0.999389964922983,
+          "fold": 4,
+          "run_id": "task4-candidate-r5-task9-preexec-stability-task9-stability-r5-a1-fold-4",
+          "scorable_query_count": 6553,
+          "score": 0.506282916520546,
+          "total_query_count": 6557
+        }
+      ],
+      "mean": 0.5042209564244887,
+      "method": "R5",
+      "sample_standard_deviation": 0.004041090485220157
+    },
+    {
+      "candidate_run_id": "task4-candidate-r3-task9-preexec",
+      "folds": [
+        {
+          "checkpoint_sha256": "814343cc121e299b503b32d8e417af177b77e80d5295fcff9b0e150788e277ed",
+          "config_hash": "8a9efc578d7fd811e8ca8167fa73c688a995a61d73084fbecf3630429f69db63",
+          "coverage": 0.9998473981382573,
+          "fold": 0,
+          "run_id": "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-0",
+          "scorable_query_count": 6552,
+          "score": 0.29204645428626064,
+          "total_query_count": 6553
+        },
+        {
+          "checkpoint_sha256": "1090bde69bf4afe1473551e2b2bbe659ec743aa7217001e421f26d53f8afd977",
+          "config_hash": "3a0102b0f18d28ba349ad879bdbd4511977013cc8569494edecaa7c7997f8e9f",
+          "coverage": 0.9993898718730934,
+          "fold": 1,
+          "run_id": "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-1",
+          "scorable_query_count": 6552,
+          "score": 0.3101871078551549,
+          "total_query_count": 6556
+        },
+        {
+          "checkpoint_sha256": "1298c479df7046691b2c7514e0f9a1f63f87c213c27c63884928d1076e47cb94",
+          "config_hash": "934b9f83421746fc76b5ab434f5a3860f1b0c71d5df03462327d84fdd08606d2",
+          "coverage": 0.9992369906912865,
+          "fold": 2,
+          "run_id": "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a2-fold-2",
+          "scorable_query_count": 6548,
+          "score": 0.308085839514725,
+          "total_query_count": 6553
+        },
+        {
+          "checkpoint_sha256": "108f1d7be6fe9ec958f99c7a5e0fc9eeac39f02086dc7f7222ddf03106d4ebe2",
+          "config_hash": "f2fcc8057bc94e609519958a5b92de25b207dff95ad5829856d77c2f3ef44438",
+          "coverage": 0.9992371071101618,
+          "fold": 3,
+          "run_id": "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-3",
+          "scorable_query_count": 6549,
+          "score": 0.30328479352403875,
+          "total_query_count": 6554
+        },
+        {
+          "checkpoint_sha256": "a91fbcf1ebcde0dded58c583c21c958b49d1e1a66856038366b0e8a9924b6982",
+          "config_hash": "62eac816291fd68fe8859720774c3ad717e764d67a878e7aeacfa1624a472481",
+          "coverage": 0.999389964922983,
+          "fold": 4,
+          "run_id": "task4-candidate-r3-task9-preexec-stability-task9-stability-r3-a1-fold-4",
+          "scorable_query_count": 6553,
+          "score": 0.3040556020140911,
+          "total_query_count": 6557
+        }
+      ],
+      "mean": 0.3035319594388541,
+      "method": "R3",
+      "sample_standard_deviation": 0.0070228367725354325
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "artifacts": {
+    "article_type_majorities_by_fold": {
+      "path": "results/evidence/task2/i2_multitask/article_type_majorities_by_fold.csv",
+      "sha256": "eb39f00711afbe45c8378285e1c765bc5642a47b5153959eed6448f76d95b12a"
+    },
+    "comparison": {
+      "path": "results/evidence/task2/i2_multitask/comparison.csv",
+      "sha256": "b4161c46fd6ae221b99dbe6ca33bb0504412cd20e3347cafe7dd589999c735fb"
+    },
+    "decision": {
+      "path": "results/evidence/task2/i2_multitask/decision.json",
+      "sha256": "746bf657e604fd0ef3760048288ff9d594531a83228b0eb021f45a125a3e0adb"
+    },
+    "fold_shortcut_audit": {
+      "path": "results/evidence/task2/i2_multitask/fold_shortcut_audit.csv",
+      "sha256": "89e4f7f08052be79090c9c81b5df4d92aa48f963351c1fa2629286e1ae01a699"
+    },
+    "learning_curve_summary": {
+      "path": "results/evidence/task2/i2_multitask/learning_curve_summary.csv",
+      "sha256": "2754de4bc6b46e8ebec0c8284ad860265ee6c32cbec40b5a3054598c4f5c67b2"
+    },
+    "learning_curves": {
+      "path": "results/figures/task2/i2_multitask_learning_curves.png",
+      "sha256": "19a690d345325fa4cc1d28f7ec61ebe5f6fbf6e59a3540384110a49aadc66d39"
+    },
+    "paired_fold_metrics": {
+      "path": "results/evidence/task2/i2_multitask/paired_fold_metrics.csv",
+      "sha256": "9bc804dafecd3b23ff9759fd786e933004f544610b2e9534c53092e311a84537"
+    },
+    "per_class_comparison": {
+      "path": "results/evidence/task2/i2_multitask/per_class_comparison.csv",
+      "sha256": "8b81154592f0893d0e4757568cf702203a6463d6a5fd9dba04b43309a0d9c2b8"
+    },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/i2_multitask/registry_snapshot.csv",
+      "sha256": "bae280dbf173900eb90495f7c297a513db31e1ef8eb4a63c147fb40928761e35"
+    },
+    "slice_metrics": {
+      "path": "results/evidence/task2/i2_multitask/slice_metrics.csv",
+      "sha256": "cfd5ffea65e3617e49eaac08792dc4d84b07b2af03ff859ad560a60938e9d588"
+    },
+    "slice_summary": {
+      "path": "results/evidence/task2/i2_multitask/slice_summary.csv",
+      "sha256": "57f3fc5375765b25e97c39e6d3e0fd3c3b3dacefff979b824dcec95606bee5e7"
+    },
+    "transfer_deltas": {
+      "path": "results/figures/task2/i2_multitask_transfer_deltas.png",
+      "sha256": "9f6acdeea017083051f49e47b8b50caa70472b4c30f0252bef2149bf32e99b1f"
+    }
+  },
+  "coverage_sha256": "44ac291afc1f9c3f7f18ca801d7b9d22acb91017e903228ddd62f2a76bd411a8",
+  "decision_status": "closed",
+  "gate": "G4-I2",
+  "input_configs": {
+    "g3-c1-t1-smallcnn": {
+      "path": "configs/task2/g3_c1_t1_smallcnn.json",
+      "sha256": "d97d7f01b8a4be435c9cfa51dbfad206d590d7e1c79a69713b659069de9def08"
+    },
+    "g4-i2-article-type-lambda-0-1-c1": {
+      "path": "configs/task2/g4_i2_article_type_lambda_0_1_c1.json",
+      "sha256": "14a376369f672cdc62bac1bf64557d93cabc648ef574610d355c0618f469edee"
+    },
+    "g4-i2-article-type-lambda-0-3-c1": {
+      "path": "configs/task2/g4_i2_article_type_lambda_0_3_c1.json",
+      "sha256": "fc8e26c3d5183ade1ab1e8db0069528bc5b0ec30755ffac6a045fbcd9b599d60"
+    }
+  },
+  "input_manifests": {
+    "g3-c1-t1-smallcnn": {
+      "path": "results/evidence/task2/g3_c1_t1_smallcnn/manifest.json",
+      "sha256": "2f487c4147f7f6e117c1cf77cec6ec445755ef083b4e9857e821618c83abc3eb"
+    },
+    "g4-i2-article-type-lambda-0-1-c1": {
+      "path": "results/evidence/task2/g4_i2_article_type_lambda_0_1_c1/manifest.json",
+      "sha256": "a8dce94e1ed7e8cb51bf8a187c7f5f7d266d5d157b2ce4863e14e59cab3934f3"
+    },
+    "g4-i2-article-type-lambda-0-3-c1": {
+      "path": "results/evidence/task2/g4_i2_article_type_lambda_0_3_c1/manifest.json",
+      "sha256": "4606ec36122acefbf3d04b1e45d8cfaa95fbca27a7e6d0749c9c339147aceae5"
+    }
+  },
+  "keep_i2": true,
+  "matched_protocol_sha256": "d23484a4979c7685e6e05ae96767417635dea7589df8e50c5c56637600deb34b",
+  "schema_version": "1.0.0",
+  "selected_experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+  "shortcut_assignment_sha256": "baf2d961abfc0f763c2e7b786e27d409e84516909dbae8fe7ad4221b5f16ce12",
+  "split_input": {
+    "path": "data/processed/splits.csv",
+    "sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
+  },
+  "ultimate_winner_frozen": false
+}

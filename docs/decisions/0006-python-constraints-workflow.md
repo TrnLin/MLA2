@@ -14,11 +14,23 @@ Support CPython 3.12 through 3.14. Pin direct packages in `pyproject.toml` and
 resolve the complete CPython 3.12 environment in
 `requirements/constraints-py312.txt`.
 
-Install with:
+Install the full development and app environment with `uv`. Select the wheel backend at
+install time so the same public Torch pins work on CUDA and CPU machines:
+
+```bash
+uv venv --python 3.12 --seed .venv
+uv pip install --python .venv --torch-backend cu126 \
+  -c requirements/constraints-py312.txt -e ".[app,dev]"
+```
+
+CPU-only environments use the same command with `--torch-backend cpu`. A plain pip
+installation may instead add the matching official PyTorch wheel index explicitly:
 
 ```bash
 python3.12 -m venv .venv
-./.venv/bin/python -m pip install -c requirements/constraints-py312.txt -e ".[dev]"
+./.venv/bin/python -m pip install \
+  --extra-index-url https://download.pytorch.org/whl/cu126 \
+  -c requirements/constraints-py312.txt -e ".[app,dev]"
 ```
 
 Normal wheel installs resolve the checkout from the current directory when
@@ -37,9 +49,10 @@ local environment.
 
 ## Consequences
 
-The constraints file is authoritative for reproducibility checks. Other Python
-minor versions may need a separately reviewed constraints file if their wheels
-differ.
+The constraints file is authoritative for reproducibility checks. It pins public
+`torch` and `torchvision` versions; `uv --torch-backend` or the selected official wheel
+index owns the local `+cu126` or `+cpu` runtime suffix. Other Python minor versions may
+need a separately reviewed constraints file if their wheels differ.
 
 ## Evidence
 

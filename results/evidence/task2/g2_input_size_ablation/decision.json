@@ -1,0 +1,13 @@
+{
+  "decision_status": "closed",
+  "gate": "G2-P",
+  "minimum_gain": 0.005,
+  "next_question": "Compare A0 with A1 on P0 while holding the selected image size, C2, folds, seed, optimiser, and budget fixed.",
+  "observed_p1_minus_p0_macro_f1": -0.0017872656189023006,
+  "primary_metric": "pooled_five_fold_oof_macro_f1",
+  "rejected_variant": "P1",
+  "schema_version": "1.0.0",
+  "selected_experiment_id": "g1-c2-resnet18",
+  "selected_variant": "P0",
+  "selection_rule": "Select P1 only when P1 minus P0 is at least 0.005 absolute macro-F1; otherwise retain P0."
+}

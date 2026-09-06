@@ -1,0 +1,29 @@
+{
+  "benchmark_experiment_id": "g4-pstar-resnet18-standard-pretrained",
+  "candidate_selection_affected": false,
+  "control_experiment_id": "g4-p0s-resnet18-standard-scratch",
+  "decision_status": "closed",
+  "gate": "G4-PSTAR",
+  "interpretation_rule": "P* minus P0S estimates only the initialisation effect inside this fixed 80x60 Task 2 pipeline. P* is a comparison ceiling, never a candidate.",
+  "limitations": [
+    "This gate uses the primary seed only.",
+    "The fixed 80x60 project transform is not TorchVision's 224x224 ImageNet recipe.",
+    "Softmax outputs are uncalibrated and support no calibration claim here.",
+    "P* cannot be compared causally with I2 because architecture and loss differ."
+  ],
+  "next_question": "Run the frozen scratch finalist with seed 2026 for stability.",
+  "observed_pstar_minus_p0s_macro_f1": 0.023023536671545886,
+  "observed_pstar_minus_p0s_spring_f1": 0.038829098447635824,
+  "p0s_benchmark_only": true,
+  "paired_fold_mean_delta": 0.023049568168815714,
+  "pretrained_weight_provenance": {
+    "declaration": "ResNet18_Weights.DEFAULT",
+    "resolved_enum": "ResNet18_Weights.IMAGENET1K_V1",
+    "url": "https://download.pytorch.org/models/resnet18-f37072fd.pth"
+  },
+  "pstar_benchmark_only": true,
+  "pstar_final_eligible": false,
+  "schema_version": "1.0.0",
+  "scientific_question": "Under the same folds, transforms, optimiser, loss, and budget, how much does ImageNet initialisation change standard-stem ResNet18 Season performance?",
+  "ultimate_winner_frozen": false
+}

@@ -1,0 +1,3 @@
+candidate,experiment_id,seed,temperature,fit_rows,fit_scope,purpose,evaluation_claim_allowed
+C2,g3-c2-t0-resnet18,2753,1.3739861508699216,32753,all_primary_seed_oof_rows,future_frozen_bundle_confidence_only,False
+I2,g4-i2-article-type-lambda-0-3-c1,2753,1.3650015953177774,32753,all_primary_seed_oof_rows,future_frozen_bundle_confidence_only,False

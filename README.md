@@ -12,12 +12,47 @@ The shared data workflow is teacher-only, repeatable, and keeps the internal hol
 
 ## Setup
 
-Python 3.12 is the shared locked baseline.
+Python 3.12 is the shared locked baseline. The checked development machine uses an
+NVIDIA driver that supports CUDA 12.6.
+
+Recommended cross-platform setup with `uv`:
+
+```bash
+uv venv --python 3.12 --seed .venv
+uv pip install --python .venv --torch-backend cu126 \
+  -c requirements/constraints-py312.txt -e ".[app,dev]"
+```
+
+Equivalent Linux or macOS `venv` setup for CUDA-capable machines:
 
 ```bash
 cd MLA2-eda
 python3.12 -m venv .venv
-./.venv/bin/python -m pip install -c requirements/constraints-py312.txt -e ".[dev]"
+./.venv/bin/python -m pip install \
+  --extra-index-url https://download.pytorch.org/whl/cu126 \
+  -c requirements/constraints-py312.txt -e ".[app,dev]"
+```
+
+Windows PowerShell uses the same constraints with this interpreter path:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install `
+  --extra-index-url https://download.pytorch.org/whl/cu126 `
+  -c requirements\constraints-py312.txt -e ".[app,dev]"
+```
+
+For a machine without a compatible NVIDIA GPU, select the CPU wheel explicitly:
+
+```bash
+uv pip install --python .venv --torch-backend cpu \
+  -c requirements/constraints-py312.txt -e ".[app,dev]"
+```
+
+Verify the environment before running a notebook:
+
+```bash
+uv pip check --python .venv
+uv run --python .venv python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 ```
 
 For a wheel install, point the package at this checkout:
@@ -70,8 +105,19 @@ printf '%s  %s\n' \
   '64dfd2449f22e39120e2ab4b0230a4521f27a3b3513e5eee5cc000ad865df831' \
   'data/raw/external/fashion_product_images_v1/images.csv' | sha256sum --check
 ```
+Run the separate focused audit in
+`notebooks/task-4/01_v1_eda.ipynb`. It proves V1 is the same teacher catalogue at
+higher resolution and joins it to `data/processed/splits.csv` by ID. It never makes
+a second split. The main search work stays in
+`notebooks/task-4/05_task4_visual_search.ipynb`.
+
 The expected image data is about 14 GB. Raw images are ignored by Git and must not
 be committed.
+
+The frozen untrained Task 4 baseline and its development-only quality, timing,
+cost, slice, and example evidence are recorded in
+`docs/decisions/0022-task4-baseline-search.md` and
+`results/evidence/task4/`. Learned models and the final winner remain open.
 
 ## One split, five folds
 

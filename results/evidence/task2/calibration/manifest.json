@@ -1,0 +1,167 @@
+{
+  "analysis_config": {
+    "path": "configs/task2/g6_cross_fitted_calibration.json",
+    "sha256": "a7816f4e2129c53aeaae4ba021af644880dd096f6f729c61ae4715b329fb32a1"
+  },
+  "analysis_role": "development_oof_cross_fitted_calibration_only",
+  "app_threshold_frozen": false,
+  "artifacts": {
+    "calibration_reliability_figure": {
+      "path": "results/figures/task2/calibration_reliability.png",
+      "sha256": "48dcb11d113cec9181526606ee956589825160a299b289592410330bb4349fb8"
+    },
+    "calibration_summary": {
+      "path": "results/evidence/task2/calibration/calibration_summary.csv",
+      "sha256": "57e07e164eb6a5a216dc576b9ceedc618d069c1aa3e62baabeb4a1cb2dbde183"
+    },
+    "decision": {
+      "path": "results/evidence/task2/calibration/decision.json",
+      "sha256": "017976849a9e1823c828ebfda17f1c4e2535339608a3bb55287f65e9855180cb"
+    },
+    "deployment_temperatures": {
+      "path": "results/evidence/task2/calibration/deployment_temperatures.csv",
+      "sha256": "a40a74755ec58cf03148872f01b0ed665f0149c0543a051b57855989eaf912e7"
+    },
+    "fold_temperatures": {
+      "path": "results/evidence/task2/calibration/fold_temperatures.csv",
+      "sha256": "8626c316e6ddb483f0f1e2284def14dea4896ab799096682a5cbeffc25bd0f42"
+    },
+    "reliability_bins": {
+      "path": "results/evidence/task2/calibration/reliability_bins.csv",
+      "sha256": "a2015856f98f283bed5800520876b9129a6ad208b83d2a8faf77353628e8fded"
+    },
+    "review_budget_summary": {
+      "path": "results/evidence/task2/calibration/review_budget_summary.csv",
+      "sha256": "3ac1970cf5a89cb147e1c337711be8e551dbbdf6b002798c6cb5e89666b1b3da"
+    },
+    "risk_coverage": {
+      "path": "results/evidence/task2/calibration/risk_coverage.csv",
+      "sha256": "3235dc865d3ad230ae1cf9511e758738d6fa9a5377680712078b2c3ddaabdfb4"
+    },
+    "risk_coverage_figure": {
+      "path": "results/figures/task2/risk_coverage.png",
+      "sha256": "a3def8cfba202a77efb8949a7e3352d80ed1e4680f99bf39b1053eaa68295141"
+    },
+    "runtime": {
+      "path": "results/evidence/task2/calibration/runtime.json",
+      "sha256": "c1ac9302d7d2f5c2cf593c03ce4eef0fe1478d76bef0b3bd6c5904b9457fe91d"
+    }
+  },
+  "candidate_selection_affected": false,
+  "canonical_inputs": {
+    "label_maps": {
+      "path": "data/processed/label_maps.json",
+      "sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327"
+    },
+    "splits": {
+      "path": "data/processed/splits.csv",
+      "sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
+    }
+  },
+  "cross_fitted_evaluation_claim_allowed": true,
+  "decision_status": "closed",
+  "deployment_temperature_evaluation_claim_allowed": false,
+  "gate": "G6-CALIBRATION",
+  "git_commit": "ba5c31008b54e860370e6fe0245ab1528011d176",
+  "git_dirty": false,
+  "holdout_opened": false,
+  "implementation_files_at_head": [
+    "src/fashion/config.py",
+    "src/fashion/data/dataset.py",
+    "src/fashion/data/hashing.py",
+    "src/fashion/data/images.py",
+    "src/fashion/data/metadata.py",
+    "src/fashion/data/multitask.py",
+    "src/fashion/data/splits.py",
+    "src/fashion/data/torch.py",
+    "src/fashion/models/season.py",
+    "src/fashion/task2/calibration.py",
+    "src/fashion/task2/calibration_evidence.py",
+    "src/fashion/task2/evidence.py",
+    "src/fashion/task2/experiments.py",
+    "src/fashion/task2/multitask.py",
+    "src/fashion/task2/robustness.py",
+    "src/fashion/task2/robustness_evidence.py",
+    "src/fashion/task2/slice_evidence.py",
+    "src/fashion/task2/slices.py",
+    "src/fashion/task2/stability.py",
+    "src/fashion/task2/stability_evidence.py",
+    "src/fashion/train/artifacts.py",
+    "src/fashion/train/cache.py",
+    "src/fashion/train/engine.py",
+    "src/fashion/train/metrics.py",
+    "src/fashion/train/multitask.py",
+    "src/fashion/train/registry.py",
+    "src/fashion/train/reproducibility.py"
+  ],
+  "implementation_sha256": "76f77dd9c7f6cdfbeeae98c784e2812d445252fec64d3a1ba20b01e67a4d5e1c",
+  "input_predictions": {
+    "g3-c2-t0-resnet18-f0-s2753-66ee7a85d5c6": {
+      "path": "tmp/task2/runs/g3-c2-t0-resnet18-f0-s2753-66ee7a85d5c6/oof.csv",
+      "sha256": "e1eed70d7ba1a5125df0d6bcacfa5bd419f0cdc4bfa695d8e0026bf4013d44d7"
+    },
+    "g3-c2-t0-resnet18-f1-s2753-dc728952f19f": {
+      "path": "tmp/task2/runs/g3-c2-t0-resnet18-f1-s2753-dc728952f19f/oof.csv",
+      "sha256": "b6bc6b22fd80be261e5d05bfe09c04e0fe67063f9efff23dc3d85dc8a46e1518"
+    },
+    "g3-c2-t0-resnet18-f2-s2753-80377ad03917": {
+      "path": "tmp/task2/runs/g3-c2-t0-resnet18-f2-s2753-80377ad03917/oof.csv",
+      "sha256": "ff5c263882413fc48edf37f1c98bc201062d6a529a9c20c84f4c01f872feb149"
+    },
+    "g3-c2-t0-resnet18-f3-s2753-7e8c480bec75": {
+      "path": "tmp/task2/runs/g3-c2-t0-resnet18-f3-s2753-7e8c480bec75/oof.csv",
+      "sha256": "e3380c4314da6220d8913258d99b7285509586be202088459ba7e822bd72cd2f"
+    },
+    "g3-c2-t0-resnet18-f4-s2753-7b3a3bf2d06e": {
+      "path": "tmp/task2/runs/g3-c2-t0-resnet18-f4-s2753-7b3a3bf2d06e/oof.csv",
+      "sha256": "e11cb70494708af0ca2e8a38d14dec9ad6be2659930fe94e55230c284b47ae81"
+    },
+    "g4-i2-article-type-lambda-0-3-c1-f0-s2753-902fcc852d5f": {
+      "path": "tmp/task2/runs/g4-i2-article-type-lambda-0-3-c1-f0-s2753-902fcc852d5f/oof.csv",
+      "sha256": "0bfd0b41c4db96a94c5f34906b60f17ad70bf5b4ce5ec8c9cbda71bf02b3f4e4"
+    },
+    "g4-i2-article-type-lambda-0-3-c1-f1-s2753-1e4b66c26b12": {
+      "path": "tmp/task2/runs/g4-i2-article-type-lambda-0-3-c1-f1-s2753-1e4b66c26b12/oof.csv",
+      "sha256": "c59eb0fe612c098cdd58a123faf9fc3e550400f1b746c224b5f7be6683a38136"
+    },
+    "g4-i2-article-type-lambda-0-3-c1-f2-s2753-e4b6d5100cf8": {
+      "path": "tmp/task2/runs/g4-i2-article-type-lambda-0-3-c1-f2-s2753-e4b6d5100cf8/oof.csv",
+      "sha256": "cdfcd587bd0dac2fb01f64a552dddb237cfcf75bd7c8e6f418c8c36784fd7e2c"
+    },
+    "g4-i2-article-type-lambda-0-3-c1-f3-s2753-bc2ebf436c6b": {
+      "path": "tmp/task2/runs/g4-i2-article-type-lambda-0-3-c1-f3-s2753-bc2ebf436c6b/oof.csv",
+      "sha256": "e292b846a7980e471a25494013fa80d7fa67c3d01cec5b401bae12875b58d523"
+    },
+    "g4-i2-article-type-lambda-0-3-c1-f4-s2753-8d210d54f01e": {
+      "path": "tmp/task2/runs/g4-i2-article-type-lambda-0-3-c1-f4-s2753-8d210d54f01e/oof.csv",
+      "sha256": "670c8c3c03772b67a1d6083df2f77e6842cdf6dbfd959fc3a34a5b03800d2118"
+    }
+  },
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "robustness_manifest": {
+    "path": "results/evidence/task2/robustness_cost/manifest.json",
+    "sha256": "39c866e9ce255614d88748106db90cecd3e291ade39edbecac91211fccd50f7d"
+  },
+  "runtime_sha256": "51383577bb509b7301199695f86e3f99c40fa5f620abfd92a306b5310acfa65c",
+  "schema_version": "1.0.0",
+  "slice_manifest": {
+    "path": "results/evidence/task2/shortcut_error_slices/manifest.json",
+    "sha256": "df40b6c877304f886c484f4753489cd23d6dbda5cced6a391f2321495234d07c"
+  },
+  "stability_coverage_sha256": "ed465ef619067f114b1c7b442cba2eaec2f43202c55ca06a0c25572a37e554fd",
+  "temporary_calibrated_oof": {
+    "path": "tmp/task2/calibration/calibrated_oof.csv",
+    "row_count": 65506,
+    "rows_per_candidate": {
+      "C2": 32753,
+      "I2": 32753
+    },
+    "sha256": "95adc606dd76279299809bb7e3afbdd10d3f1231eb0dc4f0460473ce0ed4d894"
+  },
+  "ultimate_winner_frozen": false
+}

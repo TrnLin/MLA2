@@ -1,0 +1,56 @@
+{
+  "analysis_id": "g7-ultimate-season-judgement",
+  "calibration": {
+    "app_review_threshold": null,
+    "deployment_temperature_evaluation_claim_allowed": false,
+    "purpose": "future_frozen_bundle_confidence_only",
+    "source": "all_primary_seed_oof_rows"
+  },
+  "candidates": [
+    {
+      "candidate": "C2",
+      "experiment_id_seed_2026": "g5-c2-t0-resnet18-s2026",
+      "experiment_id_seed_2753": "g3-c2-t0-resnet18",
+      "role": "reference"
+    },
+    {
+      "candidate": "I2",
+      "experiment_id_seed_2026": "g5-i2-article-type-lambda-0-3-c1-s2026",
+      "experiment_id_seed_2753": "g4-i2-article-type-lambda-0-3-c1",
+      "role": "challenger"
+    }
+  ],
+  "decision_rules": {
+    "maximum_article_type_conflict_disadvantage": 0.01,
+    "maximum_excess_jpeg_macro_f1_drop": 0.01,
+    "maximum_robustness_disadvantage_for_cost_tie_break": 0.01,
+    "minimum_macro_f1_lead_at_each_seed": 0.0,
+    "practical_tie_threshold_macro_f1": 0.005,
+    "require_both_grouped_bootstrap_intervals_above_zero": true,
+    "require_challenger_above_reference_in_every_robustness_condition": true
+  },
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "primary_metric": "pooled_five_fold_oof_macro_f1",
+  "refit": {
+    "dataset": "all_development_rows_with_valid_season",
+    "epoch_rule": "median_primary_seed_cv_best_epoch",
+    "normalisation_scope": "all_valid_development_content_pixels_only",
+    "seed": 2753,
+    "validation_or_holdout_early_stopping": false
+  },
+  "schema_version": "1.0.0",
+  "stage": "g7_ultimate_judgement_and_pre_holdout_freeze",
+  "target": "season",
+  "warnings": {
+    "analysis_cannot_add_or_retune_candidates": true,
+    "final_model_must_be_scratch_trained": true,
+    "holdout_is_forbidden": true,
+    "pretrained_benchmark_is_not_final_eligible": true,
+    "two_seeds_do_not_cover_all_training_randomness": true
+  }
+}

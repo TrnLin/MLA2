@@ -1,0 +1,4 @@
+scope,selection_rank,size,width,height,pixels,teacher_ndcg_at_10,v1_ndcg_at_10,selection_ndcg_at_10
+development,1,96x128,96,128,12288,0.49409682,0.49086064,0.49247873
+development,2,60x80,60,80,4800,0.49293832,0.49103517,0.49198675
+development,3,240x320,240,320,76800,0.49521342,0.48454184,0.48987763

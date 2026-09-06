@@ -1,0 +1,3 @@
+experiment,family,training_origin,weights,benchmark_only,final_eligible,final_boundary_rejection
+P0S,resnet18_standard_scratch,scratch,,True,False,model is not final-eligible: benchmark_only must be false; final_eligible must be true
+P*,resnet18_standard_pretrained,imagenet_pretrained,ResNet18_Weights.DEFAULT,True,False,model is not final-eligible: benchmark_only must be false; final_eligible must be true

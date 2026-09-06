@@ -1,0 +1,41 @@
+{
+  "candidate_criteria": {
+    "g4-i2-article-type-lambda-0-1-c1": {
+      "auxiliary_weight": 0.1,
+      "observed_conflict_delta": 0.03191706479595868,
+      "observed_overall_delta": 0.01309682802249501,
+      "passes_conflict_gain_with_overall_floor": true,
+      "passes_i2_gate": true,
+      "passes_overall_gain": true
+    },
+    "g4-i2-article-type-lambda-0-3-c1": {
+      "auxiliary_weight": 0.3,
+      "observed_conflict_delta": 0.027597920476744364,
+      "observed_overall_delta": 0.01502563498191345,
+      "passes_conflict_gain_with_overall_floor": true,
+      "passes_i2_gate": true,
+      "passes_overall_gain": true
+    }
+  },
+  "decision_status": "closed",
+  "gate": "G4-I2",
+  "keep_i2": true,
+  "limitations": [
+    "This gate uses the primary seed only.",
+    "ArticleType aligned/conflict is one declared shortcut slice, not proof of causality.",
+    "Current softmax probabilities are not calibrated claims."
+  ],
+  "loss_values_comparable_to_reference": false,
+  "maximum_overall_loss": 0.002,
+  "minimum_conflict_gain": 0.01,
+  "minimum_overall_gain": 0.003,
+  "next_question": "Run the matched pretrained benchmark boundary and the second-seed stability gate, then analyse robustness, cost, calibration, uncertainty, and failures.",
+  "primary_metric": "pooled_five_fold_oof_macro_f1",
+  "reference_experiment_id": "g3-c1-t1-smallcnn",
+  "schema_version": "1.0.0",
+  "selected_experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+  "selection_priority": "Among passing candidates, choose highest pooled Season macro-F1; exact ties choose the lower auxiliary weight.",
+  "shortcut_assignment_sha256": "baf2d961abfc0f763c2e7b786e27d409e84516909dbae8fe7ad4221b5f16ce12",
+  "shortcut_mapping_scope": "four training folds only for each validation fold",
+  "ultimate_winner_frozen": false
+}

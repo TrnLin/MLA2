@@ -1,0 +1,43 @@
+{
+  "analysis_role": "development_oof_fitted_pair_uncertainty_only",
+  "candidate_selection_affected": false,
+  "current_candidate": "I2",
+  "decision_status": "closed",
+  "gate": "G6-PAIRED-BOOTSTRAP",
+  "holdout_opened": false,
+  "interpretation_rule": "Intervals compare I2 minus C2 for two already-fitted seed pairs. They quantify product-family resampling uncertainty, not all training randomness.",
+  "limitations": [
+    "product_family_group is a conservative dependency block, not a verified SKU",
+    "two fixed training seeds cannot measure all optimisation randomness",
+    "percentile intervals describe these fitted development OOF pairs only",
+    "holdout remains sealed and the ultimate winner is not frozen by this gate"
+  ],
+  "new_candidates_allowed": false,
+  "next_question": "Review deterministic Grad-CAM examples and failure taxonomy.",
+  "pair_outcomes": {
+    "primary_interval": {
+      "ci_lower": 0.013049682560195565,
+      "ci_upper": 0.022452866265268545,
+      "confidence_language": "cluster_resampling_supports_a_positive_i2_minus_c2_difference_for_this_fitted_pair",
+      "confidence_level": 0.95,
+      "interval_contains_zero": false,
+      "observed_i2_minus_c2_macro_f1": 0.017651448325659236,
+      "observed_within_practical_tie": false,
+      "seed": 2753
+    },
+    "stability_sensitivity": {
+      "ci_lower": 0.005793207332040884,
+      "ci_upper": 0.01734104393721104,
+      "confidence_language": "cluster_resampling_supports_a_positive_i2_minus_c2_difference_for_this_fitted_pair",
+      "confidence_level": 0.95,
+      "interval_contains_zero": false,
+      "observed_i2_minus_c2_macro_f1": 0.011606670104498784,
+      "observed_within_practical_tie": false,
+      "seed": 2026
+    }
+  },
+  "practical_tie_threshold_macro_f1": 0.005,
+  "random_seed_generalisability_claim_allowed": false,
+  "schema_version": "1.0.0",
+  "ultimate_winner_frozen": false
+}

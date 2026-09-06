@@ -1,0 +1,67 @@
+{
+  "artifacts": {
+    "artifact_audit": {
+      "path": "results/evidence/task2/final_handoff/artifact_audit.csv",
+      "sha256": "f7f8e4832c440380f051e48e677098a4af3ac00b89b358acd17839bdef8bc063"
+    },
+    "inference_smoke": {
+      "path": "results/evidence/task2/final_handoff/inference_smoke.json",
+      "sha256": "0fce1a59598da4bfb2a38c28b2bb906ba871a3f1dbd36c994732e074fd7361bc"
+    },
+    "inference_source": {
+      "path": "src/fashion/task2/inference.py",
+      "sha256": "9c323930b9d645e1984da74266316a1a878f066cc4837dff9b65b9b36e65f03f"
+    },
+    "model_bundle": {
+      "path": "models/task2_season.pt",
+      "sha256": "5927eff73130acedc8015199e1df5a6c6edf64c0b45023ebd91c48d7ed40f93c"
+    },
+    "model_manifest": {
+      "path": "models/task2_season.manifest.json",
+      "sha256": "25d918061dbd9b46501de9aa3671adabf951649862ce9613317983dadbac55d9"
+    },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/final_handoff/registry_snapshot.csv",
+      "sha256": "b6d7b4c43bffaaad75a16bb555ca36d4c2fc42853979a470682373618d34bfc8"
+    },
+    "selection_freeze": {
+      "path": "results/evidence/task2/selection_freeze.json",
+      "sha256": "51475a6e83c3e49e904633e1fa8a7e86bcc5e2f592c81f981561dac9f7cff995"
+    },
+    "ultimate_judgement_manifest": {
+      "path": "results/evidence/task2/ultimate_judgement/manifest.json",
+      "sha256": "cd87705b94219bd07bebb720fb4bd3736b4442afe6f1316c046b4cd98c960ab0"
+    }
+  },
+  "evaluation_claim_allowed": false,
+  "gate": "TASK2-COMPONENT-HANDOFF",
+  "group_freeze_verified": false,
+  "holdout_metrics_present": false,
+  "holdout_opened": false,
+  "inference_inputs": [
+    "image"
+  ],
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "model_change_allowed": false,
+  "next_gate": "whole-group freeze before Notebook 06",
+  "notebook_06_unlocked": false,
+  "review_threshold": null,
+  "run_id": "task2-season-i2-refit-fall-s2753-637dd6378be9",
+  "schema_version": "1.1.0",
+  "selected_candidate": "I2",
+  "selected_experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+  "status": "ready_for_group_freeze",
+  "task2_component_ready": true,
+  "unresolved_risks": [
+    "Two fixed seeds do not cover all optimisation randomness.",
+    "Brightness 0.85 severely damages macro-F1 and Spring recall.",
+    "ArticleType conflict remains difficult despite an average I2 improvement.",
+    "Grad-CAM tags are non-causal review hypotheses, not failure prevalence.",
+    "No app review threshold is justified without a business error cost."
+  ]
+}

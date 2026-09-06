@@ -1,0 +1,40 @@
+{
+  "decision_status": "closed",
+  "families": {
+    "C1": {
+      "best_observed_experiment_id": "g2-t1-c1-smallcnn",
+      "best_observed_gain_over_t0": 0.008173066438469268,
+      "best_observed_macro_f1": 0.7080748795801736,
+      "best_observed_tuning_id": "T1",
+      "gain_gate_passed": true,
+      "minimum_gain": 0.003,
+      "selected_experiment_id": "g2-t1-c1-smallcnn",
+      "selected_learning_rate": 0.001,
+      "selected_macro_f1": 0.7080748795801736,
+      "selected_tuning_id": "T1",
+      "selected_weight_decay": 0.0001,
+      "t0_macro_f1": 0.6999018131417043
+    },
+    "C2": {
+      "best_observed_experiment_id": "g2-t2-c2-resnet18",
+      "best_observed_gain_over_t0": 0.0011463465535955786,
+      "best_observed_macro_f1": 0.7082455882507765,
+      "best_observed_tuning_id": "T2",
+      "gain_gate_passed": false,
+      "minimum_gain": 0.003,
+      "selected_experiment_id": "g1-c2-resnet18",
+      "selected_learning_rate": 0.0003,
+      "selected_macro_f1": 0.707099241697181,
+      "selected_tuning_id": "T0",
+      "selected_weight_decay": 0.0001,
+      "t0_macro_f1": 0.707099241697181
+    }
+  },
+  "gate": "G2-T",
+  "minimum_gain": 0.003,
+  "next_question": "Train C1 and C2 at the full matched budget using each family's selected configuration; do not expand the tuning grid.",
+  "primary_metric": "pooled_five_fold_oof_macro_f1",
+  "retained_transform": "P0/A0",
+  "schema_version": "1.0.0",
+  "selection_rule": "For each family, replace T0 only when the best observed tuning improves pooled OOF macro-F1 by at least 0.003; otherwise retain T0."
+}

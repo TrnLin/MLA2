@@ -1,0 +1,74 @@
+{
+  "artifacts": {
+    "confusion_matrix": {
+      "path": "results/evidence/task2/b1_hog_hsv_svm/confusion_matrix.csv",
+      "sha256": "378c4b1dc99588717262976f773cc5b5bd39e3926952affaf9181439d2c1de2b"
+    },
+    "figure": {
+      "path": "results/figures/task2/b1_hog_hsv_svm.png",
+      "sha256": "6af6220ca11a24a36d12dc789d753b4f4194f96e457dfb7e1cff71e879fee01b"
+    },
+    "fold_metrics": {
+      "path": "results/evidence/task2/b1_hog_hsv_svm/fold_metrics.csv",
+      "sha256": "63d43cac7fc30afe2cddd65c0706f35c248c43c89a1758a39000f531e4402d53"
+    },
+    "fold_summary": {
+      "path": "results/evidence/task2/b1_hog_hsv_svm/fold_summary.csv",
+      "sha256": "e5d923acadbfbac3fe278670e4e90831c7534b4b2a7247c7e3f22ff8c35c63ce"
+    },
+    "per_class_metrics": {
+      "path": "results/evidence/task2/b1_hog_hsv_svm/per_class_metrics.csv",
+      "sha256": "c7081703c2e0d96f1dc35adf1969f931c5e5a72d0be08617c0d5e885d6d3cd6d"
+    },
+    "pooled_metrics": {
+      "path": "results/evidence/task2/b1_hog_hsv_svm/pooled_metrics.json",
+      "sha256": "aca27404a42ca4529a44b41365d44260399d3e77d84741e4818b06fbefa78c09"
+    },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/b1_hog_hsv_svm/registry_snapshot.csv",
+      "sha256": "de44eb3489dad786f17c89fc57c6b727b7d69b1f48284d262bc5a49ec77fa5a4"
+    }
+  },
+  "calibration_claim_allowed": false,
+  "coverage": {
+    "expected_row_count": 32753,
+    "id_set_sha256": "7e278f240c9be8e59b9bf070866f725c71906f73ce910be49a752daf3e2c5b85",
+    "labels": [
+      "Fall",
+      "Spring",
+      "Summer",
+      "Winter"
+    ],
+    "probability_sum_tolerance": 1e-05,
+    "protected_id_count": 0,
+    "row_count": 32753,
+    "unique_id_count": 32753
+  },
+  "experiment_id": "b1-hog-hsv-svm",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "oof_artifact_set_sha256": "ade0c3bfc58543930a5fbeaee6d498ff8bc72d8a02127634c7c8cf3a41c0717d",
+  "pooled_macro_f1": 0.6095612606010009,
+  "probability_note": "LinearSVC decision scores are transformed with row-wise softmax only to satisfy a common OOF storage schema. They are not calibrated probabilities, so B1 NLL, Brier, and ECE are descriptive diagnostics only and cannot support calibration claims.",
+  "run_ids": [
+    "b1-hog-hsv-svm-f0-s2753-b23d1eafe35f",
+    "b1-hog-hsv-svm-f1-s2753-5735c51cc237",
+    "b1-hog-hsv-svm-f2-s2753-3f214f6a2bd4",
+    "b1-hog-hsv-svm-f3-s2753-83fd8ce0b942",
+    "b1-hog-hsv-svm-f4-s2753-45b2e5123926"
+  ],
+  "schema_version": "1.0.0",
+  "seed": 2753,
+  "sources": [
+    "cache",
+    "cache",
+    "cache",
+    "cache",
+    "cache"
+  ]
+}

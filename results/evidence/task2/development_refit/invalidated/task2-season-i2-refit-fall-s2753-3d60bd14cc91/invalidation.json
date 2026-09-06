@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "status": "invalidated_before_holdout",
+  "run_id": "task2-season-i2-refit-fall-s2753-3d60bd14cc91",
+  "holdout_opened": false,
+  "selection_changed": false,
+  "replacement_required": true,
+  "reason": "A post-run integrity review found that the original refit contract completed the registry row before manifest verification, did not bind load mode to the registry, lacked an exclusive artifact lock and transactional publication, omitted selected I2 dependencies from the implementation hash, and accepted non-finite values and integer boolean substitutes.",
+  "fix_commits": [
+    "c32f84a",
+    "9228608",
+    "0d0c6eb",
+    "24e8f8f",
+    "88959cd",
+    "6629d78"
+  ],
+  "artifacts": {
+    "manifest": {
+      "path": "results/evidence/task2/development_refit/invalidated/task2-season-i2-refit-fall-s2753-3d60bd14cc91/task2_season.manifest.json",
+      "sha256": "16d56c1c7f5815fe4f5d699923334ac979a94a0735a943ec946cfcd79375370d"
+    },
+    "history": {
+      "path": "results/evidence/task2/development_refit/invalidated/task2-season-i2-refit-fall-s2753-3d60bd14cc91/training_history.csv",
+      "sha256": "b9f745260db04f7d28cad11c6a591869acd6ecb62b81e081a664cfcea2255978"
+    },
+    "runtime": {
+      "path": "results/evidence/task2/development_refit/invalidated/task2-season-i2-refit-fall-s2753-3d60bd14cc91/runtime.json",
+      "sha256": "63695aa436fa9682ebe7231c6282112edb885710846f72fc564c763a28fb9d7e"
+    },
+    "ignored_binary_archive": {
+      "path": "tmp/task2/development_refit/invalidated/task2-season-i2-refit-fall-s2753-3d60bd14cc91/task2_season.pt",
+      "sha256": "82e0ca0b15f8d6e7be36cdf26312b652eaf65221aec11ceb976b5e1dedcbd9d8"
+    }
+  }
+}

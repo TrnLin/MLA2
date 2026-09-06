@@ -1,0 +1,74 @@
+{
+  "artifacts": {
+    "confusion_matrix": {
+      "path": "results/evidence/task2/g4_pstar_resnet18_standard_pretrained/confusion_matrix.csv",
+      "sha256": "3e904bb63f5c1b68f50ecd7f11fc2efbd10b91177e9b7db962c832450a16523a"
+    },
+    "figure": {
+      "path": "results/figures/task2/g4_pstar_resnet18_standard_pretrained.png",
+      "sha256": "baf83505dcc0b1bb01486b7c4dc4af32fdec6f6b277fff0ecfa1a98cad2db5e3"
+    },
+    "fold_metrics": {
+      "path": "results/evidence/task2/g4_pstar_resnet18_standard_pretrained/fold_metrics.csv",
+      "sha256": "f0c3c341038546b11c2f2ccd0ad3993ae8eb970402a453c83aa5f7707f1dfd16"
+    },
+    "fold_summary": {
+      "path": "results/evidence/task2/g4_pstar_resnet18_standard_pretrained/fold_summary.csv",
+      "sha256": "240a08b7a084b314649663f1698e70f7b56a10f5bb6970ac77d0afeb5ead5c05"
+    },
+    "per_class_metrics": {
+      "path": "results/evidence/task2/g4_pstar_resnet18_standard_pretrained/per_class_metrics.csv",
+      "sha256": "fd8de980d35a1cec987040e28c7d4b9265f8b57506980861232292a786a3a3f6"
+    },
+    "pooled_metrics": {
+      "path": "results/evidence/task2/g4_pstar_resnet18_standard_pretrained/pooled_metrics.json",
+      "sha256": "a38124022d9d8196ba4bd533ee487dc8f652acfbba6cb81f3f6216aea4f9b6cc"
+    },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/g4_pstar_resnet18_standard_pretrained/registry_snapshot.csv",
+      "sha256": "0b3ede54d320e52f8752b49d24b2eee1ab842f37df651d81b248c3727b2a41d3"
+    }
+  },
+  "calibration_claim_allowed": false,
+  "coverage": {
+    "expected_row_count": 32753,
+    "id_set_sha256": "7e278f240c9be8e59b9bf070866f725c71906f73ce910be49a752daf3e2c5b85",
+    "labels": [
+      "Fall",
+      "Spring",
+      "Summer",
+      "Winter"
+    ],
+    "probability_sum_tolerance": 1e-05,
+    "protected_id_count": 0,
+    "row_count": 32753,
+    "unique_id_count": 32753
+  },
+  "experiment_id": "g4-pstar-resnet18-standard-pretrained",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "oof_artifact_set_sha256": "ff2576702068b121e4f4ead875e79072050282edd9951d6b6b5ad2c266df228e",
+  "pooled_macro_f1": 0.7541959084510115,
+  "probability_note": "Uncalibrated softmax probabilities from the checkpoint selected by validation Season macro-F1.",
+  "run_ids": [
+    "g4-pstar-resnet18-standard-pretrained-f0-s2753-ebc35155ebef",
+    "g4-pstar-resnet18-standard-pretrained-f1-s2753-4dbe35f09578",
+    "g4-pstar-resnet18-standard-pretrained-f2-s2753-b993d8bed527",
+    "g4-pstar-resnet18-standard-pretrained-f3-s2753-b0be15ef56bd",
+    "g4-pstar-resnet18-standard-pretrained-f4-s2753-a15e79285ae2"
+  ],
+  "schema_version": "1.0.0",
+  "seed": 2753,
+  "sources": [
+    "cache",
+    "cache",
+    "cache",
+    "cache",
+    "cache"
+  ]
+}

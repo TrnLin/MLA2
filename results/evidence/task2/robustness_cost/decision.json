@@ -1,0 +1,65 @@
+{
+  "analysis_role": "development_stress_and_machine_cost_diagnosis_only",
+  "candidate_selection_affected": false,
+  "current_candidate": "I2",
+  "decision_status": "closed",
+  "deployment_cost_by_device": {
+    "cpu": {
+      "c2_end_to_end_median_ms": 47.35655,
+      "c2_model_only_median_ms": 47.9758,
+      "i2_end_to_end_median_ms": 6.4925999999999995,
+      "i2_model_only_median_ms": 6.5470500000000005,
+      "i2_to_c2_model_only_latency_ratio": 0.1364656764452078
+    },
+    "cuda": {
+      "c2_end_to_end_median_ms": 3.0523,
+      "c2_model_only_median_ms": 2.24615,
+      "i2_end_to_end_median_ms": 1.8820999999999999,
+      "i2_model_only_median_ms": 1.3124,
+      "i2_to_c2_model_only_latency_ratio": 0.5842886717271776
+    }
+  },
+  "gate": "G6-ROBUSTNESS-COST",
+  "i2_above_c2_in_every_condition": true,
+  "i2_minus_c2_macro_f1_by_condition": {
+    "brightness_0_85": 0.026418923075912204,
+    "brightness_1_15": 0.06457048351508987,
+    "clean": 0.017651448325659236,
+    "gaussian_blur_radius_1": 0.031723680466581805,
+    "jpeg_quality_85": 0.007827191473137707
+  },
+  "interpretation_rule": "Controlled perturbations and machine cost can weaken a deployment claim, but this post-modelling analysis cannot reopen G5 model selection.",
+  "limitations": [
+    "Perturbations are synthetic and do not cover every real acquisition shift.",
+    "Latency and process memory are specific to the recorded machine and warm cache.",
+    "Only the primary seed is probed because random-seed ordering was tested in G5.",
+    "Softmax confidence remains uncalibrated until the calibration gate."
+  ],
+  "material_condition_count_by_candidate": {
+    "C2": 4,
+    "I2": 4
+  },
+  "material_macro_f1_degradation_threshold": 0.01,
+  "model_size": {
+    "c2_parameter_and_buffer_bytes": 44722096,
+    "i2_parameter_and_buffer_bytes": 4832192,
+    "i2_to_c2_parameter_and_buffer_ratio": 0.10804931861869801
+  },
+  "next_question": "Run cross-fitted calibration and paired grouped bootstrap.",
+  "schema_version": "1.0.0",
+  "ultimate_winner_frozen": false,
+  "worst_condition_by_candidate": {
+    "C2": {
+      "condition": "brightness_0_85",
+      "delta_macro_f1_vs_clean": -0.39749338695986663,
+      "macro_f1": 0.3375421206725712,
+      "prediction_agreement_with_clean": 0.5126247977284524
+    },
+    "I2": {
+      "condition": "brightness_0_85",
+      "delta_macro_f1_vs_clean": -0.38872591220961367,
+      "macro_f1": 0.3639610437484834,
+      "prediction_agreement_with_clean": 0.6141116844258541
+    }
+  }
+}

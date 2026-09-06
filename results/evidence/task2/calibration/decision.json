@@ -1,0 +1,97 @@
+{
+  "analysis_role": "development_oof_cross_fitted_calibration_only",
+  "app_threshold_frozen": false,
+  "candidate_selection_affected": false,
+  "cross_fitted_evaluation_claim_allowed": true,
+  "current_candidate": "I2",
+  "decision_status": "closed",
+  "deployment_temperature_evaluation_claim_allowed": false,
+  "diagnostic_review_budget_20_percent": {
+    "C2": {
+      "actual_review_rate": 0.19998168106738312,
+      "automatic_coverage": 0.8000183189326169,
+      "declared_review_budget": 0.2,
+      "selective_macro_f1": 0.8080077434398591,
+      "selective_risk": 0.18921497538449794
+    },
+    "I2": {
+      "actual_review_rate": 0.19998168106738312,
+      "automatic_coverage": 0.8000183189326169,
+      "declared_review_budget": 0.2,
+      "selective_macro_f1": 0.8258374711330957,
+      "selective_risk": 0.1728428042590543
+    }
+  },
+  "gate": "G6-CALIBRATION",
+  "interpretation_rule": "Only five-fold cross-fitted temperatures support evaluation claims. The scalar fit on all OOF rows is future bundle metadata and is not evaluation evidence.",
+  "limitations": [
+    "Temperature scaling changes confidence but cannot improve class predictions.",
+    "Different held-out folds use different fitted temperatures, so global row-confidence ordering can change across folds.",
+    "Calibration is measured only on development OOF predictions; holdout remains sealed."
+  ],
+  "next_question": "Estimate the paired grouped-bootstrap uncertainty between C2 and I2.",
+  "probability_quality_by_candidate": {
+    "C2": {
+      "brier_improved": true,
+      "cross_fitted_temperature_max": 1.4318841417365549,
+      "cross_fitted_temperature_min": 1.3396423619094666,
+      "ece_improved": true,
+      "nll_improved": true,
+      "probability_metrics": {
+        "brier": {
+          "before": 0.35609205067323857,
+          "cross_fitted": 0.35119861049203477,
+          "delta": -0.004893440181203801
+        },
+        "ece": {
+          "before": 0.05745613293349274,
+          "cross_fitted": 0.011700832522451732,
+          "delta": -0.045755300411041006
+        },
+        "mean_confidence": {
+          "before": 0.8034046236691219,
+          "cross_fitted": 0.7421756157209388,
+          "delta": -0.06122900794818309
+        },
+        "nll": {
+          "before": 0.6657363015120032,
+          "cross_fitted": 0.6388672076756515,
+          "delta": -0.02686909383635172
+        }
+      }
+    },
+    "I2": {
+      "brier_improved": true,
+      "cross_fitted_temperature_max": 1.4103618319693676,
+      "cross_fitted_temperature_min": 1.326886355692937,
+      "ece_improved": true,
+      "nll_improved": true,
+      "probability_metrics": {
+        "brier": {
+          "before": 0.3378159786332474,
+          "cross_fitted": 0.33475322373745403,
+          "delta": -0.0030627548957933848
+        },
+        "ece": {
+          "before": 0.04621036584387822,
+          "cross_fitted": 0.01676666144628276,
+          "delta": -0.02944370439759546
+        },
+        "mean_confidence": {
+          "before": 0.8078132851061645,
+          "cross_fitted": 0.7507222640574551,
+          "delta": -0.057091021048709334
+        },
+        "nll": {
+          "before": 0.6324668801797197,
+          "cross_fitted": 0.6082414505776006,
+          "delta": -0.024225429602119153
+        }
+      }
+    }
+  },
+  "review_policy": "Risk-coverage is diagnostic only; no confidence threshold is frozen without an explicit business error cost.",
+  "schema_version": "1.0.0",
+  "temperature_scaling_preserved_class_predictions": true,
+  "ultimate_winner_frozen": false
+}

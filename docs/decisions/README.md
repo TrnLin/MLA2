@@ -12,6 +12,8 @@ processing, evaluation, or the app.
 5. Explain the choice and its trade-offs.
 
 Use names like `0001-short-decision-name.md`.
+Some historical Task 3 and Task 4 records share a number. Use their full
+filenames to identify them; keep their original numbers and evidence links.
 
 Do not silently rewrite an accepted decision. If it changes, write a new record,
 mark the old one as superseded, and link both records.
@@ -34,6 +36,10 @@ mark the old one as superseded, and link both records.
   fill reviewed type/photo gaps while preserving class totals and retained rows/folds.
 - [0022-task3-usage-e1-final-model.md](0022-task3-usage-e1-final-model.md) — freeze the five
   teacher-only E1 Usage checkpoints and equal probability average; record rare-class failures.
+- `0018-task4-v1-image-variant.md`
+- `0019-task4-retrieval-evaluation.md`
+- `0021-task4-high-resolution-input.md`
+- `0022-task4-baseline-search.md`
 
 ## Superseded decisions
 
@@ -56,7 +62,11 @@ mark the old one as superseded, and link both records.
 - `0012-protected-target-runtime-boundary.md` — partition wording superseded by 0014;
   the protected runtime boundary remains active.
 - `0009-task4-retrieval-isolation.md` — the fixed shared query/gallery and image-variant protocol is
-  superseded by 0015; the rule against retrieval self-match leakage remains active.
+  superseded by 0015; stale fixed query counts and retired validation-split details are superseded
+  by 0019, while baseline fusion and measured operating details are frozen by 0022. The rule
+  against retrieval self-match leakage remains active.
+- `0020-task4-image-preprocessing.md` — size choice superseded by 0021; the
+  transform and leakage-safe normalization rules remain active.
 
 ## Proposed decisions and open gates
 

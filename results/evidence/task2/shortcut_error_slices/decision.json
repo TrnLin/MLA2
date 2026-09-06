@@ -1,0 +1,72 @@
+{
+  "adequately_supported_i2_below_c2_slice_count": 1,
+  "analysis_role": "development_oof_diagnosis_only",
+  "candidate_selection_affected": false,
+  "confidence_warning": "Confidence is raw softmax confidence. Calibration is still pending, so it is used to rank errors only and is not a deployment probability claim.",
+  "current_candidate": "I2",
+  "decision_status": "closed",
+  "evaluated_candidate_seed_pairs": 4,
+  "finite_candidate_slice_comparisons": 26,
+  "gate": "G6-SLICE",
+  "i2_below_c2_slice_count": 2,
+  "interpretation_rule": "Slices diagnose where frozen models fail. They do not create a new selection rule after results are visible and therefore cannot change the G5 candidate.",
+  "low_support_i2_below_c2_slice_count": 1,
+  "low_support_threshold": 100,
+  "metadata_boundary": "Year, file size, product-family size, and image mode are joined after OOF prediction and are never inference features.",
+  "next_question": "Probe robustness and deployment cost before calibration, grouped bootstrap, and deterministic Grad-CAM.",
+  "schema_version": "1.0.0",
+  "slice_delta_sign_reversals_between_seeds": 2,
+  "spring_deltas_by_seed": {
+    "2026": {
+      "i2_minus_c2_f1": 0.006425707702769956,
+      "i2_minus_c2_recall": 0.0022573363431150906
+    },
+    "2753": {
+      "i2_minus_c2_f1": 0.01723751541472096,
+      "i2_minus_c2_recall": 0.016553799849510997
+    }
+  },
+  "ultimate_winner_frozen": false,
+  "worst_i2_minus_c2_slice_rows": [
+    {
+      "i2_minus_c2_macro_f1": -0.11904761904761907,
+      "low_support": true,
+      "seed": 2026,
+      "slice_family": "article_type_shortcut",
+      "slice_name": "unseen_article_type",
+      "support": 19
+    },
+    {
+      "i2_minus_c2_macro_f1": -0.045315025124719965,
+      "low_support": false,
+      "seed": 2753,
+      "slice_family": "image_mode",
+      "slice_name": "greyscale",
+      "support": 294
+    },
+    {
+      "i2_minus_c2_macro_f1": 0.00219784582365834,
+      "low_support": false,
+      "seed": 2026,
+      "slice_family": "acquisition_year",
+      "slice_name": "other_years",
+      "support": 9857
+    },
+    {
+      "i2_minus_c2_macro_f1": 0.005948726710687913,
+      "low_support": false,
+      "seed": 2026,
+      "slice_family": "file_size_quartile",
+      "slice_name": "q2",
+      "support": 8192
+    },
+    {
+      "i2_minus_c2_macro_f1": 0.007714394240539435,
+      "low_support": false,
+      "seed": 2026,
+      "slice_family": "file_size_quartile",
+      "slice_name": "q3",
+      "support": 8181
+    }
+  ]
+}

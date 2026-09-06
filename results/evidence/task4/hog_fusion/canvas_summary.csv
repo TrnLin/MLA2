@@ -1,0 +1,4 @@
+scope,fold,method,descriptor_fingerprint,size,query_source,gallery_source,query_variant,queries,ndcg_at_10,ndcg_change_from_clean,mean_top10_overlap
+development,1,hog-plus-spatial-hsv-edge-equal-v1,beddc2defcc98515aab246abd33dd1810b93c84c82f34cf7481af85cde59ffc6,240x320,v1,v1,clean,6556,0.50025080,0.00000000,1.00000000
+development,1,hog-plus-spatial-hsv-edge-equal-v1,beddc2defcc98515aab246abd33dd1810b93c84c82f34cf7481af85cde59ffc6,240x320,v1,v1,wide,6556,0.03295267,-0.46729813,0.00575046
+development,1,hog-plus-spatial-hsv-edge-equal-v1,beddc2defcc98515aab246abd33dd1810b93c84c82f34cf7481af85cde59ffc6,240x320,v1,v1,tall,6556,0.17080345,-0.32944735,0.02597621

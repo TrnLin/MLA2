@@ -1,0 +1,5 @@
+config_id,gate,image_size,augmentation,transform_id,model_family,seed,folds,screen_epochs,eligibility
+P0_A0,input-size,"(80, 60)",a0,a0-7dba8a62f166046d,resnet18_small_stem,2753,"0,1,2,3,4",8,always
+P1_A0,input-size,"(128, 96)",a0,a0-a8878a801aa0d46e,resnet18_small_stem,2753,"0,1,2,3,4",8,always
+P0_A1,augmentation,"(80, 60)",a1,a1-fe8cc596054e42b2,resnet18_small_stem,2753,"0,1,2,3,4",8,only if P0_A0 wins size gate
+P1_A1,augmentation,"(128, 96)",a1,a1-f127f22d8b93e7f0,resnet18_small_stem,2753,"0,1,2,3,4",8,only if P1_A0 wins size gate

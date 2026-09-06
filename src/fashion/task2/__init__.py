@@ -1,0 +1,137 @@
+"""Season-classification baselines, experiments, evidence, and inference."""
+
+from fashion.task2.baselines import (
+    MajorityBaselineModel,
+    MajorityFoldResult,
+    evaluate_majority_fold,
+    fit_training_fold_majority,
+)
+from fashion.task2.classical import (
+    HogHsvFoldResult,
+    HogHsvSpec,
+    HogHsvSvmModel,
+    clear_hog_hsv_feature_cache,
+    evaluate_hog_hsv_svm_fold,
+    extract_hog_hsv,
+    fit_hog_hsv_svm,
+)
+from fashion.task2.evidence import (
+    build_experiment_evidence,
+    build_file_impact_edges,
+    build_g0_evidence,
+    build_g1_family_screen_evidence,
+    build_g2_augmentation_evidence,
+    build_g2_input_size_evidence,
+    build_g2_tuning_evidence,
+    build_g3_full_budget_evidence,
+    build_task2_evidence,
+    build_task2_selection_story_evidence,
+    plot_file_impact_flow,
+    validate_file_impact_edges,
+)
+from fashion.task2.experiments import (
+    ExperimentConfig,
+    ExperimentFoldOutput,
+    load_experiment_config,
+    run_matrix,
+    run_or_load_experiment,
+)
+from fashion.task2.handoff import (
+    audit_task2_artifacts,
+    build_task2_handoff_evidence,
+    load_verified_task2_handoff,
+)
+from fashion.task2.inference import (
+    InvalidSeasonImageError,
+    SeasonBundle,
+    SeasonPrediction,
+    load_season_bundle,
+    predict_manifest,
+    predict_season,
+)
+from fashion.task2.pretraining import (
+    run_pretraining_matrix,
+    validate_pretraining_config,
+    validate_pretraining_pair,
+)
+from fashion.task2.pretraining_evidence import build_pretraining_benchmark_evidence
+from fashion.task2.refit import (
+    RefitOutcome,
+    load_verified_development_refit_manifest,
+    run_or_load_development_refit,
+)
+from fashion.task2.smoke import (
+    G0SmokeConfig,
+    G0SmokeResult,
+    SmokeGateError,
+    load_g0_config,
+    run_or_load_g0_smoke,
+    select_balanced_smoke_rows,
+)
+from fashion.task2.ultimate_judgement import (
+    apply_ultimate_judgement,
+    build_candidate_scorecard,
+    build_ultimate_judgement_evidence,
+    load_ultimate_judgement_spec,
+    load_verified_selection_freeze,
+    load_verified_ultimate_judgement_manifest,
+)
+
+__all__ = [
+    "MajorityBaselineModel",
+    "MajorityFoldResult",
+    "evaluate_majority_fold",
+    "evaluate_hog_hsv_svm_fold",
+    "extract_hog_hsv",
+    "ExperimentConfig",
+    "ExperimentFoldOutput",
+    "G0SmokeConfig",
+    "G0SmokeResult",
+    "fit_training_fold_majority",
+    "fit_hog_hsv_svm",
+    "clear_hog_hsv_feature_cache",
+    "build_experiment_evidence",
+    "build_file_impact_edges",
+    "build_g1_family_screen_evidence",
+    "build_g2_augmentation_evidence",
+    "build_g2_input_size_evidence",
+    "build_g2_tuning_evidence",
+    "build_g3_full_budget_evidence",
+    "build_pretraining_benchmark_evidence",
+    "build_task2_selection_story_evidence",
+    "build_g0_evidence",
+    "build_task2_evidence",
+    "build_candidate_scorecard",
+    "build_ultimate_judgement_evidence",
+    "HogHsvFoldResult",
+    "HogHsvSpec",
+    "HogHsvSvmModel",
+    "InvalidSeasonImageError",
+    "audit_task2_artifacts",
+    "build_task2_handoff_evidence",
+    "load_experiment_config",
+    "load_season_bundle",
+    "load_verified_task2_handoff",
+    "load_ultimate_judgement_spec",
+    "load_verified_selection_freeze",
+    "load_verified_ultimate_judgement_manifest",
+    "plot_file_impact_flow",
+    "predict_manifest",
+    "predict_season",
+    "run_matrix",
+    "run_or_load_experiment",
+    "run_or_load_development_refit",
+    "run_pretraining_matrix",
+    "run_or_load_g0_smoke",
+    "select_balanced_smoke_rows",
+    "SeasonBundle",
+    "SeasonPrediction",
+    "SmokeGateError",
+    "RefitOutcome",
+    "load_g0_config",
+    "load_verified_development_refit_manifest",
+    "validate_file_impact_edges",
+    "validate_pretraining_config",
+    "validate_pretraining_pair",
+    "apply_ultimate_judgement",
+]

@@ -1,0 +1,74 @@
+{
+  "artifacts": {
+    "confusion_matrix": {
+      "path": "results/evidence/task2/g5_i2_article_type_lambda_0_3_c1_s2026/confusion_matrix.csv",
+      "sha256": "a57d783ec0a7606409657bd9e4811e82a319e0e90d40b4e41a386bc50fadbcb6"
+    },
+    "figure": {
+      "path": "results/figures/task2/g5_i2_article_type_lambda_0_3_c1_s2026.png",
+      "sha256": "c89cc64af082950534549b5a375a713606b4bbac502e072d901aff68409449f8"
+    },
+    "fold_metrics": {
+      "path": "results/evidence/task2/g5_i2_article_type_lambda_0_3_c1_s2026/fold_metrics.csv",
+      "sha256": "2a5c1bb1b3aa2158dea33cfbda6655d3d42bc55db0eec05e509a87621eba67a7"
+    },
+    "fold_summary": {
+      "path": "results/evidence/task2/g5_i2_article_type_lambda_0_3_c1_s2026/fold_summary.csv",
+      "sha256": "eeec76135a0f13f15b74622510fd2d40e762acced9919da689834b1ef0479ff7"
+    },
+    "per_class_metrics": {
+      "path": "results/evidence/task2/g5_i2_article_type_lambda_0_3_c1_s2026/per_class_metrics.csv",
+      "sha256": "2e1e31134efa13c408acb7cc88d39727e0c42ae86219526ba431b398d0c244a3"
+    },
+    "pooled_metrics": {
+      "path": "results/evidence/task2/g5_i2_article_type_lambda_0_3_c1_s2026/pooled_metrics.json",
+      "sha256": "85dfceaebdf5de7b59d08d89dbcbf7c9d01976f596fc65e9d98cd67d9316e308"
+    },
+    "registry_snapshot": {
+      "path": "results/evidence/task2/g5_i2_article_type_lambda_0_3_c1_s2026/registry_snapshot.csv",
+      "sha256": "ee31e72188f3aa4c6451a8db67a560548d32098b91422b78caa1946c6fecaa8f"
+    }
+  },
+  "calibration_claim_allowed": false,
+  "coverage": {
+    "expected_row_count": 32753,
+    "id_set_sha256": "7e278f240c9be8e59b9bf070866f725c71906f73ce910be49a752daf3e2c5b85",
+    "labels": [
+      "Fall",
+      "Spring",
+      "Summer",
+      "Winter"
+    ],
+    "probability_sum_tolerance": 1e-05,
+    "protected_id_count": 0,
+    "row_count": 32753,
+    "unique_id_count": 32753
+  },
+  "experiment_id": "g5-i2-article-type-lambda-0-3-c1-s2026",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "oof_artifact_set_sha256": "ac482e3431affb01cb70668288f918e75a0e522d446a2e19d7b438f42b36100e",
+  "pooled_macro_f1": 0.7447434490683583,
+  "probability_note": "Uncalibrated softmax probabilities from the best validation Season macro-F1 checkpoint; ArticleType is training-only.",
+  "run_ids": [
+    "g5-i2-article-type-lambda-0-3-c1-s2026-f0-s2026-af9e3079222a",
+    "g5-i2-article-type-lambda-0-3-c1-s2026-f1-s2026-468c5970b6da",
+    "g5-i2-article-type-lambda-0-3-c1-s2026-f2-s2026-e3a99b99e40e",
+    "g5-i2-article-type-lambda-0-3-c1-s2026-f3-s2026-6b9c1de81133",
+    "g5-i2-article-type-lambda-0-3-c1-s2026-f4-s2026-67a70e52f92f"
+  ],
+  "schema_version": "1.0.0",
+  "seed": 2026,
+  "sources": [
+    "cache",
+    "cache",
+    "cache",
+    "cache",
+    "cache"
+  ]
+}

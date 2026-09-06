@@ -1,0 +1,43 @@
+{
+  "common_five_fold_horizon": 11,
+  "criteria": {
+    "macro_f1_loss": {
+      "maximum_loss": 0.002,
+      "observed_delta": -0.03619064498618507,
+      "passed": false
+    },
+    "other_class_f1_loss": {
+      "maximum_loss": 0.02,
+      "observed_delta": -0.06073843711240623,
+      "passed": false,
+      "worst_label": "Fall"
+    },
+    "spring_f1_gain": {
+      "minimum": 0.01,
+      "observed": -0.04253641107201611,
+      "passed": false
+    }
+  },
+  "decision_status": "closed",
+  "gate": "G4-I1",
+  "intervention_experiment_id": "g4-i1-effective-number-c1",
+  "keep_i1": false,
+  "limitations": [
+    "No second-seed stability result exists yet.",
+    "I1 tests class weighting only; it does not isolate ArticleType shortcuts.",
+    "Current softmax probabilities are not calibrated claims."
+  ],
+  "loss_note": "I1 uses fold-specific weighted cross-entropy, so compare OOF macro-F1 and per-class metrics rather than numeric loss levels against G3-C1.",
+  "loss_values_comparable_to_reference": false,
+  "next_question": "Test masked ArticleType multi-task learning, then close stability, robustness, cost, and grouped-bootstrap gates.",
+  "observed_i1_minus_reference_macro_f1": -0.03619064498618507,
+  "observed_i1_minus_reference_spring_f1": -0.04253641107201611,
+  "observed_worst_other_class": "Fall",
+  "observed_worst_other_class_f1_delta": -0.06073843711240623,
+  "primary_metric": "pooled_five_fold_oof_macro_f1",
+  "reference_experiment_id": "g3-c1-t1-smallcnn",
+  "schema_version": "1.0.0",
+  "selected_experiment_id": "g3-c1-t1-smallcnn",
+  "targeted_class": "Spring",
+  "ultimate_winner_frozen": false
+}

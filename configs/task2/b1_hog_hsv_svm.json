@@ -1,0 +1,41 @@
+{
+  "experiment_id": "b1-hog-hsv-svm",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "hog_hsv": {
+    "hog_cells_per_block": [
+      2,
+      2
+    ],
+    "hog_orientations": 9,
+    "hog_pixels_per_cell": [
+      8,
+      8
+    ],
+    "hsv_bins": [
+      18,
+      8,
+      8
+    ],
+    "image_size": [
+      80,
+      60
+    ],
+    "max_iterations": 5000,
+    "svm_c": 1.0
+  },
+  "loss_id": "linear_svc_hinge_unweighted",
+  "method": "hog_hsv_svm",
+  "model_family": "hog_hsv_svm",
+  "schema_version": "1.0.0",
+  "seeds": [
+    2753
+  ],
+  "stage": "b1_baseline",
+  "target": "season"
+}

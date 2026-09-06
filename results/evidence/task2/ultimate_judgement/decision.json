@@ -1,0 +1,60 @@
+{
+  "analysis_role": "development_evidence_model_selection_and_pre_holdout_freeze",
+  "article_type_conflict_i2_minus_c2_macro_f1": {
+    "2026": 0.026993478939453197,
+    "2753": 0.024829569715690003
+  },
+  "bootstrap_intervals": {
+    "2026": {
+      "ci_lower": 0.0057932073320408,
+      "ci_upper": 0.017341043937211,
+      "interval_contains_zero": false,
+      "observed_delta": 0.0116066701044987,
+      "replicates": 10000
+    },
+    "2753": {
+      "ci_lower": 0.0130496825601955,
+      "ci_upper": 0.0224528662652685,
+      "interval_contains_zero": false,
+      "observed_delta": 0.0176514483256592,
+      "replicates": 10000
+    }
+  },
+  "candidate_selection_affected": true,
+  "challenger_candidate": "I2",
+  "challenger_faster_on_cpu": true,
+  "challenger_smaller": true,
+  "claim_boundary": "The judgement covers two fixed training seeds and development OOF evidence; it does not prove superiority under every random start or real-world shift.",
+  "cost_tie_break_safety_passed": true,
+  "cost_tie_break_used": false,
+  "decision_recorded_at_utc": "2026-08-30T14:27:44Z",
+  "decision_status": "closed",
+  "decision_summary": "Select I2 because it leads C2 at both seeds, both grouped-bootstrap intervals remain above zero, declared shortcut and JPEG guards pass, and I2 remains above C2 in every robustness condition. The cost tie-break was not needed; I2 is also smaller and faster.",
+  "direct_selection_rule_passed": true,
+  "gate": "G7-ULTIMATE-JUDGEMENT",
+  "holdout_metrics_present": false,
+  "holdout_opened": false,
+  "i2_above_c2_in_every_robustness_condition": true,
+  "i2_excess_jpeg_macro_f1_drop": 0.009824256852521529,
+  "near_tie_rule_triggered": false,
+  "observed_i2_minus_c2_macro_f1": {
+    "2026": 0.011606670104498784,
+    "2753": 0.017651448325659236
+  },
+  "primary_metric": "pooled_five_fold_oof_macro_f1",
+  "reference_candidate": "C2",
+  "schema_version": "1.0.0",
+  "selected_candidate": "I2",
+  "selected_experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+  "selection_checks": {
+    "above_reference_in_every_robustness_condition": true,
+    "article_type_conflict_guard": true,
+    "both_grouped_bootstrap_intervals_above_zero": true,
+    "jpeg_drop_guard": true,
+    "primary_seed_macro_f1_lead": true,
+    "stability_seed_macro_f1_lead": true
+  },
+  "strongest_limitation": "Brightness 0.85 remains a severe shift: the selected model's Spring recall falls to 0.003010.",
+  "ultimate_winner_frozen": true,
+  "worst_i2_robustness_disadvantage": 0.0
+}

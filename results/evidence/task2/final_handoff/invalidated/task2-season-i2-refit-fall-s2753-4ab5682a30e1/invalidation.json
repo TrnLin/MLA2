@@ -1,0 +1,27 @@
+{
+  "schema_version": "task2-handoff-invalidation-v1",
+  "status": "invalidated",
+  "run_id": "task2-season-i2-refit-fall-s2753-4ab5682a30e1",
+  "invalidated_at_utc": "2026-08-31T04:43:37Z",
+  "reason": "The upstream development refit was superseded after provenance validation was hardened. The immutable handoff is archived before publishing evidence for the replacement refit run.",
+  "replacement_run_id": "task2-season-i2-refit-fall-s2753-637dd6378be9",
+  "holdout_opened": false,
+  "artifacts": [
+    {
+      "path": "results/evidence/task2/final_handoff/invalidated/task2-season-i2-refit-fall-s2753-4ab5682a30e1/artifact_audit.csv",
+      "sha256": "aa60d932e0448111704cffe9ccc870a9f4f459cc53e17c38c088069fac3896cf"
+    },
+    {
+      "path": "results/evidence/task2/final_handoff/invalidated/task2-season-i2-refit-fall-s2753-4ab5682a30e1/inference_smoke.json",
+      "sha256": "fb17a89057426a69d7f37816311131675b854716a56313380f435fdb4cec7729"
+    },
+    {
+      "path": "results/evidence/task2/final_handoff/invalidated/task2-season-i2-refit-fall-s2753-4ab5682a30e1/manifest.json",
+      "sha256": "cbb1d989d659a3aed29ab72b37bc85512e00ed46dfd985d702fd034bb6c75cc0"
+    },
+    {
+      "path": "results/evidence/task2/final_handoff/invalidated/task2-season-i2-refit-fall-s2753-4ab5682a30e1/registry_snapshot.csv",
+      "sha256": "40fa462254a51fd9c5e3318b1000182a0f6a16378a102450b93129565d86cb41"
+    }
+  ]
+}

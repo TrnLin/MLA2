@@ -13,20 +13,27 @@ dependencies = [
     "numpy==2.5.2",
     "pandas==3.0.5",
     "pillow==12.3.0",
+    "kymatio==0.3.0",
+    "psutil==7.2.2",
     "scikit-image==0.26.0",
     "scikit-learn==1.9.0",
-    "scipy==1.16.3",
-    "kymatio==0.3.0",
+    "scipy==1.18.1",
+    "threadpoolctl==3.6.0",
+    "torch==2.13.0",
+    "torchvision==0.28.0",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest==9.1.1", "ruff==0.16.3"]
+app = ["streamlit==1.62.0"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "--import-mode=importlib"
+pythonpath = ["tests/data", "tests/train"]
 
 [tool.ruff]
 extend-exclude = [".agents", ".claude"]
@@ -35,3 +42,8 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+"notebooks/01_data_preparation.ipynb" = ["E501"]
+"notebooks/task-4/01_v1_eda.ipynb" = ["F401"]
+"scripts/task4/run_model_comparisons.py" = ["E402"]
