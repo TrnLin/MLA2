@@ -1,0 +1,43 @@
+usage,audit_product_type,before,retired,new,after
+Home,Cushion Covers,0,0,7,7
+Home,Cushion covers (title explicit),30,0,0,30
+Home,Decorative pillows (cover status unspecified in title),106,7,0,99
+Party,Blazers,1,1,0,0
+Party,Bras,14,14,0,0
+Party,Caps,1,1,0,0
+Party,Clutches,0,0,18,18
+Party,Dresses,130,12,12,130
+Party,Flats,3,0,0,3
+Party,Heels,22,0,0,22
+Party,Kurtas,1,1,0,0
+Party,Lehenga,1,1,0,0
+Party,Other shoes,10,10,0,0
+Party,Perfume and Body Mist,0,0,8,8
+Party,Sarees,1,1,0,0
+Party,Shirts,16,1,0,15
+Party,Suits,1,1,0,0
+Party,Tops,22,0,0,22
+Party,Tshirts,1,1,0,0
+Party,Watches,0,0,6,6
+Smart Casual,Belts,1,0,0,1
+Smart Casual,Boots,5,0,0,5
+Smart Casual,Jackets / coats,13,9,0,4
+Smart Casual,Jeans,2,0,0,2
+Smart Casual,Mules,1,0,0,1
+Smart Casual,Overshirts,3,0,0,3
+Smart Casual,Sandals,0,0,3,3
+Smart Casual,Shirts,12,0,12,24
+Smart Casual,Shoes (formal/casual ambiguous),87,49,0,38
+Smart Casual,Sweaters,5,0,0,5
+Smart Casual,Ties,0,0,4,4
+Smart Casual,Trousers,20,0,0,20
+Smart Casual,Tshirts / polos,13,4,0,9
+Smart Casual,Wallets,0,0,8,8
+Smart Casual,Watches,0,0,35,35
+Travel,Backpacks / travel packs,91,4,0,87
+Travel,Camera Bags,0,0,6,6
+Travel,Duffel Bag,41,0,0,41
+Travel,Handbags,0,0,11,11
+Travel,Handbags / totes / weekenders,7,0,0,7
+Travel,Rucksacks / hiking packs,13,0,0,13
+Travel,Wheeled luggage / hybrid bags,13,13,0,0
