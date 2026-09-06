@@ -1,0 +1,68 @@
+[
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/metrics.json",
+    "drive_url": "https://drive.google.com/file/d/1nNhQYfHM34yvktsEA9gvKvVcSCFcMuwW/view?usp=drivesdk",
+    "sha256_readback_text": "0d16accbacc3abe3f45dc067c0e0e5899ae7ce291f951c44c35fa83d52526ff1",
+    "bytes_readback_text": 3421
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/robustness.csv",
+    "drive_url": "https://drive.google.com/file/d/1o4JrnG_NQ5Bzyva0_HqVuIUT1Amnqebs/view?usp=drivesdk",
+    "sha256_readback_text": "974158bfd92b1bff14ba661d1d3157223002b5e93477f39cdc7f231f6b16cf49",
+    "bytes_readback_text": 902
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/history.csv",
+    "drive_url": "https://drive.google.com/file/d/1WmJrliBu487sTnCJ2wFn_0wKIG2kz3Wn/view?usp=drivesdk",
+    "sha256_readback_text": "64f32c1296204a0e5630172f5bef6ad677fe0996e7b2953904070584f4805f73",
+    "bytes_readback_text": 3307
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/metrics.json",
+    "drive_url": "https://drive.google.com/file/d/1DvrXp-uDs2f35gLKjhYkTta0EfaZTFOj/view?usp=drivesdk",
+    "sha256_readback_text": "aa76a1f6c249e42737d250ea4982a4d04999162042717db82fcab8ead9ea606f",
+    "bytes_readback_text": 3438
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/robustness.csv",
+    "drive_url": "https://drive.google.com/file/d/1nDFcN0svmBMkIGtFObQEIsVxI4ONdjWC/view?usp=drivesdk",
+    "sha256_readback_text": "c5f829cd1e9261afb2fe97ffee68a29a6b535f913aee598e7a848a3353066acf",
+    "bytes_readback_text": 897
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/history.csv",
+    "drive_url": "https://drive.google.com/file/d/1IHgsVvhmgrtFMDgOCte59tAa3WUZJyfO/view?usp=drivesdk",
+    "sha256_readback_text": "a147be0cd34d6fe09c7e2121e5900599ea31c9670e2dd60152030986b84647af",
+    "bytes_readback_text": 3304
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/metrics.json",
+    "drive_url": "https://drive.google.com/file/d/1IxYGu2_CSSR30DLL0OGrmE1jQstbu4az/view?usp=drivesdk",
+    "sha256_readback_text": "c4091eda294a6761a375a3eaa722c015c022274eca2a0fbacf19f230d51ad056",
+    "bytes_readback_text": 3455
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/robustness.csv",
+    "drive_url": "https://drive.google.com/file/d/1L-1AXipOfcNxqkOFmzxbsega3mzusWFf/view?usp=drivesdk",
+    "sha256_readback_text": "ff611489201038b1823300cf38c4ecb2edc86c50c685b40bc3513f49da0a7a97",
+    "bytes_readback_text": 902
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/history.csv",
+    "drive_url": "https://drive.google.com/file/d/1-cQRtKUoNZrorcHJazmnHxPJ33JRXRK-/view?usp=drivesdk",
+    "sha256_readback_text": "690b764f5a8fb52c1c5bae30d8dc8e0dabaaef50d2b53968e2ceaca727d2b4ea",
+    "bytes_readback_text": 3298
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/aggregate_five_fold/metrics.json",
+    "drive_url": "https://drive.google.com/file/d/15rlmCKxn8h31mzWrGP9BIcPRpscqO9EY/view?usp=drivesdk",
+    "sha256_readback_text": "7a99f1f5bafd6b0cb9d7e0f5b38ddbda1bd2d8902b723966682c73eaaf922fa3",
+    "bytes_readback_text": 2895
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/aggregate_fresh_folds_1_2_3/metrics.json",
+    "drive_url": "https://drive.google.com/file/d/1Q8UUJuPgvP3aD0BYpBBAQELBDQ-ZCmGG/view?usp=drivesdk",
+    "sha256_readback_text": "ad3b07e8170919402261af422ff2d89cf9fa8b0dbeb136853c89bc7ec2485c80",
+    "bytes_readback_text": 2625
+  }
+]
