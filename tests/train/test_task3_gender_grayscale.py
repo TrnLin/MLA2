@@ -358,9 +358,11 @@ def test_screen_retains_all_gates_including_grayscale_and_gap():
     )
 
 
-def test_notebook_is_one_unexecuted_frozen_trial():
+def test_notebook_is_one_frozen_trial():
     root = Path(__file__).resolve().parents[2]
-    nb = nbformat.read(root / "notebooks/04ac_task3_gender_grayscale_screen.ipynb", as_version=4)
+    nb = nbformat.read(
+        root / "notebooks/task3_training/gender_grayscale_screen.ipynb", as_version=4
+    )
     nbformat.validate(nb)
     code = "\n".join(c.source for c in nb.cells if c.cell_type == "code")
     assert code.count("run_gender_grayscale_screen(") == 1
@@ -370,7 +372,7 @@ def test_notebook_is_one_unexecuted_frozen_trial():
     for cell in nb.cells:
         if cell.cell_type == "code":
             compile(cell.source, "04ac", "exec")
-            assert cell.execution_count is None and not cell.outputs
+            assert all(output.output_type != "error" for output in cell.outputs)
 
 
 def test_actual_dataset_uses_persistent_separate_rng_and_evaluation_stays_color(tmp_path):
