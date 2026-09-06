@@ -360,6 +360,7 @@ def _run_verified_label_screen(
     parent_group,
     candidate_group,
     verify_candidate=None,
+    refine_report=None,
 ):
     """Shared two-fold execution after each recipe's source and label checks."""
     root, output_root = Path(root), Path(output_root)
@@ -467,6 +468,8 @@ def _run_verified_label_screen(
     report["incremental_comparison"]["comparison"] = (
         f"candidate minus completed {parent_group}; both evaluated on name-truth labels"
     )
+    if refine_report is not None:
+        report = refine_report(report)
     write_original_label_diagnostic(
         {**matched, candidate_group: child},
         splits=splits,
