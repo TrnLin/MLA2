@@ -1,6 +1,6 @@
 # Fixed epoch-25 SAM screen
 
-Use `notebooks/04aj_task3_gender_sam25_screen.ipynb` on a fresh Colab L4.
+Use `notebooks/task3_training/gender_sam25_screen.ipynb` on a fresh Colab L4.
 Push this code first, then Run All.
 
 Train from scratch for exactly **25 epochs**, using the same SAM rho 0.05 and
