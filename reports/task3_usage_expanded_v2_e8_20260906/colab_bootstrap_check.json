@@ -1,0 +1,105 @@
+{
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "reference_folds_verified": 10,
+  "separate_v2_registry": true,
+  "local_registry_mirror": true,
+  "training_call_reached": true,
+  "production_training_started": false,
+  "unsafe_archive_path_rejected": true,
+  "notebook": "notebooks/04al_task3_usage_expanded_v2_e8.ipynb",
+  "notebook_sha256": "65d52efb073b1e6410b1c20d605954f5e194a4947c19cc6c29af413cb738905d",
+  "bundle_sha256": "646c4ede60b69d830772c9a24d030f41e7791e74c5cbfcf06acec8ad80127ea9",
+  "code_cells_executed": [
+    "usage-v2-unpack",
+    "usage-v2-teacher-images",
+    "usage-v2-preflight",
+    "usage-v2-train"
+  ],
+  "setup_rerun_passed": true,
+  "teacher_archive_fixture_images": 1,
+  "mount_calls": 2,
+  "dataset": {
+    "name": "teacher_plus_rare_usage_v2_20260906",
+    "split_path": "data/processed/teacher_plus_rare_usage_v2_20260906/splits.csv",
+    "split_sha256": "0bd490672543b7022fa7a883be9b006d63681d7c168e497e0388616836696776",
+    "label_map_sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
+    "teacher_split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+    "previous_split_sha256": "7d5f3a986ef8e00f53ee1c86d408f1c3a155d6b0a0ab99bef4c9f7eb27dbda77",
+    "source_geometry_sha256": "564f1141a475a321f6a7bb5661062957655bcad4c907ceb7b3bbc1c11fa1dc42",
+    "same_usage_target": true,
+    "teacher_folds_preserved": true,
+    "previous_external_folds_preserved": true,
+    "initialization": "fresh_scratch_weights",
+    "total_rows": 39299,
+    "usage_development_rows": 33459,
+    "teacher_rows": 38612,
+    "previous_added_rows": 120,
+    "new_added_rows": 567,
+    "holdout_rows": 5778,
+    "quarantine_rows": 61,
+    "folds": [
+      {
+        "fold": 0,
+        "training_rows": 26751,
+        "validation_rows": 6708,
+        "teacher_training_rows": 26219,
+        "teacher_validation_rows": 6553,
+        "previous_added_training_rows": 96,
+        "previous_added_validation_rows": 24,
+        "new_added_training_rows": 436,
+        "new_added_validation_rows": 131
+      },
+      {
+        "fold": 1,
+        "training_rows": 26771,
+        "validation_rows": 6688,
+        "teacher_training_rows": 26216,
+        "teacher_validation_rows": 6556,
+        "previous_added_training_rows": 97,
+        "previous_added_validation_rows": 23,
+        "new_added_training_rows": 458,
+        "new_added_validation_rows": 109
+      },
+      {
+        "fold": 2,
+        "training_rows": 26771,
+        "validation_rows": 6688,
+        "teacher_training_rows": 26219,
+        "teacher_validation_rows": 6553,
+        "previous_added_training_rows": 95,
+        "previous_added_validation_rows": 25,
+        "new_added_training_rows": 457,
+        "new_added_validation_rows": 110
+      },
+      {
+        "fold": 3,
+        "training_rows": 26772,
+        "validation_rows": 6687,
+        "teacher_training_rows": 26219,
+        "teacher_validation_rows": 6553,
+        "previous_added_training_rows": 97,
+        "previous_added_validation_rows": 23,
+        "new_added_training_rows": 456,
+        "new_added_validation_rows": 111
+      },
+      {
+        "fold": 4,
+        "training_rows": 26771,
+        "validation_rows": 6688,
+        "teacher_training_rows": 26215,
+        "teacher_validation_rows": 6557,
+        "previous_added_training_rows": 95,
+        "previous_added_validation_rows": 25,
+        "new_added_training_rows": 461,
+        "new_added_validation_rows": 106
+      }
+    ]
+  },
+  "scope": "Local Colab setup simulation; GPU fitting is covered by separate CPU tests"
+}
