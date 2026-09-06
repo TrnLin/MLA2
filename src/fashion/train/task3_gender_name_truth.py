@@ -325,12 +325,50 @@ def run_gender_name_truth_screen(
     sources, classes, spec, evidence = check_gender_name_truth_sources(**paths, root=root)
     name_truth_config(spec, fold=0, device_name=device_name, root=root)
     require_narrow_prerequisites(precision_directory, root=root)
+    return _run_verified_label_screen(
+        sources=sources,
+        classes=classes,
+        spec=spec,
+        evidence=evidence,
+        identity=_source_identity(sources, spec, evidence, paths, root=root),
+        splits=training_splits(spec, root=root),
+        source_registry_path=source_registry_path,
+        output_root=output_root,
+        registry_path=registry_path,
+        registry_mirrors=registry_mirrors,
+        root=root,
+        device_name=device_name,
+        parent_group="Gray10",
+        candidate_group="NameTruth",
+    )
+
+
+def _run_verified_label_screen(
+    *,
+    sources,
+    classes,
+    spec,
+    evidence,
+    identity,
+    splits,
+    source_registry_path,
+    output_root,
+    registry_path,
+    registry_mirrors,
+    root,
+    device_name,
+    parent_group,
+    candidate_group,
+    verify_candidate=None,
+):
+    """Shared two-fold execution after each recipe's source and label checks."""
+    root, output_root = Path(root), Path(output_root)
     destination = output_root / spec.artifact_dir / "gender"
     destination.mkdir(parents=True, exist_ok=True)
     audit = destination / "source_audit.json"
     _save_source_audit(
         audit,
-        _source_identity(sources, spec, evidence, paths, root=root),
+        identity,
         registry_path=source_registry_path,
     )
     # Keep the label evidence beside the Drive run, even after the Colab VM expires.
@@ -344,7 +382,6 @@ def run_gender_name_truth_screen(
             raise ValueError(f"Archived label evidence changed: {source.name}")
         if not target.exists():
             target.write_bytes(source.read_bytes())
-    splits = training_splits(spec, root=root)
     contract = spec.to_dict()["gender_label_variant"]
 
     def evaluate(run):
@@ -361,6 +398,7 @@ def run_gender_name_truth_screen(
         return evaluated
 
     matched = {name: {} for name in ("G2", "E6", "Gray10")}
+    matched.setdefault(parent_group, {})
     for name in matched:
         for fold in FOLDS:
             matched[name][fold] = evaluate(sources[name][fold])
@@ -376,7 +414,7 @@ def run_gender_name_truth_screen(
                 root=root,
                 device_name=device_name,
                 child_spec=spec,
-                parent_run_directory=sources["Gray10"][fold]["directory"],
+                parent_run_directory=sources[parent_group][fold]["directory"],
                 prerequisite_path=audit,
             )
         run = inspect_gender_run(
@@ -391,12 +429,14 @@ def run_gender_name_truth_screen(
         _verify_training_evidence(
             run,
             spec,
-            sources["Gray10"][fold]["run_id"],
+            sources[parent_group][fold]["run_id"],
             evidence,
             audit_sha256=compute_sha256(audit),
         )
         if run["config"].get("gender_label_variant") != contract:
             raise ValueError("Candidate was not trained on the verified name-truth dataset")
+        if verify_candidate is not None:
+            verify_candidate(run, fold=fold, splits=splits, directory=Path(result["run_dir"]))
         memory = run["metrics"]["peak_memory_bytes"]
         if not np.isfinite(memory) or not 0 < memory < MEMORY_LIMIT:
             stopped = {
@@ -415,20 +455,20 @@ def run_gender_name_truth_screen(
             for run in group.values()
         ):
             raise ValueError("Cannot compare runs scored against different gender labels")
-    report = evaluate_gender_narrow_screen(child, matched, classes, experiment_name=NAME)
+    report = evaluate_gender_narrow_screen(child, matched, classes, experiment_name=spec.name)
     report.update(
         registry_and_artifact_integrity=True,
         comparison_label_basis=contract,
         run_ids={str(f): child[f]["run_id"] for f in FOLDS},
         independent_blind_test=False,
-        incremental_comparison=compare_with_dropout(child, matched["Gray10"], classes),
-        direct_parent_run_ids={str(f): matched["Gray10"][f]["run_id"] for f in FOLDS},
+        incremental_comparison=compare_with_dropout(child, matched[parent_group], classes),
+        direct_parent_run_ids={str(f): matched[parent_group][f]["run_id"] for f in FOLDS},
     )
     report["incremental_comparison"]["comparison"] = (
-        "candidate minus completed Gray10; both evaluated on name-truth labels"
+        f"candidate minus completed {parent_group}; both evaluated on name-truth labels"
     )
     write_original_label_diagnostic(
-        {**matched, "NameTruth": child},
+        {**matched, candidate_group: child},
         splits=splits,
         classes=classes,
         destination=destination,
