@@ -1,6 +1,6 @@
 # Usage E8 on the combined dataset
 
-Open `notebooks/04ag_task3_usage_expanded_e8.ipynb` in Google Colab.
+Open `notebooks/task3_training/usage_expanded_e8.ipynb` in Google Colab.
 
 1. Put `teacher_plus_rare_usage_training.zip` in `MyDrive/MLA2/data/`.
 2. Keep the existing `task3-data.zip` in that same folder.
@@ -66,7 +66,7 @@ remain sealed. The new run does not automatically replace the chosen model.
 From the project root:
 
 ```bash
-./.venv/bin/python reports/task3_usage_expanded_e8_20260906/build_bundle.py
+./.venv/bin/python reports/task3/usage_expanded_e8_20260906/build_bundle.py
 ```
 
 Upload the rebuilt ZIP before starting a fresh Colab session. The bundle receipt
