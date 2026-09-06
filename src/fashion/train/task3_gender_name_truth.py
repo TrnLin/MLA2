@@ -361,6 +361,7 @@ def _run_verified_label_screen(
     candidate_group,
     verify_candidate=None,
     refine_report=None,
+    candidate_epochs=30,
 ):
     """Shared two-fold execution after each recipe's source and label checks."""
     root, output_root = Path(root), Path(output_root)
@@ -424,6 +425,7 @@ def _run_verified_label_screen(
             splits=splits,
             classes=classes,
             root=root,
+            expected_epochs=candidate_epochs,
         )
         if run["fold"] != fold:
             raise ValueError("Name-truth candidate is assigned to the wrong fold")
@@ -433,6 +435,7 @@ def _run_verified_label_screen(
             sources[parent_group][fold]["run_id"],
             evidence,
             audit_sha256=compute_sha256(audit),
+            expected_epochs=candidate_epochs,
         )
         if run["config"].get("gender_label_variant") != contract:
             raise ValueError("Candidate was not trained on the verified name-truth dataset")
