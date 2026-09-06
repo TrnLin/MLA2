@@ -97,7 +97,6 @@ def test_task1_notebook_orders_diagnosis_before_weighted_experiment() -> None:
 
 
 def test_task1_notebook_defaults_weighted_controller_to_smoke() -> None:
-    notebook = _notebook()
     source = _notebook_code_source()
     assert 'WEIGHTED_MODE = "smoke"' in source
     assert "run_task1_weighted_experiment(" in source

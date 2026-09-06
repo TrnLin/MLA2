@@ -1,5 +1,10 @@
 # Task 1 Gentle Class-Weighting Implementation Plan
 
+> **Superseded:** The implemented gentle/no-augmentation candidate was replaced by the
+> mild-augmentation balanced-weight candidate on 2026-09-05. The current contract is in
+> `docs/superpowers/specs/2026-09-05-task1-gentle-class-weighting-design.md` and
+> `notebooks/02_task1_article_type.ipynb`; the steps below remain as historical implementation detail.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add one gentle class-weighted scratch-CNN candidate, train only its five new folds, merge it safely with the ten completed CNN folds, and show learning-curve evidence in Task 1.

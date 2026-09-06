@@ -188,7 +188,7 @@ def test_smoke_runs_only_weighted_fold_zero_without_old_evidence(tmp_path: Path)
         fold_runner=_fake_fold_runner,
     )
     assert [(row.fold, row.candidate_id) for row in smoke.fold_results] == [
-        (0, "task1_cnn_no_aug_sqrt_weighted_v1")
+        (0, "task1_cnn_mild_aug_balanced_weighted_v1")
     ]
     assert smoke.comparison.empty and smoke.oof_metrics.empty
     assert smoke.oof_predictions == {} and smoke.per_class == {}
@@ -222,7 +222,7 @@ def test_full_merges_fifteen_folds_and_preserves_old_artifacts(
     assert set(full.fold_metrics["candidate_id"]) == {
         "task1_cnn_no_aug_unweighted_v1",
         "task1_cnn_mild_aug_unweighted_v1",
-        "task1_cnn_no_aug_sqrt_weighted_v1",
+        "task1_cnn_mild_aug_balanced_weighted_v1",
     }
     assert full.fold_metrics["candidate_id"].value_counts().tolist() == [5, 5, 5]
     assert full.comparison["top1_accuracy_mean"].tolist() == [1.0] * 3
@@ -233,7 +233,7 @@ def test_full_merges_fifteen_folds_and_preserves_old_artifacts(
     new_rows = registry.read().iloc[10:]
     assert len(new_rows) == 5
     assert new_rows["fold"].tolist() == ["0", "1", "2", "3", "4"]
-    assert set(new_rows["loss_id"]) == {"cross_entropy_sqrt_class_weighted_v1"}
+    assert set(new_rows["loss_id"]) == {"cross_entropy_balanced_class_weighted_v1"}
     pd.testing.assert_frame_equal(pd.read_csv(evidence / "fold_metrics.csv"), full.fold_metrics)
     for candidate_id, frame in full.per_class.items():
         pd.testing.assert_frame_equal(
@@ -243,10 +243,34 @@ def test_full_merges_fifteen_folds_and_preserves_old_artifacts(
     assert not list(evidence.glob("*.tmp"))
 
 
+def test_full_reuses_complete_fifteen_fold_evidence_without_training(
+    tmp_path: Path, old_evidence: tuple[RunRegistry, Path]
+) -> None:
+    """A repeated full run must verify and reuse already-complete evidence."""
+    registry, evidence = old_evidence
+    first = _run(tmp_path, registry, evidence)
+    registry_before = registry.read()
+    evidence_before = _snapshot(evidence)
+
+    def fail_if_training_starts(*args: Any, **kwargs: Any) -> Task1FoldResult:
+        raise AssertionError("complete evidence must not start training")
+
+    repeated = _run(tmp_path, registry, evidence, fold_runner=fail_if_training_starts)
+
+    assert len(first.fold_results) == len(repeated.fold_results) == 15
+    assert repeated.fold_metrics["candidate_id"].value_counts().to_dict() == {
+        "task1_cnn_no_aug_unweighted_v1": 5,
+        "task1_cnn_mild_aug_unweighted_v1": 5,
+        "task1_cnn_mild_aug_balanced_weighted_v1": 5,
+    }
+    pd.testing.assert_frame_equal(registry.read(), registry_before)
+    assert _snapshot(evidence) == evidence_before
+
+
 @pytest.mark.parametrize(
     ("field", "value"),
     [
-        ("loss_id", "cross_entropy_sqrt_class_weighted_v1"),
+        ("loss_id", "cross_entropy_balanced_class_weighted_v1"),
         ("prediction_sha256", "0" * 64),
         ("fold", "4"),
         ("transform_id", "wrong-transform"),

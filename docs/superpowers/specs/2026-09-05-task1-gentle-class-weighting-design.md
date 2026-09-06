@@ -1,8 +1,8 @@
-# Task 1 Gentle Class-Weighting Design
+# Task 1 Balanced Class-Weighting Design
 
 ## Purpose
 
-Add one new scratch-CNN experiment that tests whether gentle class weighting improves
+Add one new scratch-CNN experiment that tests whether balanced class weighting improves
 article-type macro-F1, especially for rare classes. Keep the ten completed unweighted CNN
 folds and train only five new weighted folds. The change must preserve the canonical split,
 append-only run registry, from-scratch training rule, and untouched holdout.
@@ -12,12 +12,13 @@ append-only run registry, from-scratch training rule, and untouched holdout.
 The current development data are highly uneven: article-type support ranges from 1 to 5,748
 products. The new experiment asks:
 
-> With the architecture, image preprocessing, optimizer, seed, epoch budget, and folds fixed,
-> does gentle class-weighted cross-entropy improve five-fold validation macro-F1 and rare-class
+> With the architecture, mild augmentation, optimizer, seed, epoch budget, and folds fixed,
+> does balanced class-weighted cross-entropy improve five-fold validation macro-F1 and rare-class
 > F1 without unacceptable fold instability or loss of common-class performance?
 
-The new candidate uses the existing no-augmentation preprocessing. This isolates the loss change.
-Validation metrics and validation loss remain unweighted so all candidates stay comparable.
+The new candidate uses the existing mild-augmentation preprocessing. Comparing it with the
+mild-augmentation unweighted candidate isolates the loss change. Validation metrics and validation
+loss remain unweighted so all candidates stay comparable.
 
 ## Loss design
 
@@ -25,15 +26,14 @@ Create an explicit loss configuration rather than encoding a loss choice in a pr
 The two supported loss identities are:
 
 - `cross_entropy_unweighted_v1`
-- `cross_entropy_sqrt_class_weighted_v1`
+- `cross_entropy_balanced_class_weighted_v1`
 
 For each validation fold, calculate weights from that fold's development-training rows only:
 
 1. Count the training examples for every fixed article-type class.
-2. For each present class, calculate `sqrt(median_positive_count / class_count)`.
-3. Divide present-class weights by their arithmetic mean.
-4. Clamp the result to the range 0.25 through 4.0.
-5. Give an absent training class weight 0.0. Record its absence; the model cannot learn a class
+2. For each present class, use sklearn's balanced formula
+   `weight = training_rows / (present_classes * class_rows)`.
+3. Give an absent training class weight 0.0. Record its absence; the model cannot learn a class
    that is absent from that fold's training rows.
 
 Use these weights only in the training cross-entropy call. Use ordinary unweighted
@@ -53,7 +53,7 @@ Use these candidate IDs:
 
 - `task1_cnn_no_aug_unweighted_v1`
 - `task1_cnn_mild_aug_unweighted_v1`
-- `task1_cnn_no_aug_sqrt_weighted_v1`
+- `task1_cnn_mild_aug_balanced_weighted_v1`
 
 The physical run `experiment_id` includes the candidate ID. This keeps run directories and
 registry rows readable and unique.
@@ -107,7 +107,7 @@ Reorder the Task 1 notebook narrative without deleting prior evidence:
 2. Scratch CNN without augmentation.
 3. Learning curve and overfitting diagnosis.
 4. Mild-augmentation test.
-5. Gentle class-weighted-loss test.
+5. Balanced class-weighted-loss test.
 6. Five-fold comparison and pooled OOF metrics.
 7. Rare-class and confusion analysis.
 8. Final development choice and handoff to the untouched holdout notebook.
@@ -129,7 +129,7 @@ current mean macro-F1. It must wait for the weighted evidence before judging the
 
 Use test-first development. Add tests that prove:
 
-- the hand-checked gentle-weight formula, normalization, cap, and absent-class behavior;
+- the hand-checked balanced-weight formula and absent-class behavior;
 - weights use training-fold rows only;
 - unweighted training remains unchanged;
 - weighted training passes weights only to training cross-entropy;

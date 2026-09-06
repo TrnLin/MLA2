@@ -16,10 +16,10 @@ def test_comparison_figure_groups_five_folds_per_candidate(tmp_path: Path) -> No
     """Grouping by preprocessing instead of candidate must fail this figure contract."""
     metrics = pd.DataFrame(
         {
-            "candidate_id": ["task1_cnn_no_aug_unweighted_v1"] * 5
-            + ["task1_cnn_no_aug_gentle_weighted_v1"] * 5,
-            "preprocessing_id": ["no_augmentation"] * 10,
-            "loss_id": ["unweighted"] * 5 + ["gentle_weighted"] * 5,
+            "candidate_id": ["task1_cnn_mild_aug_unweighted_v1"] * 5
+            + ["task1_cnn_mild_aug_balanced_weighted_v1"] * 5,
+            "preprocessing_id": ["mild_augmentation"] * 10,
+            "loss_id": ["unweighted"] * 5 + ["balanced_weighted"] * 5,
             "fold": list(range(5)) * 2,
             "macro_f1": np.linspace(0.1, 0.5, 10),
         }

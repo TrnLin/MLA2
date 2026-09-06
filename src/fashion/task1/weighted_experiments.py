@@ -16,7 +16,7 @@ from fashion.config import ROOT, SPLITS_CSV, TASK1_EVIDENCE_DIR, TASK1_RESULT_DI
 from fashion.data.dataset import get_samples
 from fashion.data.hashing import compute_sha256
 from fashion.task1.candidates import (
-    TASK1_GENTLE_WEIGHTED_CANDIDATE,
+    TASK1_BALANCED_WEIGHTED_CANDIDATE,
     TASK1_MILD_AUG_CANDIDATE,
     TASK1_NO_AUG_CANDIDATE,
 )
@@ -39,7 +39,7 @@ from fashion.train.registry import RunRegistry
 _OLD_CANDIDATES = (TASK1_NO_AUG_CANDIDATE, TASK1_MILD_AUG_CANDIDATE)
 _CANDIDATES = {
     candidate.candidate_id: candidate
-    for candidate in (*_OLD_CANDIDATES, TASK1_GENTLE_WEIGHTED_CANDIDATE)
+    for candidate in (*_OLD_CANDIDATES, TASK1_BALANCED_WEIGHTED_CANDIDATE)
 }
 _METRIC_COLUMNS = ("macro_f1", "weighted_f1", "top1_accuracy", "top5_accuracy", "validation_loss")
 
@@ -140,14 +140,14 @@ def _verified_result(
     )
 
 
-def _load_verified_old_results(
+def _load_verified_existing_results(
     *,
     registry: RunRegistry,
     evidence_root: Path,
     root: Path,
     split_sha256: str,
 ) -> tuple[Task1FoldResult, ...]:
-    """Accept legacy identity columns only at this registry-backed merge boundary."""
+    """Load a complete ten-fold starting point or fifteen-fold finished result."""
     evidence = pd.read_csv(evidence_root / "fold_metrics.csv", keep_default_na=False)
     required = {"run_id", "fold", "preprocessing_id", *_METRIC_COLUMNS}
     if missing := required.difference(evidence.columns):
@@ -163,13 +163,21 @@ def _load_verified_old_results(
         evidence["loss_id"] = TASK1_NO_AUG_CANDIDATE.loss.loss_id
     elif len(identity_columns) != 2:
         raise ValueError("old Task 1 evidence must provide both candidate_id and loss_id")
-    expected = {candidate.candidate_id for candidate in _OLD_CANDIDATES}
-    if set(evidence["candidate_id"]) != expected:
-        raise ValueError("old CNN evidence must contain exactly the two unweighted candidates")
+    old_candidate_ids = {candidate.candidate_id for candidate in _OLD_CANDIDATES}
+    complete_candidate_ids = set(_CANDIDATES)
+    candidate_ids = set(evidence["candidate_id"])
+    if frozenset(candidate_ids) not in {
+        frozenset(old_candidate_ids),
+        frozenset(complete_candidate_ids),
+    }:
+        raise ValueError(
+            "CNN evidence must contain exactly the two unweighted candidates "
+            "or all three completed candidates"
+        )
     if evidence["run_id"].duplicated().any():
         raise ValueError("old CNN evidence contains duplicate run IDs")
     evidence["fold"] = evidence["fold"].map(_fold_number)
-    _aggregate_comparison(evidence, list(expected))
+    _aggregate_comparison(evidence, list(candidate_ids))
     registry_rows = registry.read().set_index("run_id", drop=False)
     return tuple(
         _verified_result(item, registry_rows, root=root, split_sha256=split_sha256)
@@ -351,13 +359,16 @@ def run_task1_weighted_experiment(
     old_results: tuple[Task1FoldResult, ...] = ()
     if mode == "full":
         split_sha256 = compute_sha256(SPLITS_CSV)
-        old_results = _load_verified_old_results(
+        old_results = _load_verified_existing_results(
             registry=active_registry,
             evidence_root=evidence_directory,
             root=project_root,
             split_sha256=split_sha256,
         )
         _validate_label_identity(old_results, active_registry, label_map)
+        existing_candidate_ids = {result.candidate_id for result in old_results}
+        if existing_candidate_ids == set(_CANDIDATES):
+            return _build_full_evidence(old_results, splits, label_map, list(_CANDIDATES))
         _build_full_evidence(
             old_results,
             splits,
@@ -370,7 +381,7 @@ def run_task1_weighted_experiment(
             splits,
             label_map,
             validation_fold=fold,
-            candidate=TASK1_GENTLE_WEIGHTED_CANDIDATE,
+            candidate=TASK1_BALANCED_WEIGHTED_CANDIDATE,
             config=config,
             registry=active_registry,
             root=root,
@@ -390,7 +401,7 @@ def run_task1_weighted_experiment(
         )
 
     # Recheck old files after training: nothing may drift during the five new runs.
-    old_results = _load_verified_old_results(
+    old_results = _load_verified_existing_results(
         registry=active_registry,
         evidence_root=evidence_directory,
         root=project_root,
@@ -401,7 +412,7 @@ def run_task1_weighted_experiment(
         if (
             result.status != "completed"
             or result.fold != fold
-            or result.candidate_id != TASK1_GENTLE_WEIGHTED_CANDIDATE.candidate_id
+            or result.candidate_id != TASK1_BALANCED_WEIGHTED_CANDIDATE.candidate_id
         ):
             raise ValueError(
                 "weighted Task 1 results must contain the five scheduled completed folds"

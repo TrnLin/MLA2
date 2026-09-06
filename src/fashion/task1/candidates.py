@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 
 from fashion.task1.losses import (
-    TASK1_GENTLE_WEIGHTED_LOSS,
+    TASK1_BALANCED_WEIGHTED_LOSS,
     TASK1_UNWEIGHTED_LOSS,
     Task1LossConfig,
 )
@@ -31,6 +31,8 @@ TASK1_NO_AUG_CANDIDATE = Task1CnnCandidate(
 TASK1_MILD_AUG_CANDIDATE = Task1CnnCandidate(
     "task1_cnn_mild_aug_unweighted_v1", DEFAULT_TASK1_PREPROCESSING, TASK1_UNWEIGHTED_LOSS
 )
-TASK1_GENTLE_WEIGHTED_CANDIDATE = Task1CnnCandidate(
-    "task1_cnn_no_aug_sqrt_weighted_v1", TASK1_CONTROL_PREPROCESSING, TASK1_GENTLE_WEIGHTED_LOSS
+TASK1_BALANCED_WEIGHTED_CANDIDATE = Task1CnnCandidate(
+    "task1_cnn_mild_aug_balanced_weighted_v1",
+    DEFAULT_TASK1_PREPROCESSING,
+    TASK1_BALANCED_WEIGHTED_LOSS,
 )

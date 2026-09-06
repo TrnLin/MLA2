@@ -12,16 +12,16 @@ import pandas as pd
 
 from fashion.config import ROOT, TASK1_EVIDENCE_DIR, TASK1_RESULT_DIR
 from fashion.data.dataset import get_samples
+from fashion.task1.candidates import (
+    TASK1_MILD_AUG_CANDIDATE,
+    TASK1_NO_AUG_CANDIDATE,
+    Task1CnnCandidate,
+)
 from fashion.task1.evaluation import (
     aggregate_fold_metrics,
     classification_metrics,
     per_class_metrics,
     validate_oof_predictions,
-)
-from fashion.task1.candidates import (
-    TASK1_MILD_AUG_CANDIDATE,
-    TASK1_NO_AUG_CANDIDATE,
-    Task1CnnCandidate,
 )
 from fashion.task1.training import Task1FoldResult, Task1TrainConfig, train_task1_fold
 from fashion.train.artifacts import atomic_write_csv

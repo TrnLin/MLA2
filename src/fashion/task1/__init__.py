@@ -7,6 +7,12 @@ from fashion.task1.analysis import (
     build_task1_problem_profile,
     build_task1_weak_class_table,
 )
+from fashion.task1.candidates import (
+    TASK1_BALANCED_WEIGHTED_CANDIDATE,
+    TASK1_MILD_AUG_CANDIDATE,
+    TASK1_NO_AUG_CANDIDATE,
+    Task1CnnCandidate,
+)
 from fashion.task1.classical_experiments import (
     Task1ClassicalExperimentResult,
     Task1ClassicalSelection,
@@ -33,7 +39,6 @@ from fashion.task1.cnn_experiments import (
     Task1ExperimentResult,
     run_task1_experiment,
 )
-from fashion.task1.weighted_experiments import run_task1_weighted_experiment
 from fashion.task1.dataset import Task1TorchDataset, get_task1_fold_rows
 from fashion.task1.evaluation import (
     aggregate_fold_metrics,
@@ -46,6 +51,13 @@ from fashion.task1.image_contract import (
     TASK1_IMAGE_SIZE,
     TASK1_PAD_COLOR,
     TASK1_TENSOR_SHAPE,
+)
+from fashion.task1.losses import (
+    TASK1_BALANCED_WEIGHTED_LOSS,
+    TASK1_UNWEIGHTED_LOSS,
+    Task1LossConfig,
+    Task1LossWeights,
+    build_task1_loss_weights,
 )
 from fashion.task1.models import Task1ModelConfig, Task1SmallCNN, count_trainable_parameters
 from fashion.task1.plotting import (
@@ -69,19 +81,7 @@ from fashion.task1.training import (
     select_training_device,
     train_task1_fold,
 )
-from fashion.task1.losses import (
-    TASK1_GENTLE_WEIGHTED_LOSS,
-    TASK1_UNWEIGHTED_LOSS,
-    Task1LossConfig,
-    Task1LossWeights,
-    build_task1_loss_weights,
-)
-from fashion.task1.candidates import (
-    TASK1_GENTLE_WEIGHTED_CANDIDATE,
-    TASK1_MILD_AUG_CANDIDATE,
-    TASK1_NO_AUG_CANDIDATE,
-    Task1CnnCandidate,
-)
+from fashion.task1.weighted_experiments import run_task1_weighted_experiment
 
 __all__ = [
     "DEFAULT_TASK1_PREPROCESSING",
@@ -138,9 +138,9 @@ __all__ = [
     "Task1LossWeights",
     "build_task1_loss_weights",
     "TASK1_UNWEIGHTED_LOSS",
-    "TASK1_GENTLE_WEIGHTED_LOSS",
+    "TASK1_BALANCED_WEIGHTED_LOSS",
     "Task1CnnCandidate",
     "TASK1_NO_AUG_CANDIDATE",
     "TASK1_MILD_AUG_CANDIDATE",
-    "TASK1_GENTLE_WEIGHTED_CANDIDATE",
+    "TASK1_BALANCED_WEIGHTED_CANDIDATE",
 ]

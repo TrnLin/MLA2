@@ -242,3 +242,23 @@ def test_full_runner_requires_five_fold_metrics_per_candidate(
             fold_runner=wrong_candidate_runner,
             result_root=tmp_path / "runs",
         )
+
+
+def test_aggregate_comparison_requires_unique_fold_labels() -> None:
+    """Repeated folds must not be accepted as complete cross-validation evidence."""
+    fold_metrics = pd.DataFrame(
+        {
+            "run_id": [f"run-{fold}" for fold in range(5)],
+            "fold": [0, 1, 2, 3, 3],
+            "candidate_id": ["candidate"] * 5,
+            "preprocessing_id": ["preprocessing"] * 5,
+            "loss_id": ["unweighted"] * 5,
+            "macro_f1": [0.1] * 5,
+            "weighted_f1": [0.1] * 5,
+            "top1_accuracy": [0.1] * 5,
+            "top5_accuracy": [0.5] * 5,
+        }
+    )
+
+    with pytest.raises(ValueError, match="unique labels"):
+        cnn_experiments._aggregate_comparison(fold_metrics, ["candidate"])

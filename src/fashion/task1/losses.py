@@ -6,14 +6,13 @@ from typing import Literal
 import numpy as np
 import pandas as pd
 import torch
+from sklearn.utils.class_weight import compute_class_weight
 
 
 @dataclass(frozen=True)
 class Task1LossConfig:
     loss_id: str
-    weighting: Literal["none", "sqrt_balanced"]
-    minimum_weight: float = 0.25
-    maximum_weight: float = 4.0
+    weighting: Literal["none", "balanced"]
 
     def to_dict(self) -> dict[str, object]:
         return asdict(self)
@@ -30,8 +29,8 @@ class Task1LossWeights:
 
 
 TASK1_UNWEIGHTED_LOSS = Task1LossConfig("cross_entropy_unweighted_v1", "none")
-TASK1_GENTLE_WEIGHTED_LOSS = Task1LossConfig(
-    "cross_entropy_sqrt_class_weighted_v1", "sqrt_balanced"
+TASK1_BALANCED_WEIGHTED_LOSS = Task1LossConfig(
+    "cross_entropy_balanced_class_weighted_v1", "balanced"
 )
 
 
@@ -53,14 +52,8 @@ def build_task1_loss_weights(
         training_rows["cv_fold"] == validation_fold
     ).any():
         raise ValueError("weights require development training rows")
-    if not config.loss_id or config.weighting not in {"none", "sqrt_balanced"}:
+    if not config.loss_id or config.weighting not in {"none", "balanced"}:
         raise ValueError("invalid loss configuration")
-    if (
-        not np.isfinite(config.minimum_weight)
-        or not np.isfinite(config.maximum_weight)
-        or not 0 < config.minimum_weight <= config.maximum_weight
-    ):
-        raise ValueError("weight bounds must be finite and satisfy 0 < minimum <= maximum")
 
     counts = np.zeros(len(label_to_index), dtype=np.int64)
     for label, count in training_rows["articleType"].value_counts().items():
@@ -73,11 +66,14 @@ def build_task1_loss_weights(
         raise ValueError("training rows must contain at least one known class")
 
     weights = np.zeros(len(counts), dtype=np.float64)
-    if config.weighting == "sqrt_balanced":
-        median = float(np.median(counts[present]))
-        raw = np.sqrt(median / counts[present])
-        normalised = raw / raw.mean()
-        weights[present] = np.clip(normalised, config.minimum_weight, config.maximum_weight)
+    if config.weighting == "balanced":
+        encoded = training_rows["articleType"].astype(str).map(label_to_index).to_numpy()
+        present_indices = np.flatnonzero(present)
+        weights[present] = compute_class_weight(
+            class_weight="balanced",
+            classes=present_indices,
+            y=encoded,
+        )
         tensor = torch.tensor(weights, dtype=torch.float32)
     else:
         tensor = None

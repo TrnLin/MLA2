@@ -16,7 +16,7 @@ from fashion.config import RANDOM_SEED, ROOT, SPLITS_CSV, TASK1_RESULT_DIR
 from fashion.data.dataset import load_splits
 from fashion.data.hashing import compute_sha256
 from fashion.task1.candidates import (
-    TASK1_GENTLE_WEIGHTED_CANDIDATE,
+    TASK1_BALANCED_WEIGHTED_CANDIDATE,
     TASK1_MILD_AUG_CANDIDATE,
     TASK1_NO_AUG_CANDIDATE,
     Task1CnnCandidate,
@@ -169,7 +169,7 @@ def train_task1_fold(
         if candidate not in (
             TASK1_NO_AUG_CANDIDATE,
             TASK1_MILD_AUG_CANDIDATE,
-            TASK1_GENTLE_WEIGHTED_CANDIDATE,
+            TASK1_BALANCED_WEIGHTED_CANDIDATE,
         ):
             raise ValueError("final-eligible Task 1 runs require an approved candidate")
         if model_factory is not Task1SmallCNN:

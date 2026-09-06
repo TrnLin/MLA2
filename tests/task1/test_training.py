@@ -14,7 +14,7 @@ from fashion.data.dataset import load_splits
 from fashion.data.hashing import compute_sha256
 from fashion.data.splits import validate_splits
 from fashion.task1.candidates import (
-    TASK1_GENTLE_WEIGHTED_CANDIDATE,
+    TASK1_BALANCED_WEIGHTED_CANDIDATE,
     TASK1_NO_AUG_CANDIDATE,
     Task1CnnCandidate,
 )
@@ -289,7 +289,7 @@ def test_weighted_fold_records_loss_candidate_and_fold_only_weights(tmp_path: Pa
         splits,
         _label_map(),
         validation_fold=0,
-        candidate=TASK1_GENTLE_WEIGHTED_CANDIDATE,
+        candidate=TASK1_BALANCED_WEIGHTED_CANDIDATE,
         config=Task1TrainConfig.smoke(),
         registry=registry,
         root=tmp_path,
@@ -300,10 +300,10 @@ def test_weighted_fold_records_loss_candidate_and_fold_only_weights(tmp_path: Pa
 
     row = registry.read().iloc[0]
     checkpoint = torch.load(result.checkpoint_path, map_location="cpu", weights_only=False)
-    assert result.candidate_id == "task1_cnn_no_aug_sqrt_weighted_v1"
-    assert result.loss_id == "cross_entropy_sqrt_class_weighted_v1"
+    assert result.candidate_id == "task1_cnn_mild_aug_balanced_weighted_v1"
+    assert result.loss_id == "cross_entropy_balanced_class_weighted_v1"
     assert row["loss_id"] == result.loss_id
-    assert row["experiment_id"] == "task1-cnn-task1_cnn_no_aug_sqrt_weighted_v1"
+    assert row["experiment_id"] == "task1-cnn-task1_cnn_mild_aug_balanced_weighted_v1"
     assert checkpoint["candidate_id"] == result.candidate_id
     assert checkpoint["loss"]["config"]["loss_id"] == result.loss_id
     assert len(checkpoint["loss"]["class_weights"]) == 124
