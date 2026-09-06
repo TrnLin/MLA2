@@ -553,7 +553,10 @@ def run_task3_baseline_fold(
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
     group_weight = getattr(child_spec, "name", None) == "gender_name_truth_article_weight_sqrt_cap3"
     stronger_mixup = getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha040"
-    use_sam = getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020_sam005"
+    sam25 = getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020_sam005_epoch25"
+    use_sam = (
+        sam25 or getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020_sam005"
+    )
     use_mixup = (
         use_sam
         or stronger_mixup
@@ -567,7 +570,13 @@ def run_task3_baseline_fold(
         or (getattr(child_spec, "name", None) == "gender_name_truth_dropout_030_grayscale_010")
     )
     if use_mixup:
-        if use_sam:
+        if sam25:
+            from fashion.train.task3_gender_sam25 import (
+                require_sam25_prerequisites as require_mixup_prerequisites,
+            )
+            from fashion.train.task3_gender_sam25 import sam25_config as mixup_config
+            from fashion.train.task3_gender_sam25 import training_splits
+        elif use_sam:
             from fashion.train.task3_gender_sam import (
                 require_sam_prerequisites as require_mixup_prerequisites,
             )
@@ -887,6 +896,8 @@ def run_task3_baseline_fold(
     config_payload = config.to_dict()
     if use_sam:
         config_payload["sam_policy"] = child_spec.to_dict()["sam_policy"]
+    if sam25:
+        config_payload["cosine_t_max"] = child_spec.to_dict()["cosine_t_max"]
     if expanded_contract is not None:
         config_payload["expanded_dataset"] = expanded_contract
     mixup = None
@@ -1074,9 +1085,11 @@ def run_task3_baseline_fold(
     if use_sam:
         from fashion.train.sam import SAMStep
 
-        sam = SAMStep(model, optimizer)
+        sam = SAMStep(model, optimizer, policy=config_payload["sam_policy"])
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-        optimizer, T_max=config.epochs, eta_min=config.minimum_learning_rate
+        optimizer,
+        T_max=config_payload.get("cosine_t_max", config.epochs),
+        eta_min=config.minimum_learning_rate,
     )
     environment = runtime_environment(device)
     registry = RunRegistry(registry_path, mirrors=registry_mirrors)
