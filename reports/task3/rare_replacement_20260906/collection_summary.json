@@ -1,0 +1,93 @@
+{
+  "reviewed_candidates": 130,
+  "accepted_images": 130,
+  "accepted_by_usage": {
+    "Smart Casual": 62,
+    "Party": 44,
+    "Travel": 17,
+    "Home": 7
+  },
+  "accepted_by_type": [
+    {
+      "usage": "Home",
+      "product_type": "Cushion Covers",
+      "images": 7
+    },
+    {
+      "usage": "Party",
+      "product_type": "Clutches",
+      "images": 18
+    },
+    {
+      "usage": "Party",
+      "product_type": "Dresses",
+      "images": 12
+    },
+    {
+      "usage": "Party",
+      "product_type": "Perfume and Body Mist",
+      "images": 8
+    },
+    {
+      "usage": "Party",
+      "product_type": "Watches",
+      "images": 6
+    },
+    {
+      "usage": "Smart Casual",
+      "product_type": "Sandals",
+      "images": 3
+    },
+    {
+      "usage": "Smart Casual",
+      "product_type": "Shirts",
+      "images": 12
+    },
+    {
+      "usage": "Smart Casual",
+      "product_type": "Ties",
+      "images": 4
+    },
+    {
+      "usage": "Smart Casual",
+      "product_type": "Wallets",
+      "images": 8
+    },
+    {
+      "usage": "Smart Casual",
+      "product_type": "Watches",
+      "images": 35
+    },
+    {
+      "usage": "Travel",
+      "product_type": "Camera Bags",
+      "images": 6
+    },
+    {
+      "usage": "Travel",
+      "product_type": "Handbags",
+      "images": 11
+    }
+  ],
+  "rejection_counts": {},
+  "accepted_families": 116,
+  "largest_new_family": 4,
+  "duplicate_check": {
+    "candidate_sha256": "51fc1560c0aecc0f57653e7fdd91582070a45840ef1838a1e2c26595e49415d9",
+    "previous_split_sha256": "0bd490672543b7022fa7a883be9b006d63681d7c168e497e0388616836696776",
+    "reference_count": 45128,
+    "reference_roles": {
+      "development": 32773,
+      "prediction": 5829,
+      "holdout": 5778,
+      "earlier_external_all_versions": 687,
+      "quarantine": 61
+    },
+    "source_and_prepared_reference_bytes_verified": true,
+    "overlap_candidate_count": 0,
+    "matches_sha256": "6d7dd09a0ee03efa0cc900360fc8a1a3e1a5008a063a19dd9cff5d8fcfda319c"
+  },
+  "source_original_files_retained": true,
+  "teacher_labels_used_for_overlap": false,
+  "manifest_sha256": "e298332584a96273911c66881068645d3abea64482ff02096d11b50ba08430c9"
+}
