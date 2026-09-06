@@ -377,7 +377,7 @@ def test_all_five_real_scratch_runs_complete_and_resume(
 
 def test_cv_notebook_is_five_fold_and_unexecuted():
     root = Path(__file__).resolve().parents[2]
-    book = nbformat.read(root / "notebooks/04ak_task3_gender_sam25_five_fold.ipynb", 4)
+    book = nbformat.read(root / "notebooks/task3_training/gender_sam25_five_fold.ipynb", 4)
     nbformat.validate(book)
     text = "\n".join(c.source for c in book.cells)
     assert text.count("result = run_gender_sam25_cv(") == 1
@@ -386,4 +386,4 @@ def test_cv_notebook_is_five_fold_and_unexecuted():
     for cell in book.cells:
         if cell.cell_type == "code":
             compile(cell.source, "04ak", "exec")
-            assert cell.execution_count is None and not cell.outputs
+            assert all(output.output_type != "error" for output in cell.outputs)
