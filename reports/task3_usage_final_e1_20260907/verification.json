@@ -1,0 +1,43 @@
+{
+  "source_notebook_sha256": "674c5eee15064cdece7fffbb9138b5f8ad3bda7e04b5454b01c0cc315eaaa840",
+  "notebook_sha256": "d608831eee1d844b3d5170c8a72f9f2734020af13e8c3007f18be495394b1cde",
+  "model_manifest_sha256": "79cec64647d7c37f3bb64af1307e3911333c6198dce41bfc5171bf9f06d72a34",
+  "executed_code_cells": 127,
+  "execution_errors": 0,
+  "five_checkpoint_hashes_verified": true,
+  "saved_fold_normalizations_match_both_evaluations": true,
+  "source_inference_contract_hashes_match": true,
+  "e1_oof_rows_verified": 32772,
+  "saved_test_probability_average_verified": true,
+  "max_csv_average_drift": 2.0396423217050597e-08,
+  "test_models_checked_from_per_class_counts": 4,
+  "holdout_confusion_reproduces_metrics": true,
+  "expanded_teacher_confusions_reproduce_metrics": true,
+  "original_analysis_cells_preserved": "11\u2013350, except Usage historical decision 63 and scope wording 339",
+  "training_or_new_inference": false,
+  "raw_evaluation_labels_opened": false,
+  "source_checkout_modified": false,
+  "tests_passed": 32,
+  "test_files": [
+    "tests/test_notebook_scaffolds.py",
+    "tests/data/test_images.py",
+    "tests/train/test_task3_baseline_contracts.py"
+  ],
+  "ruff_passed": true,
+  "html_local_links_checked": true,
+  "html_sha256": "6d6fe80fbb05e892da23bc27b035f1163feb9f73d5418c05f9586861610e0401",
+  "visual_review": {
+    "new_figures": [
+      "usage_source_transfer.png",
+      "usage_screen_fit.png",
+      "usage_final_test_accuracy.png",
+      "usage_final_class_limits.png"
+    ],
+    "html_tables": [
+      "five-fold development",
+      "E1 frozen recipe",
+      "holdout and test summaries"
+    ],
+    "result": "Readable; no clipping or overlap in reviewed tables and figures"
+  }
+}
