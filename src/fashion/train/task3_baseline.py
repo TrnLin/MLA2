@@ -559,9 +559,13 @@ def run_task3_baseline_fold(
         from fashion.train.task3_gender_weight_decay import weight_decay_config
 
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
-    usage_sam = getattr(child_spec, "name", None) == "usage_expanded_v2_mixup_sam"
+    usage_v3 = getattr(child_spec, "name", None) == "usage_replaced_v3_mixup_sam"
+    usage_sam = usage_v3 or getattr(child_spec, "name", None) == "usage_expanded_v2_mixup_sam"
     if usage_sam:
-        from fashion.train.task3_usage_mixup_sam import screen_config
+        if usage_v3:
+            from fashion.train.task3_usage_replaced_v3 import screen_config
+        else:
+            from fashion.train.task3_usage_mixup_sam import screen_config
 
         config = screen_config(child_spec, fold=validation_fold, device_name=device_name)
     group_weight = getattr(child_spec, "name", None) == "gender_name_truth_article_weight_sqrt_cap3"
@@ -765,7 +769,9 @@ def run_task3_baseline_fold(
     splits_path = root / SPLITS_CSV.relative_to(ROOT)
     label_maps_path = root / LABEL_MAPS_JSON.relative_to(ROOT)
     if expanded_usage:
-        if usage_sam or expanded_usage_name == "usage_expanded_v2_e8":
+        if usage_v3:
+            from fashion.train import task3_usage_replaced_v3 as expanded_module
+        elif usage_sam or expanded_usage_name == "usage_expanded_v2_e8":
             from fashion.train import task3_usage_expanded_v2 as expanded_module
         else:
             from fashion.train import task3_usage_expanded as expanded_module
