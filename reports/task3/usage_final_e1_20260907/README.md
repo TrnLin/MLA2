@@ -22,6 +22,8 @@ Travel case. Home has no test examples. On the reserved holdout, it gets
 - [HTML preview](../main_report_20260906/main_report.html): the executed
   notebook with working local links. This is a generated review artifact.
 - [Verification](verification.json): source hashes and completed checks.
+- [Evaluated source mapping](source-archive-map.json): exact archived inference
+  sources and separately pinned current scripts.
 
 Sections 39–45 finish the Usage path: original experiments, 120/687-image
 expansions, the matched two-fold MixUp/SAM and replacement trials, overfitting,
@@ -54,7 +56,9 @@ a new fit. The four-target submission still requires integration.
 - All 127 code cells executed without errors; notebook schema and Python
   syntax checks passed. Ruff passed for the notebook and changed test file.
 - All five E1 checkpoint hashes match the registry. Their normalizations
-  match both saved evaluation recipes. The inference source hashes match.
+  match both saved evaluation recipes. Frozen inference source hashes match
+  the evaluated source archive through the mapping below. The adapted current
+  scripts have different hashes and are checked separately.
 - All 32,772 saved E1 OOF rows match canonical IDs, folds, families and class
   indices. Their decisions reproduce the registered accuracy and macro-F1.
 - The saved five-fold test probability average reproduces every E1 decision.
@@ -71,6 +75,31 @@ The main notebook and its tests were based on the current source checkout,
 including its uncommitted Gender report changes. The source notebook hash is
 recorded in `verification.json`. The source checkout, training notebooks,
 training code, registry, data and checkpoints were not edited.
+
+## Verify the frozen artifact after path moves
+
+From the project root, with the private model/data assets from
+[asset setup](../ASSETS.md) present, run:
+
+```bash
+./.venv/bin/python scripts/verify_task3_usage_manifest.py
+```
+
+This checks all 38 frozen manifest references: the recipe, source contracts,
+five checkpoints, configurations, normalizations, metrics, OOF records and
+saved predictions. It only reads and hashes files; it does not import or run
+the archived scripts, train, or perform inference.
+
+Two evaluated inference scripts changed when their live paths were moved.
+Their exact evaluated bytes are tracked in `evaluated_sources/`.
+`source-archive-map.json` maps each original manifest reference to its archive,
+and pins each adapted current script separately. Other historical report
+references use the `reports/task3_` → `reports/task3/` prefix move; other paths
+stay relative to the checkout root. The frozen manifest itself is also checked.
+Expected output is 38 frozen references and two separately verified current
+scripts. No stale filename aliases or original source checkout are needed.
+The current scripts are retained for their adapted paths, not claimed to be
+byte-identical to the evaluated source or newly evaluated models.
 
 The combined cleanup includes the saved source evidence packs, moved report
 links, and decision 0022 in the decision index. See [asset setup](../ASSETS.md)
