@@ -1,0 +1,10 @@
+{
+  "exponent": 0.25,
+  "sources": [
+    "E2",
+    "E3",
+    "E8"
+  ],
+  "fits": 0,
+  "score_scope": "post-hoc sensitivity only; no acceptance gate is applied or changed"
+}
