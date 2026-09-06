@@ -32,6 +32,8 @@ mark the old one as superseded, and link both records.
   and their equal-probability ensemble; record evaluation limits and label bases.
 - `0021-task3-usage-gap-replacements.md` — replace 130 outside images in a new v3 dataset;
   fill reviewed type/photo gaps while preserving class totals and retained rows/folds.
+- [0022-task3-usage-e1-final-model.md](0022-task3-usage-e1-final-model.md) — freeze the five
+  teacher-only E1 Usage checkpoints and equal probability average; record rare-class failures.
 
 ## Superseded decisions
 
@@ -45,7 +47,8 @@ mark the old one as superseded, and link both records.
 ## Accepted with later amendments
 
 - `0014-development-holdout-cv-boundary.md` — Task 3 combined-data exception in 0018;
-  gender final artifact is a five-fold ensemble under 0020. Other boundaries remain active.
+  Gender and Usage final artifacts are five-fold ensembles under 0020 and 0022.
+  Other boundaries remain active.
 - `0002-single-split-and-duplicate-quarantine.md` — partition details superseded by 0014;
   the sole-split and duplicate-quarantine rules remain active.
 - `0011-auditable-family-review-boundary.md` — fixed partition counts superseded by 0014 and the
