@@ -1,0 +1,72 @@
+[
+  {
+    "path": "incremental_comparison.json",
+    "url": "https://drive.google.com/file/d/16fUQq29O9MMHsA6nZYqe2u4-LxgDDBgG/view?usp=drivesdk",
+    "size": "10833"
+  },
+  {
+    "path": "screen_decision.json",
+    "url": "https://drive.google.com/file/d/12PlXm9kr6Pz1wGSfJhwLu1D13wZgtSiD/view?usp=drivesdk",
+    "size": "22898"
+  },
+  {
+    "path": "fold0/metrics.json",
+    "url": "https://drive.google.com/file/d/13unxKh2Nex_irL3QRCS52SkN0vOxR3mG/view?usp=drivesdk",
+    "size": "3830"
+  },
+  {
+    "path": "fold0/clean_epoch_diagnostics.json",
+    "url": "https://drive.google.com/file/d/1QbrcJBFnwTWY1K7EmkzCLYRVTCMBgOD1/view?usp=drivesdk",
+    "size": "17784"
+  },
+  {
+    "path": "fold0/history.csv",
+    "url": "https://drive.google.com/file/d/1i5JdjKzIh8-Dsq_9xoiPT56iosSMBJ3S/view?usp=drivesdk",
+    "size": "3630"
+  },
+  {
+    "path": "fold0/sam_training.json",
+    "url": "https://drive.google.com/file/d/1lE90Z2cihbkptiyUwuJdeYchyoirAdOV/view?usp=drivesdk",
+    "size": "8668"
+  },
+  {
+    "path": "fold0/mixup_training.json",
+    "url": "https://drive.google.com/file/d/10CMuxsmGTt3xJ8-wcFW7OokpNBIpmU9G/view?usp=drivesdk",
+    "size": "7442"
+  },
+  {
+    "path": "fold0/config.json",
+    "url": "https://drive.google.com/file/d/1AluRkkhmFH4uKBRUXegO646t8kYBebO2/view?usp=drivesdk",
+    "size": "9483"
+  },
+  {
+    "path": "fold4/metrics.json",
+    "url": "https://drive.google.com/file/d/1buAZQwmgigadRhQEamUEOStKR6OBDm0y/view?usp=drivesdk",
+    "size": "3855"
+  },
+  {
+    "path": "fold4/clean_epoch_diagnostics.json",
+    "url": "https://drive.google.com/file/d/1Bar0oEdoerchEUTy_tNyBuntbtm_1dhU/view?usp=drivesdk",
+    "size": "17829"
+  },
+  {
+    "path": "fold4/history.csv",
+    "url": "https://drive.google.com/file/d/13Gpya4oEoccNJbtsEXsuaVsl6ivL7NMQ/view?usp=drivesdk",
+    "size": "3640"
+  },
+  {
+    "path": "fold4/sam_training.json",
+    "url": "https://drive.google.com/file/d/1Nsje0p_Y-1DQg-tk9ZYV1Hih6q11ZJWJ/view?usp=drivesdk",
+    "size": "8670"
+  },
+  {
+    "path": "fold4/mixup_training.json",
+    "url": "https://drive.google.com/file/d/1XwyclpU-tpBdEk1zl5Yo9jjp46DmjO6W/view?usp=drivesdk",
+    "size": "7442"
+  },
+  {
+    "path": "fold4/config.json",
+    "url": "https://drive.google.com/file/d/1nLBZtSB25mFKve0qmxsfdP8N7npz-RI7/view?usp=drivesdk",
+    "size": "9483"
+  }
+]
