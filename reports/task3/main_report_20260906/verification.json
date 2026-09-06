@@ -1,10 +1,10 @@
 {
   "registry_stages_checked_against_sklearn": 47,
-  "executed_code_cells": 121,
+  "executed_code_cells": 127,
   "execution_counts_in_order": true,
   "execution_errors": 0,
-  "numbered_sections": 40,
-  "maximum_code_cell_lines": 23,
+  "numbered_sections": 45,
+  "maximum_code_cell_lines": 25,
   "embedded_charts_visually_checked": 77,
   "additional_pinned_sources": 136,
   "development_images_hash_checked_and_decoded": 32773,
@@ -15,5 +15,37 @@
   "html_local_links_checked": true,
   "html_layout_visually_checked": true,
   "archive_byte_identical": true,
-  "registry_sha256": "aae3e2b64332a892548ad86eed7c1e0bbecf97340913c4ec1a3999ab179b7ba5"
+  "registry_sha256": "aae3e2b64332a892548ad86eed7c1e0bbecf97340913c4ec1a3999ab179b7ba5",
+  "prior_verification": {
+    "note": "Values below describe the report before cleanup integration.",
+    "values": {
+      "registry_stages_checked_against_sklearn": 47,
+      "executed_code_cells": 121,
+      "execution_counts_in_order": true,
+      "execution_errors": 0,
+      "numbered_sections": 40,
+      "maximum_code_cell_lines": 23,
+      "embedded_charts_visually_checked": 77,
+      "additional_pinned_sources": 136,
+      "development_images_hash_checked_and_decoded": 32773,
+      "analysis_runs_inside_notebook": true,
+      "external_analysis_helpers": false,
+      "notebook_scaffold_tests_passed": 15,
+      "ruff_check_passed": true,
+      "html_local_links_checked": true,
+      "html_layout_visually_checked": true,
+      "archive_byte_identical": true,
+      "registry_sha256": "aae3e2b64332a892548ad86eed7c1e0bbecf97340913c4ec1a3999ab179b7ba5"
+    }
+  },
+  "embedded_charts": 81,
+  "notebook_sha256": "9239e722b73d38821b926d991b961417c7f06b16fb6c30a52229bc105f66de8a",
+  "html_sha256": "99b0f30588a93bb5e0926e13f90424be382a311128362d5fa97270bea5f67131",
+  "combined_tests_passed": 403,
+  "additional_notebook_tests_after_line_wrap": 15,
+  "local_assets_verified": 7229,
+  "live_markdown_links_checked": true,
+  "visual_checks": "Four final Usage plots, E1 recipe table, saved evaluation tables; earlier report sample checks retained",
+  "new_training_or_inference": false,
+  "integration_source_commit": "85f7cdd35a8c88025e4f9fac52cf63bc8e5b597d"
 }
