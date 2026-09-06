@@ -34,7 +34,7 @@ class-weight denominator as the training loop.
 
 1. Put `usage_mixup_sam_training.zip` beside the existing `task3-data.zip` in
    `MyDrive/MLA2/data/`.
-2. Open [the notebook](../../notebooks/04am_task3_usage_mixup_sam_screen.ipynb) in VS Code,
+2. Open [the notebook](../../../notebooks/task3_training/usage_mixup_sam_screen.ipynb) in VS Code,
    select a fresh Colab GPU kernel, and choose **Run All**.
 
 The notebook verifies its bundled code, data and baseline artifacts. All training pixels
@@ -66,7 +66,7 @@ No other folds are launched and no model is promoted automatically.
 ## Rebuild the bundle
 
 ```bash
-./.venv/bin/python reports/task3_usage_mixup_sam_20260906/build_bundle.py
+./.venv/bin/python reports/task3/usage_mixup_sam_20260906/build_bundle.py
 ```
 
 PyTorch is required. The build verifies all development images and both saved baseline
