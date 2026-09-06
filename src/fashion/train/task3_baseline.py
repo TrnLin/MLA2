@@ -567,7 +567,8 @@ def run_task3_baseline_fold(
         or stronger_mixup
         or (getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020")
     )
-    expanded_usage = getattr(child_spec, "name", None) == "usage_expanded_e8"
+    expanded_usage_name = getattr(child_spec, "name", None)
+    expanded_usage = expanded_usage_name in {"usage_expanded_e8", "usage_expanded_v2_e8"}
     expanded_contract = None
     name_truth = (
         use_mixup
@@ -746,11 +747,14 @@ def run_task3_baseline_fold(
     splits_path = root / SPLITS_CSV.relative_to(ROOT)
     label_maps_path = root / LABEL_MAPS_JSON.relative_to(ROOT)
     if expanded_usage:
-        from fashion.train.task3_usage_expanded import DATA_DIRECTORY, validate_dataset
+        if expanded_usage_name == "usage_expanded_v2_e8":
+            from fashion.train import task3_usage_expanded_v2 as expanded_module
+        else:
+            from fashion.train import task3_usage_expanded as expanded_module
 
-        splits, expanded_contract = validate_dataset(root=root, check_images=False)
-        splits_path = root / DATA_DIRECTORY / "splits.csv"
-        label_maps_path = root / DATA_DIRECTORY / "label_maps.json"
+        splits, expanded_contract = expanded_module.validate_dataset(root=root, check_images=False)
+        splits_path = root / expanded_module.DATA_DIRECTORY / "splits.csv"
+        label_maps_path = root / expanded_module.DATA_DIRECTORY / "label_maps.json"
     else:
         splits = load_splits(splits_path)
     if name_truth:
@@ -1303,10 +1307,8 @@ def run_task3_baseline_fold(
         predictions = _prediction_frame(labels, probabilities, trace, classes, run_id)
         expanded_scores = None
         if expanded_usage:
-            from fashion.train.task3_usage_expanded import source_metrics, source_predictions
-
-            predictions = source_predictions(predictions, validation)
-            training_predictions = source_predictions(
+            predictions = expanded_module.source_predictions(predictions, validation)
+            training_predictions = expanded_module.source_predictions(
                 _prediction_frame(
                     final_train_labels,
                     final_train_probabilities,
@@ -1318,8 +1320,8 @@ def run_task3_baseline_fold(
             )
             training_predictions.to_csv(run_dir / "training_predictions.csv", index=False)
             expanded_scores = {
-                "validation": source_metrics(predictions),
-                "clean_training": source_metrics(training_predictions),
+                "validation": expanded_module.source_metrics(predictions),
+                "clean_training": expanded_module.source_metrics(training_predictions),
             }
             _json_dump(expanded_scores, run_dir / "source_metrics.json")
         predictions.to_csv(prediction_path, index=False)
