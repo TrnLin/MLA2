@@ -1,0 +1,88 @@
+{
+  "date": "2026-09-06",
+  "status": "validated_auxiliary_source_label_intake",
+  "training_target": "source_usage",
+  "teacher_usage_compatible": false,
+  "downloaded_candidate_images": 264,
+  "accepted_images": 120,
+  "accepted_families": 109,
+  "class_counts": [
+    {
+      "class": "Home",
+      "images": 16,
+      "families": 16,
+      "train_images": 13,
+      "validation_images": 3,
+      "train_families": 13,
+      "validation_families": 3
+    },
+    {
+      "class": "Party",
+      "images": 97,
+      "families": 90,
+      "train_images": 79,
+      "validation_images": 18,
+      "train_families": 72,
+      "validation_families": 18
+    },
+    {
+      "class": "Smart Casual",
+      "images": 6,
+      "families": 2,
+      "train_images": 3,
+      "validation_images": 3,
+      "train_families": 1,
+      "validation_families": 1
+    },
+    {
+      "class": "Travel",
+      "images": 1,
+      "families": 1,
+      "train_images": 1,
+      "validation_images": 0,
+      "train_families": 1,
+      "validation_families": 0
+    },
+    {
+      "class": "NA",
+      "images": 0,
+      "families": 0,
+      "train_images": 0,
+      "validation_images": 0,
+      "train_families": 0,
+      "validation_families": 0
+    }
+  ],
+  "teacher_role_counts": {
+    "development": 32773,
+    "prediction": 5829,
+    "holdout": 5778,
+    "quarantine": 61
+  },
+  "teacher_comparison_rows": 7,
+  "accepted_teacher_overlap_rows": 0,
+  "teacher_connected_source_families_withheld": 0,
+  "conflicting_source_families_withheld": 0,
+  "withheld_reason_counts": {
+    "Unresolved source product-type mismatch (6,7), or small top competing with full outfit at 60x80 (15,49,69)": 5,
+    "Collage or unresolved source product-type mismatch": 10,
+    "Multiple products or competing scene context in the same photo": 27,
+    "Flat print artwork without clear product form": 2,
+    "Weak source purpose/type text is not an exact occasion/style label": 90,
+    "Repeated prepared RGB image; keep one deterministic source representative": 10
+  },
+  "adapter_checks": {
+    "train": 96,
+    "validation": 24
+  },
+  "source_split_sha256": "e951f13baf7916d74513015aaef2d79aa845a50278e6904f1c946f4803051e79",
+  "teacher_contract_hashes_unchanged": {
+    "data/processed/splits.csv": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+    "data/processed/prediction_manifest.csv": "8d1fdd27721fc8604203b99308ecda9773b1f7c89b8cf6b2a33c82587b14954b"
+  },
+  "split_policy": "Deterministic 80/20 whole-family allocation within source/label strata, seed2753; singleton strata train-only",
+  "image_policy": "EXIF->RGB->LANCZOS aspect-preserving letterbox; PNG width60 height80; content mask preserves neutral padding after normalization",
+  "normalization_scope": "Only external training content pixels; external validation never fitted",
+  "model_fit_performed": false,
+  "limits": "Perceptual comparisons are heuristic, not proof of source independence. Source labels are not validated teacher-equivalent Usage targets. Source validation is separate from canonical teacher evaluation."
+}
