@@ -155,7 +155,9 @@ def test_memory_boundary_and_wrong_gap_are_rejected():
 
 def test_notebook_runs_screen_only_and_compiles():
     root = Path(__file__).resolve().parents[2]
-    nb = json.loads((root / "notebooks/04u_task3_gender_weight_decay_screen.ipynb").read_text())
+    nb = json.loads(
+        (root / "notebooks/task3_training/gender_weight_decay_screen.ipynb").read_text()
+    )
     code = "\n".join("".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code")
     assert "run_gender_weight_decay_screen(" in code
     assert "confirmation" not in code
