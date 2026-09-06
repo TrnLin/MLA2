@@ -257,9 +257,9 @@ def test_receipt_checks_reject_modified_evidence(tmp_path, monkeypatch):
             screen.verify_mixup_evidence(run, fold=0, splits=None, directory=tmp_path)
 
 
-def test_mixup_notebook_is_one_unexecuted_two_fold_trial():
+def test_mixup_notebook_is_one_two_fold_trial():
     root = Path(__file__).resolve().parents[2]
-    nb = nbformat.read(root / "notebooks/04af_task3_gender_mixup_screen.ipynb", as_version=4)
+    nb = nbformat.read(root / "notebooks/task3_training/gender_mixup_screen.ipynb", as_version=4)
     nbformat.validate(nb)
     code = "\n".join(c.source for c in nb.cells if c.cell_type == "code")
     assert code.count("run_gender_mixup_screen(") == 1
@@ -268,7 +268,7 @@ def test_mixup_notebook_is_one_unexecuted_two_fold_trial():
     for cell in nb.cells:
         if cell.cell_type == "code":
             compile(cell.source, "04af", "exec")
-            assert cell.execution_count is None and not cell.outputs
+            assert all(output.output_type != "error" for output in cell.outputs)
 
 
 @pytest.mark.parametrize("fault", [None, "labels", "parent", "audit"])
