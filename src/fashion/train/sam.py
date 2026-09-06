@@ -1,5 +1,6 @@
 """First-order L2 SAM over AdamW, with one stochastic batch and one update."""
 
+import copy
 import math
 
 import torch
@@ -21,10 +22,23 @@ POLICY = {
 }
 
 
+def policy_for_epochs(epochs=30):
+    if epochs not in (25, 30):
+        raise ValueError("SAM supports only the frozen 25- or 30-epoch trials")
+    policy = copy.deepcopy(POLICY)
+    if epochs == 25:
+        policy.update(version="gender_sam005_adamw_epoch25_v1", diagnostic_epochs=[10, 15, 20, 25])
+    return policy
+
+
 class SAMStep:
     """Own the two backward passes; leave scheduling on the original AdamW."""
 
-    def __init__(self, model, optimizer):
+    def __init__(self, model, optimizer, *, policy=None):
+        policy = policy_for_epochs() if policy is None else policy
+        if policy not in (policy_for_epochs(25), policy_for_epochs(30)):
+            raise ValueError("SAM policy differs from the frozen trials")
+        self.policy = copy.deepcopy(policy)
         if type(optimizer) is not torch.optim.AdamW:
             raise ValueError("The frozen SAM trial requires AdamW")
         self.model, self.optimizer = model, optimizer
@@ -94,7 +108,7 @@ class SAMStep:
             logits, first_loss, norm = self._backward(closure)
             first_buffers = [b.clone() for b in self.buffers]
             with torch.no_grad():
-                scale = POLICY["rho"] / (norm + POLICY["epsilon"])
+                scale = self.policy["rho"] / (norm + self.policy["epsilon"])
                 for p in self.parameters:
                     if p.grad is not None:
                         p.add_(p.grad * scale)
@@ -140,4 +154,4 @@ class SAMStep:
     def receipt(self):
         if self.current is not None:
             raise ValueError("Cannot save an unfinished SAM epoch")
-        return {"policy": dict(POLICY), "epochs": list(self.epochs)}
+        return {"policy": copy.deepcopy(self.policy), "epochs": list(self.epochs)}
