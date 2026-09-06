@@ -5,7 +5,7 @@ Start with [the main notebook](../../notebooks/04_task3_gender_usage.ipynb),
 [asset setup and submission checklist](ASSETS.md).
 
 Gender is the accepted SAM25 five-fold ensemble. Usage is the selected
-teacher-only E1 five-fold average; its final write-up is integrated separately.
+teacher-only E1 five-fold average. Both final choices are in the main notebook.
 Earlier reports below are dated evidence, not overrides of the final decisions.
 
 ## Main evidence
@@ -14,6 +14,7 @@ Earlier reports below are dated evidence, not overrides of the final decisions.
 - [Gender final manifest](gender_sam25_cv_result_20260906/model_manifest.json)
 - [Gender reserved holdout and label checks](gender_sam25_holdout_test_20260906/README.md)
 - [Usage E1/E8 comparison and prediction recipe](usage_teacher_vs_expanded_test_20260906/README.md)
+- [Usage final E1 manifest and report](usage_final_e1_20260907/README.md)
 - [Usage saved holdout](usage_holdout_20260906/README.md)
 - [Usage 687-addition E8 result](usage_expanded_v2_e8_test_20260907/README.md)
 - [Failed replacement trial](usage_replaced_v3_mixup_sam_result_20260907/README.md)
