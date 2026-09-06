@@ -1,0 +1,300 @@
+{
+  "canonical_usage": [
+    "Casual",
+    "Ethnic",
+    "Formal",
+    "Home",
+    "NA",
+    "Party",
+    "Smart Casual",
+    "Sports",
+    "Travel"
+  ],
+  "all": {
+    "rows": 20000,
+    "unique_product_ids": 19998
+  },
+  "with_occasion": {
+    "rows": 9954,
+    "unique_product_ids": 9954
+  },
+  "multiple_tokens": {
+    "rows": 1812,
+    "unique_product_ids": 1812
+  },
+  "multiple_canonical_tokens": {
+    "rows": 489,
+    "unique_product_ids": 489
+  },
+  "strict_policy": "Known broad fashion root AND exactly one source token AND exact canonical name; provisional weak labels, not semantic validation.",
+  "strict_by_label": {
+    "Casual": {
+      "rows": 4767,
+      "unique_product_ids": 4767
+    },
+    "Ethnic": {
+      "rows": 37,
+      "unique_product_ids": 37
+    },
+    "Formal": {
+      "rows": 467,
+      "unique_product_ids": 467
+    },
+    "Home": {
+      "rows": 0,
+      "unique_product_ids": 0
+    },
+    "NA": {
+      "rows": 0,
+      "unique_product_ids": 0
+    },
+    "Party": {
+      "rows": 342,
+      "unique_product_ids": 342
+    },
+    "Smart Casual": {
+      "rows": 0,
+      "unique_product_ids": 0
+    },
+    "Sports": {
+      "rows": 130,
+      "unique_product_ids": 130
+    },
+    "Travel": {
+      "rows": 2,
+      "unique_product_ids": 2
+    }
+  },
+  "all_singleton_exact_by_label": {
+    "Casual": {
+      "rows": 4910,
+      "unique_product_ids": 4910
+    },
+    "Ethnic": {
+      "rows": 37,
+      "unique_product_ids": 37
+    },
+    "Formal": {
+      "rows": 470,
+      "unique_product_ids": 470
+    },
+    "Home": {
+      "rows": 0,
+      "unique_product_ids": 0
+    },
+    "NA": {
+      "rows": 0,
+      "unique_product_ids": 0
+    },
+    "Party": {
+      "rows": 363,
+      "unique_product_ids": 363
+    },
+    "Smart Casual": {
+      "rows": 0,
+      "unique_product_ids": 0
+    },
+    "Sports": {
+      "rows": 137,
+      "unique_product_ids": 137
+    },
+    "Travel": {
+      "rows": 2,
+      "unique_product_ids": 2
+    }
+  },
+  "token_counts": {
+    "Adventure": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "All Occasions": {
+      "rows": 2,
+      "unique_product_ids": 2
+    },
+    "Beach": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Beach Wear": {
+      "rows": 129,
+      "unique_product_ids": 129
+    },
+    "Birthday": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Casual": {
+      "rows": 5467,
+      "unique_product_ids": 5467
+    },
+    "Casual And Formal": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "College": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Ethnic": {
+      "rows": 56,
+      "unique_product_ids": 56
+    },
+    "Evening/Party": {
+      "rows": 35,
+      "unique_product_ids": 35
+    },
+    "Event": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Everyday": {
+      "rows": 2126,
+      "unique_product_ids": 2126
+    },
+    "Festival": {
+      "rows": 2,
+      "unique_product_ids": 2
+    },
+    "Festive": {
+      "rows": 223,
+      "unique_product_ids": 223
+    },
+    "Formal": {
+      "rows": 726,
+      "unique_product_ids": 726
+    },
+    "Friendship Day": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Gym and Training": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Halloween": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Hiking": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Lifestyle": {
+      "rows": 5,
+      "unique_product_ids": 5
+    },
+    "Lounge Wear": {
+      "rows": 149,
+      "unique_product_ids": 149
+    },
+    "Love": {
+      "rows": 848,
+      "unique_product_ids": 848
+    },
+    "Outdoor Adventure": {
+      "rows": 2,
+      "unique_product_ids": 2
+    },
+    "Party": {
+      "rows": 693,
+      "unique_product_ids": 693
+    },
+    "Party and Celebration": {
+      "rows": 2,
+      "unique_product_ids": 2
+    },
+    "Party-Wedding": {
+      "rows": 97,
+      "unique_product_ids": 97
+    },
+    "Picnic": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Rain": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Rainy Weather": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Religious": {
+      "rows": 432,
+      "unique_product_ids": 432
+    },
+    "Riding": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "School": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Special": {
+      "rows": 9,
+      "unique_product_ids": 9
+    },
+    "Special Occasion": {
+      "rows": 6,
+      "unique_product_ids": 6
+    },
+    "Sports": {
+      "rows": 219,
+      "unique_product_ids": 219
+    },
+    "Sporty": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Sun": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "TRAVEL": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Travel": {
+      "rows": 20,
+      "unique_product_ids": 20
+    },
+    "Trekking": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "Wedding": {
+      "rows": 180,
+      "unique_product_ids": 180
+    },
+    "Wedding and Engagement": {
+      "rows": 1562,
+      "unique_product_ids": 1562
+    },
+    "Work": {
+      "rows": 16,
+      "unique_product_ids": 16
+    },
+    "Workwear": {
+      "rows": 777,
+      "unique_product_ids": 777
+    },
+    "travel": {
+      "rows": 1,
+      "unique_product_ids": 1
+    },
+    "|Wedding and Engagement": {
+      "rows": 1,
+      "unique_product_ids": 1
+    }
+  },
+  "root_filter": [
+    "Bags, Wallets & Belts",
+    "Clothing",
+    "Footwear",
+    "Jewellery",
+    "Watches"
+  ],
+  "cross_row_pid_label_conflicts": []
+}
