@@ -1,6 +1,6 @@
 # Gender/product loss-weight trial
 
-Run `notebooks/04ae_task3_gender_group_weight_screen.ipynb` on a fresh Colab L4
+Run `notebooks/task3_training/gender_group_weight_screen.ipynb` on a fresh Colab L4
 after pushing its source changes. It trains folds **0 and 4 only**, from scratch,
 and stops for review. The completed 04ad models are the direct parents.
 The local machine has not run this trial.
