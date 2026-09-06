@@ -298,10 +298,10 @@ def test_baseline_parent_resolver_handles_fold_four_without_torch():
         scope["_child_parent_run_id"](spec, 1)
 
 
-def test_notebook_is_unexecuted_and_has_one_two_fold_screen():
+def test_notebook_has_one_two_fold_screen():
     root = Path(__file__).resolve().parents[2]
     notebook = nbformat.read(
-        root / "notebooks/04aa_task3_gender_dropout_darkening_screen.ipynb", as_version=4
+        root / "notebooks/task3_training/gender_dropout_darkening_screen.ipynb", as_version=4
     )
     nbformat.validate(notebook)
     code = "\n".join(c.source for c in notebook.cells if c.cell_type == "code")
@@ -311,7 +311,7 @@ def test_notebook_is_unexecuted_and_has_one_two_fold_screen():
     for cell in notebook.cells:
         if cell.cell_type == "code":
             compile(cell.source, "04aa", "exec")
-            assert cell.execution_count is None and cell.outputs == []
+            assert all(output.output_type != "error" for output in cell.outputs)
 
 
 def test_actual_trainer_rejects_missing_audit_before_any_fit(tmp_path):
