@@ -1,0 +1,165 @@
+{
+  "verified": true,
+  "training_performed": false,
+  "inference_performed": false,
+  "source_bundles_verified": 8,
+  "evaluation_hashes_verified": 80,
+  "prediction_rows_verified": 524384,
+  "image_hashes_verified": 32773,
+  "source_audit_listed_runs": 16,
+  "code_commit": "854d7703adcae426b584d9161abe963ba80938d3",
+  "sources": [
+    {
+      "model": "Gray10",
+      "fold": 0,
+      "run_id": "t3_gender_dropout_030_mild_darkening_grayscale_010_gender_smallcnngem3_f0_s2753_eb37119b7e68_20260905T144455Ze47ef6",
+      "sha256": {
+        "config.json": "de829d1e32ff89145e05a39f4e2ed31b83a978b69c4d83024a189408d1b582d5",
+        "normalization.json": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e",
+        "history.csv": "c21256afa01c5d576079e4602468c069bd91a483ab6619ff17ff52777a012bbd",
+        "metrics.json": "f4de8955556981dbdb50d10c77933a13ac332f59da81b58da61a68dff0f49e4c",
+        "oof_predictions.csv": "2081566dc21db28e68e20facaec0493688352b9fa83e46b6a61693d2470ff60b",
+        "robustness.csv": "def98a89f7343db45765ac7312bb7065fef822fb00ae2974f4725f667975a719",
+        "final_epoch.pt": "9bc554d69e09116c0c673ea555fcf05f890b012915119ec87c446fb7c96e6293"
+      }
+    },
+    {
+      "model": "Gray10",
+      "fold": 4,
+      "run_id": "t3_gender_dropout_030_mild_darkening_grayscale_010_gender_smallcnngem3_f4_s2753_eb37119b7e68_20260905T145521Z7d0a34",
+      "sha256": {
+        "config.json": "766d741fea2427ee070f7efe30087d12428fb6be0ddd961edda84b9d9382c746",
+        "normalization.json": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2",
+        "history.csv": "bdb59a1fa7b1823b5040c8e704aecf893c735fb205e7f9030db1e8905060f2f9",
+        "metrics.json": "359791d42760969fbf267b15c6dc37fca50bdb966a22df132ab1efd521ce06f2",
+        "oof_predictions.csv": "945a7832bf2550f7d8c35b4eaed9201fe678de38218d5369f296f4d35bee95d6",
+        "robustness.csv": "b24625a21dfe976677ea9fcfd2fca56bdcf95b54e8d02491950d95fc7fb32d34",
+        "final_epoch.pt": "cf9198178dfeb25f42d1ae2ac295c40ecacdf5de0d4a8297434eea017169d317"
+      }
+    },
+    {
+      "model": "E6",
+      "fold": 0,
+      "run_id": "t3_gender_e6_gem_p3_gender_smallcnngem3_f0_s2753_a8c09286451b_20260831T090059Z0bab1f",
+      "sha256": {
+        "config.json": "3d88fce2c8094462a1bae39b1c32483c23737c82287c028f7f5ebabd452e3526",
+        "normalization.json": "643edd3763f7e5cec8a6e1031e02fff27e117d58329e44c49559c8cc8df5534a",
+        "history.csv": "0b0ed79d7e1a73d02878c58016336bc572a51326292c41a0df870e659920185b",
+        "metrics.json": "8ec771fa2ac3f100358b18233a1dcb8205d1e622262cb92b692e31aa5d8debe3",
+        "oof_predictions.csv": "5479ed8da3a240ec491fdb704a4a3aec378c0002691ba6f808606f306a29e846",
+        "robustness.csv": "e812dc36e313b43c27b07ffb1d148cdd5eeceab4ba81a54f393c2b41dfefdc6d",
+        "final_epoch.pt": "72728c200141d6e5f672f1ab097a608a9b4a5d7164b83681d0c9ff2efbe59b62"
+      }
+    },
+    {
+      "model": "E6",
+      "fold": 4,
+      "run_id": "t3_gender_e6_gem_p3_gender_smallcnngem3_f4_s2753_a8c09286451b_20260831T093553Z63b5fd",
+      "sha256": {
+        "config.json": "e4c2a6a97b978d0d8c25c8950314a94c9b2294b45cb95f93aa01bc3087259a53",
+        "normalization.json": "539e5174b1f44e350d36d1e7fed9a79b5b92e47e3d0ad1e8edf134f6cda70d87",
+        "history.csv": "674276a2c4d3326429744e04110726730648430c2818b00592209e9a076e9d89",
+        "metrics.json": "9831be330ee5a19b5f057b1e98f96854bd34d934b741b19afe7fcca9c677c3ed",
+        "oof_predictions.csv": "fb47a84c6f6bbced7bfeffc9cf640c61b13d6505bb8b8afa757792ae9edc948b",
+        "robustness.csv": "aac143a0ee8c6f4f38a1813ac50264d889ea6c09e61edc6af837dcbddb01b30c",
+        "final_epoch.pt": "74f7ccb07f391ad466df1a433509b881bd5383a7062419a2f7d306c2cf266b31"
+      }
+    },
+    {
+      "model": "NameTruth",
+      "fold": 0,
+      "run_id": "t3_gender_name_truth_dropout_030_grayscale_010_gender_smallcnngem3_f0_s2753_416e64f58f57_20260905T160634Z0acdc0",
+      "sha256": {
+        "config.json": "6018ebaa70bbb431b8cd7dd678a61a73171c21171a01343ff04d8f8864a0470d",
+        "normalization.json": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e",
+        "history.csv": "d074b341792b23090628a6cd5dd7c7a0c2093c128a441796598ff9d62d85b59a",
+        "metrics.json": "9315c46387f12dadec96a8aee7644af4334bcec09d892791c8c96bb2d3f72ea5",
+        "oof_predictions.csv": "edc7a30c057d53953ba10cbb28db0e0c56c86f161559c1980f3445eda39f7e39",
+        "robustness.csv": "9acb93da73a4b08772dc139c67dc7f0d1b3a8480ae8554e78b5b25129fc0fa1e",
+        "final_epoch.pt": "e33207207876665d1ad5ba24a4700e36328eb555e2a7597bb6f780afd55ecc3b"
+      }
+    },
+    {
+      "model": "NameTruth",
+      "fold": 4,
+      "run_id": "t3_gender_name_truth_dropout_030_grayscale_010_gender_smallcnngem3_f4_s2753_416e64f58f57_20260905T161722Za0a0f7",
+      "sha256": {
+        "config.json": "08ce7ba0f74188b4aeea4802103f7a763ccb00fa80d5c7654094953b72c256a5",
+        "normalization.json": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2",
+        "history.csv": "5703e344d014ec4b33410d24fec3651e5f83300ab5ad367e216f351e68c513b1",
+        "metrics.json": "cacc6d91e03f0f126b9b3a495df6b6df8d00532965fbf013ec8bf7dc21791ae0",
+        "oof_predictions.csv": "c90cbe9fc567b98426e4aeb3c28add10764b954c85891443ae6a5e72765cebf2",
+        "robustness.csv": "b7bfbc3a54d997a42c359f0dc95b65f769963e6bccddc9ea69247b0d059f4e2d",
+        "final_epoch.pt": "9b571bc2726238d447019f94a8405ba3be050a637c0e7b6b053415b4e676c336"
+      }
+    },
+    {
+      "model": "G2",
+      "fold": 0,
+      "run_id": "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6",
+      "sha256": {
+        "config.json": "12a00ed5d1f34ebb816ceb4e750600ca3481764d55379623ce3c751925ad437d",
+        "normalization.json": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e",
+        "history.csv": "cfc09a982d07b299ec8bd60fc675459d901595eee2117adda3f656330e1fe602",
+        "metrics.json": "4a72b9d2f32a4f95673c75ad9bb848fbbbf6b8857af5aa46d7724ce8bfa37cec",
+        "oof_predictions.csv": "b57fd083ccaee7ce3a51e029e43329866d1abcf9cf26145384273d9774a51898",
+        "robustness.csv": "c4a0f4336c407a67cda77c82dc1ace222e89d255e9a03f316d9f4756eac42385",
+        "final_epoch.pt": "0eaf3d0e7efe36e16bb5765dd9a62d4b776e38ba3eac2fe5eff6ad013cc6a71f"
+      }
+    },
+    {
+      "model": "G2",
+      "fold": 4,
+      "run_id": "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1",
+      "sha256": {
+        "config.json": "f63e98722733ef2a1752d0b8b8806852c923f831a996ca4f6023c9c533953f42",
+        "normalization.json": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2",
+        "history.csv": "75773ed37b6f52dc80740a8db1a4922ec3fd06d93ad26195c1c8a93e1d6f3a54",
+        "metrics.json": "c8c49172d99eb7349168d00061beb441481c8b2566e3a19d90db46520dc7e7b2",
+        "oof_predictions.csv": "94bc9531caa7c4fc2370398ec863ef5511689d806b626c9143fe93199996b286",
+        "robustness.csv": "cb54ac094c57df5152c601a8216209f9e6667b52bf1ae21d8c42d4cbb302017e",
+        "final_epoch.pt": "12399c4125bc67fcaca433dae0e6fe4e2a3f30a7ac745bdfa337c8595e82a43e"
+      }
+    }
+  ],
+  "original_teacher_interval": {
+    "point": -0.005429835139441397,
+    "lower_95": -0.02100021261829728,
+    "upper_95": 0.010324574477245918,
+    "repetitions": 10000,
+    "seed": 2753,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "families_by_fold": {
+      "0": 4564,
+      "4": 4570
+    },
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "selection_bias_removed": false
+  },
+  "failed_checks": [
+    {
+      "gate": "fold_0.gap_reduction",
+      "value": -0.0011446070853456947,
+      "rule": "> 0",
+      "status": "fail"
+    },
+    {
+      "gate": "mean_gap_reduction",
+      "value": 0.01943318212017503,
+      "rule": ">= 0.050",
+      "status": "fail"
+    }
+  ],
+  "limits": [
+    "No checkpoint was unpickled and no fresh GPU inference was performed.",
+    "Timing, GPU memory, and unchanged model state are recorded GPU evidence.",
+    "Eight run bundles used in comparisons were rechecked locally; other audit-listed bundles were not all downloaded.",
+    "These reused development folds are not an independent final test."
+  ]
+}
