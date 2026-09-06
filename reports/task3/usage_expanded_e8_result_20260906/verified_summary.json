@@ -1,0 +1,687 @@
+{
+  "class_changes": [
+    {
+      "change": -0.0007974462279539685,
+      "class_name": "Casual",
+      "e8_f1": 0.9305225421813507,
+      "expanded_f1": 0.9297250959533967,
+      "support": 25151
+    },
+    {
+      "change": 0.0028214786280926774,
+      "class_name": "Ethnic",
+      "e8_f1": 0.8473771659150249,
+      "expanded_f1": 0.8501986445431176,
+      "support": 2183
+    },
+    {
+      "change": -0.00730510642931026,
+      "class_name": "Formal",
+      "e8_f1": 0.7770700636942676,
+      "expanded_f1": 0.7697649572649573,
+      "support": 1949
+    },
+    {
+      "change": 0.0,
+      "class_name": "Home",
+      "e8_f1": 0.0,
+      "expanded_f1": 0.0,
+      "support": 1
+    },
+    {
+      "change": 0.05320813771517999,
+      "class_name": "NA",
+      "e8_f1": 0.16901408450704225,
+      "expanded_f1": 0.22222222222222224,
+      "support": 61
+    },
+    {
+      "change": -0.07692307692307691,
+      "class_name": "Party",
+      "e8_f1": 0.07692307692307691,
+      "expanded_f1": 0.0,
+      "support": 12
+    },
+    {
+      "change": -0.06498673740053051,
+      "class_name": "Smart Casual",
+      "e8_f1": 0.10344827586206896,
+      "expanded_f1": 0.03846153846153846,
+      "support": 47
+    },
+    {
+      "change": -0.0028488671770108276,
+      "class_name": "Sports",
+      "e8_f1": 0.666101982043029,
+      "expanded_f1": 0.6632531148660181,
+      "support": 3346
+    },
+    {
+      "change": 0.0,
+      "class_name": "Travel",
+      "e8_f1": 0.20408163265306123,
+      "expanded_f1": 0.20408163265306123,
+      "support": 22
+    }
+  ],
+  "combined_macro_f1": 0.5547688945988467,
+  "completed_folds": 5,
+  "decision": "Do not replace E8 with this expanded run: teacher-only validation is lower. The combined-data score is a secondary diagnostic, not evidence of improved teacher test-set performance.",
+  "e8_teacher_macro_f1": 0.41939320264210234,
+  "epochs_per_fold": 30,
+  "expanded_teacher_macro_f1": 0.4086341339960346,
+  "holdout_and_prediction_rows_in_evaluation": 0,
+  "limits": [
+    "One fixed seed; this does not establish statistical significance.",
+    "Teacher image counts: Home 1, Party 12, Smart Casual 47, Travel 22.",
+    "Added-source class scores have small samples and a different source distribution.",
+    "No training or checkpoint promotion was performed during this review."
+  ],
+  "mean_teacher_train_f1": 0.7766126710265497,
+  "mean_teacher_validation_f1": 0.40585507400001386,
+  "model_selection_scope": "Original teacher validation images",
+  "prediction_ids_labels_folds_families_and_probabilities_verified": true,
+  "project_goal": "Good predictions on the teacher's unseen test set",
+  "sources": {
+    "added": {
+      "metrics": {
+        "accuracy": 0.5333333333333333,
+        "balanced_accuracy": 0.14289805269186712,
+        "brier": 0.7129231607006685,
+        "confusion_matrix": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            0,
+            0,
+            12,
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            35,
+            2,
+            3,
+            0,
+            1,
+            52,
+            0,
+            4,
+            0
+          ],
+          [
+            3,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "ece_15": 0.2567885331666666,
+        "macro_f1": 0.17076460213715114,
+        "mcc": 0.3106124781549772,
+        "nll": 1.8047772801972664,
+        "per_class": [
+          {
+            "class_index": 0,
+            "class_name": "Casual",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_count": 42,
+            "recall": 0.0,
+            "support": 0
+          },
+          {
+            "class_index": 1,
+            "class_name": "Ethnic",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_count": 2,
+            "recall": 0.0,
+            "support": 0
+          },
+          {
+            "class_index": 2,
+            "class_name": "Formal",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_count": 3,
+            "recall": 0.0,
+            "support": 0
+          },
+          {
+            "class_index": 3,
+            "class_name": "Home",
+            "f1": 0.8571428571428571,
+            "precision": 1.0,
+            "predicted_count": 12,
+            "recall": 0.75,
+            "support": 16
+          },
+          {
+            "class_index": 4,
+            "class_name": "NA",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_count": 1,
+            "recall": 0.0,
+            "support": 0
+          },
+          {
+            "class_index": 5,
+            "class_name": "Party",
+            "f1": 0.6797385620915032,
+            "precision": 0.9285714285714286,
+            "predicted_count": 56,
+            "recall": 0.5360824742268041,
+            "support": 97
+          },
+          {
+            "class_index": 6,
+            "class_name": "Smart Casual",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_count": 0,
+            "recall": 0.0,
+            "support": 6
+          },
+          {
+            "class_index": 7,
+            "class_name": "Sports",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_count": 4,
+            "recall": 0.0,
+            "support": 0
+          },
+          {
+            "class_index": 8,
+            "class_name": "Travel",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_count": 0,
+            "recall": 0.0,
+            "support": 1
+          }
+        ],
+        "support": 120,
+        "weighted_f1": 0.663741051976346
+      },
+      "rows": 120
+    },
+    "combined": {
+      "metrics": {
+        "accuracy": 0.8862033321172321,
+        "balanced_accuracy": 0.5317721405009408,
+        "brier": 0.17332705332360315,
+        "confusion_matrix": [
+          [
+            23860,
+            267,
+            328,
+            1,
+            56,
+            25,
+            41,
+            553,
+            20
+          ],
+          [
+            356,
+            1819,
+            5,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0
+          ],
+          [
+            473,
+            5,
+            1441,
+            0,
+            3,
+            2,
+            12,
+            13,
+            0
+          ],
+          [
+            4,
+            0,
+            0,
+            12,
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            44,
+            0,
+            0,
+            0,
+            15,
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            43,
+            6,
+            3,
+            0,
+            1,
+            52,
+            0,
+            4,
+            0
+          ],
+          [
+            38,
+            0,
+            9,
+            0,
+            0,
+            3,
+            2,
+            1,
+            0
+          ],
+          [
+            1385,
+            1,
+            11,
+            0,
+            0,
+            2,
+            2,
+            1943,
+            2
+          ],
+          [
+            15,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            5
+          ]
+        ],
+        "ece_15": 0.006061211284810869,
+        "macro_f1": 0.5547688945988467,
+        "mcc": 0.699603534265956,
+        "nll": 0.3346071213519933,
+        "per_class": [
+          {
+            "class_index": 0,
+            "class_name": "Casual",
+            "f1": 0.9289649399443243,
+            "precision": 0.9100617896101915,
+            "predicted_count": 26218,
+            "recall": 0.9486700330006759,
+            "support": 25151
+          },
+          {
+            "class_index": 1,
+            "class_name": "Ethnic",
+            "f1": 0.8498014482597525,
+            "precision": 0.8670162059103909,
+            "predicted_count": 2098,
+            "recall": 0.8332569857993587,
+            "support": 2183
+          },
+          {
+            "class_index": 2,
+            "class_name": "Formal",
+            "f1": 0.7691486522551375,
+            "precision": 0.8014460511679644,
+            "predicted_count": 1798,
+            "recall": 0.7393535146228836,
+            "support": 1949
+          },
+          {
+            "class_index": 3,
+            "class_name": "Home",
+            "f1": 0.8000000000000002,
+            "precision": 0.9230769230769231,
+            "predicted_count": 13,
+            "recall": 0.7058823529411765,
+            "support": 17
+          },
+          {
+            "class_index": 4,
+            "class_name": "NA",
+            "f1": 0.22058823529411764,
+            "precision": 0.2,
+            "predicted_count": 75,
+            "recall": 0.2459016393442623,
+            "support": 61
+          },
+          {
+            "class_index": 5,
+            "class_name": "Party",
+            "f1": 0.5252525252525253,
+            "precision": 0.5842696629213483,
+            "predicted_count": 89,
+            "recall": 0.47706422018348627,
+            "support": 109
+          },
+          {
+            "class_index": 6,
+            "class_name": "Smart Casual",
+            "f1": 0.03636363636363636,
+            "precision": 0.03508771929824561,
+            "predicted_count": 57,
+            "recall": 0.03773584905660377,
+            "support": 53
+          },
+          {
+            "class_index": 7,
+            "class_name": "Sports",
+            "f1": 0.6628006140201261,
+            "precision": 0.7719507350019865,
+            "predicted_count": 2517,
+            "recall": 0.5806933652121936,
+            "support": 3346
+          },
+          {
+            "class_index": 8,
+            "class_name": "Travel",
+            "f1": 0.19999999999999998,
+            "precision": 0.18518518518518517,
+            "predicted_count": 27,
+            "recall": 0.21739130434782608,
+            "support": 23
+          }
+        ],
+        "support": 32892,
+        "weighted_f1": 0.8824988150364855
+      },
+      "rows": 32892
+    },
+    "teacher": {
+      "metrics": {
+        "accuracy": 0.8874954229220066,
+        "balanced_accuracy": 0.40196682852682925,
+        "brier": 0.17135123454887935,
+        "confusion_matrix": [
+          [
+            23860,
+            267,
+            328,
+            1,
+            56,
+            25,
+            41,
+            553,
+            20
+          ],
+          [
+            356,
+            1819,
+            5,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0
+          ],
+          [
+            473,
+            5,
+            1441,
+            0,
+            3,
+            2,
+            12,
+            13,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            44,
+            0,
+            0,
+            0,
+            15,
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            8,
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            35,
+            0,
+            9,
+            0,
+            0,
+            0,
+            2,
+            1,
+            0
+          ],
+          [
+            1385,
+            1,
+            11,
+            0,
+            0,
+            2,
+            2,
+            1943,
+            2
+          ],
+          [
+            14,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            5
+          ]
+        ],
+        "ece_15": 0.006327410469913386,
+        "macro_f1": 0.4086341339960346,
+        "mcc": 0.7000526408801636,
+        "nll": 0.3292238545674994,
+        "per_class": [
+          {
+            "class_index": 0,
+            "class_name": "Casual",
+            "f1": 0.9297250959533967,
+            "precision": 0.9115220048899756,
+            "predicted_count": 26176,
+            "recall": 0.9486700330006759,
+            "support": 25151
+          },
+          {
+            "class_index": 1,
+            "class_name": "Ethnic",
+            "f1": 0.8501986445431176,
+            "precision": 0.8678435114503816,
+            "predicted_count": 2096,
+            "recall": 0.8332569857993587,
+            "support": 2183
+          },
+          {
+            "class_index": 2,
+            "class_name": "Formal",
+            "f1": 0.7697649572649573,
+            "precision": 0.8027855153203343,
+            "predicted_count": 1795,
+            "recall": 0.7393535146228836,
+            "support": 1949
+          },
+          {
+            "class_index": 3,
+            "class_name": "Home",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_count": 1,
+            "recall": 0.0,
+            "support": 1
+          },
+          {
+            "class_index": 4,
+            "class_name": "NA",
+            "f1": 0.22222222222222224,
+            "precision": 0.20270270270270271,
+            "predicted_count": 74,
+            "recall": 0.2459016393442623,
+            "support": 61
+          },
+          {
+            "class_index": 5,
+            "class_name": "Party",
+            "f1": 0.0,
+            "precision": 0.0,
+            "predicted_count": 33,
+            "recall": 0.0,
+            "support": 12
+          },
+          {
+            "class_index": 6,
+            "class_name": "Smart Casual",
+            "f1": 0.03846153846153846,
+            "precision": 0.03508771929824561,
+            "predicted_count": 57,
+            "recall": 0.0425531914893617,
+            "support": 47
+          },
+          {
+            "class_index": 7,
+            "class_name": "Sports",
+            "f1": 0.6632531148660181,
+            "precision": 0.7731794667727815,
+            "predicted_count": 2513,
+            "recall": 0.5806933652121936,
+            "support": 3346
+          },
+          {
+            "class_index": 8,
+            "class_name": "Travel",
+            "f1": 0.20408163265306123,
+            "precision": 0.18518518518518517,
+            "predicted_count": 27,
+            "recall": 0.22727272727272727,
+            "support": 22
+          }
+        ],
+        "support": 32772,
+        "weighted_f1": 0.8842569692784762
+      },
+      "rows": 32772
+    }
+  },
+  "teacher_comparison_uses_identical_ids": true,
+  "teacher_fold_wins": 1,
+  "teacher_macro_f1_change": -0.010759068646067738,
+  "teacher_rows": 32772,
+  "train_minutes_total": 42.11564223023335,
+  "verified_artifact_hashes": 40
+}
