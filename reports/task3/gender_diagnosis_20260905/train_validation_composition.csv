@@ -1,0 +1,1551 @@
+fold,dimensions,slice,train_count,val_count
+0,gender,Boys,548,136
+0,gender,Girls,436,107
+0,gender,Men,14203,3550
+0,gender,Unisex,1411,355
+0,gender,Women,9622,2405
+0,gender × articleType,"('Boys', 'Blazers')",1,0
+0,gender × articleType,"('Boys', 'Booties')",3,2
+0,gender × articleType,"('Boys', 'Capris')",9,2
+0,gender × articleType,"('Boys', 'Casual Shoes')",17,7
+0,gender × articleType,"('Boys', 'Churidar')",1,0
+0,gender × articleType,"('Boys', 'Clothing Set')",4,0
+0,gender × articleType,"('Boys', 'Flip Flops')",11,3
+0,gender × articleType,"('Boys', 'Gloves')",4,2
+0,gender × articleType,"('Boys', 'Innerwear Vests')",3,0
+0,gender × articleType,"('Boys', 'Jackets')",2,2
+0,gender × articleType,"('Boys', 'Jeans')",21,4
+0,gender × articleType,"('Boys', 'Kurta Sets')",2,0
+0,gender × articleType,"('Boys', 'Kurtas')",5,0
+0,gender × articleType,"('Boys', 'Leggings')",3,0
+0,gender × articleType,"('Boys', 'Rompers')",4,2
+0,gender × articleType,"('Boys', 'Sandals')",8,3
+0,gender × articleType,"('Boys', 'Shirts')",52,13
+0,gender × articleType,"('Boys', 'Shorts')",39,7
+0,gender × articleType,"('Boys', 'Socks')",1,0
+0,gender × articleType,"('Boys', 'Sports Shoes')",2,0
+0,gender × articleType,"('Boys', 'Sweatshirts')",1,1
+0,gender × articleType,"('Boys', 'Trousers')",2,2
+0,gender × articleType,"('Boys', 'Tshirts')",346,86
+0,gender × articleType,"('Boys', 'Waistcoat')",2,0
+0,gender × articleType,"('Boys', 'Watches')",5,0
+0,gender × articleType,"('Girls', 'Backpacks')",1,0
+0,gender × articleType,"('Girls', 'Booties')",4,0
+0,gender × articleType,"('Girls', 'Capris')",21,8
+0,gender × articleType,"('Girls', 'Casual Shoes')",8,6
+0,gender × articleType,"('Girls', 'Clothing Set')",2,1
+0,gender × articleType,"('Girls', 'Dresses')",42,12
+0,gender × articleType,"('Girls', 'Earrings')",1,0
+0,gender × articleType,"('Girls', 'Flip Flops')",6,0
+0,gender × articleType,"('Girls', 'Gloves')",4,2
+0,gender × articleType,"('Girls', 'Innerwear Vests')",3,2
+0,gender × articleType,"('Girls', 'Jeans')",12,1
+0,gender × articleType,"('Girls', 'Leggings')",15,1
+0,gender × articleType,"('Girls', 'Lehenga Choli')",2,0
+0,gender × articleType,"('Girls', 'Rompers')",4,1
+0,gender × articleType,"('Girls', 'Salwar')",4,0
+0,gender × articleType,"('Girls', 'Sandals')",31,8
+0,gender × articleType,"('Girls', 'Shirts')",1,0
+0,gender × articleType,"('Girls', 'Shorts')",25,7
+0,gender × articleType,"('Girls', 'Skirts')",16,4
+0,gender × articleType,"('Girls', 'Tops')",154,38
+0,gender × articleType,"('Girls', 'Tshirts')",72,16
+0,gender × articleType,"('Girls', 'Watches')",8,0
+0,gender × articleType,"('Men', 'Accessory Gift Set')",74,17
+0,gender × articleType,"('Men', 'Backpacks')",36,11
+0,gender × articleType,"('Men', 'Bangle')",14,0
+0,gender × articleType,"('Men', 'Belts')",359,84
+0,gender × articleType,"('Men', 'Blazers')",4,1
+0,gender × articleType,"('Men', 'Body Wash and Scrub')",1,0
+0,gender × articleType,"('Men', 'Boxers')",27,7
+0,gender × articleType,"('Men', 'Briefs')",349,88
+0,gender × articleType,"('Men', 'Caps')",74,20
+0,gender × articleType,"('Men', 'Casual Shoes')",1432,354
+0,gender × articleType,"('Men', 'Churidar')",6,0
+0,gender × articleType,"('Men', 'Cufflinks')",25,13
+0,gender × articleType,"('Men', 'Deodorant')",124,33
+0,gender × articleType,"('Men', 'Duffel Bag')",1,2
+0,gender × articleType,"('Men', 'Flip Flops')",323,78
+0,gender × articleType,"('Men', 'Formal Shoes')",414,103
+0,gender × articleType,"('Men', 'Fragrance Gift Set')",20,7
+0,gender × articleType,"('Men', 'Free Gifts')",26,4
+0,gender × articleType,"('Men', 'Gloves')",6,0
+0,gender × articleType,"('Men', 'Handbags')",1,3
+0,gender × articleType,"('Men', 'Heels')",1,0
+0,gender × articleType,"('Men', 'Innerwear Vests')",158,38
+0,gender × articleType,"('Men', 'Jackets')",120,24
+0,gender × articleType,"('Men', 'Jeans')",207,56
+0,gender × articleType,"('Men', 'Kurtas')",45,6
+0,gender × articleType,"('Men', 'Kurtis')",2,0
+0,gender × articleType,"('Men', 'Laptop Bag')",12,2
+0,gender × articleType,"('Men', 'Lounge Pants')",22,7
+0,gender × articleType,"('Men', 'Lounge Shorts')",16,6
+0,gender × articleType,"('Men', 'Messenger Bag')",9,1
+0,gender × articleType,"('Men', 'Mufflers')",22,3
+0,gender × articleType,"('Men', 'Nehru Jackets')",4,0
+0,gender × articleType,"('Men', 'Night suits')",10,5
+0,gender × articleType,"('Men', 'Perfume and Body Mist')",212,54
+0,gender × articleType,"('Men', 'Rain Trousers')",1,0
+0,gender × articleType,"('Men', 'Ring')",25,0
+0,gender × articleType,"('Men', 'Sandals')",486,116
+0,gender × articleType,"('Men', 'Scarves')",27,10
+0,gender × articleType,"('Men', 'Shirts')",1852,468
+0,gender × articleType,"('Men', 'Shoe Accessories')",2,0
+0,gender × articleType,"('Men', 'Shorts')",251,65
+0,gender × articleType,"('Men', 'Socks')",316,79
+0,gender × articleType,"('Men', 'Sports Sandals')",18,6
+0,gender × articleType,"('Men', 'Sports Shoes')",1057,260
+0,gender × articleType,"('Men', 'Sunglasses')",412,91
+0,gender × articleType,"('Men', 'Suspenders')",28,6
+0,gender × articleType,"('Men', 'Sweaters')",134,28
+0,gender × articleType,"('Men', 'Sweatshirts')",149,33
+0,gender × articleType,"('Men', 'Ties')",145,34
+0,gender × articleType,"('Men', 'Tights')",1,0
+0,gender × articleType,"('Men', 'Tops')",1,0
+0,gender × articleType,"('Men', 'Track Pants')",141,37
+0,gender × articleType,"('Men', 'Tracksuits')",19,5
+0,gender × articleType,"('Men', 'Trousers')",282,72
+0,gender × articleType,"('Men', 'Trunk')",96,23
+0,gender × articleType,"('Men', 'Tshirts')",3449,868
+0,gender × articleType,"('Men', 'Tunics')",1,0
+0,gender × articleType,"('Men', 'Waist Pouch')",1,0
+0,gender × articleType,"('Men', 'Waistcoat')",5,1
+0,gender × articleType,"('Men', 'Wallets')",277,67
+0,gender × articleType,"('Men', 'Watches')",869,236
+0,gender × articleType,"('Men', 'Water Bottle')",2,1
+0,gender × articleType,"('Unisex', 'Backpacks')",421,105
+0,gender × articleType,"('Unisex', 'Basketballs')",9,3
+0,gender × articleType,"('Unisex', 'Belts')",7,1
+0,gender × articleType,"('Unisex', 'Caps')",95,22
+0,gender × articleType,"('Unisex', 'Casual Shoes')",147,39
+0,gender × articleType,"('Unisex', 'Cushion Covers')",1,0
+0,gender × articleType,"('Unisex', 'Deodorant')",2,1
+0,gender × articleType,"('Unisex', 'Duffel Bag')",54,10
+0,gender × articleType,"('Unisex', 'Flip Flops')",101,24
+0,gender × articleType,"('Unisex', 'Footballs')",5,2
+0,gender × articleType,"('Unisex', 'Fragrance Gift Set')",1,0
+0,gender × articleType,"('Unisex', 'Free Gifts')",1,0
+0,gender × articleType,"('Unisex', 'Handbags')",42,8
+0,gender × articleType,"('Unisex', 'Hat')",2,0
+0,gender × articleType,"('Unisex', 'Headband')",4,2
+0,gender × articleType,"('Unisex', 'Jackets')",1,0
+0,gender × articleType,"('Unisex', 'Key chain')",1,0
+0,gender × articleType,"('Unisex', 'Laptop Bag')",35,10
+0,gender × articleType,"('Unisex', 'Messenger Bag')",21,6
+0,gender × articleType,"('Unisex', 'Mobile Pouch')",4,2
+0,gender × articleType,"('Unisex', 'Mufflers')",1,0
+0,gender × articleType,"('Unisex', 'Perfume and Body Mist')",5,2
+0,gender × articleType,"('Unisex', 'Rain Jacket')",1,0
+0,gender × articleType,"('Unisex', 'Rucksacks')",8,2
+0,gender × articleType,"('Unisex', 'Sandals')",63,17
+0,gender × articleType,"('Unisex', 'Scarves')",4,1
+0,gender × articleType,"('Unisex', 'Shoe Accessories')",14,4
+0,gender × articleType,"('Unisex', 'Shoe Laces')",1,0
+0,gender × articleType,"('Unisex', 'Socks')",47,11
+0,gender × articleType,"('Unisex', 'Sports Shoes')",30,8
+0,gender × articleType,"('Unisex', 'Sunglasses')",95,24
+0,gender × articleType,"('Unisex', 'Sweatshirts')",1,0
+0,gender × articleType,"('Unisex', 'Swimwear')",4,0
+0,gender × articleType,"('Unisex', 'Tablet Sleeve')",1,0
+0,gender × articleType,"('Unisex', 'Track Pants')",1,0
+0,gender × articleType,"('Unisex', 'Travel Accessory')",6,3
+0,gender × articleType,"('Unisex', 'Trolley Bag')",3,0
+0,gender × articleType,"('Unisex', 'Tshirts')",48,12
+0,gender × articleType,"('Unisex', 'Waist Pouch')",11,3
+0,gender × articleType,"('Unisex', 'Wallets')",15,3
+0,gender × articleType,"('Unisex', 'Watches')",88,22
+0,gender × articleType,"('Unisex', 'Water Bottle')",6,1
+0,gender × articleType,"('Unisex', 'Wristbands')",4,1
+0,gender × articleType,"('Women', 'Baby Dolls')",2,0
+0,gender × articleType,"('Women', 'Backpacks')",27,3
+0,gender × articleType,"('Women', 'Bangle')",18,18
+0,gender × articleType,"('Women', 'Belts')",176,49
+0,gender × articleType,"('Women', 'Blazers')",1,0
+0,gender × articleType,"('Women', 'Bra')",202,49
+0,gender × articleType,"('Women', 'Bracelet')",28,0
+0,gender × articleType,"('Women', 'Briefs')",107,24
+0,gender × articleType,"('Women', 'Camisoles')",10,3
+0,gender × articleType,"('Women', 'Capris')",80,16
+0,gender × articleType,"('Women', 'Caps')",16,3
+0,gender × articleType,"('Women', 'Casual Shoes')",215,51
+0,gender × articleType,"('Women', 'Churidar')",14,5
+0,gender × articleType,"('Women', 'Clutches')",152,37
+0,gender × articleType,"('Women', 'Compact')",4,0
+0,gender × articleType,"('Women', 'Concealer')",2,0
+0,gender × articleType,"('Women', 'Deodorant')",73,15
+0,gender × articleType,"('Women', 'Dresses')",190,45
+0,gender × articleType,"('Women', 'Duffel Bag')",4,2
+0,gender × articleType,"('Women', 'Dupatta')",80,19
+0,gender × articleType,"('Women', 'Earrings')",125,80
+0,gender × articleType,"('Women', 'Eyeshadow')",2,2
+0,gender × articleType,"('Women', 'Flats')",287,69
+0,gender × articleType,"('Women', 'Flip Flops')",146,42
+0,gender × articleType,"('Women', 'Foundation and Primer')",7,4
+0,gender × articleType,"('Women', 'Fragrance Gift Set')",17,2
+0,gender × articleType,"('Women', 'Free Gifts')",19,7
+0,gender × articleType,"('Women', 'Handbags')",935,233
+0,gender × articleType,"('Women', 'Heels')",710,179
+0,gender × articleType,"('Women', 'Highlighter and Blush')",4,0
+0,gender × articleType,"('Women', 'Innerwear Vests')",1,0
+0,gender × articleType,"('Women', 'Ipad')",1,0
+0,gender × articleType,"('Women', 'Jackets')",32,12
+0,gender × articleType,"('Women', 'Jeans')",138,30
+0,gender × articleType,"('Women', 'Jeggings')",18,4
+0,gender × articleType,"('Women', 'Jewellery Set')",32,6
+0,gender × articleType,"('Women', 'Jumpsuit')",8,2
+0,gender × articleType,"('Women', 'Kajal and Eyeliner')",8,3
+0,gender × articleType,"('Women', 'Kurta Sets')",49,13
+0,gender × articleType,"('Women', 'Kurtas')",1009,257
+0,gender × articleType,"('Women', 'Kurtis')",137,33
+0,gender × articleType,"('Women', 'Laptop Bag')",8,0
+0,gender × articleType,"('Women', 'Leggings')",91,25
+0,gender × articleType,"('Women', 'Lip Gloss')",4,1
+0,gender × articleType,"('Women', 'Lip Liner')",9,2
+0,gender × articleType,"('Women', 'Lip Plumper')",2,1
+0,gender × articleType,"('Women', 'Lipstick')",10,0
+0,gender × articleType,"('Women', 'Lounge Pants')",14,2
+0,gender × articleType,"('Women', 'Lounge Shorts')",7,0
+0,gender × articleType,"('Women', 'Lounge Tshirts')",1,0
+0,gender × articleType,"('Women', 'Mobile Pouch')",28,6
+0,gender × articleType,"('Women', 'Mufflers')",3,4
+0,gender × articleType,"('Women', 'Nail Polish')",12,4
+0,gender × articleType,"('Women', 'Necklace and Chains')",43,10
+0,gender × articleType,"('Women', 'Night suits')",38,6
+0,gender × articleType,"('Women', 'Nightdress')",27,7
+0,gender × articleType,"('Women', 'Patiala')",19,4
+0,gender × articleType,"('Women', 'Pendant')",100,5
+0,gender × articleType,"('Women', 'Perfume and Body Mist')",162,39
+0,gender × articleType,"('Women', 'Ring')",54,0
+0,gender × articleType,"('Women', 'Robe')",2,0
+0,gender × articleType,"('Women', 'Salwar')",19,5
+0,gender × articleType,"('Women', 'Salwar and Dupatta')",5,1
+0,gender × articleType,"('Women', 'Sandals')",1,2
+0,gender × articleType,"('Women', 'Sarees')",104,25
+0,gender × articleType,"('Women', 'Scarves')",44,7
+0,gender × articleType,"('Women', 'Shapewear')",2,0
+0,gender × articleType,"('Women', 'Shirts')",186,47
+0,gender × articleType,"('Women', 'Shorts')",44,9
+0,gender × articleType,"('Women', 'Shrug')",2,0
+0,gender × articleType,"('Women', 'Skirts')",64,15
+0,gender × articleType,"('Women', 'Socks')",54,13
+0,gender × articleType,"('Women', 'Sports Sandals')",26,1
+0,gender × articleType,"('Women', 'Sports Shoes')",263,71
+0,gender × articleType,"('Women', 'Stockings')",14,8
+0,gender × articleType,"('Women', 'Stoles')",62,14
+0,gender × articleType,"('Women', 'Sunglasses')",204,60
+0,gender × articleType,"('Women', 'Sweaters')",54,18
+0,gender × articleType,"('Women', 'Sweatshirts')",40,12
+0,gender × articleType,"('Women', 'Swimwear')",8,3
+0,gender × articleType,"('Women', 'Tablet Sleeve')",1,0
+0,gender × articleType,"('Women', 'Tights')",5,2
+0,gender × articleType,"('Women', 'Tops')",940,236
+0,gender × articleType,"('Women', 'Track Pants')",58,12
+0,gender × articleType,"('Women', 'Travel Accessory')",3,0
+0,gender × articleType,"('Women', 'Trousers')",66,11
+0,gender × articleType,"('Women', 'Tshirts')",682,169
+0,gender × articleType,"('Women', 'Tunics')",119,28
+0,gender × articleType,"('Women', 'Umbrellas')",4,1
+0,gender × articleType,"('Women', 'Waistcoat')",2,2
+0,gender × articleType,"('Women', 'Wallets')",273,69
+0,gender × articleType,"('Women', 'Watches')",553,130
+0,gender × articleType,"('Men', 'Bracelet')",0,16
+0,gender × articleType,"('Men', 'Stoles')",0,1
+0,gender × articleType,"('Unisex', 'Jeans')",0,3
+0,gender × articleType,"('Unisex', 'Sports Sandals')",0,3
+0,gender × articleType,"('Women', 'Ties and Cufflinks')",0,1
+0,gender × family_size_bin,"('Boys', '1')",219,48
+0,gender × family_size_bin,"('Boys', '2–3')",193,60
+0,gender × family_size_bin,"('Boys', '4+')",136,28
+0,gender × family_size_bin,"('Girls', '1')",178,47
+0,gender × family_size_bin,"('Girls', '2–3')",174,45
+0,gender × family_size_bin,"('Girls', '4+')",84,15
+0,gender × family_size_bin,"('Men', '1')",8217,2049
+0,gender × family_size_bin,"('Men', '2–3')",2683,673
+0,gender × family_size_bin,"('Men', '4+')",3303,828
+0,gender × family_size_bin,"('Unisex', '1')",1018,257
+0,gender × family_size_bin,"('Unisex', '2–3')",199,53
+0,gender × family_size_bin,"('Unisex', '4+')",194,45
+0,gender × family_size_bin,"('Women', '1')",5618,1392
+0,gender × family_size_bin,"('Women', '2–3')",1771,450
+0,gender × family_size_bin,"('Women', '4+')",2233,563
+0,gender × articleType × family_size_bin,"('Boys', 'Blazers', '1')",1,0
+0,gender × articleType × family_size_bin,"('Boys', 'Booties', '1')",1,0
+0,gender × articleType × family_size_bin,"('Boys', 'Booties', '2–3')",2,2
+0,gender × articleType × family_size_bin,"('Boys', 'Capris', '2–3')",3,2
+0,gender × articleType × family_size_bin,"('Boys', 'Capris', '4+')",6,0
+0,gender × articleType × family_size_bin,"('Boys', 'Casual Shoes', '1')",11,5
+0,gender × articleType × family_size_bin,"('Boys', 'Casual Shoes', '2–3')",6,2
+0,gender × articleType × family_size_bin,"('Boys', 'Churidar', '1')",1,0
+0,gender × articleType × family_size_bin,"('Boys', 'Clothing Set', '1')",4,0
+0,gender × articleType × family_size_bin,"('Boys', 'Flip Flops', '1')",9,3
+0,gender × articleType × family_size_bin,"('Boys', 'Flip Flops', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Boys', 'Gloves', '2–3')",4,2
+0,gender × articleType × family_size_bin,"('Boys', 'Innerwear Vests', '2–3')",3,0
+0,gender × articleType × family_size_bin,"('Boys', 'Jackets', '2–3')",2,2
+0,gender × articleType × family_size_bin,"('Boys', 'Jeans', '1')",3,1
+0,gender × articleType × family_size_bin,"('Boys', 'Jeans', '2–3')",9,3
+0,gender × articleType × family_size_bin,"('Boys', 'Jeans', '4+')",9,0
+0,gender × articleType × family_size_bin,"('Boys', 'Kurta Sets', '1')",2,0
+0,gender × articleType × family_size_bin,"('Boys', 'Kurtas', '1')",3,0
+0,gender × articleType × family_size_bin,"('Boys', 'Kurtas', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Boys', 'Leggings', '1')",3,0
+0,gender × articleType × family_size_bin,"('Boys', 'Rompers', '1')",2,0
+0,gender × articleType × family_size_bin,"('Boys', 'Rompers', '2–3')",2,2
+0,gender × articleType × family_size_bin,"('Boys', 'Sandals', '1')",3,3
+0,gender × articleType × family_size_bin,"('Boys', 'Sandals', '2–3')",5,0
+0,gender × articleType × family_size_bin,"('Boys', 'Shirts', '1')",13,1
+0,gender × articleType × family_size_bin,"('Boys', 'Shirts', '2–3')",17,2
+0,gender × articleType × family_size_bin,"('Boys', 'Shirts', '4+')",22,10
+0,gender × articleType × family_size_bin,"('Boys', 'Shorts', '1')",14,1
+0,gender × articleType × family_size_bin,"('Boys', 'Shorts', '2–3')",16,6
+0,gender × articleType × family_size_bin,"('Boys', 'Shorts', '4+')",9,0
+0,gender × articleType × family_size_bin,"('Boys', 'Socks', '1')",1,0
+0,gender × articleType × family_size_bin,"('Boys', 'Sports Shoes', '1')",2,0
+0,gender × articleType × family_size_bin,"('Boys', 'Sweatshirts', '1')",1,1
+0,gender × articleType × family_size_bin,"('Boys', 'Trousers', '1')",2,0
+0,gender × articleType × family_size_bin,"('Boys', 'Tshirts', '1')",136,33
+0,gender × articleType × family_size_bin,"('Boys', 'Tshirts', '2–3')",120,35
+0,gender × articleType × family_size_bin,"('Boys', 'Tshirts', '4+')",90,18
+0,gender × articleType × family_size_bin,"('Boys', 'Waistcoat', '1')",2,0
+0,gender × articleType × family_size_bin,"('Boys', 'Watches', '1')",5,0
+0,gender × articleType × family_size_bin,"('Girls', 'Backpacks', '1')",1,0
+0,gender × articleType × family_size_bin,"('Girls', 'Booties', '2–3')",4,0
+0,gender × articleType × family_size_bin,"('Girls', 'Capris', '1')",4,2
+0,gender × articleType × family_size_bin,"('Girls', 'Capris', '2–3')",17,6
+0,gender × articleType × family_size_bin,"('Girls', 'Casual Shoes', '1')",8,4
+0,gender × articleType × family_size_bin,"('Girls', 'Clothing Set', '1')",2,1
+0,gender × articleType × family_size_bin,"('Girls', 'Dresses', '1')",20,4
+0,gender × articleType × family_size_bin,"('Girls', 'Dresses', '2–3')",14,8
+0,gender × articleType × family_size_bin,"('Girls', 'Dresses', '4+')",8,0
+0,gender × articleType × family_size_bin,"('Girls', 'Earrings', '1')",1,0
+0,gender × articleType × family_size_bin,"('Girls', 'Flip Flops', '1')",4,0
+0,gender × articleType × family_size_bin,"('Girls', 'Flip Flops', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Girls', 'Gloves', '2–3')",4,2
+0,gender × articleType × family_size_bin,"('Girls', 'Innerwear Vests', '1')",1,2
+0,gender × articleType × family_size_bin,"('Girls', 'Innerwear Vests', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Girls', 'Jeans', '1')",1,1
+0,gender × articleType × family_size_bin,"('Girls', 'Jeans', '2–3')",3,0
+0,gender × articleType × family_size_bin,"('Girls', 'Jeans', '4+')",8,0
+0,gender × articleType × family_size_bin,"('Girls', 'Leggings', '1')",4,1
+0,gender × articleType × family_size_bin,"('Girls', 'Leggings', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Girls', 'Leggings', '4+')",9,0
+0,gender × articleType × family_size_bin,"('Girls', 'Lehenga Choli', '1')",2,0
+0,gender × articleType × family_size_bin,"('Girls', 'Rompers', '1')",2,0
+0,gender × articleType × family_size_bin,"('Girls', 'Rompers', '2–3')",2,1
+0,gender × articleType × family_size_bin,"('Girls', 'Salwar', '1')",4,0
+0,gender × articleType × family_size_bin,"('Girls', 'Sandals', '1')",21,6
+0,gender × articleType × family_size_bin,"('Girls', 'Sandals', '2–3')",10,2
+0,gender × articleType × family_size_bin,"('Girls', 'Shirts', '1')",1,0
+0,gender × articleType × family_size_bin,"('Girls', 'Shorts', '1')",6,2
+0,gender × articleType × family_size_bin,"('Girls', 'Shorts', '2–3')",19,5
+0,gender × articleType × family_size_bin,"('Girls', 'Skirts', '1')",3,2
+0,gender × articleType × family_size_bin,"('Girls', 'Skirts', '2–3')",13,2
+0,gender × articleType × family_size_bin,"('Girls', 'Tops', '1')",48,13
+0,gender × articleType × family_size_bin,"('Girls', 'Tops', '2–3')",59,14
+0,gender × articleType × family_size_bin,"('Girls', 'Tops', '4+')",47,11
+0,gender × articleType × family_size_bin,"('Girls', 'Tshirts', '1')",44,9
+0,gender × articleType × family_size_bin,"('Girls', 'Tshirts', '2–3')",23,3
+0,gender × articleType × family_size_bin,"('Girls', 'Tshirts', '4+')",5,4
+0,gender × articleType × family_size_bin,"('Girls', 'Watches', '1')",1,0
+0,gender × articleType × family_size_bin,"('Girls', 'Watches', '4+')",7,0
+0,gender × articleType × family_size_bin,"('Men', 'Accessory Gift Set', '1')",12,4
+0,gender × articleType × family_size_bin,"('Men', 'Accessory Gift Set', '2–3')",17,3
+0,gender × articleType × family_size_bin,"('Men', 'Accessory Gift Set', '4+')",45,10
+0,gender × articleType × family_size_bin,"('Men', 'Backpacks', '1')",17,4
+0,gender × articleType × family_size_bin,"('Men', 'Backpacks', '2–3')",6,0
+0,gender × articleType × family_size_bin,"('Men', 'Backpacks', '4+')",13,7
+0,gender × articleType × family_size_bin,"('Men', 'Bangle', '1')",1,0
+0,gender × articleType × family_size_bin,"('Men', 'Bangle', '4+')",13,0
+0,gender × articleType × family_size_bin,"('Men', 'Belts', '1')",131,34
+0,gender × articleType × family_size_bin,"('Men', 'Belts', '2–3')",92,24
+0,gender × articleType × family_size_bin,"('Men', 'Belts', '4+')",136,26
+0,gender × articleType × family_size_bin,"('Men', 'Blazers', '1')",4,1
+0,gender × articleType × family_size_bin,"('Men', 'Body Wash and Scrub', '1')",1,0
+0,gender × articleType × family_size_bin,"('Men', 'Boxers', '1')",17,3
+0,gender × articleType × family_size_bin,"('Men', 'Boxers', '2–3')",10,4
+0,gender × articleType × family_size_bin,"('Men', 'Briefs', '1')",204,45
+0,gender × articleType × family_size_bin,"('Men', 'Briefs', '2–3')",84,20
+0,gender × articleType × family_size_bin,"('Men', 'Briefs', '4+')",61,23
+0,gender × articleType × family_size_bin,"('Men', 'Caps', '1')",51,16
+0,gender × articleType × family_size_bin,"('Men', 'Caps', '2–3')",19,4
+0,gender × articleType × family_size_bin,"('Men', 'Caps', '4+')",4,0
+0,gender × articleType × family_size_bin,"('Men', 'Casual Shoes', '1')",900,228
+0,gender × articleType × family_size_bin,"('Men', 'Casual Shoes', '2–3')",240,65
+0,gender × articleType × family_size_bin,"('Men', 'Casual Shoes', '4+')",292,61
+0,gender × articleType × family_size_bin,"('Men', 'Churidar', '1')",4,0
+0,gender × articleType × family_size_bin,"('Men', 'Churidar', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Men', 'Cufflinks', '1')",13,0
+0,gender × articleType × family_size_bin,"('Men', 'Cufflinks', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Men', 'Cufflinks', '4+')",10,13
+0,gender × articleType × family_size_bin,"('Men', 'Deodorant', '1')",103,27
+0,gender × articleType × family_size_bin,"('Men', 'Deodorant', '2–3')",8,6
+0,gender × articleType × family_size_bin,"('Men', 'Deodorant', '4+')",13,0
+0,gender × articleType × family_size_bin,"('Men', 'Duffel Bag', '1')",1,0
+0,gender × articleType × family_size_bin,"('Men', 'Flip Flops', '1')",250,61
+0,gender × articleType × family_size_bin,"('Men', 'Flip Flops', '2–3')",65,15
+0,gender × articleType × family_size_bin,"('Men', 'Flip Flops', '4+')",8,2
+0,gender × articleType × family_size_bin,"('Men', 'Formal Shoes', '1')",117,28
+0,gender × articleType × family_size_bin,"('Men', 'Formal Shoes', '2–3')",69,17
+0,gender × articleType × family_size_bin,"('Men', 'Formal Shoes', '4+')",228,58
+0,gender × articleType × family_size_bin,"('Men', 'Fragrance Gift Set', '1')",18,7
+0,gender × articleType × family_size_bin,"('Men', 'Fragrance Gift Set', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Men', 'Free Gifts', '1')",9,0
+0,gender × articleType × family_size_bin,"('Men', 'Free Gifts', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Men', 'Free Gifts', '4+')",15,4
+0,gender × articleType × family_size_bin,"('Men', 'Gloves', '1')",6,0
+0,gender × articleType × family_size_bin,"('Men', 'Handbags', '2–3')",1,2
+0,gender × articleType × family_size_bin,"('Men', 'Heels', '1')",1,0
+0,gender × articleType × family_size_bin,"('Men', 'Innerwear Vests', '1')",103,25
+0,gender × articleType × family_size_bin,"('Men', 'Innerwear Vests', '2–3')",39,9
+0,gender × articleType × family_size_bin,"('Men', 'Innerwear Vests', '4+')",16,4
+0,gender × articleType × family_size_bin,"('Men', 'Jackets', '1')",96,20
+0,gender × articleType × family_size_bin,"('Men', 'Jackets', '2–3')",18,4
+0,gender × articleType × family_size_bin,"('Men', 'Jackets', '4+')",6,0
+0,gender × articleType × family_size_bin,"('Men', 'Jeans', '1')",72,13
+0,gender × articleType × family_size_bin,"('Men', 'Jeans', '2–3')",26,4
+0,gender × articleType × family_size_bin,"('Men', 'Jeans', '4+')",109,39
+0,gender × articleType × family_size_bin,"('Men', 'Kurtas', '1')",28,6
+0,gender × articleType × family_size_bin,"('Men', 'Kurtas', '2–3')",12,0
+0,gender × articleType × family_size_bin,"('Men', 'Kurtas', '4+')",5,0
+0,gender × articleType × family_size_bin,"('Men', 'Kurtis', '1')",2,0
+0,gender × articleType × family_size_bin,"('Men', 'Laptop Bag', '1')",7,2
+0,gender × articleType × family_size_bin,"('Men', 'Laptop Bag', '4+')",5,0
+0,gender × articleType × family_size_bin,"('Men', 'Lounge Pants', '1')",18,7
+0,gender × articleType × family_size_bin,"('Men', 'Lounge Pants', '2–3')",4,0
+0,gender × articleType × family_size_bin,"('Men', 'Lounge Shorts', '1')",10,4
+0,gender × articleType × family_size_bin,"('Men', 'Lounge Shorts', '2–3')",6,2
+0,gender × articleType × family_size_bin,"('Men', 'Messenger Bag', '1')",8,1
+0,gender × articleType × family_size_bin,"('Men', 'Messenger Bag', '2–3')",1,0
+0,gender × articleType × family_size_bin,"('Men', 'Mufflers', '1')",16,3
+0,gender × articleType × family_size_bin,"('Men', 'Mufflers', '2–3')",6,0
+0,gender × articleType × family_size_bin,"('Men', 'Nehru Jackets', '1')",2,0
+0,gender × articleType × family_size_bin,"('Men', 'Nehru Jackets', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Men', 'Night suits', '1')",4,3
+0,gender × articleType × family_size_bin,"('Men', 'Night suits', '2–3')",2,2
+0,gender × articleType × family_size_bin,"('Men', 'Night suits', '4+')",4,0
+0,gender × articleType × family_size_bin,"('Men', 'Perfume and Body Mist', '1')",158,44
+0,gender × articleType × family_size_bin,"('Men', 'Perfume and Body Mist', '2–3')",48,10
+0,gender × articleType × family_size_bin,"('Men', 'Perfume and Body Mist', '4+')",6,0
+0,gender × articleType × family_size_bin,"('Men', 'Rain Trousers', '1')",1,0
+0,gender × articleType × family_size_bin,"('Men', 'Ring', '4+')",25,0
+0,gender × articleType × family_size_bin,"('Men', 'Sandals', '1')",254,58
+0,gender × articleType × family_size_bin,"('Men', 'Sandals', '2–3')",71,22
+0,gender × articleType × family_size_bin,"('Men', 'Sandals', '4+')",161,36
+0,gender × articleType × family_size_bin,"('Men', 'Scarves', '1')",17,6
+0,gender × articleType × family_size_bin,"('Men', 'Scarves', '2–3')",5,4
+0,gender × articleType × family_size_bin,"('Men', 'Scarves', '4+')",5,0
+0,gender × articleType × family_size_bin,"('Men', 'Shirts', '1')",720,178
+0,gender × articleType × family_size_bin,"('Men', 'Shirts', '2–3')",494,130
+0,gender × articleType × family_size_bin,"('Men', 'Shirts', '4+')",638,160
+0,gender × articleType × family_size_bin,"('Men', 'Shoe Accessories', '1')",2,0
+0,gender × articleType × family_size_bin,"('Men', 'Shorts', '1')",178,47
+0,gender × articleType × family_size_bin,"('Men', 'Shorts', '2–3')",33,9
+0,gender × articleType × family_size_bin,"('Men', 'Shorts', '4+')",40,9
+0,gender × articleType × family_size_bin,"('Men', 'Socks', '1')",99,23
+0,gender × articleType × family_size_bin,"('Men', 'Socks', '2–3')",85,20
+0,gender × articleType × family_size_bin,"('Men', 'Socks', '4+')",132,36
+0,gender × articleType × family_size_bin,"('Men', 'Sports Sandals', '1')",16,6
+0,gender × articleType × family_size_bin,"('Men', 'Sports Sandals', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Men', 'Sports Shoes', '1')",879,209
+0,gender × articleType × family_size_bin,"('Men', 'Sports Shoes', '2–3')",150,51
+0,gender × articleType × family_size_bin,"('Men', 'Sports Shoes', '4+')",28,0
+0,gender × articleType × family_size_bin,"('Men', 'Sunglasses', '1')",116,31
+0,gender × articleType × family_size_bin,"('Men', 'Sunglasses', '2–3')",62,18
+0,gender × articleType × family_size_bin,"('Men', 'Sunglasses', '4+')",234,42
+0,gender × articleType × family_size_bin,"('Men', 'Suspenders', '1')",10,4
+0,gender × articleType × family_size_bin,"('Men', 'Suspenders', '2–3')",5,2
+0,gender × articleType × family_size_bin,"('Men', 'Suspenders', '4+')",13,0
+0,gender × articleType × family_size_bin,"('Men', 'Sweaters', '1')",95,20
+0,gender × articleType × family_size_bin,"('Men', 'Sweaters', '2–3')",30,8
+0,gender × articleType × family_size_bin,"('Men', 'Sweaters', '4+')",9,0
+0,gender × articleType × family_size_bin,"('Men', 'Sweatshirts', '1')",103,23
+0,gender × articleType × family_size_bin,"('Men', 'Sweatshirts', '2–3')",42,10
+0,gender × articleType × family_size_bin,"('Men', 'Sweatshirts', '4+')",4,0
+0,gender × articleType × family_size_bin,"('Men', 'Ties', '1')",42,11
+0,gender × articleType × family_size_bin,"('Men', 'Ties', '2–3')",37,12
+0,gender × articleType × family_size_bin,"('Men', 'Ties', '4+')",66,11
+0,gender × articleType × family_size_bin,"('Men', 'Tights', '1')",1,0
+0,gender × articleType × family_size_bin,"('Men', 'Tops', '1')",1,0
+0,gender × articleType × family_size_bin,"('Men', 'Track Pants', '1')",91,25
+0,gender × articleType × family_size_bin,"('Men', 'Track Pants', '2–3')",24,2
+0,gender × articleType × family_size_bin,"('Men', 'Track Pants', '4+')",26,10
+0,gender × articleType × family_size_bin,"('Men', 'Tracksuits', '1')",11,5
+0,gender × articleType × family_size_bin,"('Men', 'Tracksuits', '2–3')",8,0
+0,gender × articleType × family_size_bin,"('Men', 'Trousers', '1')",114,34
+0,gender × articleType × family_size_bin,"('Men', 'Trousers', '2–3')",85,20
+0,gender × articleType × family_size_bin,"('Men', 'Trousers', '4+')",83,18
+0,gender × articleType × family_size_bin,"('Men', 'Trunk', '1')",58,14
+0,gender × articleType × family_size_bin,"('Men', 'Trunk', '2–3')",21,4
+0,gender × articleType × family_size_bin,"('Men', 'Trunk', '4+')",17,5
+0,gender × articleType × family_size_bin,"('Men', 'Tshirts', '1')",2446,625
+0,gender × articleType × family_size_bin,"('Men', 'Tshirts', '2–3')",587,139
+0,gender × articleType × family_size_bin,"('Men', 'Tshirts', '4+')",416,104
+0,gender × articleType × family_size_bin,"('Men', 'Tunics', '1')",1,0
+0,gender × articleType × family_size_bin,"('Men', 'Waist Pouch', '1')",1,0
+0,gender × articleType × family_size_bin,"('Men', 'Waistcoat', '1')",3,1
+0,gender × articleType × family_size_bin,"('Men', 'Waistcoat', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Men', 'Wallets', '1')",74,19
+0,gender × articleType × family_size_bin,"('Men', 'Wallets', '2–3')",85,16
+0,gender × articleType × family_size_bin,"('Men', 'Wallets', '4+')",118,32
+0,gender × articleType × family_size_bin,"('Men', 'Watches', '1')",498,121
+0,gender × articleType × family_size_bin,"('Men', 'Watches', '2–3')",72,13
+0,gender × articleType × family_size_bin,"('Men', 'Watches', '4+')",299,102
+0,gender × articleType × family_size_bin,"('Men', 'Water Bottle', '1')",2,1
+0,gender × articleType × family_size_bin,"('Unisex', 'Backpacks', '1')",254,66
+0,gender × articleType × family_size_bin,"('Unisex', 'Backpacks', '2–3')",68,16
+0,gender × articleType × family_size_bin,"('Unisex', 'Backpacks', '4+')",99,23
+0,gender × articleType × family_size_bin,"('Unisex', 'Basketballs', '1')",9,3
+0,gender × articleType × family_size_bin,"('Unisex', 'Belts', '1')",7,1
+0,gender × articleType × family_size_bin,"('Unisex', 'Caps', '1')",77,20
+0,gender × articleType × family_size_bin,"('Unisex', 'Caps', '2–3')",9,2
+0,gender × articleType × family_size_bin,"('Unisex', 'Caps', '4+')",9,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Casual Shoes', '1')",131,31
+0,gender × articleType × family_size_bin,"('Unisex', 'Casual Shoes', '2–3')",16,4
+0,gender × articleType × family_size_bin,"('Unisex', 'Cushion Covers', '1')",1,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Deodorant', '1')",2,1
+0,gender × articleType × family_size_bin,"('Unisex', 'Duffel Bag', '1')",33,7
+0,gender × articleType × family_size_bin,"('Unisex', 'Duffel Bag', '2–3')",13,3
+0,gender × articleType × family_size_bin,"('Unisex', 'Duffel Bag', '4+')",8,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Flip Flops', '1')",82,22
+0,gender × articleType × family_size_bin,"('Unisex', 'Flip Flops', '2–3')",19,2
+0,gender × articleType × family_size_bin,"('Unisex', 'Footballs', '1')",5,2
+0,gender × articleType × family_size_bin,"('Unisex', 'Fragrance Gift Set', '1')",1,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Free Gifts', '1')",1,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Handbags', '1')",35,8
+0,gender × articleType × family_size_bin,"('Unisex', 'Handbags', '2–3')",4,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Handbags', '4+')",3,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Hat', '1')",2,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Headband', '1')",4,2
+0,gender × articleType × family_size_bin,"('Unisex', 'Jackets', '1')",1,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Key chain', '1')",1,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Laptop Bag', '1')",18,6
+0,gender × articleType × family_size_bin,"('Unisex', 'Laptop Bag', '2–3')",2,4
+0,gender × articleType × family_size_bin,"('Unisex', 'Laptop Bag', '4+')",15,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Messenger Bag', '1')",19,6
+0,gender × articleType × family_size_bin,"('Unisex', 'Messenger Bag', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Mobile Pouch', '1')",2,2
+0,gender × articleType × family_size_bin,"('Unisex', 'Mobile Pouch', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Mufflers', '1')",1,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Perfume and Body Mist', '1')",3,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Perfume and Body Mist', '2–3')",2,2
+0,gender × articleType × family_size_bin,"('Unisex', 'Rain Jacket', '1')",1,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Rucksacks', '1')",8,2
+0,gender × articleType × family_size_bin,"('Unisex', 'Sandals', '1')",51,15
+0,gender × articleType × family_size_bin,"('Unisex', 'Sandals', '2–3')",12,2
+0,gender × articleType × family_size_bin,"('Unisex', 'Scarves', '1')",4,1
+0,gender × articleType × family_size_bin,"('Unisex', 'Shoe Accessories', '1')",11,2
+0,gender × articleType × family_size_bin,"('Unisex', 'Shoe Accessories', '2–3')",3,2
+0,gender × articleType × family_size_bin,"('Unisex', 'Shoe Laces', '1')",1,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Socks', '1')",27,8
+0,gender × articleType × family_size_bin,"('Unisex', 'Socks', '2–3')",6,3
+0,gender × articleType × family_size_bin,"('Unisex', 'Socks', '4+')",14,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Sports Shoes', '1')",30,8
+0,gender × articleType × family_size_bin,"('Unisex', 'Sunglasses', '1')",52,6
+0,gender × articleType × family_size_bin,"('Unisex', 'Sunglasses', '2–3')",18,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Sunglasses', '4+')",25,18
+0,gender × articleType × family_size_bin,"('Unisex', 'Sweatshirts', '1')",1,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Swimwear', '1')",4,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Tablet Sleeve', '1')",1,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Track Pants', '1')",1,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Travel Accessory', '1')",6,1
+0,gender × articleType × family_size_bin,"('Unisex', 'Trolley Bag', '1')",1,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Trolley Bag', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Tshirts', '1')",33,10
+0,gender × articleType × family_size_bin,"('Unisex', 'Tshirts', '2–3')",5,2
+0,gender × articleType × family_size_bin,"('Unisex', 'Tshirts', '4+')",10,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Waist Pouch', '1')",11,1
+0,gender × articleType × family_size_bin,"('Unisex', 'Wallets', '1')",7,3
+0,gender × articleType × family_size_bin,"('Unisex', 'Wallets', '2–3')",8,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Watches', '1')",69,18
+0,gender × articleType × family_size_bin,"('Unisex', 'Watches', '2–3')",8,4
+0,gender × articleType × family_size_bin,"('Unisex', 'Watches', '4+')",11,0
+0,gender × articleType × family_size_bin,"('Unisex', 'Water Bottle', '1')",6,1
+0,gender × articleType × family_size_bin,"('Unisex', 'Wristbands', '1')",4,1
+0,gender × articleType × family_size_bin,"('Women', 'Baby Dolls', '1')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Backpacks', '1')",21,3
+0,gender × articleType × family_size_bin,"('Women', 'Backpacks', '2–3')",6,0
+0,gender × articleType × family_size_bin,"('Women', 'Bangle', '1')",12,0
+0,gender × articleType × family_size_bin,"('Women', 'Bangle', '2–3')",6,0
+0,gender × articleType × family_size_bin,"('Women', 'Belts', '1')",106,26
+0,gender × articleType × family_size_bin,"('Women', 'Belts', '2–3')",38,11
+0,gender × articleType × family_size_bin,"('Women', 'Belts', '4+')",32,12
+0,gender × articleType × family_size_bin,"('Women', 'Blazers', '1')",1,0
+0,gender × articleType × family_size_bin,"('Women', 'Bra', '1')",131,33
+0,gender × articleType × family_size_bin,"('Women', 'Bra', '2–3')",43,10
+0,gender × articleType × family_size_bin,"('Women', 'Bra', '4+')",28,6
+0,gender × articleType × family_size_bin,"('Women', 'Bracelet', '1')",11,0
+0,gender × articleType × family_size_bin,"('Women', 'Bracelet', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Bracelet', '4+')",15,0
+0,gender × articleType × family_size_bin,"('Women', 'Briefs', '1')",56,20
+0,gender × articleType × family_size_bin,"('Women', 'Briefs', '2–3')",27,4
+0,gender × articleType × family_size_bin,"('Women', 'Briefs', '4+')",24,0
+0,gender × articleType × family_size_bin,"('Women', 'Camisoles', '1')",10,3
+0,gender × articleType × family_size_bin,"('Women', 'Capris', '1')",57,14
+0,gender × articleType × family_size_bin,"('Women', 'Capris', '2–3')",23,2
+0,gender × articleType × family_size_bin,"('Women', 'Caps', '1')",16,1
+0,gender × articleType × family_size_bin,"('Women', 'Casual Shoes', '1')",168,42
+0,gender × articleType × family_size_bin,"('Women', 'Casual Shoes', '2–3')",33,9
+0,gender × articleType × family_size_bin,"('Women', 'Casual Shoes', '4+')",14,0
+0,gender × articleType × family_size_bin,"('Women', 'Churidar', '1')",12,5
+0,gender × articleType × family_size_bin,"('Women', 'Churidar', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Clutches', '1')",107,26
+0,gender × articleType × family_size_bin,"('Women', 'Clutches', '2–3')",30,7
+0,gender × articleType × family_size_bin,"('Women', 'Clutches', '4+')",15,4
+0,gender × articleType × family_size_bin,"('Women', 'Compact', '4+')",4,0
+0,gender × articleType × family_size_bin,"('Women', 'Concealer', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Deodorant', '1')",63,13
+0,gender × articleType × family_size_bin,"('Women', 'Deodorant', '2–3')",10,2
+0,gender × articleType × family_size_bin,"('Women', 'Dresses', '1')",134,32
+0,gender × articleType × family_size_bin,"('Women', 'Dresses', '2–3')",43,4
+0,gender × articleType × family_size_bin,"('Women', 'Dresses', '4+')",13,9
+0,gender × articleType × family_size_bin,"('Women', 'Duffel Bag', '1')",4,2
+0,gender × articleType × family_size_bin,"('Women', 'Dupatta', '1')",46,12
+0,gender × articleType × family_size_bin,"('Women', 'Dupatta', '2–3')",21,7
+0,gender × articleType × family_size_bin,"('Women', 'Dupatta', '4+')",13,0
+0,gender × articleType × family_size_bin,"('Women', 'Earrings', '1')",16,0
+0,gender × articleType × family_size_bin,"('Women', 'Earrings', '2–3')",10,0
+0,gender × articleType × family_size_bin,"('Women', 'Earrings', '4+')",99,80
+0,gender × articleType × family_size_bin,"('Women', 'Eyeshadow', '1')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Flats', '1')",143,35
+0,gender × articleType × family_size_bin,"('Women', 'Flats', '2–3')",49,21
+0,gender × articleType × family_size_bin,"('Women', 'Flats', '4+')",95,13
+0,gender × articleType × family_size_bin,"('Women', 'Flip Flops', '1')",88,23
+0,gender × articleType × family_size_bin,"('Women', 'Flip Flops', '2–3')",14,6
+0,gender × articleType × family_size_bin,"('Women', 'Flip Flops', '4+')",44,13
+0,gender × articleType × family_size_bin,"('Women', 'Foundation and Primer', '1')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Foundation and Primer', '2–3')",5,0
+0,gender × articleType × family_size_bin,"('Women', 'Fragrance Gift Set', '1')",17,2
+0,gender × articleType × family_size_bin,"('Women', 'Free Gifts', '1')",10,4
+0,gender × articleType × family_size_bin,"('Women', 'Free Gifts', '2–3')",3,3
+0,gender × articleType × family_size_bin,"('Women', 'Free Gifts', '4+')",6,0
+0,gender × articleType × family_size_bin,"('Women', 'Handbags', '1')",481,119
+0,gender × articleType × family_size_bin,"('Women', 'Handbags', '2–3')",162,40
+0,gender × articleType × family_size_bin,"('Women', 'Handbags', '4+')",292,74
+0,gender × articleType × family_size_bin,"('Women', 'Heels', '1')",278,71
+0,gender × articleType × family_size_bin,"('Women', 'Heels', '2–3')",125,26
+0,gender × articleType × family_size_bin,"('Women', 'Heels', '4+')",307,82
+0,gender × articleType × family_size_bin,"('Women', 'Highlighter and Blush', '4+')",4,0
+0,gender × articleType × family_size_bin,"('Women', 'Innerwear Vests', '1')",1,0
+0,gender × articleType × family_size_bin,"('Women', 'Ipad', '2–3')",1,0
+0,gender × articleType × family_size_bin,"('Women', 'Jackets', '1')",25,12
+0,gender × articleType × family_size_bin,"('Women', 'Jackets', '2–3')",7,0
+0,gender × articleType × family_size_bin,"('Women', 'Jeans', '1')",45,16
+0,gender × articleType × family_size_bin,"('Women', 'Jeans', '2–3')",42,8
+0,gender × articleType × family_size_bin,"('Women', 'Jeans', '4+')",51,6
+0,gender × articleType × family_size_bin,"('Women', 'Jeggings', '1')",8,2
+0,gender × articleType × family_size_bin,"('Women', 'Jeggings', '2–3')",4,2
+0,gender × articleType × family_size_bin,"('Women', 'Jeggings', '4+')",6,0
+0,gender × articleType × family_size_bin,"('Women', 'Jewellery Set', '1')",8,3
+0,gender × articleType × family_size_bin,"('Women', 'Jewellery Set', '2–3')",5,3
+0,gender × articleType × family_size_bin,"('Women', 'Jewellery Set', '4+')",19,0
+0,gender × articleType × family_size_bin,"('Women', 'Jumpsuit', '1')",8,2
+0,gender × articleType × family_size_bin,"('Women', 'Kajal and Eyeliner', '1')",6,1
+0,gender × articleType × family_size_bin,"('Women', 'Kajal and Eyeliner', '2–3')",2,2
+0,gender × articleType × family_size_bin,"('Women', 'Kurta Sets', '1')",41,11
+0,gender × articleType × family_size_bin,"('Women', 'Kurta Sets', '2–3')",8,2
+0,gender × articleType × family_size_bin,"('Women', 'Kurtas', '1')",342,86
+0,gender × articleType × family_size_bin,"('Women', 'Kurtas', '2–3')",270,72
+0,gender × articleType × family_size_bin,"('Women', 'Kurtas', '4+')",397,99
+0,gender × articleType × family_size_bin,"('Women', 'Kurtis', '1')",89,22
+0,gender × articleType × family_size_bin,"('Women', 'Kurtis', '2–3')",27,7
+0,gender × articleType × family_size_bin,"('Women', 'Kurtis', '4+')",21,4
+0,gender × articleType × family_size_bin,"('Women', 'Laptop Bag', '1')",8,0
+0,gender × articleType × family_size_bin,"('Women', 'Leggings', '1')",72,20
+0,gender × articleType × family_size_bin,"('Women', 'Leggings', '2–3')",19,5
+0,gender × articleType × family_size_bin,"('Women', 'Lip Gloss', '1')",4,1
+0,gender × articleType × family_size_bin,"('Women', 'Lip Liner', '1')",5,0
+0,gender × articleType × family_size_bin,"('Women', 'Lip Liner', '4+')",4,0
+0,gender × articleType × family_size_bin,"('Women', 'Lip Plumper', '1')",2,1
+0,gender × articleType × family_size_bin,"('Women', 'Lipstick', '4+')",10,0
+0,gender × articleType × family_size_bin,"('Women', 'Lounge Pants', '1')",12,2
+0,gender × articleType × family_size_bin,"('Women', 'Lounge Pants', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Lounge Shorts', '1')",5,0
+0,gender × articleType × family_size_bin,"('Women', 'Lounge Shorts', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Lounge Tshirts', '1')",1,0
+0,gender × articleType × family_size_bin,"('Women', 'Mobile Pouch', '1')",28,6
+0,gender × articleType × family_size_bin,"('Women', 'Mufflers', '1')",1,1
+0,gender × articleType × family_size_bin,"('Women', 'Mufflers', '2–3')",2,3
+0,gender × articleType × family_size_bin,"('Women', 'Nail Polish', '1')",10,4
+0,gender × articleType × family_size_bin,"('Women', 'Nail Polish', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Necklace and Chains', '1')",22,6
+0,gender × articleType × family_size_bin,"('Women', 'Necklace and Chains', '2–3')",17,4
+0,gender × articleType × family_size_bin,"('Women', 'Necklace and Chains', '4+')",4,0
+0,gender × articleType × family_size_bin,"('Women', 'Night suits', '1')",16,4
+0,gender × articleType × family_size_bin,"('Women', 'Night suits', '2–3')",2,2
+0,gender × articleType × family_size_bin,"('Women', 'Night suits', '4+')",20,0
+0,gender × articleType × family_size_bin,"('Women', 'Nightdress', '1')",16,4
+0,gender × articleType × family_size_bin,"('Women', 'Nightdress', '2–3')",11,3
+0,gender × articleType × family_size_bin,"('Women', 'Patiala', '1')",14,2
+0,gender × articleType × family_size_bin,"('Women', 'Patiala', '2–3')",5,2
+0,gender × articleType × family_size_bin,"('Women', 'Pendant', '1')",3,1
+0,gender × articleType × family_size_bin,"('Women', 'Pendant', '2–3')",2,4
+0,gender × articleType × family_size_bin,"('Women', 'Pendant', '4+')",95,0
+0,gender × articleType × family_size_bin,"('Women', 'Perfume and Body Mist', '1')",123,27
+0,gender × articleType × family_size_bin,"('Women', 'Perfume and Body Mist', '2–3')",27,12
+0,gender × articleType × family_size_bin,"('Women', 'Perfume and Body Mist', '4+')",12,0
+0,gender × articleType × family_size_bin,"('Women', 'Ring', '2–3')",5,0
+0,gender × articleType × family_size_bin,"('Women', 'Ring', '4+')",49,0
+0,gender × articleType × family_size_bin,"('Women', 'Robe', '1')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Salwar', '1')",14,3
+0,gender × articleType × family_size_bin,"('Women', 'Salwar', '2–3')",5,2
+0,gender × articleType × family_size_bin,"('Women', 'Salwar and Dupatta', '1')",5,1
+0,gender × articleType × family_size_bin,"('Women', 'Sandals', '4+')",1,0
+0,gender × articleType × family_size_bin,"('Women', 'Sarees', '1')",72,19
+0,gender × articleType × family_size_bin,"('Women', 'Sarees', '2–3')",20,6
+0,gender × articleType × family_size_bin,"('Women', 'Sarees', '4+')",12,0
+0,gender × articleType × family_size_bin,"('Women', 'Scarves', '1')",29,5
+0,gender × articleType × family_size_bin,"('Women', 'Scarves', '2–3')",11,2
+0,gender × articleType × family_size_bin,"('Women', 'Scarves', '4+')",4,0
+0,gender × articleType × family_size_bin,"('Women', 'Shapewear', '1')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Shirts', '1')",138,35
+0,gender × articleType × family_size_bin,"('Women', 'Shirts', '2–3')",39,8
+0,gender × articleType × family_size_bin,"('Women', 'Shirts', '4+')",9,4
+0,gender × articleType × family_size_bin,"('Women', 'Shorts', '1')",38,9
+0,gender × articleType × family_size_bin,"('Women', 'Shorts', '2–3')",6,0
+0,gender × articleType × family_size_bin,"('Women', 'Shrug', '1')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Skirts', '1')",51,12
+0,gender × articleType × family_size_bin,"('Women', 'Skirts', '2–3')",13,3
+0,gender × articleType × family_size_bin,"('Women', 'Socks', '1')",37,11
+0,gender × articleType × family_size_bin,"('Women', 'Socks', '2–3')",12,2
+0,gender × articleType × family_size_bin,"('Women', 'Socks', '4+')",5,0
+0,gender × articleType × family_size_bin,"('Women', 'Sports Sandals', '1')",25,1
+0,gender × articleType × family_size_bin,"('Women', 'Sports Sandals', '4+')",1,0
+0,gender × articleType × family_size_bin,"('Women', 'Sports Shoes', '1')",231,67
+0,gender × articleType × family_size_bin,"('Women', 'Sports Shoes', '2–3')",32,4
+0,gender × articleType × family_size_bin,"('Women', 'Stockings', '1')",7,0
+0,gender × articleType × family_size_bin,"('Women', 'Stockings', '2–3')",3,0
+0,gender × articleType × family_size_bin,"('Women', 'Stockings', '4+')",4,8
+0,gender × articleType × family_size_bin,"('Women', 'Stoles', '1')",31,8
+0,gender × articleType × family_size_bin,"('Women', 'Stoles', '2–3')",16,2
+0,gender × articleType × family_size_bin,"('Women', 'Stoles', '4+')",15,4
+0,gender × articleType × family_size_bin,"('Women', 'Sunglasses', '1')",84,25
+0,gender × articleType × family_size_bin,"('Women', 'Sunglasses', '2–3')",33,12
+0,gender × articleType × family_size_bin,"('Women', 'Sunglasses', '4+')",87,23
+0,gender × articleType × family_size_bin,"('Women', 'Sweaters', '1')",44,14
+0,gender × articleType × family_size_bin,"('Women', 'Sweaters', '2–3')",10,4
+0,gender × articleType × family_size_bin,"('Women', 'Sweatshirts', '1')",36,10
+0,gender × articleType × family_size_bin,"('Women', 'Sweatshirts', '2–3')",4,2
+0,gender × articleType × family_size_bin,"('Women', 'Swimwear', '1')",8,1
+0,gender × articleType × family_size_bin,"('Women', 'Tablet Sleeve', '1')",1,0
+0,gender × articleType × family_size_bin,"('Women', 'Tights', '1')",3,2
+0,gender × articleType × family_size_bin,"('Women', 'Tights', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Tops', '1')",569,144
+0,gender × articleType × family_size_bin,"('Women', 'Tops', '2–3')",204,53
+0,gender × articleType × family_size_bin,"('Women', 'Tops', '4+')",167,39
+0,gender × articleType × family_size_bin,"('Women', 'Track Pants', '1')",49,10
+0,gender × articleType × family_size_bin,"('Women', 'Track Pants', '2–3')",9,2
+0,gender × articleType × family_size_bin,"('Women', 'Travel Accessory', '1')",3,0
+0,gender × articleType × family_size_bin,"('Women', 'Trousers', '1')",43,5
+0,gender × articleType × family_size_bin,"('Women', 'Trousers', '2–3')",23,2
+0,gender × articleType × family_size_bin,"('Women', 'Tshirts', '1')",560,135
+0,gender × articleType × family_size_bin,"('Women', 'Tshirts', '2–3')",86,20
+0,gender × articleType × family_size_bin,"('Women', 'Tshirts', '4+')",36,14
+0,gender × articleType × family_size_bin,"('Women', 'Tunics', '1')",96,25
+0,gender × articleType × family_size_bin,"('Women', 'Tunics', '2–3')",18,3
+0,gender × articleType × family_size_bin,"('Women', 'Tunics', '4+')",5,0
+0,gender × articleType × family_size_bin,"('Women', 'Umbrellas', '1')",2,1
+0,gender × articleType × family_size_bin,"('Women', 'Umbrellas', '2–3')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Waistcoat', '1')",2,0
+0,gender × articleType × family_size_bin,"('Women', 'Wallets', '1')",171,42
+0,gender × articleType × family_size_bin,"('Women', 'Wallets', '2–3')",46,15
+0,gender × articleType × family_size_bin,"('Women', 'Wallets', '4+')",56,12
+0,gender × articleType × family_size_bin,"('Women', 'Watches', '1')",354,86
+0,gender × articleType × family_size_bin,"('Women', 'Watches', '2–3')",61,14
+0,gender × articleType × family_size_bin,"('Women', 'Watches', '4+')",138,30
+0,gender × articleType × family_size_bin,"('Boys', 'Trousers', '2–3')",0,2
+0,gender × articleType × family_size_bin,"('Girls', 'Casual Shoes', '2–3')",0,2
+0,gender × articleType × family_size_bin,"('Men', 'Bracelet', '4+')",0,16
+0,gender × articleType × family_size_bin,"('Men', 'Duffel Bag', '2–3')",0,2
+0,gender × articleType × family_size_bin,"('Men', 'Handbags', '1')",0,1
+0,gender × articleType × family_size_bin,"('Men', 'Stoles', '1')",0,1
+0,gender × articleType × family_size_bin,"('Unisex', 'Casual Shoes', '4+')",0,4
+0,gender × articleType × family_size_bin,"('Unisex', 'Jeans', '2–3')",0,3
+0,gender × articleType × family_size_bin,"('Unisex', 'Sports Sandals', '1')",0,3
+0,gender × articleType × family_size_bin,"('Unisex', 'Travel Accessory', '2–3')",0,2
+0,gender × articleType × family_size_bin,"('Unisex', 'Waist Pouch', '2–3')",0,2
+0,gender × articleType × family_size_bin,"('Women', 'Bangle', '4+')",0,18
+0,gender × articleType × family_size_bin,"('Women', 'Caps', '2–3')",0,2
+0,gender × articleType × family_size_bin,"('Women', 'Eyeshadow', '2–3')",0,2
+0,gender × articleType × family_size_bin,"('Women', 'Foundation and Primer', '4+')",0,4
+0,gender × articleType × family_size_bin,"('Women', 'Lip Liner', '2–3')",0,2
+0,gender × articleType × family_size_bin,"('Women', 'Sandals', '1')",0,1
+0,gender × articleType × family_size_bin,"('Women', 'Sandals', '2–3')",0,1
+0,gender × articleType × family_size_bin,"('Women', 'Swimwear', '2–3')",0,2
+0,gender × articleType × family_size_bin,"('Women', 'Ties and Cufflinks', '4+')",0,1
+0,gender × articleType × family_size_bin,"('Women', 'Trousers', '4+')",0,4
+0,gender × articleType × family_size_bin,"('Women', 'Waistcoat', '2–3')",0,2
+4,gender,Boys,546,138
+4,gender,Girls,434,109
+4,gender,Men,14201,3552
+4,gender,Unisex,1413,353
+4,gender,Women,9622,2405
+4,gender × articleType,"('Boys', 'Booties')",3,2
+4,gender × articleType,"('Boys', 'Capris')",11,0
+4,gender × articleType,"('Boys', 'Casual Shoes')",18,6
+4,gender × articleType,"('Boys', 'Churidar')",1,0
+4,gender × articleType,"('Boys', 'Clothing Set')",3,1
+4,gender × articleType,"('Boys', 'Flip Flops')",12,2
+4,gender × articleType,"('Boys', 'Gloves')",4,2
+4,gender × articleType,"('Boys', 'Innerwear Vests')",3,0
+4,gender × articleType,"('Boys', 'Jackets')",2,2
+4,gender × articleType,"('Boys', 'Jeans')",19,6
+4,gender × articleType,"('Boys', 'Kurta Sets')",2,0
+4,gender × articleType,"('Boys', 'Kurtas')",4,1
+4,gender × articleType,"('Boys', 'Leggings')",3,0
+4,gender × articleType,"('Boys', 'Rompers')",6,0
+4,gender × articleType,"('Boys', 'Sandals')",9,2
+4,gender × articleType,"('Boys', 'Shirts')",53,12
+4,gender × articleType,"('Boys', 'Shorts')",37,9
+4,gender × articleType,"('Boys', 'Socks')",1,0
+4,gender × articleType,"('Boys', 'Sports Shoes')",2,0
+4,gender × articleType,"('Boys', 'Sweatshirts')",1,1
+4,gender × articleType,"('Boys', 'Trousers')",3,1
+4,gender × articleType,"('Boys', 'Tshirts')",347,85
+4,gender × articleType,"('Boys', 'Waistcoat')",2,0
+4,gender × articleType,"('Girls', 'Backpacks')",1,0
+4,gender × articleType,"('Girls', 'Booties')",4,0
+4,gender × articleType,"('Girls', 'Capris')",21,8
+4,gender × articleType,"('Girls', 'Casual Shoes')",10,4
+4,gender × articleType,"('Girls', 'Clothing Set')",2,1
+4,gender × articleType,"('Girls', 'Dresses')",45,9
+4,gender × articleType,"('Girls', 'Earrings')",1,0
+4,gender × articleType,"('Girls', 'Flip Flops')",4,2
+4,gender × articleType,"('Girls', 'Gloves')",6,0
+4,gender × articleType,"('Girls', 'Innerwear Vests')",4,1
+4,gender × articleType,"('Girls', 'Jeans')",9,4
+4,gender × articleType,"('Girls', 'Leggings')",14,2
+4,gender × articleType,"('Girls', 'Lehenga Choli')",1,1
+4,gender × articleType,"('Girls', 'Rompers')",3,2
+4,gender × articleType,"('Girls', 'Salwar')",4,0
+4,gender × articleType,"('Girls', 'Sandals')",30,9
+4,gender × articleType,"('Girls', 'Shirts')",1,0
+4,gender × articleType,"('Girls', 'Shorts')",26,6
+4,gender × articleType,"('Girls', 'Skirts')",16,4
+4,gender × articleType,"('Girls', 'Tops')",154,38
+4,gender × articleType,"('Girls', 'Tshirts')",71,17
+4,gender × articleType,"('Girls', 'Watches')",7,1
+4,gender × articleType,"('Men', 'Accessory Gift Set')",73,18
+4,gender × articleType,"('Men', 'Backpacks')",36,11
+4,gender × articleType,"('Men', 'Bangle')",1,13
+4,gender × articleType,"('Men', 'Belts')",349,94
+4,gender × articleType,"('Men', 'Blazers')",4,1
+4,gender × articleType,"('Men', 'Body Wash and Scrub')",1,0
+4,gender × articleType,"('Men', 'Boxers')",27,7
+4,gender × articleType,"('Men', 'Bracelet')",16,0
+4,gender × articleType,"('Men', 'Briefs')",350,87
+4,gender × articleType,"('Men', 'Caps')",73,21
+4,gender × articleType,"('Men', 'Casual Shoes')",1432,354
+4,gender × articleType,"('Men', 'Churidar')",6,0
+4,gender × articleType,"('Men', 'Cufflinks')",31,7
+4,gender × articleType,"('Men', 'Deodorant')",127,30
+4,gender × articleType,"('Men', 'Duffel Bag')",3,0
+4,gender × articleType,"('Men', 'Flip Flops')",318,83
+4,gender × articleType,"('Men', 'Formal Shoes')",415,102
+4,gender × articleType,"('Men', 'Fragrance Gift Set')",20,7
+4,gender × articleType,"('Men', 'Free Gifts')",25,5
+4,gender × articleType,"('Men', 'Gloves')",4,2
+4,gender × articleType,"('Men', 'Handbags')",4,0
+4,gender × articleType,"('Men', 'Innerwear Vests')",157,39
+4,gender × articleType,"('Men', 'Jackets')",124,20
+4,gender × articleType,"('Men', 'Jeans')",208,55
+4,gender × articleType,"('Men', 'Kurtas')",36,15
+4,gender × articleType,"('Men', 'Kurtis')",2,0
+4,gender × articleType,"('Men', 'Laptop Bag')",13,1
+4,gender × articleType,"('Men', 'Lounge Pants')",22,7
+4,gender × articleType,"('Men', 'Lounge Shorts')",19,3
+4,gender × articleType,"('Men', 'Messenger Bag')",8,2
+4,gender × articleType,"('Men', 'Mufflers')",20,5
+4,gender × articleType,"('Men', 'Nehru Jackets')",3,1
+4,gender × articleType,"('Men', 'Night suits')",12,3
+4,gender × articleType,"('Men', 'Perfume and Body Mist')",214,52
+4,gender × articleType,"('Men', 'Ring')",25,0
+4,gender × articleType,"('Men', 'Sandals')",478,124
+4,gender × articleType,"('Men', 'Scarves')",34,3
+4,gender × articleType,"('Men', 'Shirts')",1859,461
+4,gender × articleType,"('Men', 'Shoe Accessories')",2,0
+4,gender × articleType,"('Men', 'Shorts')",253,63
+4,gender × articleType,"('Men', 'Socks')",313,82
+4,gender × articleType,"('Men', 'Sports Sandals')",19,5
+4,gender × articleType,"('Men', 'Sports Shoes')",1056,261
+4,gender × articleType,"('Men', 'Stoles')",1,0
+4,gender × articleType,"('Men', 'Sunglasses')",382,121
+4,gender × articleType,"('Men', 'Suspenders')",27,7
+4,gender × articleType,"('Men', 'Sweaters')",129,33
+4,gender × articleType,"('Men', 'Sweatshirts')",148,34
+4,gender × articleType,"('Men', 'Ties')",144,35
+4,gender × articleType,"('Men', 'Tights')",1,0
+4,gender × articleType,"('Men', 'Track Pants')",144,34
+4,gender × articleType,"('Men', 'Tracksuits')",19,5
+4,gender × articleType,"('Men', 'Trousers')",285,69
+4,gender × articleType,"('Men', 'Trunk')",96,23
+4,gender × articleType,"('Men', 'Tshirts')",3455,862
+4,gender × articleType,"('Men', 'Tunics')",1,0
+4,gender × articleType,"('Men', 'Waist Pouch')",1,0
+4,gender × articleType,"('Men', 'Waistcoat')",4,2
+4,gender × articleType,"('Men', 'Wallets')",278,66
+4,gender × articleType,"('Men', 'Watches')",892,213
+4,gender × articleType,"('Men', 'Water Bottle')",2,1
+4,gender × articleType,"('Unisex', 'Backpacks')",417,109
+4,gender × articleType,"('Unisex', 'Basketballs')",10,2
+4,gender × articleType,"('Unisex', 'Belts')",6,2
+4,gender × articleType,"('Unisex', 'Caps')",96,21
+4,gender × articleType,"('Unisex', 'Casual Shoes')",150,36
+4,gender × articleType,"('Unisex', 'Deodorant')",3,0
+4,gender × articleType,"('Unisex', 'Duffel Bag')",53,11
+4,gender × articleType,"('Unisex', 'Flip Flops')",101,24
+4,gender × articleType,"('Unisex', 'Footballs')",6,1
+4,gender × articleType,"('Unisex', 'Fragrance Gift Set')",1,0
+4,gender × articleType,"('Unisex', 'Free Gifts')",1,0
+4,gender × articleType,"('Unisex', 'Handbags')",38,12
+4,gender × articleType,"('Unisex', 'Hat')",2,0
+4,gender × articleType,"('Unisex', 'Headband')",5,1
+4,gender × articleType,"('Unisex', 'Jackets')",1,0
+4,gender × articleType,"('Unisex', 'Jeans')",3,0
+4,gender × articleType,"('Unisex', 'Key chain')",1,0
+4,gender × articleType,"('Unisex', 'Laptop Bag')",34,11
+4,gender × articleType,"('Unisex', 'Messenger Bag')",22,5
+4,gender × articleType,"('Unisex', 'Mobile Pouch')",6,0
+4,gender × articleType,"('Unisex', 'Mufflers')",1,0
+4,gender × articleType,"('Unisex', 'Perfume and Body Mist')",7,0
+4,gender × articleType,"('Unisex', 'Rain Jacket')",1,0
+4,gender × articleType,"('Unisex', 'Rucksacks')",8,2
+4,gender × articleType,"('Unisex', 'Sandals')",64,16
+4,gender × articleType,"('Unisex', 'Scarves')",2,3
+4,gender × articleType,"('Unisex', 'Shoe Accessories')",14,4
+4,gender × articleType,"('Unisex', 'Shoe Laces')",1,0
+4,gender × articleType,"('Unisex', 'Socks')",46,12
+4,gender × articleType,"('Unisex', 'Sports Sandals')",3,0
+4,gender × articleType,"('Unisex', 'Sports Shoes')",29,9
+4,gender × articleType,"('Unisex', 'Sunglasses')",95,24
+4,gender × articleType,"('Unisex', 'Sweatshirts')",1,0
+4,gender × articleType,"('Unisex', 'Swimwear')",2,2
+4,gender × articleType,"('Unisex', 'Track Pants')",1,0
+4,gender × articleType,"('Unisex', 'Travel Accessory')",8,1
+4,gender × articleType,"('Unisex', 'Trolley Bag')",2,1
+4,gender × articleType,"('Unisex', 'Tshirts')",49,11
+4,gender × articleType,"('Unisex', 'Waist Pouch')",11,3
+4,gender × articleType,"('Unisex', 'Wallets')",14,4
+4,gender × articleType,"('Unisex', 'Watches')",88,22
+4,gender × articleType,"('Unisex', 'Water Bottle')",6,1
+4,gender × articleType,"('Unisex', 'Wristbands')",4,1
+4,gender × articleType,"('Women', 'Baby Dolls')",2,0
+4,gender × articleType,"('Women', 'Backpacks')",24,6
+4,gender × articleType,"('Women', 'Bangle')",36,0
+4,gender × articleType,"('Women', 'Belts')",185,40
+4,gender × articleType,"('Women', 'Blazers')",1,0
+4,gender × articleType,"('Women', 'Bra')",201,50
+4,gender × articleType,"('Women', 'Bracelet')",21,7
+4,gender × articleType,"('Women', 'Briefs')",105,26
+4,gender × articleType,"('Women', 'Camisoles')",10,3
+4,gender × articleType,"('Women', 'Capris')",77,19
+4,gender × articleType,"('Women', 'Caps')",15,4
+4,gender × articleType,"('Women', 'Casual Shoes')",214,52
+4,gender × articleType,"('Women', 'Churidar')",13,6
+4,gender × articleType,"('Women', 'Clutches')",151,38
+4,gender × articleType,"('Women', 'Compact')",4,0
+4,gender × articleType,"('Women', 'Deodorant')",69,19
+4,gender × articleType,"('Women', 'Dresses')",186,49
+4,gender × articleType,"('Women', 'Duffel Bag')",3,3
+4,gender × articleType,"('Women', 'Dupatta')",80,19
+4,gender × articleType,"('Women', 'Earrings')",160,45
+4,gender × articleType,"('Women', 'Eyeshadow')",3,1
+4,gender × articleType,"('Women', 'Flats')",284,72
+4,gender × articleType,"('Women', 'Flip Flops')",150,38
+4,gender × articleType,"('Women', 'Foundation and Primer')",9,2
+4,gender × articleType,"('Women', 'Fragrance Gift Set')",17,2
+4,gender × articleType,"('Women', 'Free Gifts')",21,5
+4,gender × articleType,"('Women', 'Handbags')",934,234
+4,gender × articleType,"('Women', 'Heels')",707,182
+4,gender × articleType,"('Women', 'Highlighter and Blush')",4,0
+4,gender × articleType,"('Women', 'Innerwear Vests')",1,0
+4,gender × articleType,"('Women', 'Ipad')",1,0
+4,gender × articleType,"('Women', 'Jackets')",28,16
+4,gender × articleType,"('Women', 'Jeans')",138,30
+4,gender × articleType,"('Women', 'Jeggings')",18,4
+4,gender × articleType,"('Women', 'Jewellery Set')",32,6
+4,gender × articleType,"('Women', 'Jumpsuit')",8,2
+4,gender × articleType,"('Women', 'Kajal and Eyeliner')",9,2
+4,gender × articleType,"('Women', 'Kurta Sets')",50,12
+4,gender × articleType,"('Women', 'Kurtas')",1015,251
+4,gender × articleType,"('Women', 'Kurtis')",136,34
+4,gender × articleType,"('Women', 'Laptop Bag')",7,1
+4,gender × articleType,"('Women', 'Leggings')",91,25
+4,gender × articleType,"('Women', 'Lip Gloss')",4,1
+4,gender × articleType,"('Women', 'Lip Liner')",7,4
+4,gender × articleType,"('Women', 'Lip Plumper')",3,0
+4,gender × articleType,"('Women', 'Lipstick')",6,4
+4,gender × articleType,"('Women', 'Lounge Pants')",14,2
+4,gender × articleType,"('Women', 'Lounge Shorts')",4,3
+4,gender × articleType,"('Women', 'Lounge Tshirts')",1,0
+4,gender × articleType,"('Women', 'Mobile Pouch')",26,8
+4,gender × articleType,"('Women', 'Mufflers')",6,1
+4,gender × articleType,"('Women', 'Nail Polish')",13,3
+4,gender × articleType,"('Women', 'Necklace and Chains')",42,11
+4,gender × articleType,"('Women', 'Night suits')",35,9
+4,gender × articleType,"('Women', 'Nightdress')",27,7
+4,gender × articleType,"('Women', 'Patiala')",18,5
+4,gender × articleType,"('Women', 'Pendant')",77,28
+4,gender × articleType,"('Women', 'Perfume and Body Mist')",158,43
+4,gender × articleType,"('Women', 'Ring')",51,3
+4,gender × articleType,"('Women', 'Robe')",2,0
+4,gender × articleType,"('Women', 'Salwar')",18,6
+4,gender × articleType,"('Women', 'Salwar and Dupatta')",5,1
+4,gender × articleType,"('Women', 'Sandals')",3,0
+4,gender × articleType,"('Women', 'Sarees')",104,25
+4,gender × articleType,"('Women', 'Scarves')",39,12
+4,gender × articleType,"('Women', 'Shapewear')",2,0
+4,gender × articleType,"('Women', 'Shirts')",187,46
+4,gender × articleType,"('Women', 'Shorts')",41,12
+4,gender × articleType,"('Women', 'Shrug')",2,0
+4,gender × articleType,"('Women', 'Skirts')",64,15
+4,gender × articleType,"('Women', 'Socks')",57,10
+4,gender × articleType,"('Women', 'Sports Sandals')",21,6
+4,gender × articleType,"('Women', 'Sports Shoes')",268,66
+4,gender × articleType,"('Women', 'Stockings')",18,4
+4,gender × articleType,"('Women', 'Stoles')",62,14
+4,gender × articleType,"('Women', 'Sunglasses')",223,41
+4,gender × articleType,"('Women', 'Sweaters')",59,13
+4,gender × articleType,"('Women', 'Sweatshirts')",40,12
+4,gender × articleType,"('Women', 'Swimwear')",10,1
+4,gender × articleType,"('Women', 'Tablet Sleeve')",1,0
+4,gender × articleType,"('Women', 'Ties and Cufflinks')",1,0
+4,gender × articleType,"('Women', 'Tights')",5,2
+4,gender × articleType,"('Women', 'Tops')",940,236
+4,gender × articleType,"('Women', 'Track Pants')",55,15
+4,gender × articleType,"('Women', 'Travel Accessory')",2,1
+4,gender × articleType,"('Women', 'Trousers')",60,17
+4,gender × articleType,"('Women', 'Tshirts')",679,172
+4,gender × articleType,"('Women', 'Tunics')",118,29
+4,gender × articleType,"('Women', 'Umbrellas')",3,2
+4,gender × articleType,"('Women', 'Waistcoat')",4,0
+4,gender × articleType,"('Women', 'Wallets')",271,71
+4,gender × articleType,"('Women', 'Watches')",546,137
+4,gender × articleType,"('Boys', 'Blazers')",0,1
+4,gender × articleType,"('Boys', 'Watches')",0,5
+4,gender × articleType,"('Men', 'Heels')",0,1
+4,gender × articleType,"('Men', 'Rain Trousers')",0,1
+4,gender × articleType,"('Men', 'Tops')",0,1
+4,gender × articleType,"('Unisex', 'Cushion Covers')",0,1
+4,gender × articleType,"('Unisex', 'Tablet Sleeve')",0,1
+4,gender × articleType,"('Women', 'Concealer')",0,2
+4,gender × family_size_bin,"('Boys', '1')",211,56
+4,gender × family_size_bin,"('Boys', '2–3')",202,51
+4,gender × family_size_bin,"('Boys', '4+')",133,31
+4,gender × family_size_bin,"('Girls', '1')",184,41
+4,gender × family_size_bin,"('Girls', '2–3')",174,45
+4,gender × family_size_bin,"('Girls', '4+')",76,23
+4,gender × family_size_bin,"('Men', '1')",8206,2060
+4,gender × family_size_bin,"('Men', '2–3')",2678,678
+4,gender × family_size_bin,"('Men', '4+')",3317,814
+4,gender × family_size_bin,"('Unisex', '1')",1016,259
+4,gender × family_size_bin,"('Unisex', '2–3')",195,57
+4,gender × family_size_bin,"('Unisex', '4+')",202,37
+4,gender × family_size_bin,"('Women', '1')",5631,1379
+4,gender × family_size_bin,"('Women', '2–3')",1756,465
+4,gender × family_size_bin,"('Women', '4+')",2235,561
+4,gender × articleType × family_size_bin,"('Boys', 'Booties', '1')",1,0
+4,gender × articleType × family_size_bin,"('Boys', 'Booties', '2–3')",2,2
+4,gender × articleType × family_size_bin,"('Boys', 'Capris', '2–3')",5,0
+4,gender × articleType × family_size_bin,"('Boys', 'Capris', '4+')",6,0
+4,gender × articleType × family_size_bin,"('Boys', 'Casual Shoes', '1')",14,2
+4,gender × articleType × family_size_bin,"('Boys', 'Casual Shoes', '2–3')",4,4
+4,gender × articleType × family_size_bin,"('Boys', 'Churidar', '1')",1,0
+4,gender × articleType × family_size_bin,"('Boys', 'Clothing Set', '1')",3,1
+4,gender × articleType × family_size_bin,"('Boys', 'Flip Flops', '1')",10,2
+4,gender × articleType × family_size_bin,"('Boys', 'Flip Flops', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Boys', 'Gloves', '2–3')",4,2
+4,gender × articleType × family_size_bin,"('Boys', 'Innerwear Vests', '2–3')",3,0
+4,gender × articleType × family_size_bin,"('Boys', 'Jackets', '2–3')",2,2
+4,gender × articleType × family_size_bin,"('Boys', 'Jeans', '1')",3,1
+4,gender × articleType × family_size_bin,"('Boys', 'Jeans', '2–3')",12,0
+4,gender × articleType × family_size_bin,"('Boys', 'Jeans', '4+')",4,5
+4,gender × articleType × family_size_bin,"('Boys', 'Kurta Sets', '1')",2,0
+4,gender × articleType × family_size_bin,"('Boys', 'Kurtas', '1')",2,1
+4,gender × articleType × family_size_bin,"('Boys', 'Kurtas', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Boys', 'Leggings', '1')",3,0
+4,gender × articleType × family_size_bin,"('Boys', 'Rompers', '1')",2,0
+4,gender × articleType × family_size_bin,"('Boys', 'Rompers', '2–3')",4,0
+4,gender × articleType × family_size_bin,"('Boys', 'Sandals', '1')",6,0
+4,gender × articleType × family_size_bin,"('Boys', 'Sandals', '2–3')",3,2
+4,gender × articleType × family_size_bin,"('Boys', 'Shirts', '1')",11,3
+4,gender × articleType × family_size_bin,"('Boys', 'Shirts', '2–3')",16,3
+4,gender × articleType × family_size_bin,"('Boys', 'Shirts', '4+')",26,6
+4,gender × articleType × family_size_bin,"('Boys', 'Shorts', '1')",11,4
+4,gender × articleType × family_size_bin,"('Boys', 'Shorts', '2–3')",17,5
+4,gender × articleType × family_size_bin,"('Boys', 'Shorts', '4+')",9,0
+4,gender × articleType × family_size_bin,"('Boys', 'Socks', '1')",1,0
+4,gender × articleType × family_size_bin,"('Boys', 'Sports Shoes', '1')",2,0
+4,gender × articleType × family_size_bin,"('Boys', 'Sweatshirts', '1')",1,1
+4,gender × articleType × family_size_bin,"('Boys', 'Trousers', '1')",1,1
+4,gender × articleType × family_size_bin,"('Boys', 'Trousers', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Boys', 'Tshirts', '1')",135,34
+4,gender × articleType × family_size_bin,"('Boys', 'Tshirts', '2–3')",124,31
+4,gender × articleType × family_size_bin,"('Boys', 'Tshirts', '4+')",88,20
+4,gender × articleType × family_size_bin,"('Boys', 'Waistcoat', '1')",2,0
+4,gender × articleType × family_size_bin,"('Girls', 'Backpacks', '1')",1,0
+4,gender × articleType × family_size_bin,"('Girls', 'Booties', '2–3')",4,0
+4,gender × articleType × family_size_bin,"('Girls', 'Capris', '1')",6,0
+4,gender × articleType × family_size_bin,"('Girls', 'Capris', '2–3')",15,8
+4,gender × articleType × family_size_bin,"('Girls', 'Casual Shoes', '1')",8,4
+4,gender × articleType × family_size_bin,"('Girls', 'Casual Shoes', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Girls', 'Clothing Set', '1')",2,1
+4,gender × articleType × family_size_bin,"('Girls', 'Dresses', '1')",21,3
+4,gender × articleType × family_size_bin,"('Girls', 'Dresses', '2–3')",20,2
+4,gender × articleType × family_size_bin,"('Girls', 'Dresses', '4+')",4,4
+4,gender × articleType × family_size_bin,"('Girls', 'Earrings', '1')",1,0
+4,gender × articleType × family_size_bin,"('Girls', 'Flip Flops', '1')",4,0
+4,gender × articleType × family_size_bin,"('Girls', 'Gloves', '2–3')",6,0
+4,gender × articleType × family_size_bin,"('Girls', 'Innerwear Vests', '1')",2,1
+4,gender × articleType × family_size_bin,"('Girls', 'Innerwear Vests', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Girls', 'Jeans', '1')",2,0
+4,gender × articleType × family_size_bin,"('Girls', 'Jeans', '2–3')",3,0
+4,gender × articleType × family_size_bin,"('Girls', 'Jeans', '4+')",4,4
+4,gender × articleType × family_size_bin,"('Girls', 'Leggings', '1')",3,2
+4,gender × articleType × family_size_bin,"('Girls', 'Leggings', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Girls', 'Leggings', '4+')",9,0
+4,gender × articleType × family_size_bin,"('Girls', 'Lehenga Choli', '1')",1,1
+4,gender × articleType × family_size_bin,"('Girls', 'Rompers', '1')",2,0
+4,gender × articleType × family_size_bin,"('Girls', 'Rompers', '2–3')",1,2
+4,gender × articleType × family_size_bin,"('Girls', 'Salwar', '1')",4,0
+4,gender × articleType × family_size_bin,"('Girls', 'Sandals', '1')",23,4
+4,gender × articleType × family_size_bin,"('Girls', 'Sandals', '2–3')",7,5
+4,gender × articleType × family_size_bin,"('Girls', 'Shirts', '1')",1,0
+4,gender × articleType × family_size_bin,"('Girls', 'Shorts', '1')",5,3
+4,gender × articleType × family_size_bin,"('Girls', 'Shorts', '2–3')",21,3
+4,gender × articleType × family_size_bin,"('Girls', 'Skirts', '1')",4,1
+4,gender × articleType × family_size_bin,"('Girls', 'Skirts', '2–3')",12,3
+4,gender × articleType × family_size_bin,"('Girls', 'Tops', '1')",50,11
+4,gender × articleType × family_size_bin,"('Girls', 'Tops', '2–3')",61,12
+4,gender × articleType × family_size_bin,"('Girls', 'Tops', '4+')",43,15
+4,gender × articleType × family_size_bin,"('Girls', 'Tshirts', '1')",44,9
+4,gender × articleType × family_size_bin,"('Girls', 'Tshirts', '2–3')",18,8
+4,gender × articleType × family_size_bin,"('Girls', 'Tshirts', '4+')",9,0
+4,gender × articleType × family_size_bin,"('Girls', 'Watches', '4+')",7,0
+4,gender × articleType × family_size_bin,"('Men', 'Accessory Gift Set', '1')",14,2
+4,gender × articleType × family_size_bin,"('Men', 'Accessory Gift Set', '2–3')",15,5
+4,gender × articleType × family_size_bin,"('Men', 'Accessory Gift Set', '4+')",44,11
+4,gender × articleType × family_size_bin,"('Men', 'Backpacks', '1')",16,5
+4,gender × articleType × family_size_bin,"('Men', 'Backpacks', '2–3')",4,2
+4,gender × articleType × family_size_bin,"('Men', 'Backpacks', '4+')",16,4
+4,gender × articleType × family_size_bin,"('Men', 'Bangle', '1')",1,0
+4,gender × articleType × family_size_bin,"('Men', 'Belts', '1')",128,37
+4,gender × articleType × family_size_bin,"('Men', 'Belts', '2–3')",91,25
+4,gender × articleType × family_size_bin,"('Men', 'Belts', '4+')",130,32
+4,gender × articleType × family_size_bin,"('Men', 'Blazers', '1')",4,1
+4,gender × articleType × family_size_bin,"('Men', 'Body Wash and Scrub', '1')",1,0
+4,gender × articleType × family_size_bin,"('Men', 'Boxers', '1')",15,5
+4,gender × articleType × family_size_bin,"('Men', 'Boxers', '2–3')",12,2
+4,gender × articleType × family_size_bin,"('Men', 'Bracelet', '4+')",16,0
+4,gender × articleType × family_size_bin,"('Men', 'Briefs', '1')",197,52
+4,gender × articleType × family_size_bin,"('Men', 'Briefs', '2–3')",87,17
+4,gender × articleType × family_size_bin,"('Men', 'Briefs', '4+')",66,18
+4,gender × articleType × family_size_bin,"('Men', 'Caps', '1')",53,14
+4,gender × articleType × family_size_bin,"('Men', 'Caps', '2–3')",16,7
+4,gender × articleType × family_size_bin,"('Men', 'Caps', '4+')",4,0
+4,gender × articleType × family_size_bin,"('Men', 'Casual Shoes', '1')",903,225
+4,gender × articleType × family_size_bin,"('Men', 'Casual Shoes', '2–3')",242,63
+4,gender × articleType × family_size_bin,"('Men', 'Casual Shoes', '4+')",287,66
+4,gender × articleType × family_size_bin,"('Men', 'Churidar', '1')",4,0
+4,gender × articleType × family_size_bin,"('Men', 'Churidar', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Men', 'Cufflinks', '1')",12,1
+4,gender × articleType × family_size_bin,"('Men', 'Cufflinks', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Men', 'Cufflinks', '4+')",17,6
+4,gender × articleType × family_size_bin,"('Men', 'Deodorant', '1')",102,28
+4,gender × articleType × family_size_bin,"('Men', 'Deodorant', '2–3')",12,2
+4,gender × articleType × family_size_bin,"('Men', 'Deodorant', '4+')",13,0
+4,gender × articleType × family_size_bin,"('Men', 'Duffel Bag', '1')",1,0
+4,gender × articleType × family_size_bin,"('Men', 'Duffel Bag', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Men', 'Flip Flops', '1')",250,61
+4,gender × articleType × family_size_bin,"('Men', 'Flip Flops', '2–3')",62,18
+4,gender × articleType × family_size_bin,"('Men', 'Flip Flops', '4+')",6,4
+4,gender × articleType × family_size_bin,"('Men', 'Formal Shoes', '1')",116,29
+4,gender × articleType × family_size_bin,"('Men', 'Formal Shoes', '2–3')",70,16
+4,gender × articleType × family_size_bin,"('Men', 'Formal Shoes', '4+')",229,57
+4,gender × articleType × family_size_bin,"('Men', 'Fragrance Gift Set', '1')",18,7
+4,gender × articleType × family_size_bin,"('Men', 'Fragrance Gift Set', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Men', 'Free Gifts', '1')",7,2
+4,gender × articleType × family_size_bin,"('Men', 'Free Gifts', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Men', 'Free Gifts', '4+')",16,3
+4,gender × articleType × family_size_bin,"('Men', 'Gloves', '1')",4,2
+4,gender × articleType × family_size_bin,"('Men', 'Handbags', '1')",1,0
+4,gender × articleType × family_size_bin,"('Men', 'Handbags', '2–3')",3,0
+4,gender × articleType × family_size_bin,"('Men', 'Innerwear Vests', '1')",104,24
+4,gender × articleType × family_size_bin,"('Men', 'Innerwear Vests', '2–3')",37,11
+4,gender × articleType × family_size_bin,"('Men', 'Innerwear Vests', '4+')",16,4
+4,gender × articleType × family_size_bin,"('Men', 'Jackets', '1')",99,17
+4,gender × articleType × family_size_bin,"('Men', 'Jackets', '2–3')",19,3
+4,gender × articleType × family_size_bin,"('Men', 'Jackets', '4+')",6,0
+4,gender × articleType × family_size_bin,"('Men', 'Jeans', '1')",67,18
+4,gender × articleType × family_size_bin,"('Men', 'Jeans', '2–3')",21,9
+4,gender × articleType × family_size_bin,"('Men', 'Jeans', '4+')",120,28
+4,gender × articleType × family_size_bin,"('Men', 'Kurtas', '1')",26,8
+4,gender × articleType × family_size_bin,"('Men', 'Kurtas', '2–3')",5,7
+4,gender × articleType × family_size_bin,"('Men', 'Kurtas', '4+')",5,0
+4,gender × articleType × family_size_bin,"('Men', 'Kurtis', '1')",2,0
+4,gender × articleType × family_size_bin,"('Men', 'Laptop Bag', '1')",8,1
+4,gender × articleType × family_size_bin,"('Men', 'Laptop Bag', '4+')",5,0
+4,gender × articleType × family_size_bin,"('Men', 'Lounge Pants', '1')",18,7
+4,gender × articleType × family_size_bin,"('Men', 'Lounge Pants', '2–3')",4,0
+4,gender × articleType × family_size_bin,"('Men', 'Lounge Shorts', '1')",11,3
+4,gender × articleType × family_size_bin,"('Men', 'Lounge Shorts', '2–3')",8,0
+4,gender × articleType × family_size_bin,"('Men', 'Messenger Bag', '1')",7,2
+4,gender × articleType × family_size_bin,"('Men', 'Messenger Bag', '2–3')",1,0
+4,gender × articleType × family_size_bin,"('Men', 'Mufflers', '1')",16,3
+4,gender × articleType × family_size_bin,"('Men', 'Mufflers', '2–3')",4,2
+4,gender × articleType × family_size_bin,"('Men', 'Nehru Jackets', '1')",1,1
+4,gender × articleType × family_size_bin,"('Men', 'Nehru Jackets', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Men', 'Night suits', '1')",6,1
+4,gender × articleType × family_size_bin,"('Men', 'Night suits', '2–3')",2,2
+4,gender × articleType × family_size_bin,"('Men', 'Night suits', '4+')",4,0
+4,gender × articleType × family_size_bin,"('Men', 'Perfume and Body Mist', '1')",163,39
+4,gender × articleType × family_size_bin,"('Men', 'Perfume and Body Mist', '2–3')",45,13
+4,gender × articleType × family_size_bin,"('Men', 'Perfume and Body Mist', '4+')",6,0
+4,gender × articleType × family_size_bin,"('Men', 'Ring', '4+')",25,0
+4,gender × articleType × family_size_bin,"('Men', 'Sandals', '1')",248,64
+4,gender × articleType × family_size_bin,"('Men', 'Sandals', '2–3')",75,18
+4,gender × articleType × family_size_bin,"('Men', 'Sandals', '4+')",155,42
+4,gender × articleType × family_size_bin,"('Men', 'Scarves', '1')",20,3
+4,gender × articleType × family_size_bin,"('Men', 'Scarves', '2–3')",9,0
+4,gender × articleType × family_size_bin,"('Men', 'Scarves', '4+')",5,0
+4,gender × articleType × family_size_bin,"('Men', 'Shirts', '1')",717,181
+4,gender × articleType × family_size_bin,"('Men', 'Shirts', '2–3')",499,125
+4,gender × articleType × family_size_bin,"('Men', 'Shirts', '4+')",643,155
+4,gender × articleType × family_size_bin,"('Men', 'Shoe Accessories', '1')",2,0
+4,gender × articleType × family_size_bin,"('Men', 'Shorts', '1')",182,43
+4,gender × articleType × family_size_bin,"('Men', 'Shorts', '2–3')",36,6
+4,gender × articleType × family_size_bin,"('Men', 'Shorts', '4+')",35,14
+4,gender × articleType × family_size_bin,"('Men', 'Socks', '1')",98,24
+4,gender × articleType × family_size_bin,"('Men', 'Socks', '2–3')",84,21
+4,gender × articleType × family_size_bin,"('Men', 'Socks', '4+')",131,37
+4,gender × articleType × family_size_bin,"('Men', 'Sports Sandals', '1')",17,5
+4,gender × articleType × family_size_bin,"('Men', 'Sports Sandals', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Men', 'Sports Shoes', '1')",870,218
+4,gender × articleType × family_size_bin,"('Men', 'Sports Shoes', '2–3')",158,43
+4,gender × articleType × family_size_bin,"('Men', 'Sports Shoes', '4+')",28,0
+4,gender × articleType × family_size_bin,"('Men', 'Stoles', '1')",1,0
+4,gender × articleType × family_size_bin,"('Men', 'Sunglasses', '1')",113,34
+4,gender × articleType × family_size_bin,"('Men', 'Sunglasses', '2–3')",62,18
+4,gender × articleType × family_size_bin,"('Men', 'Sunglasses', '4+')",207,69
+4,gender × articleType × family_size_bin,"('Men', 'Suspenders', '1')",11,3
+4,gender × articleType × family_size_bin,"('Men', 'Suspenders', '2–3')",7,0
+4,gender × articleType × family_size_bin,"('Men', 'Suspenders', '4+')",9,4
+4,gender × articleType × family_size_bin,"('Men', 'Sweaters', '1')",91,24
+4,gender × articleType × family_size_bin,"('Men', 'Sweaters', '2–3')",29,9
+4,gender × articleType × family_size_bin,"('Men', 'Sweaters', '4+')",9,0
+4,gender × articleType × family_size_bin,"('Men', 'Sweatshirts', '1')",101,25
+4,gender × articleType × family_size_bin,"('Men', 'Sweatshirts', '2–3')",43,9
+4,gender × articleType × family_size_bin,"('Men', 'Sweatshirts', '4+')",4,0
+4,gender × articleType × family_size_bin,"('Men', 'Ties', '1')",43,10
+4,gender × articleType × family_size_bin,"('Men', 'Ties', '2–3')",41,8
+4,gender × articleType × family_size_bin,"('Men', 'Ties', '4+')",60,17
+4,gender × articleType × family_size_bin,"('Men', 'Tights', '1')",1,0
+4,gender × articleType × family_size_bin,"('Men', 'Track Pants', '1')",97,19
+4,gender × articleType × family_size_bin,"('Men', 'Track Pants', '2–3')",20,6
+4,gender × articleType × family_size_bin,"('Men', 'Track Pants', '4+')",27,9
+4,gender × articleType × family_size_bin,"('Men', 'Tracksuits', '1')",13,3
+4,gender × articleType × family_size_bin,"('Men', 'Tracksuits', '2–3')",6,2
+4,gender × articleType × family_size_bin,"('Men', 'Trousers', '1')",120,28
+4,gender × articleType × family_size_bin,"('Men', 'Trousers', '2–3')",84,21
+4,gender × articleType × family_size_bin,"('Men', 'Trousers', '4+')",81,20
+4,gender × articleType × family_size_bin,"('Men', 'Trunk', '1')",59,13
+4,gender × articleType × family_size_bin,"('Men', 'Trunk', '2–3')",15,10
+4,gender × articleType × family_size_bin,"('Men', 'Trunk', '4+')",22,0
+4,gender × articleType × family_size_bin,"('Men', 'Tshirts', '1')",2456,615
+4,gender × articleType × family_size_bin,"('Men', 'Tshirts', '2–3')",578,148
+4,gender × articleType × family_size_bin,"('Men', 'Tshirts', '4+')",421,99
+4,gender × articleType × family_size_bin,"('Men', 'Tunics', '1')",1,0
+4,gender × articleType × family_size_bin,"('Men', 'Waist Pouch', '1')",1,0
+4,gender × articleType × family_size_bin,"('Men', 'Waistcoat', '1')",4,0
+4,gender × articleType × family_size_bin,"('Men', 'Wallets', '1')",72,21
+4,gender × articleType × family_size_bin,"('Men', 'Wallets', '2–3')",90,11
+4,gender × articleType × family_size_bin,"('Men', 'Wallets', '4+')",116,34
+4,gender × articleType × family_size_bin,"('Men', 'Watches', '1')",491,128
+4,gender × articleType × family_size_bin,"('Men', 'Watches', '2–3')",68,17
+4,gender × articleType × family_size_bin,"('Men', 'Watches', '4+')",333,68
+4,gender × articleType × family_size_bin,"('Men', 'Water Bottle', '1')",2,1
+4,gender × articleType × family_size_bin,"('Unisex', 'Backpacks', '1')",257,63
+4,gender × articleType × family_size_bin,"('Unisex', 'Backpacks', '2–3')",65,19
+4,gender × articleType × family_size_bin,"('Unisex', 'Backpacks', '4+')",95,27
+4,gender × articleType × family_size_bin,"('Unisex', 'Basketballs', '1')",10,2
+4,gender × articleType × family_size_bin,"('Unisex', 'Belts', '1')",6,2
+4,gender × articleType × family_size_bin,"('Unisex', 'Caps', '1')",78,19
+4,gender × articleType × family_size_bin,"('Unisex', 'Caps', '2–3')",9,2
+4,gender × articleType × family_size_bin,"('Unisex', 'Caps', '4+')",9,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Casual Shoes', '1')",130,32
+4,gender × articleType × family_size_bin,"('Unisex', 'Casual Shoes', '2–3')",16,4
+4,gender × articleType × family_size_bin,"('Unisex', 'Casual Shoes', '4+')",4,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Deodorant', '1')",3,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Duffel Bag', '1')",32,8
+4,gender × articleType × family_size_bin,"('Unisex', 'Duffel Bag', '2–3')",13,3
+4,gender × articleType × family_size_bin,"('Unisex', 'Duffel Bag', '4+')",8,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Flip Flops', '1')",85,19
+4,gender × articleType × family_size_bin,"('Unisex', 'Flip Flops', '2–3')",16,5
+4,gender × articleType × family_size_bin,"('Unisex', 'Footballs', '1')",6,1
+4,gender × articleType × family_size_bin,"('Unisex', 'Fragrance Gift Set', '1')",1,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Free Gifts', '1')",1,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Handbags', '1')",33,10
+4,gender × articleType × family_size_bin,"('Unisex', 'Handbags', '2–3')",2,2
+4,gender × articleType × family_size_bin,"('Unisex', 'Handbags', '4+')",3,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Hat', '1')",2,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Headband', '1')",5,1
+4,gender × articleType × family_size_bin,"('Unisex', 'Jackets', '1')",1,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Jeans', '2–3')",3,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Key chain', '1')",1,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Laptop Bag', '1')",19,5
+4,gender × articleType × family_size_bin,"('Unisex', 'Laptop Bag', '2–3')",4,2
+4,gender × articleType × family_size_bin,"('Unisex', 'Laptop Bag', '4+')",11,4
+4,gender × articleType × family_size_bin,"('Unisex', 'Messenger Bag', '1')",20,5
+4,gender × articleType × family_size_bin,"('Unisex', 'Messenger Bag', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Mobile Pouch', '1')",4,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Mobile Pouch', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Mufflers', '1')",1,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Perfume and Body Mist', '1')",3,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Perfume and Body Mist', '2–3')",4,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Rain Jacket', '1')",1,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Rucksacks', '1')",8,2
+4,gender × articleType × family_size_bin,"('Unisex', 'Sandals', '1')",54,12
+4,gender × articleType × family_size_bin,"('Unisex', 'Sandals', '2–3')",10,4
+4,gender × articleType × family_size_bin,"('Unisex', 'Scarves', '1')",2,3
+4,gender × articleType × family_size_bin,"('Unisex', 'Shoe Accessories', '1')",9,4
+4,gender × articleType × family_size_bin,"('Unisex', 'Shoe Accessories', '2–3')",5,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Shoe Laces', '1')",1,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Socks', '1')",25,10
+4,gender × articleType × family_size_bin,"('Unisex', 'Socks', '2–3')",7,2
+4,gender × articleType × family_size_bin,"('Unisex', 'Socks', '4+')",14,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Sports Sandals', '1')",3,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Sports Shoes', '1')",29,9
+4,gender × articleType × family_size_bin,"('Unisex', 'Sunglasses', '1')",44,14
+4,gender × articleType × family_size_bin,"('Unisex', 'Sunglasses', '2–3')",14,4
+4,gender × articleType × family_size_bin,"('Unisex', 'Sunglasses', '4+')",37,6
+4,gender × articleType × family_size_bin,"('Unisex', 'Sweatshirts', '1')",1,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Swimwear', '1')",2,2
+4,gender × articleType × family_size_bin,"('Unisex', 'Track Pants', '1')",1,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Travel Accessory', '1')",6,1
+4,gender × articleType × family_size_bin,"('Unisex', 'Travel Accessory', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Trolley Bag', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Tshirts', '1')",34,9
+4,gender × articleType × family_size_bin,"('Unisex', 'Tshirts', '2–3')",5,2
+4,gender × articleType × family_size_bin,"('Unisex', 'Tshirts', '4+')",10,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Waist Pouch', '1')",9,3
+4,gender × articleType × family_size_bin,"('Unisex', 'Waist Pouch', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Wallets', '1')",10,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Wallets', '2–3')",4,4
+4,gender × articleType × family_size_bin,"('Unisex', 'Watches', '1')",69,18
+4,gender × articleType × family_size_bin,"('Unisex', 'Watches', '2–3')",8,4
+4,gender × articleType × family_size_bin,"('Unisex', 'Watches', '4+')",11,0
+4,gender × articleType × family_size_bin,"('Unisex', 'Water Bottle', '1')",6,1
+4,gender × articleType × family_size_bin,"('Unisex', 'Wristbands', '1')",4,1
+4,gender × articleType × family_size_bin,"('Women', 'Baby Dolls', '1')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Backpacks', '1')",21,3
+4,gender × articleType × family_size_bin,"('Women', 'Backpacks', '2–3')",3,3
+4,gender × articleType × family_size_bin,"('Women', 'Bangle', '1')",12,0
+4,gender × articleType × family_size_bin,"('Women', 'Bangle', '2–3')",6,0
+4,gender × articleType × family_size_bin,"('Women', 'Bangle', '4+')",18,0
+4,gender × articleType × family_size_bin,"('Women', 'Belts', '1')",111,21
+4,gender × articleType × family_size_bin,"('Women', 'Belts', '2–3')",40,9
+4,gender × articleType × family_size_bin,"('Women', 'Belts', '4+')",34,10
+4,gender × articleType × family_size_bin,"('Women', 'Blazers', '1')",1,0
+4,gender × articleType × family_size_bin,"('Women', 'Bra', '1')",131,33
+4,gender × articleType × family_size_bin,"('Women', 'Bra', '2–3')",43,10
+4,gender × articleType × family_size_bin,"('Women', 'Bra', '4+')",27,7
+4,gender × articleType × family_size_bin,"('Women', 'Bracelet', '1')",10,1
+4,gender × articleType × family_size_bin,"('Women', 'Bracelet', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Bracelet', '4+')",9,6
+4,gender × articleType × family_size_bin,"('Women', 'Briefs', '1')",63,13
+4,gender × articleType × family_size_bin,"('Women', 'Briefs', '2–3')",23,8
+4,gender × articleType × family_size_bin,"('Women', 'Briefs', '4+')",19,5
+4,gender × articleType × family_size_bin,"('Women', 'Camisoles', '1')",10,3
+4,gender × articleType × family_size_bin,"('Women', 'Capris', '1')",56,15
+4,gender × articleType × family_size_bin,"('Women', 'Capris', '2–3')",21,4
+4,gender × articleType × family_size_bin,"('Women', 'Caps', '1')",13,4
+4,gender × articleType × family_size_bin,"('Women', 'Caps', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Casual Shoes', '1')",169,41
+4,gender × articleType × family_size_bin,"('Women', 'Casual Shoes', '2–3')",33,9
+4,gender × articleType × family_size_bin,"('Women', 'Casual Shoes', '4+')",12,2
+4,gender × articleType × family_size_bin,"('Women', 'Churidar', '1')",11,6
+4,gender × articleType × family_size_bin,"('Women', 'Churidar', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Clutches', '1')",107,26
+4,gender × articleType × family_size_bin,"('Women', 'Clutches', '2–3')",25,12
+4,gender × articleType × family_size_bin,"('Women', 'Clutches', '4+')",19,0
+4,gender × articleType × family_size_bin,"('Women', 'Compact', '4+')",4,0
+4,gender × articleType × family_size_bin,"('Women', 'Deodorant', '1')",62,14
+4,gender × articleType × family_size_bin,"('Women', 'Deodorant', '2–3')",7,5
+4,gender × articleType × family_size_bin,"('Women', 'Dresses', '1')",131,35
+4,gender × articleType × family_size_bin,"('Women', 'Dresses', '2–3')",38,9
+4,gender × articleType × family_size_bin,"('Women', 'Dresses', '4+')",17,5
+4,gender × articleType × family_size_bin,"('Women', 'Duffel Bag', '1')",3,3
+4,gender × articleType × family_size_bin,"('Women', 'Dupatta', '1')",46,12
+4,gender × articleType × family_size_bin,"('Women', 'Dupatta', '2–3')",21,7
+4,gender × articleType × family_size_bin,"('Women', 'Dupatta', '4+')",13,0
+4,gender × articleType × family_size_bin,"('Women', 'Earrings', '1')",16,0
+4,gender × articleType × family_size_bin,"('Women', 'Earrings', '2–3')",8,2
+4,gender × articleType × family_size_bin,"('Women', 'Earrings', '4+')",136,43
+4,gender × articleType × family_size_bin,"('Women', 'Eyeshadow', '1')",1,1
+4,gender × articleType × family_size_bin,"('Women', 'Eyeshadow', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Flats', '1')",143,35
+4,gender × articleType × family_size_bin,"('Women', 'Flats', '2–3')",52,18
+4,gender × articleType × family_size_bin,"('Women', 'Flats', '4+')",89,19
+4,gender × articleType × family_size_bin,"('Women', 'Flip Flops', '1')",87,24
+4,gender × articleType × family_size_bin,"('Women', 'Flip Flops', '2–3')",16,4
+4,gender × articleType × family_size_bin,"('Women', 'Flip Flops', '4+')",47,10
+4,gender × articleType × family_size_bin,"('Women', 'Foundation and Primer', '1')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Foundation and Primer', '2–3')",3,2
+4,gender × articleType × family_size_bin,"('Women', 'Foundation and Primer', '4+')",4,0
+4,gender × articleType × family_size_bin,"('Women', 'Fragrance Gift Set', '1')",17,2
+4,gender × articleType × family_size_bin,"('Women', 'Free Gifts', '1')",12,2
+4,gender × articleType × family_size_bin,"('Women', 'Free Gifts', '2–3')",6,0
+4,gender × articleType × family_size_bin,"('Women', 'Free Gifts', '4+')",3,3
+4,gender × articleType × family_size_bin,"('Women', 'Handbags', '1')",482,118
+4,gender × articleType × family_size_bin,"('Women', 'Handbags', '2–3')",162,40
+4,gender × articleType × family_size_bin,"('Women', 'Handbags', '4+')",290,76
+4,gender × articleType × family_size_bin,"('Women', 'Heels', '1')",280,69
+4,gender × articleType × family_size_bin,"('Women', 'Heels', '2–3')",127,24
+4,gender × articleType × family_size_bin,"('Women', 'Heels', '4+')",300,89
+4,gender × articleType × family_size_bin,"('Women', 'Highlighter and Blush', '4+')",4,0
+4,gender × articleType × family_size_bin,"('Women', 'Innerwear Vests', '1')",1,0
+4,gender × articleType × family_size_bin,"('Women', 'Ipad', '2–3')",1,0
+4,gender × articleType × family_size_bin,"('Women', 'Jackets', '1')",23,14
+4,gender × articleType × family_size_bin,"('Women', 'Jackets', '2–3')",5,2
+4,gender × articleType × family_size_bin,"('Women', 'Jeans', '1')",50,11
+4,gender × articleType × family_size_bin,"('Women', 'Jeans', '2–3')",35,15
+4,gender × articleType × family_size_bin,"('Women', 'Jeans', '4+')",53,4
+4,gender × articleType × family_size_bin,"('Women', 'Jeggings', '1')",8,2
+4,gender × articleType × family_size_bin,"('Women', 'Jeggings', '2–3')",4,2
+4,gender × articleType × family_size_bin,"('Women', 'Jeggings', '4+')",6,0
+4,gender × articleType × family_size_bin,"('Women', 'Jewellery Set', '1')",9,2
+4,gender × articleType × family_size_bin,"('Women', 'Jewellery Set', '2–3')",8,0
+4,gender × articleType × family_size_bin,"('Women', 'Jewellery Set', '4+')",15,4
+4,gender × articleType × family_size_bin,"('Women', 'Jumpsuit', '1')",8,2
+4,gender × articleType × family_size_bin,"('Women', 'Kajal and Eyeliner', '1')",5,2
+4,gender × articleType × family_size_bin,"('Women', 'Kajal and Eyeliner', '2–3')",4,0
+4,gender × articleType × family_size_bin,"('Women', 'Kurta Sets', '1')",42,10
+4,gender × articleType × family_size_bin,"('Women', 'Kurta Sets', '2–3')",8,2
+4,gender × articleType × family_size_bin,"('Women', 'Kurtas', '1')",342,86
+4,gender × articleType × family_size_bin,"('Women', 'Kurtas', '2–3')",280,62
+4,gender × articleType × family_size_bin,"('Women', 'Kurtas', '4+')",393,103
+4,gender × articleType × family_size_bin,"('Women', 'Kurtis', '1')",88,23
+4,gender × articleType × family_size_bin,"('Women', 'Kurtis', '2–3')",28,6
+4,gender × articleType × family_size_bin,"('Women', 'Kurtis', '4+')",20,5
+4,gender × articleType × family_size_bin,"('Women', 'Laptop Bag', '1')",7,1
+4,gender × articleType × family_size_bin,"('Women', 'Leggings', '1')",74,18
+4,gender × articleType × family_size_bin,"('Women', 'Leggings', '2–3')",17,7
+4,gender × articleType × family_size_bin,"('Women', 'Lip Gloss', '1')",4,1
+4,gender × articleType × family_size_bin,"('Women', 'Lip Liner', '1')",5,0
+4,gender × articleType × family_size_bin,"('Women', 'Lip Liner', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Lip Plumper', '1')",3,0
+4,gender × articleType × family_size_bin,"('Women', 'Lipstick', '4+')",6,4
+4,gender × articleType × family_size_bin,"('Women', 'Lounge Pants', '1')",12,2
+4,gender × articleType × family_size_bin,"('Women', 'Lounge Pants', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Lounge Shorts', '1')",4,1
+4,gender × articleType × family_size_bin,"('Women', 'Lounge Tshirts', '1')",1,0
+4,gender × articleType × family_size_bin,"('Women', 'Mobile Pouch', '1')",26,8
+4,gender × articleType × family_size_bin,"('Women', 'Mufflers', '1')",1,1
+4,gender × articleType × family_size_bin,"('Women', 'Mufflers', '2–3')",5,0
+4,gender × articleType × family_size_bin,"('Women', 'Nail Polish', '1')",11,3
+4,gender × articleType × family_size_bin,"('Women', 'Nail Polish', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Necklace and Chains', '1')",22,6
+4,gender × articleType × family_size_bin,"('Women', 'Necklace and Chains', '2–3')",16,5
+4,gender × articleType × family_size_bin,"('Women', 'Necklace and Chains', '4+')",4,0
+4,gender × articleType × family_size_bin,"('Women', 'Night suits', '1')",15,5
+4,gender × articleType × family_size_bin,"('Women', 'Night suits', '2–3')",4,0
+4,gender × articleType × family_size_bin,"('Women', 'Night suits', '4+')",16,4
+4,gender × articleType × family_size_bin,"('Women', 'Nightdress', '1')",15,5
+4,gender × articleType × family_size_bin,"('Women', 'Nightdress', '2–3')",12,2
+4,gender × articleType × family_size_bin,"('Women', 'Patiala', '1')",14,2
+4,gender × articleType × family_size_bin,"('Women', 'Patiala', '2–3')",4,3
+4,gender × articleType × family_size_bin,"('Women', 'Pendant', '1')",4,0
+4,gender × articleType × family_size_bin,"('Women', 'Pendant', '2–3')",6,0
+4,gender × articleType × family_size_bin,"('Women', 'Pendant', '4+')",67,28
+4,gender × articleType × family_size_bin,"('Women', 'Perfume and Body Mist', '1')",118,32
+4,gender × articleType × family_size_bin,"('Women', 'Perfume and Body Mist', '2–3')",33,6
+4,gender × articleType × family_size_bin,"('Women', 'Perfume and Body Mist', '4+')",7,5
+4,gender × articleType × family_size_bin,"('Women', 'Ring', '2–3')",2,3
+4,gender × articleType × family_size_bin,"('Women', 'Ring', '4+')",49,0
+4,gender × articleType × family_size_bin,"('Women', 'Robe', '1')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Salwar', '1')",14,3
+4,gender × articleType × family_size_bin,"('Women', 'Salwar', '2–3')",4,3
+4,gender × articleType × family_size_bin,"('Women', 'Salwar and Dupatta', '1')",5,1
+4,gender × articleType × family_size_bin,"('Women', 'Sandals', '1')",1,0
+4,gender × articleType × family_size_bin,"('Women', 'Sandals', '2–3')",1,0
+4,gender × articleType × family_size_bin,"('Women', 'Sandals', '4+')",1,0
+4,gender × articleType × family_size_bin,"('Women', 'Sarees', '1')",72,19
+4,gender × articleType × family_size_bin,"('Women', 'Sarees', '2–3')",20,6
+4,gender × articleType × family_size_bin,"('Women', 'Sarees', '4+')",12,0
+4,gender × articleType × family_size_bin,"('Women', 'Scarves', '1')",27,7
+4,gender × articleType × family_size_bin,"('Women', 'Scarves', '2–3')",8,5
+4,gender × articleType × family_size_bin,"('Women', 'Scarves', '4+')",4,0
+4,gender × articleType × family_size_bin,"('Women', 'Shapewear', '1')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Shirts', '1')",142,31
+4,gender × articleType × family_size_bin,"('Women', 'Shirts', '2–3')",40,7
+4,gender × articleType × family_size_bin,"('Women', 'Shirts', '4+')",5,8
+4,gender × articleType × family_size_bin,"('Women', 'Shorts', '1')",37,10
+4,gender × articleType × family_size_bin,"('Women', 'Shorts', '2–3')",4,2
+4,gender × articleType × family_size_bin,"('Women', 'Shrug', '1')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Skirts', '1')",50,13
+4,gender × articleType × family_size_bin,"('Women', 'Skirts', '2–3')",14,2
+4,gender × articleType × family_size_bin,"('Women', 'Socks', '1')",42,6
+4,gender × articleType × family_size_bin,"('Women', 'Socks', '2–3')",10,4
+4,gender × articleType × family_size_bin,"('Women', 'Socks', '4+')",5,0
+4,gender × articleType × family_size_bin,"('Women', 'Sports Sandals', '1')",20,6
+4,gender × articleType × family_size_bin,"('Women', 'Sports Sandals', '4+')",1,0
+4,gender × articleType × family_size_bin,"('Women', 'Sports Shoes', '1')",238,60
+4,gender × articleType × family_size_bin,"('Women', 'Sports Shoes', '2–3')",30,6
+4,gender × articleType × family_size_bin,"('Women', 'Stockings', '1')",6,1
+4,gender × articleType × family_size_bin,"('Women', 'Stockings', '4+')",12,0
+4,gender × articleType × family_size_bin,"('Women', 'Stoles', '1')",31,8
+4,gender × articleType × family_size_bin,"('Women', 'Stoles', '2–3')",12,6
+4,gender × articleType × family_size_bin,"('Women', 'Stoles', '4+')",19,0
+4,gender × articleType × family_size_bin,"('Women', 'Sunglasses', '1')",95,14
+4,gender × articleType × family_size_bin,"('Women', 'Sunglasses', '2–3')",37,8
+4,gender × articleType × family_size_bin,"('Women', 'Sunglasses', '4+')",91,19
+4,gender × articleType × family_size_bin,"('Women', 'Sweaters', '1')",48,10
+4,gender × articleType × family_size_bin,"('Women', 'Sweaters', '2–3')",11,3
+4,gender × articleType × family_size_bin,"('Women', 'Sweatshirts', '1')",36,10
+4,gender × articleType × family_size_bin,"('Women', 'Sweatshirts', '2–3')",4,2
+4,gender × articleType × family_size_bin,"('Women', 'Swimwear', '1')",8,1
+4,gender × articleType × family_size_bin,"('Women', 'Swimwear', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Tablet Sleeve', '1')",1,0
+4,gender × articleType × family_size_bin,"('Women', 'Ties and Cufflinks', '4+')",1,0
+4,gender × articleType × family_size_bin,"('Women', 'Tights', '1')",3,2
+4,gender × articleType × family_size_bin,"('Women', 'Tights', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Tops', '1')",572,141
+4,gender × articleType × family_size_bin,"('Women', 'Tops', '2–3')",202,55
+4,gender × articleType × family_size_bin,"('Women', 'Tops', '4+')",166,40
+4,gender × articleType × family_size_bin,"('Women', 'Track Pants', '1')",44,15
+4,gender × articleType × family_size_bin,"('Women', 'Track Pants', '2–3')",11,0
+4,gender × articleType × family_size_bin,"('Women', 'Travel Accessory', '1')",2,1
+4,gender × articleType × family_size_bin,"('Women', 'Trousers', '1')",37,11
+4,gender × articleType × family_size_bin,"('Women', 'Trousers', '2–3')",19,6
+4,gender × articleType × family_size_bin,"('Women', 'Trousers', '4+')",4,0
+4,gender × articleType × family_size_bin,"('Women', 'Tshirts', '1')",558,137
+4,gender × articleType × family_size_bin,"('Women', 'Tshirts', '2–3')",83,23
+4,gender × articleType × family_size_bin,"('Women', 'Tshirts', '4+')",38,12
+4,gender × articleType × family_size_bin,"('Women', 'Tunics', '1')",97,24
+4,gender × articleType × family_size_bin,"('Women', 'Tunics', '2–3')",16,5
+4,gender × articleType × family_size_bin,"('Women', 'Tunics', '4+')",5,0
+4,gender × articleType × family_size_bin,"('Women', 'Umbrellas', '1')",3,0
+4,gender × articleType × family_size_bin,"('Women', 'Waistcoat', '1')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Waistcoat', '2–3')",2,0
+4,gender × articleType × family_size_bin,"('Women', 'Wallets', '1')",171,42
+4,gender × articleType × family_size_bin,"('Women', 'Wallets', '2–3')",42,19
+4,gender × articleType × family_size_bin,"('Women', 'Wallets', '4+')",58,10
+4,gender × articleType × family_size_bin,"('Women', 'Watches', '1')",352,88
+4,gender × articleType × family_size_bin,"('Women', 'Watches', '2–3')",62,13
+4,gender × articleType × family_size_bin,"('Women', 'Watches', '4+')",132,36
+4,gender × articleType × family_size_bin,"('Boys', 'Blazers', '1')",0,1
+4,gender × articleType × family_size_bin,"('Boys', 'Watches', '1')",0,5
+4,gender × articleType × family_size_bin,"('Girls', 'Flip Flops', '2–3')",0,2
+4,gender × articleType × family_size_bin,"('Girls', 'Watches', '1')",0,1
+4,gender × articleType × family_size_bin,"('Men', 'Bangle', '4+')",0,13
+4,gender × articleType × family_size_bin,"('Men', 'Heels', '1')",0,1
+4,gender × articleType × family_size_bin,"('Men', 'Rain Trousers', '1')",0,1
+4,gender × articleType × family_size_bin,"('Men', 'Tops', '1')",0,1
+4,gender × articleType × family_size_bin,"('Men', 'Waistcoat', '2–3')",0,2
+4,gender × articleType × family_size_bin,"('Unisex', 'Cushion Covers', '1')",0,1
+4,gender × articleType × family_size_bin,"('Unisex', 'Tablet Sleeve', '1')",0,1
+4,gender × articleType × family_size_bin,"('Unisex', 'Trolley Bag', '1')",0,1
+4,gender × articleType × family_size_bin,"('Women', 'Concealer', '2–3')",0,2
+4,gender × articleType × family_size_bin,"('Women', 'Lip Liner', '4+')",0,4
+4,gender × articleType × family_size_bin,"('Women', 'Lounge Shorts', '2–3')",0,2
+4,gender × articleType × family_size_bin,"('Women', 'Stockings', '2–3')",0,3
+4,gender × articleType × family_size_bin,"('Women', 'Umbrellas', '2–3')",0,2
