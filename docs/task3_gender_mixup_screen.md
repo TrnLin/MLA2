@@ -1,6 +1,6 @@
 # Gender MixUp screen
 
-Run `notebooks/04af_task3_gender_mixup_screen.ipynb` on a fresh Colab L4
+Run `notebooks/task3_training/gender_mixup_screen.ipynb` on a fresh Colab L4
 after pushing the notebook and source files. Use **Run All**. The notebook checks
 completed 04ad parents and their earlier evidence on Drive before any fit.
 
