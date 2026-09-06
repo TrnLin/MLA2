@@ -47,6 +47,7 @@ def inspect_gender_run(
     splits: pd.DataFrame,
     classes: list[str],
     root: Path,
+    expected_epochs: int = 30,
 ) -> dict[str, Any]:
     """Verify source hashes and canonical scope; never unpickle a checkpoint."""
     run_id = run_dir.name
@@ -148,10 +149,17 @@ def inspect_gender_run(
     ):
         raise ValueError(f"normalization scope disagrees: {run_id}")
     history = pd.read_csv(paths["history.csv"], keep_default_na=False)
+    if expected_epochs not in (25, 30) or (
+        expected_epochs == 25
+        and config["child_experiment"].get("name")
+        != "gender_name_truth_mixup_alpha020_sam005_epoch25"
+    ):
+        raise ValueError("Only the frozen SAM epoch-25 screen may use a shorter history")
     if (
-        history["epoch"].tolist() != list(range(1, 31))
+        history["epoch"].tolist() != list(range(1, expected_epochs + 1))
+        or config["epochs"] != expected_epochs
         or config["checkpoint_rule"] != "final_epoch"
-        or metrics.get("selected_epoch", 30) != 30
+        or metrics.get("selected_epoch", 30) != expected_epochs
     ):
         raise ValueError(f"G2/E6 final-epoch history is incomplete: {run_id}")
     predictions = validate_oof(
