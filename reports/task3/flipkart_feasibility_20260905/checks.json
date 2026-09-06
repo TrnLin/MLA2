@@ -1,0 +1,102 @@
+[
+  {
+    "command": [
+      "./.venv/bin/ruff",
+      "check",
+      "reports/task3_flipkart_feasibility_20260905"
+    ],
+    "exit_code": 0,
+    "output": "All checks passed!\n"
+  },
+  {
+    "command": [
+      "./.venv/bin/ruff",
+      "format",
+      "--check",
+      "reports/task3_flipkart_feasibility_20260905"
+    ],
+    "exit_code": 0,
+    "output": "15 files already formatted\n"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_flipkart_feasibility_20260905/scout.py"
+    ],
+    "exit_code": 0,
+    "seconds": 2.263,
+    "log": "reproduction_logs/scout.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_flipkart_feasibility_20260905/coverage.py"
+    ],
+    "exit_code": 0,
+    "seconds": 1.017,
+    "log": "reproduction_logs/coverage.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_flipkart_feasibility_20260905/label_audit.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.67,
+    "log": "reproduction_logs/label_audit.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_flipkart_feasibility_20260905/metadata_groups.py"
+    ],
+    "exit_code": 0,
+    "seconds": 1.088,
+    "log": "reproduction_logs/metadata_groups.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_flipkart_feasibility_20260905/pilot_candidates.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.54,
+    "log": "reproduction_logs/pilot_candidates.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_flipkart_feasibility_20260905/access.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.534,
+    "log": "reproduction_logs/access.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_flipkart_feasibility_20260905/candidate_access.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.526,
+    "log": "reproduction_logs/candidate_access.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_flipkart_feasibility_20260905/verify_audit.py"
+    ],
+    "exit_code": 0,
+    "seconds": 3.306,
+    "log": "reproduction_logs/verify_audit.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_flipkart_feasibility_20260905/render_audit.py"
+    ],
+    "exit_code": 0,
+    "seconds": 4.939,
+    "log": "reproduction_logs/render_audit.txt"
+  }
+]
