@@ -469,12 +469,14 @@ class RunRegistry(Task3Registry):
         task_rows = [
             {column: row[column] for column in TASK2_RUN_COLUMNS}
             for row in rows
-            if row["task"] not in {"task3", "task4"}
+            if row["task"] == "task2"
         ]
         return pd.DataFrame(task_rows, columns=TASK2_RUN_COLUMNS)
 
     def append(self, record: RunRecord) -> None:
         """Append one new running row; never reuse a run ID."""
+        if record.task != "task2":
+            raise ValueError("task must be task2 for append")
         if record.status != "running":
             raise ValueError("new registry rows must start with status='running'")
         task2_row = record.to_row()
@@ -488,6 +490,8 @@ class RunRegistry(Task3Registry):
 
     def finalize(self, record: RunRecord) -> None:
         """Replace a running row once, while preserving its starting identity."""
+        if record.task != "task2":
+            raise ValueError("task must be task2 for finalize")
         if record.status not in TERMINAL_STATUSES:
             raise ValueError("finalized run must have a terminal status")
         with _registry_lock(self.path, exclusive=True):
@@ -513,13 +517,13 @@ class RunRegistry(Task3Registry):
             _write_union_rows_with_pandas(self.path, rows)
 
     def interrupt(self, run_id: str, *, reason: str) -> None:
-        """Mark one running non-Task-4 row interrupted without losing other tasks."""
+        """Mark one running Task 2 row interrupted without changing other tasks."""
         with _registry_lock(self.path, exclusive=True):
             rows = _read_union_rows(self.path)
             matches = [
                 index
                 for index, row in enumerate(rows)
-                if row["run_id"] == run_id and row["task"] != "task4"
+                if row["run_id"] == run_id and row["task"] == "task2"
             ]
             if not matches:
                 raise RegistryError(f"run_id does not exist: {run_id}")
@@ -765,7 +769,7 @@ class Task4RunRegistry:
             raise RunRegistryError(
                 f"schema_version must be {TASK4_SCHEMA_VERSION}, got {row['schema_version']!r}"
             )
-        if row["task"] not in {"task3", "task4"}:
+        if row["task"] != "task4":
             raise RunRegistryError("task must be task4")
         for field_name in _TASK4_NONEMPTY_TEXT_FIELDS:
             if not row[field_name].strip():
