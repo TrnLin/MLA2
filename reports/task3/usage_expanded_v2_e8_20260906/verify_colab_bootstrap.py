@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from fashion.task3_paths import resolve_task3_path
 
 import ast
 import csv
@@ -56,7 +55,7 @@ def main():
         # One real teacher image is enough to exercise archive extraction. The package
         # builder separately hashes and decodes all 33,459 development images.
         with zipfile.ZipFile(data / "task3-data.zip", "w") as archive:
-            archive.write(resolve_task3_path(teacher["path"], root=ROOT), teacher["path"])
+            archive.write((ROOT / teacher["path"]), teacher["path"])
         mounts = []
         if "google" not in sys.modules:
             google = types.ModuleType("google")
@@ -129,7 +128,7 @@ def main():
                     else:
                         raise AssertionError("Notebook accepted a path outside the extraction")
             assert (namespace["REPO_DIR"] / teacher["path"]).read_bytes() == (
-                resolve_task3_path(teacher["path"], root=ROOT)
+                (ROOT / teacher["path"])
             ).read_bytes()
             checked.update(
                 notebook=str(NOTEBOOK.relative_to(ROOT)),
