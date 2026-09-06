@@ -92,7 +92,8 @@ def test_e10_adds_only_the_three_way_training_head_to_gender_e6() -> None:
     assert sum(parameter.numel() for parameter in model.parameters()) == 390_952
     assert tuple(primary.shape) == (2, 5)
     assert tuple(audience.shape) == (2, 3)
-    assert model(torch.zeros(2, 3, 80, 60)) == pytest.approx(primary)
+    with torch.inference_mode():
+        torch.testing.assert_close(model(torch.zeros(2, 3, 80, 60)), primary)
     with pytest.raises(ValueError, match="Gender target"):
         Task3GeM3AudienceCNN(Task3BaselineConfig(target="usage"))
 
