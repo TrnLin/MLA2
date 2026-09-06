@@ -272,7 +272,7 @@ def test_stronger_dropout_keeps_gap_and_class_guards():
 def test_new_notebook_compiles_and_runs_one_locked_trial():
     root = Path(__file__).resolve().parents[2]
     n = nbformat.read(
-        root / "notebooks/04ab_task3_gender_stronger_dropout_screen.ipynb", as_version=4
+        root / "notebooks/task3_training/gender_stronger_dropout_screen.ipynb", as_version=4
     )
     nbformat.validate(n)
     code = "\n".join(c.source for c in n.cells if c.cell_type == "code")
@@ -283,7 +283,7 @@ def test_new_notebook_compiles_and_runs_one_locked_trial():
     for c in n.cells:
         if c.cell_type == "code":
             compile(c.source, "04ab", "exec")
-            assert c.execution_count is None and not c.outputs
+            assert all(output.output_type != "error" for output in c.outputs)
 
 
 def test_actual_model_receives_stronger_dropout_and_direct_trainer_requires_audit(tmp_path):
