@@ -19,7 +19,17 @@ POLICY = {
 }
 
 
-def training_contract(training, *, validation_fold, seed=2753):
+def policy_for_alpha(alpha=0.2):
+    """Keep the completed 0.2 contract stable; allow only the separate 0.4 trial."""
+    if alpha not in (0.2, 0.4):
+        raise ValueError("Only the frozen MixUp strengths 0.2 and 0.4 are supported")
+    policy = dict(POLICY)
+    if alpha == 0.4:
+        policy.update(version="gender_mixup_alpha040_v1", alpha=0.4)
+    return policy
+
+
+def training_contract(training, *, validation_fold, seed=2753, alpha=0.2):
     columns = ["id", "cv_fold", "product_family_group", "gender"]
     required = {*columns, "partition"}
     if validation_fold not in (0, 4) or not required.issubset(training.columns):
@@ -34,7 +44,7 @@ def training_contract(training, *, validation_fold, seed=2753):
     ):
         raise ValueError("MixUp may only use unique valid fold-training rows")
     return {
-        "policy": dict(POLICY),
+        "policy": policy_for_alpha(alpha),
         "seed": seed,
         "validation_fold": validation_fold,
         "training_rows": len(training),
@@ -47,8 +57,10 @@ def training_contract(training, *, validation_fold, seed=2753):
 class TrainingMixUp:
     """Keep every row once per epoch and reject any out-of-fold batch before mixing."""
 
-    def __init__(self, training, *, validation_fold, label_to_index, seed=2753):
-        self.contract = training_contract(training, validation_fold=validation_fold, seed=seed)
+    def __init__(self, training, *, validation_fold, label_to_index, seed=2753, alpha=0.2):
+        self.contract = training_contract(
+            training, validation_fold=validation_fold, seed=seed, alpha=alpha
+        )
         self.allowed = dict(zip(training.id.astype(int), training.gender.map(label_to_index)))
         if any(not np.isfinite(value) for value in self.allowed.values()):
             raise ValueError("MixUp labels are absent from the class map")
@@ -81,7 +93,8 @@ class TrainingMixUp:
             or any(self.allowed.get(i) != y for i, y in zip(ids, labels, strict=True))
         ):
             raise ValueError("MixUp batch contains missing, repeated or non-training rows/labels")
-        lam = float(self.rng.beta(POLICY["alpha"], POLICY["alpha"]))
+        alpha = self.contract["policy"]["alpha"]
+        lam = float(self.rng.beta(alpha, alpha))
         order = self.rng.permutation(len(ids))
         self.seen.update(ids)
         self.stats["rows"] += len(ids)
