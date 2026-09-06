@@ -152,9 +152,12 @@ def inspect_gender_run(
     if expected_epochs not in (25, 30) or (
         expected_epochs == 25
         and config["child_experiment"].get("name")
-        != "gender_name_truth_mixup_alpha020_sam005_epoch25"
+        not in {
+            "gender_name_truth_mixup_alpha020_sam005_epoch25",
+            "gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
+        }
     ):
-        raise ValueError("Only the frozen SAM epoch-25 screen may use a shorter history")
+        raise ValueError("Only the frozen SAM epoch-25 recipes may use a shorter history")
     if (
         history["epoch"].tolist() != list(range(1, expected_epochs + 1))
         or config["epochs"] != expected_epochs
