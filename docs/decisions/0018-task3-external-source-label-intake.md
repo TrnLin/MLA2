@@ -66,8 +66,8 @@ attribution and rights evidence remain attached to the intake.
 - [Combined builder](../../src/fashion/data/expanded_usage.py)
 - [Combined data tests](../../tests/data/test_expanded_usage.py)
 - [Original image-only overlap audit](../../src/fashion/data/external_usage_audit.py)
-- [E8 training and run instructions](../../reports/task3_usage_expanded_e8_20260906/README.md)
+- [E8 training and run instructions](../../reports/task3/usage_expanded_e8_20260906/README.md)
 
 The full intake report and combined validation stay in the local
-`reports/task3_rare_external_intake_20260906/` directory. The training archive carries
+`reports/task3/rare_external_intake_20260906/` directory. The training archive carries
 the reviewed dataset, image provenance, validation and source evidence needed by Colab.
