@@ -24,6 +24,9 @@ analysis of the runs already done, choose the analysis.
   ADR 0019 also permits `data/processed/teacher_plus_rare_usage_v2_20260906/splits.csv`,
   which keeps the earlier 120 additions and appends 567 reviewed images with labels
   supported by product text or retailer collections. Keep its saved family folds intact.
+  ADR 0021 also permits `data/processed/teacher_plus_rare_usage_v3_20260906/splits.csv`,
+  which replaces 130 outside images to fill reviewed gaps while keeping class totals,
+  all teacher rows and every retained outside row/fold fixed. Select v3 explicitly.
 - **Every training run appends a row to `results/runs.csv`** through
   `fashion.train.registry`. The report's comparison tables are generated from that file.
 - **`data/raw/teacher/test/styles_prediction.csv` format is fixed**:
@@ -39,6 +42,9 @@ analysis of the runs already done, choose the analysis.
 - Later notebooks stay narrative and import reusable logic from `src/fashion/`.
 - Write a figure to `results/figures/` when the report will cite it.
 - Use `./.venv/bin/python`.
+- For future training experiments, reuse existing data ZIPs in Drive and fetch code updates
+  from GitHub. Code-only changes must not require another data ZIP upload. Keep each
+  experiment's results separate. Fresh model weights do not require a fresh data archive.
 
 ## How to talk to me
 
