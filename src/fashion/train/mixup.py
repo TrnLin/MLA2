@@ -29,8 +29,41 @@ def policy_for_alpha(alpha=0.2):
     return policy
 
 
-def training_contract(training, *, validation_fold, seed=2753, alpha=0.2):
-    columns = ["id", "cv_fold", "product_family_group", "gender"]
+USAGE_CLASSES = (
+    "Casual",
+    "Ethnic",
+    "Formal",
+    "Home",
+    "NA",
+    "Party",
+    "Smart Casual",
+    "Sports",
+    "Travel",
+)
+
+
+def usage_policy():
+    """Mix Usage labels while retaining the existing fold-fitted class weights."""
+    return dict(
+        POLICY,
+        version="usage_mixup_alpha020_weighted_v1",
+        loss="lambda * weighted_CE(logits, y) + (1-lambda) * weighted_CE(logits, partner_y)",
+        reduction=(
+            "each CE divides by sum of target weights; a batch permutation preserves this sum"
+        ),
+        evaluation=(
+            "unmixed images; existing E8 weighted CE loss and ordinary classification metrics"
+        ),
+    )
+
+
+def training_contract(training, *, validation_fold, seed=2753, alpha=0.2, target="gender"):
+    if target not in {"gender", "usage"} or (target == "usage" and alpha != 0.2):
+        raise ValueError("MixUp supports Gender or the frozen Usage alpha 0.2 recipe")
+    columns = ["id", "cv_fold", "product_family_group", target]
+    if target == "usage":
+        columns.append("source_dataset")
+    classes = USAGE_CLASSES if target == "usage" else ["Boys", "Girls", "Men", "Unisex", "Women"]
     required = {*columns, "partition"}
     if validation_fold not in range(5) or not required.issubset(training.columns):
         raise ValueError("MixUp needs a canonical fold and complete training metadata")
@@ -40,11 +73,12 @@ def training_contract(training, *, validation_fold, seed=2753, alpha=0.2):
         or training.id.duplicated().any()
         or not training.partition.eq("development").all()
         or not training.cv_fold.isin(set(range(5)) - {validation_fold}).all()
-        or not training.gender.isin(["Boys", "Girls", "Men", "Unisex", "Women"]).all()
+        or not training[target].isin(classes).all()
     ):
         raise ValueError("MixUp may only use unique valid fold-training rows")
     return {
-        "policy": policy_for_alpha(alpha),
+        **({"target": target} if target == "usage" else {}),
+        "policy": usage_policy() if target == "usage" else policy_for_alpha(alpha),
         "seed": seed,
         "validation_fold": validation_fold,
         "training_rows": len(training),
@@ -57,11 +91,13 @@ def training_contract(training, *, validation_fold, seed=2753, alpha=0.2):
 class TrainingMixUp:
     """Keep every row once per epoch and reject any out-of-fold batch before mixing."""
 
-    def __init__(self, training, *, validation_fold, label_to_index, seed=2753, alpha=0.2):
+    def __init__(
+        self, training, *, validation_fold, label_to_index, seed=2753, alpha=0.2, target="gender"
+    ):
         self.contract = training_contract(
-            training, validation_fold=validation_fold, seed=seed, alpha=alpha
+            training, validation_fold=validation_fold, seed=seed, alpha=alpha, target=target
         )
-        self.allowed = dict(zip(training.id.astype(int), training.gender.map(label_to_index)))
+        self.allowed = dict(zip(training.id.astype(int), training[target].map(label_to_index)))
         if any(not np.isfinite(value) for value in self.allowed.values()):
             raise ValueError("MixUp labels are absent from the class map")
         self.rng = np.random.Generator(np.random.PCG64(seed ^ 0x4D495855))
