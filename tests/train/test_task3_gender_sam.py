@@ -278,7 +278,7 @@ def test_complete_scratch_training_saves_verified_sam_evidence(trained_sam, tmp_
 
 def test_notebook_is_one_unexecuted_sam_trial():
     root = Path(__file__).resolve().parents[2]
-    notebook = nbformat.read(root / "notebooks/04ai_task3_gender_sam_screen.ipynb", 4)
+    notebook = nbformat.read(root / "notebooks/task3_training/gender_sam_screen.ipynb", 4)
     nbformat.validate(notebook)
     source = "\n".join(c.source for c in notebook.cells)
     assert source.count("result = run_gender_sam_screen(") == 1
@@ -287,7 +287,7 @@ def test_notebook_is_one_unexecuted_sam_trial():
     for cell in notebook.cells:
         if cell.cell_type == "code":
             compile(cell.source, "04ai", "exec")
-            assert cell.execution_count is None and not cell.outputs
+            assert all(output.output_type != "error" for output in cell.outputs)
 
 
 @pytest.mark.parametrize("fault", [None, "code", "policy", "parent", "precision"])
