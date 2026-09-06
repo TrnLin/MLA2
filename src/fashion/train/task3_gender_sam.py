@@ -14,7 +14,7 @@ from fashion.data.hashing import compute_sha256
 from fashion.train.config import Task3BaselineConfig
 from fashion.train.mixup import POLICY as MIXUP_POLICY
 from fashion.train.mixup import training_contract
-from fashion.train.sam import POLICY
+from fashion.train.sam import POLICY, policy_for_epochs
 from fashion.train.task3_gender_mixup import verify_mixup_evidence
 from fashion.train.task3_gender_name_truth import (
     NameTruthSpec,
@@ -80,14 +80,15 @@ def check_gender_sam_sources(*, root=ROOT, **paths):
     return sources, classes, sam_spec(root), evidence
 
 
-def _source_identity(sources, spec, evidence, paths, *, root):
+def _source_identity(sources, spec, evidence, paths, *, root, splits=None):
     identity = label_source_identity(
         sources, NameTruthSpec(spec.label_contract_json), evidence, paths, root=root
     )
-    splits = training_splits(spec, root=root)
+    if splits is None:
+        splits = training_splits(spec, root=root)
     identity.update(
         spec=spec.to_dict(),
-        rule_version=RULE_VERSION,
+        rule_version=spec.to_dict()["screen_rule_version"],
         mixup20_code_commit=PARENT_COMMIT,
         parent_screen_decision_sha256=compute_sha256(
             Path(paths["mixup_directory"]) / "screen_decision.json"
@@ -144,8 +145,9 @@ def require_sam_prerequisites(
     }
 
 
-def verify_sam_evidence(run, *, fold, splits, directory):
-    verify_mixup_evidence(run, fold=fold, splits=splits, directory=directory)
+def verify_sam_evidence(run, *, fold, splits, directory, epochs=30):
+    expected_policy = policy_for_epochs(epochs)
+    verify_mixup_evidence(run, fold=fold, splits=splits, directory=directory, epochs=epochs)
     directory = Path(directory)
     path = directory / "sam_training.json"
     receipt = json.loads(path.read_text())
@@ -153,14 +155,14 @@ def verify_sam_evidence(run, *, fold, splits, directory):
     history = pd.read_csv(directory / "history.csv")
     diagnostics = json.loads((directory / "clean_epoch_diagnostics.json").read_text())
     if (
-        receipt.get("policy") != POLICY
-        or run["config"].get("sam_policy") != POLICY
+        receipt.get("policy") != expected_policy
+        or run["config"].get("sam_policy") != expected_policy
         or run["metrics"].get("sam_receipt_sha256") != compute_sha256(path)
         or run["metrics"].get("clean_epoch_diagnostics_sha256")
         != compute_sha256(directory / "clean_epoch_diagnostics.json")
-        or len(receipt.get("epochs", [])) != 30
-        or [row["epoch"] for row in diagnostics] != POLICY["diagnostic_epochs"]
-        or history.epoch.tolist() != list(range(1, 31))
+        or len(receipt.get("epochs", [])) != epochs
+        or [row["epoch"] for row in diagnostics] != expected_policy["diagnostic_epochs"]
+        or history.epoch.tolist() != list(range(1, epochs + 1))
     ):
         raise ValueError("Saved SAM training evidence differs from the frozen contract")
     for row, mixed, (_, epoch) in zip(
