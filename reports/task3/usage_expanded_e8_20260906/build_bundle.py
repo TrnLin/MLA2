@@ -1,5 +1,7 @@
 """Build a self-contained Colab training snapshot without committing or pushing."""
 
+from fashion.task3_paths import resolve_task3_path
+
 import hashlib
 import json
 import zipfile
@@ -20,9 +22,9 @@ from fashion.train.task3_usage_expanded import (
     write_json,
 )
 
-REPORT = ROOT / "reports/task3_usage_expanded_e8_20260906"
+REPORT = ROOT / "reports/task3/usage_expanded_e8_20260906"
 BUNDLE = REPORT / "teacher_plus_rare_usage_training.zip"
-NOTEBOOK = Path("notebooks/04ag_task3_usage_expanded_e8.ipynb")
+NOTEBOOK = Path("notebooks/task3_training/usage_expanded_e8.ipynb")
 
 
 def write_repair_script():
@@ -59,7 +61,7 @@ def main():
             SOURCE_MANIFEST,
         }
     )
-    paths.update(p.relative_to(ROOT) for p in (ROOT / DATA_DIRECTORY).rglob("*") if p.is_file())
+    paths.update(p.relative_to(ROOT) for p in (resolve_task3_path(DATA_DIRECTORY, root=ROOT)).rglob("*") if p.is_file())
     paths.update(Path(p) for p in splits.loc[splits.source_dataset.ne("teacher"), "path"])
     evidence = Path("results/evidence/task3") / E8_DIRECTORY
     for run_id in E8_RUN_IDS:
@@ -73,7 +75,7 @@ def main():
             "final_epoch.pt",
         ):
             paths.add(evidence / run_id / name)
-    payload = {str(path): (ROOT / path).read_bytes() for path in sorted(paths)}
+    payload = {str(path): (resolve_task3_path(path, root=ROOT)).read_bytes() for path in sorted(paths)}
     # The user's executed notebook stays untouched. Ship a clean run copy inside
     # the archive so old failure output cannot look like a result of this code.
     notebook = json.loads(payload[str(NOTEBOOK)])
