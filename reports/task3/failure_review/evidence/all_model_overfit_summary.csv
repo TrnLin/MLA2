@@ -1,0 +1,24 @@
+model_id,target,code,name,scope,pooled_oof_macro_f1,mean_train_macro_f1,mean_validation_macro_f1,train_validation_gap,train_score_source,classification,source_root
+g-e1,gender,E1,SmallCNN baseline,5-fold,0.7117526877,0.998811908284,0.711667937073,0.28714397121,epoch-log,overfit,results/evidence/task3/baseline/gender
+g-e2,gender,E2,Brightness jitter,5-fold,0.6988984,0.991967500546,0.698832509075,0.293134991471,epoch-log,overfit,results/evidence/task3/experiments/t3_gender_e2_brightness/gender
+g-e3,gender,E3,Class balance,5-fold,0.7081139,0.99943687659,0.707858413869,0.291578462722,final-eval,overfit,results/evidence/task3/experiments/t3_gender_e3_class_balanced_ce/gender
+g-e4,gender,E4,TinyResNet,5-fold,0.7120786,0.999968854851,0.712022457038,0.287946397813,final-eval,overfit,results/evidence/task3/experiments/t3_gender_e4_tinyresnet18_pm/gender
+g-e5,gender,E5,CompactBlur,5-fold,0.7068535,0.872333965562,0.706915148149,0.165418817413,final-eval,overfit,results/evidence/task3/experiments/t3_gender_e5_compact_blur_cnn/gender
+g-e6,gender,E6,GeM pooling,5-fold,0.7335206,0.999953327454,0.73334582877,0.266607498684,final-eval,overfit,results/evidence/task3/experiments/t3_gender_e6_gem_p3/gender
+g-e7,gender,E7,TinyHRNet,5-fold,0.702517,1.0,0.70179341095,0.29820658905,final-eval,overfit,results/evidence/task3/experiments/t3_gender_e7_tinyhrnet20/gender
+g-e8,gender,E8,Early stopping,5-fold,0.7411986,0.999286515655,0.741055532016,0.258230983638,final-eval,overfit,results/evidence/task3/experiments/t3_gender_e8_early_stopping/gender
+g-e9,gender,E9,Semantic filter,5-fold,0.7450845,0.999953288526,0.745104498495,0.254848790031,final-eval,overfit,results/evidence/task3/experiments/t3_gender_e9_semantic_filter/gender
+g-e10,gender,E10,Audience helper,5-fold,0.7268771,0.999968895048,0.726820993067,0.27314790198,final-eval,overfit,results/evidence/task3/experiments/t3_gender_e10_audience_aux/gender
+g-hog,gender,S1,HOG–SVM,2-fold,0.6607654816652765,0.85348683656,0.660568556379,0.192918280181,final-eval,overfit,results/task3/experiments/task3_clean_slate_screen_1/gender
+g-swin,gender,S2,Micro-Swin,2-fold,0.6846634219949939,0.99985701724,0.684818145388,0.315038871852,final-eval,overfit,reports/task3_failure_review/evidence/gpu_screen_2/gender
+u-e1,usage,E1,SmallCNN baseline,5-fold,0.3738,0.654639999111,0.374124101189,0.280515897922,epoch-log,mixed,reports/task3_failure_review/evidence/usage_e1_drive
+u-e2,usage,E2,Class balance,5-fold,0.4081705,0.938489044374,0.404315810796,0.534173233578,epoch-log,overfit,results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage
+u-e3,usage,E3,Dropout,5-fold,0.4161328,0.929076885713,0.414017868826,0.515059016887,final-eval,overfit,results/evidence/task3/experiments/t3_usage_e3_classifier_dropout/usage
+u-e4,usage,E4,TinyResNet,5-fold,0.3878204,0.976192968222,0.385778697324,0.590414270899,final-eval,overfit,results/evidence/task3/experiments/t3_usage_e4_tinyresnet18_pm/usage
+u-e5,usage,E5,Label smoothing,5-fold,0.4048638,0.941976930175,0.403280542981,0.538696387194,final-eval,overfit,results/evidence/task3/experiments/t3_usage_e5_label_smoothing/usage
+u-e6,usage,E6,Focal loss,5-fold,0.4093852,0.937301935502,0.405647618898,0.531654316604,final-eval,overfit,results/evidence/task3/experiments/t3_usage_e6_focal_gamma1/usage
+u-e7,usage,E7,TinyConvNeXt,5-fold,0.3450941,0.683846166244,0.347405918211,0.336440248033,final-eval,mixed,results/evidence/task3/experiments/t3_usage_e7_tinyconvnext18/usage
+u-e8,usage,E8,Translation,5-fold,0.4193932,0.790529527081,0.415548897599,0.374980629481,final-eval,mixed,results/evidence/task3/experiments/t3_usage_e8_translation/usage
+u-e9,usage,E9,Exception balance,5-fold,0.3955233,0.777504390166,0.394657298826,0.38284709134,final-eval,mixed,results/evidence/task3/experiments/t3_usage_e9_exception_balance/usage
+u-type,usage,S1,Type posterior,2-fold,0.3193236363096896,0.381479494245,0.319414876607,0.062064617638,final-eval,underfit,results/task3/experiments/task3_clean_slate_screen_1/usage
+u-swin,usage,S2,Micro-Swin,2-fold,0.39729804145581515,0.943508540554,0.396167048925,0.547341491629,final-eval,overfit,reports/task3_failure_review/evidence/gpu_screen_2/usage
