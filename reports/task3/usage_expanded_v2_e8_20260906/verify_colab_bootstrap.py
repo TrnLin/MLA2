@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from fashion.task3_paths import resolve_task3_path
+
 import ast
 import csv
 import hashlib
@@ -14,9 +16,9 @@ import types
 import zipfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-REPORT = ROOT / "reports/task3_usage_expanded_v2_e8_20260906"
-NOTEBOOK = ROOT / "notebooks/04al_task3_usage_expanded_v2_e8.ipynb"
+ROOT = next(p for p in Path(__file__).resolve().parents if (p / "pyproject.toml").is_file())
+REPORT = ROOT / "reports/task3/usage_expanded_v2_e8_20260906"
+NOTEBOOK = ROOT / "notebooks/task3_training/usage_expanded_v2_e8.ipynb"
 BUNDLE = REPORT / "teacher_plus_rare_usage_v2_training.zip"
 
 
@@ -29,6 +31,9 @@ class LocalContentPaths(ast.NodeTransformer):
         self.content = content
 
     def visit_Constant(self, node):
+        # Validate the committed local code without depending on a published branch.
+        if node.value == "https://github.com/TrnLin/MLA2.git":
+            node.value = str(ROOT)
         if isinstance(node.value, str) and node.value.startswith("/content"):
             node.value = str(self.content) + node.value[len("/content") :]
         return node
@@ -51,7 +56,7 @@ def main():
         # One real teacher image is enough to exercise archive extraction. The package
         # builder separately hashes and decodes all 33,459 development images.
         with zipfile.ZipFile(data / "task3-data.zip", "w") as archive:
-            archive.write(ROOT / teacher["path"], teacher["path"])
+            archive.write(resolve_task3_path(teacher["path"], root=ROOT), teacher["path"])
         mounts = []
         if "google" not in sys.modules:
             google = types.ModuleType("google")
@@ -124,7 +129,7 @@ def main():
                     else:
                         raise AssertionError("Notebook accepted a path outside the extraction")
             assert (namespace["REPO_DIR"] / teacher["path"]).read_bytes() == (
-                ROOT / teacher["path"]
+                resolve_task3_path(teacher["path"], root=ROOT)
             ).read_bytes()
             checked.update(
                 notebook=str(NOTEBOOK.relative_to(ROOT)),
@@ -139,7 +144,7 @@ def main():
             )
         finally:
             os.chdir(original_cwd)
-        (REPORT / "colab_bootstrap_check.json").write_text(json.dumps(checked, indent=2) + "\n")
+        (REPORT / "bootstrap_check_current.json").write_text(json.dumps(checked, indent=2) + "\n")
         print("Colab setup, both references, training arguments and repeat setup passed.")
 
 
