@@ -97,5 +97,14 @@
   "live_markdown_links_checked": true,
   "visual_checks": "Four final Usage plots, E1 recipe table, saved evaluation tables; earlier report sample checks retained",
   "new_training_or_inference": false,
-  "integration_source_commit": "85f7cdd35a8c88025e4f9fac52cf63bc8e5b597d"
+  "integration_source_commit": "85f7cdd35a8c88025e4f9fac52cf63bc8e5b597d",
+  "source_inference_contract_hash_scope": "Exact evaluated sources resolved through source-archive-map.json; adapted current scripts differ and are checked separately.",
+  "frozen_manifest_verification": {
+    "command": "./.venv/bin/python scripts/verify_task3_usage_manifest.py",
+    "frozen_references_verified": 38,
+    "adapted_scripts_verified_separately": 2,
+    "mapping": "source-archive-map.json",
+    "archive_directory": "evaluated_sources",
+    "training_or_inference": false
+  }
 }
