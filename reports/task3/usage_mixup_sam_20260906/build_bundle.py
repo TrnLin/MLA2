@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from fashion.task3_paths import resolve_task3_path
+
 import hashlib
 import json
 import zipfile
@@ -15,9 +17,9 @@ from fashion.train import task3_usage_expanded as previous
 from fashion.train import task3_usage_expanded_v2 as v2
 from fashion.train import task3_usage_mixup_sam as screen
 
-REPORT = ROOT / "reports/task3_usage_mixup_sam_20260906"
+REPORT = ROOT / "reports/task3/usage_mixup_sam_20260906"
 BUNDLE = REPORT / "usage_mixup_sam_training.zip"
-NOTEBOOK = Path("notebooks/04am_task3_usage_mixup_sam_screen.ipynb")
+NOTEBOOK = Path("notebooks/task3_training/usage_mixup_sam_screen.ipynb")
 REFERENCE_ROOT = Path("reference/usage_mixup_sam")
 BASELINE_DIRECTORY = ROOT / "results/evidence/task3/usage_expanded_v2_e8_20260906"
 
@@ -57,10 +59,10 @@ def main():
         }
     )
     paths.update(
-        path.relative_to(ROOT) for path in (ROOT / v2.DATA_DIRECTORY).rglob("*") if path.is_file()
+        path.relative_to(ROOT) for path in (resolve_task3_path(v2.DATA_DIRECTORY, root=ROOT)).rglob("*") if path.is_file()
     )
     paths.update(Path(path) for path in splits.loc[splits.source_dataset.ne("teacher"), "path"])
-    payload = {str(path): (ROOT / path).read_bytes() for path in sorted(paths)}
+    payload = {str(path): (resolve_task3_path(path, root=ROOT)).read_bytes() for path in sorted(paths)}
     notebook = json.loads(payload[str(NOTEBOOK)])
     for cell in notebook["cells"]:
         if cell["cell_type"] == "code":
