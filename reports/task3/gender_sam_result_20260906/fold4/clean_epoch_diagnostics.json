@@ -1,0 +1,977 @@
+[
+  {
+    "checkpoint_selection": "diagnostic_only",
+    "clean_training": {
+      "accuracy": 0.9021971315227342,
+      "balanced_accuracy": 0.7605733651808133,
+      "brier": 0.15183897321809808,
+      "confusion_matrix": [
+        [
+          609,
+          17,
+          35,
+          7,
+          15
+        ],
+        [
+          127,
+          349,
+          13,
+          9,
+          59
+        ],
+        [
+          26,
+          7,
+          13567,
+          80,
+          387
+        ],
+        [
+          58,
+          10,
+          509,
+          595,
+          238
+        ],
+        [
+          17,
+          18,
+          889,
+          43,
+          8532
+        ]
+      ],
+      "ece_15": 0.04210701785688357,
+      "macro_f1": 0.785817459904778,
+      "mcc": 0.8280057490850821,
+      "nll": 0.2961683228761549,
+      "per_class": [
+        {
+          "class_index": 0,
+          "class_name": "Boys",
+          "f1": 0.8013157894736842,
+          "precision": 0.7275985663082437,
+          "predicted_count": 837,
+          "recall": 0.8916544655929722,
+          "support": 683
+        },
+        {
+          "class_index": 1,
+          "class_name": "Girls",
+          "f1": 0.7286012526096033,
+          "precision": 0.8703241895261845,
+          "predicted_count": 401,
+          "recall": 0.6265709156193896,
+          "support": 557
+        },
+        {
+          "class_index": 2,
+          "class_name": "Men",
+          "f1": 0.9330811554332874,
+          "precision": 0.903683474322254,
+          "predicted_count": 15013,
+          "recall": 0.9644558185824981,
+          "support": 14067
+        },
+        {
+          "class_index": 3,
+          "class_name": "Unisex",
+          "f1": 0.5550373134328358,
+          "precision": 0.8106267029972752,
+          "predicted_count": 734,
+          "recall": 0.4219858156028369,
+          "support": 1410
+        },
+        {
+          "class_index": 4,
+          "class_name": "Women",
+          "f1": 0.9110517885744794,
+          "precision": 0.924276893077673,
+          "predicted_count": 9231,
+          "recall": 0.8981998105063691,
+          "support": 9499
+        }
+      ],
+      "support": 26216,
+      "weighted_f1": 0.8969890809812102
+    },
+    "epoch": 10,
+    "gap": 0.05416810774583125,
+    "validation": {
+      "accuracy": 0.8834833002897666,
+      "balanced_accuracy": 0.7048568036770915,
+      "brier": 0.17554764317961327,
+      "confusion_matrix": [
+        [
+          142,
+          5,
+          18,
+          3,
+          17
+        ],
+        [
+          45,
+          76,
+          3,
+          5,
+          14
+        ],
+        [
+          12,
+          5,
+          3327,
+          28,
+          133
+        ],
+        [
+          22,
+          2,
+          117,
+          136,
+          76
+        ],
+        [
+          5,
+          6,
+          238,
+          10,
+          2112
+        ]
+      ],
+      "ece_15": 0.02842735128375802,
+      "macro_f1": 0.7316493521589468,
+      "mcc": 0.7954637453912552,
+      "nll": 0.34276065242302417,
+      "per_class": [
+        {
+          "class_index": 0,
+          "class_name": "Boys",
+          "f1": 0.6909975669099757,
+          "precision": 0.6283185840707964,
+          "predicted_count": 226,
+          "recall": 0.7675675675675676,
+          "support": 185
+        },
+        {
+          "class_index": 1,
+          "class_name": "Girls",
+          "f1": 0.6413502109704642,
+          "precision": 0.8085106382978723,
+          "predicted_count": 94,
+          "recall": 0.5314685314685315,
+          "support": 143
+        },
+        {
+          "class_index": 2,
+          "class_name": "Men",
+          "f1": 0.9231409544950056,
+          "precision": 0.8984607075344315,
+          "predicted_count": 3703,
+          "recall": 0.9492154065620542,
+          "support": 3505
+        },
+        {
+          "class_index": 3,
+          "class_name": "Unisex",
+          "f1": 0.508411214953271,
+          "precision": 0.7472527472527473,
+          "predicted_count": 182,
+          "recall": 0.38526912181303113,
+          "support": 353
+        },
+        {
+          "class_index": 4,
+          "class_name": "Women",
+          "f1": 0.8943468134660175,
+          "precision": 0.8979591836734694,
+          "predicted_count": 2352,
+          "recall": 0.8907633909742725,
+          "support": 2371
+        }
+      ],
+      "support": 6557,
+      "weighted_f1": 0.877706592825766
+    }
+  },
+  {
+    "checkpoint_selection": "diagnostic_only",
+    "clean_training": {
+      "accuracy": 0.9213457430576747,
+      "balanced_accuracy": 0.8214548358773316,
+      "brier": 0.12473878787267886,
+      "confusion_matrix": [
+        [
+          573,
+          25,
+          33,
+          27,
+          25
+        ],
+        [
+          44,
+          422,
+          7,
+          14,
+          70
+        ],
+        [
+          10,
+          2,
+          13492,
+          152,
+          411
+        ],
+        [
+          26,
+          6,
+          316,
+          884,
+          178
+        ],
+        [
+          0,
+          11,
+          623,
+          82,
+          8783
+        ]
+      ],
+      "ece_15": 0.05652561497203561,
+      "macro_f1": 0.8485488765617084,
+      "mcc": 0.8622369299694237,
+      "nll": 0.24865359872586515,
+      "per_class": [
+        {
+          "class_index": 0,
+          "class_name": "Boys",
+          "f1": 0.8577844311377246,
+          "precision": 0.877488514548239,
+          "predicted_count": 653,
+          "recall": 0.8389458272327965,
+          "support": 683
+        },
+        {
+          "class_index": 1,
+          "class_name": "Girls",
+          "f1": 0.8250244379276637,
+          "precision": 0.9055793991416309,
+          "predicted_count": 466,
+          "recall": 0.7576301615798923,
+          "support": 557
+        },
+        {
+          "class_index": 2,
+          "class_name": "Men",
+          "f1": 0.9455462891583152,
+          "precision": 0.9323474535277452,
+          "predicted_count": 14471,
+          "recall": 0.9591241913698727,
+          "support": 14067
+        },
+        {
+          "class_index": 3,
+          "class_name": "Unisex",
+          "f1": 0.6882055274425847,
+          "precision": 0.7627264883520276,
+          "predicted_count": 1159,
+          "recall": 0.6269503546099291,
+          "support": 1410
+        },
+        {
+          "class_index": 4,
+          "class_name": "Women",
+          "f1": 0.9261836971422546,
+          "precision": 0.9277490229217281,
+          "predicted_count": 9467,
+          "recall": 0.9246236445941678,
+          "support": 9499
+        }
+      ],
+      "support": 26216,
+      "weighted_f1": 0.9198426060738143
+    },
+    "epoch": 15,
+    "gap": 0.06343526905008667,
+    "validation": {
+      "accuracy": 0.8932438615220375,
+      "balanced_accuracy": 0.7520528320724249,
+      "brier": 0.1624310110235181,
+      "confusion_matrix": [
+        [
+          130,
+          8,
+          18,
+          9,
+          20
+        ],
+        [
+          18,
+          95,
+          1,
+          9,
+          20
+        ],
+        [
+          2,
+          2,
+          3297,
+          56,
+          148
+        ],
+        [
+          11,
+          3,
+          89,
+          194,
+          56
+        ],
+        [
+          2,
+          2,
+          200,
+          26,
+          2141
+        ]
+      ],
+      "ece_15": 0.03434007645644158,
+      "macro_f1": 0.7851136075116217,
+      "mcc": 0.8134117241852079,
+      "nll": 0.3157493274483818,
+      "per_class": [
+        {
+          "class_index": 0,
+          "class_name": "Boys",
+          "f1": 0.7471264367816092,
+          "precision": 0.7975460122699386,
+          "predicted_count": 163,
+          "recall": 0.7027027027027027,
+          "support": 185
+        },
+        {
+          "class_index": 1,
+          "class_name": "Girls",
+          "f1": 0.7509881422924902,
+          "precision": 0.8636363636363636,
+          "predicted_count": 110,
+          "recall": 0.6643356643356644,
+          "support": 143
+        },
+        {
+          "class_index": 2,
+          "class_name": "Men",
+          "f1": 0.9274261603375529,
+          "precision": 0.9145631067961165,
+          "predicted_count": 3605,
+          "recall": 0.9406562054208274,
+          "support": 3505
+        },
+        {
+          "class_index": 3,
+          "class_name": "Unisex",
+          "f1": 0.5996908809891809,
+          "precision": 0.6598639455782312,
+          "predicted_count": 294,
+          "recall": 0.5495750708215298,
+          "support": 353
+        },
+        {
+          "class_index": 4,
+          "class_name": "Women",
+          "f1": 0.900336417157275,
+          "precision": 0.8976939203354297,
+          "predicted_count": 2385,
+          "recall": 0.9029945170814002,
+          "support": 2371
+        }
+      ],
+      "support": 6557,
+      "weighted_f1": 0.8910518397444906
+    }
+  },
+  {
+    "checkpoint_selection": "diagnostic_only",
+    "clean_training": {
+      "accuracy": 0.9370994812328349,
+      "balanced_accuracy": 0.8563015868703246,
+      "brier": 0.10403115493086053,
+      "confusion_matrix": [
+        [
+          631,
+          17,
+          19,
+          2,
+          14
+        ],
+        [
+          27,
+          493,
+          0,
+          7,
+          30
+        ],
+        [
+          14,
+          2,
+          13663,
+          81,
+          307
+        ],
+        [
+          37,
+          13,
+          364,
+          781,
+          215
+        ],
+        [
+          1,
+          14,
+          453,
+          32,
+          8999
+        ]
+      ],
+      "ece_15": 0.05443084656653391,
+      "macro_f1": 0.8763163372918843,
+      "mcc": 0.8898932454488522,
+      "nll": 0.2136319428438561,
+      "per_class": [
+        {
+          "class_index": 0,
+          "class_name": "Boys",
+          "f1": 0.9059583632447954,
+          "precision": 0.8887323943661972,
+          "predicted_count": 710,
+          "recall": 0.9238653001464129,
+          "support": 683
+        },
+        {
+          "class_index": 1,
+          "class_name": "Girls",
+          "f1": 0.8996350364963503,
+          "precision": 0.9146567717996289,
+          "predicted_count": 539,
+          "recall": 0.8850987432675045,
+          "support": 557
+        },
+        {
+          "class_index": 2,
+          "class_name": "Men",
+          "f1": 0.9565917524329622,
+          "precision": 0.9423408510931789,
+          "predicted_count": 14499,
+          "recall": 0.9712803014146584,
+          "support": 14067
+        },
+        {
+          "class_index": 3,
+          "class_name": "Unisex",
+          "f1": 0.6753134457414612,
+          "precision": 0.8648947951273532,
+          "predicted_count": 903,
+          "recall": 0.5539007092198581,
+          "support": 1410
+        },
+        {
+          "class_index": 4,
+          "class_name": "Women",
+          "f1": 0.9440830885438521,
+          "precision": 0.9408259278619968,
+          "predicted_count": 9565,
+          "recall": 0.9473628803031898,
+          "support": 9499
+        }
+      ],
+      "support": 26216,
+      "weighted_f1": 0.9344018795953865
+    },
+    "epoch": 20,
+    "gap": 0.08991601782636993,
+    "validation": {
+      "accuracy": 0.9042244929083423,
+      "balanced_accuracy": 0.7645754858686219,
+      "brier": 0.14687189488688973,
+      "confusion_matrix": [
+        [
+          145,
+          14,
+          11,
+          2,
+          13
+        ],
+        [
+          22,
+          103,
+          1,
+          3,
+          14
+        ],
+        [
+          4,
+          4,
+          3340,
+          39,
+          118
+        ],
+        [
+          18,
+          4,
+          99,
+          157,
+          75
+        ],
+        [
+          3,
+          5,
+          168,
+          11,
+          2184
+        ]
+      ],
+      "ece_15": 0.03235151766094475,
+      "macro_f1": 0.7864003194655144,
+      "mcc": 0.8325136649747219,
+      "nll": 0.2928988632594655,
+      "per_class": [
+        {
+          "class_index": 0,
+          "class_name": "Boys",
+          "f1": 0.7692307692307692,
+          "precision": 0.7552083333333334,
+          "predicted_count": 192,
+          "recall": 0.7837837837837838,
+          "support": 185
+        },
+        {
+          "class_index": 1,
+          "class_name": "Girls",
+          "f1": 0.7545787545787546,
+          "precision": 0.7923076923076923,
+          "predicted_count": 130,
+          "recall": 0.7202797202797203,
+          "support": 143
+        },
+        {
+          "class_index": 2,
+          "class_name": "Men",
+          "f1": 0.9376754632229085,
+          "precision": 0.9229068803536888,
+          "predicted_count": 3619,
+          "recall": 0.9529243937232525,
+          "support": 3505
+        },
+        {
+          "class_index": 3,
+          "class_name": "Unisex",
+          "f1": 0.5557522123893806,
+          "precision": 0.7405660377358491,
+          "predicted_count": 212,
+          "recall": 0.4447592067988669,
+          "support": 353
+        },
+        {
+          "class_index": 4,
+          "class_name": "Women",
+          "f1": 0.9147643979057591,
+          "precision": 0.908485856905158,
+          "predicted_count": 2404,
+          "recall": 0.9211303247574862,
+          "support": 2371
+        }
+      ],
+      "support": 6557,
+      "weighted_f1": 0.9000841652000542
+    }
+  },
+  {
+    "checkpoint_selection": "diagnostic_only",
+    "clean_training": {
+      "accuracy": 0.945872749465975,
+      "balanced_accuracy": 0.8858378252104722,
+      "brier": 0.09120287016432888,
+      "confusion_matrix": [
+        [
+          618,
+          22,
+          20,
+          10,
+          13
+        ],
+        [
+          14,
+          510,
+          0,
+          12,
+          21
+        ],
+        [
+          12,
+          2,
+          13714,
+          111,
+          228
+        ],
+        [
+          12,
+          8,
+          284,
+          970,
+          136
+        ],
+        [
+          0,
+          11,
+          460,
+          43,
+          8985
+        ]
+      ],
+      "ece_15": 0.05728886767012299,
+      "macro_f1": 0.9027126224940561,
+      "mcc": 0.9054780019821078,
+      "nll": 0.19026983799901795,
+      "per_class": [
+        {
+          "class_index": 0,
+          "class_name": "Boys",
+          "f1": 0.9230769230769231,
+          "precision": 0.9420731707317073,
+          "predicted_count": 656,
+          "recall": 0.9048316251830161,
+          "support": 683
+        },
+        {
+          "class_index": 1,
+          "class_name": "Girls",
+          "f1": 0.918918918918919,
+          "precision": 0.9222423146473779,
+          "predicted_count": 553,
+          "recall": 0.9156193895870736,
+          "support": 557
+        },
+        {
+          "class_index": 2,
+          "class_name": "Men",
+          "f1": 0.9608688036433701,
+          "precision": 0.9472302804254731,
+          "predicted_count": 14478,
+          "recall": 0.9749058079192436,
+          "support": 14067
+        },
+        {
+          "class_index": 3,
+          "class_name": "Unisex",
+          "f1": 0.758998435054773,
+          "precision": 0.8464223385689355,
+          "predicted_count": 1146,
+          "recall": 0.6879432624113475,
+          "support": 1410
+        },
+        {
+          "class_index": 4,
+          "class_name": "Women",
+          "f1": 0.9517000317762949,
+          "precision": 0.9575828626238942,
+          "predicted_count": 9383,
+          "recall": 0.9458890409516791,
+          "support": 9499
+        }
+      ],
+      "support": 26216,
+      "weighted_f1": 0.9448133671201144
+    },
+    "epoch": 25,
+    "gap": 0.10354292291971146,
+    "validation": {
+      "accuracy": 0.9059020893701388,
+      "balanced_accuracy": 0.7728941042732781,
+      "brier": 0.14137203481806435,
+      "confusion_matrix": [
+        [
+          134,
+          14,
+          18,
+          6,
+          13
+        ],
+        [
+          16,
+          106,
+          2,
+          8,
+          11
+        ],
+        [
+          2,
+          4,
+          3342,
+          51,
+          106
+        ],
+        [
+          9,
+          3,
+          95,
+          187,
+          59
+        ],
+        [
+          2,
+          4,
+          173,
+          21,
+          2171
+        ]
+      ],
+      "ece_15": 0.029746601703200738,
+      "macro_f1": 0.7991696995743447,
+      "mcc": 0.835567709420778,
+      "nll": 0.2790898388361123,
+      "per_class": [
+        {
+          "class_index": 0,
+          "class_name": "Boys",
+          "f1": 0.7701149425287356,
+          "precision": 0.8220858895705522,
+          "predicted_count": 163,
+          "recall": 0.7243243243243244,
+          "support": 185
+        },
+        {
+          "class_index": 1,
+          "class_name": "Girls",
+          "f1": 0.7737226277372262,
+          "precision": 0.8091603053435115,
+          "predicted_count": 131,
+          "recall": 0.7412587412587412,
+          "support": 143
+        },
+        {
+          "class_index": 2,
+          "class_name": "Men",
+          "f1": 0.936790469516468,
+          "precision": 0.9206611570247933,
+          "predicted_count": 3630,
+          "recall": 0.9534950071326677,
+          "support": 3505
+        },
+        {
+          "class_index": 3,
+          "class_name": "Unisex",
+          "f1": 0.597444089456869,
+          "precision": 0.684981684981685,
+          "predicted_count": 273,
+          "recall": 0.5297450424929179,
+          "support": 353
+        },
+        {
+          "class_index": 4,
+          "class_name": "Women",
+          "f1": 0.9177763686324244,
+          "precision": 0.9199152542372881,
+          "predicted_count": 2360,
+          "recall": 0.9156474061577393,
+          "support": 2371
+        }
+      ],
+      "support": 6557,
+      "weighted_f1": 0.9033871784955335
+    }
+  },
+  {
+    "checkpoint_selection": "diagnostic_only",
+    "clean_training": {
+      "accuracy": 0.9469026548672567,
+      "balanced_accuracy": 0.8826322763700055,
+      "brier": 0.08765325337710411,
+      "confusion_matrix": [
+        [
+          634,
+          14,
+          19,
+          5,
+          11
+        ],
+        [
+          19,
+          507,
+          0,
+          12,
+          19
+        ],
+        [
+          9,
+          1,
+          13782,
+          75,
+          200
+        ],
+        [
+          16,
+          6,
+          333,
+          915,
+          140
+        ],
+        [
+          0,
+          10,
+          468,
+          35,
+          8986
+        ]
+      ],
+      "ece_15": 0.0473120353222439,
+      "macro_f1": 0.9037300723535375,
+      "mcc": 0.9072284568640404,
+      "nll": 0.17969827759349732,
+      "per_class": [
+        {
+          "class_index": 0,
+          "class_name": "Boys",
+          "f1": 0.9316678912564291,
+          "precision": 0.9351032448377581,
+          "predicted_count": 678,
+          "recall": 0.9282576866764275,
+          "support": 683
+        },
+        {
+          "class_index": 1,
+          "class_name": "Girls",
+          "f1": 0.9260273972602738,
+          "precision": 0.9423791821561338,
+          "predicted_count": 538,
+          "recall": 0.9102333931777379,
+          "support": 557
+        },
+        {
+          "class_index": 2,
+          "class_name": "Men",
+          "f1": 0.9614566256234957,
+          "precision": 0.9438433091357348,
+          "predicted_count": 14602,
+          "recall": 0.9797398165920239,
+          "support": 14067
+        },
+        {
+          "class_index": 3,
+          "class_name": "Unisex",
+          "f1": 0.7463295269168025,
+          "precision": 0.8781190019193857,
+          "predicted_count": 1042,
+          "recall": 0.648936170212766,
+          "support": 1410
+        },
+        {
+          "class_index": 4,
+          "class_name": "Women",
+          "f1": 0.9531689207106868,
+          "precision": 0.960453185121847,
+          "predicted_count": 9356,
+          "recall": 0.9459943151910728,
+          "support": 9499
+        }
+      ],
+      "support": 26216,
+      "weighted_f1": 0.9453544779307038
+    },
+    "epoch": 30,
+    "gap": 0.10817308024537076,
+    "validation": {
+      "accuracy": 0.906054598139393,
+      "balanced_accuracy": 0.7688696614130472,
+      "brier": 0.1402774673198187,
+      "confusion_matrix": [
+        [
+          139,
+          13,
+          19,
+          3,
+          11
+        ],
+        [
+          19,
+          103,
+          2,
+          8,
+          11
+        ],
+        [
+          3,
+          4,
+          3354,
+          44,
+          100
+        ],
+        [
+          11,
+          4,
+          99,
+          177,
+          62
+        ],
+        [
+          2,
+          3,
+          178,
+          20,
+          2168
+        ]
+      ],
+      "ece_15": 0.019435867824004645,
+      "macro_f1": 0.7955569921081668,
+      "mcc": 0.835685438533013,
+      "nll": 0.2746042247786751,
+      "per_class": [
+        {
+          "class_index": 0,
+          "class_name": "Boys",
+          "f1": 0.7743732590529248,
+          "precision": 0.7988505747126436,
+          "predicted_count": 174,
+          "recall": 0.7513513513513513,
+          "support": 185
+        },
+        {
+          "class_index": 1,
+          "class_name": "Girls",
+          "f1": 0.7629629629629631,
+          "precision": 0.8110236220472441,
+          "predicted_count": 127,
+          "recall": 0.7202797202797203,
+          "support": 143
+        },
+        {
+          "class_index": 2,
+          "class_name": "Men",
+          "f1": 0.9372642168506358,
+          "precision": 0.9184008762322016,
+          "predicted_count": 3652,
+          "recall": 0.9569186875891583,
+          "support": 3505
+        },
+        {
+          "class_index": 3,
+          "class_name": "Unisex",
+          "f1": 0.5851239669421487,
+          "precision": 0.7023809523809523,
+          "predicted_count": 252,
+          "recall": 0.5014164305949008,
+          "support": 353
+        },
+        {
+          "class_index": 4,
+          "class_name": "Women",
+          "f1": 0.9180605547321617,
+          "precision": 0.9217687074829932,
+          "predicted_count": 2352,
+          "recall": 0.9143821172501054,
+          "support": 2371
+        }
+      ],
+      "support": 6557,
+      "weighted_f1": 0.9029654067851925
+    }
+  }
+]
