@@ -1,0 +1,145 @@
+{
+  "experiment_id": "t3_usage_fixed_e2_e3_e8_probability_mean",
+  "prepared_on": "2026-09-05",
+  "status": "inactive_user_declined_as_next_test; no corruption inference performed",
+  "status_reason": "The measured small development gain does not establish a fix for overfitting or weak rare-class transfer. Retained as a historical plan after U3 failed and user feedback on 2026-09-05.",
+  "operation": "mean class probabilities per image across E2, E3 and E8",
+  "weights": {
+    "E2": 0.3333333333333333,
+    "E3": 0.3333333333333333,
+    "E8": 0.3333333333333333
+  },
+  "new_fits": 0,
+  "canonical_split": "data/processed/splits.csv",
+  "screen_folds": [
+    0,
+    4
+  ],
+  "expected_validation_rows": 13110,
+  "classes": [
+    "Casual",
+    "Ethnic",
+    "Formal",
+    "Home",
+    "NA",
+    "Party",
+    "Smart Casual",
+    "Sports",
+    "Travel"
+  ],
+  "human_image_label_or_review_required": false,
+  "outer_fold_checkpoint_rule": "Each validation row uses only the three checkpoints for its own excluded fold.",
+  "sources": [
+    {
+      "model": "E2",
+      "fold": 0,
+      "run_id": "t3_usage_e2_class_balanced_ce_usage_smallcnn_f0_s2753_5461e048c3b3_20260830T115815Z356f6d",
+      "checkpoint_path": "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/t3_usage_e2_class_balanced_ce_usage_smallcnn_f0_s2753_5461e048c3b3_20260830T115815Z356f6d/final_epoch.pt",
+      "checkpoint_sha256": "9c971700618c381acf5014d391a199922a90337e64879c25a68da7814aed7996",
+      "checkpoint_bytes": 1580309
+    },
+    {
+      "model": "E2",
+      "fold": 4,
+      "run_id": "t3_usage_e2_class_balanced_ce_usage_smallcnn_f4_s2753_5461e048c3b3_20260830T123218Z94db47",
+      "checkpoint_path": "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/t3_usage_e2_class_balanced_ce_usage_smallcnn_f4_s2753_5461e048c3b3_20260830T123218Z94db47/final_epoch.pt",
+      "checkpoint_sha256": "a2da70d8c7a26bd26dcc6daafe5f536a9c2d01a4fab1a87b5fda999a3d63bbcb",
+      "checkpoint_bytes": 1580309
+    },
+    {
+      "model": "E3",
+      "fold": 0,
+      "run_id": "t3_usage_e3_classifier_dropout_usage_smallcnn_f0_s2753_55b7a96c2617_20260830T152222Z130be4",
+      "checkpoint_path": "results/evidence/task3/experiments/t3_usage_e3_classifier_dropout/usage/t3_usage_e3_classifier_dropout_usage_smallcnn_f0_s2753_55b7a96c2617_20260830T152222Z130be4/final_epoch.pt",
+      "checkpoint_sha256": "c8933f81e4d50dd45141ebd79f6c8acb043a8a098a282ef59745c847f624ae4b",
+      "checkpoint_bytes": 1580501
+    },
+    {
+      "model": "E3",
+      "fold": 4,
+      "run_id": "t3_usage_e3_classifier_dropout_usage_smallcnn_f4_s2753_55b7a96c2617_20260830T155731Z30497c",
+      "checkpoint_path": "results/evidence/task3/experiments/t3_usage_e3_classifier_dropout/usage/t3_usage_e3_classifier_dropout_usage_smallcnn_f4_s2753_55b7a96c2617_20260830T155731Z30497c/final_epoch.pt",
+      "checkpoint_sha256": "cdafa0c4d1d4ba4163c08ab6f9706a41d330ef049199a785bccd0d98ac8a97ae",
+      "checkpoint_bytes": 1580501
+    },
+    {
+      "model": "E8",
+      "fold": 0,
+      "run_id": "t3_usage_e8_translation_usage_smallcnn_f0_s2753_be3cf562b9ab_20260831T173123Zd848db",
+      "checkpoint_path": "results/evidence/task3/experiments/t3_usage_e8_translation/usage/t3_usage_e8_translation_usage_smallcnn_f0_s2753_be3cf562b9ab_20260831T173123Zd848db/final_epoch.pt",
+      "checkpoint_sha256": "331b0e1bfc9c8b59ef00544c2503011e0ec53b2ff30bd433dbc35db570730951",
+      "checkpoint_bytes": 1580949
+    },
+    {
+      "model": "E8",
+      "fold": 4,
+      "run_id": "t3_usage_e8_translation_usage_smallcnn_f4_s2753_be3cf562b9ab_20260831T180832Z708926",
+      "checkpoint_path": "results/evidence/task3/experiments/t3_usage_e8_translation/usage/t3_usage_e8_translation_usage_smallcnn_f4_s2753_be3cf562b9ab_20260831T180832Z708926/final_epoch.pt",
+      "checkpoint_sha256": "e29ae39e5abfe3132d49d412c8e79ae7d3e9ab7fda3a55b04eb6de6e13c508be",
+      "checkpoint_bytes": 1580949
+    }
+  ],
+  "clean_reproduction": {
+    "maximum_absolute_probability_error": 0.00001,
+    "maximum_macro_f1_error": 1e-10,
+    "on_failure": "Stop; inspect runtime and saved normalization/architecture. Do not change tolerance after observing output."
+  },
+  "corruptions": [
+    "jpeg_75",
+    "brightness_085",
+    "brightness_115",
+    "translation_003",
+    "grayscale"
+  ],
+  "limits": {
+    "wall_seconds": 1800,
+    "peak_memory_bytes": 7516192768,
+    "batch_size": 128,
+    "pilot_rows": 256,
+    "benchmark_before_full_inference": true
+  },
+  "frozen_numeric_gates": {
+    "reference": "matched E2 folds 0 and 4",
+    "route_a": {
+      "minimum_macro_f1": 0.417319,
+      "paired_family_bootstrap_lower_95_greater_than": 0,
+      "bootstrap_draws": 10000,
+      "bootstrap_seed": 2753
+    },
+    "route_b": {
+      "minimum_macro_f1": 0.402319,
+      "minimum_relative_nll_or_brier_improvement": 0.1,
+      "alternative_minimum_matched_clean_gap_improvement": 0.25,
+      "clean_gap_route_status": "unavailable until clean E2 inference measured"
+    },
+    "maximum_ece_15": 0.05,
+    "minimum_each_non_home_class_f1_delta": -0.03,
+    "maximum_rare_prediction_to_support_ratio": 5,
+    "rare_classes": [
+      "NA",
+      "Party",
+      "Smart Casual",
+      "Travel"
+    ],
+    "count_scopes": [
+      "pooled",
+      "fold_0",
+      "fold_4"
+    ],
+    "minimum_each_mean_corruption_induced_delta_vs_e2": -0.02,
+    "home_policy": "Keep original nine-class CNN probability vectors; retain Home in official scores."
+  },
+  "outputs": [
+    "source_manifest.json",
+    "clean_reproduction.json",
+    "clean_predictions.csv",
+    "per_corruption_predictions/*.csv",
+    "per_class.csv",
+    "robustness.csv",
+    "resource_metrics.json",
+    "decision.json"
+  ],
+  "on_pass": "Complete fixed five-fold development checks and latency review; reserve holdout for final locked judgement.",
+  "on_fail": "Record failed gates; no weight search. Next new training method is the two-stage SmallCNN specified in REPORT.md.",
+  "selection_bias_removed": false
+}
