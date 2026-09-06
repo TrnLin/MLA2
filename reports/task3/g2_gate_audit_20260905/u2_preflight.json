@@ -1,0 +1,32 @@
+{
+  "ready": true,
+  "training_blockers": [],
+  "folds": [
+    0,
+    4
+  ],
+  "usage_classes": [
+    "Casual",
+    "Ethnic",
+    "Formal",
+    "Home",
+    "NA",
+    "Party",
+    "Smart Casual",
+    "Sports",
+    "Travel"
+  ],
+  "model": "full-RGB HOG + weighted StandardScaler + calibrated LinearSVC(C=1)",
+  "calibration": "unweighted, natural inner-fold frequency",
+  "class_weight_scope": "each inner base-training subset",
+  "unsupported_class": "Home: excluded from fit/calibration, zero probability, official score retained",
+  "parent_evidence": "verified",
+  "feature_columns": 1944,
+  "estimated_cache_bytes": 254842848,
+  "host_memory_limit_bytes": 7516192768,
+  "resource_enforcement": "spawned_fold_wall_deadline_and_hard_address_space_v1",
+  "hard_memory_scope": "worker_address_space_including_mappings_stricter_than_RSS",
+  "model_fits": 0,
+  "optimizer_steps": 0,
+  "execution_device": "cpu"
+}
