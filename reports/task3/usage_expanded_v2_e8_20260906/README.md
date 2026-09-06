@@ -6,7 +6,7 @@ All teacher and earlier external IDs and folds stay fixed.
 
 ## Run in Colab
 
-1. Open `notebooks/04al_task3_usage_expanded_v2_e8.ipynb` in Colab.
+1. Open `notebooks/task3_training/usage_expanded_v2_e8.ipynb` in Colab.
 2. Select a GPU runtime.
 3. Upload `teacher_plus_rare_usage_v2_training.zip` to `MyDrive/MLA2/data/`.
 4. Keep the existing `task3-data.zip` in that folder, then choose **Run All**.
@@ -83,7 +83,7 @@ exist; a future evaluation must not be described as an untouched first test.
 - Trainer: `src/fashion/train/task3_usage_expanded_v2.py`.
 - Shared optimizer loop: `src/fashion/train/task3_baseline.py`.
 - Tests: `tests/train/test_task3_usage_expanded_v2.py`.
-- Package builder: `reports/task3_usage_expanded_v2_e8_20260906/build_bundle.py`.
+- Package builder: `reports/task3/usage_expanded_v2_e8_20260906/build_bundle.py`.
 - Data and reference checks: `preflight.json`.
 - Archive hashes and size: `bundle_receipt.json`.
 
@@ -95,7 +95,7 @@ started by the notebook; preparing this package does not launch it.
 Rebuild the package with:
 
 ```bash
-./.venv/bin/python reports/task3_usage_expanded_v2_e8_20260906/build_bundle.py
+./.venv/bin/python reports/task3/usage_expanded_v2_e8_20260906/build_bundle.py
 ```
 
 For a local GPU run using the saved local references:
