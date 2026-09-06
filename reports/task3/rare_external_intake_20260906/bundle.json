@@ -1,0 +1,11 @@
+{
+  "bundle": "teacher_plus_rare_usage.zip",
+  "sha256": "bc6567fa1b4563cff2cf369716ac386e470d585bda56975eea15af4589b23aec",
+  "bytes": 14041640,
+  "files": 167,
+  "image_files": 120,
+  "combined_dataset_rows": 38732,
+  "image_bytes": 595287,
+  "zip_hash_readback_passed": true,
+  "scope": "Combined dataset package plus 120 new PNGs; uses existing project teacher images"
+}
