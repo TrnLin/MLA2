@@ -32,8 +32,8 @@ def policy_for_alpha(alpha=0.2):
 def training_contract(training, *, validation_fold, seed=2753, alpha=0.2):
     columns = ["id", "cv_fold", "product_family_group", "gender"]
     required = {*columns, "partition"}
-    if validation_fold not in (0, 4) or not required.issubset(training.columns):
-        raise ValueError("MixUp needs fold 0 or 4 and complete training metadata")
+    if validation_fold not in range(5) or not required.issubset(training.columns):
+        raise ValueError("MixUp needs a canonical fold and complete training metadata")
     if (
         training.empty
         or training[list(required)].isna().any().any()
