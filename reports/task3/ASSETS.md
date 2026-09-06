@@ -70,6 +70,11 @@ No code-only change requires another data ZIP upload.
   names the exact five runs; the baseline folder also has an older unused fold-0 run.
   Use the selected five-fold recipe in [decision 0022](../../docs/decisions/0022-task3-usage-e1-final-model.md);
   do not substitute a two-fold screen or an expanded-dataset checkpoint.
+- Verify the complete frozen Usage artifact with
+  `./.venv/bin/python scripts/verify_task3_usage_manifest.py` after restoring
+  private assets. Its [source mapping](usage_final_e1_20260907/source-archive-map.json)
+  resolves two evaluated scripts to tracked exact-byte archives and checks the
+  adapted current scripts separately. Those archives need no external source checkout.
 - Keep the canonical `data/processed/splits.csv`, `label_maps.json`, and the
   Gender name-label variant. Expanded experiments additionally need their
   explicit saved split version and reviewed image files. Never rebuild folds
