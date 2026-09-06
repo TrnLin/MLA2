@@ -1,0 +1,21 @@
+{
+  "verified_images": 32773,
+  "hashes": [
+    {
+      "hash_kind": "decoded_rgb_sha256",
+      "duplicate_groups": 541,
+      "duplicate_rows": 1193,
+      "mixed_usage_groups": 0,
+      "mixed_usage_rows": 0,
+      "fold_crossings": 0
+    },
+    {
+      "hash_kind": "resized_60x80_sha256",
+      "duplicate_groups": 541,
+      "duplicate_rows": 1193,
+      "mixed_usage_groups": 0,
+      "mixed_usage_rows": 0,
+      "fold_crossings": 0
+    }
+  ]
+}
