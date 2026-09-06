@@ -1,0 +1,144 @@
+{
+  "candidate_artifacts": [
+    {
+      "file": "config.json",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f0_s2753_efaf7648b32f_20260906T171028Zac966b",
+      "sha256": "3758292b140b2a9d22e096fa2cae4607183eabab349babb180ab82fbb38f90aa"
+    },
+    {
+      "file": "history.csv",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f0_s2753_efaf7648b32f_20260906T171028Zac966b",
+      "sha256": "1e9d013df2797e1a585a93a1c10d019565b3de13e1c06b80e78022cd2d0a14a5"
+    },
+    {
+      "file": "normalization.json",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f0_s2753_efaf7648b32f_20260906T171028Zac966b",
+      "sha256": "a5bcf608660ea322d587bf09266805e050960e89964889cd507a8723943bfeed"
+    },
+    {
+      "file": "robustness.csv",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f0_s2753_efaf7648b32f_20260906T171028Zac966b",
+      "sha256": "5efbdea6026ff7fbb837e5cf444128a93e0bef68044bf5e5a694397ed3a6c4cd"
+    },
+    {
+      "file": "source_metrics.json",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f0_s2753_efaf7648b32f_20260906T171028Zac966b",
+      "sha256": "6b30329e6fa194cab5b372cfdeeab700a04c5e2f3b99d99f30d7f1e7d5dc977b"
+    },
+    {
+      "file": "training_predictions.csv",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f0_s2753_efaf7648b32f_20260906T171028Zac966b",
+      "sha256": "de3fdc21675936bbed842e30513e5f3993e821b2f9a48b76a9fef48c2dc5a8c0"
+    },
+    {
+      "file": "final_epoch.pt",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f0_s2753_efaf7648b32f_20260906T171028Zac966b",
+      "sha256": "eb8ef02b7eec1713f908221f5fd1b4a1790c7b766700e97b998236386d0756ab"
+    },
+    {
+      "file": "oof_predictions.csv",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f0_s2753_efaf7648b32f_20260906T171028Zac966b",
+      "sha256": "ade11d0c5ec006c3c2b9a279eff7750c5b76823b1d410ee6ae1854e6e05a72d0"
+    },
+    {
+      "file": "mixup_training.json",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f0_s2753_efaf7648b32f_20260906T171028Zac966b",
+      "sha256": "e2fd924b658ea5485267a8361498de43f19177e560d33913837a94ab116bb09b"
+    },
+    {
+      "file": "sam_training.json",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f0_s2753_efaf7648b32f_20260906T171028Zac966b",
+      "sha256": "fd6bce06ad848f48bdef6886664e2b2d9af2514b598b1eb673d953321bd7cac1"
+    },
+    {
+      "file": "clean_epoch_diagnostics.json",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f0_s2753_efaf7648b32f_20260906T171028Zac966b",
+      "sha256": "4136a978b41d7352e85e24905f6424fc7853e7d02205c0327d5908d633306184"
+    },
+    {
+      "file": "config.json",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f4_s2753_efaf7648b32f_20260906T172117Zb45c56",
+      "sha256": "fa9dca8478b599ffab25034c3faa6e777b72ce2f46cdcbf869cdf0162b02454c"
+    },
+    {
+      "file": "history.csv",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f4_s2753_efaf7648b32f_20260906T172117Zb45c56",
+      "sha256": "e8ef7638907d8ac01a16c5b6bf72e8b28f0185719fe547f5a14764ed22c02c0d"
+    },
+    {
+      "file": "normalization.json",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f4_s2753_efaf7648b32f_20260906T172117Zb45c56",
+      "sha256": "5e6e967af2d0e7de7501a7ec5c4eb2bc47e46b9ce82d9bc4a2f6e96fef0e0375"
+    },
+    {
+      "file": "robustness.csv",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f4_s2753_efaf7648b32f_20260906T172117Zb45c56",
+      "sha256": "c12562ae62dc93d97b30a438e71535f3109e98d0e0b3edf0ae7dac4c8f5e8721"
+    },
+    {
+      "file": "source_metrics.json",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f4_s2753_efaf7648b32f_20260906T172117Zb45c56",
+      "sha256": "fa08739d08d73826912c50398a2856280bd06504fe87c84fde5046c09c4d5d0f"
+    },
+    {
+      "file": "training_predictions.csv",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f4_s2753_efaf7648b32f_20260906T172117Zb45c56",
+      "sha256": "b06f0dc97a995ab65cf89239074a02f0353dca914f1bde8870d028a7a4f9b691"
+    },
+    {
+      "file": "final_epoch.pt",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f4_s2753_efaf7648b32f_20260906T172117Zb45c56",
+      "sha256": "9bc0f0a9754c6ba7d31c89b0f7e37a55d4f5c95e36e3be53994203f64259cf9d"
+    },
+    {
+      "file": "oof_predictions.csv",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f4_s2753_efaf7648b32f_20260906T172117Zb45c56",
+      "sha256": "8045ac11ab7f242a81cc3184f7b08de5563ea1889f94caedc58c827bdb881053"
+    },
+    {
+      "file": "mixup_training.json",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f4_s2753_efaf7648b32f_20260906T172117Zb45c56",
+      "sha256": "44f5dbff3d3acfe8cd970354a0146edc09655a65103d0cfb5eaa4dbcca391ed5"
+    },
+    {
+      "file": "sam_training.json",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f4_s2753_efaf7648b32f_20260906T172117Zb45c56",
+      "sha256": "9d41c4110e3f75442c11a313e1144ec7ae749a6deb246cbe0303fdfbd64e6537"
+    },
+    {
+      "file": "clean_epoch_diagnostics.json",
+      "run_id": "t3_usage_replaced_v3_mixup_sam_usage_smallcnn_f4_s2753_efaf7648b32f_20260906T172117Zb45c56",
+      "sha256": "039b3aa921b816a451bfeeefe67e32b0f25fb5b6e73240b481eb9a82b8ab7fe5"
+    }
+  ],
+  "data_setup": {
+    "archive_code_loaded": false,
+    "archives": [
+      {
+        "data_files": 714,
+        "sha256": "0e2b8549195d381ba583176c729c26e50fd9cbc691f4a89863802e6d2679de40",
+        "source": "/content/drive/MyDrive/MLA2/data/usage_mixup_sam_training.zip"
+      },
+      {
+        "data_files": 156,
+        "sha256": "e625d81fc993ecb607377478eea445b77eea56fc245029502bfafe2e0e2ba4c6",
+        "source": "/content/drive/MyDrive/MLA2/data/teacher_plus_rare_usage_v3_delta.zip"
+      },
+      {
+        "data_files": 38613,
+        "sha256": "4bda99c6540133c3c4dfc4e537b22d80c48c0878da0b577c9813333feaedb571",
+        "source": "/content/drive/MyDrive/MLA2/data/task3-data.zip"
+      }
+    ],
+    "baseline_directory": "/content/drive/MyDrive/MLA2/task3_usage_mixup_sam/experiments/t3_usage_expanded_v2_mixup_sam/usage",
+    "baseline_registry_path": "/content/drive/MyDrive/MLA2/task3_usage_mixup_sam/experiments/t3_usage_expanded_v2_mixup_sam/usage/results/runs.csv",
+    "code_commit": "1e7292174d935a333b7bbddc2d10b150180370f8",
+    "output_root": "/content/drive/MyDrive/MLA2/task3_usage_replaced_v3_mixup_sam",
+    "repository": "https://github.com/TrnLin/MLA2.git"
+  },
+  "no_training_or_new_holdout_test_evaluation": true,
+  "notebook_code_matches_pushed_version": true,
+  "notebook_has_no_errors": true,
+  "reference_folds_verified": 2,
+  "registry_sha256": "0dd9a8336cffd3f3e611e86511a6ee16abf65cb707af2ae04771c29cf70e7814"
+}
