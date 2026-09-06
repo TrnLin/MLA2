@@ -1,0 +1,294 @@
+[
+  {
+    "path": "notebooks/04_task3_gender_usage.ipynb",
+    "sha256": "530e959b71fb30ab67a735bbecc7ab12e2014811dbb71a69392cc53a7ca0f4f9"
+  },
+  {
+    "path": "notebooks/04a_task3_smallcnn_baseline_training.ipynb",
+    "sha256": "d2e66fafc5a3814c2b8b7429c4a50c8a95c2b8a9f8d051e002c4afe32023850d"
+  },
+  {
+    "path": "notebooks/04b_task3_smallcnn_child_experiments.ipynb",
+    "sha256": "394974e83999859acb5da6aa2ac8683a2e287200b775aa4db0f7ae52cbbf7dd8"
+  },
+  {
+    "path": "notebooks/04c_task3_smallcnn_e3_experiments.ipynb",
+    "sha256": "330086ed5cd4074845cd23c975a0a9311ccd9f726fde5547bbe64b165faf3b96"
+  },
+  {
+    "path": "notebooks/04d_task3_tinyresnet18_pm_e4_experiments.ipynb",
+    "sha256": "a5b44560be5837fa9f555cb7edfb7d17ab167ff00a19c71845ae3b9098c5a5be"
+  },
+  {
+    "path": "notebooks/04e_task3_compactblurcnn_label_smoothing_e5_experiments.ipynb",
+    "sha256": "79572196bf7b21ea0bdd6422a354fa085358083650be6300ff4843ee9c367a5e"
+  },
+  {
+    "path": "notebooks/04f_task3_gem_focal_e6_experiments.ipynb",
+    "sha256": "4c4841fdc55b1ed9f24ab33ac2e3654ed1a0207382685e499c127820743dce63"
+  },
+  {
+    "path": "notebooks/04g_task3_tinyconvnext_tinyhrnet_e7_experiments.ipynb",
+    "sha256": "487b8ca0ca3c1139bf9d1d8902c8b16f0002efe3316225b427aeea39009cc875"
+  },
+  {
+    "path": "notebooks/04h_task3_early_stopping_translation_e8_experiments.ipynb",
+    "sha256": "83491c4effa8fafe1152253ad1720196f6ae13fe1cbfcb6f21a3039a609dfa73"
+  },
+  {
+    "path": "notebooks/04i_task3_semantic_filter_exception_balance_e9_experiments.ipynb",
+    "sha256": "b1b9f43c89af39ab2e1108e4bbb000451b60bb3f817954fd1d8559549d282b53"
+  },
+  {
+    "path": "notebooks/04j_task3_audience_aux_e10_experiment.ipynb",
+    "sha256": "907a96e55c73a5b90d51eb211e19404d374c5f1daaef89b424aa03b6346f350a"
+  },
+  {
+    "path": "notebooks/04k_task3_clean_slate_eda.ipynb",
+    "sha256": "12d666bb17e29ba0427d2e7ba80bc4421d6f6b2fe94f58e67351c3a3c611c911"
+  },
+  {
+    "path": "notebooks/04l_task3_clean_slate_screen_1.ipynb",
+    "sha256": "0fc14a930cff12cf8ef70c6b36e1a2b2259b1d2749d49ca83b38f366d89782bc"
+  },
+  {
+    "path": "notebooks/04m_task3_micro_swin_clean_slate_screen_2.ipynb",
+    "sha256": "81c201ea37906fef4e2cbf7be7d49064a16b9f002f0c34d0944bfd70be144b68"
+  },
+  {
+    "path": "notebooks/04n_task3_gem_gender_v2_g1_foreground_mask.ipynb",
+    "sha256": "827ba9f5a09277bf6bc8520a3c5aea437d405897de441e67073e92694bbe5ea5"
+  },
+  {
+    "path": "notebooks/04o_task3_gem_gender_v2_g2_translation.ipynb",
+    "sha256": "393157cc948c368bd65562a537647f28d29b35fe3c0513dcb526453d68fc9490"
+  },
+  {
+    "path": "notebooks/04p_task3_gem_gender_v2_g3_component_weight.ipynb",
+    "sha256": "cabb82f9de8adf31f3fd6c7b68f2632ff7ce3f7ce3f3668523899074355bd5c1"
+  },
+  {
+    "path": "notebooks/04q_task3_smallcnn_usage_v2_u1_component_weight.ipynb",
+    "sha256": "cc68f2a62fecfb5efd6d19e4ea50da5ff63f86925b668493bdfeb081405d468b"
+  },
+  {
+    "path": "notebooks/04r_task3_gem_gender_v2_g2_confirmation.ipynb",
+    "sha256": "d690b08c417139802b797780c3ac6f47d07a27fbdd7350ad387e751a9aeedf95"
+  },
+  {
+    "path": "notebooks/04s_task3_usage_v2_u2_full_rgb_hog_svm.ipynb",
+    "sha256": "423eafde26342aa3b97b1788d9f93af3dd641d8d3f3d49f9522a5a0dc8d32651"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/all_experiments.csv",
+    "sha256": "1f6854974ca573d378927f5543514499e197a8715368e10dd9e525736973ecbb"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/mean_curves.csv",
+    "sha256": "7dc3ecc1e97e7359f2a0e86842a4a1db641ce225e66b54f600eda3bf6a4d41dd"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/detail.json",
+    "sha256": "b0bcfb08c6f74943f0c0a42cfa15f63b6b1f1f0b91feaca8d90a12546447246c"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/gender_curves.png",
+    "sha256": "8f96996b03c812d3d0a21a5ea487745620b6bd2592356d6c4e1b202237bea072"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/usage_curves.png",
+    "sha256": "dda542de14b045fd233d75f1c29003df7038cf657f6ca2419cf53372a2ea08eb"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/gender_loss.png",
+    "sha256": "671014f97e579612b645062c6f350ca1ef285a053717b49549bc50552386d151"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/usage_loss.png",
+    "sha256": "cc0a4f179ade21ba6838da8053fe9b1ce8fb49990ac6594903f3e9e7fc3d9560"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback_manifest.json",
+    "sha256": "46b6fc29101cabd0d4a5732f931e529bc0c81241888ff6119aff0fb2b6fdeb54"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/README.md",
+    "sha256": "bb03839bff2b0297f24bb51272577c5f9df39a31c3e759b4cc2c6117eccc9c13"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/metrics.json",
+    "sha256": "0d16accbacc3abe3f45dc067c0e0e5899ae7ce291f951c44c35fa83d52526ff1"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/robustness.csv",
+    "sha256": "974158bfd92b1bff14ba661d1d3157223002b5e93477f39cdc7f231f6b16cf49"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/history.csv",
+    "sha256": "64f32c1296204a0e5630172f5bef6ad677fe0996e7b2953904070584f4805f73"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/metrics.json",
+    "sha256": "aa76a1f6c249e42737d250ea4982a4d04999162042717db82fcab8ead9ea606f"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/robustness.csv",
+    "sha256": "c5f829cd1e9261afb2fe97ffee68a29a6b535f913aee598e7a848a3353066acf"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/history.csv",
+    "sha256": "a147be0cd34d6fe09c7e2121e5900599ea31c9670e2dd60152030986b84647af"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/metrics.json",
+    "sha256": "c4091eda294a6761a375a3eaa722c015c022274eca2a0fbacf19f230d51ad056"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/robustness.csv",
+    "sha256": "ff611489201038b1823300cf38c4ecb2edc86c50c685b40bc3513f49da0a7a97"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/history.csv",
+    "sha256": "690b764f5a8fb52c1c5bae30d8dc8e0dabaaef50d2b53968e2ceaca727d2b4ea"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/aggregate_five_fold/metrics.json",
+    "sha256": "7a99f1f5bafd6b0cb9d7e0f5b38ddbda1bd2d8902b723966682c73eaaf922fa3"
+  },
+  {
+    "path": "reports/task3_fit_review_20260905/g2_readback/aggregate_fresh_folds_1_2_3/metrics.json",
+    "sha256": "ad3b07e8170919402261af422ff2d89cf9fa8b0dbeb136853c89bc7ec2485c80"
+  },
+  {
+    "path": "src/fashion/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "src/fashion/config.py",
+    "sha256": "d35bd4228512ecf436eec1aad60c91df6d9613859742701d00346615312e8860"
+  },
+  {
+    "path": "src/fashion/data/images.py",
+    "sha256": "2a5683d9ef66e7ebf4ab033aab5f586c0af7122a758752ea0059bd3e2868883d"
+  },
+  {
+    "path": "src/fashion/data/__init__.py",
+    "sha256": "c06b45990703a59d36c5c6e8682b066c37dec494c3bc7064d7a8da473279fd18"
+  },
+  {
+    "path": "src/fashion/data/hashing.py",
+    "sha256": "28709e3c9032ebc576bf8510131afefcc481347dd468e8173de3db0d11b90d55"
+  },
+  {
+    "path": "src/fashion/data/perceptual.py",
+    "sha256": "585d7dcd0d821cd5f498911b2593fb31a752b0f109380538403ca3fd7b8604c0"
+  },
+  {
+    "path": "src/fashion/data/pipeline.py",
+    "sha256": "3436aa0f7bb5784828cd6c9ff322a018f4371bfd1b6d1d731f764253f518af11"
+  },
+  {
+    "path": "src/fashion/data/audit.py",
+    "sha256": "d1a9a039127a623ecd2483d98b2ff062e8a6ea705824d460c1377a4b9b6225da"
+  },
+  {
+    "path": "src/fashion/data/dataset.py",
+    "sha256": "9137c2ee0aed8550d833fd7bb88fb0b9bc69b990934353eb42d2220961540db3"
+  },
+  {
+    "path": "src/fashion/data/evidence.py",
+    "sha256": "a01caad4455c04df6969735e1a79edb6da66917fb4efb2cf0e87bbc4013d85cf"
+  },
+  {
+    "path": "src/fashion/data/families.py",
+    "sha256": "f05e189089e083df76ecb438007a8c8618fb0403253dd946a8c3f39650ea92dd"
+  },
+  {
+    "path": "src/fashion/data/manifests.py",
+    "sha256": "618f6daa659f4cd5bd9df463275688cade8d9a1ff3abe9ef6691b9cc6847858f"
+  },
+  {
+    "path": "src/fashion/data/metadata.py",
+    "sha256": "ca432ec5f723662f20d9adfea8597e6dcade45d775b54b21613ba1e6c4a45725"
+  },
+  {
+    "path": "src/fashion/data/splits.py",
+    "sha256": "9efe119241a92b41da4efdc7a54dc5ed289d35fc98a04282dc0a737f5172ce98"
+  },
+  {
+    "path": "src/fashion/data/taxonomy.py",
+    "sha256": "88845ce693f1773d0e932e8530f7db218e94702284a4c25fa2c70de5902a6e9d"
+  },
+  {
+    "path": "src/fashion/data/task3_clean_slate_eda.py",
+    "sha256": "56b46396e6d449916e02291ab0f1931c17fe4b2d925d42f2bc0e5a1d2cf02d75"
+  },
+  {
+    "path": "src/fashion/train/__init__.py",
+    "sha256": "07d44647f79f7f4e903ccb485edf0e06a55d97aba967a9c01fc29b8181710c20"
+  },
+  {
+    "path": "src/fashion/train/config.py",
+    "sha256": "8e04ce0bfe0d77e3829207fb551487a7786ee53f8464a9c446cd6068afacb0e7"
+  },
+  {
+    "path": "src/fashion/train/registry.py",
+    "sha256": "46b0d24f3280bb66aa9d903d6716036697ebc88edef0195e6e7c3fa680962d18"
+  },
+  {
+    "path": "src/fashion/train/metrics.py",
+    "sha256": "a87b2115b1b7473c45cc4c06d9b46e9705ae3a676c924b7350d91f795fde82ec"
+  },
+  {
+    "path": "src/fashion/train/model.py",
+    "sha256": "67a243acd93e725a99bcc4e3763d4f6034f58e53265ce147fc1ac718af2c7c30"
+  },
+  {
+    "path": "src/fashion/train/data.py",
+    "sha256": "5fc97eeaa99a5646d3e4303580eeb3733ffac62b030a8d5e221f4aa3c63aad0c"
+  },
+  {
+    "path": "src/fashion/train/task3_baseline.py",
+    "sha256": "62cabbce0c712d1ef53338209a63e2830725fa3f18e51a0b30a318798333fce9"
+  },
+  {
+    "path": "src/fashion/train/task3_experiments.py",
+    "sha256": "af7e322492645d16fec9ec94dd9a66c1bce7b0a14157dad38694fbfcd37f25cf"
+  },
+  {
+    "path": "src/fashion/train/augmentation.py",
+    "sha256": "51261a01595219312e04b5dc1e0a00a42b8c4f91ca96cd6403f16b5fdf9ccac1"
+  },
+  {
+    "path": "src/fashion/train/loss.py",
+    "sha256": "2ed5f77373ff03a51e3d7438cde4b5f20358712e29ac6ba0347f44420d615b00"
+  },
+  {
+    "path": "src/fashion/train/evidence.py",
+    "sha256": "4840ac8488d370f6ac8c801d692e03e71247d64abf4823fcaca1432528697b71"
+  },
+  {
+    "path": "src/fashion/train/task3_e9.py",
+    "sha256": "f42056d2f39b4e8ccec8c1c2bed00d02694ab6bfd293e35642141919a1692474"
+  },
+  {
+    "path": "src/fashion/train/task3_e10.py",
+    "sha256": "692c3bfc10ba7adee2f04c0b7bdb6c3f82cebcf9b02e7fee7fcc633cbb324ad9"
+  },
+  {
+    "path": "src/fashion/train/task3_clean_slate.py",
+    "sha256": "c5a446d24b5e65da3cd0f589df015f266eb98c0ba54c2c0b336e99c39e7c38e3"
+  },
+  {
+    "path": "src/fashion/train/task3_micro_swin.py",
+    "sha256": "26178e1fda9f606479e556a39c45e45f8b209d563416ef26c6961d92b180d152"
+  },
+  {
+    "path": "src/fashion/train/task3_dataset_v2.py",
+    "sha256": "316a1a7dbf3bc39831a83e661923519a551de2a2fc87006e1415feca5f9cc740"
+  },
+  {
+    "path": "src/fashion/train/task3_usage_hog_svm.py",
+    "sha256": "1998dfac689aab2b10b681214b278744d46c907c33ae4e8cf2663edbbdc54657"
+  }
+]
