@@ -535,7 +535,10 @@ def run_task3_baseline_fold(
 
         config = weight_decay_config(child_spec, fold=validation_fold, device_name=device_name)
     group_weight = getattr(child_spec, "name", None) == "gender_name_truth_article_weight_sqrt_cap3"
-    use_mixup = getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020"
+    stronger_mixup = getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha040"
+    use_mixup = stronger_mixup or (
+        getattr(child_spec, "name", None) == "gender_name_truth_mixup_alpha020"
+    )
     expanded_usage = getattr(child_spec, "name", None) == "usage_expanded_e8"
     expanded_contract = None
     name_truth = (
@@ -544,11 +547,22 @@ def run_task3_baseline_fold(
         or (getattr(child_spec, "name", None) == "gender_name_truth_dropout_030_grayscale_010")
     )
     if use_mixup:
-        from fashion.train.task3_gender_mixup import (
-            mixup_config,
-            require_mixup_prerequisites,
-            training_splits,
-        )
+        if stronger_mixup:
+            from fashion.train.task3_gender_stronger_mixup import (
+                mixup40_config as mixup_config,
+            )
+            from fashion.train.task3_gender_stronger_mixup import (
+                require_mixup40_prerequisites as require_mixup_prerequisites,
+            )
+            from fashion.train.task3_gender_stronger_mixup import (
+                training_splits,
+            )
+        else:
+            from fashion.train.task3_gender_mixup import (
+                mixup_config,
+                require_mixup_prerequisites,
+                training_splits,
+            )
 
         config = mixup_config(child_spec, fold=validation_fold, device_name=device_name, root=root)
         refinement_evidence = require_mixup_prerequisites(
@@ -856,6 +870,7 @@ def run_task3_baseline_fold(
             validation_fold=validation_fold,
             label_to_index=label_to_index,
             seed=config.seed,
+            alpha=child_spec.to_dict()["mixup_policy"]["alpha"],
         )
         config_payload["mixup_contract"] = mixup.contract
     if name_truth:
