@@ -1,0 +1,261 @@
+{
+  "source": "gdrive:MLA2/task3/experiments/t3_gender_v2_g2_translation/gender",
+  "registry_source": "gdrive:MLA2/task3/results/runs.csv",
+  "files": [
+    {
+      "path": "aggregate/confusion_matrix.csv",
+      "bytes": 150,
+      "sha256": "7bbacbd56a452d3568a9a213abe9a8bf07ee1a515618a7412e22f3fcf3bc6a93"
+    },
+    {
+      "path": "aggregate/failure_index.csv",
+      "bytes": 31013,
+      "sha256": "22a7d87be0a5457c86a2ac77cd96c033597f77ff3c5ba2205852eb1af6c21776"
+    },
+    {
+      "path": "aggregate/metrics.json",
+      "bytes": 2573,
+      "sha256": "2d0d99290682f564ba70ddb5ceb336cca36c5dd03a840a527bebf4cfbfdc03ba"
+    },
+    {
+      "path": "aggregate/oof_predictions.csv",
+      "bytes": 3378871,
+      "sha256": "d04e84fc06f2aebef34b0cec4b618e8b8415acef6eaa9464e74939e7a3d896ed"
+    },
+    {
+      "path": "aggregate/per_class.csv",
+      "bytes": 433,
+      "sha256": "1a00715c8086669d97ce6bf1143bc695319d79541236ef3cbe55a0e6912c9a28"
+    },
+    {
+      "path": "aggregate_five_fold/confusion_matrix.csv",
+      "bytes": 160,
+      "sha256": "4e8a7567fadba5acab57c9a82219c4e7471b0d8d20c91d519887a76cd4ce6a2e"
+    },
+    {
+      "path": "aggregate_five_fold/failure_index.csv",
+      "bytes": 31138,
+      "sha256": "b7bc73d7f1a1a52a024f59edbddc5037ddcd4c2ff214e7d2cc765f349f7b54e2"
+    },
+    {
+      "path": "aggregate_five_fold/metrics.json",
+      "bytes": 2895,
+      "sha256": "7a99f1f5bafd6b0cb9d7e0f5b38ddbda1bd2d8902b723966682c73eaaf922fa3"
+    },
+    {
+      "path": "aggregate_five_fold/oof_predictions.csv",
+      "bytes": 8445917,
+      "sha256": "f9e7bcd611b5547806cfc89aee065f937c94763f2e08e6d558af19e199e20f6c"
+    },
+    {
+      "path": "aggregate_five_fold/per_class.csv",
+      "bytes": 439,
+      "sha256": "e4c76ea2a7c77a0739f34e4a3eb419c31c8aff85fbcc1d1099db7214b1251d85"
+    },
+    {
+      "path": "aggregate_fresh_folds_1_2_3/confusion_matrix.csv",
+      "bytes": 152,
+      "sha256": "5c49be67fd6d252cb9962a0a91e07f8cc934953accde21126c2362dd3febdd67"
+    },
+    {
+      "path": "aggregate_fresh_folds_1_2_3/failure_index.csv",
+      "bytes": 31079,
+      "sha256": "d071841cc6b07188fdce12957f8d638e06c84deb5264e29e0c6ec704801dd562"
+    },
+    {
+      "path": "aggregate_fresh_folds_1_2_3/metrics.json",
+      "bytes": 2625,
+      "sha256": "ad3b07e8170919402261af422ff2d89cf9fa8b0dbeb136853c89bc7ec2485c80"
+    },
+    {
+      "path": "aggregate_fresh_folds_1_2_3/oof_predictions.csv",
+      "bytes": 5067253,
+      "sha256": "7ec7f35dd97a5f7d19ab81e11987550a3f68707f179173ea1835bbef717b6cfc"
+    },
+    {
+      "path": "aggregate_fresh_folds_1_2_3/per_class.csv",
+      "bytes": 436,
+      "sha256": "aaf80cd423c4a4501a48b3a7a247de34caffa36b638e151901aede6a94daba18"
+    },
+    {
+      "path": "runs.csv",
+      "bytes": 526416,
+      "sha256": "10de4d0dd39e3b949f7e51686eb7e66b62cab5dd18d27ab51bcc4550a3dc474d"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6/config.json",
+      "bytes": 2717,
+      "sha256": "12a00ed5d1f34ebb816ceb4e750600ca3481764d55379623ce3c751925ad437d"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6/final_epoch.pt",
+      "bytes": 1576981,
+      "sha256": "0eaf3d0e7efe36e16bb5765dd9a62d4b776e38ba3eac2fe5eff6ad013cc6a71f"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6/history.csv",
+      "bytes": 3314,
+      "sha256": "cfc09a982d07b299ec8bd60fc675459d901595eee2117adda3f656330e1fe602"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6/metrics.json",
+      "bytes": 3453,
+      "sha256": "4a72b9d2f32a4f95673c75ad9bb848fbbbf6b8857af5aa46d7724ce8bfa37cec"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6/normalization.json",
+      "bytes": 353,
+      "sha256": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6/oof_predictions.csv",
+      "bytes": 1689057,
+      "sha256": "b57fd083ccaee7ce3a51e029e43329866d1abcf9cf26145384273d9774a51898"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6/robustness.csv",
+      "bytes": 900,
+      "sha256": "c4a0f4336c407a67cda77c82dc1ace222e89d255e9a03f316d9f4756eac42385"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/config.json",
+      "bytes": 2717,
+      "sha256": "cc937e7733548faf97f2256c092527825b77c1b90388f5ec49f81eb058ccfbed"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/final_epoch.pt",
+      "bytes": 1576981,
+      "sha256": "4b7817218a58a31a9202536d13fb0dab0dd3c69e120c206d3b5a8f270f24ba16"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/history.csv",
+      "bytes": 3298,
+      "sha256": "690b764f5a8fb52c1c5bae30d8dc8e0dabaaef50d2b53968e2ceaca727d2b4ea"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/metrics.json",
+      "bytes": 3455,
+      "sha256": "c4091eda294a6761a375a3eaa722c015c022274eca2a0fbacf19f230d51ad056"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/normalization.json",
+      "bytes": 353,
+      "sha256": "5a8364f7c4f333d4f35c54fd945b354320eab3bae2bac30b850608698726a1e6"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/oof_predictions.csv",
+      "bytes": 1689817,
+      "sha256": "bb786b410dda038640373c5f3a585371f65a6a16c856ebcbadb2f3aa008ec9f6"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d/robustness.csv",
+      "bytes": 902,
+      "sha256": "ff611489201038b1823300cf38c4ecb2edc86c50c685b40bc3513f49da0a7a97"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/config.json",
+      "bytes": 2717,
+      "sha256": "4b0851225ca1f73cbf32082a33fd6a1b26e5b63b50e8c9643341eac4abbeaf6a"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/final_epoch.pt",
+      "bytes": 1576981,
+      "sha256": "32c2847189a57c9c3ff40d1c20dd193de53330c8192fadc3364c13ba5fba83b5"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/history.csv",
+      "bytes": 3304,
+      "sha256": "a147be0cd34d6fe09c7e2121e5900599ea31c9670e2dd60152030986b84647af"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/metrics.json",
+      "bytes": 3438,
+      "sha256": "aa76a1f6c249e42737d250ea4982a4d04999162042717db82fcab8ead9ea606f"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/normalization.json",
+      "bytes": 355,
+      "sha256": "7b5a56f3fd5350bac34d50c3f4c32546996482d845cbf2c68e33d1c73dca2b0c"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/oof_predictions.csv",
+      "bytes": 1688742,
+      "sha256": "43e668f58f213fa4a555c88d108e938a51600d27e291761dea80f1a53c8b7ead"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa/robustness.csv",
+      "bytes": 897,
+      "sha256": "c5f829cd1e9261afb2fe97ffee68a29a6b535f913aee598e7a848a3353066acf"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/config.json",
+      "bytes": 2717,
+      "sha256": "0839621690c84972954a351b29c16910e8a88955d9ecaaed1c039cd1c5c57ea4"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/final_epoch.pt",
+      "bytes": 1576981,
+      "sha256": "a6acc6c718c27daa31f20c7938e58ac079cd42a743b6c5d3ce14b49b39abbbdb"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/history.csv",
+      "bytes": 3307,
+      "sha256": "64f32c1296204a0e5630172f5bef6ad677fe0996e7b2953904070584f4805f73"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/metrics.json",
+      "bytes": 3421,
+      "sha256": "0d16accbacc3abe3f45dc067c0e0e5899ae7ce291f951c44c35fa83d52526ff1"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/normalization.json",
+      "bytes": 352,
+      "sha256": "3724fe3bd8d96a0cf6292d5451f66a1ae324dcd180296b66289e1acb6a3e1817"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/oof_predictions.csv",
+      "bytes": 1689108,
+      "sha256": "fc02d4523da537fc39f5dc88eaae5e84cb9b1205539591f892ef79068beacb1d"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef/robustness.csv",
+      "bytes": 902,
+      "sha256": "974158bfd92b1bff14ba661d1d3157223002b5e93477f39cdc7f231f6b16cf49"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1/config.json",
+      "bytes": 2717,
+      "sha256": "f63e98722733ef2a1752d0b8b8806852c923f831a996ca4f6023c9c533953f42"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1/final_epoch.pt",
+      "bytes": 1576981,
+      "sha256": "12399c4125bc67fcaca433dae0e6fe4e2a3f30a7ac745bdfa337c8595e82a43e"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1/history.csv",
+      "bytes": 3303,
+      "sha256": "75773ed37b6f52dc80740a8db1a4922ec3fd06d93ad26195c1c8a93e1d6f3a54"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1/metrics.json",
+      "bytes": 3452,
+      "sha256": "c8c49172d99eb7349168d00061beb441481c8b2566e3a19d90db46520dc7e7b2"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1/normalization.json",
+      "bytes": 352,
+      "sha256": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1/oof_predictions.csv",
+      "bytes": 1690021,
+      "sha256": "94bc9531caa7c4fc2370398ec863ef5511689d806b626c9143fe93199996b286"
+    },
+    {
+      "path": "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1/robustness.csv",
+      "bytes": 898,
+      "sha256": "cb54ac094c57df5152c601a8216209f9e6667b52bf1ae21d8c42d4cbb302017e"
+    }
+  ]
+}
