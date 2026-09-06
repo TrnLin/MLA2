@@ -1,0 +1,132 @@
+{
+  "model": "Usage E8 trained from scratch on teacher plus 120 admitted external images",
+  "prediction_rule": "Equal arithmetic mean of five softmax probability vectors; argmax",
+  "test_rows": 5829,
+  "matched_reference_ids": 5829,
+  "scored_rows": 5829,
+  "correct": 5000,
+  "incorrect": 829,
+  "accuracy": 0.8577800651912849,
+  "macro_f1_all_nine_classes": 0.30423125817717467,
+  "macro_f1_classes_present_in_reference": 0.3422601654493215,
+  "balanced_accuracy_classes_present": 0.3590536844930942,
+  "class_names": [
+    "Casual",
+    "Ethnic",
+    "Formal",
+    "Home",
+    "NA",
+    "Party",
+    "Smart Casual",
+    "Sports",
+    "Travel"
+  ],
+  "reference_class_counts": {
+    "Casual": 4773,
+    "Travel": 1,
+    "NA": 245,
+    "Ethnic": 638,
+    "Formal": 59,
+    "Sports": 85,
+    "Party": 16,
+    "Smart Casual": 12
+  },
+  "per_class": [
+    {
+      "usage": "Casual",
+      "test_images": 4773,
+      "correct": 4356,
+      "predicted_count": 4762,
+      "precision": 0.9147417051658967,
+      "recall": 0.9126335637963545,
+      "f1": 0.9136864184583114
+    },
+    {
+      "usage": "Ethnic",
+      "test_images": 638,
+      "correct": 553,
+      "predicted_count": 696,
+      "precision": 0.7945402298850575,
+      "recall": 0.8667711598746082,
+      "f1": 0.8290854572713643
+    },
+    {
+      "usage": "Formal",
+      "test_images": 59,
+      "correct": 39,
+      "predicted_count": 124,
+      "precision": 0.31451612903225806,
+      "recall": 0.6610169491525424,
+      "f1": 0.4262295081967213
+    },
+    {
+      "usage": "Home",
+      "test_images": 0,
+      "correct": 0,
+      "predicted_count": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "usage": "NA",
+      "test_images": 245,
+      "correct": 30,
+      "predicted_count": 197,
+      "precision": 0.15228426395939088,
+      "recall": 0.12244897959183673,
+      "f1": 0.13574660633484162
+    },
+    {
+      "usage": "Party",
+      "test_images": 16,
+      "correct": 1,
+      "predicted_count": 4,
+      "precision": 0.25,
+      "recall": 0.0625,
+      "f1": 0.1
+    },
+    {
+      "usage": "Smart Casual",
+      "test_images": 12,
+      "correct": 0,
+      "predicted_count": 5,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "usage": "Sports",
+      "test_images": 85,
+      "correct": 21,
+      "predicted_count": 41,
+      "precision": 0.5121951219512195,
+      "recall": 0.24705882352941178,
+      "f1": 0.3333333333333333
+    },
+    {
+      "usage": "Travel",
+      "test_images": 1,
+      "correct": 0,
+      "predicted_count": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    }
+  ],
+  "missing_reference_ids": [],
+  "unscorable_reference_values": [],
+  "literal_NA_is_a_class": true,
+  "blank_reference_values_are_not_imputed": true,
+  "reference_path": "data/raw/external/fashion_product_images_v1_legacy_extras/fashion-dataset/styles.csv",
+  "reference_sha256": "cd86bd2d71b4065ed91786a52aa6ccc0eed343949791c663be9af35f105a128c",
+  "reference_labels_opened_at_utc": "2026-09-06T10:43:41.758290+00:00",
+  "predictions_frozen_at_utc": "2026-09-06T10:42:15.335055+00:00",
+  "prediction_freeze_sha256": "f1e4773a86709cc4fa16e845fb8144c39cab0810bcba0dce4ec9cd361479764e",
+  "matching_ids_with_extra_product_name_columns": [
+    59768
+  ],
+  "duplicate_matching_reference_ids": [],
+  "training_tuning_or_checkpoint_selection_after_label_access": false,
+  "evaluation_scope": "Official teacher test IDs only; high-resolution metadata supplies Usage labels only"
+}
