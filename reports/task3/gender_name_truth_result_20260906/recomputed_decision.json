@@ -1,0 +1,386 @@
+{
+  "status": "fail",
+  "phase": "screen",
+  "rule_version": "gname_truth_loss003_gap005_v1",
+  "checks": [
+    {
+      "gate": "validation_delta",
+      "value": 0.043282048942540174,
+      "rule": ">= -0.030 versus matched IEEE G2",
+      "status": "pass"
+    },
+    {
+      "gate": "validation_ci_lower",
+      "value": 0.025265182659548812,
+      "rule": ">= -0.030",
+      "status": "pass"
+    },
+    {
+      "gate": "fold_0.validation_delta",
+      "value": 0.022890565691880194,
+      "rule": ">= -0.030",
+      "status": "pass"
+    },
+    {
+      "gate": "fold_0.gap_reduction",
+      "value": -0.0011446070853456947,
+      "rule": "> 0",
+      "status": "fail"
+    },
+    {
+      "gate": "fold_0.gpu_memory_bytes",
+      "value": 475258880,
+      "rule": "0 < value < 3000000000",
+      "status": "pass"
+    },
+    {
+      "gate": "fold_0.parameters",
+      "value": 390181,
+      "rule": "== 390181",
+      "status": "pass"
+    },
+    {
+      "gate": "fold_4.validation_delta",
+      "value": 0.06383531481464322,
+      "rule": ">= -0.030",
+      "status": "pass"
+    },
+    {
+      "gate": "fold_4.gap_reduction",
+      "value": 0.040010971325695754,
+      "rule": "> 0",
+      "status": "pass"
+    },
+    {
+      "gate": "fold_4.gpu_memory_bytes",
+      "value": 475029504,
+      "rule": "0 < value < 3000000000",
+      "status": "pass"
+    },
+    {
+      "gate": "fold_4.parameters",
+      "value": 390181,
+      "rule": "== 390181",
+      "status": "pass"
+    },
+    {
+      "gate": "mean_gap_reduction",
+      "value": 0.01943318212017503,
+      "rule": ">= 0.050",
+      "status": "fail"
+    },
+    {
+      "gate": "class_f1",
+      "value": {
+        "Boys": 0.08634492655111203,
+        "Girls": 0.1314116627850721,
+        "Men": 0.0023183596749588586,
+        "Unisex": -0.008284430854003655,
+        "Women": 0.004619726555562087
+      },
+      "rule": "every class >= -0.020",
+      "status": "pass"
+    },
+    {
+      "gate": "nll",
+      "value": -0.024379855050159494,
+      "rule": "<= 0.02 versus matched IEEE G2",
+      "status": "pass"
+    },
+    {
+      "gate": "ece_15",
+      "value": -0.008565376877421076,
+      "rule": "<= 0.01 versus matched IEEE G2",
+      "status": "pass"
+    },
+    {
+      "gate": "robustness_vs_e6.brightness_085",
+      "value": 0.1774898407621635,
+      "rule": ">= -0.02",
+      "status": "pass"
+    },
+    {
+      "gate": "robustness_vs_e6.brightness_115",
+      "value": -0.0055812971011717505,
+      "rule": ">= -0.02",
+      "status": "pass"
+    },
+    {
+      "gate": "robustness_vs_e6.grayscale",
+      "value": 0.022624160834753004,
+      "rule": ">= -0.02",
+      "status": "pass"
+    },
+    {
+      "gate": "robustness_vs_e6.jpeg_75",
+      "value": 0.026402377727106956,
+      "rule": ">= -0.02",
+      "status": "pass"
+    },
+    {
+      "gate": "robustness_vs_e6.translation_003",
+      "value": 0.12633161644981597,
+      "rule": ">= 0.03",
+      "status": "pass"
+    }
+  ],
+  "candidate": {
+    "accuracy": 0.9087719298245615,
+    "balanced_accuracy": 0.7725806754156538,
+    "macro_f1": 0.7944403076808578,
+    "weighted_f1": 0.9061821614900819,
+    "mcc": 0.8403845193126281,
+    "support": 13110,
+    "per_class": [
+      {
+        "class_index": 0,
+        "class_name": "Boys",
+        "support": 356,
+        "predicted_count": 323,
+        "precision": 0.804953560371517,
+        "recall": 0.7303370786516854,
+        "f1": 0.7658321060382915
+      },
+      {
+        "class_index": 1,
+        "class_name": "Girls",
+        "support": 285,
+        "predicted_count": 274,
+        "precision": 0.7627737226277372,
+        "recall": 0.7333333333333333,
+        "f1": 0.7477638640429338
+      },
+      {
+        "class_index": 2,
+        "class_name": "Men",
+        "support": 7023,
+        "predicted_count": 7271,
+        "precision": 0.9240819694677486,
+        "recall": 0.956713655133134,
+        "f1": 0.9401147334545963
+      },
+      {
+        "class_index": 3,
+        "class_name": "Unisex",
+        "support": 707,
+        "predicted_count": 534,
+        "precision": 0.6928838951310862,
+        "recall": 0.5233380480905233,
+        "f1": 0.596293311845286
+      },
+      {
+        "class_index": 4,
+        "class_name": "Women",
+        "support": 4739,
+        "predicted_count": 4708,
+        "precision": 0.9252336448598131,
+        "recall": 0.9191812618695927,
+        "f1": 0.922197523023182
+      }
+    ],
+    "confusion_matrix": [
+      [
+        260,
+        33,
+        33,
+        16,
+        14
+      ],
+      [
+        30,
+        209,
+        6,
+        16,
+        24
+      ],
+      [
+        9,
+        8,
+        6719,
+        84,
+        203
+      ],
+      [
+        20,
+        10,
+        196,
+        370,
+        111
+      ],
+      [
+        4,
+        14,
+        317,
+        48,
+        4356
+      ]
+    ],
+    "nll": 0.27522761462891693,
+    "brier": 0.13757189945908477,
+    "ece_15": 0.023407798378091062
+  },
+  "comparison": {
+    "accuracy": 0.9023646071700991,
+    "balanced_accuracy": 0.7062631352228286,
+    "macro_f1": 0.7511582587383177,
+    "weighted_f1": 0.8985155902256879,
+    "mcc": 0.8283024826488373,
+    "support": 13110,
+    "per_class": [
+      {
+        "class_index": 0,
+        "class_name": "Boys",
+        "support": 356,
+        "predicted_count": 268,
+        "precision": 0.7910447761194029,
+        "recall": 0.5955056179775281,
+        "f1": 0.6794871794871795
+      },
+      {
+        "class_index": 1,
+        "class_name": "Girls",
+        "support": 285,
+        "predicted_count": 192,
+        "precision": 0.765625,
+        "recall": 0.5157894736842106,
+        "f1": 0.6163522012578617
+      },
+      {
+        "class_index": 2,
+        "class_name": "Men",
+        "support": 7023,
+        "predicted_count": 7317,
+        "precision": 0.9189558562252289,
+        "recall": 0.9574256015947601,
+        "f1": 0.9377963737796374
+      },
+      {
+        "class_index": 3,
+        "class_name": "Unisex",
+        "support": 707,
+        "predicted_count": 560,
+        "precision": 0.6839285714285714,
+        "recall": 0.5417256011315418,
+        "f1": 0.6045777426992897
+      },
+      {
+        "class_index": 4,
+        "class_name": "Women",
+        "support": 4739,
+        "predicted_count": 4773,
+        "precision": 0.914309658495705,
+        "recall": 0.9208693817261026,
+        "f1": 0.9175777964676199
+      }
+    ],
+    "confusion_matrix": [
+      [
+        212,
+        18,
+        72,
+        19,
+        35
+      ],
+      [
+        33,
+        147,
+        14,
+        11,
+        80
+      ],
+      [
+        7,
+        4,
+        6724,
+        92,
+        196
+      ],
+      [
+        14,
+        11,
+        201,
+        383,
+        98
+      ],
+      [
+        2,
+        12,
+        306,
+        55,
+        4364
+      ]
+    ],
+    "nll": 0.2996074696790764,
+    "brier": 0.14663870734764334,
+    "ece_15": 0.03197317525551214
+  },
+  "bootstrap": {
+    "point": 0.043282048942540285,
+    "lower_95": 0.025265182659548812,
+    "upper_95": 0.06183753257567468,
+    "repetitions": 10000,
+    "seed": 2753,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "families_by_fold": {
+      "0": 4564,
+      "4": 4570
+    },
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "selection_bias_removed": false
+  },
+  "folds": [
+    {
+      "fold": 0,
+      "candidate_train_f1": 0.9670008377149664,
+      "candidate_validation_f1": 0.7878217977107641,
+      "candidate_gap": 0.17917904000420226,
+      "parent_train_f1": 0.9429656649377405,
+      "parent_validation_f1": 0.7649312320188839,
+      "parent_gap": 0.17803443291885657,
+      "gap_reduction": -0.0011446070853456947,
+      "train_seconds": 515.285446696,
+      "latency_ms_batch_1": 0.7548717400004534,
+      "peak_memory_bytes": 475258880
+    },
+    {
+      "fold": 4,
+      "candidate_train_f1": 0.9690327964766725,
+      "candidate_validation_f1": 0.8006262648359123,
+      "candidate_gap": 0.16840653164076025,
+      "parent_train_f1": 0.945208452987725,
+      "parent_validation_f1": 0.736790950021269,
+      "parent_gap": 0.208417502966456,
+      "gap_reduction": 0.040010971325695754,
+      "train_seconds": 513.9844229399998,
+      "latency_ms_batch_1": 0.74657562000084,
+      "peak_memory_bytes": 475029504
+    }
+  ],
+  "mean_gap_reduction": 0.01943318212017503,
+  "required_validation_f1": 0.7211582587383176,
+  "maximum_mean_clean_gap": 0.1432259679426563,
+  "robustness_change_vs_e6": {
+    "brightness_085": 0.1774898407621635,
+    "brightness_115": -0.0055812971011717505,
+    "grayscale": 0.022624160834753004,
+    "jpeg_75": 0.026402377727106956,
+    "translation_003": 0.12633161644981597
+  },
+  "comparison_precision": "saved_checkpoint_ieee_fp32_batch128_v1",
+  "training_precision": {
+    "backends": "none",
+    "backends.cuda.matmul": "none",
+    "backends.cudnn": "none",
+    "backends.cudnn.conv": "tf32",
+    "backends.cudnn.rnn": "tf32"
+  },
+  "speed_cap": null,
+  "independent_test_evidence": false,
+  "next_step": "Stop. A pass permits planning confirmation separately; it is not model acceptance."
+}
