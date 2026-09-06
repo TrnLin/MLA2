@@ -166,7 +166,9 @@ def require_mixup_prerequisites(
     }
 
 
-def verify_mixup_evidence(run, *, fold, splits, directory, alpha=0.2):
+def verify_mixup_evidence(run, *, fold, splits, directory, alpha=0.2, epochs=30):
+    if epochs not in (25, 30):
+        raise ValueError("MixUp receipt verification requires a frozen epoch budget")
     training = get_samples(get_cv_split(splits, fold)[0], target="gender")
     expected = training_contract(training, validation_fold=fold, alpha=alpha)
     config = Task3BaselineConfig(target="gender")
@@ -177,7 +179,7 @@ def verify_mixup_evidence(run, *, fold, splits, directory, alpha=0.2):
         run["config"].get("mixup_contract") != expected
         or run["metrics"].get("mixup_receipt_sha256") != compute_sha256(path)
         or receipt.get("contract") != expected
-        or len(receipt.get("epochs", [])) != config.epochs
+        or len(receipt.get("epochs", [])) != epochs
         or not history.train_macro_f1.isna().all()
         or not history.train_metric_scope.eq(POLICY["online_train_f1"]).all()
     ):
