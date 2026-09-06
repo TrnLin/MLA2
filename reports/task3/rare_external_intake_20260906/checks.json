@@ -1,0 +1,40 @@
+{
+  "date": "2026-09-06",
+  "passed": true,
+  "dataset": "teacher_plus_rare_usage_20260906",
+  "checks": [
+    {
+      "command": "./.venv/bin/python -m pytest tests/data/test_expanded_usage.py tests/data/test_external_usage.py tests/data/test_external_usage_audit.py tests/data/test_pipeline.py -q",
+      "result": "58 passed in 3.65s"
+    },
+    {
+      "command": "./.venv/bin/python -m ruff check src/fashion/data/dataset.py src/fashion/data/expanded_usage.py src/fashion/data/external_usage.py tests/data/test_expanded_usage.py reports/task3_rare_external_intake_20260906",
+      "result": "All checks passed"
+    },
+    {
+      "command": "./.venv/bin/python -m ruff format --check src/fashion/data/dataset.py src/fashion/data/expanded_usage.py src/fashion/data/external_usage.py tests/data/test_expanded_usage.py reports/task3_rare_external_intake_20260906",
+      "result": "23 files already formatted"
+    },
+    {
+      "command": "./.venv/bin/python reports/task3_rare_external_intake_20260906/build_combined_dataset.py",
+      "result": "38,732 images loaded and hash-checked; mixed teacher/external batch uses the same nine-class Usage mapping",
+      "log": "combined_build.log"
+    },
+    {
+      "check": "Executed the Python example in USAGE.md",
+      "result": "26315 training rows and 6577 validation rows"
+    },
+    {
+      "check": "Read back exported fold files and full CSVs",
+      "result": "All 10 fold ID files and both full fold-0 CSVs match the combined split"
+    },
+    {
+      "check": "Package readback",
+      "result": "Every bundled file matched its SHA-256; previous ZIP link contains the corrected package"
+    }
+  ],
+  "skipped": [
+    "PyTorch integration: not installed locally",
+    "Model fitting: dataset preparation only"
+  ]
+}
