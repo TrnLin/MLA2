@@ -287,7 +287,8 @@ def test_delivered_notebook_code_and_result_cells(trained_screen):
     import nbformat
 
     notebook = nbformat.read(
-        Path(__file__).resolve().parents[2] / "notebooks/04am_task3_usage_mixup_sam_screen.ipynb",
+        Path(__file__).resolve().parents[2]
+        / "notebooks/task3_training/usage_mixup_sam_screen.ipynb",
         as_version=4,
     )
     nbformat.validate(notebook)
