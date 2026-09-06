@@ -1,0 +1,18 @@
+{
+  "channels": 3,
+  "fit_scope": "fold_training_content_pixels_only",
+  "input_view": "full",
+  "mean": [
+    0.8499703689700645,
+    0.8333611823854307,
+    0.82773125999148
+  ],
+  "padding_excluded": true,
+  "std": [
+    0.27119002269360504,
+    0.28249807091882057,
+    0.28607075541532817
+  ],
+  "total_pixels": 125834460,
+  "validation_fold": 1
+}
