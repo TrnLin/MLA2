@@ -74,6 +74,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         "04ad_task3_gender_name_truth_screen.ipynb",
         "04ae_task3_gender_group_weight_screen.ipynb",
         "04af_task3_gender_mixup_screen.ipynb",
+        "04ah_task3_gender_stronger_mixup_screen.ipynb",
         "04z_task3_usage_two_stage_screen.ipynb",
         *TASK_SPECS,
     }
