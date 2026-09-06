@@ -1,0 +1,132 @@
+fold,label,train_n,train_families,validation_n,validation_families,article
+0,Boys,548,318,136,79,
+0,Boys,3,2,2,1,Booties
+0,Boys,9,2,2,1,Capris
+0,Boys,17,14,7,6,Casual Shoes
+0,Boys,11,10,3,3,Flip Flops
+0,Boys,4,2,2,1,Gloves
+0,Boys,2,1,2,1,Jackets
+0,Boys,21,8,4,2,Jeans
+0,Boys,4,3,2,1,Rompers
+0,Boys,8,6,3,3,Sandals
+0,Boys,52,22,13,3,Shirts
+0,Boys,39,22,7,4,Shorts
+0,Boys,1,1,1,1,Sweatshirts
+0,Boys,2,2,2,1,Trousers
+0,Boys,346,198,86,51,Tshirts
+0,Girls,436,266,107,70,
+0,Girls,21,11,8,4,Capris
+0,Girls,8,8,6,5,Casual Shoes
+0,Girls,2,2,1,1,Clothing Set
+0,Girls,42,28,12,8,Dresses
+0,Girls,4,2,2,1,Gloves
+0,Girls,3,2,2,2,Innerwear Vests
+0,Girls,12,4,1,1,Jeans
+0,Girls,15,7,1,1,Leggings
+0,Girls,4,3,1,1,Rompers
+0,Girls,31,25,8,7,Sandals
+0,Girls,25,14,7,4,Shorts
+0,Girls,16,8,4,3,Skirts
+0,Girls,154,78,38,21,Tops
+0,Girls,72,56,16,11,Tshirts
+0,Men,14203,9883,3550,2462,
+0,Unisex,1411,1141,355,287,
+0,Unisex,421,296,105,77,Backpacks
+0,Unisex,9,9,3,3,Basketballs
+0,Unisex,7,7,1,1,Belts
+0,Unisex,95,83,22,21,Caps
+0,Unisex,147,139,39,34,Casual Shoes
+0,Unisex,2,2,1,1,Deodorant
+0,Unisex,54,41,10,8,Duffel Bag
+0,Unisex,101,91,24,23,Flip Flops
+0,Unisex,5,5,2,2,Footballs
+0,Unisex,42,38,8,8,Handbags
+0,Unisex,4,4,2,2,Headband
+0,Unisex,0,0,3,1,Jeans
+0,Unisex,35,23,10,8,Laptop Bag
+0,Unisex,21,20,6,6,Messenger Bag
+0,Unisex,4,3,2,2,Mobile Pouch
+0,Unisex,5,4,2,1,Perfume and Body Mist
+0,Unisex,8,8,2,2,Rucksacks
+0,Unisex,63,57,17,16,Sandals
+0,Unisex,4,4,1,1,Scarves
+0,Unisex,14,12,4,3,Shoe Accessories
+0,Unisex,47,33,11,9,Socks
+0,Unisex,0,0,3,3,Sports Sandals
+0,Unisex,30,30,8,8,Sports Shoes
+0,Unisex,95,64,24,7,Sunglasses
+0,Unisex,6,6,3,2,Travel Accessory
+0,Unisex,48,37,12,11,Tshirts
+0,Unisex,11,11,3,2,Waist Pouch
+0,Unisex,15,11,3,3,Wallets
+0,Unisex,88,75,22,20,Watches
+0,Unisex,6,6,1,1,Water Bottle
+0,Unisex,4,4,1,1,Wristbands
+0,Women,9622,6734,2405,1667,
+4,Boys,546,315,138,82,
+4,Boys,0,0,1,1,Blazers
+4,Boys,3,2,2,1,Booties
+4,Boys,18,16,6,4,Casual Shoes
+4,Boys,3,3,1,1,Clothing Set
+4,Boys,12,11,2,2,Flip Flops
+4,Boys,4,2,2,1,Gloves
+4,Boys,2,1,2,1,Jackets
+4,Boys,19,8,6,2,Jeans
+4,Boys,4,3,1,1,Kurtas
+4,Boys,9,8,2,1,Sandals
+4,Boys,53,20,12,5,Shirts
+4,Boys,37,20,9,6,Shorts
+4,Boys,1,1,1,1,Sweatshirts
+4,Boys,3,2,1,1,Trousers
+4,Boys,347,200,85,49,Tshirts
+4,Boys,0,0,5,5,Watches
+4,Girls,434,272,109,64,
+4,Girls,21,12,8,3,Capris
+4,Girls,10,9,4,4,Casual Shoes
+4,Girls,2,2,1,1,Clothing Set
+4,Girls,45,31,9,5,Dresses
+4,Girls,4,4,2,1,Flip Flops
+4,Girls,4,3,1,1,Innerwear Vests
+4,Girls,9,4,4,1,Jeans
+4,Girls,14,6,2,2,Leggings
+4,Girls,1,1,1,1,Lehenga Choli
+4,Girls,3,3,2,1,Rompers
+4,Girls,30,26,9,6,Sandals
+4,Girls,26,14,6,4,Shorts
+4,Girls,16,9,4,2,Skirts
+4,Girls,154,81,38,18,Tops
+4,Girls,71,54,17,13,Tshirts
+4,Girls,7,1,1,1,Watches
+4,Men,14201,9876,3552,2469,
+4,Unisex,1413,1137,353,291,
+4,Unisex,417,298,109,75,Backpacks
+4,Unisex,10,10,2,2,Basketballs
+4,Unisex,6,6,2,2,Belts
+4,Unisex,96,84,21,20,Caps
+4,Unisex,150,139,36,34,Casual Shoes
+4,Unisex,0,0,1,1,Cushion Covers
+4,Unisex,53,40,11,9,Duffel Bag
+4,Unisex,101,93,24,21,Flip Flops
+4,Unisex,6,6,1,1,Footballs
+4,Unisex,38,35,12,11,Handbags
+4,Unisex,5,5,1,1,Headband
+4,Unisex,34,24,11,7,Laptop Bag
+4,Unisex,22,21,5,5,Messenger Bag
+4,Unisex,8,8,2,2,Rucksacks
+4,Unisex,64,59,16,14,Sandals
+4,Unisex,2,2,3,3,Scarves
+4,Unisex,14,11,4,4,Shoe Accessories
+4,Unisex,46,31,12,11,Socks
+4,Unisex,29,29,9,9,Sports Shoes
+4,Unisex,95,54,24,17,Sunglasses
+4,Unisex,2,2,2,2,Swimwear
+4,Unisex,0,0,1,1,Tablet Sleeve
+4,Unisex,8,7,1,1,Travel Accessory
+4,Unisex,2,1,1,1,Trolley Bag
+4,Unisex,49,38,11,10,Tshirts
+4,Unisex,11,10,3,3,Waist Pouch
+4,Unisex,14,12,4,2,Wallets
+4,Unisex,88,75,22,20,Watches
+4,Unisex,6,6,1,1,Water Bottle
+4,Unisex,4,4,1,1,Wristbands
+4,Women,9622,6737,2405,1664,
