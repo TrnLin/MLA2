@@ -1,6 +1,6 @@
 # Gender refinement: dropout plus mild darkening
 
-Status: implemented as `notebooks/04aa_task3_gender_dropout_darkening_screen.ipynb`
+Status: implemented as `notebooks/task3_training/gender_dropout_darkening_screen.ipynb`
 with reusable logic in `src/fashion/train/task3_gender_dropout_darkening.py`.
 No new training has been performed. The model is not accepted.
 
@@ -123,9 +123,9 @@ families; pooled/fold F1, pooled NLL and ECE were recomputed from probabilities.
 The full new checkpoint hashes, corruption predictions and bootstrap were not
 independently recomputed in that review.
 
-G-D1: `reports/task3_gender_gd1_result_20260905/fold_comparison.csv`, its saved
+G-D1: `reports/task3/gender_gd1_result_20260905/fold_comparison.csv`, its saved
 per-fold robustness files and prior verified decision. Image preview:
-`reports/task3_data_intervention_20260905/augmentation_preview.png`.
+`reports/task3/data_intervention_20260905/augmentation_preview.png`.
 
 The two-fold results guide development; they do not remove model-selection bias
 or provide independent final evaluation.
