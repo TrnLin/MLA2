@@ -25,6 +25,8 @@ mark the old one as superseded, and link both records.
 - `0015-teacher-only-shared-image-preparation.md`
 - `0016-development-label-scope.md`
 - `0017-product-name-na-and-cv-refreeze.md`
+- `0018-task3-external-source-label-intake.md` — combined teacher + rare-class Task 3 dataset;
+  direct Usage labels, unchanged teacher folds, grouped folds for added images.
 
 ## Superseded decisions
 
