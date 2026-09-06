@@ -10,25 +10,13 @@ Notebooks tell the investigation story. Reusable code lives in `src/fashion/`.
 | 01 | `01_data_preparation.ipynb` | complete and executed | teacher audit, sole split, five folds, and development-only evidence |
 | 02 | `02_task1_article_type.ipynb` | planning scaffold | article-type comparisons and judgement |
 | 03 | `03_task2_season.ipynb` | planning scaffold | season comparisons and judgement |
-| 04 | `04_task3_gender_usage.ipynb` | baseline evidence notebook | model, five-fold analysis, and next hypotheses |
-| 04a | `04a_task3_smallcnn_baseline_training.ipynb` | executed baseline runner | reproducible five-fold SmallCNN baselines |
-| 04b | `04b_task3_smallcnn_child_experiments.ipynb` | child training runner | brightness-only Gender and loss-only Usage experiments |
-| 04c | `04c_task3_smallcnn_e3_experiments.ipynb` | E3 training runner | loss-only Gender and dropout-only Usage experiments |
-| 04d | `04d_task3_tinyresnet18_pm_e4_experiments.ipynb` | E4 training runner | parameter-matched TinyResNet architecture experiments |
-| 04e | `04e_task3_compactblurcnn_label_smoothing_e5_experiments.ipynb` | E5 training runner | compact Gender architecture and Usage label-smoothing experiments |
-| 04f | `04f_task3_gem_focal_e6_experiments.ipynb` | E6 training runner | Gender GeM pooling and Usage focal-loss experiments |
-| 04g | `04g_task3_tinyconvnext_tinyhrnet_e7_experiments.ipynb` | E7 training runner | Usage TinyConvNeXt and Gender TinyHRNet architecture experiments |
-| 04h | `04h_task3_early_stopping_translation_e8_experiments.ipynb` | E8 training runner | Gender checkpoint selection and Usage translation experiments |
-| 04i | `04i_task3_semantic_filter_exception_balance_e9_experiments.ipynb` | E9 training runner | Gender semantic filtering and Usage exception-balance experiments |
-| 04j | `04j_task3_audience_aux_e10_experiment.ipynb` | E10 training runner | Gender E6 plus a training-only three-way catalogue-audience head |
-| 04k | `04k_task3_clean_slate_eda.ipynb` | clean-slate EDA | teacher-only foreground, nuisance, family, representation, and fold audits |
-| 04l | `04l_task3_clean_slate_screen_1.ipynb` | local CPU training runner | two-fold clean-slate screen with separate Gender HOG-SVM and Usage type-posterior models |
+| 04 | `04_task3_gender_usage.ipynb` | saved-results report | model comparisons, failures, and final choices |
 | 05 | `05_task4_visual_search.ipynb` | planning scaffold | Top-K search choices and comparisons |
 | 06 | `06_final_evaluation.ipynb` | locked scaffold | one holdout evaluation and ultimate judgement |
 
 Notebooks 02, 03, 05, and 06 are planning or locked Markdown scaffolds. Task 3 has one
-narrative notebook, separate E1–E10 training runners, one clean-slate EDA notebook, and separate
-clean-slate training runners so Run All cannot accidentally retrain an earlier stage. Each
+narrative notebook and [40 named companion notebooks](task3_training/README.md).
+The companion index lists every old name, its new path and runtime. Each
 `TODO(owner)` belongs to the task owner.
 
 ## Shared rules
