@@ -1,0 +1,72 @@
+{
+  "eligible_rows_before_group_representative": 5329,
+  "candidate_metadata_groups": 3094,
+  "candidate_teacher_types": 50,
+  "counts": [
+    {
+      "source_occasion": "Casual",
+      "eligible_rows_before_group_representative": 4538,
+      "metadata_group_representatives": 2497,
+      "candidate_teacher_types": 47
+    },
+    {
+      "source_occasion": "Ethnic",
+      "eligible_rows_before_group_representative": 35,
+      "metadata_group_representatives": 19,
+      "candidate_teacher_types": 4
+    },
+    {
+      "source_occasion": "Formal",
+      "eligible_rows_before_group_representative": 388,
+      "metadata_group_representatives": 300,
+      "candidate_teacher_types": 20
+    },
+    {
+      "source_occasion": "Home",
+      "eligible_rows_before_group_representative": 0,
+      "metadata_group_representatives": 0,
+      "candidate_teacher_types": 0
+    },
+    {
+      "source_occasion": "NA",
+      "eligible_rows_before_group_representative": 0,
+      "metadata_group_representatives": 0,
+      "candidate_teacher_types": 0
+    },
+    {
+      "source_occasion": "Party",
+      "eligible_rows_before_group_representative": 248,
+      "metadata_group_representatives": 186,
+      "candidate_teacher_types": 17
+    },
+    {
+      "source_occasion": "Smart Casual",
+      "eligible_rows_before_group_representative": 0,
+      "metadata_group_representatives": 0,
+      "candidate_teacher_types": 0
+    },
+    {
+      "source_occasion": "Sports",
+      "eligible_rows_before_group_representative": 118,
+      "metadata_group_representatives": 91,
+      "candidate_teacher_types": 11
+    },
+    {
+      "source_occasion": "Travel",
+      "eligible_rows_before_group_representative": 2,
+      "metadata_group_representatives": 1,
+      "candidate_teacher_types": 1
+    }
+  ],
+  "exclusions_sequential_row_counts": {
+    "no_exact_singleton_occasion_in_coarse_fashion_scope": 5816,
+    "no_accepted_type_mapping": 8653,
+    "metadata_group_has_different_occasion_sets": 202,
+    "additional_rows_in_retained_metadata_groups": 2231,
+    "within_group_type_disagreement_rows": 4
+  },
+  "targeted_access_probe_products": 41,
+  "selection": "Exact singleton canonical-name source occasion plus both coarse fashion scope and accepted exact type mapping; URLs present; metadata groups with different known occasion sets or different accepted types excluded; one hash-selected row per remaining group.",
+  "claim_limit": "Metadata groups are conservative hints, not proven independent products. Same-name source labels remain weak labels. Full pixel/family overlap checks and image eligibility are outstanding.",
+  "training_rows_admitted": 0
+}
