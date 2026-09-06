@@ -21,6 +21,9 @@ analysis of the runs already done, choose the analysis.
   `data/processed/teacher_plus_rare_usage_20260906/splits.csv`: teacher rows plus admitted
   external images using the same `usage` target and nine-class map. Select this version
   explicitly; preserve the original teacher folds and keep the search gallery unchanged.
+  ADR 0019 also permits `data/processed/teacher_plus_rare_usage_v2_20260906/splits.csv`,
+  which keeps the earlier 120 additions and appends 567 reviewed images with labels
+  supported by product text or retailer collections. Keep its saved family folds intact.
 - **Every training run appends a row to `results/runs.csv`** through
   `fashion.train.registry`. The report's comparison tables are generated from that file.
 - **`data/raw/teacher/test/styles_prediction.csv` format is fixed**:
