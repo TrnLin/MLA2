@@ -2,6 +2,7 @@
 
 import json
 from dataclasses import FrozenInstanceError, asdict, replace
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -152,7 +153,8 @@ def test_real_dataset_and_e8_sources_are_intact():
     )
 
 
-def test_real_training_step_and_registry_use_combined_data(tiny_data, tmp_path, monkeypatch):
+@pytest.fixture
+def trained_usage_fold(tiny_data, tmp_path, monkeypatch):
     torch = pytest.importorskip("torch")
     from fashion.train import task3_baseline as engine
 
@@ -177,6 +179,13 @@ def test_real_training_step_and_registry_use_combined_data(tiny_data, tmp_path, 
         child_spec=expanded.expanded_usage_spec(),
         parent_run_directory=parent,
     )
+    return result, config
+
+
+def test_real_training_step_and_registry_use_combined_data(trained_usage_fold, tmp_path):
+    import torch
+
+    result, _ = trained_usage_fold
     path = tmp_path / "output" / expanded.ARTIFACT_DIRECTORY / "usage" / result["run_id"]
     registry = pd.read_csv(tmp_path / "runs.csv", keep_default_na=False)
     assert registry.status.tolist() == ["complete"]
@@ -286,9 +295,13 @@ def test_resume_requires_intact_complete_matching_artifacts(tiny_data, tmp_path)
         expanded.reusable_fold(**arguments)
 
 
-def test_five_fold_summary_compares_only_matching_teacher_ids(tiny_data, tmp_path, monkeypatch):
+@pytest.mark.parametrize("shared_registry", [False, True])
+def test_five_fold_summary_compares_only_matching_teacher_ids(
+    tiny_data, tmp_path, monkeypatch, shared_registry
+):
     torch = pytest.importorskip("torch")
     from fashion.train import task3_baseline as engine
+    from fashion.train import task3_usage_registry as recovery
 
     monkeypatch.setattr(torch.cuda, "is_available", lambda: True)
     monkeypatch.setattr(torch.cuda, "empty_cache", lambda: None)
@@ -304,6 +317,14 @@ def test_five_fold_summary_compares_only_matching_teacher_ids(tiny_data, tmp_pat
             "predictions": predictions_for(teacher),
         }
     monkeypatch.setattr(expanded, "check_e8_sources", lambda **kwargs: sources)
+    private = recovery.usage_registry_path(tmp_path / "output")
+    migration_calls = []
+
+    def migrate(**kwargs):
+        migration_calls.append(kwargs)
+        return {"registry_path": str(private)}
+
+    monkeypatch.setattr(recovery, "prepare_usage_registry", migrate)
 
     def completed_fold(target, fold, **kwargs):
         _, validation = expanded.training_scope(tiny_data, fold)
@@ -317,7 +338,9 @@ def test_five_fold_summary_compares_only_matching_teacher_ids(tiny_data, tmp_pat
     result = expanded.run_expanded_usage(
         root=tmp_path,
         output_root=tmp_path / "output",
-        registry_path=tmp_path / "runs.csv",
+        registry_path=(
+            tmp_path / "output/results/runs.csv" if shared_registry else tmp_path / "runs.csv"
+        ),
         e8_directory=tmp_path,
         source_registry_path=tmp_path / "sources.csv",
         resume=False,
@@ -327,3 +350,140 @@ def test_five_fold_summary_compares_only_matching_teacher_ids(tiny_data, tmp_pat
     assert comparison["sources"]["teacher"]["rows"] == 10
     assert comparison["teacher_macro_f1_change"] == 0
     assert len(comparison["teacher_per_class"]) == 9
+    assert bool(migration_calls) == shared_registry
+    if shared_registry:
+        assert result["registry_path"] == str(private)
+
+
+@pytest.mark.parametrize("keep_mirror", [True, False])
+def test_recovery_preserves_complete_fold_after_shared_csv_overwrite(
+    trained_usage_fold, tiny_data, tmp_path, monkeypatch, keep_mirror
+):
+    from fashion.train import task3_usage_registry as recovery
+    from fashion.train.registry import RunRegistry
+
+    result, config = trained_usage_fold
+    monkeypatch.setattr(recovery, "Task3BaselineConfig", lambda **kwargs: config)
+    monkeypatch.setattr(expanded, "Task3BaselineConfig", lambda **kwargs: config)
+    monkeypatch.setattr(recovery, "validate_dataset", lambda **kwargs: (tiny_data, {}))
+    shared = tmp_path / "runs.csv"
+    mirror = tmp_path / "local/results/runs.csv"
+    mirror.parent.mkdir(parents=True)
+    mirror.write_bytes(shared.read_bytes())
+    bundle = {p.name: p.read_bytes() for p in Path(result["run_dir"]).iterdir() if p.is_file()}
+    other = RunRegistry(shared)
+    other._write_rows([])
+    other.start({"run_id": "other-notebook", "experiment_id": "gender"})
+    shared_before = shared.read_bytes()
+    with pytest.raises(ValueError, match="found 0"):
+        other.update(result["run_id"], {"last_completed_stage": "example_lost_update"})
+    if not keep_mirror:
+        mirror.unlink()
+    namespace = {
+        "REPO_DIR": tmp_path,
+        "DRIVE_TASK_DIR": tmp_path / "output",
+        "LOCAL_REGISTRY": mirror,
+        "DRIVE_REGISTRY": shared,
+    }
+    receipt = recovery.repair_connected_usage_session(namespace, expected_completed_folds=(0,))
+    assert namespace["DRIVE_REGISTRY"] == recovery.usage_registry_path(tmp_path / "output")
+    assert shared.read_bytes() == shared_before
+    assert receipt["verified_complete_runs"] == [
+        {"run_id": result["run_id"], "fold": 0, "original_complete_row_found": keep_mirror}
+    ]
+    assert bundle == {
+        p.name: p.read_bytes() for p in Path(result["run_dir"]).iterdir() if p.is_file()
+    }
+    assert (
+        expanded.reusable_fold(
+            fold=0,
+            output_root=tmp_path / "output",
+            registry_path=receipt["registry_path"],
+            splits=tiny_data,
+            spec=expanded.expanded_usage_spec(),
+        )["run_id"]
+        == result["run_id"]
+    )
+    private = RunRegistry(receipt["registry_path"])
+    private.start({"run_id": "next-usage-fold", "experiment_id": expanded.EXPERIMENT})
+    for epoch in range(1, 4):
+        other._write_rows([])
+        private.update("next-usage-fold", {"last_completed_stage": f"epoch_{epoch}_complete"})
+    assert private._read_rows()[-1]["last_completed_stage"] == "epoch_3_complete"
+
+
+def test_recovery_rejects_changed_complete_artifacts(
+    trained_usage_fold, tiny_data, tmp_path, monkeypatch
+):
+    from fashion.train import task3_usage_registry as recovery
+
+    result, config = trained_usage_fold
+    monkeypatch.setattr(recovery, "Task3BaselineConfig", lambda **kwargs: config)
+    monkeypatch.setattr(recovery, "validate_dataset", lambda **kwargs: (tiny_data, {}))
+    path = Path(result["run_dir"]) / "history.csv"
+    path.write_text(path.read_text() + "\n")
+    shared_before = (tmp_path / "runs.csv").read_bytes()
+    with pytest.raises(ValueError, match="artifact changed"):
+        recovery.prepare_usage_registry(
+            root=tmp_path, output_root=tmp_path / "output", source_paths=(tmp_path / "runs.csv",)
+        )
+    assert (tmp_path / "runs.csv").read_bytes() == shared_before
+    assert not recovery.usage_registry_path(tmp_path / "output").exists()
+
+
+def test_original_training_error_survives_registry_failure(
+    trained_usage_fold, tmp_path, monkeypatch
+):
+    from fashion.train import task3_baseline as engine
+    from fashion.train.registry import RunRegistry
+
+    def fail_training(*args, **kwargs):
+        raise RuntimeError("original training error")
+
+    def fail_logging(*args, **kwargs):
+        raise ValueError("registry row missing")
+
+    monkeypatch.setattr(engine, "_pass", fail_training)
+    monkeypatch.setattr(RunRegistry, "fail", fail_logging)
+    with pytest.raises(RuntimeError, match="original training error") as caught:
+        engine.run_task3_baseline_fold(
+            "usage",
+            0,
+            root=tmp_path,
+            output_root=tmp_path / "output",
+            registry_path=tmp_path / "runs.csv",
+            device_name="cpu",
+            child_spec=expanded.expanded_usage_spec(),
+            parent_run_directory=tmp_path / "parent",
+        )
+    assert any("registry row missing" in note for note in caught.value.__notes__)
+
+
+def test_recovery_records_interrupted_fold_without_promoting_it(
+    trained_usage_fold, tiny_data, tmp_path, monkeypatch
+):
+    from fashion.train import task3_usage_registry as recovery
+
+    result, config = trained_usage_fold
+    monkeypatch.setattr(recovery, "Task3BaselineConfig", lambda **kwargs: config)
+    monkeypatch.setattr(recovery, "validate_dataset", lambda **kwargs: (tiny_data, {}))
+    run_id = "t3_usage_expanded_e8_usage_smallcnn_f2_s2753_interrupted"
+    path = Path(result["run_dir"]).parent / run_id
+    path.mkdir()
+    saved_config = json.loads((Path(result["run_dir"]) / "config.json").read_text())
+    saved_config["parent_run_id"] = expanded.E8_RUN_IDS[2]
+    expanded.write_json(saved_config, path / "config.json")
+    (path / "history.csv").write_text("epoch,train_loss\n1,1.2\n")
+    receipt = recovery.prepare_usage_registry(
+        root=tmp_path,
+        output_root=tmp_path / "output",
+        source_paths=(tmp_path / "runs.csv",),
+        interrupted_run_ids=(run_id,),
+    )
+    rows = pd.read_csv(receipt["registry_path"], keep_default_na=False)
+    interrupted = rows.loc[rows.run_id.eq(run_id)].iloc[0]
+    assert interrupted.status == "failed"
+    assert int(interrupted.validation_fold) == 2
+    assert interrupted.checkpoint_sha256 == ""
+    assert interrupted.exception_type == "RegistryRowLost"
+    assert receipt["incomplete_runs"] == [run_id]
