@@ -1,0 +1,64 @@
+{
+  "schema_version": "task3_clean_slate_eda_v2",
+  "teacher_image_directory": "data/raw/teacher/train/images_train",
+  "foreground": {
+    "white_threshold": 245,
+    "minimum_fraction": 0.005,
+    "maximum_fraction": 0.95,
+    "padding_pixels": 2
+  },
+  "probe_views": [
+    "full_rgb_hog",
+    "foreground_masked_hog",
+    "foreground_letterbox_hog",
+    "border_hog",
+    "silhouette_hog",
+    "grayscale_hog",
+    "colour_summary",
+    "global_geometry_colour"
+  ],
+  "neighbour_representations": [
+    "raw_pixels",
+    "hog",
+    "scattering",
+    "fisher"
+  ],
+  "diagnostic_features": [
+    "log_file_size",
+    "brightness",
+    "contrast",
+    "edge_strength",
+    "near_white_fraction",
+    "border_connected_white_fraction",
+    "foreground_fraction",
+    "foreground_bbox_area_fraction",
+    "foreground_width_fraction",
+    "foreground_height_fraction",
+    "foreground_center_x",
+    "foreground_center_y",
+    "red_mean",
+    "green_mean",
+    "blue_mean",
+    "saturation_mean",
+    "value_mean",
+    "jpeg_quantization_sum"
+  ],
+  "image_canvas": [
+    60,
+    80
+  ],
+  "code_sha256": "56b46396e6d449916e02291ab0f1931c17fe4b2d925d42f2bc0e5a1d2cf02d75",
+  "split_digest": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd",
+  "task3_label_scope_digest": "afaeede6f879f519f00952749de6a7986da2d7c40d568d971d247bca43567af2",
+  "teacher_manifest_digest": "ab3b382e7c314043cb218f2d7c7eee0e0e5939f9dbc5a88973d60699b53c5e9e",
+  "environment": {
+    "python": "3.14.7",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "scipy": "1.16.3",
+    "skimage": "0.26.0",
+    "sklearn": "1.9.0",
+    "platform": "Linux-7.1.13-200.fc44.x86_64-x86_64-with-glibc2.43"
+  },
+  "audit_contract_hash": "74cb33cdb6d3e0e05616436cecfd02b7a3ef234e9caed273d1d55cea23190fbb"
+}
