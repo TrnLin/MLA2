@@ -1,0 +1,25 @@
+id,cv_fold,path,usage,articleType,product_family_group,models_correct,e2_prediction
+11966,2,data/raw/teacher/train/images_train/11966.jpg,Sports,Sports Shoes,family_0124eabefd6e9c11,0,Casual
+17993,2,data/raw/teacher/train/images_train/17993.jpg,Sports,Track Pants,family_0256430b8e4be422,0,Casual
+50667,1,data/raw/teacher/train/images_train/50667.jpg,Sports,Lounge Pants,family_0287a41136a0712f,0,Casual
+18614,2,data/raw/teacher/train/images_train/18614.jpg,Sports,Tshirts,family_035a8eab4b2a516b,0,Casual
+34495,2,data/raw/teacher/train/images_train/34495.jpg,Formal,Skirts,family_009ae022a2e94f9f,0,Casual
+39058,1,data/raw/teacher/train/images_train/39058.jpg,Formal,Cufflinks,family_01971954b192a53b,0,Casual
+40499,1,data/raw/teacher/train/images_train/40499.jpg,Formal,Watches,family_045459a06ff3a014,0,Casual
+43511,2,data/raw/teacher/train/images_train/43511.jpg,Formal,Dresses,family_08fd4842da3ee231,0,Casual
+31702,2,data/raw/teacher/train/images_train/31702.jpg,Ethnic,Earrings,family_0a6b2ba492cbe947,0,Casual
+46249,2,data/raw/teacher/train/images_train/46249.jpg,Ethnic,Tunics,family_0ecdfe9b1ae166de,0,Casual
+30794,3,data/raw/teacher/train/images_train/30794.jpg,Ethnic,Shirts,family_123c551bc0603235,0,Casual
+24543,1,data/raw/teacher/train/images_train/24543.jpg,Ethnic,Tops,family_190de34eeda50203,0,Casual
+45687,2,data/raw/teacher/train/images_train/45687.jpg,NA,Perfume and Body Mist,family_11dfff7d11be89c5,0,Casual
+32608,2,data/raw/teacher/train/images_train/32608.jpg,NA,Wallets,family_1b43859d1dc2922a,0,Casual
+6835,1,data/raw/teacher/train/images_train/6835.jpg,NA,Shoe Accessories,family_1caca1f2422580ca,0,Casual
+30992,3,data/raw/teacher/train/images_train/30992.jpg,NA,Perfume and Body Mist,family_1f38da162e55a853,0,Casual
+25140,3,data/raw/teacher/train/images_train/25140.jpg,Party,Clutches,family_1ccb8d961c1599a3,0,Casual
+33969,1,data/raw/teacher/train/images_train/33969.jpg,Party,Dresses,family_4032f48fbb449bd2,0,Casual
+44131,1,data/raw/teacher/train/images_train/44131.jpg,Party,Perfume and Body Mist,family_560ea672a79b9af5,0,Casual
+43644,2,data/raw/teacher/train/images_train/43644.jpg,Party,Dresses,family_7a669cfe713bb793,0,Casual
+33697,1,data/raw/teacher/train/images_train/33697.jpg,Smart Casual,Sandals,family_00d23cbcc9f63092,0,Casual
+45240,3,data/raw/teacher/train/images_train/45240.jpg,Smart Casual,Watches,family_0be1307fc191fd21,0,Casual
+45210,3,data/raw/teacher/train/images_train/45210.jpg,Smart Casual,Watches,family_19a606fdd809e41d,0,Casual
+45137,2,data/raw/teacher/train/images_train/45137.jpg,Smart Casual,Watches,family_20fc475035f9e924,0,Casual
