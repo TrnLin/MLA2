@@ -1,0 +1,49 @@
+{
+  "folds": [
+    {
+      "fold": 0,
+      "run_id": "t3_usage_v2_u2_hogsvm_usage_hogsvm_f0_s2753_a6ad243ce747_20260905T054052Z04fa8f",
+      "saved_probability_max_abs_error": 2.220446049250313e-16,
+      "raw_mean_margin_f1": 0.38532406649420065,
+      "calibrated_f1": 0.3821628942603867,
+      "all_solvers_converged": true,
+      "solver_iterations_min": 4538,
+      "solver_iterations_max": 5548
+    },
+    {
+      "fold": 4,
+      "run_id": "t3_usage_v2_u2_hogsvm_usage_hogsvm_f4_s2753_9e41360894cc_20260905T070228Z5803af",
+      "saved_probability_max_abs_error": 2.7755575615628914e-16,
+      "raw_mean_margin_f1": 0.4302581732674835,
+      "calibrated_f1": 0.33880239112752153,
+      "all_solvers_converged": true,
+      "solver_iterations_min": 4538,
+      "solver_iterations_max": 5944
+    }
+  ],
+  "inner_raw_crossfit": [
+    {
+      "outer_fold": 0,
+      "inner_raw_oof_rows": 26218,
+      "inner_raw_oof_f1": 0.3747441583182941
+    },
+    {
+      "outer_fold": 4,
+      "inner_raw_oof_rows": 26215,
+      "inner_raw_oof_f1": 0.3618942538006135
+    }
+  ],
+  "pooled_raw_mean_margin_f1": 0.4059456510939483,
+  "pooled_calibrated_f1": 0.36293188251462905,
+  "input_hashes": {
+    "results/task3/experiments/t3_usage_v2_u2_full_rgb_hog_svm/feature_cache/full_rgb_hog_74cb33cdb6d3e0e0.npy": "791bc942d6f1ba895b86d90fa7f850e74d6d5db8fcab2f703c03a39f939e9a17",
+    "results/task3/experiments/t3_usage_v2_u2_full_rgb_hog_svm/feature_cache/full_rgb_hog_ids.csv": "dd739298d6e6fa788ac6eff31085e5073bcc1f560dc09a55ae388c181bc1aa54",
+    "results/task3/experiments/t3_usage_v2_u2_full_rgb_hog_svm/usage/t3_usage_v2_u2_hogsvm_usage_hogsvm_f0_s2753_a6ad243ce747_20260905T054052Z04fa8f/model.pkl": "2fd6cd450e843c57b1e9a7bf8cddcef1b3ce5abe8c75cb820850ce9c3d63a506",
+    "results/task3/experiments/t3_usage_v2_u2_full_rgb_hog_svm/usage/t3_usage_v2_u2_hogsvm_usage_hogsvm_f4_s2753_9e41360894cc_20260905T070228Z5803af/model.pkl": "a815ff2027b709c930d2f974eb8d9bd1111edcd18fd00d7e195a3bb5dc4d71bb"
+  },
+  "seconds": 4.074318726001366,
+  "new_model_fits": 0,
+  "new_optimizer_steps": 0,
+  "protected_rows": 0,
+  "interpretation": "post-hoc paired calibration/margin diagnostic, not a new admitted model"
+}
