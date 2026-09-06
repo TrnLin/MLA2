@@ -1,0 +1,401 @@
+{
+  "identity": {
+    "baseline_controls": {
+      "augmentation": "none",
+      "batch_size": 128,
+      "channels": [
+        32,
+        64,
+        128,
+        256
+      ],
+      "checkpoint_rule": "final_epoch",
+      "early_stopping": false,
+      "epochs": 25,
+      "image_height": 80,
+      "image_width": 60,
+      "learning_rate": 0.001,
+      "loss_name": "cross_entropy",
+      "minimum_learning_rate": 1e-05,
+      "mixed_precision": false,
+      "model_family": "task3_small_cnn",
+      "num_classes": 5,
+      "num_workers": 2,
+      "optimizer_name": "AdamW",
+      "scheduler_name": "CosineAnnealingLR",
+      "scratch": true,
+      "seed": 2753,
+      "submission_eligible": true,
+      "target": "gender",
+      "weight_decay": 0.0001
+    },
+    "comparison_precision": "saved_checkpoint_ieee_fp32_batch128_v1",
+    "cosine_t_max": 30,
+    "data_sha256": {
+      "data/processed/label_maps.json": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
+      "data/processed/splits.csv": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+      "src/fashion/data/dataset.py": "aa2c712b12e3ff2667d2b5cd67391413c8bc3862f61b265fe7c73f266eb475ef",
+      "src/fashion/data/gender_name_truth.py": "e9369be8f2be67732ced4ccf4587f2e96ff6366e31c1629ec8f5c09e879143d0",
+      "src/fashion/data/images.py": "2a5683d9ef66e7ebf4ab033aab5f586c0af7122a758752ea0059bd3e2868883d"
+    },
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "implementation_sha256": {
+      "augmentation.py": "029f6ba932d6288fc0892e487daa492706b1ace6d7f0483f3754f554180efe2d",
+      "config.py": "bd5bed89b110b2465e5b126ce20f1c31b8bcc710157c2a42bde49f2f9ad59361",
+      "data.py": "f54664ec92c61a8026eed815e143f72237823df9086a430f343b8dd40f2f9fcc",
+      "metrics.py": "a87b2115b1b7473c45cc4c06d9b46e9705ae3a676c924b7350d91f795fde82ec",
+      "mixup.py": "14b9b48ce6e915ce6eb3c03b42fcec49d30f0d1ad8b188db8da585d771db13b9",
+      "model.py": "8e306a9588e5ba681f883b6eda143e63a592a9234665c4bd2f872d40de895cf1",
+      "registry.py": "46b0d24f3280bb66aa9d903d6716036697ebc88edef0195e6e7c3fa680962d18",
+      "sam.py": "c67e4afd023b0a4c4f418f7403a829cb68a2e2135b3b0f62ef861ebde60e81cc",
+      "task3_baseline.py": "1037449c392a4d97e0af8971cd79c5f4d62dc51b5a8659ff18d42c3a1c8fd46c",
+      "task3_decisions.py": "2b49758b788a1b754cb24987a7f3669712f64434edcf3b1cff5b5470b0b9022f",
+      "task3_g2_audit.py": "7af883338d97fe5e0be36ebd7e846f5a29d3867afd426d2668a70dad02b9280a",
+      "task3_gender_diagnostic.py": "a7ffdbe57bba3bd80ae516a6bb908a43e284b96aeab83e2167f1967f3b007bf7",
+      "task3_gender_dropout_darkening.py": "505933b8613ae8c42b4176fb01211a9541cc1fdc1ab7b2560d327e90de33f108",
+      "task3_gender_ieee.py": "7bcb31813615fc72ad29eb3806f2014fe1db3016c7f598165a0587d544d03728",
+      "task3_gender_mixup.py": "9510a18a9a2f353b87d58e8071ebec4fc303f823400e6acd98120b3fd5f31aaf",
+      "task3_gender_name_truth.py": "c5d25117980e2937f743ff4198f34563be69c66443f987b0e7f96335d6a6a854",
+      "task3_gender_precision.py": "1abfe2d05ce47b7a48ccdecdc6a1c43bc8ae051446a1d1627ae04a852a538f4a",
+      "task3_gender_sam.py": "81a25082098e7fb1b4915786d4a0235728b3be77dbac70bb9fa59fcc39733bff",
+      "task3_gender_sam25.py": "e158cc2140c010c32eb4db222cf16ccf6e44fbef2b8f88cf7e73569c2427ee12",
+      "task3_gender_sam25_cv.py": "7bf1981614c4530d800530ca205fc75004980980808ac0dd63f1637ca0fdf063"
+    },
+    "paths": {
+      "darkening_directory": "/content/drive/MyDrive/MLA2/task3/experiments/t3_gender_dropout_030_mild_darkening/gender",
+      "dropout_directory": "/content/drive/MyDrive/MLA2/task3/experiments/t3_gender_dropout_030/gender",
+      "e6_directory": "/content/drive/MyDrive/MLA2/task3/experiments/t3_gender_e6_gem_p3/gender",
+      "g2_directory": "/content/drive/MyDrive/MLA2/task3/experiments/t3_gender_v2_g2_translation/gender",
+      "grayscale_directory": "/content/drive/MyDrive/MLA2/task3/experiments/t3_gender_dropout_030_mild_darkening_grayscale_010/gender",
+      "mixup_directory": "/content/drive/MyDrive/MLA2/task3/experiments/t3_gender_name_truth_mixup_alpha020/gender",
+      "name_truth_directory": "/content/drive/MyDrive/MLA2/task3/experiments/t3_gender_name_truth_dropout_030_grayscale_010/gender",
+      "precision_directory": "/content/drive/MyDrive/MLA2/task3/diagnostics/gender_precision/20260905T085822668071Z",
+      "sam25_directory": "/content/drive/MyDrive/MLA2/task3/experiments/t3_gender_name_truth_mixup_alpha020_sam005_epoch25/gender",
+      "source_registry_path": "/content/drive/MyDrive/MLA2/task3/results/runs.csv"
+    },
+    "precision_evidence_sha256": {
+      "precision_comparisons.csv": "10d5d38011346e8466bf4c7b73314a21b11b2c81fafd45f9bbce3e428874aed9",
+      "precision_status.json": "8d51320f94bbb770082cd36618fcdc7898089443293fd889aa80f52253551fdf",
+      "t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f0_s2753_029107022917_20260831T060941Z1f0fc7/train_probabilities.npz": "44c87035a784aae3609a48be6f8a3b1b778d63a33ca87ef32aea7841f51f0e54",
+      "t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f0_s2753_029107022917_20260831T060941Z1f0fc7/validation_probabilities.npz": "62b98c811abc197818779b748f9bf299d5eac56f8877afb55636375ea8a3405e",
+      "t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f4_s2753_029107022917_20260831T064434Z46c915/train_probabilities.npz": "2078452e787673fdf9d7472ef8385bd3babc74bb11637d67a82f3b5f8ffb0e0d",
+      "t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f4_s2753_029107022917_20260831T064434Z46c915/validation_probabilities.npz": "c3b43f987308906998ffa02c0c661d38377241bb590b9dfc0a0fef2cd7012228",
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6/train_probabilities.npz": "c02ff3812ea36a175fe6d6ce05d42817b7fd982e2bc19a97d17953a6127e573a",
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6/validation_probabilities.npz": "bd278b4d623ef06cf87d6214d5352e49275261226af26fa8fa252686c591f5c1",
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1/train_probabilities.npz": "d5a09d02003812d2b0ba4b9364d5aeadbd8214ace743a67cfa731d2466a2a3d2",
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1/validation_probabilities.npz": "dce87ef51b0a5156725fbef0f039dfccfe284819c159d2013d4b81b86df987e5"
+    },
+    "screen_audit_sha256": "cde606d1cfe37cab5b3a41e5b93703f17fc1c97a882af4ae10a36d01a7baf09f",
+    "screen_decision_sha256": "4d495669701cb8e5fe05dbb6dfd8e6e66c7232f0d0dac6d97df729e28f533ca4",
+    "screen_evaluation_sha256": {
+      "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_gender_smallcnngem3_f0_s2753_5fcf4e0e0035_20260906T101038Z1eda8d": "ed1f8e29c25dce9da67221c89283196da25fc3d28d47caf10d91a79cbd163140",
+      "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_gender_smallcnngem3_f4_s2753_5fcf4e0e0035_20260906T102136Z29db40": "5be2141413b506fc5d661bdec2e30395d20d241e8831a450325e4ea0512c9f03"
+    },
+    "source_sha256": {
+      "t3_gender_dropout_030_gender_smallcnngem3_f0_s2753_2ab5e633206b_20260905T111550Zce42ad": {
+        "config.json": "d58c6b4a2c456e3d91f25841fd57cb876d90af64b8a8ba1423686332f56aa16b",
+        "final_epoch.pt": "547da259868c834286269e87d2c1d27ce2ca9248f652049b2408d8f18f904a88",
+        "history.csv": "7a079e93f7f408c82f650f378d90a02afd1aeb845fc69b4c37b3dab1df76c011",
+        "metrics.json": "9a9cea927361c717fd03ca96f0d7dd0712d849907fbc02cabe50dc158da9bc11",
+        "normalization.json": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e",
+        "oof_predictions.csv": "0da5270eb1871ad39f0d6304fdbb91d06a3c6051c9a1f31e3e9c24eed64442ea",
+        "robustness.csv": "e8f36ef976f3adf29c9c86789d7c9cc0c7e4ab3179e9c58cdd827cba11f2a33f"
+      },
+      "t3_gender_dropout_030_gender_smallcnngem3_f4_s2753_2ab5e633206b_20260905T112541Z8145b5": {
+        "config.json": "3b6967777424990924f688a0bc82509ee1f4587031922a83e7fda725364e590b",
+        "final_epoch.pt": "b04a895f199ef375c28bf6656330c5a059b6cbbd1976596943012848d118ac1c",
+        "history.csv": "aa3e12cd2fb71e15f85614874eeda726156e0a82e150444567d444b1372729cf",
+        "metrics.json": "bf0144bb2e126c1c4bb3973616f33e543e18abc74ca861a3d954cea61ca81f58",
+        "normalization.json": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2",
+        "oof_predictions.csv": "cf3b3278e5aa60ca3d0b4d77c2f44a7b41d02bcc93d426c1b0c43b2f81e44ea3",
+        "robustness.csv": "5d09667168e7e8457f79edaf930c81a8ba370b9373f3c36461f9a6c775af391c"
+      },
+      "t3_gender_dropout_030_mild_darkening_gender_smallcnngem3_f0_s2753_cfbed3f0fed4_20260905T123721Z5d546f": {
+        "config.json": "cdd5ec9cfe91b6e47474baea0d48b55363a5933314e4956c8f103852e88df9ca",
+        "final_epoch.pt": "507793f49328545252e6d403495d057091a48192405abedb8ae20150fe6bc41f",
+        "history.csv": "e1973bac6400f88f9589dd4363003f88c52dd5bbc2f0eaf7727c69ed43e41b7d",
+        "metrics.json": "9f1659942658ff19928c00cdc8d3966e8b130bd651c9db6b8413fff7b5666649",
+        "normalization.json": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e",
+        "oof_predictions.csv": "e40a4f1bf4361b03db72adadca8e23d4f6b1ab8a13c80edc10e38f6fdffb5a2a",
+        "robustness.csv": "c4a8ffc98623463743c55d9479349a8c7cb4cc30691488b897cf063ca6941450"
+      },
+      "t3_gender_dropout_030_mild_darkening_gender_smallcnngem3_f4_s2753_cfbed3f0fed4_20260905T124728Z7dfb12": {
+        "config.json": "02d37c5b5b2610a7356964051b25be790321c7709701655ef28c6fb8b6029768",
+        "final_epoch.pt": "6a10a5edb78aa32c9736dc84d35af9c2ca8f94ec88438080c3d612219a27c535",
+        "history.csv": "8d05f57ffb753b498d09b8fb678df25dbe6ab0464bca0de8f6e59e12b44ef70d",
+        "metrics.json": "ac1c3700415b8a681ec3278e5b810c8f0d3dd97864116c256e4433b94b7b95f6",
+        "normalization.json": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2",
+        "oof_predictions.csv": "75e22beba575be959b4352dd803de0c9b0990792b7a50ac348ba2a6ad485fdf3",
+        "robustness.csv": "b39404de4fb3834fa1d900cf31d083c960f7ccfc369910ac78858e1196bafd5f"
+      },
+      "t3_gender_dropout_030_mild_darkening_grayscale_010_gender_smallcnngem3_f0_s2753_eb37119b7e68_20260905T144455Ze47ef6": {
+        "config.json": "de829d1e32ff89145e05a39f4e2ed31b83a978b69c4d83024a189408d1b582d5",
+        "final_epoch.pt": "9bc554d69e09116c0c673ea555fcf05f890b012915119ec87c446fb7c96e6293",
+        "history.csv": "c21256afa01c5d576079e4602468c069bd91a483ab6619ff17ff52777a012bbd",
+        "metrics.json": "f4de8955556981dbdb50d10c77933a13ac332f59da81b58da61a68dff0f49e4c",
+        "normalization.json": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e",
+        "oof_predictions.csv": "2081566dc21db28e68e20facaec0493688352b9fa83e46b6a61693d2470ff60b",
+        "robustness.csv": "def98a89f7343db45765ac7312bb7065fef822fb00ae2974f4725f667975a719"
+      },
+      "t3_gender_dropout_030_mild_darkening_grayscale_010_gender_smallcnngem3_f4_s2753_eb37119b7e68_20260905T145521Z7d0a34": {
+        "config.json": "766d741fea2427ee070f7efe30087d12428fb6be0ddd961edda84b9d9382c746",
+        "final_epoch.pt": "cf9198178dfeb25f42d1ae2ac295c40ecacdf5de0d4a8297434eea017169d317",
+        "history.csv": "bdb59a1fa7b1823b5040c8e704aecf893c735fb205e7f9030db1e8905060f2f9",
+        "metrics.json": "359791d42760969fbf267b15c6dc37fca50bdb966a22df132ab1efd521ce06f2",
+        "normalization.json": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2",
+        "oof_predictions.csv": "945a7832bf2550f7d8c35b4eaed9201fe678de38218d5369f296f4d35bee95d6",
+        "robustness.csv": "b24625a21dfe976677ea9fcfd2fca56bdcf95b54e8d02491950d95fc7fb32d34"
+      },
+      "t3_gender_e6_gem_p3_gender_smallcnngem3_f0_s2753_a8c09286451b_20260831T090059Z0bab1f": {
+        "config.json": "3d88fce2c8094462a1bae39b1c32483c23737c82287c028f7f5ebabd452e3526",
+        "final_epoch.pt": "72728c200141d6e5f672f1ab097a608a9b4a5d7164b83681d0c9ff2efbe59b62",
+        "history.csv": "0b0ed79d7e1a73d02878c58016336bc572a51326292c41a0df870e659920185b",
+        "metrics.json": "8ec771fa2ac3f100358b18233a1dcb8205d1e622262cb92b692e31aa5d8debe3",
+        "normalization.json": "643edd3763f7e5cec8a6e1031e02fff27e117d58329e44c49559c8cc8df5534a",
+        "oof_predictions.csv": "5479ed8da3a240ec491fdb704a4a3aec378c0002691ba6f808606f306a29e846",
+        "robustness.csv": "e812dc36e313b43c27b07ffb1d148cdd5eeceab4ba81a54f393c2b41dfefdc6d"
+      },
+      "t3_gender_e6_gem_p3_gender_smallcnngem3_f1_s2753_a8c09286451b_20260831T090940Z6e10b5": {
+        "config.json": "141108e3514354e90b434bf31e89054e30e74d2ba0608dc4fe5420587d0d3f0e",
+        "final_epoch.pt": "4214f58f33e42eebc39fcf733bea56362929fcd5c15887c5f563c5a232363b55",
+        "history.csv": "dfd83048a09f4fd97042b576f33ad032d34a2f9e69394a8d0eb3def703a3239d",
+        "metrics.json": "0e903dd46812e1c948fd7f64bac7811bf0aeb7f5833adf0a44ce39b72b3c7e7f",
+        "normalization.json": "316222255a022a575c48773b8b58b928cc95634d59f17ad8d7bf37a90769cee2",
+        "oof_predictions.csv": "fe857d94a27da59a25bacbcf7c685d48730df2e5700992c63fa2931cedfe0f9f",
+        "robustness.csv": "fcd66a7fa310257c4abf6d1e67a8fd4b9894a7e345cd87c6dc0c905078318ccb"
+      },
+      "t3_gender_e6_gem_p3_gender_smallcnngem3_f2_s2753_a8c09286451b_20260831T091823Zabb677": {
+        "config.json": "6f408618d97e0d1dcdd863c27b6eb357cd2d28f1b44fd4d9577ab56e7fa57c31",
+        "final_epoch.pt": "691c3ac7e8ea362e31bf25c949d80f22296423303737051ca5fdc205024929dc",
+        "history.csv": "d0806014c7b988ebef35df3831f629897f7d6b28bfdc88d78bf681db12283a02",
+        "metrics.json": "74f32ae46c2be4e68668692aa77b374f5f9d8411be56e153c136fbefd5488696",
+        "normalization.json": "36d09d17785f438277151d6b410778118c2651d1ec0221b6de4b86398d00267c",
+        "oof_predictions.csv": "ef93ffae7cc06c0cc0d27ed1b52c9c8011469fe55b828107fcd913b2628c1619",
+        "robustness.csv": "7212421b0c703e54d1457bb8f1d06a7c6c44a58530b29faeebbbab5b63560482"
+      },
+      "t3_gender_e6_gem_p3_gender_smallcnngem3_f3_s2753_a8c09286451b_20260831T092710Zee7c6a": {
+        "config.json": "9aeb2d0866ec4325e2398d4d549302d25489bc3af2956fb8589d5b8ae028e5fe",
+        "final_epoch.pt": "eef74d4c6c708aa2d3a2cac0dc9fc854af1eec9ddcdcc47ec6724fd891711408",
+        "history.csv": "b10ed191d485c28d6cb2a6907ce5c9789beef03eb5e78aa262144d9e173af203",
+        "metrics.json": "b238dfad04b2852c63852a44fdb5f4912caf3600ac3a4b0a0d5dafdd4fe45ce6",
+        "normalization.json": "f3d070bc0401cb38a91dfa1eabbd944a4667a6d013fa3a54ea6c27906e553a53",
+        "oof_predictions.csv": "fe4996c3b0ae510d30141e708c26c8478cfbf4c5a1f5970e77ea49d3c259cb8d",
+        "robustness.csv": "40f7243a1492894b583c9341ebfb28fe4bbe53e2c02ebbb5fa364b97b01db085"
+      },
+      "t3_gender_e6_gem_p3_gender_smallcnngem3_f4_s2753_a8c09286451b_20260831T093553Z63b5fd": {
+        "config.json": "e4c2a6a97b978d0d8c25c8950314a94c9b2294b45cb95f93aa01bc3087259a53",
+        "final_epoch.pt": "74f7ccb07f391ad466df1a433509b881bd5383a7062419a2f7d306c2cf266b31",
+        "history.csv": "674276a2c4d3326429744e04110726730648430c2818b00592209e9a076e9d89",
+        "metrics.json": "9831be330ee5a19b5f057b1e98f96854bd34d934b741b19afe7fcca9c677c3ed",
+        "normalization.json": "539e5174b1f44e350d36d1e7fed9a79b5b92e47e3d0ad1e8edf134f6cda70d87",
+        "oof_predictions.csv": "fb47a84c6f6bbced7bfeffc9cf640c61b13d6505bb8b8afa757792ae9edc948b",
+        "robustness.csv": "aac143a0ee8c6f4f38a1813ac50264d889ea6c09e61edc6af837dcbddb01b30c"
+      },
+      "t3_gender_name_truth_dropout_030_grayscale_010_gender_smallcnngem3_f0_s2753_416e64f58f57_20260905T160634Z0acdc0": {
+        "config.json": "6018ebaa70bbb431b8cd7dd678a61a73171c21171a01343ff04d8f8864a0470d",
+        "final_epoch.pt": "e33207207876665d1ad5ba24a4700e36328eb555e2a7597bb6f780afd55ecc3b",
+        "history.csv": "d074b341792b23090628a6cd5dd7c7a0c2093c128a441796598ff9d62d85b59a",
+        "metrics.json": "9315c46387f12dadec96a8aee7644af4334bcec09d892791c8c96bb2d3f72ea5",
+        "normalization.json": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e",
+        "oof_predictions.csv": "edc7a30c057d53953ba10cbb28db0e0c56c86f161559c1980f3445eda39f7e39",
+        "robustness.csv": "9acb93da73a4b08772dc139c67dc7f0d1b3a8480ae8554e78b5b25129fc0fa1e"
+      },
+      "t3_gender_name_truth_dropout_030_grayscale_010_gender_smallcnngem3_f4_s2753_416e64f58f57_20260905T161722Za0a0f7": {
+        "config.json": "08ce7ba0f74188b4aeea4802103f7a763ccb00fa80d5c7654094953b72c256a5",
+        "final_epoch.pt": "9b571bc2726238d447019f94a8405ba3be050a637c0e7b6b053415b4e676c336",
+        "history.csv": "5703e344d014ec4b33410d24fec3651e5f83300ab5ad367e216f351e68c513b1",
+        "metrics.json": "cacc6d91e03f0f126b9b3a495df6b6df8d00532965fbf013ec8bf7dc21791ae0",
+        "normalization.json": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2",
+        "oof_predictions.csv": "c90cbe9fc567b98426e4aeb3c28add10764b954c85891443ae6a5e72765cebf2",
+        "robustness.csv": "b7bfbc3a54d997a42c359f0dc95b65f769963e6bccddc9ea69247b0d059f4e2d"
+      },
+      "t3_gender_name_truth_mixup_alpha020_gender_smallcnngem3_f0_s2753_4566a61e0e2d_20260906T070013Z8f7ca5": {
+        "config.json": "5a8214917e34a489f8301614cb95fa6058e751c894e801ab77b35686ff0b7043",
+        "final_epoch.pt": "63f7ca125e097e19300450016580f7285d616512bbe3c0f37ba13adc5541ec4b",
+        "history.csv": "e0ff2db282598aa1520b7d8989a492fb276eeaae117427c6f1d236bba7576607",
+        "metrics.json": "b243150a13af4cd6653862973192928189072052cce8a2d5e8d5f884a11c11e8",
+        "normalization.json": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e",
+        "oof_predictions.csv": "eac0433a60ae2bbe8ffd3308d1b054a9a0f9f142a30ce122b016fe788cef2b07",
+        "robustness.csv": "a148be52488b5ee8b289b592bb22308855f63254020838687ea4b2b9f5cf4e2c"
+      },
+      "t3_gender_name_truth_mixup_alpha020_gender_smallcnngem3_f4_s2753_4566a61e0e2d_20260906T071118Z37920b": {
+        "config.json": "7094a9f326349c614c05fa58964fe8048704c794ba770f7b567f966e3895363d",
+        "final_epoch.pt": "5a1fd15e3f2df9dca6cd1596ff4609d65b56198f17f79885bebd0e29cfa31d0a",
+        "history.csv": "51a2f8b9b0a8e8215bb484b297a781e41ed8c32b08c234d0943994aec60ec114",
+        "metrics.json": "86b393b9d7f2613f27ea16a1864dfcb804837ee03a771a2433154c527548c0dd",
+        "normalization.json": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2",
+        "oof_predictions.csv": "670babd4b89bef0ef989298893f7342babe0accf710f60152220c3883d9126b7",
+        "robustness.csv": "d256c496cc02a2973b9a93a976b8aeffed3e00f2706eaa043a16a8b0bf41b1cd"
+      },
+      "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_gender_smallcnngem3_f0_s2753_5fcf4e0e0035_20260906T101038Z1eda8d": {
+        "config.json": "512d6c79b1e6b3076e8d9c2036e10ccc053bcda722511730b5a930632470ca5a",
+        "final_epoch.pt": "f3398c94b58878e4e16912bb282a549d9c3df9ed69ebeb276a88f4970d247575",
+        "history.csv": "e2bafb230668c159b00c6576ebd6af5f05336f41882d63f42047d2bd247a68e7",
+        "metrics.json": "e263116c0a1583a2b4ddff07862e760d21f494170b64fccc96d39061d1fe8493",
+        "normalization.json": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e",
+        "oof_predictions.csv": "a99c8347cbab091ddbc788ff5b9220eff1fae8119077e5891ce47367dd45fcac",
+        "robustness.csv": "a19edaa1aa4733ddb59ffeb0e87481f8b98250263b4567e9b22b051c581addab"
+      },
+      "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_gender_smallcnngem3_f4_s2753_5fcf4e0e0035_20260906T102136Z29db40": {
+        "config.json": "862e606e98a383e0b3291f880413ab1f404de6dbc5a36181098b5422915126b5",
+        "final_epoch.pt": "ea2ab6f1b2015412c32dddeaadbd6955ddc52eff23d215e2215835a80ba5b1f7",
+        "history.csv": "2233fa9f79f2c769b5adc488b04071f68d7277d473af28abc5ca7029e2853efb",
+        "metrics.json": "e1337c02a5d904180eb853c49a7aeefdffc9e84b9dfbb27c6ee9182723120a94",
+        "normalization.json": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2",
+        "oof_predictions.csv": "a8208090b0ad0e3e77a8fcd403b933af17fb00060103c408df00354f89d7898f",
+        "robustness.csv": "5dc3e392676d9cb2be13a1cf8d3cfd65f9d02c94d6d5eb5c6855b106e3774fe9"
+      },
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6": {
+        "config.json": "12a00ed5d1f34ebb816ceb4e750600ca3481764d55379623ce3c751925ad437d",
+        "final_epoch.pt": "0eaf3d0e7efe36e16bb5765dd9a62d4b776e38ba3eac2fe5eff6ad013cc6a71f",
+        "history.csv": "cfc09a982d07b299ec8bd60fc675459d901595eee2117adda3f656330e1fe602",
+        "metrics.json": "4a72b9d2f32a4f95673c75ad9bb848fbbbf6b8857af5aa46d7724ce8bfa37cec",
+        "normalization.json": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e",
+        "oof_predictions.csv": "b57fd083ccaee7ce3a51e029e43329866d1abcf9cf26145384273d9774a51898",
+        "robustness.csv": "c4a0f4336c407a67cda77c82dc1ace222e89d255e9a03f316d9f4756eac42385"
+      },
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d": {
+        "config.json": "cc937e7733548faf97f2256c092527825b77c1b90388f5ec49f81eb058ccfbed",
+        "final_epoch.pt": "4b7817218a58a31a9202536d13fb0dab0dd3c69e120c206d3b5a8f270f24ba16",
+        "history.csv": "690b764f5a8fb52c1c5bae30d8dc8e0dabaaef50d2b53968e2ceaca727d2b4ea",
+        "metrics.json": "c4091eda294a6761a375a3eaa722c015c022274eca2a0fbacf19f230d51ad056",
+        "normalization.json": "5a8364f7c4f333d4f35c54fd945b354320eab3bae2bac30b850608698726a1e6",
+        "oof_predictions.csv": "bb786b410dda038640373c5f3a585371f65a6a16c856ebcbadb2f3aa008ec9f6",
+        "robustness.csv": "ff611489201038b1823300cf38c4ecb2edc86c50c685b40bc3513f49da0a7a97"
+      },
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa": {
+        "config.json": "4b0851225ca1f73cbf32082a33fd6a1b26e5b63b50e8c9643341eac4abbeaf6a",
+        "final_epoch.pt": "32c2847189a57c9c3ff40d1c20dd193de53330c8192fadc3364c13ba5fba83b5",
+        "history.csv": "a147be0cd34d6fe09c7e2121e5900599ea31c9670e2dd60152030986b84647af",
+        "metrics.json": "aa76a1f6c249e42737d250ea4982a4d04999162042717db82fcab8ead9ea606f",
+        "normalization.json": "7b5a56f3fd5350bac34d50c3f4c32546996482d845cbf2c68e33d1c73dca2b0c",
+        "oof_predictions.csv": "43e668f58f213fa4a555c88d108e938a51600d27e291761dea80f1a53c8b7ead",
+        "robustness.csv": "c5f829cd1e9261afb2fe97ffee68a29a6b535f913aee598e7a848a3353066acf"
+      },
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef": {
+        "config.json": "0839621690c84972954a351b29c16910e8a88955d9ecaaed1c039cd1c5c57ea4",
+        "final_epoch.pt": "a6acc6c718c27daa31f20c7938e58ac079cd42a743b6c5d3ce14b49b39abbbdb",
+        "history.csv": "64f32c1296204a0e5630172f5bef6ad677fe0996e7b2953904070584f4805f73",
+        "metrics.json": "0d16accbacc3abe3f45dc067c0e0e5899ae7ce291f951c44c35fa83d52526ff1",
+        "normalization.json": "3724fe3bd8d96a0cf6292d5451f66a1ae324dcd180296b66289e1acb6a3e1817",
+        "oof_predictions.csv": "fc02d4523da537fc39f5dc88eaae5e84cb9b1205539591f892ef79068beacb1d",
+        "robustness.csv": "974158bfd92b1bff14ba661d1d3157223002b5e93477f39cdc7f231f6b16cf49"
+      },
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1": {
+        "config.json": "f63e98722733ef2a1752d0b8b8806852c923f831a996ca4f6023c9c533953f42",
+        "final_epoch.pt": "12399c4125bc67fcaca433dae0e6fe4e2a3f30a7ac745bdfa337c8595e82a43e",
+        "history.csv": "75773ed37b6f52dc80740a8db1a4922ec3fd06d93ad26195c1c8a93e1d6f3a54",
+        "metrics.json": "c8c49172d99eb7349168d00061beb441481c8b2566e3a19d90db46520dc7e7b2",
+        "normalization.json": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2",
+        "oof_predictions.csv": "94bc9531caa7c4fc2370398ec863ef5511689d806b626c9143fe93199996b286",
+        "robustness.csv": "cb54ac094c57df5152c601a8216209f9e6667b52bf1ae21d8c42d4cbb302017e"
+      }
+    },
+    "spec": {
+      "artifact_dir": "experiments/t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
+      "auxiliary_loss_weight": 0.0,
+      "auxiliary_target": "none",
+      "changed_factor": "five_fold_evaluation_of_fixed_sam25_recipe",
+      "checkpoint_policy": "final_epoch",
+      "class_weight_beta": null,
+      "class_weight_cap": null,
+      "classifier_dropout": 0.3,
+      "cosine_t_max": 30,
+      "darkening_rng": "persistent_worker_initial_seed_xor_0x474431",
+      "early_stopping_min_delta": 0.0,
+      "early_stopping_min_epoch": 0,
+      "early_stopping_patience": 0,
+      "execution_policy": "g2_training_defaults_ieee_comparison_under_3gb_v1",
+      "execution_scope": "five_fresh_scratch_folds_reuse_only_completed_cv_runs",
+      "experiment_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
+      "focal_gamma": 0.0,
+      "gender_label_variant": {
+        "canonical_split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+        "labels_sha256": "168f7513743fc28b37380ec6b43d0da05243d70e51dbe6d13d311f56a439764a",
+        "rule_version": "single_explicit_gender_cue_v1",
+        "summary_sha256": "f6e656d93d0af949d8cb0621e28b420fd671405fcf04a9347bcaab03a7cc14fe",
+        "variant_id": "gender_name_truth_v1"
+      },
+      "grayscale_probability": 0.1,
+      "grayscale_rng": "persistent_worker_initial_seed_xor_0x47524159",
+      "hypothesis_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
+      "independent_blind_test": false,
+      "input_view": "full",
+      "label_smoothing": 0.0,
+      "loss_name": "cross_entropy",
+      "mixup_policy": {
+        "alpha": 0.2,
+        "evaluation": "unmixed images, plain unweighted cross-entropy",
+        "lambda": "one Beta(alpha, alpha) draw per batch",
+        "loss": "lambda * CE(logits, y) + (1-lambda) * CE(logits, partner_y)",
+        "online_train_f1": "not_applicable_mixed_inputs",
+        "partners": "random permutation within the current training batch; self-pairs allowed",
+        "placement": "after existing image augmentation and RGB normalization",
+        "probability": 1.0,
+        "rng": "dedicated numpy PCG64; seed XOR 0x4D495855; persists across epochs",
+        "version": "gender_mixup_alpha020_v1"
+      },
+      "model_family": "task3_small_cnn_gem_p3",
+      "name": "gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
+      "parent_artifact_dir": "experiments/t3_gender_v2_g2_translation",
+      "parent_folds": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "parent_role": "same_fold_G2_comparison_only_no_weights_loaded",
+      "parent_run_ids": [
+        "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6",
+        "t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d",
+        "t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa",
+        "t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef",
+        "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1"
+      ],
+      "primary_loss_weight": 1.0,
+      "recipe_source_commit": "5f0789506239944f2e836348b00bdc5e34d5658d",
+      "recipe_source_run_ids": {
+        "0": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_gender_smallcnngem3_f0_s2753_5fcf4e0e0035_20260906T101038Z1eda8d",
+        "4": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_gender_smallcnngem3_f4_s2753_5fcf4e0e0035_20260906T102136Z29db40"
+      },
+      "run_model_token": "smallcnngem3",
+      "run_prefix": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
+      "sam_policy": {
+        "adaptive": false,
+        "base_optimizer": "AdamW",
+        "batch": "same augmented mixed inputs and labels for both passes",
+        "batchnorm": "training statistics twice; retain first-pass running buffers only",
+        "checkpoint": "final_epoch",
+        "diagnostic_epochs": [
+          10,
+          15,
+          20,
+          25
+        ],
+        "dropout": "same mask on both passes; advance torch RNG once",
+        "epsilon": 1e-12,
+        "gradient": "mixed cross-entropy before weight decay",
+        "norm": "global L2 over all trainable parameters, including BatchNorm affine",
+        "rho": 0.05,
+        "update": "restore exact original weights; apply second gradient and AdamW decay once",
+        "version": "gender_sam005_adamw_epoch25_v1"
+      },
+      "sample_weight_strategy": "none",
+      "screen_rule_version": "sam25_five_fold_fixed_recipe_v1",
+      "selection_basis": "04ai_epoch_diagnostics_post_selection",
+      "target": "gender",
+      "training_augmentation": "translation_2px_p05_mild_darkening_p025_grayscale_p010",
+      "training_epochs": 25,
+      "training_selection_strategy": "all"
+    }
+  },
+  "initial_source_registry_sha256": "cbb20779a31069a8870d6c97670a314e6c4322eb2d31d2c5c4816ba684a9e0d3",
+  "optimizer_steps_at_audit": 0
+}
