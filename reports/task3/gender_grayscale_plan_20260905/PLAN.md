@@ -86,7 +86,7 @@ baseline, and a lower training score alone is not success.
 
 ## Run and output
 
-Notebook: `notebooks/04ac_task3_gender_grayscale_screen.ipynb`.
+Notebook: `notebooks/task3_training/gender_grayscale_screen.ipynb`.
 Entry point: `fashion.train.task3_gender_grayscale.run_gender_grayscale_screen`.
 Push the code and notebook, use a fresh Colab L4 runtime, then Run All.
 
