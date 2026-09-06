@@ -22,6 +22,11 @@ code, scores and useful failure evidence.
 - `local-assets.csv` records the ignored registry, saved-run evidence, model
   weights, prepared variants and reviewed external inputs. These are still
   needed for full reproduction; they are not disposable.
+  The original Task 3 live registry is preserved byte for byte at
+  `results/task3/registry_before_main_merge.csv`. The shared tracked
+  `results/runs.csv` combines its 411 existing rows with the 27 Task 4 rows
+  from main in a union of their columns. No new training run was created.
+  Dated report registry snapshots retain their original bytes.
 
 ## Restore a local checkout
 
@@ -50,6 +55,11 @@ The existing local teacher files are at
 `/home/dinhquan/personal/academic/RMIT/Machine-Learning/ASM2/A2_FashionDataset/`.
 Copy or link these four items to the paths above. Keep the teacher CSVs unchanged.
 See the root README for the pinned environment setup.
+
+The merged project uses main's shared dependency pins, including SciPy 1.18.1,
+and retains Task 3's Kymatio dependency. Saved run configurations still record
+the original training environments; merging source does not re-evaluate models
+under the newer shared environment.
 
 For Colab, reuse the named data ZIPs in each notebook's setup cell.
 The notebooks fetch code from `fashion-analysis-and-cleanup` on GitHub.
