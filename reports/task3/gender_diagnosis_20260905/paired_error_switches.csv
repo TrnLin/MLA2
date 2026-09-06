@@ -1,0 +1,229 @@
+dimensions,slice,rows,families,g2_errors,compact_errors,compact_fixes,compact_new_errors
+gender,Boys,274,161,92,101,11,20
+gender,Girls,216,134,94,107,23,36
+gender,Men,7102,4931,348,444,119,215
+gender,Unisex,708,578,325,376,37,88
+gender,Women,4810,3331,411,448,111,148
+gender × articleType,Boys | Blazers,1,1,1,1,0,0
+gender × articleType,Boys | Booties,4,2,4,4,0,0
+gender × articleType,Boys | Capris,2,1,0,0,0,0
+gender × articleType,Boys | Casual Shoes,13,10,7,9,0,2
+gender × articleType,Boys | Clothing Set,1,1,0,1,0,1
+gender × articleType,Boys | Flip Flops,5,5,3,2,1,0
+gender × articleType,Boys | Gloves,4,2,2,3,0,1
+gender × articleType,Boys | Jackets,4,2,4,4,0,0
+gender × articleType,Boys | Jeans,10,4,4,4,0,0
+gender × articleType,Boys | Kurtas,1,1,0,0,0,0
+gender × articleType,Boys | Rompers,2,1,0,0,0,0
+gender × articleType,Boys | Sandals,5,4,3,3,0,0
+gender × articleType,Boys | Shirts,25,8,2,8,0,6
+gender × articleType,Boys | Shorts,16,10,12,9,6,3
+gender × articleType,Boys | Sweatshirts,2,2,2,2,0,0
+gender × articleType,Boys | Trousers,3,2,2,3,0,1
+gender × articleType,Boys | Tshirts,171,100,41,43,4,6
+gender × articleType,Boys | Watches,5,5,5,5,0,0
+gender × articleType,Girls | Capris,16,7,7,13,0,6
+gender × articleType,Girls | Casual Shoes,10,9,7,7,2,2
+gender × articleType,Girls | Clothing Set,2,2,0,0,0,0
+gender × articleType,Girls | Dresses,21,13,12,11,2,1
+gender × articleType,Girls | Flip Flops,2,1,2,1,1,0
+gender × articleType,Girls | Gloves,2,1,0,0,0,0
+gender × articleType,Girls | Innerwear Vests,3,3,2,1,1,0
+gender × articleType,Girls | Jeans,5,2,2,1,2,1
+gender × articleType,Girls | Leggings,3,3,2,3,0,1
+gender × articleType,Girls | Lehenga Choli,1,1,0,0,0,0
+gender × articleType,Girls | Rompers,3,2,0,0,0,0
+gender × articleType,Girls | Sandals,17,13,7,13,1,7
+gender × articleType,Girls | Shorts,13,8,4,6,1,3
+gender × articleType,Girls | Skirts,8,5,8,7,1,0
+gender × articleType,Girls | Tops,76,39,22,34,3,15
+gender × articleType,Girls | Tshirts,33,24,18,10,8,0
+gender × articleType,Girls | Watches,1,1,1,0,1,0
+gender × articleType,Men | Accessory Gift Set,35,13,0,0,0,0
+gender × articleType,Men | Backpacks,22,12,22,22,0,0
+gender × articleType,Men | Bangle,13,1,9,9,2,2
+gender × articleType,Men | Belts,178,100,9,16,1,8
+gender × articleType,Men | Blazers,2,2,0,0,0,0
+gender × articleType,Men | Boxers,14,11,0,0,0,0
+gender × articleType,Men | Bracelet,16,1,10,12,1,3
+gender × articleType,Men | Briefs,175,117,0,0,0,0
+gender × articleType,Men | Caps,41,35,18,25,5,12
+gender × articleType,Men | Casual Shoes,708,530,27,35,14,22
+gender × articleType,Men | Cufflinks,20,3,0,2,0,2
+gender × articleType,Men | Deodorant,63,58,8,10,2,4
+gender × articleType,Men | Duffel Bag,2,1,1,1,0,0
+gender × articleType,Men | Flip Flops,161,138,14,16,6,8
+gender × articleType,Men | Formal Shoes,205,88,1,2,0,1
+gender × articleType,Men | Fragrance Gift Set,14,14,3,3,1,1
+gender × articleType,Men | Free Gifts,9,5,1,2,0,1
+gender × articleType,Men | Gloves,2,2,0,0,0,0
+gender × articleType,Men | Handbags,3,2,2,2,0,0
+gender × articleType,Men | Heels,1,1,0,0,0,0
+gender × articleType,Men | Innerwear Vests,77,60,3,4,2,3
+gender × articleType,Men | Jackets,44,40,0,1,0,1
+gender × articleType,Men | Jeans,111,45,4,8,1,5
+gender × articleType,Men | Kurtas,21,17,0,2,0,2
+gender × articleType,Men | Laptop Bag,3,3,2,2,0,0
+gender × articleType,Men | Lounge Pants,14,14,0,3,0,3
+gender × articleType,Men | Lounge Shorts,9,8,1,1,0,0
+gender × articleType,Men | Messenger Bag,3,3,3,3,0,0
+gender × articleType,Men | Mufflers,8,7,2,4,0,2
+gender × articleType,Men | Nehru Jackets,1,1,0,0,0,0
+gender × articleType,Men | Night suits,8,6,1,4,0,3
+gender × articleType,Men | Perfume and Body Mist,106,94,21,19,10,8
+gender × articleType,Men | Rain Trousers,1,1,0,0,0,0
+gender × articleType,Men | Sandals,240,147,9,9,3,3
+gender × articleType,Men | Scarves,13,11,2,5,0,3
+gender × articleType,Men | Shirts,929,522,15,9,12,6
+gender × articleType,Men | Shorts,128,102,17,23,2,8
+gender × articleType,Men | Socks,161,76,16,17,10,11
+gender × articleType,Men | Sports Sandals,11,11,0,0,0,0
+gender × articleType,Men | Sports Shoes,521,473,21,20,13,12
+gender × articleType,Men | Stoles,1,1,0,0,0,0
+gender × articleType,Men | Sunglasses,212,91,11,21,2,12
+gender × articleType,Men | Suspenders,13,9,1,0,1,0
+gender × articleType,Men | Sweaters,61,52,0,0,0,0
+gender × articleType,Men | Sweatshirts,67,57,1,2,0,1
+gender × articleType,Men | Ties,69,34,0,3,0,3
+gender × articleType,Men | Tops,1,1,0,0,0,0
+gender × articleType,Men | Track Pants,71,52,6,4,5,3
+gender × articleType,Men | Tracksuits,10,9,0,2,0,2
+gender × articleType,Men | Trousers,141,89,2,6,0,4
+gender × articleType,Men | Trunk,46,34,1,0,1,0
+gender × articleType,Men | Tshirts,1730,1404,37,53,7,23
+gender × articleType,Men | Waistcoat,3,2,0,0,0,0
+gender × articleType,Men | Wallets,133,56,8,10,1,3
+gender × articleType,Men | Watches,449,278,38,51,17,30
+gender × articleType,Men | Water Bottle,2,2,1,1,0,0
+gender × articleType,Unisex | Backpacks,214,152,27,34,8,15
+gender × articleType,Unisex | Basketballs,5,5,1,2,0,1
+gender × articleType,Unisex | Belts,3,3,3,3,0,0
+gender × articleType,Unisex | Caps,43,41,13,16,2,5
+gender × articleType,Unisex | Casual Shoes,75,68,47,56,6,15
+gender × articleType,Unisex | Cushion Covers,1,1,1,1,0,0
+gender × articleType,Unisex | Deodorant,1,1,1,1,0,0
+gender × articleType,Unisex | Duffel Bag,21,17,8,9,3,4
+gender × articleType,Unisex | Flip Flops,48,44,27,29,5,7
+gender × articleType,Unisex | Footballs,3,3,3,2,1,0
+gender × articleType,Unisex | Handbags,20,19,12,13,1,2
+gender × articleType,Unisex | Headband,3,3,3,3,0,0
+gender × articleType,Unisex | Jeans,3,1,3,3,0,0
+gender × articleType,Unisex | Laptop Bag,21,15,7,10,2,5
+gender × articleType,Unisex | Messenger Bag,11,11,3,6,1,4
+gender × articleType,Unisex | Mobile Pouch,2,2,2,2,0,0
+gender × articleType,Unisex | Perfume and Body Mist,2,1,2,2,0,0
+gender × articleType,Unisex | Rucksacks,4,4,0,0,0,0
+gender × articleType,Unisex | Sandals,33,30,16,20,1,5
+gender × articleType,Unisex | Scarves,4,4,4,4,0,0
+gender × articleType,Unisex | Shoe Accessories,8,7,8,7,1,0
+gender × articleType,Unisex | Socks,23,20,18,22,0,4
+gender × articleType,Unisex | Sports Sandals,3,3,2,3,0,1
+gender × articleType,Unisex | Sports Shoes,17,17,16,16,1,1
+gender × articleType,Unisex | Sunglasses,48,24,38,40,1,3
+gender × articleType,Unisex | Swimwear,2,2,1,2,0,1
+gender × articleType,Unisex | Tablet Sleeve,1,1,1,1,0,0
+gender × articleType,Unisex | Travel Accessory,4,3,3,3,0,0
+gender × articleType,Unisex | Trolley Bag,1,1,1,1,0,0
+gender × articleType,Unisex | Tshirts,23,21,12,19,0,7
+gender × articleType,Unisex | Waist Pouch,6,5,3,3,0,0
+gender × articleType,Unisex | Wallets,7,5,7,7,0,0
+gender × articleType,Unisex | Watches,44,40,29,32,4,7
+gender × articleType,Unisex | Water Bottle,2,2,2,2,0,0
+gender × articleType,Unisex | Wristbands,2,2,1,2,0,1
+gender × articleType,Women | Backpacks,9,7,6,5,2,1
+gender × articleType,Women | Bangle,18,1,0,0,0,0
+gender × articleType,Women | Belts,89,60,26,27,2,3
+gender × articleType,Women | Bra,99,78,0,1,0,1
+gender × articleType,Women | Bracelet,7,2,2,1,1,0
+gender × articleType,Women | Briefs,50,40,5,5,4,4
+gender × articleType,Women | Camisoles,6,6,0,0,0,0
+gender × articleType,Women | Capris,35,32,11,10,3,2
+gender × articleType,Women | Caps,7,6,6,4,2,0
+gender × articleType,Women | Casual Shoes,103,93,29,27,8,6
+gender × articleType,Women | Churidar,11,11,0,0,0,0
+gender × articleType,Women | Clutches,75,61,5,7,1,3
+gender × articleType,Women | Concealer,2,1,0,0,0,0
+gender × articleType,Women | Deodorant,34,30,8,6,3,1
+gender × articleType,Women | Dresses,94,75,4,4,2,2
+gender × articleType,Women | Duffel Bag,5,5,0,1,0,1
+gender × articleType,Women | Dupatta,38,30,0,0,0,0
+gender × articleType,Women | Earrings,125,4,4,1,4,1
+gender × articleType,Women | Eyeshadow,3,2,0,0,0,0
+gender × articleType,Women | Flats,141,97,11,12,0,1
+gender × articleType,Women | Flip Flops,80,56,14,18,1,5
+gender × articleType,Women | Foundation and Primer,6,2,0,0,0,0
+gender × articleType,Women | Fragrance Gift Set,4,4,0,0,0,0
+gender × articleType,Women | Free Gifts,12,8,4,4,1,1
+gender × articleType,Women | Handbags,467,294,17,27,6,16
+gender × articleType,Women | Heels,361,184,5,6,2,3
+gender × articleType,Women | Jackets,28,27,5,4,1,0
+gender × articleType,Women | Jeans,60,40,4,4,3,3
+gender × articleType,Women | Jeggings,8,6,0,0,0,0
+gender × articleType,Women | Jewellery Set,12,7,0,0,0,0
+gender × articleType,Women | Jumpsuit,4,4,0,0,0,0
+gender × articleType,Women | Kajal and Eyeliner,5,4,1,2,0,1
+gender × articleType,Women | Kurta Sets,25,23,0,0,0,0
+gender × articleType,Women | Kurtas,508,262,2,1,1,0
+gender × articleType,Women | Kurtis,67,53,0,0,0,0
+gender × articleType,Women | Laptop Bag,1,1,0,0,0,0
+gender × articleType,Women | Leggings,50,43,2,1,1,0
+gender × articleType,Women | Lip Gloss,2,2,0,0,0,0
+gender × articleType,Women | Lip Liner,6,2,0,0,0,0
+gender × articleType,Women | Lip Plumper,1,1,0,0,0,0
+gender × articleType,Women | Lipstick,4,1,0,0,0,0
+gender × articleType,Women | Lounge Pants,4,4,0,1,0,1
+gender × articleType,Women | Lounge Shorts,3,2,0,1,0,1
+gender × articleType,Women | Mobile Pouch,14,14,4,2,2,0
+gender × articleType,Women | Mufflers,5,3,1,2,0,1
+gender × articleType,Women | Nail Polish,7,7,0,0,0,0
+gender × articleType,Women | Necklace and Chains,21,16,2,2,0,0
+gender × articleType,Women | Night suits,15,11,0,0,0,0
+gender × articleType,Women | Nightdress,14,11,0,0,0,0
+gender × articleType,Women | Patiala,9,6,0,0,0,0
+gender × articleType,Women | Pendant,33,4,0,0,0,0
+gender × articleType,Women | Perfume and Body Mist,82,68,17,22,4,9
+gender × articleType,Women | Ring,3,1,0,0,0,0
+gender × articleType,Women | Salwar,11,8,0,0,0,0
+gender × articleType,Women | Salwar and Dupatta,2,2,0,0,0,0
+gender × articleType,Women | Sandals,2,2,1,1,0,0
+gender × articleType,Women | Sarees,50,44,0,0,0,0
+gender × articleType,Women | Scarves,19,15,4,4,3,3
+gender × articleType,Women | Shirts,93,76,2,3,0,1
+gender × articleType,Women | Shorts,21,20,3,5,1,3
+gender × articleType,Women | Skirts,30,27,8,7,1,0
+gender × articleType,Women | Socks,23,20,11,8,4,1
+gender × articleType,Women | Sports Sandals,7,7,2,3,1,2
+gender × articleType,Women | Sports Shoes,137,132,53,58,8,13
+gender × articleType,Women | Stockings,12,3,0,0,0,0
+gender × articleType,Women | Stoles,28,20,2,2,0,0
+gender × articleType,Women | Sunglasses,101,54,16,19,4,7
+gender × articleType,Women | Sweaters,31,27,0,0,0,0
+gender × articleType,Women | Sweatshirts,24,22,3,4,0,1
+gender × articleType,Women | Swimwear,4,3,0,0,0,0
+gender × articleType,Women | Ties and Cufflinks,1,1,0,0,0,0
+gender × articleType,Women | Tights,4,4,0,0,0,0
+gender × articleType,Women | Tops,472,349,18,24,5,11
+gender × articleType,Women | Track Pants,27,26,2,5,0,3
+gender × articleType,Women | Travel Accessory,1,1,0,0,0,0
+gender × articleType,Women | Trousers,28,21,4,2,2,0
+gender × articleType,Women | Tshirts,341,298,17,23,2,8
+gender × articleType,Women | Tunics,57,52,1,1,1,1
+gender × articleType,Women | Umbrellas,3,2,0,1,0,1
+gender × articleType,Women | Waistcoat,2,1,0,0,0,0
+gender × articleType,Women | Wallets,140,103,9,11,3,5
+gender × articleType,Women | Watches,267,198,60,59,22,21
+gender × family_size_bin,Boys | 1,104,104,42,42,7,7
+gender × family_size_bin,Boys | 2–3,111,49,38,44,4,10
+gender × family_size_bin,Boys | 4+,59,8,12,15,0,3
+gender × family_size_bin,Girls | 1,88,88,49,44,18,13
+gender × family_size_bin,Girls | 2–3,90,39,33,49,3,19
+gender × family_size_bin,Girls | 4+,38,7,12,14,2,4
+gender × family_size_bin,Men | 1,4109,4109,203,263,70,130
+gender × family_size_bin,Men | 2–3,1351,605,76,83,32,39
+gender × family_size_bin,Men | 4+,1642,217,69,98,17,46
+gender × family_size_bin,Unisex | 1,516,516,251,293,28,70
+gender × family_size_bin,Unisex | 2–3,110,50,47,52,8,13
+gender × family_size_bin,Unisex | 4+,82,12,27,31,1,5
+gender × family_size_bin,Women | 1,2771,2771,304,326,79,101
+gender × family_size_bin,Women | 2–3,915,406,59,70,17,28
+gender × family_size_bin,Women | 4+,1124,154,48,52,15,19
