@@ -1,5 +1,7 @@
 """Run the delivered Colab setup locally and stop before GPU training."""
 
+from fashion.task3_paths import resolve_task3_path
+
 import ast
 import csv
 import hashlib
@@ -11,9 +13,9 @@ import types
 import zipfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-REPORT = ROOT / "reports/task3_usage_mixup_sam_20260906"
-NOTEBOOK = ROOT / "notebooks/04am_task3_usage_mixup_sam_screen.ipynb"
+ROOT = next(p for p in Path(__file__).resolve().parents if (p / "pyproject.toml").is_file())
+REPORT = ROOT / "reports/task3/usage_mixup_sam_20260906"
+NOTEBOOK = ROOT / "notebooks/task3_training/usage_mixup_sam_screen.ipynb"
 BUNDLE = REPORT / "usage_mixup_sam_training.zip"
 
 
@@ -26,6 +28,9 @@ class ContentPaths(ast.NodeTransformer):
         self.content = str(content)
 
     def visit_Constant(self, node):
+        # Validate the committed local code without depending on a published branch.
+        if node.value == "https://github.com/TrnLin/MLA2.git":
+            node.value = str(ROOT)
         if isinstance(node.value, str) and node.value.startswith("/content"):
             node.value = self.content + node.value[len("/content") :]
         return node
@@ -45,7 +50,7 @@ def main():
         with (ROOT / "data/processed/splits.csv").open() as handle:
             teacher = next(r for r in csv.DictReader(handle) if r["partition"] == "development")
         with zipfile.ZipFile(data / "task3-data.zip", "w") as archive:
-            archive.write(ROOT / teacher["path"], teacher["path"])
+            archive.write(resolve_task3_path(teacher["path"], root=ROOT), teacher["path"])
         if "google" not in sys.modules:
             google = types.ModuleType("google")
             google.__path__ = []
@@ -99,7 +104,7 @@ def main():
             assert checked["training_call_reached"]
             execute(notebook["cells"][2])
             assert (namespace["REPO_DIR"] / teacher["path"]).read_bytes() == (
-                ROOT / teacher["path"]
+                resolve_task3_path(teacher["path"], root=ROOT)
             ).read_bytes()
             checked.update(
                 notebook_sha256=hashlib.sha256(NOTEBOOK.read_bytes()).hexdigest(),
@@ -111,7 +116,7 @@ def main():
             )
         finally:
             os.chdir(original_cwd)
-    (REPORT / "colab_bootstrap_check.json").write_text(json.dumps(checked, indent=2) + "\n")
+    (REPORT / "bootstrap_check_current.json").write_text(json.dumps(checked, indent=2) + "\n")
     print("Delivered Colab setup and both v2 references passed; stopped before training.")
 
 
