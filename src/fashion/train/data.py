@@ -118,14 +118,30 @@ def fit_fold_rgb_stats(
     root = Path(root)
     stats = StreamingStats(channels=3)
     total = len(training)
-    for position, relative_path in enumerate(training["path"], start=1):
-        path = root / str(relative_path)
+    for position, row in enumerate(training.itertuples(), start=1):
+        path = root / str(row.path)
         if not path.is_file():
             raise FileNotFoundError(path)
         with Image.open(path) as source:
             image = ImageOps.exif_transpose(source).convert("RGB")
         image = apply_task3_input_view(image, image_view)
         array, mask = transform_image_with_mask(image, image_size=image_size)
+        if pd.notna(getattr(row, "content_left", np.nan)):
+            # Added PNGs were letterboxed before intake. Their saved content
+            # rectangle keeps those padding pixels out of training statistics.
+            if image.size != (image_size[1], image_size[0]):
+                raise ValueError("saved content geometry requires the native training canvas")
+            left, top, width, height = (
+                int(getattr(row, key))
+                for key in ("content_left", "content_top", "content_width", "content_height")
+            )
+            if not (
+                0 <= left < left + width <= image_size[1]
+                and 0 <= top < top + height <= image_size[0]
+            ):
+                raise ValueError("saved content rectangle is outside the training canvas")
+            mask[:] = False
+            mask[top : top + height, left : left + width] = True
         stats.update(array, content_mask=mask)
         if progress is not None:
             progress(position, total)
