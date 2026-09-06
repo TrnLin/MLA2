@@ -1,0 +1,26 @@
+{
+  "sample_products": 48,
+  "usable_images": 41,
+  "failed_products": 7,
+  "attempts": 55,
+  "final_status_counts": {
+    "200": 41,
+    "403": 7
+  },
+  "downloaded_usable_bytes": 8158360,
+  "teacher_cached_role_counts": {
+    "development": 32773,
+    "prediction": 5829,
+    "holdout": 5778,
+    "quarantine": 61
+  },
+  "duplicate_candidates": 0,
+  "duplicate_status": "cached image-only comparison",
+  "limits": {
+    "products": 48,
+    "bytes_per_file": 2097152,
+    "workers": 4,
+    "connect_and_read_timeout_seconds": 15
+  },
+  "note": "One source-listed URL per product; failed HTTP permits scheme-only HTTPS retry. No inference of whole-dataset availability or absence of leakage from this sample. No training admission."
+}
