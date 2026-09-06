@@ -1,0 +1,19 @@
+# Travel image expansion — 2026-09-06
+
+Result: 180 real main-product images downloaded and decoded. Visual review rejected 15. `candidates.csv` holds 165 distinct source product IDs and 165 unique file hashes, grouped into 121 **heuristic** product families. Family IDs are an initial grouping, not proof of independent designs; colours, capacities and renamed models may still overlap. Final central duplicate checks are required.
+
+The accepted originals are under `data/external/rare_usage_expansion_20260906/candidates/travel/`. Rejected originals were moved to `rejected_images/` beside this log. `rejected.csv` gives the reasons. Original file bytes remain unchanged. Some .jpg-named files decode as PNG/WebP; use Pillow decoding rather than the suffix. Composite alpha transparency on **white** when resizing.
+
+Sources and acquisition:
+
+- Official Amazon Berkeley Objects cached metadata: all 16 metadata shards and official image index at `reports/task3/rare_external_intake_20260906/sources/abo/raw/`. Product IDs joined to official main-image IDs. 46 accepted records. Previously downloaded but withheld Travel images were reused where available. Existing admitted source IDs, image URLs and original hashes were excluded. Official release licence was checked at https://amazon-berkeley-objects.s3.us-east-1.amazonaws.com/index.html on 2026-09-06. CC BY 4.0; attribution to Amazon.com and the dataset contributors is in the earlier cache's ATTRIBUTION.md and README/license files. Those attribution obligations continue to apply.
+- Public Shopify catalogues: `https://www.dakine.com/products.json?limit=250` pages 1–8 (14 accepted); `https://www.cotopaxi.com/products.json?limit=250` pages 1–4 (19); `https://www.tombihn.com/products.json?limit=250` (3); `https://topodesigns.com/products.json?limit=250` (4); `https://www.eaglecreek.com/products.json?limit=250` (27); `https://dbjourney.com/products.json?limit=250` (52). Exact returned metadata saved in the named JSON files beside this log. Product and image URLs are in each manifest row. Copyright remains with the source brand; **no open training/reuse licence was verified**. Public access does not establish permission.
+- Osprey public catalogue request returned HTTP 403. No further access attempted and no images obtained there.
+
+Selection requires a compatible bag title and travel, hiking, trekking, overnight, weekend, trail or rucksack wording in the title/description. Product text is an inferred Usage label, not an original source class. All rows use `product_text_inference`. Main catalogue photos only; no generated images or teacher test/holdout labels were used. Model/family variety was prioritized, followed by legitimate colour variants. Raw selected product records are in `selected_native_records.json`.
+
+Visual review inspected all five original `contact_sheet_*.jpg` sheets. Rejected logo placeholder, passport case, diaper/picnic bags, cycling/snow-specific bags, lifestyle cycling photo, composites and one renewed duplicate. White-background QA sheets are `qa_contact_sheet_*.jpg`; pages 1 and 3 were additionally checked after correcting alpha display. The remaining product photos are suitable catalogue images. Further image-similarity and teacher/earlier-addition overlap checks belong to the central intake.
+
+Reproduction: run `./.venv/bin/python reports/task3/rare_expansion_20260906/travel/acquire.py` and then `./.venv/bin/python reports/task3/rare_expansion_20260906/travel/finish_qa.py`. The second script's rejection indices refer to the acquisition ordering; do not run that script alone on the filtered manifest. The final manual move of rejected originals and renaming the summary's family-count key are documented above.
+
+No shared source, split, registry, manifest, model or training code was changed. No commits were created.
