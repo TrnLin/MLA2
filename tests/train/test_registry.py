@@ -19,6 +19,7 @@ from fashion.train.registry import (
     TASK4_RUN_COLUMNS,
     DuplicateRunError,
     ImmutableRunError,
+    RegistryError,
     RunRecord,
     RunRegistryError,
     new_run_id,
@@ -134,11 +135,7 @@ def test_registry_import_does_not_import_torch() -> None:
         [
             sys.executable,
             "-c",
-            (
-                "import sys; "
-                "import fashion.train.registry; "
-                "assert 'torch' not in sys.modules"
-            ),
+            ("import sys; import fashion.train.registry; assert 'torch' not in sys.modules"),
         ],
         capture_output=True,
         text=True,
@@ -171,9 +168,7 @@ def test_registry_import_check_preserves_parent_torch_module() -> None:
         ("split_fingerprint", ""),
     ],
 )
-def test_append_rejects_invalid_schema_values(
-    tmp_path: Path, field: str, value: object
-) -> None:
+def test_append_rejects_invalid_schema_values(tmp_path: Path, field: str, value: object) -> None:
     registry = RunRegistry(tmp_path / "runs.csv")
 
     with pytest.raises(RunRegistryError, match=field):
@@ -239,9 +234,7 @@ def test_update_rejects_changes_to_identity_fields(
 
 
 @pytest.mark.parametrize("status", ["completed", "failed", "cancelled"])
-def test_terminal_runs_reject_all_further_status_transitions(
-    tmp_path: Path, status: str
-) -> None:
+def test_terminal_runs_reject_all_further_status_transitions(tmp_path: Path, status: str) -> None:
     registry = RunRegistry(tmp_path / "runs.csv")
     registry.append(_running_row("terminal"))
     if status == "completed":
@@ -352,9 +345,7 @@ def test_append_rejects_missing_parent_run(tmp_path: Path) -> None:
 
 
 @pytest.mark.parametrize("eligibility", ["eligible", "deployment_eligible"])
-def test_pretrained_run_cannot_be_deployment_eligible(
-    tmp_path: Path, eligibility: str
-) -> None:
+def test_pretrained_run_cannot_be_deployment_eligible(tmp_path: Path, eligibility: str) -> None:
     registry = RunRegistry(tmp_path / "runs.csv")
 
     with pytest.raises(RunRegistryError, match="pretrained"):
@@ -391,10 +382,7 @@ def test_pretrained_comparison_only_run_is_valid(tmp_path: Path) -> None:
     "contents",
     [
         "wrong,header\nvalue,value\n",
-        ",".join(TASK4_RUN_COLUMNS)
-        + "\n"
-        + ",".join([""] * len(TASK4_RUN_COLUMNS))
-        + "\n",
+        ",".join(TASK4_RUN_COLUMNS) + "\n" + ",".join([""] * len(TASK4_RUN_COLUMNS)) + "\n",
     ],
 )
 def test_read_rejects_malformed_existing_csv(tmp_path: Path, contents: str) -> None:
@@ -447,9 +435,7 @@ def test_append_rejects_malformed_quote_csv_without_changing_file(tmp_path: Path
 
 
 @pytest.mark.parametrize("operation", ["append", "update"])
-def test_append_and_update_wait_for_exclusive_registry_lock(
-    tmp_path: Path, operation: str
-) -> None:
+def test_append_and_update_wait_for_exclusive_registry_lock(tmp_path: Path, operation: str) -> None:
     csv_path = tmp_path / "runs.csv"
     registry = RunRegistry(csv_path)
     registry.append(_running_row("existing"))
@@ -700,3 +686,66 @@ def test_task2_orphan_recovery_preserves_task4_rows(tmp_path: Path) -> None:
 
     assert task4_registry.read()[0]["run_id"] == "task4-run"
     assert task2_registry.read().loc[0, "status"] == "interrupted"
+
+
+@pytest.mark.parametrize("task3_first", [True, False])
+def test_all_three_tasks_preserve_each_others_rows(tmp_path: Path, task3_first: bool) -> None:
+    path = tmp_path / "runs.csv"
+    mirror = tmp_path / "mirror.csv"
+    shared = Task2RunRegistry(path, mirrors=[mirror])
+    retrieval = RunRegistry(path)
+    if task3_first:
+        shared.start({"run_id": "task3-run", "target": "usage"})
+    retrieval.append(_running_row("task4-run"))
+    shared.append(_record("task2-run"))
+    if not task3_first:
+        shared.start({"run_id": "task3-run", "target": "usage"})
+    with path.open(newline="") as stream:
+        before = {row["run_id"]: row for row in csv.DictReader(stream)}
+    shared.complete("task3-run", {"metrics_json": {"macro_f1": 0.3}})
+    with path.open(newline="") as stream:
+        after = {row["run_id"]: row for row in csv.DictReader(stream)}
+    with mirror.open(newline="") as stream:
+        mirrored = list(csv.DictReader(stream))
+    assert len(mirrored) == 1
+    assert all(after["task3-run"][key] == value for key, value in mirrored[0].items())
+    assert after["task2-run"] == before["task2-run"]
+    assert after["task4-run"] == before["task4-run"]
+    assert after["task3-run"]["status"] == "complete"
+    assert shared.read().run_id.tolist() == ["task2-run"]
+    assert [row["run_id"] for row in retrieval.read()] == ["task4-run"]
+    with pytest.raises(ValueError, match="another task"):
+        shared.update("task4-run", {"status": "failed"})
+    with pytest.raises(ValueError, match="immutable"):
+        shared.update("task3-run", {"task": "task2"})
+    with pytest.raises(ValueError, match="already exists"):
+        shared.start({"run_id": "task2-run"})
+    with pytest.raises(RegistryError):
+        shared.interrupt("task3-run", reason="wrong task")
+
+
+def test_task3_private_registry_mirror_preserves_shared_task4_rows(tmp_path: Path) -> None:
+    shared_path = tmp_path / "shared.csv"
+    retrieval = RunRegistry(shared_path)
+    retrieval.append(_running_row("task4-run"))
+    before = retrieval.read()
+    private = Task2RunRegistry(tmp_path / "private.csv", mirrors=[shared_path])
+    private.start({"run_id": "task3-run", "target": "usage"})
+    private.complete("task3-run", {"metrics_json": {"macro_f1": 0.3}})
+    assert retrieval.read() == before
+    with shared_path.open(newline="") as stream:
+        rows = {row["run_id"]: row for row in csv.DictReader(stream)}
+    assert rows["task3-run"]["status"] == "complete"
+    assert rows["task4-run"]["status"] == "running"
+
+
+def test_task3_mirror_collision_is_rejected_before_writing(tmp_path: Path) -> None:
+    shared_path = tmp_path / "shared.csv"
+    RunRegistry(shared_path).append(_running_row("shared-id"))
+    before = shared_path.read_bytes()
+    private_path = tmp_path / "private.csv"
+    private = Task2RunRegistry(private_path, mirrors=[shared_path])
+    with pytest.raises(ValueError, match="another task"):
+        private.start({"run_id": "shared-id"})
+    assert shared_path.read_bytes() == before
+    assert not private_path.exists()
