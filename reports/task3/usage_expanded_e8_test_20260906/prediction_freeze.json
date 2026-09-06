@@ -1,0 +1,24 @@
+{
+  "frozen_at_utc": "2026-09-06T10:42:15.335055+00:00",
+  "reference_labels_opened": false,
+  "test_rows": 5829,
+  "outputs": {
+    "usage_test_fold_0.csv": "7ca87b0ba93b1be877edd0437844e0d292f46b5d768917f09122f1f6e3ff75a2",
+    "usage_test_fold_1.csv": "2e531e0d3e41623f0806b92024db7602aa432231e9c4083266944e2d4d76e958",
+    "usage_test_fold_2.csv": "003e536b05ff7338c8198eb4f2b3e5dc609761e4c6c82f4a6614e6224bdfb8a7",
+    "usage_test_fold_3.csv": "ca71180470a2e08311c2a30473752435509a628bece93808331dbb03da07e2af",
+    "usage_test_fold_4.csv": "e5ef150e1615b2c710e1f73dae9653e0ac5ec15d3fa8461203670efa574aeb78",
+    "usage_test_probabilities.csv": "1ac02cd5abbb45b2df61a6dff47e7fc464a9ee3b8e49806758dd96cd9d141a3c",
+    "usage_test_predictions.csv": "78b185bf60725d98cd4c995091f15e5260f44df59f1749f614f919d7a633ec7b",
+    "inference_recipe.json": "4587f5985f0271e71ce8aad5afb558b7f2a57b4be314c5aca72063e6c473c192"
+  },
+  "predicted_class_counts": {
+    "Casual": 4762,
+    "Ethnic": 696,
+    "NA": 197,
+    "Formal": 124,
+    "Sports": 41,
+    "Smart Casual": 5,
+    "Party": 4
+  }
+}
