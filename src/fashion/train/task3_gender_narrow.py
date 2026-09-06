@@ -183,6 +183,8 @@ def _screen_contract(name):
         return "gname_truth_loss003_gap005_v1", baseline_parameter_count("gender")
     if name == "gender_name_truth_article_weight_sqrt_cap3":
         return "gname_article_weight_loss003_gap005_v1", baseline_parameter_count("gender")
+    if name == "gender_name_truth_mixup_alpha020":
+        return "gname_mixup020_loss003_gap005_v1", baseline_parameter_count("gender")
     raise ValueError("Unknown frozen gender screen")
 
 
