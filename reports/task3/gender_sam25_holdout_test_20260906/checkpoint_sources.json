@@ -1,0 +1,32 @@
+[
+  {
+    "fold": 0,
+    "url": "https://drive.google.com/file/d/1sR1vLBOJjljcOylkuxZt-BcArwdLlaWA/view?usp=drivesdk",
+    "size": "1583317",
+    "run_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f0_s2753_cebc4858f043_20260906T112202Z13e60c"
+  },
+  {
+    "fold": 1,
+    "url": "https://drive.google.com/file/d/1CdJXLLWFheqfLmPdBjA69Z6S1B8HImSu/view?usp=drivesdk",
+    "size": "1583317",
+    "run_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f1_s2753_cebc4858f043_20260906T113308Zefe5d2"
+  },
+  {
+    "fold": 2,
+    "url": "https://drive.google.com/file/d/1XOuaKwXbN_PR4VqFQNbn83tjObNDFTwc/view?usp=drivesdk",
+    "size": "1583317",
+    "run_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f2_s2753_cebc4858f043_20260906T114419Z1959d4"
+  },
+  {
+    "fold": 3,
+    "url": "https://drive.google.com/file/d/13mgyYf-Mm79hc2Hb8ItVXHv7dMf_gqIo/view?usp=drivesdk",
+    "size": "1583317",
+    "run_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f3_s2753_cebc4858f043_20260906T115531Z5216b9"
+  },
+  {
+    "fold": 4,
+    "url": "https://drive.google.com/file/d/1aVbkeUgyvpu6YD3kS8t-2v8wQd63E9mx/view?usp=drivesdk",
+    "size": "1583317",
+    "run_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f4_s2753_cebc4858f043_20260906T120642Za83c66"
+  }
+]
