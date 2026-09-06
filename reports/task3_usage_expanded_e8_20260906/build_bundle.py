@@ -25,7 +25,25 @@ BUNDLE = REPORT / "teacher_plus_rare_usage_training.zip"
 NOTEBOOK = Path("notebooks/04ag_task3_usage_expanded_e8.ipynb")
 
 
+def write_repair_script():
+    """The failed session can run this small file without replacing its frozen ZIP."""
+    source = (ROOT / "src/fashion/train/task3_usage_registry.py").read_text()
+    entry = """
+
+if __name__ == "__main__":
+    repair_connected_usage_session(
+        globals(),
+        expected_completed_folds=(0, 1),
+        interrupted_run_ids=(
+            "t3_usage_expanded_e8_usage_smallcnn_f2_s2753_6eb56854d557_20260906T082459Z0a0f7d",
+        ),
+    )
+"""
+    (REPORT / "repair_usage_registry.py").write_text(source + entry)
+
+
 def main():
+    write_repair_script()
     splits, contract = validate_dataset(check_images=False)
     check_e8_sources(
         directory=ROOT / "results/evidence/task3" / E8_DIRECTORY,
@@ -56,6 +74,14 @@ def main():
         ):
             paths.add(evidence / run_id / name)
     payload = {str(path): (ROOT / path).read_bytes() for path in sorted(paths)}
+    # The user's executed notebook stays untouched. Ship a clean run copy inside
+    # the archive so old failure output cannot look like a result of this code.
+    notebook = json.loads(payload[str(NOTEBOOK)])
+    for cell in notebook["cells"]:
+        if cell["cell_type"] == "code":
+            cell["execution_count"] = None
+            cell["outputs"] = []
+    payload[str(NOTEBOOK)] = (json.dumps(notebook, indent=1) + "\n").encode()
     registry = pd.read_csv(ROOT / "results/runs.csv", keep_default_na=False)
     payload["reference/e8_runs.csv"] = (
         registry.loc[registry.run_id.isin(E8_RUN_IDS)].to_csv(index=False).encode()
