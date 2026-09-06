@@ -1,6 +1,6 @@
 # Stronger MixUp screen
 
-Use `notebooks/04ah_task3_gender_stronger_mixup_screen.ipynb` on a fresh Colab L4.
+Use `notebooks/task3_training/gender_stronger_mixup_screen.ipynb` on a fresh Colab L4.
 Push its code first, then Run All. It needs the completed 04af alpha 0.2 runs
 and their original parent and precision evidence on Drive.
 
