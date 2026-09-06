@@ -69,7 +69,7 @@ from scratch and register its new split hash.
 
 - [Reusable extension and validation](../../src/fashion/data/usage_extension.py)
 - [Boundary and input tests](../../tests/data/test_usage_extension.py)
-- [Versioned dataset build](../../reports/task3_usage_expanded_v2_20260906/build_dataset.py)
-- [Family linking](../../reports/task3_usage_expanded_v2_20260906/audit_family_links.py)
-- [Source intake](../../reports/task3_rare_expansion_20260906/README.md)
-- [Usage guide and split counts](../../reports/task3_usage_expanded_v2_20260906/README.md)
+- [Versioned dataset build](../../reports/task3/usage_expanded_v2_20260906/build_dataset.py)
+- [Family linking](../../reports/task3/usage_expanded_v2_20260906/audit_family_links.py)
+- [Source intake](../../reports/task3/rare_expansion_20260906/README.md)
+- [Usage guide and split counts](../../reports/task3/usage_expanded_v2_20260906/README.md)
