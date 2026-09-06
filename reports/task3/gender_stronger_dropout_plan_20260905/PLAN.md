@@ -60,7 +60,7 @@ alone is not success. Do not open the held-out test or automatically expand fold
 
 ## Run and outputs
 
-Notebook: `notebooks/04ab_task3_gender_stronger_dropout_screen.ipynb`.
+Notebook: `notebooks/task3_training/gender_stronger_dropout_screen.ipynb`.
 Entry point: `fashion.train.task3_gender_stronger_dropout.run_gender_stronger_dropout_screen`.
 Output: `MyDrive/MLA2/task3/experiments/t3_gender_dropout_045_mild_darkening/gender`.
 
