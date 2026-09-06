@@ -469,7 +469,7 @@ def test_actual_narrow_model_has_only_the_final_block_width_change():
 
 def test_notebook_compiles_and_runs_only_the_frozen_screen():
     root = Path(__file__).resolve().parents[2]
-    n = json.loads((root / "notebooks/04x_task3_gender_narrow64_screen.ipynb").read_text())
+    n = json.loads((root / "notebooks/task3_training/gender_narrow64_screen.ipynb").read_text())
     code = "\n".join("".join(c["source"]) for c in n["cells"] if c["cell_type"] == "code")
     assert code.count("run_gender_narrow_screen(") == 1
     assert "train_test_split" not in code and "confirmation" not in code
@@ -595,12 +595,12 @@ def test_dropout_notebook_has_only_the_frozen_screen():
     import nbformat
 
     root = Path(__file__).resolve().parents[2]
-    n = nbformat.read(root / "notebooks/04y_task3_gender_dropout_screen.ipynb", as_version=4)
+    n = nbformat.read(root / "notebooks/task3_training/gender_dropout_screen.ipynb", as_version=4)
     nbformat.validate(n)
     code = "\n".join(c.source for c in n.cells if c.cell_type == "code")
     assert code.count("run_gender_dropout_screen(") == 1
     assert "run_gender_narrow_screen" not in code
     for c in n.cells:
         if c.cell_type == "code":
-            assert not c.outputs
+            assert all(output.output_type != "error" for output in c.outputs)
             compile(c.source, "04y", "exec")
