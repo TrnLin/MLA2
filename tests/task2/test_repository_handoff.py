@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import json
+
 import pandas as pd
 
 from fashion.config import ROOT
+from fashion.train.artifacts import canonical_sha256
 from fashion.train.registry import TASK2_RUN_COLUMNS
 
 
@@ -52,3 +55,28 @@ def test_recovered_task2_attempts_are_all_terminal() -> None:
         "interrupted": 7,
         "failed": 2,
     }
+
+
+def test_registry_recovery_record_matches_shared_ledger() -> None:
+    recovery = json.loads(
+        (ROOT / "results/evidence/task2/registry_recovery.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    registry = pd.read_csv(
+        ROOT / "results/runs.csv",
+        dtype=str,
+        keep_default_na=False,
+    )
+    rows = registry.loc[
+        registry["task"].eq("task2"),
+        list(TASK2_RUN_COLUMNS),
+    ].to_dict(orient="records")
+
+    assert recovery["task2_rows_canonical_sha256"] == canonical_sha256(rows)
+    assert recovery["final_task2_status_counts"] == {
+        "completed": 143,
+        "failed": 2,
+        "interrupted": 7,
+    }
+    assert recovery["holdout_opened"] is False
