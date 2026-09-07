@@ -1531,6 +1531,7 @@ def test_task2_markdown_matches_final_model_and_recovered_registry() -> None:
         assert required in registry_findings
 
     assert handoff["run_id"] == model_manifest["run_id"]
+    assert recovery["active_refit_run_id"] == handoff["run_id"]
     assert handoff["artifacts"]["model_bundle"] == model_manifest["bundle"]
     assert handoff["status"] == "ready_for_group_freeze"
     assert handoff["holdout_opened"] is False
@@ -1548,7 +1549,6 @@ def test_task2_final_cells_build_only_the_locked_component_handoff() -> None:
 
     combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
     for required in (
-        "audit_task2_artifacts",
         'task2_artifact_audit["status"].eq("PASS").all()',
         "load_season_bundle",
         "predict_season",
@@ -1570,6 +1570,24 @@ def test_task2_final_cells_build_only_the_locked_component_handoff() -> None:
         "HTML export",
     ):
         assert forbidden not in combined
+
+    audit_code = cells["s15-01-01-code"].source
+    assert "load_verified_task2_handoff" in audit_code
+    assert "audit_task2_artifacts" not in audit_code
+    packaged_audit = pd.read_csv(
+        ROOT / "results/evidence/task2/final_handoff/artifact_audit.csv",
+        dtype="string",
+    ).fillna("")
+    registry_binding = packaged_audit.loc[
+        packaged_audit["artifact"].eq("registry_binding")
+    ].iloc[0]
+    output = cells["s15-01-01-code"].outputs[0]
+    output_text = output["data"]["text/plain"]
+    if isinstance(output_text, list):
+        output_text = "".join(output_text)
+    assert registry_binding["path"] in output_text
+    assert registry_binding["expected_sha256"] in output_text
+    assert "results/runs.csv" not in output_text
 
     findings = "\n".join(
         cells[cell_id].source
