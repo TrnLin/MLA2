@@ -898,7 +898,9 @@ def verify_development_refit_registry(
     registry = RunRegistry(registry_file).read()
     matches = registry.loc[registry["run_id"].eq(str(manifest["run_id"]))]
     if len(matches) != 1:
-        raise ValueError("development refit registry must contain exactly one matching run row")
+        raise ValueError(
+            f"{error_scope} provenance changed: expected exactly one matching run row"
+        )
     row = matches.iloc[0]
     if row["status"] != "completed":
         raise ValueError("development refit registry row is not completed")
