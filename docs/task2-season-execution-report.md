@@ -111,7 +111,7 @@ strongest defensible submission path.
 | Notebook 03 | Complete and clean-kernel executed in `artifact_replay` mode: all 147 code cells have sequential counts, exactly one saved output, and no error | Run All verifies and displays frozen tables, figures, manifests, and the final bundle; it cannot launch training or rebuild evidence |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
 | Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, verified image-only inference, and the locked component handoff are implemented | Wait for whole-group freeze; do not add or retune a candidate |
-| `results/runs.csv` | 123 append-only rows: 116 completed, two failed, and five interrupted | The provenance-hardened refit and all earlier lifecycle outcomes remain traceable |
+| `results/runs.csv` | 152 recovered unique Task 2 rows: 143 completed, two failed, and seven interrupted | The provenance-hardened refit and every recoverable lifecycle outcome are preserved beside the Task 3 and Task 4 rows |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 | Current handoff gate | Ten component checks pass for run `task2-season-i2-refit-fall-s2753-637dd6378be9`; the portable registry snapshot, bundle, and image-only smoke prediction match the frozen hashes; final evaluation remains locked | Wait for a machine-readable whole-group freeze before Notebook 06 |
@@ -120,6 +120,13 @@ strongest defensible submission path.
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
 Notebook 03 should orchestrate those functions and tell the evidence-backed story.
+
+Registry recovery note: main-branch integration replaced the earlier ignored Task 2-only
+ledger with the tracked shared ledger. The timestamped safety backup contained 152 unique
+Task 2 attempts and was merged without changing any Task 2 field or teammate row. One stale
+`running` attempt was explicitly closed as `interrupted`; the source digest, final row digest,
+counts, and invalidated refit IDs are recorded in
+`results/evidence/task2/registry_recovery.json`.
 
 ### 2.1 Independent defect audit and correction order
 
@@ -1397,10 +1404,11 @@ Task 2 modelling and its sealed component handoff are complete. The remaining pe
 items are deliberately blocked by the whole-group freeze or deferred integration window;
 they are not Task 2 implementation checkboxes.
 
-- [x] `results/runs.csv` contains all 123 unique Task 2 runs: 116 completed, two failed,
-  and five interrupted. The live completed evidence passes identity, schema, provenance,
-  and artifact checks; superseded refit and handoff bytes are preserved under
-  `invalidated/` instead of being expected at their former live paths;
+- [x] `results/runs.csv` contains all 152 recovered unique Task 2 attempts: 143 completed,
+  two failed, and seven interrupted. The active refit passes identity, schema, provenance,
+  and artifact checks; the two superseded completed refits are identified by the recovery
+  record and their archived invalidation manifests instead of being mistaken for the active
+  model;
 - [x] Current B0, B1, C1, C2, and C3 OOF predictions each cover all 32,753 valid development rows;
 - [x] G3 C1-T1 and C2-T0 each cover the same 32,753 valid rows, and their paired
   full-budget comparison is hash-audited;
