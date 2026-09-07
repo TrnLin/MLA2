@@ -118,6 +118,68 @@ def implementation_sha256(
     return canonical_sha256(manifest)
 
 
+def implementation_sha256_at_commit(
+    *paths: str | Path,
+    commit: str,
+    root: str | Path = ROOT,
+) -> str:
+    """Hash an explicit source-file list from one recorded Git commit."""
+    if len(commit) != 40 or any(character not in "0123456789abcdef" for character in commit):
+        raise ValueError("commit must be a 40-character lowercase hexadecimal Git ID")
+    repository = Path(root).resolve()
+    commit_check = subprocess.run(
+        ["git", "cat-file", "-e", f"{commit}^{{commit}}"],
+        cwd=repository,
+        check=False,
+        capture_output=True,
+    )
+    if commit_check.returncode != 0:
+        raise ValueError(f"recorded implementation commit is unavailable: {commit}")
+
+    relative_paths: set[str] = set()
+    for raw_path in paths:
+        candidate = Path(raw_path)
+        if not candidate.is_absolute():
+            candidate = repository / candidate
+        candidate = candidate.resolve()
+        try:
+            relative = candidate.relative_to(repository).as_posix()
+        except ValueError as error:
+            raise ValueError(f"implementation path is outside project root: {candidate}") from error
+        relative_paths.add(relative)
+    if not relative_paths:
+        raise ValueError("implementation paths contain no hashable files")
+
+    manifest: list[dict[str, str]] = []
+    for relative in sorted(relative_paths):
+        object_name = f"{commit}:{relative}"
+        object_type = subprocess.run(
+            ["git", "cat-file", "-t", object_name],
+            cwd=repository,
+            check=False,
+            capture_output=True,
+        )
+        if object_type.returncode != 0:
+            raise FileNotFoundError(
+                f"implementation file does not exist at recorded commit: {relative}"
+            )
+        if object_type.stdout.strip() != b"blob":
+            raise ValueError(f"implementation path is not a file at recorded commit: {relative}")
+        content = subprocess.run(
+            ["git", "show", object_name],
+            cwd=repository,
+            check=True,
+            capture_output=True,
+        ).stdout.replace(b"\r\n", b"\n")
+        manifest.append(
+            {
+                "path": relative,
+                "sha256": hashlib.sha256(content).hexdigest(),
+            }
+        )
+    return canonical_sha256(manifest)
+
+
 def verify_implementation_at_head(
     *paths: str | Path,
     root: str | Path = ROOT,
