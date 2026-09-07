@@ -13,6 +13,7 @@ from PIL import Image
 from torch import nn
 
 import fashion.task4 as task4
+import fashion.task4.report_figures as report_figures_module
 import fashion.task4.search as search_module
 from fashion.data.hashing import compute_sha256
 from fashion.task4.gallery_artifact import TeacherGallery
@@ -21,6 +22,7 @@ from fashion.task4.search import (
     CropBox,
     SearchBundle,
     SearchHit,
+    SearchResponse,
     load_search_bundle,
     run_search,
 )
@@ -191,6 +193,163 @@ def bundle(tmp_path: Path) -> SearchBundle:
 def _save_image(path: Path, size: tuple[int, int] = (100, 80)) -> Path:
     Image.new("RGBA", size, (255, 0, 0, 0)).save(path)
     return path
+
+
+def _response_with_teacher_images(
+    bundle: SearchBundle,
+    tmp_path: Path,
+    *,
+    outside: bool = False,
+) -> SearchResponse:
+    for product_id, colour in (
+        (20, (31, 81, 50)),
+        (30, (179, 128, 31)),
+        (40, (125, 39, 39)),
+    ):
+        image_path = tmp_path / f"teacher-{product_id}.png"
+        Image.new("RGB", (24, 32), colour).save(image_path)
+        row = bundle.gallery.metadata["id"].eq(product_id)
+        bundle.gallery.metadata.loc[row, "path"] = str(image_path)
+        bundle.gallery.metadata.loc[row, "external_path"] = str(
+            tmp_path / f"missing-external-{product_id}.png"
+        )
+    if not outside:
+        return run_search(bundle, query_id=10, top_k=3)
+    outside_path = tmp_path / "wide-outside.png"
+    Image.new("RGB", (200, 20), (240, 240, 240)).save(outside_path)
+    return run_search(bundle, image_path=outside_path, top_k=3)
+
+
+def test_search_outputs_are_deterministic_named_and_strict_json(
+    bundle: SearchBundle,
+    tmp_path: Path,
+) -> None:
+    response = _response_with_teacher_images(bundle, tmp_path)
+
+    first_png, first_json = search_module.write_search_outputs(
+        response,
+        figure_directory=tmp_path / "first/figures",
+        evidence_directory=tmp_path / "first/evidence",
+    )
+    second_png, second_json = search_module.write_search_outputs(
+        response,
+        figure_directory=tmp_path / "second/figures",
+        evidence_directory=tmp_path / "second/evidence",
+    )
+
+    assert first_png.stem == first_json.stem == response.record.query_key
+    assert second_png.stem == second_json.stem == response.record.query_key
+    assert first_png.read_bytes() == second_png.read_bytes()
+    assert first_json.read_bytes() == second_json.read_bytes()
+    raw_json = first_json.read_bytes()
+    assert raw_json.endswith(b"\n")
+    assert not raw_json.endswith(b"\n\n")
+
+    def reject_nonfinite(value: str) -> None:
+        raise AssertionError(f"non-finite JSON constant: {value}")
+
+    assert json.loads(
+        raw_json.decode("utf-8"),
+        parse_constant=reject_nonfinite,
+    ) == response.record.to_dict()
+
+
+def test_search_output_title_names_query_warnings(
+    monkeypatch: pytest.MonkeyPatch,
+    bundle: SearchBundle,
+    tmp_path: Path,
+) -> None:
+    response = _response_with_teacher_images(bundle, tmp_path, outside=True)
+    captured: dict[str, object] = {}
+
+    def capture_renderer(**kwargs: object) -> Path:
+        captured.update(kwargs)
+        destination = Path(kwargs["destination"])
+        destination.write_bytes(b"synthetic png")
+        return destination
+
+    monkeypatch.setattr(report_figures_module, "render_search_grid", capture_renderer)
+
+    search_module.write_search_outputs(
+        response,
+        figure_directory=tmp_path / "figures",
+        evidence_directory=tmp_path / "evidence",
+    )
+
+    assert captured["query_pixels"] is response.record.query.preprocessed.pixels
+    assert captured["results"] is response.record.results
+    assert captured["catalogue"] is response.result_metadata
+    assert captured["query_title"] == (
+        "OUTSIDE QUERY\nWarnings: unusual_aspect_ratio, heavy_letterbox_padding"
+    )
+
+
+def test_rendering_failure_leaves_no_search_output_or_temporary_file(
+    monkeypatch: pytest.MonkeyPatch,
+    bundle: SearchBundle,
+    tmp_path: Path,
+) -> None:
+    response = _response_with_teacher_images(bundle, tmp_path)
+    figure_directory = tmp_path / "figures"
+    evidence_directory = tmp_path / "evidence"
+
+    def fail_renderer(**kwargs: object) -> Path:
+        raise RuntimeError("synthetic render failure")
+
+    monkeypatch.setattr(report_figures_module, "render_search_grid", fail_renderer)
+
+    with pytest.raises(RuntimeError, match="synthetic render failure"):
+        search_module.write_search_outputs(
+            response,
+            figure_directory=figure_directory,
+            evidence_directory=evidence_directory,
+        )
+
+    assert not (figure_directory / f"{response.record.query_key}.png").exists()
+    assert not (evidence_directory / f"{response.record.query_key}.json").exists()
+    assert list(figure_directory.glob("*")) == []
+    assert list(evidence_directory.glob("*")) == []
+
+
+def test_second_publish_failure_restores_the_previous_output_pair(
+    monkeypatch: pytest.MonkeyPatch,
+    bundle: SearchBundle,
+    tmp_path: Path,
+) -> None:
+    response = _response_with_teacher_images(bundle, tmp_path)
+    figure_directory = tmp_path / "figures"
+    evidence_directory = tmp_path / "evidence"
+    figure_directory.mkdir()
+    evidence_directory.mkdir()
+    final_png = figure_directory / f"{response.record.query_key}.png"
+    final_json = evidence_directory / f"{response.record.query_key}.json"
+    final_png.write_bytes(b"previous png")
+    final_json.write_bytes(b'{"previous": true}\n')
+    original_replace = search_module.os.replace
+    publish_attempts = 0
+
+    def fail_second_publish(source: object, destination: object) -> None:
+        nonlocal publish_attempts
+        if Path(destination) in {final_png, final_json}:
+            publish_attempts += 1
+            if publish_attempts == 2:
+                raise OSError("synthetic second replacement failure")
+        original_replace(source, destination)
+
+    monkeypatch.setattr(search_module.os, "replace", fail_second_publish)
+
+    with pytest.raises(OSError, match="second replacement"):
+        search_module.write_search_outputs(
+            response,
+            figure_directory=figure_directory,
+            evidence_directory=evidence_directory,
+        )
+
+    assert publish_attempts >= 3
+    assert final_png.read_bytes() == b"previous png"
+    assert final_json.read_bytes() == b'{"previous": true}\n'
+    assert sorted(path.name for path in figure_directory.iterdir()) == [final_png.name]
+    assert sorted(path.name for path in evidence_directory.iterdir()) == [final_json.name]
 
 
 def test_outside_search_prepares_encodes_ranks_and_redacts(

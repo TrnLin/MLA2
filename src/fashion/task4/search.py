@@ -196,6 +196,98 @@ class SearchBundle:
     splits: pd.DataFrame
 
 
+def _temporary_sibling(destination: Path) -> Path:
+    descriptor, name = tempfile.mkstemp(
+        dir=destination.parent,
+        prefix=f".{destination.stem}-",
+        suffix=destination.suffix,
+    )
+    os.close(descriptor)
+    return Path(name)
+
+
+def _query_figure_title(record: SearchRecord) -> str:
+    query = record.query
+    title = (
+        f"KNOWN QUERY {query.known_id}"
+        if query.kind == "known"
+        else "OUTSIDE QUERY"
+    )
+    if query.warnings:
+        title += f"\nWarnings: {', '.join(query.warnings)}"
+    return title
+
+
+def write_search_outputs(
+    response: SearchResponse,
+    *,
+    figure_directory: str | Path,
+    evidence_directory: str | Path,
+) -> tuple[Path, Path]:
+    """Atomically publish one deterministic PNG and strict JSON evidence pair."""
+
+    from fashion.task4.report_figures import render_search_grid
+
+    payload = (
+        json.dumps(
+            response.record.to_dict(),
+            indent=2,
+            sort_keys=True,
+            ensure_ascii=False,
+            allow_nan=False,
+        )
+        + "\n"
+    ).encode("utf-8")
+    figure_target = Path(figure_directory)
+    evidence_target = Path(evidence_directory)
+    figure_target.mkdir(parents=True, exist_ok=True)
+    evidence_target.mkdir(parents=True, exist_ok=True)
+    stem = response.record.query_key
+    final_png = figure_target / f"{stem}.png"
+    final_json = evidence_target / f"{stem}.json"
+    temporary_png = _temporary_sibling(final_png)
+    temporary_json = _temporary_sibling(final_json)
+    backup_png: Path | None = None
+    first_replaced = False
+
+    try:
+        render_search_grid(
+            query_pixels=response.record.query.preprocessed.pixels,
+            query_title=_query_figure_title(response.record),
+            results=response.record.results,
+            catalogue=response.result_metadata,
+            destination=temporary_png,
+        )
+        temporary_json.write_bytes(payload)
+        if not temporary_png.is_file() or not temporary_json.is_file():
+            raise OSError("search output staging did not produce both files")
+        json.loads(temporary_json.read_text(encoding="utf-8"))
+
+        if final_png.exists():
+            backup_png = _temporary_sibling(final_png)
+            shutil.copyfile(final_png, backup_png)
+        os.replace(temporary_png, final_png)
+        first_replaced = True
+        try:
+            os.replace(temporary_json, final_json)
+        except Exception:
+            if backup_png is None:
+                final_png.unlink(missing_ok=True)
+            else:
+                os.replace(backup_png, final_png)
+            first_replaced = False
+            raise
+    finally:
+        temporary_png.unlink(missing_ok=True)
+        temporary_json.unlink(missing_ok=True)
+        if backup_png is not None:
+            backup_png.unlink(missing_ok=True)
+
+    if not first_replaced:
+        raise RuntimeError("search output pair was not published")
+    return final_png, final_json
+
+
 def _read_manifest(path: Path) -> tuple[dict[str, Any], bytes]:
     try:
         raw = path.read_bytes()
@@ -735,4 +827,5 @@ __all__ = (
     "SearchResponse",
     "load_search_bundle",
     "run_search",
+    "write_search_outputs",
 )

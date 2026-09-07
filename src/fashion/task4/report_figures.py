@@ -47,6 +47,7 @@ __all__ = (
     "development_catalogue",
     "graded_relevance",
     "load_winner_retrieval_evidence",
+    "render_search_grid",
     "resolve_image_rows",
     "same_family",
     "select_retrieval_panels",
@@ -1379,8 +1380,13 @@ def build_chart_figures(
     return outputs
 
 
-def _display_pixels(row: pd.Series, variant: str) -> np.ndarray:
-    path = Path(str(row["external_path"]))
+def _display_pixels(
+    row: pd.Series,
+    variant: str,
+    *,
+    path_column: str = "external_path",
+) -> np.ndarray:
+    path = Path(str(row[path_column]))
     resolved = path if path.is_absolute() else ROOT / path
     with Image.open(resolved) as image:
         prepared = (
@@ -1389,6 +1395,95 @@ def _display_pixels(row: pd.Series, variant: str) -> np.ndarray:
             else image
         )
         return preprocess_image(prepared, CONTRACT).pixels
+
+
+def render_search_grid(
+    *,
+    query_pixels: np.ndarray,
+    query_title: str,
+    results: Sequence[Any],
+    catalogue: pd.DataFrame,
+    destination: Path,
+) -> Path:
+    """Draw one prepared query and its ordered, development-only result images."""
+
+    result_rows = resolve_image_rows(
+        catalogue,
+        [result.candidate_id for result in results],
+    )
+    columns = len(results) + 1
+    figure, axes = plt.subplots(
+        1,
+        columns,
+        figsize=(1.65 * columns + 1.0, 3.0),
+        squeeze=False,
+        constrained_layout=True,
+    )
+    row_axes = axes[0]
+    query_axes = row_axes[0]
+    query_axes.imshow(query_pixels)
+    query_axes.set_title(query_title, fontsize=8, color=_INK)
+    for spine in query_axes.spines.values():
+        spine.set_edgecolor(_INK)
+        spine.set_linewidth(2.2)
+
+    for column_index, (result, candidate) in enumerate(
+        zip(results, result_rows.itertuples(index=False), strict=True),
+        start=1,
+    ):
+        candidate_row = pd.Series(candidate._asdict())
+        reject_sealed_image_rows(
+            pd.DataFrame([candidate_row]),
+            require_development=True,
+        )
+        cell = row_axes[column_index]
+        cell.imshow(
+            _display_pixels(
+                candidate_row,
+                "clean",
+                path_column="path",
+            )
+        )
+        grade = result.grade
+        border = _MUTED if grade is None else _GRADE_COLOURS[grade]
+        mark = "" if grade is None else f" {_GRADE_MARKS[grade]} ·"
+        cell.set_title(
+            f"#{result.rank}{mark} {result.candidate_id} · d={result.distance:.3f}\n"
+            f"{result.article_type} · {result.base_colour}",
+            fontsize=7,
+            color=border,
+        )
+        for spine in cell.spines.values():
+            spine.set_edgecolor(border)
+            spine.set_linewidth(3.0)
+
+    for cell in row_axes:
+        cell.set_xticks([])
+        cell.set_yticks([])
+
+    known_grades = {result.grade for result in results if result.grade is not None}
+    if known_grades:
+        handles = [
+            plt.Rectangle(
+                (0, 0),
+                1,
+                1,
+                facecolor=_GRADE_COLOURS[grade],
+                edgecolor=_INK,
+                label=_GRADE_LABELS[grade],
+            )
+            for grade in (2, 1, 0)
+            if grade in known_grades
+        ]
+        figure.legend(
+            handles=handles,
+            fontsize=7.5,
+            loc="outside lower center",
+            ncol=len(handles),
+            frameon=False,
+        )
+    target = Path(destination)
+    return _save(figure, target.parent, target.name)
 
 
 def _draw_panels(
