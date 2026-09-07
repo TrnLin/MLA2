@@ -37,3 +37,18 @@ def test_shared_registry_preserves_all_recovered_task2_attempts() -> None:
 
     assert len(task2) == 152
     assert task2["run_id"].is_unique
+
+
+def test_recovered_task2_attempts_are_all_terminal() -> None:
+    registry = pd.read_csv(
+        ROOT / "results/runs.csv",
+        dtype=str,
+        keep_default_na=False,
+    )
+    task2 = registry.loc[registry["task"].eq("task2")]
+
+    assert task2["status"].value_counts().to_dict() == {
+        "completed": 143,
+        "interrupted": 7,
+        "failed": 2,
+    }
