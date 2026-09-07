@@ -245,6 +245,7 @@ from .probe import (
     extract_spatial_probe,
     rank_embeddings,
     rank_probe_embeddings,
+    rank_single_embedding,
 )
 from .protocol import (
     COVERAGE_COLUMNS,
@@ -478,6 +479,7 @@ __all__ = (
     "primary_relevance",
     "rank_embeddings",
     "rank_probe_embeddings",
+    "rank_single_embedding",
     "query_normalization_source",
     "read_external_catalogue",
     "reconcile_external_ids",
