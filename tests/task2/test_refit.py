@@ -209,6 +209,84 @@ def test_refit_writes_fixed_epoch_bundle_registry_and_verifiable_manifest(
             )
 
 
+def test_refit_load_accepts_verified_historical_training_source(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _patch_fast_refit(monkeypatch)
+    (ROOT / "tmp").mkdir(exist_ok=True)
+    with TemporaryDirectory(dir=ROOT / "tmp") as directory:
+        paths = _paths(Path(directory))
+        run_or_load_development_refit(mode="run", project_root=ROOT, **paths)
+        manifest = json.loads(paths["manifest_path"].read_text(encoding="utf-8"))
+        recorded_digest = str(manifest["implementation_sha256"])
+        runtime_digest = "e" * 64
+
+        monkeypatch.setattr(
+            refit_module,
+            "implementation_sha256",
+            lambda *paths, root: (
+                runtime_digest
+                if paths == refit_module.REFIT_LOAD_COMPATIBILITY_PATHS
+                else "f" * 64
+            ),
+        )
+        monkeypatch.setattr(
+            refit_module,
+            "implementation_sha256_at_commit",
+            lambda *paths, commit, root: (
+                runtime_digest
+                if paths == refit_module.REFIT_LOAD_COMPATIBILITY_PATHS
+                else recorded_digest
+            ),
+        )
+
+        loaded, _, _ = load_verified_development_refit_manifest(
+            paths["manifest_path"],
+            project_root=ROOT,
+            registry_path=paths["registry_path"],
+        )
+
+        assert loaded["implementation_sha256"] == recorded_digest
+
+
+def test_refit_load_rejects_changed_runtime_source(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _patch_fast_refit(monkeypatch)
+    (ROOT / "tmp").mkdir(exist_ok=True)
+    with TemporaryDirectory(dir=ROOT / "tmp") as directory:
+        paths = _paths(Path(directory))
+        run_or_load_development_refit(mode="run", project_root=ROOT, **paths)
+        manifest = json.loads(paths["manifest_path"].read_text(encoding="utf-8"))
+        recorded_digest = str(manifest["implementation_sha256"])
+
+        monkeypatch.setattr(
+            refit_module,
+            "implementation_sha256",
+            lambda *paths, root: (
+                "c" * 64
+                if paths == refit_module.REFIT_LOAD_COMPATIBILITY_PATHS
+                else "f" * 64
+            ),
+        )
+        monkeypatch.setattr(
+            refit_module,
+            "implementation_sha256_at_commit",
+            lambda *paths, commit, root: (
+                "e" * 64
+                if paths == refit_module.REFIT_LOAD_COMPATIBILITY_PATHS
+                else recorded_digest
+            ),
+        )
+
+        with pytest.raises(ValueError, match="runtime compatibility bytes changed"):
+            load_verified_development_refit_manifest(
+                paths["manifest_path"],
+                project_root=ROOT,
+                registry_path=paths["registry_path"],
+            )
+
+
 def test_refit_manifest_rejects_a_claim_that_holdout_was_opened(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

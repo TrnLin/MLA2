@@ -2,7 +2,7 @@
 title: "Task 2 - Fashion Season Classification: execution report and plan"
 status: task2-component-ready-for-group-freeze
 created: 2026-08-25
-updated: 2026-09-01
+updated: 2026-09-07
 scope: task2-season
 ---
 
@@ -32,7 +32,7 @@ Recommended direction:
    and size. Do not select by accuracy alone.
 6. Freeze every choice before Notebook 06 opens the holdout once.
 
-Current position on 31 August 2026: corrected G3, I1, I2, the matched pretrained
+Current position on 7 September 2026: corrected G3, I1, I2, the matched pretrained
 boundary, G5 seed stability, shortcut/error slices, robustness/cost, calibration,
 paired grouped-bootstrap uncertainty, deterministic Grad-CAM/failure review, and the
 G7 Ultimate Judgement is complete. I2 lambda `0.3` is the
@@ -111,15 +111,38 @@ strongest defensible submission path.
 | Notebook 03 | Complete and clean-kernel executed in `artifact_replay` mode: all 147 code cells have sequential counts, exactly one saved output, and no error | Run All verifies and displays frozen tables, figures, manifests, and the final bundle; it cannot launch training or rebuild evidence |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
 | Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, verified image-only inference, and the locked component handoff are implemented | Wait for whole-group freeze; do not add or retune a candidate |
-| `results/runs.csv` | 123 append-only rows: 116 completed, two failed, and five interrupted | The provenance-hardened refit and all earlier lifecycle outcomes remain traceable |
+| `results/runs.csv` | 152 recovered unique Task 2 rows: 143 completed, two failed, and seven interrupted | The provenance-hardened refit and every recoverable lifecycle outcome are preserved beside the Task 3 and Task 4 rows |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 | Current handoff gate | Ten component checks pass for run `task2-season-i2-refit-fall-s2753-637dd6378be9`; the portable registry snapshot, bundle, and image-only smoke prediction match the frozen hashes; final evaluation remains locked | Wait for a machine-readable whole-group freeze before Notebook 06 |
-| Current verification | Ruff and all `579` repository tests pass. This includes 43 focused refit/handoff tests and 37 notebook-contract tests | The code, artifact, presentation, saved-output, and artifact-only replay contracts are green |
+| Current Task 2 verification | `pip check` and scoped Ruff pass; 431 Task 2, model-boundary, registry, and cache tests pass; 35 Task 2 notebook-contract tests pass; the headless plotting contract, clean-kernel Notebook Run All, real handoff, and CPU bundle load also verify | Task 2 is green on Windows. The full repository collection is still blocked by unchanged Task 3/4 Unix-only `resource` imports, and full-repository lint debt outside the files changed here remains teammate-owned; neither issue is hidden or changed in this branch |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
 Notebook 03 should orchestrate those functions and tell the evidence-backed story.
+
+Registry recovery note: main-branch integration replaced the earlier ignored Task 2-only
+ledger with the tracked shared ledger. The timestamped safety backup contained 152 unique
+Task 2 attempts and was merged without changing any Task 2 field or teammate row. One stale
+`running` attempt was explicitly closed as `interrupted`; the source digest, final row digest,
+counts, and invalidated refit IDs are recorded in
+`results/evidence/task2/registry_recovery.json`.
+
+Shared EDA lock note: main integration re-encoded the four Notebook 01 PNGs consumed by
+Task 2. A direct old-versus-current comparison found identical dimensions and zero changed
+pixels in every image; only PNG bytes changed. The Task 2 figure registry and replay lock now
+record the current SHA-256 values, and a regression test verifies every referenced file. No
+EDA result, training input, selected model, or performance claim changed.
+
+The final integration corrections remain readable as test-then-fix pairs: `88d0239`
+exposes stale final-model and ledger wording, while `3607246` synchronises the notebook;
+`d315b97` exposes shared EDA hash drift, which the same replay fix closes; and `eb61805`
+exposes the interactive plotting dependency before `02ef104` forces the test-only `Agg`
+backend. Finally, `0178e3b` exposes the Section 15 dependency on the mutable live ledger,
+and `b664fb3` replays the immutable handoff audit and its packaged registry snapshot
+instead. The last documentation check, `cb08399`, exposes the missing final experiment,
+temperature, and snapshot identity before `058c2dc` binds the report to the current
+manifest and handoff. No failing commit is the branch tip.
 
 ### 2.1 Independent defect audit and correction order
 
@@ -569,7 +592,8 @@ to `results/evidence/task2/final_handoff/registry_snapshot.csv`, recomputes stor
 claims during load, validates probability semantics, and prevents non-identical package
 replacement. Its manifest records `task2_component_ready=true` but deliberately keeps
 `notebook_06_unlocked=false`. This separates “Task 2 is ready” from “the whole group is
-allowed to evaluate.”
+allowed to evaluate.” Notebook 03 Section 15 displays this stored ten-row audit and
+packaged snapshot hash; it does not silently substitute the mutable `results/runs.csv`.
 
 ## 3. Task 2 contract
 
@@ -1225,13 +1249,17 @@ adding a validation curve here would require a new post-freeze selection split.
 
 Final replacement trace:
 
+- selected candidate `I2`, experiment `g4-i2-article-type-lambda-0-3-c1`;
 - run `task2-season-i2-refit-fall-s2753-637dd6378be9`;
 - bundle `models/task2_season.pt`, SHA-256
   `5927eff73130acedc8015199e1df5a6c6edf64c0b45023ebd91c48d7ed40f93c`;
 - manifest `models/task2_season.manifest.json`, SHA-256
   `25d918061dbd9b46501de9aa3671adabf951649862ce9613317983dadbac55d9`;
+- confidence-only deployment temperature `1.365002`;
 - history `results/evidence/task2/development_refit/training_history.csv`;
-- chart `results/figures/task2/development_refit_training_curve.png`.
+- chart `results/figures/task2/development_refit_training_curve.png`;
+- registry snapshot `results/evidence/task2/final_handoff/registry_snapshot.csv`, SHA-256
+  `b6d7b4c43bffaaad75a16bb555ca36d4c2fc42853979a470682373618d34bfc8`.
 
 The first package, run `task2-season-i2-refit-fall-s2753-3d60bd14cc91`, is retained under
 `results/evidence/task2/development_refit/invalidated/` and must not be used. The next run,
@@ -1397,10 +1425,11 @@ Task 2 modelling and its sealed component handoff are complete. The remaining pe
 items are deliberately blocked by the whole-group freeze or deferred integration window;
 they are not Task 2 implementation checkboxes.
 
-- [x] `results/runs.csv` contains all 123 unique Task 2 runs: 116 completed, two failed,
-  and five interrupted. The live completed evidence passes identity, schema, provenance,
-  and artifact checks; superseded refit and handoff bytes are preserved under
-  `invalidated/` instead of being expected at their former live paths;
+- [x] `results/runs.csv` contains all 152 recovered unique Task 2 attempts: 143 completed,
+  two failed, and seven interrupted. The active refit passes identity, schema, provenance,
+  and artifact checks; the two superseded completed refits are identified by the recovery
+  record and their archived invalidation manifests instead of being mistaken for the active
+  model;
 - [x] Current B0, B1, C1, C2, and C3 OOF predictions each cover all 32,753 valid development rows;
 - [x] G3 C1-T1 and C2-T0 each cover the same 32,753 valid rows, and their paired
   full-budget comparison is hash-audited;

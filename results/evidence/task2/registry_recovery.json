@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "status": "recovered_and_audited",
+  "recovery_date": "2026-09-07",
+  "source": {
+    "kind": "timestamped_local_safety_backup",
+    "created_at_local": "2026-08-31T21:43:22+07:00",
+    "file": "results/runs.csv",
+    "sha256": "5e0177680260788c2c821d9ca2904c4bfe298c7d1346f5307663679169d4dcae"
+  },
+  "recovery": {
+    "task2_rows": 152,
+    "unique_run_ids": true,
+    "shared_rows_preserved_before_merge": 438,
+    "task2_columns_copied_without_value_changes": true,
+    "shared_union_columns_filled_with_blank_values": true,
+    "stale_running_run": {
+      "run_id": "g3-c1-t1-smallcnn-f1-s2753-5c90789216a1",
+      "original_status": "running",
+      "recovered_status": "interrupted",
+      "reason": "No process remained and later completed fold replacements were already recorded."
+    }
+  },
+  "final_task2_status_counts": {
+    "completed": 143,
+    "failed": 2,
+    "interrupted": 7
+  },
+  "task2_rows_canonical_sha256": "93afa9f2b7107cc781e768ff7c6c4ad9138a975dd0bacf096e36883189d37d13",
+  "invalidated_completed_refits": [
+    "task2-season-i2-refit-fall-s2753-3d60bd14cc91",
+    "task2-season-i2-refit-fall-s2753-4ab5682a30e1"
+  ],
+  "active_refit_run_id": "task2-season-i2-refit-fall-s2753-637dd6378be9",
+  "holdout_opened": false
+}

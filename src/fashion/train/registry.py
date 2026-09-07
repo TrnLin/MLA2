@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import copy
 import csv
-import fcntl
 import hashlib
 import math
 import os
@@ -20,6 +19,7 @@ from pathlib import Path
 from typing import Any, Iterator, Sequence
 
 import pandas as pd
+from filelock import FileLock
 
 from fashion.config import RUNS_CSV
 from fashion.train.artifacts import atomic_write_csv, canonical_json_bytes
@@ -218,13 +218,12 @@ def _lock_path(path: Path) -> Path:
 @contextmanager
 def _registry_lock(path: Path, *, exclusive: bool) -> Iterator[None]:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with _lock_path(path).open("a+b") as lock_handle:
-        operation = fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH
-        fcntl.flock(lock_handle.fileno(), operation)
-        try:
-            yield
-        finally:
-            fcntl.flock(lock_handle.fileno(), fcntl.LOCK_UN)
+    # FileLock is exclusive on every supported platform. Registry reads are
+    # short, so using the same lock for reads and writes favours portability
+    # and a simple, safe contract over Unix-only shared-read concurrency.
+    del exclusive
+    with FileLock(str(_lock_path(path))):
+        yield
 
 
 def _read_union_rows(path: Path) -> list[dict[str, str]]:
@@ -269,6 +268,25 @@ def _write_union_rows_with_pandas(path: Path, rows: list[dict[str, str]]) -> Non
     _write_registry_csv(path, frame)
 
 
+def _sync_parent_directory(path: Path) -> None:
+    """Best-effort directory sync after an atomic replace.
+
+    Windows does not expose directory file descriptors through ``os.open``.
+    The file contents are already flushed before this optional durability step.
+    """
+    try:
+        directory_fd = os.open(path.parent, os.O_RDONLY)
+    except (NotImplementedError, OSError):
+        return
+    try:
+        try:
+            os.fsync(directory_fd)
+        except (NotImplementedError, OSError):
+            return
+    finally:
+        os.close(directory_fd)
+
+
 def _write_union_rows_with_csv(path: Path, rows: list[dict[str, str]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path: Path | None = None
@@ -290,11 +308,7 @@ def _write_union_rows_with_csv(path: Path, rows: list[dict[str, str]]) -> None:
             os.fsync(handle.fileno())
         os.replace(temporary_path, path)
         temporary_path = None
-        directory_fd = os.open(path.parent, os.O_RDONLY)
-        try:
-            os.fsync(directory_fd)
-        finally:
-            os.close(directory_fd)
+        _sync_parent_directory(path)
     finally:
         if temporary_path is not None:
             temporary_path.unlink(missing_ok=True)

@@ -3,11 +3,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+import matplotlib
 import pandas as pd
 import pytest
 from PIL import Image
 
 from fashion.data.pipeline import prepare_data
+
+matplotlib.use("Agg", force=True)
 
 
 @dataclass(frozen=True)
