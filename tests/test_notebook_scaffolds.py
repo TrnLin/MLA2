@@ -24,12 +24,17 @@ TASK_SPECS = {
     "04_task3_gender_usage.ipynb": {
         "title": "Task 3 — Gender and Usage Classification",
         "tokens": ("gender", "usage", "negative transfer", "label-mask"),
-        "sections": 45,
+        "sections": 19,
     },
     "05_task4_visual_search.ipynb": {
         "title": "Task 4 — Fashion Visual Search",
         "tokens": ("arbitrary query size", "optional additional image", "embedding", "Top-K"),
         "sections": 15,
+    },
+    "04_task3_final_evaluation.ipynb": {
+        "title": "Task 3 — Final Evaluation and Ultimate Judgement",
+        "tokens": ("holdout", "Gender", "Usage", "ultimate judgement"),
+        "sections": 13,
     },
     "06_final_evaluation.ipynb": {
         "title": "Final Evaluation and Ultimate Judgement",
@@ -95,6 +100,8 @@ def test_only_planned_notebook_names_are_present() -> None:
         "task3_training/gender_sam25_screen.ipynb",
         "task3_training/gender_sam25_five_fold.ipynb",
         "task3_training/gender_sam25_refit.ipynb",
+        "task3_training/usage_e1_refit.ipynb",
+        "task3_training/usage_e8_refit.ipynb",
         "task3_training/usage_expanded_v2_e8.ipynb",
         "task3_training/usage_mixup_sam_screen.ipynb",
         "task3_training/usage_replaced_v3_mixup_sam.ipynb",
@@ -2209,39 +2216,36 @@ def test_task3_final_metric_contracts_are_explicit():
     assert "Primary development metric for `usage`: pooled five-fold OOF macro-F1" in task3
     stages = [
         "Start with the baseline",
-        "Keep the pooling lesson",
-        "Reduce sensitivity to small shifts",
-        "Add dropout",
-        "Repair the dark-image weakness",
-        "Reduce colour dependence",
+        "Gender: pooling and photo sensitivity",
         "Review the labels",
         "Add MixUp",
         "Choose the SAM25 trade-off",
         "Confirm the fixed recipe on five folds",
-        "Freeze the full prediction recipe",
-        "Read the reserved holdout results",
-        "Explain the remaining failures",
+        "Usage: class weighting, then translation",
+        "Usage: the effect of adding rare-class images",
+        "Refit the fixed Usage recipes on all development images",
+        "Retained E8 recipe and evaluation handoff",
+        "## 19. Development findings and limits",
     ]
     positions = [task3.index(stage) for stage in stages]
     assert positions == sorted(positions)
     for contract in (
-        "0020-task3-gender-sam25-final-model.md",
         "single_explicit_gender_cue_v1",
-        "original-label",
+        "original labels",
         "folds 0 and 4",
         "not a best epoch",
         "teacher did not supply test labels",
-        "146 of 311 Unisex",
         "id,gender,articleType,season,usage",
-        "0022-task3-usage-e1-final-model.md",
-        "original teacher-only E1",
-        "equal probability average of its five saved fold models",
+        "single teacher-only E8 refit",
+        "32,772 teacher images",
         "13,110 teacher images",
-        "E1 misses every test NA",
-        "final E1 acceptance followed holdout/test review",
+        "no test scores are reported here",
+        "Reserved-holdout results and analysis remain in",
     ):
         assert contract in task3
-    assert "run_task3_baseline_cv" not in task3
+    notebook = nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4)
+    executable = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+    assert "run_task3_baseline_cv" not in executable
     for internal_result in (
         "61.85",
         "92.02",
@@ -2250,6 +2254,10 @@ def test_task3_final_metric_contracts_are_explicit():
         'figure("matches")',
         'figure("evaluation")',
         "report.final_table",
+        "42.26%",
+        "88.70%",
+        "usage_refits_test_20260907",
+        "E1 misses every test NA",
     ):
         assert internal_result not in task3
     notebook = nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4)
@@ -2288,15 +2296,15 @@ def test_task3_final_report_structure() -> None:
             for index, cell in enumerate(notebook.cells):
                 if cell.cell_type == "code":
                     assert notebook.cells[index - 1].cell_type == "markdown"
-                    assert "### " in notebook.cells[index - 1].source
+                    assert notebook.cells[index - 1].source.strip()
             code = "\n".join(cell.source for cell in code_cells)
-            assert "from fashion" not in code
-            assert "import fashion" not in code
+            assert "from fashion.task3_final import verify_usage_final" in code
             assert "def " not in code
             assert "class Task3" not in code
             assert "plt.subplots" in code
             assert "analysis_assets.json" in code
-            assert "earlier_investigation.ipynb" in source
+            assert "original-gender-comparisons" in {cell.id for cell in code_cells}
+            assert "original-usage-comparisons" in {cell.id for cell in code_cells}
         else:
             assert all(cell.cell_type == "markdown" for cell in notebook.cells)
         assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
@@ -2310,7 +2318,7 @@ def test_task3_final_report_structure() -> None:
             assert required in source
         if filename == "04_task3_gender_usage.ipynb":
             assert "TODO(owner)" not in source
-            assert "0022-task3-usage-e1-final-model.md" in source
+            assert "single teacher-only E8 refit" in source
         else:
             assert "TODO(owner)" in source
         assert all(token.lower() in lowered for token in spec["tokens"])
@@ -2320,3 +2328,18 @@ def test_task3_final_report_structure() -> None:
         if filename != "04_task3_gender_usage.ipynb":
             for unselected in ("macro-F1", "nDCG@", "Recall@", "Adam", "cross-entropy"):
                 assert unselected not in source
+
+
+def test_task3_links_are_limited_to_the_opening_training_map() -> None:
+    for filename in ("04_task3_gender_usage.ipynb", "04_task3_final_evaluation.ipynb"):
+        notebook = nbformat.read(ROOT / "notebooks" / filename, as_version=4)
+        for index, cell in enumerate(notebook.cells):
+            if cell.cell_type == "markdown":
+                if filename == "04_task3_gender_usage.ipynb" and index == 0:
+                    for link in re.findall(r"\[[^\]]*\]\(([^)]+)\)", cell.source):
+                        assert (ROOT / "notebooks" / link).exists(), link
+                else:
+                    assert not re.search(r"\[[^\]]*\]\s*\(|\[[^\]]*\]\s*\[", cell.source)
+                assert not re.search(r"https?://|<a\b|^\s*\[[^\]]+\]:", cell.source, re.M)
+            for output in cell.get("outputs", []):
+                assert "href=" not in output.get("data", {}).get("text/html", "")
