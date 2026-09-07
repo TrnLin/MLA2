@@ -2,7 +2,7 @@
 title: "Task 2 - Fashion Season Classification: execution report and plan"
 status: task2-component-ready-for-group-freeze
 created: 2026-08-25
-updated: 2026-09-01
+updated: 2026-09-07
 scope: task2-season
 ---
 
@@ -32,7 +32,7 @@ Recommended direction:
    and size. Do not select by accuracy alone.
 6. Freeze every choice before Notebook 06 opens the holdout once.
 
-Current position on 31 August 2026: corrected G3, I1, I2, the matched pretrained
+Current position on 7 September 2026: corrected G3, I1, I2, the matched pretrained
 boundary, G5 seed stability, shortcut/error slices, robustness/cost, calibration,
 paired grouped-bootstrap uncertainty, deterministic Grad-CAM/failure review, and the
 G7 Ultimate Judgement is complete. I2 lambda `0.3` is the
@@ -115,7 +115,7 @@ strongest defensible submission path.
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 | Current handoff gate | Ten component checks pass for run `task2-season-i2-refit-fall-s2753-637dd6378be9`; the portable registry snapshot, bundle, and image-only smoke prediction match the frozen hashes; final evaluation remains locked | Wait for a machine-readable whole-group freeze before Notebook 06 |
-| Current Task 2 verification | `pip check` and scoped Ruff pass; 430 Task 2, model-boundary, registry, and cache tests pass; 34 Task 2 notebook-contract tests pass; the real handoff and CPU bundle load both verify | Task 2 is green on Windows. The full repository gate is currently blocked by unchanged Task 3/4 Unix-only `resource` imports and 1,483 Ruff findings outside the files changed here; those teammate-owned issues are not hidden or fixed in this branch |
+| Current Task 2 verification | `pip check` and scoped Ruff pass; 431 Task 2, model-boundary, registry, and cache tests pass; 35 Task 2 notebook-contract tests pass; the headless plotting contract, clean-kernel Notebook Run All, real handoff, and CPU bundle load also verify | Task 2 is green on Windows. The full repository collection is still blocked by unchanged Task 3/4 Unix-only `resource` imports, and full-repository lint debt outside the files changed here remains teammate-owned; neither issue is hidden or changed in this branch |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -127,6 +127,18 @@ Task 2 attempts and was merged without changing any Task 2 field or teammate row
 `running` attempt was explicitly closed as `interrupted`; the source digest, final row digest,
 counts, and invalidated refit IDs are recorded in
 `results/evidence/task2/registry_recovery.json`.
+
+Shared EDA lock note: main integration re-encoded the four Notebook 01 PNGs consumed by
+Task 2. A direct old-versus-current comparison found identical dimensions and zero changed
+pixels in every image; only PNG bytes changed. The Task 2 figure registry and replay lock now
+record the current SHA-256 values, and a regression test verifies every referenced file. No
+EDA result, training input, selected model, or performance claim changed.
+
+The final integration corrections remain readable as test-then-fix pairs: `88d0239`
+exposes stale final-model and ledger wording, while `3607246` synchronises the notebook;
+`d315b97` exposes shared EDA hash drift, which the same replay fix closes; and `eb61805`
+exposes the interactive plotting dependency before `02ef104` forces the test-only `Agg`
+backend. No failing commit is the branch tip.
 
 ### 2.1 Independent defect audit and correction order
 
