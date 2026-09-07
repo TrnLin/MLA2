@@ -116,6 +116,15 @@ from .external import (
     reconcile_external_ids,
     select_development_pairs,
 )
+from .gallery_artifact import (
+    GALLERY_ARTIFACT_SCHEMA_VERSION,
+    GALLERY_ARTIFACT_TYPE,
+    METADATA_COLUMNS,
+    SOURCE_IDENTITY_FIELDS,
+    TeacherGallery,
+    export_teacher_gallery_artifact,
+    load_teacher_gallery_artifact,
+)
 from .hog import (
     HOG_CONFIG,
     HOG_CONFIG_FINGERPRINT,
@@ -542,4 +551,11 @@ __all__ = (
     "validate_learned_manifest",
     "validate_stability_evidence_artifact",
     "write_learned_artifacts",
+    "GALLERY_ARTIFACT_SCHEMA_VERSION",
+    "GALLERY_ARTIFACT_TYPE",
+    "METADATA_COLUMNS",
+    "SOURCE_IDENTITY_FIELDS",
+    "TeacherGallery",
+    "export_teacher_gallery_artifact",
+    "load_teacher_gallery_artifact",
 )
