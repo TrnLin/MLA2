@@ -23,11 +23,11 @@ from PIL import Image
 
 from fashion.config import ROOT
 from fashion.data.dataset import load_splits
-from fashion.data.splits import PROTECTED_PARTITIONS
 from fashion.task4.final_freeze import (
     FINAL_FREEZE_RELATIVE_PATH,
     validate_final_comparison_bundle,
 )
+from fashion.task4.image_safety import reject_sealed_image_rows
 from fashion.task4.preprocessing import PreprocessingContract, preprocess_image
 from fashion.task4.preprocessing_experiment import build_odd_aspect_canvas
 from fashion.task4.protocol import primary_relevance
@@ -60,7 +60,6 @@ PANEL_COUNT = 5
 SLICE_TOP_K = 5
 
 CONTRACT = PreprocessingContract(width=240, height=320)
-_TEACHER_TEST_MARKERS = ("teacher/test", "images_test", "styles_prediction")
 _SLICE_ORDER = (
     "normal_success",
     "grayscale",
@@ -306,20 +305,7 @@ def development_catalogue(*, root: Path = ROOT) -> pd.DataFrame:
 
 
 def _reject_sealed(frame: pd.DataFrame) -> None:
-    if "partition" not in frame:
-        raise ValueError("image rows must carry canonical partition values")
-    protected = frame["partition"].isin(list(PROTECTED_PARTITIONS))
-    if protected.any():
-        ids = frame.loc[protected, "id"].astype(str).head(5).tolist()
-        raise ValueError(f"sealed holdout/quarantine rows reached image access: {ids}")
-    if not frame["partition"].eq("development").all():
-        raise ValueError("sealed or unknown partition rows reached image access")
-    for column in (name for name in frame.columns if str(name).endswith("_path")):
-        lowered = frame[column].astype(str).str.replace("\\", "/", regex=False).str.lower()
-        if lowered.map(
-            lambda value: any(marker in value for marker in _TEACHER_TEST_MARKERS)
-        ).any():
-            raise ValueError("official teacher-test path reached image access")
+    reject_sealed_image_rows(frame, require_development=True)
 
 
 def resolve_image_rows(

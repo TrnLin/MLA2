@@ -14,6 +14,7 @@ import pandas as pd
 import pytest
 import torch
 
+from fashion.task4 import image_safety
 from fashion.train.registry import Task4RunRegistry as RunRegistry
 
 RUNNER_PATH = Path(__file__).parents[2] / "scripts/task4/run_model_comparisons.py"
@@ -406,6 +407,12 @@ def test_sealed_rows_and_teacher_test_paths_are_rejected_before_image_access() -
     frame.loc[1, "teacher_path"] = "data/raw/teacher/test/images_test/2.jpg"
     with pytest.raises(ValueError, match="teacher-test"):
         runner.reject_sealed_image_rows(frame)
+
+
+def test_runner_uses_canonical_image_safety_guard() -> None:
+    runner = _load_runner()
+
+    assert runner.reject_sealed_image_rows is image_safety.reject_sealed_image_rows
 
 
 def test_smoke_attempt_registers_one_new_run_row(

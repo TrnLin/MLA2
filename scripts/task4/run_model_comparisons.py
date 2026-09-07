@@ -97,6 +97,7 @@ from fashion.task4.learned_evidence import (
     reconstruct_training_result,
     record_evidence_failure,
 )
+from fashion.task4.image_safety import reject_sealed_image_rows
 from fashion.task4.preprocessing import PreprocessingContract
 from fashion.task4.training import (
     AugmentationPolicy,
@@ -245,15 +246,6 @@ PHASE_REQUEST_HYPERPARAMETER_FIELDS = {
     "planned_epochs",
     "checkpoint_epochs",
 }
-PROTECTED_PARTITIONS = {"holdout", "quarantine"}
-TEACHER_TEST_MARKERS = (
-    "data/raw/teacher/test",
-    "teacher/test",
-    "images_test",
-    "styles_prediction.csv",
-)
-
-
 class SmokeResult(NamedTuple):
     run_id: str
     family: str
@@ -393,22 +385,6 @@ def load_canonical_splits() -> pd.DataFrame:
     splits = load_splits(SPLITS_CSV)
     validate_split_structure(splits)
     return splits
-
-
-def reject_sealed_image_rows(frame: pd.DataFrame) -> None:
-    if "partition" not in frame:
-        raise ValueError("image rows must carry canonical partition values")
-    protected = frame["partition"].isin(PROTECTED_PARTITIONS)
-    if protected.any():
-        ids = frame.loc[protected, "id"].astype(str).head(5).tolist()
-        raise ValueError(f"sealed holdout/quarantine rows reached image access: {ids}")
-    path_columns = [
-        column for column in frame.columns if column.endswith("_path") or column == "path"
-    ]
-    for column in path_columns:
-        lowered = frame[column].astype(str).str.replace("\\", "/", regex=False).str.lower()
-        if lowered.map(lambda value: any(marker in value for marker in TEACHER_TEST_MARKERS)).any():
-            raise ValueError("official teacher-test path reached image access")
 
 
 def _reject_distributed_environment() -> None:
