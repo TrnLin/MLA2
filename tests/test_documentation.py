@@ -1,12 +1,49 @@
 from __future__ import annotations
 
 import ast
+import hashlib
+import json
 import subprocess
 
 import nbformat
 
 from fashion.config import ROOT
 from fashion.data.pipeline import _BASE_ARTIFACTS, CACHE_FILENAME
+
+
+def test_task2_report_final_trace_matches_current_artifacts() -> None:
+    report = (ROOT / "docs/task2-season-execution-report.md").read_text(
+        encoding="utf-8"
+    )
+    model_manifest_path = ROOT / "models/task2_season.manifest.json"
+    model_manifest = json.loads(model_manifest_path.read_text(encoding="utf-8"))
+    handoff = json.loads(
+        (ROOT / "results/evidence/task2/final_handoff/manifest.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    manifest_sha256 = hashlib.sha256(model_manifest_path.read_bytes()).hexdigest()
+
+    for current in (
+        model_manifest["selected_candidate"],
+        model_manifest["selected_experiment_id"],
+        model_manifest["run_id"],
+        model_manifest["bundle"]["path"],
+        model_manifest["bundle"]["sha256"],
+        manifest_sha256,
+        f'{model_manifest["parameter_count"]:,}',
+        f'{model_manifest["valid_development_rows"]:,}',
+        f'{model_manifest["final_epoch"]} epochs',
+        f'{model_manifest["temperature"]:.6f}',
+        handoff["artifacts"]["registry_snapshot"]["path"],
+        handoff["artifacts"]["registry_snapshot"]["sha256"],
+    ):
+        assert current in report
+
+    assert handoff["run_id"] == model_manifest["run_id"]
+    assert handoff["artifacts"]["model_bundle"] == model_manifest["bundle"]
+    assert handoff["artifacts"]["model_manifest"]["sha256"] == manifest_sha256
+    assert handoff["holdout_opened"] is False
 
 
 def test_active_handoff_docs_use_the_current_contract() -> None:
