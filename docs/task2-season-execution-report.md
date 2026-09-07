@@ -115,7 +115,7 @@ strongest defensible submission path.
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 | Current handoff gate | Ten component checks pass for run `task2-season-i2-refit-fall-s2753-637dd6378be9`; the portable registry snapshot, bundle, and image-only smoke prediction match the frozen hashes; final evaluation remains locked | Wait for a machine-readable whole-group freeze before Notebook 06 |
-| Current verification | Ruff and all `579` repository tests pass. This includes 43 focused refit/handoff tests and 37 notebook-contract tests | The code, artifact, presentation, saved-output, and artifact-only replay contracts are green |
+| Current Task 2 verification | `pip check` and scoped Ruff pass; 430 Task 2, model-boundary, registry, and cache tests pass; 34 Task 2 notebook-contract tests pass; the real handoff and CPU bundle load both verify | Task 2 is green on Windows. The full repository gate is currently blocked by unchanged Task 3/4 Unix-only `resource` imports and 1,483 Ruff findings outside the files changed here; those teammate-owned issues are not hidden or fixed in this branch |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
