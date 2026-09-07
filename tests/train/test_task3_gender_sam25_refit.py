@@ -170,4 +170,5 @@ def test_refit_launcher_uses_existing_zip_and_separate_output():
     for cell in notebook.cells:
         if cell.cell_type == "code":
             compile(cell.source, "gender_sam25_refit.ipynb", "exec")
-            assert not cell.outputs and cell.execution_count is None
+            assert cell.execution_count is not None
+            assert all(output.output_type != "error" for output in cell.outputs)
