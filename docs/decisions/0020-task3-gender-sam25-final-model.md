@@ -1,6 +1,6 @@
 # 0020 — Freeze the Task 3 gender SAM25 model
 
-- Status: Accepted
+- Status: Superseded by [0025](0025-task3-gender-sam25-refit-final-model.md) for the final Gender artifact; the five-fold evidence remains historical
 - Date: 2026-09-06
 - Amends: [0014](0014-development-holdout-cv-boundary.md), for the final gender artifact only
 
