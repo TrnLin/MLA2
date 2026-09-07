@@ -1,0 +1,10 @@
+{
+  "outputs": {
+    "evaluation.json": "761f4f458d3a5c134d793afd51c25d4f35be324e7a9a750e06e23e5c5a0eca8d",
+    "holdout_comparison.csv": "006eaf1eb1eb0e4f3526da8f12edf935a03d7fbbecdf9086bc3c4f91197658a4",
+    "holdout_per_class.csv": "cc2699131b8957f5110c7718c28e00add58747f31afb846e1512deeed9c35810",
+    "holdout_predictions_and_labels.csv": "ce1c6c2ada71633303d69ea6705657cd45d60343ed8fd53570f074e5464805da",
+    "holdout_comparison.png": "285acd0a81de00e40ea6485499115d3b387212959a3692d28644a7d37d82569a",
+    "prediction_freeze.json": "8d7e7d0682b1826e6e014f8a3d5875adc7fdd227ab94c799c23ce7c334cd9c97"
+  }
+}
