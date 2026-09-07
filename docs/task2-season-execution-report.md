@@ -138,7 +138,9 @@ The final integration corrections remain readable as test-then-fix pairs: `88d02
 exposes stale final-model and ledger wording, while `3607246` synchronises the notebook;
 `d315b97` exposes shared EDA hash drift, which the same replay fix closes; and `eb61805`
 exposes the interactive plotting dependency before `02ef104` forces the test-only `Agg`
-backend. No failing commit is the branch tip.
+backend. Finally, `0178e3b` exposes the Section 15 dependency on the mutable live ledger,
+and `b664fb3` replays the immutable handoff audit and its packaged registry snapshot
+instead. No failing commit is the branch tip.
 
 ### 2.1 Independent defect audit and correction order
 
@@ -588,7 +590,8 @@ to `results/evidence/task2/final_handoff/registry_snapshot.csv`, recomputes stor
 claims during load, validates probability semantics, and prevents non-identical package
 replacement. Its manifest records `task2_component_ready=true` but deliberately keeps
 `notebook_06_unlocked=false`. This separates “Task 2 is ready” from “the whole group is
-allowed to evaluate.”
+allowed to evaluate.” Notebook 03 Section 15 displays this stored ten-row audit and
+packaged snapshot hash; it does not silently substitute the mutable `results/runs.csv`.
 
 ## 3. Task 2 contract
 
