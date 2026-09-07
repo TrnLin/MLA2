@@ -524,6 +524,7 @@ def test_bundle_loader_checks_identities_builds_fixed_views_and_redacts_paths(
     package.mkdir()
     manifest_path = package / "manifest.json"
     manifest_path.write_text(json.dumps(_portable_manifest()), encoding="utf-8")
+    (package / "weights.pt").write_bytes(b"source weights")
     model = FakeEncoder()
     calls: dict[str, object] = {}
 
@@ -549,10 +550,12 @@ def test_bundle_loader_checks_identities_builds_fixed_views_and_redacts_paths(
         splits_path=tmp_path / "splits.csv",
     )
 
-    assert calls == {
-        "model": (package, torch.device("cpu")),
-        "gallery": tmp_path / "gallery",
-    }
+    model_package, model_device = calls["model"]
+    assert isinstance(model_package, Path)
+    assert model_package != package
+    assert not model_package.exists()
+    assert model_device == torch.device("cpu")
+    assert calls["gallery"] == tmp_path / "gallery"
     assert loaded.model is model
     assert loaded.model.training is False
     assert loaded.device == torch.device("cpu")
@@ -568,7 +571,7 @@ def test_bundle_loader_checks_identities_builds_fixed_views_and_redacts_paths(
     assert set(loaded.splits) == {"id", "sha256", "partition", "cv_fold"}
 
 
-def test_bundle_loader_rejects_manifest_changed_while_model_loads(
+def test_bundle_loader_uses_snapshot_when_source_manifest_changes_and_restores(
     monkeypatch: pytest.MonkeyPatch,
     bundle: SearchBundle,
     tmp_path: Path,
@@ -577,26 +580,35 @@ def test_bundle_loader_rejects_manifest_changed_while_model_loads(
     package.mkdir()
     manifest_path = package / "manifest.json"
     manifest = _portable_manifest()
-    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    manifest_bytes = json.dumps(manifest).encode("utf-8")
+    weight_bytes = b"stable source weights"
+    manifest_path.write_bytes(manifest_bytes)
+    (package / "weights.pt").write_bytes(weight_bytes)
     loader_splits = pd.concat(
         [bundle.query_catalogue, bundle.gallery.metadata],
         ignore_index=True,
     )
+    received_packages: list[Path] = []
 
-    def mutate_manifest_while_loading(
+    def change_and_restore_source_manifest(
         path: Path,
         *,
         device: torch.device | str,
     ) -> nn.Module:
+        received = Path(path)
+        received_packages.append(received)
         changed = _portable_manifest()
         changed["normalization"]["teacher"]["mean"] = [0.1, 0.2, 0.3]
         manifest_path.write_text(json.dumps(changed), encoding="utf-8")
+        manifest_path.write_bytes(manifest_bytes)
+        assert (received / "manifest.json").read_bytes() == manifest_bytes
+        assert (received / "weights.pt").read_bytes() == weight_bytes
         return FakeEncoder()
 
     monkeypatch.setattr(
         search_module,
         "load_r5_inference_package",
-        mutate_manifest_while_loading,
+        change_and_restore_source_manifest,
     )
     monkeypatch.setattr(
         search_module,
@@ -605,12 +617,17 @@ def test_bundle_loader_rejects_manifest_changed_while_model_loads(
     )
     monkeypatch.setattr(search_module, "load_splits", lambda path: loader_splits)
 
-    with pytest.raises(ValueError, match="manifest.*changed"):
-        load_search_bundle(
-            model_package=package,
-            gallery_directory=tmp_path / "gallery",
-            splits_path=tmp_path / "splits.csv",
-        )
+    loaded = load_search_bundle(
+        model_package=package,
+        gallery_directory=tmp_path / "gallery",
+        splits_path=tmp_path / "splits.csv",
+    )
+
+    assert len(received_packages) == 1
+    assert received_packages[0] != package
+    assert not received_packages[0].exists()
+    assert loaded.teacher_mean == (0.5, 0.5, 0.5)
+    assert loaded.model_manifest_sha256 == hashlib.sha256(manifest_bytes).hexdigest()
 
 
 def test_bundle_loader_rejects_gallery_from_another_checkpoint(
@@ -624,6 +641,7 @@ def test_bundle_loader_rejects_gallery_from_another_checkpoint(
         json.dumps(_portable_manifest()),
         encoding="utf-8",
     )
+    (package / "weights.pt").write_bytes(b"source weights")
     bad_manifest = dict(bundle.gallery.manifest)
     bad_manifest["r5_checkpoint"] = {
         "run_id": "other",

@@ -6,7 +6,9 @@ import hashlib
 import json
 import math
 import os
+import shutil
 import stat
+import tempfile
 from collections.abc import Mapping
 from dataclasses import dataclass
 from numbers import Integral
@@ -261,6 +263,28 @@ def _checkpoint_sha256(manifest: Mapping[str, object], *, label: str) -> str:
     return digest
 
 
+def _load_model_snapshot(
+    package: Path,
+    *,
+    manifest: Mapping[str, object],
+    manifest_bytes: bytes,
+    device: torch.device,
+) -> nn.Module:
+    weights = manifest.get("weights")
+    weights_path = weights.get("path") if isinstance(weights, Mapping) else None
+    if weights_path != "weights.pt":
+        raise ValueError("portable R5 weight path must be exactly weights.pt")
+
+    with tempfile.TemporaryDirectory(prefix="task4-r5-snapshot-") as temporary:
+        snapshot = Path(temporary)
+        (snapshot / "manifest.json").write_bytes(manifest_bytes)
+        try:
+            shutil.copyfile(package / "weights.pt", snapshot / "weights.pt")
+        except OSError as error:
+            raise ValueError(f"portable R5 weights cannot be copied: {error}") from error
+        return load_r5_inference_package(snapshot, device=device)
+
+
 def load_search_bundle(
     *,
     model_package: str | Path,
@@ -274,13 +298,12 @@ def load_search_bundle(
     package = Path(model_package)
     manifest_path = package / "manifest.json"
     model_manifest, manifest_bytes = _read_manifest(manifest_path)
-    model = load_r5_inference_package(package, device=selected_device)
-    try:
-        manifest_after_load = manifest_path.read_bytes()
-    except OSError as error:
-        raise ValueError(f"portable R5 manifest cannot be reread: {error}") from error
-    if manifest_after_load != manifest_bytes:
-        raise ValueError("portable R5 manifest changed while the model was loading")
+    model = _load_model_snapshot(
+        package,
+        manifest=model_manifest,
+        manifest_bytes=manifest_bytes,
+        device=selected_device,
+    )
 
     expected_contract = _EXPECTED_CONTRACT.to_dict()
     if model_manifest.get("input_contract") != expected_contract:
