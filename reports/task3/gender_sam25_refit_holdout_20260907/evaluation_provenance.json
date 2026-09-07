@@ -1,0 +1,12 @@
+{
+  "checkpoint_sha256": "41a5f5ea027805e8edbbf667d080564776ca9873d9146e0dec15c0d4bec2b272",
+  "canonical_splits_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+  "average_probabilities_sha256": "defcd35a526f2725ea2392ab40cbb0e94a02fd8f5eecb56ef48294a44eb2b066",
+  "outputs": {
+    "refit_holdout_probabilities.csv": "02062a90c0ce62270e198cc3f67d487b3c407832cf226d26b5e51e72d435729c",
+    "holdout_comparison.csv": "fb4b39974ac12ecc0a6f1dc4dbdae5420d8d017bb9effca9020454b33dba90d7",
+    "holdout_per_class.csv": "a5ad9d635c062e445fb12af7f86d1c2d378527fd4a071b8551bf101b60651bca",
+    "evaluation.json": "bff7ce261aad0b49d5347c2b718dc79527662113fe8d1910530aa9fa32e335ce",
+    "holdout_comparison.png": "7ac31789b966cc9d684f1e8ba804af1763f53514f50d8e2d6c40c69a3a19c554"
+  }
+}
