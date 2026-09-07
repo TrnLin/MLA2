@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import csv
-import fcntl
 import hashlib
 import multiprocessing
 import subprocess
@@ -10,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from filelock import FileLock
 
 import fashion.train.registry as registry_module
 from fashion.train.recovery import interrupt_orphaned_run
@@ -84,11 +84,9 @@ def _hold_registry_lock(
     acquired: Any,
     release: Any,
 ) -> None:
-    with Path(lock_path).open("a+b") as lock_handle:
-        fcntl.flock(lock_handle.fileno(), fcntl.LOCK_EX)
+    with FileLock(lock_path):
         acquired.set()
         release.wait(timeout=15)
-        fcntl.flock(lock_handle.fileno(), fcntl.LOCK_UN)
 
 
 def _mutate_registry_in_process(
@@ -98,14 +96,7 @@ def _mutate_registry_in_process(
     finished: Any,
 ) -> None:
     registry = RunRegistry(Path(csv_path))
-    real_flock = registry_module.fcntl.flock
-
-    def signal_exclusive_lock_attempt(file_descriptor: int, operation_code: int) -> Any:
-        if operation_code == fcntl.LOCK_EX:
-            attempted.set()
-        return real_flock(file_descriptor, operation_code)
-
-    registry_module.fcntl.flock = signal_exclusive_lock_attempt
+    attempted.set()
     if operation == "append":
         registry.append(_running_row("contender"))
     else:
