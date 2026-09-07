@@ -1247,13 +1247,17 @@ adding a validation curve here would require a new post-freeze selection split.
 
 Final replacement trace:
 
+- selected candidate `I2`, experiment `g4-i2-article-type-lambda-0-3-c1`;
 - run `task2-season-i2-refit-fall-s2753-637dd6378be9`;
 - bundle `models/task2_season.pt`, SHA-256
   `5927eff73130acedc8015199e1df5a6c6edf64c0b45023ebd91c48d7ed40f93c`;
 - manifest `models/task2_season.manifest.json`, SHA-256
   `25d918061dbd9b46501de9aa3671adabf951649862ce9613317983dadbac55d9`;
+- confidence-only deployment temperature `1.365002`;
 - history `results/evidence/task2/development_refit/training_history.csv`;
-- chart `results/figures/task2/development_refit_training_curve.png`.
+- chart `results/figures/task2/development_refit_training_curve.png`;
+- registry snapshot `results/evidence/task2/final_handoff/registry_snapshot.csv`, SHA-256
+  `b6d7b4c43bffaaad75a16bb555ca36d4c2fc42853979a470682373618d34bfc8`.
 
 The first package, run `task2-season-i2-refit-fall-s2753-3d60bd14cc91`, is retained under
 `results/evidence/task2/development_refit/invalidated/` and must not be used. The next run,
