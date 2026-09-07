@@ -13,6 +13,7 @@ Notebooks tell the investigation story. Reusable code lives in `src/fashion/`.
 | 04 | `04_task3_gender_usage.ipynb` | saved-results report | model comparisons, failures, and final choices |
 | 05a | `task-4/01_v1_eda.ipynb` | complete and executed | V1 provenance, geometry, and paired-image audit |
 | 05b | `task-4/05_task4_visual_search.ipynb` | baseline complete; model work open | Top-K search choices and comparisons |
+| 04 eval | `04_task3_final_evaluation.ipynb` | saved Task 3 evaluation | Gender and Usage holdout results, errors and ultimate judgement |
 | 06 | `06_final_evaluation.ipynb` | locked scaffold | one holdout evaluation and ultimate judgement |
 
 Notebooks 02 and 06 remain Markdown-only planning or locked scaffolds.
