@@ -1,0 +1,40 @@
+{
+  "target": "usage",
+  "run_id": "t3_usage_e8_translation_teacher_all_development_refit_5553be0c138243e9",
+  "selected_epoch": 30,
+  "class_names": [
+    "Casual",
+    "Ethnic",
+    "Formal",
+    "Home",
+    "NA",
+    "Party",
+    "Smart Casual",
+    "Sports",
+    "Travel"
+  ],
+  "path_base": "this folder",
+  "source_path_base": "repository root",
+  "requires": "Repository src/fashion code and its Python environment",
+  "files": {
+    "final_epoch.pt": {
+      "sha256": "18da75a4ec935ab0d18c9ebdf9d1dabb6fa87ee484ead5f439de0192c4af2747",
+      "source": "results/evidence/task3/usage_e8_refit_20260907/final_epoch.pt",
+      "bytes": 1584821
+    },
+    "config.json": {
+      "sha256": "57e5be27be52d3eb7ee78e52bc8fa4349156948d70c3ed120358ced6fe9ea15c",
+      "source": "results/evidence/task3/usage_e8_refit_20260907/config.json",
+      "bytes": 7764
+    },
+    "normalization.json": {
+      "sha256": "76b0279c922c6b19f86ebad40921e7d841e8df0c0d5f3728b1f30c1a7245e45d",
+      "source": "results/evidence/task3/usage_e8_refit_20260907/normalization.json",
+      "bytes": 413
+    },
+    "class_names.json": {
+      "sha256": "b30c30b5432ac07f0ae7a0a5396b9678e54609a16245ee98a199e7dbb170c245",
+      "bytes": 110
+    }
+  }
+}
