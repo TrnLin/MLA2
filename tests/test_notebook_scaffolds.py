@@ -1481,6 +1481,60 @@ def test_task2_refit_cell_loads_verified_bundle_without_evaluation_leakage() -> 
         assert required in finding
 
 
+def test_task2_markdown_matches_final_model_and_recovered_registry() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    cells = {cell.id: cell for cell in notebook.cells}
+    model_manifest_path = ROOT / "models/task2_season.manifest.json"
+    model_manifest = json.loads(model_manifest_path.read_text(encoding="utf-8"))
+    handoff = json.loads(
+        (ROOT / "results/evidence/task2/final_handoff/manifest.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    recovery = json.loads(
+        (ROOT / "results/evidence/task2/registry_recovery.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    refit_finding = cells["s14-03-finding"].source
+    for required in (
+        model_manifest["selected_candidate"],
+        model_manifest["selected_experiment_id"],
+        model_manifest["run_id"],
+        model_manifest["bundle"]["sha256"],
+        compute_sha256(model_manifest_path),
+        f'{(ROOT / model_manifest["bundle"]["path"]).stat().st_size:,} bytes',
+        f'{model_manifest["parameter_count"]:,}',
+        f'{model_manifest["valid_development_rows"]:,}',
+        f'{model_manifest["final_epoch"]} epochs',
+        f'{model_manifest["temperature"]:.6f}',
+        "weights=None",
+    ):
+        assert required in refit_finding
+
+    registry_findings = "\n".join(
+        cells[cell_id].source
+        for cell_id in ("s07-02-finding", "s07-02-output-1-finding")
+    )
+    status_counts = recovery["final_task2_status_counts"]
+    for required in (
+        str(recovery["recovery"]["task2_rows"]),
+        str(status_counts["completed"]),
+        str(status_counts["failed"]),
+        str(status_counts["interrupted"]),
+        recovery["active_refit_run_id"],
+        "historical eligibility snapshot",
+        "final recovered Task 2 ledger",
+    ):
+        assert required in registry_findings
+
+    assert handoff["run_id"] == model_manifest["run_id"]
+    assert handoff["artifacts"]["model_bundle"] == model_manifest["bundle"]
+    assert handoff["status"] == "ready_for_group_freeze"
+    assert handoff["holdout_opened"] is False
+
+
 def test_task2_final_cells_build_only_the_locked_component_handoff() -> None:
     notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
