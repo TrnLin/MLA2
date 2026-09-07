@@ -6,6 +6,7 @@ import io
 import json
 import math
 import os
+import subprocess
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass
 from datetime import datetime
@@ -49,7 +50,11 @@ from fashion.train.artifacts import (
     canonical_sha256,
     verify_artifact,
 )
-from fashion.train.cache import implementation_sha256, verify_implementation_at_head
+from fashion.train.cache import (
+    implementation_sha256,
+    implementation_sha256_at_commit,
+    verify_implementation_at_head,
+)
 from fashion.train.multitask import (
     RefitResult,
     RefitTrainConfig,
@@ -84,6 +89,12 @@ REFIT_IMPLEMENTATION_PATHS = tuple(
             "src/fashion/task2/ultimate_judgement.py",
         }
     )
+)
+REFIT_LOAD_COMPATIBILITY_PATHS = (
+    "src/fashion/data/images.py",
+    "src/fashion/data/torch.py",
+    "src/fashion/models/season.py",
+    "src/fashion/task2/inference.py",
 )
 HISTORY_COLUMNS = (
     "epoch",
@@ -558,12 +569,32 @@ def _load_verified_development_refit_package(
         raise ValueError("development refit Git commit is invalid")
     if manifest["implementation_files_at_head"] != list(REFIT_IMPLEMENTATION_PATHS):
         raise ValueError("development refit implementation file set changed")
-    current_implementation = implementation_sha256(
-        *REFIT_IMPLEMENTATION_PATHS,
-        root=root,
-    )
-    if current_implementation != manifest["implementation_sha256"]:
-        raise ValueError("development refit implementation bytes changed")
+    recorded_implementation = str(manifest["implementation_sha256"])
+    current_implementation = implementation_sha256(*REFIT_IMPLEMENTATION_PATHS, root=root)
+    if current_implementation != recorded_implementation:
+        try:
+            historical_implementation = implementation_sha256_at_commit(
+                *REFIT_IMPLEMENTATION_PATHS,
+                commit=str(manifest["git_commit"]),
+                root=root,
+            )
+            historical_runtime = implementation_sha256_at_commit(
+                *REFIT_LOAD_COMPATIBILITY_PATHS,
+                commit=str(manifest["git_commit"]),
+                root=root,
+            )
+        except (FileNotFoundError, OSError, subprocess.SubprocessError, ValueError) as error:
+            raise ValueError(
+                "development refit historical implementation is unverifiable"
+            ) from error
+        current_runtime = implementation_sha256(
+            *REFIT_LOAD_COMPATIBILITY_PATHS,
+            root=root,
+        )
+        if historical_implementation != recorded_implementation:
+            raise ValueError("development refit recorded implementation digest changed")
+        if current_runtime != historical_runtime:
+            raise ValueError("development refit runtime compatibility bytes changed")
 
     canonical_inputs = manifest["canonical_inputs"]
     _require_exact_keys(canonical_inputs, {"splits", "label_maps"}, "canonical inputs")
@@ -1394,6 +1425,7 @@ __all__ = [
     "REFIT_GATE",
     "REFIT_HISTORY_CSV",
     "REFIT_IMPLEMENTATION_PATHS",
+    "REFIT_LOAD_COMPATIBILITY_PATHS",
     "REFIT_LOCK_FILENAME",
     "REFIT_RUNTIME_JSON",
     "RefitOutcome",

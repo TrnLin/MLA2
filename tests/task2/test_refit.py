@@ -219,17 +219,25 @@ def test_refit_load_accepts_verified_historical_training_source(
         run_or_load_development_refit(mode="run", project_root=ROOT, **paths)
         manifest = json.loads(paths["manifest_path"].read_text(encoding="utf-8"))
         recorded_digest = str(manifest["implementation_sha256"])
+        runtime_digest = "e" * 64
 
         monkeypatch.setattr(
             refit_module,
             "implementation_sha256",
-            lambda *paths, root: "f" * 64,
+            lambda *paths, root: (
+                runtime_digest
+                if paths == refit_module.REFIT_LOAD_COMPATIBILITY_PATHS
+                else "f" * 64
+            ),
         )
         monkeypatch.setattr(
             refit_module,
             "implementation_sha256_at_commit",
-            lambda *paths, commit, root: recorded_digest,
-            raising=False,
+            lambda *paths, commit, root: (
+                runtime_digest
+                if paths == refit_module.REFIT_LOAD_COMPATIBILITY_PATHS
+                else recorded_digest
+            ),
         )
 
         loaded, _, _ = load_verified_development_refit_manifest(
