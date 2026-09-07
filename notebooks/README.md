@@ -15,8 +15,11 @@ Notebooks tell the investigation story. Reusable code lives in `src/fashion/`.
 | 05b | `task-4/05_task4_visual_search.ipynb` | baseline complete; model work open | Top-K search choices and comparisons |
 | 04 eval | `04_task3_final_evaluation.ipynb` | saved Task 3 evaluation | Gender and Usage holdout results, errors and ultimate judgement |
 | 06 | `06_final_evaluation.ipynb` | locked scaffold | one holdout evaluation and ultimate judgement |
+| 06 Task 2 | `06_task2_season_evaluation.ipynb` | locked owner replay | Kai's frozen Season bundle, holdout contract, and Assessment 3 evidence |
 
-Notebooks 02 and 06 remain Markdown-only planning or locked scaffolds.
+Notebook 02 and the shared Notebook 06 remain planning or locked scaffolds.
+The Task 2 owner notebook is a replay-safe companion; it does not independently unlock
+protected labels or create a second holdout score.
 Task 3 has one report and [40 retained training notebooks](task3_training/README.md). Each
 `TODO(owner)` belongs to the task owner.
 
