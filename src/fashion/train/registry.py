@@ -268,6 +268,25 @@ def _write_union_rows_with_pandas(path: Path, rows: list[dict[str, str]]) -> Non
     _write_registry_csv(path, frame)
 
 
+def _sync_parent_directory(path: Path) -> None:
+    """Best-effort directory sync after an atomic replace.
+
+    Windows does not expose directory file descriptors through ``os.open``.
+    The file contents are already flushed before this optional durability step.
+    """
+    try:
+        directory_fd = os.open(path.parent, os.O_RDONLY)
+    except (NotImplementedError, OSError):
+        return
+    try:
+        try:
+            os.fsync(directory_fd)
+        except (NotImplementedError, OSError):
+            return
+    finally:
+        os.close(directory_fd)
+
+
 def _write_union_rows_with_csv(path: Path, rows: list[dict[str, str]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path: Path | None = None
@@ -289,11 +308,7 @@ def _write_union_rows_with_csv(path: Path, rows: list[dict[str, str]]) -> None:
             os.fsync(handle.fileno())
         os.replace(temporary_path, path)
         temporary_path = None
-        directory_fd = os.open(path.parent, os.O_RDONLY)
-        try:
-            os.fsync(directory_fd)
-        finally:
-            os.close(directory_fd)
+        _sync_parent_directory(path)
     finally:
         if temporary_path is not None:
             temporary_path.unlink(missing_ok=True)
