@@ -45,9 +45,12 @@ No holdout/test evaluation or submission file is produced here. Mixed training
 loss is a training diagnostic; it cannot establish validation performance.
 The five-fold scores belong to the earlier fold models, not this new checkpoint.
 
-This implements the owner's later request for a full-development refit.
-ADR 0020 and its existing five-model artifact remain the historical freeze;
-writing or running this code does not replace that artifact automatically.
+The completed refit was accepted on 7 September 2026 in
+[ADR 0025](decisions/0025-task3-gender-sam25-refit-final-model.md).
+Use its [acceptance manifest](../reports/task3/gender_final_sam25_refit_20260907/model_manifest.json)
+for the final model. ADR 0020 and the five-model artifact remain historical evidence.
+The original training-only receipt remains unchanged; later holdout analysis is in
+[the Task 3 final evaluation notebook](../notebooks/04_task3_final_evaluation.ipynb).
 
 Equivalent command, from a checkout with the teacher images already available:
 
