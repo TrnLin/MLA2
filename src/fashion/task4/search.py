@@ -5,11 +5,13 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import os
+import stat
 from collections.abc import Mapping
 from dataclasses import dataclass
 from numbers import Integral
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, BinaryIO, Literal
 
 import numpy as np
 import pandas as pd
@@ -19,7 +21,6 @@ from torch import nn
 
 from fashion.config import ROOT
 from fashion.data.dataset import load_splits
-from fashion.data.hashing import compute_sha256
 from fashion.task4.gallery_artifact import (
     TeacherGallery,
     load_teacher_gallery_artifact,
@@ -193,14 +194,15 @@ class SearchBundle:
     splits: pd.DataFrame
 
 
-def _read_manifest(path: Path) -> dict[str, Any]:
+def _read_manifest(path: Path) -> tuple[dict[str, Any], bytes]:
     try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
+        raw = path.read_bytes()
+        payload = json.loads(raw.decode("utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         raise ValueError(f"portable R5 manifest cannot be read: {error}") from error
     if not isinstance(payload, dict):
         raise ValueError("portable R5 manifest must contain one JSON object")
-    return payload
+    return payload, raw
 
 
 def _device(value: str | torch.device) -> torch.device:
@@ -271,8 +273,14 @@ def load_search_bundle(
     selected_device = _device(device)
     package = Path(model_package)
     manifest_path = package / "manifest.json"
-    model_manifest = _read_manifest(manifest_path)
+    model_manifest, manifest_bytes = _read_manifest(manifest_path)
     model = load_r5_inference_package(package, device=selected_device)
+    try:
+        manifest_after_load = manifest_path.read_bytes()
+    except OSError as error:
+        raise ValueError(f"portable R5 manifest cannot be reread: {error}") from error
+    if manifest_after_load != manifest_bytes:
+        raise ValueError("portable R5 manifest changed while the model was loading")
 
     expected_contract = _EXPECTED_CONTRACT.to_dict()
     if model_manifest.get("input_contract") != expected_contract:
@@ -312,7 +320,7 @@ def load_search_bundle(
         teacher_mean=teacher_mean,
         teacher_std=teacher_std,
         model_manifest=dict(model_manifest),
-        model_manifest_sha256=compute_sha256(manifest_path),
+        model_manifest_sha256=hashlib.sha256(manifest_bytes).hexdigest(),
         gallery=gallery,
         query_catalogue=primary.queries.copy(),
         splits=redacted_splits,
@@ -329,14 +337,23 @@ def _validate_crop(crop: CropBox | None, dimensions: tuple[int, int]) -> None:
         raise ValueError("crop must fit inside oriented source bounds")
 
 
+def _sha256_open_file(source: BinaryIO) -> str:
+    source.seek(0)
+    digest = hashlib.sha256()
+    for chunk in iter(lambda: source.read(1024 * 1024), b""):
+        digest.update(chunk)
+    source.seek(0)
+    return digest.hexdigest()
+
+
 def _open_prepared_image(
-    path: Path,
+    source: BinaryIO,
     *,
     crop: CropBox | None,
     contract: PreprocessingContract,
 ) -> tuple[tuple[int, int], tuple[int, int], PreprocessedImage]:
     try:
-        with Image.open(path) as image:
+        with Image.open(source) as image:
             oriented = ImageOps.exif_transpose(image)
             source_dimensions = (int(oriented.width), int(oriented.height))
             if source_dimensions[0] <= 0 or source_dimensions[1] <= 0:
@@ -415,10 +432,6 @@ def _prepare_query(
     known_row: dict[str, object] | None = None
     if image_path is not None:
         source_path = reject_protected_image_path(image_path)
-        if not source_path.is_file():
-            raise ValueError("outside query path must be a regular file")
-        source_sha256 = compute_sha256(source_path)
-        reject_protected_image_sha256(source_sha256, bundle.splits)
         kind: Literal["known", "outside"] = "outside"
         known_id = None
     else:
@@ -432,21 +445,30 @@ def _prepare_query(
         source_path = reject_protected_image_path(
             _resolved_canonical_path(known_row["path"])
         )
-        if not source_path.is_file():
-            raise ValueError("known query path must be a regular file")
-        source_sha256 = compute_sha256(source_path)
-        expected_sha256 = str(known_row["sha256"]).lower()
-        if source_sha256 != expected_sha256:
-            raise ValueError("known query image SHA-256 does not match canonical splits")
-        reject_protected_image_sha256(source_sha256, bundle.splits)
         kind = "known"
         known_id = int(query_id)
 
-    source_dimensions, effective_dimensions, transformed = _open_prepared_image(
-        source_path,
-        crop=crop,
-        contract=bundle.contract,
-    )
+    try:
+        with source_path.open("rb") as source:
+            if not stat.S_ISREG(os.fstat(source.fileno()).st_mode):
+                raise ValueError(f"{kind} query path must be a regular file")
+            source_sha256 = _sha256_open_file(source)
+            if known_row is not None:
+                expected_sha256 = str(known_row["sha256"]).lower()
+                if source_sha256 != expected_sha256:
+                    raise ValueError(
+                        "known query image SHA-256 does not match canonical splits"
+                    )
+            reject_protected_image_sha256(source_sha256, bundle.splits)
+            source_dimensions, effective_dimensions, transformed = (
+                _open_prepared_image(
+                    source,
+                    crop=crop,
+                    contract=bundle.contract,
+                )
+            )
+    except OSError as error:
+        raise ValueError(f"{kind} query path must be a regular readable file") from error
     effective_width, effective_height = effective_dimensions
     aspect_ratio = effective_width / effective_height
     content_fraction = float(transformed.content_mask.mean())

@@ -330,6 +330,38 @@ def test_copied_protected_bytes_are_rejected_before_decode(
         run_search(bundle, image_path=copied)
 
 
+def test_search_decodes_the_same_open_file_bytes_that_passed_hash_safety(
+    monkeypatch: pytest.MonkeyPatch,
+    bundle: SearchBundle,
+    tmp_path: Path,
+) -> None:
+    outside = tmp_path / "outside.png"
+    protected = tmp_path / "protected.png"
+    Image.new("RGB", (75, 100), (255, 255, 255)).save(outside)
+    Image.new("RGB", (75, 100), (0, 0, 0)).save(protected)
+    safe_digest = compute_sha256(outside)
+    bundle.splits.loc[bundle.splits["id"].eq(99), "sha256"] = compute_sha256(
+        protected
+    )
+    original_reject = search_module.reject_protected_image_sha256
+
+    def replace_path_after_hash_check(digest: str, splits: pd.DataFrame) -> None:
+        original_reject(digest, splits)
+        protected.replace(outside)
+
+    monkeypatch.setattr(
+        search_module,
+        "reject_protected_image_sha256",
+        replace_path_after_hash_check,
+    )
+
+    response = run_search(bundle, image_path=outside, top_k=1)
+
+    query = response.record.query
+    assert query.source_sha256 == safe_digest
+    assert np.all(query.preprocessed.pixels[query.preprocessed.content_mask] == 255)
+
+
 @pytest.mark.parametrize(
     "coordinates",
     [
@@ -534,6 +566,51 @@ def test_bundle_loader_checks_identities_builds_fixed_views_and_redacts_paths(
     assert loaded.gallery.ids.tolist() == [20, 30, 40]
     assert "path" not in loaded.splits
     assert set(loaded.splits) == {"id", "sha256", "partition", "cv_fold"}
+
+
+def test_bundle_loader_rejects_manifest_changed_while_model_loads(
+    monkeypatch: pytest.MonkeyPatch,
+    bundle: SearchBundle,
+    tmp_path: Path,
+) -> None:
+    package = tmp_path / "task4_r5"
+    package.mkdir()
+    manifest_path = package / "manifest.json"
+    manifest = _portable_manifest()
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    loader_splits = pd.concat(
+        [bundle.query_catalogue, bundle.gallery.metadata],
+        ignore_index=True,
+    )
+
+    def mutate_manifest_while_loading(
+        path: Path,
+        *,
+        device: torch.device | str,
+    ) -> nn.Module:
+        changed = _portable_manifest()
+        changed["normalization"]["teacher"]["mean"] = [0.1, 0.2, 0.3]
+        manifest_path.write_text(json.dumps(changed), encoding="utf-8")
+        return FakeEncoder()
+
+    monkeypatch.setattr(
+        search_module,
+        "load_r5_inference_package",
+        mutate_manifest_while_loading,
+    )
+    monkeypatch.setattr(
+        search_module,
+        "load_teacher_gallery_artifact",
+        lambda path: bundle.gallery,
+    )
+    monkeypatch.setattr(search_module, "load_splits", lambda path: loader_splits)
+
+    with pytest.raises(ValueError, match="manifest.*changed"):
+        load_search_bundle(
+            model_package=package,
+            gallery_directory=tmp_path / "gallery",
+            splits_path=tmp_path / "splits.csv",
+        )
 
 
 def test_bundle_loader_rejects_gallery_from_another_checkpoint(
