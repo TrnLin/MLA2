@@ -140,7 +140,9 @@ exposes stale final-model and ledger wording, while `3607246` synchronises the n
 exposes the interactive plotting dependency before `02ef104` forces the test-only `Agg`
 backend. Finally, `0178e3b` exposes the Section 15 dependency on the mutable live ledger,
 and `b664fb3` replays the immutable handoff audit and its packaged registry snapshot
-instead. No failing commit is the branch tip.
+instead. The last documentation check, `cb08399`, exposes the missing final experiment,
+temperature, and snapshot identity before `058c2dc` binds the report to the current
+manifest and handoff. No failing commit is the branch tip.
 
 ### 2.1 Independent defect audit and correction order
 
