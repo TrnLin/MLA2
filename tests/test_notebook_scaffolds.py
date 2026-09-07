@@ -460,6 +460,7 @@ def test_task2_replay_locks_match_every_declared_root() -> None:
         "data/processed/splits.csv",
         "results/evidence/task2/environment.json",
         "results/evidence/task2/registry_health.json",
+        "results/evidence/task2/registry_recovery.json",
         "results/evidence/task2/selection_freeze.json",
         "results/evidence/task2/ultimate_judgement/manifest.json",
         "results/evidence/task2/final_handoff/manifest.json",

@@ -5,7 +5,6 @@ from pathlib import Path
 
 from fashion.data.hashing import compute_sha256
 
-
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY_PATH = ROOT / "results/evidence/task2/eda_figure_registry.csv"
 EXPECTED_EVIDENCE = {
