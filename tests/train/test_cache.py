@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
+import fashion.train.cache as cache_module
 from fashion.data.hashing import compute_sha256
 from fashion.train.cache import (
     build_run_cache_key,
@@ -70,6 +72,45 @@ def test_implementation_hash_changes_for_code_but_not_discovered_docs(tmp_path: 
 
     assert after_docs == original
     assert after_code != original
+
+
+def test_implementation_hash_can_be_verified_at_recorded_commit(tmp_path: Path) -> None:
+    source = tmp_path / "src" / "model.py"
+    source.parent.mkdir(parents=True)
+    source.write_text("WIDTH = 32\n", encoding="utf-8")
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    subprocess.run(
+        ["git", "config", "user.email", "registry-test@example.invalid"],
+        cwd=tmp_path,
+        check=True,
+    )
+    subprocess.run(
+        ["git", "config", "user.name", "Registry Test"],
+        cwd=tmp_path,
+        check=True,
+    )
+    subprocess.run(["git", "add", "--", "src/model.py"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "record implementation"], cwd=tmp_path, check=True)
+    commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    recorded = implementation_sha256(source, root=tmp_path)
+
+    source.write_text("WIDTH = 64\n", encoding="utf-8")
+
+    assert implementation_sha256(source, root=tmp_path) != recorded
+    assert (
+        cache_module.implementation_sha256_at_commit(
+            "src/model.py",
+            commit=commit,
+            root=tmp_path,
+        )
+        == recorded
+    )
 
 
 def test_cache_key_is_stable_across_config_mapping_order(tmp_path: Path) -> None:
