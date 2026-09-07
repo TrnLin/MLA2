@@ -1,0 +1,20 @@
+{
+  "scope": "saved reserved-holdout evidence for Notebook 6 only",
+  "files": {
+    "reports/task3/usage_e1_refit_holdout_20260907/evaluation.json": "3ef85cc4cd7e82bb4aa52f5ac7cc68aea6c4828052c3524377d1b2ba42fb2e41",
+    "reports/task3/usage_e1_refit_holdout_20260907/evaluation_provenance.json": "6dcc455d602d39eb95659ee3aaddac8f85b132a8dd0975b5a9b3b4059062cbb1",
+    "reports/task3/usage_e1_refit_holdout_20260907/holdout_per_class.csv": "a235b1ea2d3a2d43fbd6a3a00cde2d0a22f76272d9a638d6736212fdd00ee0c1",
+    "reports/task3/usage_e1_refit_holdout_20260907/holdout_predictions_and_labels.csv": "d10a9f56943c18122b9212f1343b6fda112ee1b93e23bcbac2799be5d4238852",
+    "reports/task3/usage_e1_refit_holdout_20260907/prediction_freeze.json": "4fc8481a167991c005f498e0239f2b37eaec850f2f17dbe34d3c5e63e0f3c4e2",
+    "reports/task3/usage_e1_refit_holdout_20260907/refit_holdout_probabilities.csv": "7ae4f7c9540d71a7ca80bbd34bbc42fb52e0f085f32dacc21ed19a26c76cce6c",
+    "reports/task3/usage_e8_refit_holdout_20260907/comparison_provenance.json": "e2188c98b609e18e275c244bd465bfcf25b20d6bebeaf6b5af8c65a28e1f996e",
+    "reports/task3/usage_e8_refit_holdout_20260907/e1_e8_comparison.csv": "03ee10888d846ee3b55fc8acb1b1d3bebdc888386cdb646292266f7174b537dd",
+    "reports/task3/usage_e8_refit_holdout_20260907/evaluation.json": "761f4f458d3a5c134d793afd51c25d4f35be324e7a9a750e06e23e5c5a0eca8d",
+    "reports/task3/usage_e8_refit_holdout_20260907/evaluation_provenance.json": "b3a53755622ddad16148653aae98dcc7a5682a12e94c3ffb2536b90f2ecacb0d",
+    "reports/task3/usage_e8_refit_holdout_20260907/f1_gain_by_class.csv": "56463c22d75591901057568ebb3a1ae1fc1faba706d060c51eee57202a0d4923",
+    "reports/task3/usage_e8_refit_holdout_20260907/holdout_per_class.csv": "cc2699131b8957f5110c7718c28e00add58747f31afb846e1512deeed9c35810",
+    "reports/task3/usage_e8_refit_holdout_20260907/holdout_predictions_and_labels.csv": "ce1c6c2ada71633303d69ea6705657cd45d60343ed8fd53570f074e5464805da",
+    "reports/task3/usage_e8_refit_holdout_20260907/prediction_freeze.json": "8d7e7d0682b1826e6e014f8a3d5875adc7fdd227ab94c799c23ce7c334cd9c97",
+    "reports/task3/usage_e8_refit_holdout_20260907/refit_holdout_probabilities.csv": "a48d98ef4eddbdcdd4ef3a3eca7603c16dfd5c34464e554707d5253bb17ec653"
+  }
+}

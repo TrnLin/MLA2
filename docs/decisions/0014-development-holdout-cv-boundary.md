@@ -1,6 +1,6 @@
 # 0014 — Development, holdout, and cross-validation boundary
 
-- Status: Accepted with amendments; combined Task 3 dataset exception in [0018](0018-task3-external-source-label-intake.md), Gender final-artifact exception in [0020](0020-task3-gender-sam25-final-model.md), and Usage final-artifact exception in [0022](0022-task3-usage-e1-final-model.md)
+- Status: Accepted with amendments; combined Task 3 dataset exception in [0018](0018-task3-external-source-label-intake.md), Gender SAM25 refit and acceptance timing in [0025](0025-task3-gender-sam25-refit-final-model.md), and Usage E8 refit and acceptance timing in [0024](0024-task3-usage-e8-refit-final-model.md)
 - Date: 2026-08-23
 - Supersedes: partition details in 0002, train/validation scope in 0003, fixed-partition
   counts in 0011, and partition wording in 0012

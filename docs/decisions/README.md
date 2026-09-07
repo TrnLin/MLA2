@@ -30,12 +30,13 @@ mark the old one as superseded, and link both records.
   direct Usage labels, unchanged teacher folds, grouped folds for added images.
 - `0019-task3-text-supported-usage-expansion.md` — a new combined version adds 567 reviewed
   product-text/collection-labelled images while preserving all earlier rows and folds.
-- `0020-task3-gender-sam25-final-model.md` — freeze the five SAM25 gender checkpoints
-  and their equal-probability ensemble; record evaluation limits and label bases.
+- [0025-task3-gender-sam25-refit-final-model.md](0025-task3-gender-sam25-refit-final-model.md) — freeze
+  the single SAM25 Gender refit; preserve the five-fold evidence and record later acceptance.
 - `0021-task3-usage-gap-replacements.md` — replace 130 outside images in a new v3 dataset;
   fill reviewed type/photo gaps while preserving class totals and retained rows/folds.
-- [0022-task3-usage-e1-final-model.md](0022-task3-usage-e1-final-model.md) — freeze the five
-  teacher-only E1 Usage checkpoints and equal probability average; record rare-class failures.
+- [0024-task3-usage-e8-refit-final-model.md](0024-task3-usage-e8-refit-final-model.md) — freeze
+  the single teacher-only E8 refit; keep holdout analysis in the Task 3 final evaluation notebook
+  and test prediction-only.
 - `0018-task4-v1-image-variant.md`
 - `0019-task4-retrieval-evaluation.md`
 - `0021-task4-high-resolution-input.md`
@@ -43,6 +44,10 @@ mark the old one as superseded, and link both records.
 
 ## Superseded decisions
 
+- [0020-task3-gender-sam25-final-model.md](0020-task3-gender-sam25-final-model.md) — superseded by
+  0025; the five-model average and its original evidence remain preserved.
+- [0022-task3-usage-e1-final-model.md](0022-task3-usage-e1-final-model.md) — superseded by
+  0024; the original E1 manifest and historical decision remain preserved.
 - `0004-product-group-leakage-check.md` — superseded by 0011.
 - `0007-supported-deployment-taxonomy.md` — superseded by 0010.
 - `0003-protected-eda-and-train-only-statistics.md` — superseded by 0014.
@@ -53,7 +58,7 @@ mark the old one as superseded, and link both records.
 ## Accepted with later amendments
 
 - `0014-development-holdout-cv-boundary.md` — Task 3 combined-data exception in 0018;
-  Gender and Usage final artifacts are five-fold ensembles under 0020 and 0022.
+  Gender uses the SAM25 refit under 0025; Usage uses the E8 refit under 0024.
   Other boundaries remain active.
 - `0002-single-split-and-duplicate-quarantine.md` — partition details superseded by 0014;
   the sole-split and duplicate-quarantine rules remain active.

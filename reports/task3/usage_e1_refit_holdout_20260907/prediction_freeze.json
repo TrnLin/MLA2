@@ -1,0 +1,37 @@
+{
+  "frozen_at_utc": "2026-09-07T07:08:33.385969+00:00",
+  "user_authorization": "review the result and compare its reserved holdout performance to the average one; Usage E1 refit",
+  "new_blind_evaluation": false,
+  "checkpoint_sha256": "d8256ee8ac25c2ff275664319ea05bae972a8e9629c413db7d3213ef92d086c0",
+  "class_names": [
+    "Casual",
+    "Ethnic",
+    "Formal",
+    "Home",
+    "NA",
+    "Party",
+    "Smart Casual",
+    "Sports",
+    "Travel"
+  ],
+  "prediction_rule": "One saved final-epoch model; eval; saved normalization; softmax then argmax",
+  "device": "cpu",
+  "torch": "2.11.0+cpu",
+  "threads": 2,
+  "batch_size": 32,
+  "precision": "IEEE float32",
+  "inference_seconds_including_image_preprocessing": 11.861256370990304,
+  "teacher_test_evaluated": false,
+  "weights_and_buffers_unchanged": true,
+  "inputs": {
+    "results/evidence/task3/usage_e1_refit_20260907/model_manifest.json": "ccc3bb0ad8283c94ed8e274071d3aaedf431b0ade66bc38e8751699fca3bd9b0",
+    "results/evidence/task3/usage_e1_refit_20260907/source_runs.csv": "b79e722e9456ff7e1299efc64c05bc2f3b5fafd5cc5f6662433ff1eb29eee506",
+    "reports/task3/usage_holdout_20260906/prediction_freeze.json": "25623bf16d54343ff08faedf241821ef3b76c96fd5f3eec9594388f3588a491b",
+    "reports/task3/usage_e1_refit_holdout_20260907/evaluate.py": "bdf88cc67246d50040a9248d55bde5a4c5c24a1a1e10c87f9305bf76ce3928e8",
+    "data/processed/splits.csv": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
+  },
+  "outputs": {
+    "refit_holdout_probabilities.csv": "7ae4f7c9540d71a7ca80bbd34bbc42fb52e0f085f32dacc21ed19a26c76cce6c",
+    "holdout_image_manifest.csv": "e012a1fd46c27afd96d496da0be59c0d6c67309438953ac89c833d2bd90ff130"
+  }
+}

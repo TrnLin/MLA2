@@ -1,6 +1,6 @@
 # 0022 — Freeze the Task 3 Usage E1 model
 
-- Status: Accepted
+- Status: Superseded by [0024](0024-task3-usage-e8-refit-final-model.md); retained as the historical E1 decision
 - Date: 2026-09-07
 - Amends: [0014](0014-development-holdout-cv-boundary.md), for the final Usage artifact only
 

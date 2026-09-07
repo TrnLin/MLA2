@@ -1,0 +1,13 @@
+{
+  "scope": "saved reserved-holdout evidence for Notebook 6 only",
+  "files": {
+    "reports/task3/gender_sam25_cv_result_20260906/cv_summary.json": "cbc72db0f4f96cdcd28cd4f05d090e0849dcff27e716a6b2ed8bbbbee64cc78e",
+    "reports/task3/gender_sam25_holdout_test_20260906/gender_holdout_probabilities.csv": "defcd35a526f2725ea2392ab40cbb0e94a02fd8f5eecb56ef48294a44eb2b066",
+    "reports/task3/gender_sam25_refit_holdout_20260907/evaluate.py": "c47f657dd3b90163c03e3b99a6e477ade58bfd69f2bb34731477e4ef29145bb3",
+    "reports/task3/gender_sam25_refit_holdout_20260907/evaluation.json": "bff7ce261aad0b49d5347c2b718dc79527662113fe8d1910530aa9fa32e335ce",
+    "reports/task3/gender_sam25_refit_holdout_20260907/evaluation_provenance.json": "d741baf2ad4e3bb318e3f88e900940a890fb0cbda9170a8eb16a3578e6a20c21",
+    "reports/task3/gender_sam25_refit_holdout_20260907/holdout_comparison.csv": "fb4b39974ac12ecc0a6f1dc4dbdae5420d8d017bb9effca9020454b33dba90d7",
+    "reports/task3/gender_sam25_refit_holdout_20260907/holdout_per_class.csv": "a5ad9d635c062e445fb12af7f86d1c2d378527fd4a071b8551bf101b60651bca",
+    "reports/task3/gender_sam25_refit_holdout_20260907/refit_holdout_probabilities.csv": "02062a90c0ce62270e198cc3f67d487b3c407832cf226d26b5e51e72d435729c"
+  }
+}

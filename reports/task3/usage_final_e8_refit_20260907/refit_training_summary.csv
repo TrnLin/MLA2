@@ -1,0 +1,3 @@
+Model,Images,Epochs,Validation images,Train minutes,Parameters,Checkpoint bytes
+E1 refit,32772,30,0,8.318481913016672,391209,1581813
+E8 refit,32772,30,0,8.812865079999998,391209,1584821

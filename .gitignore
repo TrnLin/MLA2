@@ -53,9 +53,8 @@ models/*.ckpt
 /scripts/task4/queue_gpu1_r3_stability.sh
 
 
-# Private Task 3 snapshots; the shared results/runs.csv is tracked.
+# Runtime registry lock.
 results/runs.csv.lock
-/results/task3/
 
 # Local copies of downloaded Task 3 training evidence. Keep report-selected figures trackable.
 results/evidence/task3/
