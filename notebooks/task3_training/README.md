@@ -16,7 +16,9 @@ All 40 original companions are kept, including the EDA and saved-model diagnosti
 - Outputs shown here are the original run record. They are not a fresh
   execution of the current Git revision. Reading them needs no GPU.
 
-The final Gender runner is [SAM25 on five folds](gender_sam25_five_fold.ipynb).
+The accepted final Gender model is the [single SAM25 refit](gender_sam25_refit.ipynb),
+recorded in [Decision 0025](../../docs/decisions/0025-task3-gender-sam25-refit-final-model.md).
+[SAM25 on five folds](gender_sam25_five_fold.ipynb) remains the development evidence.
 The original E1 Usage runner is [SmallCNN baselines](smallcnn_baseline_training.ipynb).
 
 ## Find an experiment
