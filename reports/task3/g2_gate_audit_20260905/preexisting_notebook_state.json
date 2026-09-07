@@ -1,0 +1,58 @@
+{
+  "notebooks/04_task3_gender_usage.ipynb": {
+    "sha256": "530e959b71fb30ab67a735bbecc7ab12e2014811dbb71a69392cc53a7ca0f4f9",
+    "outputs_digest": "6f2077c8b28103cbc33fcd9377aaa4088ce99274aeb2cb6efd5700092def9e8b"
+  },
+  "notebooks/04e_task3_compactblurcnn_label_smoothing_e5_experiments.ipynb": {
+    "sha256": "79572196bf7b21ea0bdd6422a354fa085358083650be6300ff4843ee9c367a5e",
+    "outputs_digest": "0cc3a5ca34c77eecb8688adb3be2120faf3fcb0e11b30bfe4b4efe381985abec"
+  },
+  "notebooks/04f_task3_gem_focal_e6_experiments.ipynb": {
+    "sha256": "4c4841fdc55b1ed9f24ab33ac2e3654ed1a0207382685e499c127820743dce63",
+    "outputs_digest": "d233173a8e6d1b999d71d30e8fe5d9e3b2112cd8213afea58f88b37c86f5a36b"
+  },
+  "notebooks/04g_task3_tinyconvnext_tinyhrnet_e7_experiments.ipynb": {
+    "sha256": "487b8ca0ca3c1139bf9d1d8902c8b16f0002efe3316225b427aeea39009cc875",
+    "outputs_digest": "6521334c674de0f6c5980c13db99802acf34b4c0a665a1d048027af00f069caa"
+  },
+  "notebooks/04h_task3_early_stopping_translation_e8_experiments.ipynb": {
+    "sha256": "83491c4effa8fafe1152253ad1720196f6ae13fe1cbfcb6f21a3039a609dfa73",
+    "outputs_digest": "82f9210d282985aaf67d53a5c3b8c2a4b5d5c53f7483a6e3180a006bc7a7604f"
+  },
+  "notebooks/04i_task3_semantic_filter_exception_balance_e9_experiments.ipynb": {
+    "sha256": "b1b9f43c89af39ab2e1108e4bbb000451b60bb3f817954fd1d8559549d282b53",
+    "outputs_digest": "ea0291a2f2de95ca93fb0e1d6bdadfb17afd32fbaf49687675bc889e6f29b9db"
+  },
+  "notebooks/04j_task3_audience_aux_e10_experiment.ipynb": {
+    "sha256": "907a96e55c73a5b90d51eb211e19404d374c5f1daaef89b424aa03b6346f350a",
+    "outputs_digest": "dae698aea57dc10b6e645c2151ce8cff12092f72cff9ff5e3ffa98f96e363466"
+  },
+  "notebooks/04l_task3_clean_slate_screen_1.ipynb": {
+    "sha256": "0fc14a930cff12cf8ef70c6b36e1a2b2259b1d2749d49ca83b38f366d89782bc",
+    "outputs_digest": "9f00e707333800801c85650db41e2e5ebad67fe353819c0ee8eebe8f13117e56"
+  },
+  "notebooks/04m_task3_micro_swin_clean_slate_screen_2.ipynb": {
+    "sha256": "81c201ea37906fef4e2cbf7be7d49064a16b9f002f0c34d0944bfd70be144b68",
+    "outputs_digest": "3500d87c674eaa24b5ff79ff9b15260bf8a5d184e2e607cc9a9647c5b4e2b3d0"
+  },
+  "notebooks/04n_task3_gem_gender_v2_g1_foreground_mask.ipynb": {
+    "sha256": "827ba9f5a09277bf6bc8520a3c5aea437d405897de441e67073e92694bbe5ea5",
+    "outputs_digest": "0c5f3553e7aedab9d8d0ead687619796cbe46bf773b2ba99165794dc26ff81bc"
+  },
+  "notebooks/04o_task3_gem_gender_v2_g2_translation.ipynb": {
+    "sha256": "393157cc948c368bd65562a537647f28d29b35fe3c0513dcb526453d68fc9490",
+    "outputs_digest": "2b07aeb7e248d058398d5540352cc46e9718692056508dcb33e18d25775b9136"
+  },
+  "notebooks/04p_task3_gem_gender_v2_g3_component_weight.ipynb": {
+    "sha256": "cabb82f9de8adf31f3fd6c7b68f2632ff7ce3f7ce3f3668523899074355bd5c1",
+    "outputs_digest": "07d0c3b4350c820ed3d306ae5628c740b42314b739e734696870c40958646bc4"
+  },
+  "notebooks/04q_task3_smallcnn_usage_v2_u1_component_weight.ipynb": {
+    "sha256": "cc68f2a62fecfb5efd6d19e4ea50da5ff63f86925b668493bdfeb081405d468b",
+    "outputs_digest": "ef868953daf3164699c6bf6b17e38140e8f7cbeb7786ed652e7b1d163c206c6f"
+  },
+  "notebooks/04r_task3_gem_gender_v2_g2_confirmation.ipynb": {
+    "sha256": "d690b08c417139802b797780c3ac6f47d07a27fbdd7350ad387e751a9aeedf95",
+    "outputs_digest": "eb44be3db8d1e50d841e9d3d38f50ede36102ebbbd235fc7eac5ba0b1aafe606"
+  }
+}

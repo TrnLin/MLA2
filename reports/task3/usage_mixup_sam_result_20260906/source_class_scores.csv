@@ -1,0 +1,55 @@
+model,source,class_name,support,correct,predicted,precision,recall,f1
+mixup_sam,new_added,Casual,0,0,15,0.0,0.0,0.0
+mixup_sam,new_added,Ethnic,0,0,0,0.0,0.0,0.0
+mixup_sam,new_added,Formal,0,0,0,0.0,0.0,0.0
+mixup_sam,new_added,Home,48,47,47,1.0,0.9791666666666666,0.9894736842105264
+mixup_sam,new_added,NA,0,0,0,0.0,0.0,0.0
+mixup_sam,new_added,Party,50,49,50,0.98,0.98,0.98
+mixup_sam,new_added,Smart Casual,74,71,71,1.0,0.9594594594594594,0.9793103448275862
+mixup_sam,new_added,Sports,0,0,0,0.0,0.0,0.0
+mixup_sam,new_added,Travel,65,53,54,0.9814814814814815,0.8153846153846154,0.8907563025210083
+mixup_sam,previous_added,Casual,0,0,11,0.0,0.0,0.0
+mixup_sam,previous_added,Ethnic,0,0,1,0.0,0.0,0.0
+mixup_sam,previous_added,Formal,0,0,0,0.0,0.0,0.0
+mixup_sam,previous_added,Home,6,4,4,1.0,0.6666666666666666,0.8
+mixup_sam,previous_added,NA,0,0,0,0.0,0.0,0.0
+mixup_sam,previous_added,Party,39,27,28,0.9642857142857143,0.6923076923076923,0.8059701492537313
+mixup_sam,previous_added,Smart Casual,3,2,3,0.6666666666666666,0.6666666666666666,0.6666666666666666
+mixup_sam,previous_added,Sports,0,0,0,0.0,0.0,0.0
+mixup_sam,previous_added,Travel,1,1,2,0.5,1.0,0.6666666666666666
+mixup_sam,teacher,Casual,10065,9554,10502,0.9097314797181489,0.9492300049677099,0.9290611173238683
+mixup_sam,teacher,Ethnic,873,719,809,0.8887515451174289,0.8235967926689576,0.8549346016646849
+mixup_sam,teacher,Formal,779,570,693,0.8225108225108225,0.7317073170731707,0.7744565217391305
+mixup_sam,teacher,Home,1,0,4,0.0,0.0,0.0
+mixup_sam,teacher,NA,22,9,55,0.16363636363636364,0.4090909090909091,0.23376623376623376
+mixup_sam,teacher,Party,6,0,5,0.0,0.0,0.0
+mixup_sam,teacher,Smart Casual,18,0,3,0.0,0.0,0.0
+mixup_sam,teacher,Sports,1338,777,1010,0.7693069306930693,0.5807174887892377,0.661839863713799
+mixup_sam,teacher,Travel,8,1,29,0.034482758620689655,0.125,0.05405405405405405
+v2_e8,new_added,Casual,0,0,14,0.0,0.0,0.0
+v2_e8,new_added,Ethnic,0,0,0,0.0,0.0,0.0
+v2_e8,new_added,Formal,0,0,1,0.0,0.0,0.0
+v2_e8,new_added,Home,48,46,46,1.0,0.9583333333333334,0.9787234042553191
+v2_e8,new_added,NA,0,0,0,0.0,0.0,0.0
+v2_e8,new_added,Party,50,49,50,0.98,0.98,0.98
+v2_e8,new_added,Smart Casual,74,72,72,1.0,0.972972972972973,0.9863013698630138
+v2_e8,new_added,Sports,0,0,0,0.0,0.0,0.0
+v2_e8,new_added,Travel,65,54,54,1.0,0.8307692307692308,0.907563025210084
+v2_e8,previous_added,Casual,0,0,16,0.0,0.0,0.0
+v2_e8,previous_added,Ethnic,0,0,1,0.0,0.0,0.0
+v2_e8,previous_added,Formal,0,0,0,0.0,0.0,0.0
+v2_e8,previous_added,Home,6,4,4,1.0,0.6666666666666666,0.8
+v2_e8,previous_added,NA,0,0,0,0.0,0.0,0.0
+v2_e8,previous_added,Party,39,24,25,0.96,0.6153846153846154,0.7500000000000001
+v2_e8,previous_added,Smart Casual,3,0,1,0.0,0.0,0.0
+v2_e8,previous_added,Sports,0,0,1,0.0,0.0,0.0
+v2_e8,previous_added,Travel,1,0,1,0.0,0.0,0.0
+v2_e8,teacher,Casual,10065,9503,10338,0.9192300251499322,0.9441629408842523,0.931529677008283
+v2_e8,teacher,Ethnic,873,747,878,0.8507972665148064,0.8556701030927835,0.8532267275842376
+v2_e8,teacher,Formal,779,595,715,0.8321678321678322,0.7637997432605905,0.7965194109772424
+v2_e8,teacher,Home,1,0,1,0.0,0.0,0.0
+v2_e8,teacher,NA,22,5,33,0.15151515151515152,0.22727272727272727,0.18181818181818182
+v2_e8,teacher,Party,6,0,11,0.0,0.0,0.0
+v2_e8,teacher,Smart Casual,18,0,11,0.0,0.0,0.0
+v2_e8,teacher,Sports,1338,838,1106,0.7576853526220615,0.6263079222720478,0.6857610474631751
+v2_e8,teacher,Travel,8,2,17,0.11764705882352941,0.25,0.15999999999999998

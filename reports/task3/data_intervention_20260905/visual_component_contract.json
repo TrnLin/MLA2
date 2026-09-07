@@ -1,0 +1,12 @@
+{
+  "strategy": "accepted_visual_component_v1",
+  "development_rows": 32773,
+  "components": 32009,
+  "multirow_components": 629,
+  "multirow_component_rows": 1393,
+  "largest_component": 6,
+  "fold_crossings": 0,
+  "mapping_sha256": "da9cf3b2e2f6c008bbf4f4f3de872beec0581d5ad164f4345eb6adbbaae88253",
+  "candidates_path": "/home/dinhquan/personal/academic/RMIT/Machine-Learning/MLA2-eda/data/processed/audit/near_duplicate_candidates.csv.gz",
+  "candidates_sha256": "637f5c82f97829094596fa91997a4f95c2b2d2155621d3c8c0f8f9f964c34f9c"
+}

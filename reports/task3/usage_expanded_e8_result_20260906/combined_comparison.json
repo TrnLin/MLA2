@@ -1,0 +1,845 @@
+{
+  "purpose": "Secondary added-source diagnostic; not a model-selection criterion",
+  "project_goal": "Good predictions on the teacher's unseen test set",
+  "selection_scope": "Use original teacher validation for model selection",
+  "combined_fold_wins": 5,
+  "combined_macro_f1_change": 0.14374392696751442,
+  "controls": [
+    {
+      "max_probability_difference": 0.0005168312031554878,
+      "rows": 16,
+      "scope": "E8 fold 0 teacher control"
+    },
+    {
+      "max_probability_difference": 0.0013588666056823517,
+      "rows": 24,
+      "scope": "expanded fold 0 added images"
+    },
+    {
+      "max_probability_difference": 0.0002801392189025753,
+      "rows": 16,
+      "scope": "E8 fold 1 teacher control"
+    },
+    {
+      "max_probability_difference": 0.0008674827322387446,
+      "rows": 23,
+      "scope": "expanded fold 1 added images"
+    },
+    {
+      "max_probability_difference": 0.0005836150742339896,
+      "rows": 16,
+      "scope": "E8 fold 2 teacher control"
+    },
+    {
+      "max_probability_difference": 0.0010778502029419323,
+      "rows": 25,
+      "scope": "expanded fold 2 added images"
+    },
+    {
+      "max_probability_difference": 0.0010058402229309316,
+      "rows": 16,
+      "scope": "E8 fold 3 teacher control"
+    },
+    {
+      "max_probability_difference": 0.0013775246116638495,
+      "rows": 23,
+      "scope": "expanded fold 3 added images"
+    },
+    {
+      "max_probability_difference": 0.00098320772918703,
+      "rows": 17,
+      "scope": "E8 fold 4 teacher control"
+    },
+    {
+      "max_probability_difference": 0.0014942905798339678,
+      "rows": 25,
+      "scope": "expanded fold 4 added images"
+    }
+  ],
+  "cpu_cuda_reproduction_checks": {
+    "identical_class_decisions_required": true,
+    "maximum_allowed_absolute_probability_difference": 0.005
+  },
+  "e8_added": {
+    "accuracy": 0.0,
+    "balanced_accuracy": 0.0,
+    "brier": 1.7583448772190877,
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        84,
+        3,
+        7,
+        0,
+        1,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "ece_15": 0.8367627913753191,
+    "macro_f1": 0.0,
+    "mcc": 0.0,
+    "nll": 10.191691906040266,
+    "per_class": [
+      {
+        "class_index": 0,
+        "class_name": "Casual",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 106,
+        "recall": 0.0,
+        "support": 0
+      },
+      {
+        "class_index": 1,
+        "class_name": "Ethnic",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 3,
+        "recall": 0.0,
+        "support": 0
+      },
+      {
+        "class_index": 2,
+        "class_name": "Formal",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 7,
+        "recall": 0.0,
+        "support": 0
+      },
+      {
+        "class_index": 3,
+        "class_name": "Home",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 0,
+        "recall": 0.0,
+        "support": 16
+      },
+      {
+        "class_index": 4,
+        "class_name": "NA",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 1,
+        "recall": 0.0,
+        "support": 0
+      },
+      {
+        "class_index": 5,
+        "class_name": "Party",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 0,
+        "recall": 0.0,
+        "support": 97
+      },
+      {
+        "class_index": 6,
+        "class_name": "Smart Casual",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 0,
+        "recall": 0.0,
+        "support": 6
+      },
+      {
+        "class_index": 7,
+        "class_name": "Sports",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 3,
+        "recall": 0.0,
+        "support": 0
+      },
+      {
+        "class_index": 8,
+        "class_name": "Travel",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 0,
+        "recall": 0.0,
+        "support": 1
+      }
+    ],
+    "support": 120,
+    "weighted_f1": 0.0
+  },
+  "e8_combined": {
+    "accuracy": 0.8852912562325186,
+    "balanced_accuracy": 0.40470705293815,
+    "brier": 0.17734692355916712,
+    "confusion_matrix": [
+      [
+        23880,
+        235,
+        324,
+        0,
+        66,
+        7,
+        47,
+        574,
+        18
+      ],
+      [
+        379,
+        1785,
+        10,
+        0,
+        1,
+        6,
+        0,
+        2,
+        0
+      ],
+      [
+        450,
+        6,
+        1464,
+        0,
+        2,
+        0,
+        15,
+        11,
+        1
+      ],
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        48,
+        0,
+        1,
+        0,
+        12,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        93,
+        5,
+        7,
+        0,
+        1,
+        1,
+        0,
+        2,
+        0
+      ],
+      [
+        38,
+        0,
+        8,
+        0,
+        0,
+        0,
+        6,
+        1,
+        0
+      ],
+      [
+        1363,
+        2,
+        11,
+        0,
+        0,
+        0,
+        1,
+        1966,
+        3
+      ],
+      [
+        15,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2,
+        5
+      ]
+    ],
+    "ece_15": 0.008376958230752374,
+    "macro_f1": 0.4110249676313323,
+    "mcc": 0.696196196988443,
+    "nll": 0.36519471689656385,
+    "per_class": [
+      {
+        "class_index": 0,
+        "class_name": "Casual",
+        "f1": 0.9286047596826877,
+        "precision": 0.9086412236977284,
+        "predicted_count": 26281,
+        "recall": 0.9494652300107351,
+        "support": 25151
+      },
+      {
+        "class_index": 1,
+        "class_name": "Ethnic",
+        "f1": 0.8467741935483871,
+        "precision": 0.8780127889818002,
+        "predicted_count": 2033,
+        "recall": 0.8176820888685296,
+        "support": 2183
+      },
+      {
+        "class_index": 2,
+        "class_name": "Formal",
+        "f1": 0.7756291390728476,
+        "precision": 0.8017524644030668,
+        "predicted_count": 1826,
+        "recall": 0.7511544381734223,
+        "support": 1949
+      },
+      {
+        "class_index": 3,
+        "class_name": "Home",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 0,
+        "recall": 0.0,
+        "support": 17
+      },
+      {
+        "class_index": 4,
+        "class_name": "NA",
+        "f1": 0.1678321678321678,
+        "precision": 0.14634146341463414,
+        "predicted_count": 82,
+        "recall": 0.19672131147540983,
+        "support": 61
+      },
+      {
+        "class_index": 5,
+        "class_name": "Party",
+        "f1": 0.016260162601626018,
+        "precision": 0.07142857142857142,
+        "predicted_count": 14,
+        "recall": 0.009174311926605505,
+        "support": 109
+      },
+      {
+        "class_index": 6,
+        "class_name": "Smart Casual",
+        "f1": 0.09836065573770492,
+        "precision": 0.08695652173913043,
+        "predicted_count": 69,
+        "recall": 0.11320754716981132,
+        "support": 53
+      },
+      {
+        "class_index": 7,
+        "class_name": "Sports",
+        "f1": 0.6657636302065696,
+        "precision": 0.76796875,
+        "predicted_count": 2560,
+        "recall": 0.5875672444710102,
+        "support": 3346
+      },
+      {
+        "class_index": 8,
+        "class_name": "Travel",
+        "f1": 0.19999999999999998,
+        "precision": 0.18518518518518517,
+        "predicted_count": 27,
+        "recall": 0.21739130434782608,
+        "support": 23
+      }
+    ],
+    "support": 32892,
+    "weighted_f1": 0.8806097503567739
+  },
+  "expanded_added": {
+    "accuracy": 0.5333333333333333,
+    "balanced_accuracy": 0.14289805269186712,
+    "brier": 0.7129231607006685,
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        12,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        35,
+        2,
+        3,
+        0,
+        1,
+        52,
+        0,
+        4,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "ece_15": 0.2567885331666666,
+    "macro_f1": 0.17076460213715114,
+    "mcc": 0.3106124781549772,
+    "nll": 1.8047772801972664,
+    "per_class": [
+      {
+        "class_index": 0,
+        "class_name": "Casual",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 42,
+        "recall": 0.0,
+        "support": 0
+      },
+      {
+        "class_index": 1,
+        "class_name": "Ethnic",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 2,
+        "recall": 0.0,
+        "support": 0
+      },
+      {
+        "class_index": 2,
+        "class_name": "Formal",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 3,
+        "recall": 0.0,
+        "support": 0
+      },
+      {
+        "class_index": 3,
+        "class_name": "Home",
+        "f1": 0.8571428571428571,
+        "precision": 1.0,
+        "predicted_count": 12,
+        "recall": 0.75,
+        "support": 16
+      },
+      {
+        "class_index": 4,
+        "class_name": "NA",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 1,
+        "recall": 0.0,
+        "support": 0
+      },
+      {
+        "class_index": 5,
+        "class_name": "Party",
+        "f1": 0.6797385620915032,
+        "precision": 0.9285714285714286,
+        "predicted_count": 56,
+        "recall": 0.5360824742268041,
+        "support": 97
+      },
+      {
+        "class_index": 6,
+        "class_name": "Smart Casual",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 0,
+        "recall": 0.0,
+        "support": 6
+      },
+      {
+        "class_index": 7,
+        "class_name": "Sports",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 4,
+        "recall": 0.0,
+        "support": 0
+      },
+      {
+        "class_index": 8,
+        "class_name": "Travel",
+        "f1": 0.0,
+        "precision": 0.0,
+        "predicted_count": 0,
+        "recall": 0.0,
+        "support": 1
+      }
+    ],
+    "support": 120,
+    "weighted_f1": 0.663741051976346
+  },
+  "expanded_combined": {
+    "accuracy": 0.8862033321172321,
+    "balanced_accuracy": 0.5317721405009408,
+    "brier": 0.17332705332360315,
+    "confusion_matrix": [
+      [
+        23860,
+        267,
+        328,
+        1,
+        56,
+        25,
+        41,
+        553,
+        20
+      ],
+      [
+        356,
+        1819,
+        5,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        473,
+        5,
+        1441,
+        0,
+        3,
+        2,
+        12,
+        13,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        12,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        44,
+        0,
+        0,
+        0,
+        15,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        43,
+        6,
+        3,
+        0,
+        1,
+        52,
+        0,
+        4,
+        0
+      ],
+      [
+        38,
+        0,
+        9,
+        0,
+        0,
+        3,
+        2,
+        1,
+        0
+      ],
+      [
+        1385,
+        1,
+        11,
+        0,
+        0,
+        2,
+        2,
+        1943,
+        2
+      ],
+      [
+        15,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2,
+        5
+      ]
+    ],
+    "ece_15": 0.006061211284810869,
+    "macro_f1": 0.5547688945988467,
+    "mcc": 0.699603534265956,
+    "nll": 0.3346071213519933,
+    "per_class": [
+      {
+        "class_index": 0,
+        "class_name": "Casual",
+        "f1": 0.9289649399443243,
+        "precision": 0.9100617896101915,
+        "predicted_count": 26218,
+        "recall": 0.9486700330006759,
+        "support": 25151
+      },
+      {
+        "class_index": 1,
+        "class_name": "Ethnic",
+        "f1": 0.8498014482597525,
+        "precision": 0.8670162059103909,
+        "predicted_count": 2098,
+        "recall": 0.8332569857993587,
+        "support": 2183
+      },
+      {
+        "class_index": 2,
+        "class_name": "Formal",
+        "f1": 0.7691486522551375,
+        "precision": 0.8014460511679644,
+        "predicted_count": 1798,
+        "recall": 0.7393535146228836,
+        "support": 1949
+      },
+      {
+        "class_index": 3,
+        "class_name": "Home",
+        "f1": 0.8000000000000002,
+        "precision": 0.9230769230769231,
+        "predicted_count": 13,
+        "recall": 0.7058823529411765,
+        "support": 17
+      },
+      {
+        "class_index": 4,
+        "class_name": "NA",
+        "f1": 0.22058823529411764,
+        "precision": 0.2,
+        "predicted_count": 75,
+        "recall": 0.2459016393442623,
+        "support": 61
+      },
+      {
+        "class_index": 5,
+        "class_name": "Party",
+        "f1": 0.5252525252525253,
+        "precision": 0.5842696629213483,
+        "predicted_count": 89,
+        "recall": 0.47706422018348627,
+        "support": 109
+      },
+      {
+        "class_index": 6,
+        "class_name": "Smart Casual",
+        "f1": 0.03636363636363636,
+        "precision": 0.03508771929824561,
+        "predicted_count": 57,
+        "recall": 0.03773584905660377,
+        "support": 53
+      },
+      {
+        "class_index": 7,
+        "class_name": "Sports",
+        "f1": 0.6628006140201261,
+        "precision": 0.7719507350019865,
+        "predicted_count": 2517,
+        "recall": 0.5806933652121936,
+        "support": 3346
+      },
+      {
+        "class_index": 8,
+        "class_name": "Travel",
+        "f1": 0.19999999999999998,
+        "precision": 0.18518518518518517,
+        "predicted_count": 27,
+        "recall": 0.21739130434782608,
+        "support": 23
+      }
+    ],
+    "support": 32892,
+    "weighted_f1": 0.8824988150364855
+  },
+  "method": "Frozen E8 fold checkpoints infer only their assigned added validation images. Existing verified teacher OOF predictions are reused. No training, tuning, normalization refit or holdout access.",
+  "same_combined_validation_rows": 32892
+}

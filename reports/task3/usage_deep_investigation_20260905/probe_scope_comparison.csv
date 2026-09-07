@@ -1,0 +1,5 @@
+model,scope,support,macro_f1,accuracy,nll,brier,ece_15,common_four_f1,rare_four_f1,folds,probability_metrics
+E2,old_probe_ids_intersection,4878,0.40898898658489496,0.7624026240262403,0.8371959259688698,0.37400275196174365,0.13458623940549408,0.7839540333753356,0.13627118644067795,"[np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4)]",
+old_balanced_probe,same_ids_as_E2,4878,0.45405262475713987,0.7515375153751538,,,,,,,unavailable; saved probe has no full probability vector
+U2,old_probe_ids_intersection,1934,0.3322404970261575,0.6282316442605997,0.9897988468591821,0.5334165883750012,0.12701967400401726,0.6485073018837335,0.09903381642512077,"[np.int64(0), np.int64(4)]",
+old_balanced_probe,same_ids_as_U2,1934,0.4783485034694473,0.7523267838676319,,,,,,,unavailable; saved probe has no full probability vector

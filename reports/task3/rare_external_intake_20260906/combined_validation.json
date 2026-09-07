@@ -1,0 +1,119 @@
+{
+  "passed": true,
+  "dataset": "teacher_plus_rare_usage_20260906",
+  "training_target": "usage",
+  "class_count": 9,
+  "separate_model_or_head": false,
+  "teacher_rows": 38612,
+  "added_rows": 120,
+  "total_rows": 38732,
+  "partition_counts": {
+    "development": 32893,
+    "quarantine": 61,
+    "holdout": 5778
+  },
+  "usage_development_rows": 32892,
+  "added_class_counts": {
+    "Party": 97,
+    "Home": 16,
+    "Smart Casual": 6,
+    "Travel": 1
+  },
+  "added_families": 109,
+  "folds": [
+    {
+      "fold": 0,
+      "train": 26315,
+      "validation": 6577,
+      "teacher_train": 26219,
+      "added_train": 96,
+      "teacher_validation": 6553,
+      "added_validation": 24,
+      "added_validation_classes": {
+        "Party": 20,
+        "Home": 3,
+        "Travel": 1
+      }
+    },
+    {
+      "fold": 1,
+      "train": 26313,
+      "validation": 6579,
+      "teacher_train": 26216,
+      "added_train": 97,
+      "teacher_validation": 6556,
+      "added_validation": 23,
+      "added_validation_classes": {
+        "Party": 20,
+        "Home": 3
+      }
+    },
+    {
+      "fold": 2,
+      "train": 26314,
+      "validation": 6578,
+      "teacher_train": 26219,
+      "added_train": 95,
+      "teacher_validation": 6553,
+      "added_validation": 25,
+      "added_validation_classes": {
+        "Party": 19,
+        "Smart Casual": 3,
+        "Home": 3
+      }
+    },
+    {
+      "fold": 3,
+      "train": 26316,
+      "validation": 6576,
+      "teacher_train": 26219,
+      "added_train": 97,
+      "teacher_validation": 6553,
+      "added_validation": 23,
+      "added_validation_classes": {
+        "Party": 19,
+        "Home": 4
+      }
+    },
+    {
+      "fold": 4,
+      "train": 26310,
+      "validation": 6582,
+      "teacher_train": 26215,
+      "added_train": 95,
+      "teacher_validation": 6557,
+      "added_validation": 25,
+      "added_validation_classes": {
+        "Party": 19,
+        "Smart Casual": 3,
+        "Home": 3
+      }
+    }
+  ],
+  "all_images_loaded_and_hash_checked": 38732,
+  "mixed_batch_shape": [
+    8,
+    3,
+    80,
+    60
+  ],
+  "mixed_target_shape": [
+    8
+  ],
+  "image_transform": "RGB, width 60 x height 80, float32 in [0, 1], CHW",
+  "normalization": "Range scaling only; optional standardization must fit each combined training fold",
+  "teacher_rows_and_folds_preserved": true,
+  "protected_labels_stay_blank": true,
+  "group_crossings": 0,
+  "source_overlap_audit": "reports/task3_rare_external_intake_20260906/validation.json",
+  "source_split_sha256": "e951f13baf7916d74513015aaef2d79aa845a50278e6904f1c946f4803051e79",
+  "teacher_inputs_unchanged": {
+    "data/processed/splits.csv": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+    "data/processed/prediction_manifest.csv": "8d1fdd27721fc8604203b99308ecda9773b1f7c89b8cf6b2a33c82587b14954b",
+    "data/processed/label_maps.json": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327"
+  },
+  "combined_split_sha256": "7d5f3a986ef8e00f53ee1c86d408f1c3a155d6b0a0ab99bef4c9f7eb27dbda77",
+  "label_map_sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
+  "model_fit_performed": false,
+  "limits": "Seller labels are mapped explicitly by name. Keep source provenance for error analysis; Smart Casual adds only two product families and Travel adds one."
+}

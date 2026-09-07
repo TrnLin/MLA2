@@ -1,0 +1,282 @@
+[
+  {
+    "path": "fold4/metrics.json",
+    "url": "https://drive.google.com/file/d/1ZcGQGunwu9RHeT9lQHU8Waek1xAyCpVe/view?usp=drivesdk",
+    "size": "3857"
+  },
+  {
+    "path": "fold4/clean_epoch_diagnostics.json",
+    "url": "https://drive.google.com/file/d/1C1CNd9XVPu0Azt75PVJageljL7OBS8Dg/view?usp=drivesdk",
+    "size": "17829"
+  },
+  {
+    "path": "fold4/history.csv",
+    "url": "https://drive.google.com/file/d/1RZKdco8C8_zyhjaDsyl7GGS_SDCnGVEC/view?usp=drivesdk",
+    "size": "3640"
+  },
+  {
+    "path": "fold4/sam_training.json",
+    "url": "https://drive.google.com/file/d/1YbHVDXeLlRL9Yc7MMZ-7ITuPYgkfM46a/view?usp=drivesdk",
+    "size": "8670"
+  },
+  {
+    "path": "fold4/mixup_training.json",
+    "url": "https://drive.google.com/file/d/1v9IoZK3w-TF_e1SoxOW1Ox47c7wluVcf/view?usp=drivesdk",
+    "size": "7442"
+  },
+  {
+    "path": "fold4/normalization.json",
+    "url": "https://drive.google.com/file/d/1kou3TRoSDbXv5sQk1-2pLN-vzsb96XOO/view?usp=drivesdk",
+    "size": "352"
+  },
+  {
+    "path": "fold4/config.json",
+    "url": "https://drive.google.com/file/d/1K5o9WZHZxiW7ZSWZ2Q9f8KMLrEa3iw0P/view?usp=drivesdk",
+    "size": "9914"
+  },
+  {
+    "path": "fold3/metrics.json",
+    "url": "https://drive.google.com/file/d/1cii9cX7KMQY8ReIb79u3lUz2oQ15_Y4j/view?usp=drivesdk",
+    "size": "3842"
+  },
+  {
+    "path": "fold3/clean_epoch_diagnostics.json",
+    "url": "https://drive.google.com/file/d/1KYBrLoY-9luQMfbfiTCcfRWgUMpK6Kpz/view?usp=drivesdk",
+    "size": "17729"
+  },
+  {
+    "path": "fold3/history.csv",
+    "url": "https://drive.google.com/file/d/1RlU1cJSw8TB6zSWmg7I6lQVHJIZy9B9H/view?usp=drivesdk",
+    "size": "3636"
+  },
+  {
+    "path": "fold3/mixup_training.json",
+    "url": "https://drive.google.com/file/d/14hrr9efNuMANk9Hezf10z6AsHJPLDbM4/view?usp=drivesdk",
+    "size": "7442"
+  },
+  {
+    "path": "fold3/sam_training.json",
+    "url": "https://drive.google.com/file/d/1a9NmdOpUFAlanhGTEJMb6l5Yf9M5NuHz/view?usp=drivesdk",
+    "size": "8673"
+  },
+  {
+    "path": "fold3/normalization.json",
+    "url": "https://drive.google.com/file/d/1CvrzNFDUV0ecLt9STL7YH9GveUp2DA6O/view?usp=drivesdk",
+    "size": "352"
+  },
+  {
+    "path": "fold3/config.json",
+    "url": "https://drive.google.com/file/d/1k6YN1A4VW2gMSXTJ3sgrSRLwT5XzjwHR/view?usp=drivesdk",
+    "size": "9914"
+  },
+  {
+    "path": "fold2/metrics.json",
+    "url": "https://drive.google.com/file/d/1k84t2Zl3GrB-AJ5jkFpwb1mHIb2TSlPP/view?usp=drivesdk",
+    "size": "3834"
+  },
+  {
+    "path": "fold2/clean_epoch_diagnostics.json",
+    "url": "https://drive.google.com/file/d/1MaysPwIsfONP29U_zRXVjg9CVUiVNXzP/view?usp=drivesdk",
+    "size": "17726"
+  },
+  {
+    "path": "fold2/history.csv",
+    "url": "https://drive.google.com/file/d/169q_QAw30o15ddKSdaWtkAcpsfpl7ghX/view?usp=drivesdk",
+    "size": "3626"
+  },
+  {
+    "path": "fold2/mixup_training.json",
+    "url": "https://drive.google.com/file/d/1X3qGiOxAFgfIxQmBC1b5a6wwy5g8MoM-/view?usp=drivesdk",
+    "size": "7442"
+  },
+  {
+    "path": "fold2/sam_training.json",
+    "url": "https://drive.google.com/file/d/1MkWnS7-HyE4Bwxp06No-PjPMWNQtdpL1/view?usp=drivesdk",
+    "size": "8666"
+  },
+  {
+    "path": "fold2/normalization.json",
+    "url": "https://drive.google.com/file/d/1FPQd8DE5peWtcGH9o7r4i--ftijCSout/view?usp=drivesdk",
+    "size": "355"
+  },
+  {
+    "path": "fold2/config.json",
+    "url": "https://drive.google.com/file/d/1uTY22341PZLYT-gAJvc89Ehh2wraVxW5/view?usp=drivesdk",
+    "size": "9914"
+  },
+  {
+    "path": "fold1/metrics.json",
+    "url": "https://drive.google.com/file/d/1JE3FUt60-mIdiAQvi4AFy-PMD9zz7mv0/view?usp=drivesdk",
+    "size": "3856"
+  },
+  {
+    "path": "fold1/clean_epoch_diagnostics.json",
+    "url": "https://drive.google.com/file/d/1ho7AiTYuFtkhVFgtrts8Ksblh_rVjrSC/view?usp=drivesdk",
+    "size": "17808"
+  },
+  {
+    "path": "fold1/history.csv",
+    "url": "https://drive.google.com/file/d/1lDs7OFzDLMW1LGJon0WTnNZ-_R2LohWz/view?usp=drivesdk",
+    "size": "3638"
+  },
+  {
+    "path": "fold1/sam_training.json",
+    "url": "https://drive.google.com/file/d/15MpkFCpZF8wiwqUtglyK-idJK0LuJyj8/view?usp=drivesdk",
+    "size": "8672"
+  },
+  {
+    "path": "fold1/mixup_training.json",
+    "url": "https://drive.google.com/file/d/14cHrqAGlfAugTvvdtcmffjmK7dwK7FXP/view?usp=drivesdk",
+    "size": "7442"
+  },
+  {
+    "path": "fold1/normalization.json",
+    "url": "https://drive.google.com/file/d/1Zzx5FnG4SXP1Mofdz0i2pssx4Avz-zcj/view?usp=drivesdk",
+    "size": "353"
+  },
+  {
+    "path": "fold1/config.json",
+    "url": "https://drive.google.com/file/d/1WDC_T6_8onjAlBG68mi4hQ99I3HQTw8O/view?usp=drivesdk",
+    "size": "9914"
+  },
+  {
+    "path": "fold0/metrics.json",
+    "url": "https://drive.google.com/file/d/1UHrO4vA-oOzphODCR7UVB-yQIVaN81gI/view?usp=drivesdk",
+    "size": "3833"
+  },
+  {
+    "path": "fold0/clean_epoch_diagnostics.json",
+    "url": "https://drive.google.com/file/d/1DU0pByHxwtk6cNnuUmdOu3tp1RZlTjv_/view?usp=drivesdk",
+    "size": "17784"
+  },
+  {
+    "path": "fold0/history.csv",
+    "url": "https://drive.google.com/file/d/1k9gwCAb3FO5VLxddwKc6G58xQqpn5906/view?usp=drivesdk",
+    "size": "3630"
+  },
+  {
+    "path": "fold0/mixup_training.json",
+    "url": "https://drive.google.com/file/d/1UNpipygDkoZovK-qlA3bktjMYosPQO_d/view?usp=drivesdk",
+    "size": "7442"
+  },
+  {
+    "path": "fold0/sam_training.json",
+    "url": "https://drive.google.com/file/d/18vu2w5sj6HZ5LCgCcxI7qCFYclCrIUKq/view?usp=drivesdk",
+    "size": "8668"
+  },
+  {
+    "path": "fold0/normalization.json",
+    "url": "https://drive.google.com/file/d/180mXeMQk-unLuCpxAXlzOHGbeDEW90lg/view?usp=drivesdk",
+    "size": "353"
+  },
+  {
+    "path": "fold0/config.json",
+    "url": "https://drive.google.com/file/d/1LOWpHKvg7hz4oQb0Cg0D8EtXdYZ8UpN5/view?usp=drivesdk",
+    "size": "9914"
+  },
+  {
+    "path": "aggregate/label_basis_comparison.csv",
+    "url": "https://drive.google.com/file/d/1TjQOR-ZqwOhUU2MWe29q7x6W-pFHnkG_/view?usp=drivesdk",
+    "size": "9239"
+  },
+  {
+    "path": "aggregate/confusion_matrix.csv",
+    "url": "https://drive.google.com/file/d/1AkP3q2rp7vAEUehMzEeeq5WUy8g03fPY/view?usp=drivesdk",
+    "size": "156"
+  },
+  {
+    "path": "aggregate/per_class.csv",
+    "url": "https://drive.google.com/file/d/1vyN1xMu90k2b9yOzKRqIpVsv9Q1iychV/view?usp=drivesdk",
+    "size": "438"
+  },
+  {
+    "path": "aggregate/metrics.json",
+    "url": "https://drive.google.com/file/d/1U2iIMSltFWkZ0_HF3ecCI3ZQz-_KTuKB/view?usp=drivesdk",
+    "size": "1792"
+  },
+  {
+    "path": "aggregate/fold_metrics.csv",
+    "url": "https://drive.google.com/file/d/1cRo43T4QlXHiwSz98I9le-sXFmcJ3xFh/view?usp=drivesdk",
+    "size": "1106"
+  },
+  {
+    "path": "aggregate/robustness.csv",
+    "url": "https://drive.google.com/file/d/1boXMhgFgfXtlEZq7tqj9C8_Y1gtEWkdn/view?usp=drivesdk",
+    "size": "4845"
+  },
+  {
+    "path": "cv_summary.json",
+    "url": "https://drive.google.com/file/d/1Yu0KhC5rBtp635AQ5MHLgBIXqbze-q3-/view?usp=drivesdk",
+    "size": "10322"
+  },
+  {
+    "path": "model_manifest.json",
+    "url": "https://drive.google.com/file/d/1IAasf9CAzrI4IeAvSvjdSy3XJLYU8ekn/view?usp=drivesdk",
+    "size": "10309"
+  },
+  {
+    "path": "source_audit.json",
+    "url": "https://drive.google.com/file/d/1Myhzep2XxeM5_WOmmo5hkcXBloJl_32s/view?usp=drivesdk",
+    "size": "29164"
+  },
+  {
+    "path": "aggregate/fold_summary.png",
+    "url": "https://drive.google.com/file/d/1yY23wRzeemZgPqRQOd3ht0dWusBa3f82/view?usp=drivesdk",
+    "size": "112822"
+  },
+  {
+    "path": "aggregate/oof_predictions.csv",
+    "url": "https://drive.google.com/file/d/1UZ0tgrwDZGM742iXI9OtFDbwieitAPsG/view?usp=drivesdk",
+    "size": "10923793"
+  },
+  {
+    "path": "ieee0/evaluation_manifest.json",
+    "url": "https://drive.google.com/file/d/1MdVgAk_1BSDD4RKLsLSn_DbWzkO3voqr/view?usp=drivesdk",
+    "size": "4418"
+  },
+  {
+    "path": "ieee0/metrics.json",
+    "url": "https://drive.google.com/file/d/1_Psz_a2bNsgnsvLFMgv2gSaJll_izY5p/view?usp=drivesdk",
+    "size": "6463"
+  },
+  {
+    "path": "ieee1/evaluation_manifest.json",
+    "url": "https://drive.google.com/file/d/14FMf0kvJZaP7eocGCF3O0IQOCcKg7hH2/view?usp=drivesdk",
+    "size": "4418"
+  },
+  {
+    "path": "ieee1/metrics.json",
+    "url": "https://drive.google.com/file/d/1Ls4fnYbL73dsvRbQDspUBZVNlgJ9R5wb/view?usp=drivesdk",
+    "size": "6488"
+  },
+  {
+    "path": "ieee2/evaluation_manifest.json",
+    "url": "https://drive.google.com/file/d/1ME7lQCEvuoX5Xgi_oe2Qbuj51todYJyF/view?usp=drivesdk",
+    "size": "4418"
+  },
+  {
+    "path": "ieee2/metrics.json",
+    "url": "https://drive.google.com/file/d/1DaXV3NVSwKro2RD7df7j_vGb-xgtWFjI/view?usp=drivesdk",
+    "size": "6462"
+  },
+  {
+    "path": "ieee3/evaluation_manifest.json",
+    "url": "https://drive.google.com/file/d/1Jn9of2cRe4e7d_Tof3c290JY6oQOVYpf/view?usp=drivesdk",
+    "size": "4418"
+  },
+  {
+    "path": "ieee3/metrics.json",
+    "url": "https://drive.google.com/file/d/1t6DY_W8tRikj8ggJgcTTaLY-8x1Q9R2K/view?usp=drivesdk",
+    "size": "6475"
+  },
+  {
+    "path": "ieee4/evaluation_manifest.json",
+    "url": "https://drive.google.com/file/d/1jlqWnlZ4QT1sakKsxDl41g24plmFrHZE/view?usp=drivesdk",
+    "size": "4418"
+  },
+  {
+    "path": "ieee4/metrics.json",
+    "url": "https://drive.google.com/file/d/1XYYwvKaoJ5awpxHOBdlGBxwJDBsCoNeE/view?usp=drivesdk",
+    "size": "6487"
+  }
+]

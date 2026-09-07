@@ -1,0 +1,75 @@
+{
+  "date": "2026-09-05",
+  "branch": "task-3-gender-usage-classification",
+  "task_outputs": [
+    "reports/task3_usage_deep_investigation_20260905/",
+    "results/figures/task3/usage_investigation/"
+  ],
+  "new_model_fits": 0,
+  "new_optimizer_steps": 0,
+  "external_image_downloads": 0,
+  "protected_images_opened": 0,
+  "human_image_annotation_required": false,
+  "evidence_checks": {
+    "model_families": 13,
+    "unique_fold_runs": 53,
+    "historical_eda_probe_runs": 155,
+    "saved_usage_view_probe_files_checked": 10,
+    "current_view_contract_probe_hashes_matched": 8,
+    "canonical_oof_experiments": 11,
+    "largest_pooled_macro_f1_reproduction_error": 0.0,
+    "largest_probability_metric_reproduction_error": 1.5959455978986625e-16,
+    "initial_source_hashes_rechecked_unchanged": 243,
+    "development_image_hashes_verified": 32773,
+    "next_test_checkpoint_registry_hashes_matched": 6,
+    "u2_probability_reproduction_max_abs_error": 2.7755575615628914e-16
+  },
+  "checks": [
+    {
+      "command": "./.venv/bin/python -m pytest -q tests/train/test_task3_usage_hog_svm.py tests/train/test_task3_decisions.py tests/train/test_resource_worker.py",
+      "status": "passed",
+      "tests_passed": 23,
+      "seconds": 6.79
+    },
+    {
+      "command": "./.venv/bin/python -m ruff check reports/task3_usage_deep_investigation_20260905/*.py",
+      "status": "passed"
+    },
+    {
+      "command": "./.venv/bin/python -m ruff format --check reports/task3_usage_deep_investigation_20260905/*.py",
+      "status": "passed",
+      "python_files": 7
+    }
+  ],
+  "visual_checks": {
+    "status": "inspected",
+    "new_figures": [
+      "experiment_summary.png",
+      "class_f1_summary.png",
+      "robustness_summary.png",
+      "persistent_cases.png",
+      "resolution_examples.png"
+    ],
+    "existing_figures_inspected": [
+      "reports/task3_fit_review_20260905/usage_curves.png",
+      "results/figures/task3/e8_robustness_comparison.png",
+      "results/figures/task3/e9_robustness_and_gap.png"
+    ],
+    "rendered_documents": ["REPORT.html", "RUNS.html", "SOURCES.html"],
+    "all_report_images_loaded": true,
+    "viewport_width": 1280,
+    "horizontal_overflow": false
+  },
+  "not_run": [
+    "CNN blend corruption inference: torch is not installed in the required local .venv",
+    "Any new training, external image ingestion, final model promotion or held-out evaluation"
+  ],
+  "evidence_limits": [
+    "All development folds have prior research exposure; bootstrap intervals do not remove selection bias.",
+    "E1 has no local full OOF probability vectors; S2 has compact metrics but no local OOF vectors.",
+    "Neither inspected registry contains the exact local U1 or S2 run rows.",
+    "The historical EDA audit/view contract discrepancy remains unresolved.",
+    "The required local environment lacks PyTorch; CNN inference must use the existing training runtime."
+  ],
+  "workspace_note": "Concurrent gender-only work appeared during the investigation, including 04y_task3_gender_dropout_screen.ipynb. Its scope was read and excluded from Usage comparisons. Those edits were preserved."
+}

@@ -1,0 +1,61 @@
+id,cv_fold,product_family_group,usage,articleType,predicted_label,confidence,path
+24502,3,family_0f89393f9554eff6,Formal,Belts,Ethnic,0.99998975,data/raw/teacher/train/images_train/24502.jpg
+2192,2,family_707f6b27b35675b3,Sports,Shorts,Casual,0.9999156,data/raw/teacher/train/images_train/2192.jpg
+12407,1,family_70e759ac2b469665,Formal,Socks,Casual,0.9998964,data/raw/teacher/train/images_train/12407.jpg
+7691,3,family_b6db6f8b80360e7d,Sports,Tshirts,Casual,0.9998821,data/raw/teacher/train/images_train/7691.jpg
+4761,3,family_9625b0d86d2d7e98,Sports,Tshirts,Casual,0.9998078,data/raw/teacher/train/images_train/4761.jpg
+33909,1,family_e87b3a287012a05e,Formal,Watches,Casual,0.9998036,data/raw/teacher/train/images_train/33909.jpg
+4346,1,family_a306c73ff0f8e27b,Sports,Flip Flops,Casual,0.9997733,data/raw/teacher/train/images_train/4346.jpg
+7854,3,family_cc1426618cb6931b,Sports,Backpacks,Casual,0.9997125,data/raw/teacher/train/images_train/7854.jpg
+2365,3,family_cfa8624c2d1e3c8c,Sports,Handbags,Casual,0.9996952,data/raw/teacher/train/images_train/2365.jpg
+9588,2,family_d9b03dd593468b4e,Formal,Shirts,Casual,0.9996922,data/raw/teacher/train/images_train/9588.jpg
+40499,1,family_045459a06ff3a014,Formal,Watches,Casual,0.9995797,data/raw/teacher/train/images_train/40499.jpg
+2672,3,family_b11b916a54e9e274,Ethnic,Handbags,Casual,0.9994999,data/raw/teacher/train/images_train/2672.jpg
+10583,2,family_8d246e711e70b26c,Formal,Watches,Casual,0.99943215,data/raw/teacher/train/images_train/10583.jpg
+45122,1,family_d5ca8a4f07d5d72e,Smart Casual,Watches,Casual,0.9993374,data/raw/teacher/train/images_train/45122.jpg
+49131,3,family_18a9b8677bcfc784,Casual,Nail Polish,NA,0.99933726,data/raw/teacher/train/images_train/49131.jpg
+22628,2,family_a6d740e99891abee,Sports,Tshirts,Casual,0.99923587,data/raw/teacher/train/images_train/22628.jpg
+22683,2,family_bcbb7b59d35223ae,Travel,Duffel Bag,Casual,0.9991737,data/raw/teacher/train/images_train/22683.jpg
+32004,1,family_4c0365f26ae72bfa,Formal,Socks,Casual,0.9991571,data/raw/teacher/train/images_train/32004.jpg
+7518,3,family_2a42480087db6658,Sports,Duffel Bag,Casual,0.9991272,data/raw/teacher/train/images_train/7518.jpg
+11967,1,family_7190e392b24e6fd8,Sports,Casual Shoes,Casual,0.99910766,data/raw/teacher/train/images_train/11967.jpg
+38527,2,family_511e4f4e1facb430,Casual,Sports Shoes,Sports,0.9990056,data/raw/teacher/train/images_train/38527.jpg
+33697,1,family_00d23cbcc9f63092,Smart Casual,Sandals,Casual,0.9989704,data/raw/teacher/train/images_train/33697.jpg
+31704,1,family_c2b97ed5f7ab9142,Ethnic,Earrings,Casual,0.9989599,data/raw/teacher/train/images_train/31704.jpg
+7934,1,family_6a25547cf30b010a,Sports,Tshirts,Casual,0.99888486,data/raw/teacher/train/images_train/7934.jpg
+5599,3,family_a3f0fbc167fd1096,Sports,Sandals,Casual,0.9988335,data/raw/teacher/train/images_train/5599.jpg
+15005,3,family_5216736fec90435a,Sports,Jackets,Casual,0.99881315,data/raw/teacher/train/images_train/15005.jpg
+19392,1,family_7450f0be0dafc441,Sports,Tshirts,Casual,0.9988071,data/raw/teacher/train/images_train/19392.jpg
+29468,2,family_0b61c882ee7a3b84,Smart Casual,Watches,Casual,0.99871385,data/raw/teacher/train/images_train/29468.jpg
+40428,3,family_ff9ed79ef130f3e9,Formal,Skirts,Casual,0.9986972,data/raw/teacher/train/images_train/40428.jpg
+19429,1,family_7f05b8eba770fe31,Smart Casual,Shirts,Casual,0.9984664,data/raw/teacher/train/images_train/19429.jpg
+4986,2,family_123578699359aa21,Sports,Tshirts,Casual,0.9984357,data/raw/teacher/train/images_train/4986.jpg
+24543,1,family_190de34eeda50203,Ethnic,Tops,Casual,0.9983615,data/raw/teacher/train/images_train/24543.jpg
+9024,2,family_d8e74bea72251416,NA,Sandals,Casual,0.998348,data/raw/teacher/train/images_train/9024.jpg
+23447,3,family_c49eb6bbc8b52fd2,Ethnic,Tops,Casual,0.9982337,data/raw/teacher/train/images_train/23447.jpg
+3214,3,family_1ef3f6149e996293,Sports,Flip Flops,Casual,0.99820113,data/raw/teacher/train/images_train/3214.jpg
+44266,3,family_d41e102ad1b6e590,Formal,Wallets,Casual,0.9981211,data/raw/teacher/train/images_train/44266.jpg
+12374,1,family_312979bbc038612c,Formal,Shirts,Casual,0.99806887,data/raw/teacher/train/images_train/12374.jpg
+5040,2,family_68bc5ec90a2d9464,Sports,Flip Flops,Casual,0.998018,data/raw/teacher/train/images_train/5040.jpg
+45192,1,family_c429a93454c5aead,Formal,Watches,Casual,0.9979578,data/raw/teacher/train/images_train/45192.jpg
+9894,3,family_2b6255b21ae4e35a,Formal,Trousers,Casual,0.9979316,data/raw/teacher/train/images_train/9894.jpg
+15662,3,family_f233186f4f8a960f,Formal,Laptop Bag,Casual,0.9978551,data/raw/teacher/train/images_train/15662.jpg
+51400,1,family_fa0f0251213d2440,Formal,Shirts,Casual,0.99783593,data/raw/teacher/train/images_train/51400.jpg
+45139,3,family_8b00fc0cc001f170,Smart Casual,Watches,Casual,0.9978333,data/raw/teacher/train/images_train/45139.jpg
+25017,3,family_366e5b7eb796de62,Formal,Heels,Casual,0.9977053,data/raw/teacher/train/images_train/25017.jpg
+30713,3,family_dacfb3d8104edc05,Ethnic,Clutches,Casual,0.9976344,data/raw/teacher/train/images_train/30713.jpg
+18361,2,family_1a9e894be2e23bd6,Sports,Socks,Casual,0.99760866,data/raw/teacher/train/images_train/18361.jpg
+40528,1,family_d00633eee37879c9,Formal,Watches,Casual,0.9971637,data/raw/teacher/train/images_train/40528.jpg
+45535,2,family_88989fc09bbff50e,Sports,Tshirts,Casual,0.99709654,data/raw/teacher/train/images_train/45535.jpg
+32930,1,family_0c256181be761e10,Formal,Shirts,Casual,0.99702543,data/raw/teacher/train/images_train/32930.jpg
+1803,2,family_ee0d6c299a70d209,Sports,Tshirts,Casual,0.9970072,data/raw/teacher/train/images_train/1803.jpg
+41438,1,family_042f5f22ca224e7e,Casual,Sports Shoes,Sports,0.9968803,data/raw/teacher/train/images_train/41438.jpg
+33969,1,family_4032f48fbb449bd2,Party,Dresses,Casual,0.9968015,data/raw/teacher/train/images_train/33969.jpg
+30951,1,family_98ca64561c7ccba9,Ethnic,Tops,Casual,0.9967817,data/raw/teacher/train/images_train/30951.jpg
+4697,1,family_f13f21602832553d,Sports,Watches,Casual,0.99667203,data/raw/teacher/train/images_train/4697.jpg
+16121,3,family_cb64baf4c8b96eff,Formal,Belts,Casual,0.996369,data/raw/teacher/train/images_train/16121.jpg
+29470,1,family_4e0c2a90b6922a5e,Smart Casual,Watches,Casual,0.99635196,data/raw/teacher/train/images_train/29470.jpg
+32604,1,family_c8b6c96bc42a302d,NA,Wallets,Casual,0.9963437,data/raw/teacher/train/images_train/32604.jpg
+29320,2,family_2e53202648b3ae9e,Sports,Tshirts,Casual,0.9963336,data/raw/teacher/train/images_train/29320.jpg
+9945,2,family_eaf17a74d4f66de7,Sports,Sweaters,Casual,0.996269,data/raw/teacher/train/images_train/9945.jpg
+4665,1,family_df33710fdefd14a5,Sports,Watches,Casual,0.9960781,data/raw/teacher/train/images_train/4665.jpg

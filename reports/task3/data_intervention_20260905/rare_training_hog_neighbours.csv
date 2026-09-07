@@ -1,0 +1,109 @@
+query_id,query_label,articleType,kind,reference_id,reference_label,cosine_similarity,query_path,reference_path
+1559,Travel,Backpacks,same_label,1565,Travel,0.837631344795227,data/raw/teacher/train/images_train/1559.jpg,data/raw/teacher/train/images_train/1565.jpg
+1559,Travel,Backpacks,different_label,7091,Casual,0.6977983713150024,data/raw/teacher/train/images_train/1559.jpg,data/raw/teacher/train/images_train/7091.jpg
+1565,Travel,Backpacks,same_label,1559,Travel,0.837631344795227,data/raw/teacher/train/images_train/1565.jpg,data/raw/teacher/train/images_train/1559.jpg
+1565,Travel,Backpacks,different_label,7091,Casual,0.7027270197868347,data/raw/teacher/train/images_train/1565.jpg,data/raw/teacher/train/images_train/7091.jpg
+1598,Travel,Handbags,same_label,35828,Travel,0.30031126737594604,data/raw/teacher/train/images_train/1598.jpg,data/raw/teacher/train/images_train/35828.jpg
+1598,Travel,Handbags,different_label,36509,Casual,0.6979432702064514,data/raw/teacher/train/images_train/1598.jpg,data/raw/teacher/train/images_train/36509.jpg
+1648,Travel,Backpacks,same_label,1565,Travel,0.6932295560836792,data/raw/teacher/train/images_train/1648.jpg,data/raw/teacher/train/images_train/1565.jpg
+1648,Travel,Backpacks,different_label,5257,Casual,0.7859022617340088,data/raw/teacher/train/images_train/1648.jpg,data/raw/teacher/train/images_train/5257.jpg
+4180,Smart Casual,Formal Shoes,same_label,4181,Smart Casual,0.8749110698699951,data/raw/teacher/train/images_train/4180.jpg,data/raw/teacher/train/images_train/4181.jpg
+4180,Smart Casual,Formal Shoes,different_label,47199,Formal,0.847434937953949,data/raw/teacher/train/images_train/4180.jpg,data/raw/teacher/train/images_train/47199.jpg
+4181,Smart Casual,Formal Shoes,same_label,4180,Smart Casual,0.8749110698699951,data/raw/teacher/train/images_train/4181.jpg,data/raw/teacher/train/images_train/4180.jpg
+4181,Smart Casual,Formal Shoes,different_label,47199,Formal,0.8766201734542847,data/raw/teacher/train/images_train/4181.jpg,data/raw/teacher/train/images_train/47199.jpg
+4601,Travel,Rucksacks,same_label,38962,Travel,0.7733530402183533,data/raw/teacher/train/images_train/4601.jpg,data/raw/teacher/train/images_train/38962.jpg
+4602,Travel,Backpacks,same_label,1648,Travel,0.6623050570487976,data/raw/teacher/train/images_train/4602.jpg,data/raw/teacher/train/images_train/1648.jpg
+4602,Travel,Backpacks,different_label,43569,Casual,0.7459619641304016,data/raw/teacher/train/images_train/4602.jpg,data/raw/teacher/train/images_train/43569.jpg
+6835,NA,Shoe Accessories,same_label,6837,NA,0.5455548763275146,data/raw/teacher/train/images_train/6835.jpg,data/raw/teacher/train/images_train/6837.jpg
+6836,NA,Shoe Accessories,same_label,12451,NA,0.7256089448928833,data/raw/teacher/train/images_train/6836.jpg,data/raw/teacher/train/images_train/12451.jpg
+6837,NA,Shoe Accessories,same_label,6838,NA,0.8690657019615173,data/raw/teacher/train/images_train/6837.jpg,data/raw/teacher/train/images_train/6838.jpg
+6838,NA,Shoe Accessories,same_label,6837,NA,0.8690657019615173,data/raw/teacher/train/images_train/6838.jpg,data/raw/teacher/train/images_train/6837.jpg
+7113,Travel,Rucksacks,same_label,38962,Travel,0.7377098798751831,data/raw/teacher/train/images_train/7113.jpg,data/raw/teacher/train/images_train/38962.jpg
+9024,NA,Sandals,different_label,23296,Casual,0.7707786560058594,data/raw/teacher/train/images_train/9024.jpg,data/raw/teacher/train/images_train/23296.jpg
+9752,Smart Casual,Shirts,same_label,19429,Smart Casual,0.7645827531814575,data/raw/teacher/train/images_train/9752.jpg,data/raw/teacher/train/images_train/19429.jpg
+9752,Smart Casual,Shirts,different_label,14738,Formal,0.8105211853981018,data/raw/teacher/train/images_train/9752.jpg,data/raw/teacher/train/images_train/14738.jpg
+10277,Smart Casual,Formal Shoes,same_label,4181,Smart Casual,0.7931406497955322,data/raw/teacher/train/images_train/10277.jpg,data/raw/teacher/train/images_train/4181.jpg
+10277,Smart Casual,Formal Shoes,different_label,10302,Formal,0.8485268950462341,data/raw/teacher/train/images_train/10277.jpg,data/raw/teacher/train/images_train/10302.jpg
+11324,Smart Casual,Trousers,different_label,39807,Formal,0.892045259475708,data/raw/teacher/train/images_train/11324.jpg,data/raw/teacher/train/images_train/39807.jpg
+12447,NA,Shoe Accessories,same_label,12448,NA,0.585132360458374,data/raw/teacher/train/images_train/12447.jpg,data/raw/teacher/train/images_train/12448.jpg
+12448,NA,Shoe Accessories,same_label,12447,NA,0.585132360458374,data/raw/teacher/train/images_train/12448.jpg,data/raw/teacher/train/images_train/12447.jpg
+12451,NA,Shoe Accessories,same_label,6838,NA,0.766590416431427,data/raw/teacher/train/images_train/12451.jpg,data/raw/teacher/train/images_train/6838.jpg
+13493,Travel,Rucksacks,same_label,4601,Travel,0.7258886694908142,data/raw/teacher/train/images_train/13493.jpg,data/raw/teacher/train/images_train/4601.jpg
+19429,Smart Casual,Shirts,same_label,9752,Smart Casual,0.7645827531814575,data/raw/teacher/train/images_train/19429.jpg,data/raw/teacher/train/images_train/9752.jpg
+19429,Smart Casual,Shirts,different_label,8182,Casual,0.8814489841461182,data/raw/teacher/train/images_train/19429.jpg,data/raw/teacher/train/images_train/8182.jpg
+20709,Smart Casual,Casual Shoes,different_label,39993,Casual,0.7908942699432373,data/raw/teacher/train/images_train/20709.jpg,data/raw/teacher/train/images_train/39993.jpg
+22232,NA,Shoe Accessories,same_label,22233,NA,0.7847285270690918,data/raw/teacher/train/images_train/22232.jpg,data/raw/teacher/train/images_train/22233.jpg
+22233,NA,Shoe Accessories,same_label,22232,NA,0.7847285270690918,data/raw/teacher/train/images_train/22233.jpg,data/raw/teacher/train/images_train/22232.jpg
+22683,Travel,Duffel Bag,different_label,22645,Casual,0.7609999775886536,data/raw/teacher/train/images_train/22683.jpg,data/raw/teacher/train/images_train/22645.jpg
+25140,Party,Clutches,different_label,20849,Casual,0.49810391664505005,data/raw/teacher/train/images_train/25140.jpg,data/raw/teacher/train/images_train/20849.jpg
+25886,Travel,Backpacks,same_label,25887,Travel,0.813429594039917,data/raw/teacher/train/images_train/25886.jpg,data/raw/teacher/train/images_train/25887.jpg
+25886,Travel,Backpacks,different_label,4588,Casual,0.7465933561325073,data/raw/teacher/train/images_train/25886.jpg,data/raw/teacher/train/images_train/4588.jpg
+25887,Travel,Backpacks,same_label,25886,Travel,0.813429594039917,data/raw/teacher/train/images_train/25887.jpg,data/raw/teacher/train/images_train/25886.jpg
+25887,Travel,Backpacks,different_label,7091,Casual,0.7830409407615662,data/raw/teacher/train/images_train/25887.jpg,data/raw/teacher/train/images_train/7091.jpg
+27868,Smart Casual,Shirts,same_label,27869,Smart Casual,0.7494346499443054,data/raw/teacher/train/images_train/27868.jpg,data/raw/teacher/train/images_train/27869.jpg
+27868,Smart Casual,Shirts,different_label,12253,Formal,0.7498047351837158,data/raw/teacher/train/images_train/27868.jpg,data/raw/teacher/train/images_train/12253.jpg
+27869,Smart Casual,Shirts,same_label,27868,Smart Casual,0.7494346499443054,data/raw/teacher/train/images_train/27869.jpg,data/raw/teacher/train/images_train/27868.jpg
+27869,Smart Casual,Shirts,different_label,51410,Formal,0.7698659300804138,data/raw/teacher/train/images_train/27869.jpg,data/raw/teacher/train/images_train/51410.jpg
+29409,Smart Casual,Watches,same_label,29457,Smart Casual,0.806887149810791,data/raw/teacher/train/images_train/29409.jpg,data/raw/teacher/train/images_train/29457.jpg
+29409,Smart Casual,Watches,different_label,37335,Casual,0.8507953882217407,data/raw/teacher/train/images_train/29409.jpg,data/raw/teacher/train/images_train/37335.jpg
+29457,Smart Casual,Watches,same_label,29409,Smart Casual,0.806887149810791,data/raw/teacher/train/images_train/29457.jpg,data/raw/teacher/train/images_train/29409.jpg
+29457,Smart Casual,Watches,different_label,45294,Casual,0.8433636426925659,data/raw/teacher/train/images_train/29457.jpg,data/raw/teacher/train/images_train/45294.jpg
+29470,Smart Casual,Watches,same_label,29409,Smart Casual,0.7899781465530396,data/raw/teacher/train/images_train/29470.jpg,data/raw/teacher/train/images_train/29409.jpg
+29470,Smart Casual,Watches,different_label,30060,Casual,0.8261910080909729,data/raw/teacher/train/images_train/29470.jpg,data/raw/teacher/train/images_train/30060.jpg
+30991,NA,Perfume and Body Mist,same_label,30992,NA,0.4425056576728821,data/raw/teacher/train/images_train/30991.jpg,data/raw/teacher/train/images_train/30992.jpg
+30991,NA,Perfume and Body Mist,different_label,26858,Casual,0.6270745992660522,data/raw/teacher/train/images_train/30991.jpg,data/raw/teacher/train/images_train/26858.jpg
+30992,NA,Perfume and Body Mist,same_label,45687,NA,0.570873498916626,data/raw/teacher/train/images_train/30992.jpg,data/raw/teacher/train/images_train/45687.jpg
+30992,NA,Perfume and Body Mist,different_label,36810,Ethnic,0.6285369992256165,data/raw/teacher/train/images_train/30992.jpg,data/raw/teacher/train/images_train/36810.jpg
+32603,NA,Wallets,same_label,32608,NA,0.8487775325775146,data/raw/teacher/train/images_train/32603.jpg,data/raw/teacher/train/images_train/32608.jpg
+32603,NA,Wallets,different_label,14965,Formal,0.920386552810669,data/raw/teacher/train/images_train/32603.jpg,data/raw/teacher/train/images_train/14965.jpg
+32608,NA,Wallets,same_label,32603,NA,0.8487775325775146,data/raw/teacher/train/images_train/32608.jpg,data/raw/teacher/train/images_train/32603.jpg
+32608,NA,Wallets,different_label,14965,Formal,0.8569387197494507,data/raw/teacher/train/images_train/32608.jpg,data/raw/teacher/train/images_train/14965.jpg
+32717,NA,Briefs,same_label,32719,NA,0.8727880716323853,data/raw/teacher/train/images_train/32717.jpg,data/raw/teacher/train/images_train/32719.jpg
+32717,NA,Briefs,different_label,31411,Casual,0.8097074627876282,data/raw/teacher/train/images_train/32717.jpg,data/raw/teacher/train/images_train/31411.jpg
+32719,NA,Briefs,same_label,32717,NA,0.8727880716323853,data/raw/teacher/train/images_train/32719.jpg,data/raw/teacher/train/images_train/32717.jpg
+32719,NA,Briefs,different_label,31411,Casual,0.8007611036300659,data/raw/teacher/train/images_train/32719.jpg,data/raw/teacher/train/images_train/31411.jpg
+33695,Smart Casual,Formal Shoes,same_label,33702,Smart Casual,0.6663130521774292,data/raw/teacher/train/images_train/33695.jpg,data/raw/teacher/train/images_train/33702.jpg
+33695,Smart Casual,Formal Shoes,different_label,33699,Formal,0.8215017318725586,data/raw/teacher/train/images_train/33695.jpg,data/raw/teacher/train/images_train/33699.jpg
+33697,Smart Casual,Sandals,different_label,11908,Formal,0.5894724130630493,data/raw/teacher/train/images_train/33697.jpg,data/raw/teacher/train/images_train/11908.jpg
+33702,Smart Casual,Formal Shoes,same_label,4181,Smart Casual,0.710772693157196,data/raw/teacher/train/images_train/33702.jpg,data/raw/teacher/train/images_train/4181.jpg
+33702,Smart Casual,Formal Shoes,different_label,33693,Formal,0.8569027185440063,data/raw/teacher/train/images_train/33702.jpg,data/raw/teacher/train/images_train/33693.jpg
+33969,Party,Dresses,same_label,43643,Party,0.7111630439758301,data/raw/teacher/train/images_train/33969.jpg,data/raw/teacher/train/images_train/43643.jpg
+33969,Party,Dresses,different_label,8480,Casual,0.7704997062683105,data/raw/teacher/train/images_train/33969.jpg,data/raw/teacher/train/images_train/8480.jpg
+34133,Smart Casual,Wallets,different_label,47422,Casual,0.8181699514389038,data/raw/teacher/train/images_train/34133.jpg,data/raw/teacher/train/images_train/47422.jpg
+35828,Travel,Handbags,same_label,1598,Travel,0.30031126737594604,data/raw/teacher/train/images_train/35828.jpg,data/raw/teacher/train/images_train/1598.jpg
+35828,Travel,Handbags,different_label,34766,Casual,0.43991386890411377,data/raw/teacher/train/images_train/35828.jpg,data/raw/teacher/train/images_train/34766.jpg
+38962,Travel,Rucksacks,same_label,4601,Travel,0.7733530402183533,data/raw/teacher/train/images_train/38962.jpg,data/raw/teacher/train/images_train/4601.jpg
+39405,Smart Casual,Shirts,same_label,27868,Smart Casual,0.5509827136993408,data/raw/teacher/train/images_train/39405.jpg,data/raw/teacher/train/images_train/27868.jpg
+39405,Smart Casual,Shirts,different_label,9250,Formal,0.5834187269210815,data/raw/teacher/train/images_train/39405.jpg,data/raw/teacher/train/images_train/9250.jpg
+43113,NA,Perfume and Body Mist,same_label,45687,NA,0.5959002375602722,data/raw/teacher/train/images_train/43113.jpg,data/raw/teacher/train/images_train/45687.jpg
+43113,NA,Perfume and Body Mist,different_label,23543,Casual,0.6394592523574829,data/raw/teacher/train/images_train/43113.jpg,data/raw/teacher/train/images_train/23543.jpg
+43643,Party,Dresses,same_label,33969,Party,0.7111630439758301,data/raw/teacher/train/images_train/43643.jpg,data/raw/teacher/train/images_train/33969.jpg
+43643,Party,Dresses,different_label,8480,Casual,0.7902689576148987,data/raw/teacher/train/images_train/43643.jpg,data/raw/teacher/train/images_train/8480.jpg
+43644,Party,Dresses,same_label,43643,Party,0.6490746736526489,data/raw/teacher/train/images_train/43644.jpg,data/raw/teacher/train/images_train/43643.jpg
+43644,Party,Dresses,different_label,47674,Casual,0.6292940974235535,data/raw/teacher/train/images_train/43644.jpg,data/raw/teacher/train/images_train/47674.jpg
+44131,Party,Perfume and Body Mist,different_label,23568,Casual,0.44179365038871765,data/raw/teacher/train/images_train/44131.jpg,data/raw/teacher/train/images_train/23568.jpg
+44670,Smart Casual,Shirts,same_label,19429,Smart Casual,0.7349100112915039,data/raw/teacher/train/images_train/44670.jpg,data/raw/teacher/train/images_train/19429.jpg
+44670,Smart Casual,Shirts,different_label,11104,Formal,0.8084882497787476,data/raw/teacher/train/images_train/44670.jpg,data/raw/teacher/train/images_train/11104.jpg
+45114,Smart Casual,Watches,same_label,45210,Smart Casual,0.8009383678436279,data/raw/teacher/train/images_train/45114.jpg,data/raw/teacher/train/images_train/45210.jpg
+45114,Smart Casual,Watches,different_label,40560,Casual,0.8162806034088135,data/raw/teacher/train/images_train/45114.jpg,data/raw/teacher/train/images_train/40560.jpg
+45122,Smart Casual,Watches,same_label,45210,Smart Casual,0.8453333973884583,data/raw/teacher/train/images_train/45122.jpg,data/raw/teacher/train/images_train/45210.jpg
+45122,Smart Casual,Watches,different_label,36778,Casual,0.7908544540405273,data/raw/teacher/train/images_train/45122.jpg,data/raw/teacher/train/images_train/36778.jpg
+45137,Smart Casual,Watches,same_label,45210,Smart Casual,0.8786790370941162,data/raw/teacher/train/images_train/45137.jpg,data/raw/teacher/train/images_train/45210.jpg
+45137,Smart Casual,Watches,different_label,37321,Casual,0.8072194457054138,data/raw/teacher/train/images_train/45137.jpg,data/raw/teacher/train/images_train/37321.jpg
+45139,Smart Casual,Watches,same_label,29409,Smart Casual,0.7638767957687378,data/raw/teacher/train/images_train/45139.jpg,data/raw/teacher/train/images_train/29409.jpg
+45139,Smart Casual,Watches,different_label,32336,Casual,0.8387882709503174,data/raw/teacher/train/images_train/45139.jpg,data/raw/teacher/train/images_train/32336.jpg
+45210,Smart Casual,Watches,same_label,45137,Smart Casual,0.8786790370941162,data/raw/teacher/train/images_train/45210.jpg,data/raw/teacher/train/images_train/45137.jpg
+45210,Smart Casual,Watches,different_label,37321,Casual,0.7949014902114868,data/raw/teacher/train/images_train/45210.jpg,data/raw/teacher/train/images_train/37321.jpg
+45240,Smart Casual,Watches,same_label,45139,Smart Casual,0.755439281463623,data/raw/teacher/train/images_train/45240.jpg,data/raw/teacher/train/images_train/45139.jpg
+45240,Smart Casual,Watches,different_label,17428,Casual,0.8656764626502991,data/raw/teacher/train/images_train/45240.jpg,data/raw/teacher/train/images_train/17428.jpg
+45340,Party,Heels,different_label,20753,Casual,0.755050778388977,data/raw/teacher/train/images_train/45340.jpg,data/raw/teacher/train/images_train/20753.jpg
+45687,NA,Perfume and Body Mist,same_label,43113,NA,0.5959002375602722,data/raw/teacher/train/images_train/45687.jpg,data/raw/teacher/train/images_train/43113.jpg
+45687,NA,Perfume and Body Mist,different_label,23543,Casual,0.6079311370849609,data/raw/teacher/train/images_train/45687.jpg,data/raw/teacher/train/images_train/23543.jpg
+49071,NA,Nail Polish,same_label,49146,NA,0.8540276288986206,data/raw/teacher/train/images_train/49071.jpg,data/raw/teacher/train/images_train/49146.jpg
+49071,NA,Nail Polish,different_label,49145,Casual,0.861924409866333,data/raw/teacher/train/images_train/49071.jpg,data/raw/teacher/train/images_train/49145.jpg
+49146,NA,Nail Polish,same_label,49071,NA,0.8540276288986206,data/raw/teacher/train/images_train/49146.jpg,data/raw/teacher/train/images_train/49071.jpg
+49146,NA,Nail Polish,different_label,49145,Casual,0.9675867557525635,data/raw/teacher/train/images_train/49146.jpg,data/raw/teacher/train/images_train/49145.jpg
+49148,NA,Lip Liner,same_label,49152,NA,0.873166561126709,data/raw/teacher/train/images_train/49148.jpg,data/raw/teacher/train/images_train/49152.jpg
+49152,NA,Lip Liner,same_label,49148,NA,0.873166561126709,data/raw/teacher/train/images_train/49152.jpg,data/raw/teacher/train/images_train/49148.jpg
+51044,NA,Baby Dolls,same_label,51045,NA,0.6758999824523926,data/raw/teacher/train/images_train/51044.jpg,data/raw/teacher/train/images_train/51045.jpg
+51045,NA,Baby Dolls,same_label,51044,NA,0.6758999824523926,data/raw/teacher/train/images_train/51045.jpg,data/raw/teacher/train/images_train/51044.jpg

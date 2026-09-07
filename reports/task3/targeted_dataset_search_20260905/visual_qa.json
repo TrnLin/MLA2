@@ -1,0 +1,19 @@
+{
+  "observed_date": "2026-09-05",
+  "method": "Rendered local HTML in browser and inspected screenshots; opened both final contact-sheet PNGs at original resolution.",
+  "html_regions_inspected": {
+    "README.html": "Full short report, including the table and closing recommendation",
+    "REPORT.html": "Opening, ranked source table and closing next-step/reproducibility sections",
+    "catalogue/FINDINGS.html": "Opening evidence table, embedded second contact sheet and closing access/reuse section",
+    "smart_casual/FINDINGS.html": "Opening and corrected FashionStylist count discussion",
+    "travel/REPORT.html": "Opening and first source discussion",
+    "travel/ABO_ACCESS.html": "Opening, three source-image entries and licence/attribution discussion",
+    "home_na/findings.html": "Opening and first source discussion"
+  },
+  "pngs_inspected": [
+    "results/figures/task3/targeted_dataset_search/catalogue_sample_1.png",
+    "results/figures/task3/targeted_dataset_search/catalogue_sample_2.png"
+  ],
+  "result": "Inspected headings, table columns and captions fit their containers. Both final contact sheets have readable, unclipped headings and captions. Source photos include collages, printed artwork and whole outfits, as stated in the findings.",
+  "limits": "Companion report pages were spot-checked, not inspected at every scroll position. Photo inspection and successful image decoding do not establish teacher-label compatibility, duplicate independence or training benefit."
+}

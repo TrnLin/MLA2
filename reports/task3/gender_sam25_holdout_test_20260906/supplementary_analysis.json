@@ -1,0 +1,205 @@
+{
+  "name_overlap": {
+    "accuracy": 0.946047678795483,
+    "balanced_accuracy": 0.4743863604339862,
+    "macro_f1": 0.4814088598402324,
+    "weighted_f1": 0.9454385499727098,
+    "mcc": 0.8930766543969423,
+    "support": 797,
+    "per_class": [
+      {
+        "class_index": 0,
+        "class_name": "Boys",
+        "support": 0,
+        "predicted_count": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      {
+        "class_index": 1,
+        "class_name": "Girls",
+        "support": 0,
+        "predicted_count": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      {
+        "class_index": 2,
+        "class_name": "Men",
+        "support": 329,
+        "predicted_count": 319,
+        "precision": 0.9655172413793104,
+        "recall": 0.9361702127659575,
+        "f1": 0.9506172839506173
+      },
+      {
+        "class_index": 3,
+        "class_name": "Unisex",
+        "support": 15,
+        "predicted_count": 13,
+        "precision": 0.5384615384615384,
+        "recall": 0.4666666666666667,
+        "f1": 0.5
+      },
+      {
+        "class_index": 4,
+        "class_name": "Women",
+        "support": 453,
+        "predicted_count": 465,
+        "precision": 0.9440860215053763,
+        "recall": 0.9690949227373068,
+        "f1": 0.9564270152505446
+      }
+    ],
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        308,
+        0,
+        21
+      ],
+      [
+        0,
+        0,
+        3,
+        7,
+        5
+      ],
+      [
+        0,
+        0,
+        8,
+        6,
+        439
+      ]
+    ],
+    "nll": 0.20044888437064493,
+    "brier": 0.09768938190250662,
+    "ece_15": 0.0628196986586118
+  },
+  "no_name_overlap": {
+    "accuracy": 0.9161367249602543,
+    "balanced_accuracy": 0.6846743172521222,
+    "macro_f1": 0.6008665139225144,
+    "weighted_f1": 0.9168211798268303,
+    "mcc": 0.7628999060225425,
+    "support": 5032,
+    "per_class": [
+      {
+        "class_index": 0,
+        "class_name": "Boys",
+        "support": 16,
+        "predicted_count": 33,
+        "precision": 0.3939393939393939,
+        "recall": 0.8125,
+        "f1": 0.5306122448979591
+      },
+      {
+        "class_index": 1,
+        "class_name": "Girls",
+        "support": 10,
+        "predicted_count": 16,
+        "precision": 0.375,
+        "recall": 0.6,
+        "f1": 0.4615384615384615
+      },
+      {
+        "class_index": 2,
+        "class_name": "Men",
+        "support": 918,
+        "predicted_count": 1095,
+        "precision": 0.7579908675799086,
+        "recall": 0.9041394335511983,
+        "f1": 0.8246398410332837
+      },
+      {
+        "class_index": 3,
+        "class_name": "Unisex",
+        "support": 69,
+        "predicted_count": 33,
+        "precision": 0.36363636363636365,
+        "recall": 0.17391304347826086,
+        "f1": 0.2352941176470588
+      },
+      {
+        "class_index": 4,
+        "class_name": "Women",
+        "support": 4019,
+        "predicted_count": 3855,
+        "precision": 0.972503242542153,
+        "recall": 0.9328191092311521,
+        "f1": 0.952247904495809
+      }
+    ],
+    "confusion_matrix": [
+      [
+        13,
+        1,
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        6,
+        1,
+        0,
+        2
+      ],
+      [
+        1,
+        0,
+        830,
+        6,
+        81
+      ],
+      [
+        0,
+        0,
+        35,
+        12,
+        22
+      ],
+      [
+        18,
+        9,
+        228,
+        15,
+        3749
+      ]
+    ],
+    "nll": 0.29372727265941734,
+    "brier": 0.14605510759050772,
+    "ece_15": 0.09172114678236565
+  },
+  "inference_seconds": 137.37199458800023,
+  "mean_single_fold_scores": {
+    "holdout": {
+      "accuracy": 0.8969885773624091,
+      "macro_f1": 0.7646827408912846
+    },
+    "test": {
+      "accuracy": 0.9118888317035511,
+      "macro_f1": 0.6005423111686653
+    }
+  },
+  "test_women_share": 0.7671984903070853,
+  "test_name_overlap_share": 0.1367301423914908
+}

@@ -1,0 +1,87 @@
+def _fit_classifier_calibrator_pair(
+    estimator,
+    X,
+    y,
+    train,
+    test,
+    method,
+    classes,
+    xp,
+    sample_weight=None,
+    fit_params=None,
+):
+    """Fit a classifier/calibration pair on a given train/test split.
+
+    Fit the classifier on the train set, compute its predictions on the test
+    set and use the predictions as input to fit the calibrator along with the
+    test labels.
+
+    Parameters
+    ----------
+    estimator : estimator instance
+        Cloned base estimator.
+
+    X : array-like, shape (n_samples, n_features)
+        Sample data.
+
+    y : array-like, shape (n_samples,)
+        Targets.
+
+    train : ndarray, shape (n_train_indices,)
+        Indices of the training subset.
+
+    test : ndarray, shape (n_test_indices,)
+        Indices of the testing subset.
+
+    method : {'sigmoid', 'isotonic', 'temperature'}
+        Method to use for calibration.
+
+    classes : ndarray, shape (n_classes,)
+        The target classes.
+
+    xp : namespace
+        Array API namespace.
+
+    sample_weight : array-like, default=None
+        Sample weights for `X`.
+
+    fit_params : dict, default=None
+        Parameters to pass to the `fit` method of the underlying
+        classifier.
+
+    Returns
+    -------
+    calibrated_classifier : _CalibratedClassifier instance
+    """
+    fit_params_train = _check_method_params(X, params=fit_params, indices=train)
+    X_train, y_train = _safe_indexing(X, train), _safe_indexing(y, train)
+    X_test, y_test = _safe_indexing(X, test), _safe_indexing(y, test)
+
+    estimator.fit(X_train, y_train, **fit_params_train)
+
+    predictions, _ = _get_response_values(
+        estimator,
+        X_test,
+        response_method=["decision_function", "predict_proba"],
+    )
+    if predictions.ndim == 1:
+        # Reshape binary output from `(n_samples,)` to `(n_samples, 1)`
+        predictions = predictions.reshape(-1, 1)
+
+    if sample_weight is not None:
+        # Check that the sample_weight dtype is consistent with the predictions
+        # to avoid unintentional upcasts.
+        sample_weight = _check_sample_weight(sample_weight, X, dtype=predictions.dtype)
+        sw_test = _safe_indexing(sample_weight, test)
+    else:
+        sw_test = None
+    calibrated_classifier = _fit_calibrator(
+        estimator,
+        predictions,
+        y_test,
+        classes,
+        method,
+        xp=xp,
+        sample_weight=sw_test,
+    )
+    return calibrated_classifier

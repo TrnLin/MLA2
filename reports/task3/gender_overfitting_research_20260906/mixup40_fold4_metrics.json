@@ -1,0 +1,253 @@
+{
+  "accuracy": 0.906054598139393,
+  "architecture_macs": null,
+  "auxiliary_loss_weight": 0.0,
+  "auxiliary_target": "none",
+  "balanced_accuracy": 0.7770850644501559,
+  "brier": 0.14012622786958487,
+  "checkpoint_policy": "final_epoch",
+  "class_counts": [
+    683,
+    557,
+    14067,
+    1410,
+    9499
+  ],
+  "class_weights": null,
+  "classifier_dropout": 0.3,
+  "comparison_precision": "saved_checkpoint_ieee_fp32_batch128_v1",
+  "confusion_matrix": [
+    [
+      147,
+      9,
+      14,
+      6,
+      9
+    ],
+    [
+      22,
+      102,
+      2,
+      7,
+      10
+    ],
+    [
+      1,
+      4,
+      3350,
+      49,
+      101
+    ],
+    [
+      10,
+      5,
+      104,
+      180,
+      54
+    ],
+    [
+      3,
+      2,
+      185,
+      19,
+      2162
+    ]
+  ],
+  "diagnostic_seconds": 33.211668823000764,
+  "early_stopped": false,
+  "ece_15": 0.0304576197702455,
+  "epochs_completed": 30,
+  "evaluation_label_variant": {
+    "canonical_split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+    "labels_sha256": "168f7513743fc28b37380ec6b43d0da05243d70e51dbe6d13d311f56a439764a",
+    "rule_version": "single_explicit_gender_cue_v1",
+    "summary_sha256": "f6e656d93d0af949d8cb0621e28b420fd671405fcf04a9347bcaab03a7cc14fe",
+    "variant_id": "gender_name_truth_v1"
+  },
+  "experiment_id": "t3_gender_name_truth_mixup_alpha040",
+  "final_train_eval_loss": 0.17132815081133942,
+  "final_train_eval_macro_f1": 0.9209246516806747,
+  "final_train_eval_metrics": {
+    "accuracy": 0.9538831248092767,
+    "balanced_accuracy": 0.9046919457076112,
+    "brier": 0.07867980957491964,
+    "confusion_matrix": [
+      [
+        647,
+        9,
+        16,
+        2,
+        9
+      ],
+      [
+        14,
+        515,
+        0,
+        8,
+        20
+      ],
+      [
+        11,
+        2,
+        13798,
+        80,
+        176
+      ],
+      [
+        15,
+        4,
+        272,
+        1015,
+        104
+      ],
+      [
+        0,
+        9,
+        422,
+        36,
+        9032
+      ]
+    ],
+    "ece_15": 0.060524465831671315,
+    "loss": 0.17132815081133942,
+    "macro_f1": 0.9209246516806747,
+    "mcc": 0.9195649798665783,
+    "nll": 0.17132815027229759,
+    "per_class": [
+      {
+        "class_index": 0,
+        "class_name": "Boys",
+        "f1": 0.9445255474452555,
+        "precision": 0.9417758369723436,
+        "predicted_count": 687,
+        "recall": 0.9472913616398243,
+        "support": 683
+      },
+      {
+        "class_index": 1,
+        "class_name": "Girls",
+        "f1": 0.9397810218978103,
+        "precision": 0.9554730983302412,
+        "predicted_count": 539,
+        "recall": 0.9245960502692998,
+        "support": 557
+      },
+      {
+        "class_index": 2,
+        "class_name": "Men",
+        "f1": 0.9657392825896762,
+        "precision": 0.9510614833195479,
+        "predicted_count": 14508,
+        "recall": 0.980877230397384,
+        "support": 14067
+      },
+      {
+        "class_index": 3,
+        "class_name": "Unisex",
+        "f1": 0.795766366130929,
+        "precision": 0.8895705521472392,
+        "predicted_count": 1141,
+        "recall": 0.7198581560283688,
+        "support": 1410
+      },
+      {
+        "class_index": 4,
+        "class_name": "Women",
+        "f1": 0.9588110403397028,
+        "precision": 0.9669200299753774,
+        "predicted_count": 9341,
+        "recall": 0.9508369302031793,
+        "support": 9499
+      }
+    ],
+    "support": 26216,
+    "weighted_f1": 0.952982915575321
+  },
+  "final_train_validation_macro_f1_gap": 0.11903873220872863,
+  "focal_gamma": 0.0,
+  "historical_registered_macro_f1": 0.8018859194719461,
+  "historical_registered_train_macro_f1": 0.9209246516806747,
+  "hypothesis_id": "t3_gender_name_truth_mixup_alpha040",
+  "input_view": "full",
+  "label_smoothing": 0.0,
+  "latency_ms_batch_1": 0.7497280400002637,
+  "loss": 0.27971296704395415,
+  "loss_name": "cross_entropy",
+  "macro_f1": 0.8018859194719461,
+  "mcc": 0.8358290209576287,
+  "mixup_receipt_sha256": "80b0762ebd712bca6607f0f3ed98d9dcfbf984163f0a981cb36c4ae42ab75fec",
+  "model_family": "task3_small_cnn_gem_p3",
+  "nll": 0.27971296591167655,
+  "parameter_count": 390181,
+  "parent_run_ids": [
+    "t3_gender_name_truth_mixup_alpha020_gender_smallcnngem3_f4_s2753_4566a61e0e2d_20260906T071118Z37920b"
+  ],
+  "peak_memory_bytes": 476406784,
+  "per_class": [
+    {
+      "class_index": 0,
+      "class_name": "Boys",
+      "f1": 0.7989130434782608,
+      "precision": 0.8032786885245902,
+      "predicted_count": 183,
+      "recall": 0.7945945945945946,
+      "support": 185
+    },
+    {
+      "class_index": 1,
+      "class_name": "Girls",
+      "f1": 0.769811320754717,
+      "precision": 0.8360655737704918,
+      "predicted_count": 122,
+      "recall": 0.7132867132867133,
+      "support": 143
+    },
+    {
+      "class_index": 2,
+      "class_name": "Men",
+      "f1": 0.9357541899441341,
+      "precision": 0.9165526675786594,
+      "predicted_count": 3655,
+      "recall": 0.9557774607703281,
+      "support": 3505
+    },
+    {
+      "class_index": 3,
+      "class_name": "Unisex",
+      "f1": 0.5863192182410423,
+      "precision": 0.6896551724137931,
+      "predicted_count": 261,
+      "recall": 0.509915014164306,
+      "support": 353
+    },
+    {
+      "class_index": 4,
+      "class_name": "Women",
+      "f1": 0.9186318249415765,
+      "precision": 0.925513698630137,
+      "predicted_count": 2336,
+      "recall": 0.9118515394348377,
+      "support": 2371
+    }
+  ],
+  "primary_loss_weight": 1.0,
+  "run_id": "t3_gender_name_truth_mixup_alpha040_gender_smallcnngem3_f4_s2753_ab0d78c7d178_20260906T082412Z418937",
+  "sample_weight_strategy": "none",
+  "selected_epoch": 30,
+  "selected_validation_macro_f1": 0.8018859194719461,
+  "support": 6557,
+  "target": "gender",
+  "train_seconds": 513.9992082479994,
+  "training_augmentation": "translation_2px_p05_mild_darkening_p025_grayscale_p010",
+  "training_rows_after_selection": 26216,
+  "training_rows_before_selection": 26216,
+  "training_selection_contract": {
+    "after_rows": 26216,
+    "before_rows": 26216,
+    "strategy": "all",
+    "validation_unchanged": true
+  },
+  "training_selection_strategy": "all",
+  "validation_fold": 4,
+  "weighted_f1": 0.9032708721429249
+}

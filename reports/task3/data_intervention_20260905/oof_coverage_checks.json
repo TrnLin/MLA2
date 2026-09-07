@@ -1,0 +1,77 @@
+[
+  {
+    "model": "usage_E2",
+    "rows": 32772,
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "id_label_fold_family_checks": true,
+    "source": "results/evidence/task3/experiments/t3_usage_e2_class_balanced_ce/usage/aggregate/oof_predictions.csv"
+  },
+  {
+    "model": "usage_E3",
+    "rows": 32772,
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "id_label_fold_family_checks": true,
+    "source": "results/evidence/task3/experiments/t3_usage_e3_classifier_dropout/usage/aggregate/oof_predictions.csv"
+  },
+  {
+    "model": "usage_E8",
+    "rows": 32772,
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "id_label_fold_family_checks": true,
+    "source": "results/evidence/task3/experiments/t3_usage_e8_translation/usage/aggregate/oof_predictions.csv"
+  },
+  {
+    "model": "usage_E9",
+    "rows": 32772,
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "id_label_fold_family_checks": true,
+    "source": "results/evidence/task3/experiments/t3_usage_e9_exception_balance/usage/aggregate/oof_predictions.csv"
+  },
+  {
+    "model": "gender_E6",
+    "rows": 32773,
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "id_label_fold_family_checks": true,
+    "source": "results/evidence/task3/experiments/t3_gender_e6_gem_p3/gender/aggregate/oof_predictions.csv"
+  },
+  {
+    "model": "gender_G2_screen",
+    "rows": 13110,
+    "folds": [
+      0,
+      4
+    ],
+    "id_label_fold_family_checks": true,
+    "source": "results/evidence/task3/experiments/t3_gender_v2_g2_translation/gender/aggregate/oof_predictions.csv"
+  }
+]

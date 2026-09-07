@@ -1,0 +1,9 @@
+fold,model,scope,macro_f1
+0,original_cpu,train,0.9362935109828214
+0,clean_bn_cpu,train,0.9361555655772985
+0,original_cpu,validation,0.8118629907871441
+0,clean_bn_cpu,validation,0.8097674060563094
+4,original_cpu,train,0.9399526189561342
+4,clean_bn_cpu,train,0.9364192134701904
+4,original_cpu,validation,0.8061177929236404
+4,clean_bn_cpu,validation,0.8045466316840143

@@ -1,0 +1,6 @@
+{
+  "input_images": 569,
+  "prefiltered_pairs": 140,
+  "accepted_duplicate_edges": 2,
+  "source_family_equality_does_not_skip_comparison": true
+}

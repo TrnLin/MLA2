@@ -1,0 +1,11 @@
+{
+  "archive": "reports/task3_rare_replacement_20260906/teacher_plus_rare_usage_v3_delta.zip",
+  "sha256": "e625d81fc993ecb607377478eea445b77eea56fc245029502bfafe2e0e2ba4c6",
+  "files": 158,
+  "bytes": 10059242,
+  "verified_all_member_hashes": true,
+  "requires_existing_teacher_and_v2_image_files": true,
+  "contains_new_prepared_images": 130,
+  "contains_source_original_photos": false,
+  "uploaded": false
+}

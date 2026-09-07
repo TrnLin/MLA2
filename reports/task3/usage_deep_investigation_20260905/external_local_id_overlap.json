@@ -1,0 +1,13 @@
+{
+  "external_image_files": 44441,
+  "canonical_roles": {
+    "development": 32773,
+    "holdout": 5778,
+    "quarantine": 61
+  },
+  "teacher_prediction_id_overlap": 5829,
+  "ids_outside_all_teacher_roles": 0,
+  "outside_teacher_ids": [],
+  "external_labels_read": false,
+  "claim_limit": "filename ID overlap only, not a full cross-source pixel/family audit"
+}

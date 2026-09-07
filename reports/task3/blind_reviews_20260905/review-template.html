@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blind image review — Reviewer __REVIEWER__</title>
+<style>
+:root{color-scheme:light dark;font-family:system-ui,sans-serif;background:light-dark(#f8f9fb,#17191d);color:light-dark(#18202a,#eceff4)}
+*{box-sizing:border-box}body{max-width:960px;margin:auto;padding:24px}h1{font-size:24px;margin:0 0 12px}p{line-height:1.5}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0}button,select,input,textarea{font:inherit;color:inherit;background:light-dark(white,#262b33);border:1px solid light-dark(#b5bfcd,#626b78);border-radius:6px;padding:10px;min-height:44px}button{cursor:pointer}button:disabled{opacity:.4;cursor:default}label{display:grid;gap:6px}select{width:100%}.layout{display:grid;grid-template-columns:240px 1fr;gap:28px}.photo{text-align:center}.photo img{width:180px;height:240px;object-fit:contain;image-rendering:pixelated}.native img{width:auto;height:auto;max-width:100%;image-rendering:auto}.native{margin-top:16px}.forms{display:grid;grid-template-columns:1fr 1fr;gap:18px}fieldset{border:1px solid light-dark(#c8d0db,#505966);border-radius:8px;padding:16px;min-width:0}fieldset label+label{margin-top:14px}legend{font-weight:600}textarea{width:100%;min-height:72px}.notes{margin-top:16px}#position{font-variant-numeric:tabular-nums}#jump{width:90px}#status{min-height:24px}small{display:block;line-height:1.5}a{color:inherit}progress{width:100%;height:10px}#restore{max-width:100%}@media(max-width:650px){body{padding:16px}.layout{grid-template-columns:1fr}.forms{grid-template-columns:1fr 1fr}.photo{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:24px}}@media(max-width:380px){.forms{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<h1>Reviewer __REVIEWER__ · Blind image review</h1>
+<p>Review all 367 pictures on your own. Judge the product’s intended audience and use. Choose <strong>cannot tell</strong> when the picture is not enough. Do not check catalogue labels or discuss answers until both reviews are finished.</p>
+<div class="toolbar"><strong id="position"></strong><span id="complete"></span></div>
+<progress id="progress" max="367" value="0" aria-label="Completed pictures"></progress>
+<div class="toolbar"><button id="prev">Previous</button><button id="next">Next</button><label>Picture <input id="jump" type="number" min="1" max="367" value="1"></label><button id="unanswered">Next unfinished</button></div>
+<main class="layout">
+<div class="photo"><div><img id="picture" alt="Product to review"><small>3× view · original pixels</small></div><div class="native"><img id="original" alt="Product at original size"><small>Original size</small></div></div>
+<div><div class="forms"><fieldset id="gender"><legend>Intended audience</legend></fieldset><fieldset id="usage"><legend>Product use</legend></fieldset></div><label class="notes">Notes (optional)<textarea id="notes"></textarea></label></div>
+</main>
+<p id="status" role="status"></p>
+<div class="toolbar"><button id="download">Download answers (CSV)</button><button id="backup">Save progress backup</button><label>Restore your backup <input id="restore" type="file" accept="application/json,.json"></label></div>
+<small>Progress is saved in this browser when available. Save a backup before closing or moving to another device. Your answers stay on your device. No correct answers are included.</small>
+<script id="review-data" type="application/json">__DATA__</script>
+<script>
+(()=>{
+const reviewer=__REVIEWER__, data=JSON.parse(document.getElementById('review-data').textContent), rows=data.rows, columns=data.columns;
+const $=id=>document.getElementById(id), key='task3-blind-20260905-reviewer-'+reviewer;
+const fields=['gender_knowability','gender_judgement','gender_confidence','usage_knowability','usage_judgement','usage_confidence'];
+const choices={knowability:[['clear','Clear'],['uncertain','Uncertain'],['cannot_tell','Cannot tell']],confidence:[['high','High'],['medium','Medium'],['low','Low'],['cannot_tell','Cannot tell']],gender:['Boys','Girls','Men','Unisex','Women','cannot_tell'].map(x=>[x,x==='cannot_tell'?'Cannot tell':x]),usage:['Casual','Ethnic','Formal','Home','NA','Party','Smart Casual','Sports','Travel','cannot_tell'].map(x=>[x,x==='cannot_tell'?'Cannot tell':x])};
+let index=0, answers={};
+function validBackup(d){if(d.reviewer!==reviewer||d.scope!==data.scope||!d.answers||typeof d.answers!=='object')throw Error('Use the backup for this reviewer and image set.');for(const [token,ans] of Object.entries(d.answers)){if(!rows.some(r=>r.review_token===token)||!ans||typeof ans!=='object')throw Error('Invalid backup.');for(const f of fields){const t=f.split('_')[0],part=f.split('_')[1];if(ans[f]&&!choices[part==='judgement'?t:part].some(o=>o[0]===ans[f]))throw Error('Invalid answer in backup.');}}return d;}
+try{const raw=localStorage.getItem(key);if(raw){const d=validBackup(JSON.parse(raw));answers=d.answers;index=Math.max(0,Math.min(rows.length-1,Number(d.index)||0));}}catch(e){$('status').textContent='Browser save unavailable or old data could not be loaded. Use backups.';}
+for(const target of ['gender','usage'])for(const [part,label] of [['knowability','Can you tell?'],['judgement','Your answer'],['confidence','How sure?']]){const wrap=document.createElement('label');wrap.textContent=label;const s=document.createElement('select');s.id=target+'_'+part;const blank=document.createElement('option');blank.value='';blank.textContent='Choose…';s.append(blank);for(const [v,l] of choices[part==='judgement'?target:part]){const o=document.createElement('option');o.value=v;o.textContent=l;s.append(o);}wrap.append(s);$(target).append(wrap);s.addEventListener('change',()=>{if(part==='knowability'&&s.value==='cannot_tell'){ $(target+'_judgement').value='cannot_tell';$(target+'_confidence').value='cannot_tell';}if(part==='judgement'&&s.value==='cannot_tell'){ $(target+'_knowability').value='cannot_tell';$(target+'_confidence').value='cannot_tell';}if(part!=='knowability'&&s.value!=='cannot_tell'&&s.value&&$(target+'_knowability').value==='cannot_tell')$(target+'_knowability').value='uncertain';capture();});}
+function state(){return{reviewer,scope:data.scope,index,answers};}
+function persist(){try{localStorage.setItem(key,JSON.stringify(state()));$('status').textContent='Saved in this browser.';}catch(e){$('status').textContent='Browser save unavailable. Download a progress backup.';}}
+function done(a){return a&&fields.every(f=>a[f])&&['gender','usage'].every(t=>a[t+'_knowability']!=='cannot_tell'||(a[t+'_judgement']==='cannot_tell'&&a[t+'_confidence']==='cannot_tell'));}
+function updateCount(){const n=rows.filter(r=>done(answers[r.review_token])).length;$('complete').textContent=n+' / '+rows.length+' finished';$('progress').value=n;}
+function capture(){const a={};fields.forEach(f=>a[f]=$(f).value);a.reviewer_notes=$('notes').value;answers[rows[index].review_token]=a;persist();updateCount();}
+function show(){const r=rows[index],a=answers[r.review_token]||{};$('position').textContent='Picture '+(index+1)+' / '+rows.length;$('picture').src=r.image;$('original').src=r.image;fields.forEach(f=>$(f).value=a[f]||'');$('notes').value=a.reviewer_notes||'';$('jump').value=index+1;$('prev').disabled=index===0;$('next').disabled=index===rows.length-1;updateCount();}
+function move(n){index=Math.max(0,Math.min(rows.length-1,n));show();persist();}
+$('prev').onclick=()=>move(index-1);$('next').onclick=()=>move(index+1);$('jump').onchange=()=>move((Number($('jump').value)||1)-1);$('notes').oninput=capture;
+$('unanswered').onclick=()=>{for(let n=1;n<=rows.length;n++){const j=(index+n)%rows.length;if(!done(answers[rows[j].review_token])){move(j);return;}}$('status').textContent='All pictures are finished. Download your answers.';};
+function download(name,text,type){const url=URL.createObjectURL(new Blob([text],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function csv(v){return '"'+String(v??'').replaceAll('"','""')+'"';}
+$('download').onclick=()=>{const lines=[columns.map(csv).join(',')];for(const r of rows){const a=answers[r.review_token]||{};lines.push(columns.map(c=>csv(c==='review_token'?r.review_token:c==='teacher_image_path'?r.teacher_image_path:a[c]||'')).join(','));}download('observability_reviewer_'+reviewer+'.csv',lines.join('\r\n')+'\r\n','text/csv;charset=utf-8');};
+$('backup').onclick=()=>download('reviewer-'+reviewer+'-progress.json',JSON.stringify(state(),null,2),'application/json');
+$('restore').onchange=async()=>{try{const f=$('restore').files[0];if(!f)return;const d=validBackup(JSON.parse(await f.text()));if(Object.keys(answers).length&&!confirm('Replace this browser’s answers with the selected backup?'))return;answers=d.answers;index=Math.max(0,Math.min(rows.length-1,Number(d.index)||0));show();persist();}catch(e){$('status').textContent=e.message;}finally{$('restore').value='';}};
+show();
+})();
+</script>
+</body>
+</html>

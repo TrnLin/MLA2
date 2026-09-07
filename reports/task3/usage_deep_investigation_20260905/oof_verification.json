@@ -1,0 +1,107 @@
+[
+  {
+    "model": "E2",
+    "rows": 32772,
+    "folds": "[np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4)]",
+    "legacy_na_repairs": 87,
+    "score_abs_error": 0.0,
+    "max_probability_metric_error": 1.5959455978986625e-16,
+    "canonical_oof": true
+  },
+  {
+    "model": "E3",
+    "rows": 32772,
+    "folds": "[np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4)]",
+    "legacy_na_repairs": 83,
+    "score_abs_error": 0.0,
+    "max_probability_metric_error": 2.7755575615628914e-17,
+    "canonical_oof": true
+  },
+  {
+    "model": "E4",
+    "rows": 32772,
+    "folds": "[np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4)]",
+    "legacy_na_repairs": 83,
+    "score_abs_error": 0.0,
+    "max_probability_metric_error": 1.3877787807814457e-17,
+    "canonical_oof": true
+  },
+  {
+    "model": "E5",
+    "rows": 32772,
+    "folds": "[np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4)]",
+    "legacy_na_repairs": 90,
+    "score_abs_error": 0.0,
+    "max_probability_metric_error": 1.1449174941446927e-16,
+    "canonical_oof": true
+  },
+  {
+    "model": "E6",
+    "rows": 32772,
+    "folds": "[np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4)]",
+    "legacy_na_repairs": 91,
+    "score_abs_error": 0.0,
+    "max_probability_metric_error": 2.7755575615628914e-17,
+    "canonical_oof": true
+  },
+  {
+    "model": "E7",
+    "rows": 32772,
+    "folds": "[np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4)]",
+    "legacy_na_repairs": 180,
+    "score_abs_error": 0.0,
+    "max_probability_metric_error": 3.9898639947466563e-17,
+    "canonical_oof": true
+  },
+  {
+    "model": "E8",
+    "rows": 32772,
+    "folds": "[np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4)]",
+    "legacy_na_repairs": 142,
+    "score_abs_error": 0.0,
+    "max_probability_metric_error": 5.551115123125783e-17,
+    "canonical_oof": true
+  },
+  {
+    "model": "E9",
+    "rows": 32772,
+    "folds": "[np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4)]",
+    "legacy_na_repairs": 0,
+    "score_abs_error": 0.0,
+    "max_probability_metric_error": 5.551115123125783e-17,
+    "canonical_oof": true
+  },
+  {
+    "model": "U1",
+    "rows": 13110,
+    "folds": "[np.int64(0), np.int64(4)]",
+    "legacy_na_repairs": 0,
+    "score_abs_error": 0.0,
+    "max_probability_metric_error": 5.551115123125783e-17,
+    "canonical_oof": true
+  },
+  {
+    "model": "U2",
+    "rows": 13110,
+    "folds": "[np.int64(0), np.int64(4)]",
+    "legacy_na_repairs": 0,
+    "score_abs_error": 0.0,
+    "max_probability_metric_error": 0.0,
+    "canonical_oof": true
+  },
+  {
+    "model": "S1",
+    "rows": 13110,
+    "folds": "[np.int64(0), np.int64(4)]",
+    "legacy_na_repairs": 0,
+    "score_abs_error": 0.0,
+    "max_probability_metric_error": 0.0,
+    "canonical_oof": true
+  },
+  {
+    "model": "S2",
+    "rows": 13110,
+    "folds": "[0, 4]",
+    "canonical_oof": "unavailable"
+  }
+]

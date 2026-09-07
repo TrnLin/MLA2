@@ -1,0 +1,10 @@
+fold,label,n,errors,high_confidence_errors,high_confidence_predictions,false_positives,false_positives_name_matches_prediction,false_negatives_name_matches_prediction,stable_wrong_vs_parent,stable_wrong_all_three
+pooled,Girls,216,89,6,34,68,28,0,72,64
+pooled,Boys,274,93,14,88,83,32,0,79,70
+pooled,Unisex,708,332,115,270,170,0,1,309,273
+0,Girls,107,45,4,13,35,15,0,30,26
+0,Boys,136,51,9,45,43,14,0,44,38
+0,Unisex,355,169,57,125,67,0,1,161,144
+4,Girls,109,44,2,21,33,13,0,42,38
+4,Boys,138,42,5,43,40,18,0,35,32
+4,Unisex,353,163,58,145,103,0,0,148,129

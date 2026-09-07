@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "dataset": "teacher_plus_rare_usage_v3_20260906",
+  "total_rows": 39299,
+  "teacher_rows": 38612,
+  "replaced_images": 130,
+  "retained_external": 557,
+  "total_external": 687,
+  "replacements_by_usage": {
+    "Smart Casual": 62,
+    "Party": 44,
+    "Travel": 17,
+    "Home": 7
+  },
+  "external_class_counts": {
+    "Party": 224,
+    "Travel": 165,
+    "Smart Casual": 162,
+    "Home": 136
+  },
+  "same_class_totals": true,
+  "same_nine_class_map": true,
+  "no_external_na": true,
+  "teacher_all_fields_preserved": true,
+  "retained_external_all_fields_preserved": true,
+  "protected_new_targets_blank_and_masked": true,
+  "old_ids_not_reused": true,
+  "all_five_fold_boundary_crossings": 0,
+  "all_images_loaded_and_hash_checked": 39299,
+  "new_families": 116,
+  "all_external_families": 597,
+  "largest_external_family": 23,
+  "source_and_type_annotations_are_audit_only": true,
+  "model_fit_performed": false,
+  "statistics_fitted": false,
+  "split_sha256": "19d514fbd56f48459b3ec207f49bb3e59f1c23bc901804fa0c32f13eb3066ecc",
+  "manifest_sha256": "e298332584a96273911c66881068645d3abea64482ff02096d11b50ba08430c9",
+  "original_inputs_unchanged": {
+    "data/processed/splits.csv": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+    "data/processed/label_maps.json": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
+    "data/processed/teacher_plus_rare_usage_v2_20260906/splits.csv": "0bd490672543b7022fa7a883be9b006d63681d7c168e497e0388616836696776",
+    "data/processed/teacher_plus_rare_usage_v2_20260906/label_maps.json": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
+    "data/processed/teacher_plus_rare_usage_v2_20260906/image_geometry.csv": "564f1141a475a321f6a7bb5661062957655bcad4c907ceb7b3bbc1c11fa1dc42"
+  }
+}

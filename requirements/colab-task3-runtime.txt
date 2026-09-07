@@ -1,0 +1,9 @@
+# Runtime lock observed and verified on a Colab T4 session on 2026-08-29.
+# Notebook 04 validates these versions before training. This records the managed
+# runtime; do not reinstall PyTorch over Colab's CUDA build.
+# Python: 3.13.15
+numpy==2.1.3
+pandas==2.2.3
+Pillow==11.3.0
+torch==2.11.0+cu128
+torchvision==0.26.0+cu128

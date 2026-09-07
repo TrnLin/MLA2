@@ -1,0 +1,51 @@
+{
+  "date": "2026-09-06",
+  "scope": "Recover the interrupted Usage run log and isolate it from other Colab notebooks",
+  "tests": {
+    "expanded_usage_baseline_and_child_suite": "43 passed in 13.60s",
+    "final_expanded_usage_suite_including_connected_session_repair": "14 passed in 8.48s",
+    "fault_cases": [
+      "Missing shared CSV row with a surviving complete local row",
+      "Missing complete CSV row recovered from verified saved model files",
+      "Another writer overwrites the old shared CSV while private registry updates succeed",
+      "Tampered saved history is rejected before writing a recovered registry",
+      "Interrupted fold remains failed and is not promoted to complete",
+      "A logging failure does not hide the original training error"
+    ],
+    "completed_model_files_unchanged": true,
+    "old_shared_csv_unchanged_by_repair": true
+  },
+  "static_checks": {
+    "ruff": "passed for changed Python files and generated repair script",
+    "notebook_code_cells": "all five parse successfully",
+    "generated_bundle_notebook_outputs": "cleared; original notebook outputs preserved",
+    "repair_script_matches_tested_helper_source": true,
+    "all_bundle_file_hashes_verified": true,
+    "git_diff_check": "passed for task paths"
+  },
+  "visual_check": {
+    "artifact": "training_notebook.html",
+    "scope": "Rendered Step 4 and adjacent comparison introduction",
+    "result": "Private registry path, recovery explanation and training cell are readable without overlap"
+  },
+  "bundle_sha256": "f5c38ec7201f451f73f16871e10e19c4c1c4239e88641b7812422dba900bca5a",
+  "limitations": [
+    "The repair has not been executed in the user's connected Colab session",
+    "Actual Drive fold recovery must pass the script's checks before training resumes",
+    "CPU fixture training was used for tests; no full GPU training was performed"
+  ],
+  "changes_committed_or_pushed": false,
+  "fresh_retraining_followup": {
+    "requested_behavior": "Retrain in a separate folder without recovering old runs",
+    "drive_output_folder": "MyDrive/MLA2/task3_usage_expanded_e8/",
+    "notebook_recovery_step_removed": true,
+    "notebook_and_bundle_sources_match": true,
+    "drive_log_and_local_mirror_paths_checked": true,
+    "notebook_code_cells_parse": true,
+    "bundle_notebook_outputs_cleared": true,
+    "all_bundle_file_hashes_verified": true,
+    "bundle_sha256": "464bbdb20defb8e205a1910a607313fb5c2eccf8b7c998648c5722c4c768a856",
+    "visual_check": "Rendered Step 4: new folder path and retraining instructions are readable",
+    "full_gpu_training_performed": false
+  }
+}

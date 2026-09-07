@@ -1,0 +1,18 @@
+{
+  "status": "saved_validation_diagnosis_complete_inference_pending",
+  "verified_runs": 4,
+  "folds": [
+    0,
+    4
+  ],
+  "final_clean_training_aggregate_available": true,
+  "clean_training_predictions_available": false,
+  "batch_order_invariance_tested": false,
+  "inference_performed": false,
+  "holdout_used": false,
+  "limitations": [
+    "No clean training per-image predictions were saved by the trainer.",
+    "Slice-level train/validation gaps and batch/order stability need checkpoint inference.",
+    "Composition standardization is descriptive and does not prove causality."
+  ]
+}

@@ -24,7 +24,7 @@ TASK_SPECS = {
     "04_task3_gender_usage.ipynb": {
         "title": "Task 3 — Gender and Usage Classification",
         "tokens": ("gender", "usage", "negative transfer", "label-mask"),
-        "sections": 15,
+        "sections": 45,
     },
     "05_task4_visual_search.ipynb": {
         "title": "Task 4 — Fashion Visual Search",
@@ -51,21 +51,62 @@ def _source(notebook: nbformat.NotebookNode) -> str:
 
 
 def _code_source(notebook: nbformat.NotebookNode) -> str:
-    return "\n".join(
-        cell.source for cell in notebook.cells if cell.cell_type == "code"
-    )
+    return "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
 
 
 def test_only_planned_notebook_names_are_present() -> None:
     allowed = {
         "00_problem_definition.ipynb",
         "01_data_preparation.ipynb",
+        "task3_training/smallcnn_baseline_training.ipynb",
+        "task3_training/smallcnn_child_experiments.ipynb",
+        "task3_training/smallcnn_e3_experiments.ipynb",
+        "task3_training/tinyresnet18_pm_e4_experiments.ipynb",
+        "task3_training/compactblurcnn_label_smoothing_e5_experiments.ipynb",
+        "task3_training/gem_focal_e6_experiments.ipynb",
+        "task3_training/tinyconvnext_tinyhrnet_e7_experiments.ipynb",
+        "task3_training/early_stopping_translation_e8_experiments.ipynb",
+        "task3_training/semantic_filter_exception_balance_e9_experiments.ipynb",
+        "task3_training/audience_aux_e10_experiment.ipynb",
+        "task3_training/clean_slate_eda.ipynb",
+        "task3_training/clean_slate_screen_1.ipynb",
+        "task3_training/micro_swin_clean_slate_screen_2.ipynb",
+        "task3_training/gem_gender_v2_g1_foreground_mask.ipynb",
+        "task3_training/gem_gender_v2_g2_translation.ipynb",
+        "task3_training/gem_gender_v2_g3_component_weight.ipynb",
+        "task3_training/smallcnn_usage_v2_u1_component_weight.ipynb",
+        "task3_training/gem_gender_v2_g2_confirmation.ipynb",
+        "task3_training/usage_v2_u2_full_rgb_hog_svm.ipynb",
+        "task3_training/gender_gd1_mild_darkening.ipynb",
+        "task3_training/gender_weight_decay_screen.ipynb",
+        "task3_training/gender_saved_model_diagnostic.ipynb",
+        "task3_training/gender_precision_check.ipynb",
+        "task3_training/gender_narrow64_screen.ipynb",
+        "task3_training/gender_dropout_screen.ipynb",
+        "task3_training/gender_dropout_darkening_screen.ipynb",
+        "task3_training/gender_stronger_dropout_screen.ipynb",
+        "task3_training/gender_grayscale_screen.ipynb",
+        "task3_training/gender_name_truth_screen.ipynb",
+        "task3_training/gender_group_weight_screen.ipynb",
+        "task3_training/gender_mixup_screen.ipynb",
+        "task3_training/usage_expanded_e8.ipynb",
+        "task3_training/gender_stronger_mixup_screen.ipynb",
+        "task3_training/gender_sam_screen.ipynb",
+        "task3_training/gender_sam25_screen.ipynb",
+        "task3_training/gender_sam25_five_fold.ipynb",
+        "task3_training/usage_expanded_v2_e8.ipynb",
+        "task3_training/usage_mixup_sam_screen.ipynb",
+        "task3_training/usage_replaced_v3_mixup_sam.ipynb",
+        "task3_training/usage_two_stage_screen.ipynb",
         *(name for name in TASK_SPECS if name != "05_task4_visual_search.ipynb"),
+        "task-4/01_v1_eda.ipynb",
+        "task-4/05_task4_visual_search.ipynb",
     }
-    present = {path.name for path in (ROOT / "notebooks").glob("*.ipynb")}
+    present = {
+        path.relative_to(ROOT / "notebooks").as_posix()
+        for path in (ROOT / "notebooks").rglob("*.ipynb")
+    }
     assert present == allowed
-    task4_present = {path.name for path in (ROOT / "notebooks/task-4").glob("*.ipynb")}
-    assert task4_present == {"01_v1_eda.ipynb", "05_task4_visual_search.ipynb"}
 
 
 def test_task_notebooks_preserve_common_structure_and_safety() -> None:
@@ -97,11 +138,8 @@ def test_task_notebooks_preserve_common_structure_and_safety() -> None:
         assert "pretrained=True" not in source
 
 
-def test_task_1_and_3_scaffolds_leave_owner_decisions_open() -> None:
-    for filename in (
-        "02_task1_article_type.ipynb",
-        "04_task3_gender_usage.ipynb",
-    ):
+def test_task_1_scaffold_leaves_owner_decisions_open() -> None:
+    for filename in ("02_task1_article_type.ipynb",):
         notebook = nbformat.read(_task_path(filename), as_version=4)
         source = _source(notebook)
 
@@ -220,10 +258,9 @@ def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
         tree = ast.parse(cell.source)
         calls = _display_calls(cell.source)
         assert len(calls) <= 1, f"cell {cell.id} has multiple display calls"
-        assert all(
-            len(call.args) == 1 and not call.keywords
-            for call in calls
-        ), f"cell {cell.id} uses a multi-value display call"
+        assert all(len(call.args) == 1 and not call.keywords for call in calls), (
+            f"cell {cell.id} uses a multi-value display call"
+        )
         assert len(cell.outputs) <= 1, f"cell {cell.id} stores multiple outputs"
         assert all(output.output_type != "error" for output in cell.outputs)
 
@@ -257,8 +294,7 @@ def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
             assert following.cell_type == "markdown"
             assert following.source.lstrip().startswith("> **Interpretation")
             assert (
-                "**Column guide.**" in following.source
-                or "**Chart guide.**" in following.source
+                "**Column guide.**" in following.source or "**Chart guide.**" in following.source
             ), f"cell {cell.id} has no output-specific reading guide"
             assert "**Deep analysis.**" in following.source, (
                 f"cell {cell.id} has no output-specific deep analysis"
@@ -268,12 +304,8 @@ def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
                 .split("> **Decision and limitation.**", maxsplit=1)[0]
                 .strip()
             )
-            assert len(deep_analysis) >= 120, (
-                f"cell {cell.id} has a shallow output analysis"
-            )
-            deep_analyses.append(
-                (cell.id, " ".join(deep_analysis.lower().split()))
-            )
+            assert len(deep_analysis) >= 120, f"cell {cell.id} has a shallow output analysis"
+            deep_analyses.append((cell.id, " ".join(deep_analysis.lower().split())))
 
             for generic in (
                 "A separate compact table exposes",
@@ -366,11 +398,7 @@ def test_task2_notebook_is_fully_executed_artifact_replay() -> None:
     assert len(code_cells) == 147
     assert [cell.execution_count for cell in code_cells] == list(range(1, 148))
     assert all(len(cell.outputs) == 1 for cell in code_cells)
-    assert all(
-        output.output_type != "error"
-        for cell in code_cells
-        for output in cell.outputs
-    )
+    assert all(output.output_type != "error" for cell in code_cells for output in cell.outputs)
     assert 'TASK2_NOTEBOOK_MODE = "artifact_replay"' in combined
     assert "load_verified_notebook_manifest" in combined
     assert "verify_artifact" in combined
@@ -693,7 +721,7 @@ def test_task2_g3_cell_records_audited_full_budget_comparison() -> None:
         'g3_attempts["status"].eq("completed").all()',
         'near_tie"] is True',
         'ultimate_winner_frozen"] is False',
-        "len(g3_attempts) == g3_attempts[\"run_id\"].nunique() == 10",
+        'len(g3_attempts) == g3_attempts["run_id"].nunique() == 10',
     ):
         assert required in code
     assert "run_or_load_experiment" not in code
@@ -1088,8 +1116,10 @@ def test_task2_results_cells_load_only_verified_measured_evidence() -> None:
         assert not code.startswith("# TODO:")
         compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
 
-    combined = cells["s01-01-code"].source + "\n" + "\n".join(
-        cells[cell_id].source for cell_id in cell_ids
+    combined = (
+        cells["s01-01-code"].source
+        + "\n"
+        + "\n".join(cells[cell_id].source for cell_id in cell_ids)
     )
     for required in (
         "load_verified_notebook_manifest",
@@ -1468,7 +1498,7 @@ def test_task2_final_cells_build_only_the_locked_component_handoff() -> None:
         "load_season_bundle",
         "predict_season",
         'eq("1163")',
-        'task2_smoke_prediction.review_required is None',
+        "task2_smoke_prediction.review_required is None",
         "load_verified_task2_handoff",
         'task2_handoff["status"] == "ready_for_group_freeze"',
         'task2_handoff["group_freeze_verified"] is False',
@@ -1539,8 +1569,8 @@ def test_task_metric_placeholders_are_explicit() -> None:
     assert "Primary development metric:** pooled out-of-fold macro-F1" in task2
 
     task3 = _source(nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4))
-    assert "Primary development metric for `gender`: TODO(owner)" in task3
-    assert "Primary development metric for `usage`: TODO(owner)" in task3
+    assert "Primary development metric for `gender`: pooled five-fold OOF macro-F1" in task3
+    assert "Primary development metric for `usage`: pooled five-fold OOF macro-F1" in task3
 
     task4 = _source(nbformat.read(_task_path("05_task4_visual_search.ipynb"), as_version=4))
     assert "Primary ranking-quality metric: mean per-query linear nDCG@10" in task4
@@ -1571,9 +1601,7 @@ def test_task4_evaluation_protocol_is_frozen_and_executed() -> None:
     assert all(cell.execution_count is not None for cell in code_cells)
     assert all(
         not cell.get("outputs")
-        or not any(
-            output.get("output_type") == "error" for output in cell["outputs"]
-        )
+        or not any(output.get("output_type") == "error" for output in cell["outputs"])
         for cell in code_cells
     )
     saved_stderr = "\n".join(
@@ -1605,9 +1633,9 @@ def test_active_task4_notebooks_use_canonical_import_owners() -> None:
 def test_task4_preprocessing_milestone_is_frozen_and_executed() -> None:
     notebook = nbformat.read(_task_path("05_task4_visual_search.ipynb"), as_version=4)
     source = _source(notebook)
-    preprocessing = source.split(
-        "## 5. Task-specific preprocessing and leakage rules", maxsplit=1
-    )[1].split("## 7. Hypotheses and baseline", maxsplit=1)[0]
+    preprocessing = source.split("## 5. Task-specific preprocessing and leakage rules", maxsplit=1)[
+        1
+    ].split("## 7. Hypotheses and baseline", maxsplit=1)[0]
 
     for required in (
         "Frozen input contract: `240×320`",
@@ -1745,9 +1773,7 @@ def test_task4_preprocessing_artifacts_are_development_only_and_complete() -> No
         & comparison["aggregation"].eq("query_mean")
         & comparison["query_source"].eq(comparison["gallery_source"])
     ]
-    recomputed = (
-        primary_selection_rows.groupby("size")["value"].mean().sort_values(ascending=False)
-    )
+    recomputed = primary_selection_rows.groupby("size")["value"].mean().sort_values(ascending=False)
     recorded = selection.set_index("size")["selection_ndcg_at_10"]
     pd.testing.assert_series_equal(
         recomputed.sort_index(),
@@ -1762,9 +1788,7 @@ def test_task4_preprocessing_artifacts_are_development_only_and_complete() -> No
     }
     assert set(robustness["scope"]) == {"development"}
     assert set(robustness["query_variant"]) == {"clean", "wide", "tall"}
-    contract = json.loads(
-        (evidence / "preprocessing_contract.json").read_text(encoding="utf-8")
-    )
+    contract = json.loads((evidence / "preprocessing_contract.json").read_text(encoding="utf-8"))
     assert contract["selected_size"] == "240x320"
     assert contract["probe_winner_size"] == "96x128"
     assert contract["selected_probe_rank"] == 3
@@ -1796,3 +1820,502 @@ def test_task4_v1_eda_is_separate_safe_and_executed() -> None:
         assert required in source
     for forbidden in ("train_test_split", "load_splits_for_final_evaluation", "styles.csv"):
         assert forbidden not in source
+
+
+def test_task3_clean_slate_eda_is_separate_and_label_safe() -> None:
+    notebook = nbformat.read(ROOT / "notebooks/task3_training/clean_slate_eda.ipynb", as_version=4)
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == "Task 3 — Clean-Slate EDA"
+    assert "write_clean_slate_eda_tables" in code
+    assert "load_splits" in code
+    assert "train_test_split" not in source
+    assert "load_splits_for_final_evaluation" not in source
+    assert "pretrained=True" not in source
+    assert "observability gate" in source.lower()
+    assert "high-resolution" not in source.lower()
+    assert "external_image" not in source
+    assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
+    assert {
+        "t3-clean-eda-setup",
+        "t3-clean-eda-run",
+        "t3-clean-eda-observability",
+        "t3-clean-eda-foreground",
+        "t3-clean-eda-nuisance",
+        "t3-clean-eda-family",
+        "t3-clean-eda-neighbourhoods",
+        "t3-clean-eda-folds",
+        "t3-clean-eda-gate",
+    } == {cell.id for cell in notebook.cells if cell.cell_type == "code"}
+
+
+def test_task3_micro_swin_screen_is_separate_colab_gpu_work() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/micro_swin_clean_slate_screen_2.ipynb", as_version=4
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == "Task 3 — Scratch Micro-Swin Clean-Slate Screen 2"
+    assert "Run All starts four fits" in source
+    assert "check_micro_swin_screen_setup" in code
+    assert code.count("run_micro_swin_screen(") == 2
+    assert 'device_name="cuda"' in code
+    assert "reuse_completed=True" in code
+    assert "folds 0 and 4" in source
+    assert "train_test_split" not in source
+    assert "pretrained=True" not in source
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+    assert {
+        "t3-cs2-config",
+        "t3-cs2-repository",
+        "t3-cs2-data",
+        "t3-cs2-check",
+        "t3-cs2-usage",
+        "t3-cs2-gender",
+        "t3-cs2-summary",
+    } == {cell.id for cell in notebook.cells if cell.cell_type == "code"}
+
+
+def test_task3_baseline_training_runner_is_foreground_and_complete() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/smallcnn_baseline_training.ipynb", as_version=4
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == "Task 3 — SmallCNN Baseline Training"
+    assert source.count("folds=range(5)") == 2
+    assert 'run_task3_baseline_cv(\n    "gender"' in source
+    assert 'run_task3_baseline_cv(\n    "usage"' in source
+    assert "registry_path=DRIVE_REGISTRY" in source
+    assert "output_root=DRIVE_TASK_DIR" in source
+    assert "nohup" not in code
+    assert "START_BASELINE_TRAINING" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+
+
+def test_task3_child_runner_never_retrains_the_baseline() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/smallcnn_child_experiments.ipynb", as_version=4
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == "Task 3 — SmallCNN Child Experiments"
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert '"gender_brightness"' in source
+    assert '"usage_class_balanced"' in source
+    assert "latest_completed_baseline_parent_run_ids" in source
+    assert "run_task3_baseline_cv" not in source
+    assert "START_BASELINE_TRAINING" not in code
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_e3_runner_never_retrains_e1_or_e2() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/smallcnn_e3_experiments.ipynb", as_version=4
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == "Task 3 — SmallCNN E3 Experiments"
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert '"gender_class_balanced"' in source
+    assert '"usage_classifier_dropout"' in source
+    assert "latest_completed_baseline_parent_run_ids" in source
+    assert "latest_completed_usage_e2_parent_run_ids" in source
+    assert "run_task3_baseline_cv" not in source
+    assert 'run_task3_child_cv(\n    "gender_brightness"' not in source
+    assert 'run_task3_child_cv(\n    "usage_class_balanced"' not in source
+    assert "START_BASELINE_TRAINING" not in code
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_e4_runner_only_trains_tinyresnet_children() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/tinyresnet18_pm_e4_experiments.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == "Task 3 — TinyResNet-18-PM E4 Experiments"
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert '"gender_tinyresnet18_pm"' in source
+    assert '"usage_tinyresnet18_pm"' in source
+    assert "latest_completed_baseline_parent_run_ids" in source
+    assert "latest_completed_usage_e2_parent_run_ids" in source
+    assert 'parameter_count"] > 410_000' in source
+    assert 'architecture_macs"] > 105_000_000' in source
+    assert "run_task3_baseline_cv" not in source
+    assert 'run_task3_child_cv(\n    "gender_brightness"' not in source
+    assert 'run_task3_child_cv(\n    "usage_class_balanced"' not in source
+    assert 'run_task3_child_cv(\n    "gender_class_balanced"' not in source
+    assert 'run_task3_child_cv(\n    "usage_classifier_dropout"' not in source
+    assert "START_BASELINE_TRAINING" not in code
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_e5_runner_only_trains_frozen_e5_children() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/compactblurcnn_label_smoothing_e5_experiments.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert (
+        notebook.metadata["title"] == "Task 3 — CompactBlurCNN and Label-Smoothing E5 Experiments"
+    )
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert '"gender_compact_blur_cnn"' in source
+    assert '"usage_label_smoothing"' in source
+    assert "latest_completed_baseline_parent_run_ids" in source
+    assert "latest_completed_usage_e2_parent_run_ids" in source
+    assert 'gender_e5_check["parameter_count"] > 100_000' in source
+    assert 'gender_e5_check["architecture_macs"] > 35_000_000' in source
+    assert 'usage_e5_check["label_smoothing"] != 0.05' in source
+    assert "run_task3_baseline_cv" not in source
+    assert "gender_tinyresnet18_pm" not in source
+    assert "usage_tinyresnet18_pm" not in source
+    assert "START_BASELINE_TRAINING" not in code
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_e6_runner_only_trains_gem_and_focal_children() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/gem_focal_e6_experiments.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == "Task 3 — GeM and Focal-Loss E6 Experiments"
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert '"gender_gem_p3"' in source
+    assert '"usage_focal_gamma1"' in source
+    assert "latest_completed_baseline_parent_run_ids" in source
+    assert "latest_completed_usage_e2_parent_run_ids" in source
+    assert source.count("audit_completed_registry_rows(") == 2
+    assert 'gender_e6_check["parameter_count"] != 390_181' in source
+    assert 'usage_e6_check["focal_gamma"] != 1.0' in source
+    assert "run_task3_baseline_cv" not in source
+    assert "gender_compact_blur_cnn" not in source
+    assert "usage_label_smoothing" not in source
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_e7_runner_only_trains_frozen_architecture_children() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/tinyconvnext_tinyhrnet_e7_experiments.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == "Task 3 — TinyConvNeXt and TinyHRNet E7 Experiments"
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert source.index('run_task3_child_cv(\n    "usage_tinyconvnext18"') < source.index(
+        'run_task3_child_cv(\n    "gender_tinyhrnet20"'
+    )
+    assert "latest_completed_baseline_parent_run_ids" in source
+    assert "latest_completed_usage_e2_parent_run_ids" in source
+    assert source.count("audit_completed_registry_rows(") == 2
+    assert 'usage_e7_check["parameter_count"] != 384_345' in source
+    assert 'usage_e7_check["architecture_macs"] != 95_297_616' in source
+    assert 'gender_e7_check["parameter_count"] != 374_445' in source
+    assert 'gender_e7_check["architecture_macs"] != 104_064_700' in source
+    assert "run_task3_baseline_cv" not in source
+    assert "gender_gem_p3" not in source
+    assert "usage_focal_gamma1" not in source
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_e8_runner_only_trains_early_stopping_and_translation() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/early_stopping_translation_e8_experiments.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == "Task 3 — Early Stopping and Translation E8 Experiments"
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert source.index('run_task3_child_cv(\n    "gender_gem_p3_early_stopping"') < source.index(
+        'run_task3_child_cv(\n    "usage_translation_2px"'
+    )
+    assert "latest_completed_gender_e6_parent_run_ids" in source
+    assert "latest_completed_usage_e2_parent_run_ids" in source
+    assert source.count("audit_completed_registry_rows(") == 2
+    assert 'gender_child["checkpoint_policy"] != "best_validation_macro_f1"' in source
+    assert 'usage_child["training_augmentation"] != "translation_uniform_2px_p05"' in source
+    assert "run_task3_baseline_cv" not in source
+    assert "usage_tinyconvnext18" not in source
+    assert "gender_tinyhrnet20" not in source
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_e9_runner_trains_only_e9_with_deterministic_gender_audit() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/semantic_filter_exception_balance_e9_experiments.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert (
+        notebook.metadata["title"]
+        == "Task 3 — Semantic Filter and Exception Balance E9 Experiments"
+    )
+    assert source.count("folds=range(5)") == 2
+    assert source.count("run_task3_child_cv(") == 2
+    assert source.index('run_task3_child_cv(\n    "usage_exception_balance"') < source.index(
+        'run_task3_child_cv(\n    "gender_semantic_filter"'
+    )
+    assert "write_task3_e9_prerun_evidence" in source
+    assert "Deterministic E9 evidence ready in Drive; optimizer steps: 0" in source
+    assert source.index("gender_contract = e9_prerun") < source.index(
+        'run_task3_child_cv(\n    "gender_semantic_filter"'
+    )
+    assert "GENDER_E9_APPROVED" not in source
+    assert "require_gender_e9_training_approval" not in source
+    assert "three-rater" not in source
+    assert "human_rating_gate_required" in source
+    assert "latest_completed_gender_e6_parent_run_ids" in source
+    assert "latest_completed_usage_e2_parent_run_ids" in source
+    assert "no switch or merge was attempted" in source
+    assert source.count("audit_completed_registry_rows(") == 2
+    assert "run_task3_baseline_cv" not in source
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_e10_runner_trains_only_the_gender_audience_child() -> None:
+    notebook = nbformat.read(
+        ROOT / "notebooks/task3_training/audience_aux_e10_experiment.ipynb",
+        as_version=4,
+    )
+    nbformat.validate(notebook)
+    source = _source(notebook)
+    code = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
+
+    assert notebook.metadata["title"] == ("Task 3 — Gender Audience-Auxiliary E10 Experiment")
+    assert source.count("folds=range(5)") == 1
+    assert source.count("run_task3_child_cv(") == 1
+    assert 'run_task3_child_cv(\n    "gender_audience_aux"' in source
+    assert "latest_completed_gender_e6_parent_run_ids" in source
+    assert "write_task3_e10_prerun_evidence" in source
+    assert source.index("write_task3_e10_prerun_evidence(") < source.index(
+        'run_task3_child_cv(\n    "gender_audience_aux"'
+    )
+    assert source.count("audit_completed_registry_rows(") == 1
+    assert "usage_exception_balance" not in source
+    assert "gender_semantic_filter" not in source
+    assert "run_task3_baseline_cv" not in source
+    assert "nohup" not in code
+    assert all(cell.source.strip() for cell in notebook.cells if cell.cell_type == "code")
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_final_metric_contracts_are_explicit():
+    task3 = _source(nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4))
+    assert "Primary development metric for `gender`: pooled five-fold OOF macro-F1" in task3
+    assert "Primary development metric for `usage`: pooled five-fold OOF macro-F1" in task3
+    stages = [
+        "Start with the baseline",
+        "Keep the pooling lesson",
+        "Reduce sensitivity to small shifts",
+        "Add dropout",
+        "Repair the dark-image weakness",
+        "Reduce colour dependence",
+        "Review the labels",
+        "Add MixUp",
+        "Choose the SAM25 trade-off",
+        "Confirm the fixed recipe on five folds",
+        "Freeze the full prediction recipe",
+        "Read the reserved holdout results",
+        "Explain the remaining failures",
+    ]
+    positions = [task3.index(stage) for stage in stages]
+    assert positions == sorted(positions)
+    for contract in (
+        "0020-task3-gender-sam25-final-model.md",
+        "single_explicit_gender_cue_v1",
+        "original-label",
+        "folds 0 and 4",
+        "not a best epoch",
+        "teacher did not supply test labels",
+        "146 of 311 Unisex",
+        "id,gender,articleType,season,usage",
+        "0022-task3-usage-e1-final-model.md",
+        "original teacher-only E1",
+        "equal probability average of its five saved fold models",
+        "13,110 teacher images",
+        "E1 misses every test NA",
+        "final E1 acceptance followed holdout/test review",
+    ):
+        assert contract in task3
+    assert "run_task3_baseline_cv" not in task3
+    for internal_result in (
+        "61.85",
+        "92.02",
+        "797 test names",
+        "19 of 84 Unisex",
+        'figure("matches")',
+        'figure("evaluation")',
+        "report.final_table",
+    ):
+        assert internal_result not in task3
+    notebook = nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4)
+    for cell in notebook.cells:
+        for output in cell.get("outputs", []):
+            html = output.get("data", {}).get("text/html", "")
+            assert "<td>test</td>" not in html
+    assert not any(
+        output.output_type == "error"
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.outputs
+    )
+
+
+def test_task3_final_report_structure() -> None:
+    for filename in ("04_task3_gender_usage.ipynb",):
+        spec = TASK_SPECS[filename]
+        notebook = nbformat.read(ROOT / "notebooks" / filename, as_version=4)
+        nbformat.validate(notebook)
+        source = _source(notebook)
+        lowered = source.lower()
+        headings = [
+            line
+            for cell in notebook.cells
+            for line in cell.source.splitlines()
+            if line.startswith("#")
+        ]
+
+        assert notebook.metadata["title"] == spec["title"]
+        assert headings[0] == f"# {spec['title']}"
+        if filename == "04_task3_gender_usage.ipynb":
+            code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
+            assert code_cells
+            assert max(len(cell.source.splitlines()) for cell in code_cells) <= 25
+            for index, cell in enumerate(notebook.cells):
+                if cell.cell_type == "code":
+                    assert notebook.cells[index - 1].cell_type == "markdown"
+                    assert "### " in notebook.cells[index - 1].source
+            code = "\n".join(cell.source for cell in code_cells)
+            assert "from fashion" not in code
+            assert "import fashion" not in code
+            assert "def " not in code
+            assert "class Task3" not in code
+            assert "plt.subplots" in code
+            assert "analysis_assets.json" in code
+            assert "earlier_investigation.ipynb" in source
+        else:
+            assert all(cell.cell_type == "markdown" for cell in notebook.cells)
+        assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
+        assert [
+            int(match.group(1))
+            for heading in headings
+            if (match := re.fullmatch(r"## (\d+)\. .+", heading))
+        ] == list(range(1, spec["sections"] + 1))
+
+        for required in ("data/processed/splits.csv", "results/runs.csv"):
+            assert required in source
+        if filename == "04_task3_gender_usage.ipynb":
+            assert "TODO(owner)" not in source
+            assert "0022-task3-usage-e1-final-model.md" in source
+        else:
+            assert "TODO(owner)" in source
+        assert all(token.lower() in lowered for token in spec["tokens"])
+        assert "train_test_split" not in source
+        assert "pretrained=True" not in source
+        assert "Final metric selected: yes" not in source
+        if filename != "04_task3_gender_usage.ipynb":
+            for unselected in ("macro-F1", "nDCG@", "Recall@", "Adam", "cross-entropy"):
+                assert unselected not in source

@@ -1,0 +1,171 @@
+dimension,value,rows,errors,error_rate,families,high_confidence_errors
+true_label,Boys,356,96,0.2696629213483146,210,10
+true_label,Girls,285,76,0.26666666666666666,186,13
+true_label,Men,7023,304,0.043286344866866014,4885,68
+true_label,Unisex,707,337,0.4766619519094767,577,116
+true_label,Women,4739,383,0.08081873813040726,3278,107
+articleType,Accessory Gift Set,35,0,0.0,13,0
+articleType,Backpacks,245,56,0.22857142857142856,171,19
+articleType,Bangle,31,12,0.3870967741935484,2,1
+articleType,Basketballs,5,1,0.2,5,0
+articleType,Belts,270,39,0.14444444444444443,163,20
+articleType,Blazers,3,0,0.0,3,0
+articleType,Booties,4,4,1.0,2,1
+articleType,Boxers,14,0,0.0,11,0
+articleType,Bra,99,0,0.0,78,0
+articleType,Bracelet,23,14,0.6086956521739131,3,4
+articleType,Briefs,225,5,0.022222222222222223,157,0
+articleType,Camisoles,6,0,0.0,6,0
+articleType,Capris,53,13,0.24528301886792453,40,2
+articleType,Caps,91,37,0.4065934065934066,82,2
+articleType,Casual Shoes,909,118,0.12981298129812982,710,27
+articleType,Churidar,11,0,0.0,11,0
+articleType,Clothing Set,3,1,0.3333333333333333,3,0
+articleType,Clutches,75,5,0.06666666666666667,61,0
+articleType,Concealer,2,0,0.0,1,0
+articleType,Cufflinks,20,3,0.15,3,0
+articleType,Cushion Covers,1,1,1.0,1,0
+articleType,Deodorant,98,18,0.1836734693877551,89,5
+articleType,Dresses,115,8,0.06956521739130435,88,1
+articleType,Duffel Bag,28,7,0.25,23,2
+articleType,Dupatta,38,0,0.0,30,0
+articleType,Earrings,125,8,0.064,4,2
+articleType,Eyeshadow,3,0,0.0,2,0
+articleType,Flats,141,11,0.07801418439716312,97,5
+articleType,Flip Flops,296,57,0.19256756756756757,244,15
+articleType,Footballs,3,3,1.0,3,1
+articleType,Formal Shoes,205,1,0.004878048780487805,88,1
+articleType,Foundation and Primer,6,0,0.0,2,0
+articleType,Fragrance Gift Set,18,0,0.0,18,0
+articleType,Free Gifts,21,5,0.23809523809523808,13,2
+articleType,Gloves,8,3,0.375,5,0
+articleType,Handbags,490,34,0.06938775510204082,315,10
+articleType,Headband,3,3,1.0,3,0
+articleType,Heels,362,4,0.011049723756906077,185,2
+articleType,Innerwear Vests,80,4,0.05,63,2
+articleType,Jackets,76,8,0.10526315789473684,69,4
+articleType,Jeans,189,12,0.06349206349206349,92,0
+articleType,Jeggings,8,0,0.0,6,0
+articleType,Jewellery Set,12,0,0.0,7,0
+articleType,Jumpsuit,4,0,0.0,4,0
+articleType,Kajal and Eyeliner,5,2,0.4,4,0
+articleType,Kurta Sets,25,0,0.0,23,0
+articleType,Kurtas,530,1,0.0018867924528301887,280,1
+articleType,Kurtis,67,0,0.0,53,0
+articleType,Laptop Bag,25,8,0.32,19,0
+articleType,Leggings,53,2,0.03773584905660377,46,1
+articleType,Lehenga Choli,1,0,0.0,1,0
+articleType,Lip Gloss,2,0,0.0,2,0
+articleType,Lip Liner,6,0,0.0,2,0
+articleType,Lip Plumper,1,0,0.0,1,0
+articleType,Lipstick,4,0,0.0,1,0
+articleType,Lounge Pants,18,0,0.0,18,0
+articleType,Lounge Shorts,12,1,0.08333333333333333,10,0
+articleType,Messenger Bag,14,9,0.6428571428571429,14,0
+articleType,Mobile Pouch,16,3,0.1875,16,0
+articleType,Mufflers,13,4,0.3076923076923077,10,1
+articleType,Nail Polish,7,0,0.0,7,0
+articleType,Necklace and Chains,21,3,0.14285714285714285,16,0
+articleType,Nehru Jackets,1,0,0.0,1,0
+articleType,Night suits,23,2,0.08695652173913043,17,1
+articleType,Nightdress,14,0,0.0,11,0
+articleType,Patiala,9,0,0.0,6,0
+articleType,Pendant,33,0,0.0,4,0
+articleType,Perfume and Body Mist,190,43,0.22631578947368422,163,6
+articleType,Rain Trousers,1,0,0.0,1,0
+articleType,Ring,3,0,0.0,1,0
+articleType,Rompers,5,1,0.2,2,0
+articleType,Rucksacks,4,1,0.25,4,0
+articleType,Salwar,11,0,0.0,8,0
+articleType,Salwar and Dupatta,2,0,0.0,2,0
+articleType,Sandals,297,39,0.13131313131313133,196,14
+articleType,Sarees,50,0,0.0,44,0
+articleType,Scarves,36,7,0.19444444444444445,30,4
+articleType,Shirts,1047,6,0.0057306590257879654,606,1
+articleType,Shoe Accessories,8,8,1.0,7,5
+articleType,Shorts,178,30,0.16853932584269662,140,7
+articleType,Skirts,38,8,0.21052631578947367,32,1
+articleType,Socks,207,41,0.19806763285024154,116,7
+articleType,Sports Sandals,21,5,0.23809523809523808,21,3
+articleType,Sports Shoes,675,95,0.14074074074074075,622,35
+articleType,Stockings,12,0,0.0,3,0
+articleType,Stoles,29,2,0.06896551724137931,21,1
+articleType,Sunglasses,361,67,0.18559556786703602,169,28
+articleType,Suspenders,13,0,0.0,9,0
+articleType,Sweaters,92,0,0.0,79,0
+articleType,Sweatshirts,93,5,0.053763440860215055,81,2
+articleType,Swimwear,6,2,0.3333333333333333,5,1
+articleType,Tablet Sleeve,1,1,1.0,1,0
+articleType,Ties,69,0,0.0,34,0
+articleType,Ties and Cufflinks,1,0,0.0,1,0
+articleType,Tights,4,0,0.0,4,0
+articleType,Tops,549,24,0.04371584699453552,389,6
+articleType,Track Pants,98,11,0.11224489795918367,78,4
+articleType,Tracksuits,10,0,0.0,9,0
+articleType,Travel Accessory,5,3,0.6,4,0
+articleType,Trolley Bag,1,1,1.0,1,1
+articleType,Trousers,172,11,0.06395348837209303,112,2
+articleType,Trunk,46,1,0.021739130434782608,34,0
+articleType,Tshirts,2298,87,0.037859007832898174,1847,15
+articleType,Tunics,57,1,0.017543859649122806,52,0
+articleType,Umbrellas,3,0,0.0,2,0
+articleType,Waist Pouch,6,4,0.6666666666666666,5,1
+articleType,Waistcoat,5,0,0.0,3,0
+articleType,Wallets,280,22,0.07857142857142857,164,10
+articleType,Watches,766,135,0.1762402088772846,522,28
+articleType,Water Bottle,4,3,0.75,4,0
+articleType,Wristbands,2,2,1.0,2,0
+label_source,original_multiple_cues,9,2,0.2222222222222222,9,0
+label_source,original_no_cue,517,79,0.1528046421663443,419,20
+label_source,product_name,12584,1115,0.08860457724094088,8711,294
+baseColour,Beige,183,19,0.10382513661202186,141,5
+baseColour,Black,3008,316,0.10505319148936171,1991,110
+baseColour,Blue,1474,123,0.08344640434192672,1019,22
+baseColour,Bronze,10,2,0.2,10,1
+baseColour,Brown,952,75,0.07878151260504201,598,35
+baseColour,Burgundy,9,1,0.1111111111111111,9,0
+baseColour,Charcoal,74,4,0.05405405405405406,63,1
+baseColour,Coffee Brown,5,0,0.0,5,0
+baseColour,Copper,26,0,0.0,13,0
+baseColour,Cream,108,5,0.046296296296296294,87,1
+baseColour,Fluorescent Green,1,0,0.0,1,0
+baseColour,Gold,136,10,0.07352941176470588,85,0
+baseColour,Green,605,50,0.08264462809917356,471,9
+baseColour,Grey,848,70,0.08254716981132075,660,21
+baseColour,Grey Melange,34,0,0.0,28,0
+baseColour,Khaki,48,7,0.14583333333333334,23,2
+baseColour,Lavender,42,1,0.023809523809523808,35,0
+baseColour,Lime Green,1,0,0.0,1,0
+baseColour,Magenta,38,0,0.0,30,0
+baseColour,Maroon,166,7,0.04216867469879518,119,2
+baseColour,Mauve,1,0,0.0,1,0
+baseColour,Metallic,14,0,0.0,6,0
+baseColour,Multi,103,4,0.038834951456310676,66,1
+baseColour,Mushroom Brown,9,0,0.0,3,0
+baseColour,Mustard,32,2,0.0625,27,0
+baseColour,NA,5,1,0.2,4,1
+baseColour,Navy Blue,557,36,0.06463195691202872,427,7
+baseColour,Nude,2,0,0.0,2,0
+baseColour,Off White,55,3,0.05454545454545454,49,1
+baseColour,Olive,118,7,0.059322033898305086,92,1
+baseColour,Orange,153,16,0.10457516339869281,130,2
+baseColour,Peach,34,2,0.058823529411764705,31,1
+baseColour,Pink,503,45,0.08946322067594434,388,12
+baseColour,Purple,510,45,0.08823529411764706,385,13
+baseColour,Red,727,79,0.10866574965612105,575,15
+baseColour,Rose,2,0,0.0,2,0
+baseColour,Rust,17,0,0.0,14,0
+baseColour,Sea Green,3,0,0.0,3,0
+baseColour,Silver,340,43,0.1264705882352941,160,8
+baseColour,Skin,22,0,0.0,12,0
+baseColour,Steel,111,31,0.27927927927927926,55,5
+baseColour,Tan,46,1,0.021739130434782608,35,1
+baseColour,Taupe,3,0,0.0,3,0
+baseColour,Teal,38,2,0.05263157894736842,32,1
+baseColour,Turquoise Blue,19,1,0.05263157894736842,17,0
+baseColour,White,1686,163,0.0966785290628707,1262,35
+baseColour,Yellow,232,25,0.10775862068965517,183,1
+error_status,new_error,177,177,1.0,168,2
+error_status,persistent_error,1019,1019,1.0,868,312
+error_status,recovered,283,0,0.0,243,0
+error_status,still_correct,11631,0,0.0,8051,0

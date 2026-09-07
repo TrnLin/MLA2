@@ -6,6 +6,13 @@ from importlib import import_module
 from typing import Any
 
 _EXPORT_MODULES = {
+    "Task3BaselineConfig": "config",
+    "baseline_parameter_count": "config",
+    "config_digest": "config",
+    "Task3ChildSpec": "task3_experiments",
+    "check_task3_child_setup": "task3_experiments",
+    "latest_completed_baseline_parent_run_ids": "task3_experiments",
+    "run_task3_child_cv": "task3_experiments",
     "ArtifactVerificationError": "artifacts",
     "atomic_write_bytes": "artifacts",
     "atomic_write_csv": "artifacts",

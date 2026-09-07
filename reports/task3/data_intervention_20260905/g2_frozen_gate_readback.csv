@@ -1,0 +1,21 @@
+gate,value,rule,status
+five_fold_macro_f1,0.7502173957741934,>=0.7462,pass
+improved_folds,5.0,>=4,pass
+worst_fold_delta,0.0027574238982012,>=-0.005,pass
+fold_sd,0.012756575440245716,<=0.0209,pass
+clean_gap,0.24419130400023698,<=0.2466,pass
+gap_reduction,0.022416194683725466,>=0.020,pass
+worst_fold_gap_worsening,-0.006762907978108634,<=0.005,pass
+minority_mean,0.632374617398714,>=0.6013,pass
+Men_f1,0.936277918393458,>=0.9188,pass
+Women_f1,0.9176852082813668,>=0.895,pass
+nll,0.2904485219684803,<=0.4525,pass
+ece_15,0.03025811314191542,<=0.0842,pass
+brightness_085_induced_delta_vs_E6,-0.03199320751881343,>=-0.020,fail
+brightness_115_induced_delta_vs_E6,-0.007991478921811103,>=-0.020,pass
+grayscale_induced_delta_vs_E6,-0.005264073753007983,>=-0.020,pass
+jpeg_75_induced_delta_vs_E6,0.006682275268804376,>=-0.020,pass
+translation_003_induced_delta_vs_E6,0.11918995853022382,>=0.030,pass
+fresh_fold_family_bootstrap,,full source evidence required,not_recomputed
+five_fold_family_bootstrap,,full source evidence required,not_recomputed
+complete_registry_checkpoint_oof_integrity,,full source evidence required,not_recomputed

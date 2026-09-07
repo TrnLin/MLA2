@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "frozen_manifest_sha256": "79cec64647d7c37f3bb64af1307e3911333c6198dce41bfc5171bf9f06d72a34",
+  "purpose": "Resolve evaluated inference source bytes separately from adapted current scripts. Archives are evidence only; do not execute them.",
+  "evaluated_sources": {
+    "reports/task3_usage_teacher_vs_expanded_test_20260906/predict_original_models.py": {
+      "archive_path": "reports/task3/usage_final_e1_20260907/evaluated_sources/predict_original_models.py",
+      "evaluated_sha256": "25e78a92a95c26d8c9de8935369a23eef22026765781b948b91ef228d0f9417e",
+      "current_path": "reports/task3/usage_teacher_vs_expanded_test_20260906/predict_original_models.py",
+      "current_sha256": "9cc6e7e655313f7cc8df8730a6b3d917acd9057cd17c420933e8c2fff98c00b6"
+    },
+    "reports/task3_usage_expanded_e8_test_20260906/predict_test.py": {
+      "archive_path": "reports/task3/usage_final_e1_20260907/evaluated_sources/predict_test.py",
+      "evaluated_sha256": "9227a42943fd338bc703b41f939eb79647476c5e2f80dae14291a71390e586ee",
+      "current_path": "reports/task3/usage_expanded_e8_test_20260906/predict_test.py",
+      "current_sha256": "ffa51d9f83d1473564ab4078a9c08f27a32b8d33527f00247422ea7287608a70"
+    }
+  }
+}

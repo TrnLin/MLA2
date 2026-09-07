@@ -1,0 +1,36 @@
+{
+  "observed_date": "2026-09-05",
+  "passed": true,
+  "amazon_prefix_complete_rows": {
+    "amazon_clothing": 2797,
+    "amazon_home": 2191,
+    "amazon_sports": 2789
+  },
+  "home_exact_occasion_cover_ids": [
+    "B0125XFB2G",
+    "B07FSDZMQB",
+    "B084Q135JG",
+    "B0893C3QRM",
+    "B089NRXL87",
+    "B08SL2Y8X3",
+    "B09TKVLCTV"
+  ],
+  "abo_smart_casual_bullet_ids": [
+    "B07255FKTS",
+    "B0727R3L19"
+  ],
+  "image_hash_and_decode_checks": 11,
+  "wardrobe_rows": 5443,
+  "wardrobe_ethnic_category_rows": 4570,
+  "fashionstylist_smart_casual_phrase_rows": 48,
+  "fashionstylist_explicit_id_rows": 29,
+  "fashionstylist_known_product_ids": 23,
+  "fashionstylist_unresolved_shortlink_rows": 18,
+  "fashionstylist_ai_marked_rows": 1,
+  "fashionstylist_total_unique_product_count": null,
+  "canonical_split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+  "html_pages_checked": 7,
+  "missing_local_links": [],
+  "input_hash_count": 42,
+  "limits": "No teacher duplicate clearance, new labels, training, or model gain claim."
+}

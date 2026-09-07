@@ -1,0 +1,265 @@
+external_id,visual_decision,visual_flags,selection_reason
+flipkart_party:BRAEBG4DCHJMRYZZ,keep,single_product_presentation,
+flipkart_party:BZREHJ6ZXZ9YWZFB,keep,model_worn_outfit_context,
+flipkart_party:SNDEHZKGKGHDFG57,keep,single_product_presentation,
+flipkart_party:CAPE8HYQSXRDAGGC,keep,large_product_lettering,
+flipkart_party:SNDEDSCEVHNXMTKU,keep,single_product_presentation,
+flipkart_party:SHOEJDYYRGWZZBM6,withhold,single_product_presentation,"Unresolved source product-type mismatch (6,7), or small top competing with full outfit at 60x80 (15,49,69)"
+flipkart_party:SHOEFRUPFECAZYBS,withhold,single_product_presentation,"Unresolved source product-type mismatch (6,7), or small top competing with full outfit at 60x80 (15,49,69)"
+flipkart_party:BRAEBGGVYKJZAZYV,keep,single_product_presentation,
+flipkart_party:SNDECCCGM2TCHBWG,keep,single_product_presentation,
+flipkart_party:SHODX6XFHPZUHNDX,keep,single_product_presentation,
+flipkart_party:SHTDZWNYZFV33BAX,keep,model_worn_outfit_context,
+flipkart_party:SHTDUS8RJ7ZBDSBK,keep,single_product_presentation,
+flipkart_party:SNDE7RMR597YAKXB,keep,single_product_presentation,
+flipkart_party:SNDEHZHVMR3XPBST,withhold,mapped_Heels_may_be_flat_or_low_wedge_review_type,Collage or unresolved source product-type mismatch
+flipkart_party:TOPEBABFMZ2GSC2G,withhold,model_worn_outfit_context,"Unresolved source product-type mismatch (6,7), or small top competing with full outfit at 60x80 (15,49,69)"
+flipkart_party:TOPE9RCYS54YZNFG,keep,model_worn_outfit_context,
+flipkart_party:TOPEA6CKCHFHTUZ9,keep,model_worn_outfit_context,
+flipkart_party:TOPEHZNPUWSFVHKM,keep,model_worn_outfit_context,
+flipkart_party:SNDEHZQ7YZAHAZYP,keep,single_product_presentation,
+flipkart_party:TOPECAE3JJMVYJFF,keep,model_worn_outfit_context,
+flipkart_party:TOPEBR5GNG9MACAD,keep,model_worn_outfit_context,
+flipkart_party:BRAEA7GBQR7ZZN4K,keep,single_product_presentation,
+flipkart_party:SNDEJS7AGFRYHWGV,withhold,mapped_Heels_may_be_flat_or_low_wedge_review_type,Collage or unresolved source product-type mismatch
+flipkart_party:SNDEY4AKUX9BWZFG,keep,single_product_presentation,
+flipkart_party:SNDEJRB4D4RDAN6E,keep,single_product_presentation,
+flipkart_party:SHOEDTP4GJZGKCFS,keep,single_product_presentation,
+flipkart_party:SNDE9HRW9ZVPG9A6,keep,single_product_presentation,
+flipkart_party:SNDEE5FMQ5YQAKMZ,keep,single_product_presentation,
+flipkart_party:TOPDYTMFQNAGZVNG,keep,single_product_presentation,
+flipkart_party:SNDEDFYPJFHXG98W,keep,single_product_presentation,
+flipkart_party:BRAEAHFYFKDVDY8F,keep,single_product_presentation,
+flipkart_party:SNDEGR5WFMG4YGHZ,withhold,mapped_Heels_may_be_flat_or_low_wedge_review_type,Collage or unresolved source product-type mismatch
+flipkart_party:SHOEGKU9SUZRXPHY,keep,single_product_presentation,
+flipkart_party:TOPE9T8FXVBGHGQS,keep,model_worn_outfit_context,
+flipkart_party:SNDEBR4ETGGZWASZ,keep,single_product_presentation,
+flipkart_party:SNDE33WXXFHJUZPD,keep,single_product_presentation,
+flipkart_party:TOPE494XPFCSZA6H,keep,model_worn_outfit_context,
+flipkart_party:SHOE9YD3REFDCPBR,keep,single_product_presentation,
+flipkart_party:SUIEHFNUU3BDCGZN,keep,model_worn_outfit_context,
+flipkart_party:DREE7UE3SH2GGG2F,keep,model_worn_outfit_context,
+flipkart_party:SHTE5YHGMHQZHD8E,keep,model_worn_outfit_context,
+flipkart_party:SHTE2FCTN7MYJCUW,keep,model_worn_outfit_context,
+flipkart_party:DREE9HZGGRRHS2SW,keep,model_worn_outfit_context,
+flipkart_party:SARE86DZPAVZZ8S5,keep,model_worn_outfit_context,
+flipkart_party:TOPECH4FHGAQXFDH,keep,model_worn_outfit_context,
+flipkart_party:SNDEB2DMZXGFA9YM,keep,single_product_presentation,
+flipkart_party:SHOED36FPJ9WYBJK,keep,single_product_presentation,
+flipkart_party:SNDEDKKXNZZMDVAE,keep,single_product_presentation,
+flipkart_party:TOPEHZPAMBSJYWZF,withhold,model_worn_outfit_context,"Unresolved source product-type mismatch (6,7), or small top competing with full outfit at 60x80 (15,49,69)"
+flipkart_party:TOPECCMNG24UGAHX,keep,model_worn_outfit_context,
+flipkart_party:TOPED77KRHWBGGN6,keep,model_worn_outfit_context,
+flipkart_party:SNDEBGHCD3C9PY3F,withhold,mapped_Heels_may_be_flat_or_low_wedge_review_type,Collage or unresolved source product-type mismatch
+flipkart_party:TOPEFGG8TJGJ7QDT,keep,model_worn_outfit_context,
+flipkart_party:BRAEDGQFWPFGVPNF,withhold,model_worn_outfit_context;collage_three_models_three_color_variants,Collage or unresolved source product-type mismatch
+flipkart_party:BRAEBGGV3NPZHAGQ,keep,single_product_presentation,
+flipkart_party:BRAEDASWQDSYNUV3,keep,single_product_presentation,
+flipkart_party:SNDE5PJGURDFBURG,keep,single_product_presentation,
+flipkart_party:SNDE6GFVKTW2HXRN,withhold,mapped_Heels_may_be_flat_or_low_wedge_review_type,Collage or unresolved source product-type mismatch
+flipkart_party:BRAEA7GBCCF5TVAF,keep,single_product_presentation,
+flipkart_party:BRAECHF3WZHZBQX2,keep,model_worn_outfit_context,
+flipkart_party:TSHE44QJ9ZN7V7AT,keep,model_worn_outfit_context,
+flipkart_party:SNDEJRB3ZCF39NCY,withhold,mapped_Heels_may_be_flat_or_low_wedge_review_type,Collage or unresolved source product-type mismatch
+flipkart_party:SNDEDAPKZGGEGYHV,keep,single_product_presentation,
+flipkart_party:SHODX6XYJXS2YXFY,keep,single_product_presentation,
+flipkart_party:SHOE4K54VP44KTZK,keep,single_product_presentation,
+flipkart_party:SNDE6AKUC72HPWZF,keep,single_product_presentation,
+flipkart_party:SHTE4ZP5ZXGGJ5FN,keep,model_worn_outfit_context,
+flipkart_party:TUNEH2MKQBCHNSZE,withhold,mapped_top_or_tunic_has_dress_like_presentation_review_type,Collage or unresolved source product-type mismatch
+flipkart_party:TOPE7NMGHMTJPCMT,withhold,model_worn_outfit_context,"Unresolved source product-type mismatch (6,7), or small top competing with full outfit at 60x80 (15,49,69)"
+flipkart_party:BRAEBKJSNVGDG4DP,keep,model_worn_outfit_context,
+flipkart_party:TOPE8E8NZP256K8G,keep,model_worn_outfit_context,
+flipkart_party:SHTE5YHGZVA9HB2Y,keep,model_worn_outfit_context,
+flipkart_party:SHTE4S27GR2WA6DD,keep,model_worn_outfit_context,
+flipkart_party:TOPEHZNP4QZHVTDW,keep,model_worn_outfit_context,
+flipkart_party:SNDE6BQFXAGRVGF5,keep,single_product_presentation,
+flipkart_party:SNDEF3HVZW4NPVCN,keep,single_product_presentation,
+flipkart_party:SNDEF3R3VB55PJBX,keep,single_product_presentation,
+flipkart_party:SHTE644DZWTFY6KD,keep,model_worn_outfit_context,
+flipkart_party:SNDE5PJGWDSXSDQN,keep,single_product_presentation,
+flipkart_party:SHTE93RYMXUU7P6Q,keep,model_worn_outfit_context,
+flipkart_party:SHTE4Q74EEHQJZQB,keep,model_worn_outfit_context,
+flipkart_party:TOPEYHHWTQ59WEHB,keep,model_worn_outfit_context,
+flipkart_party:TOPEC89ZP7VSJGZK,withhold,model_worn_outfit_context;mapped_top_or_tunic_has_dress_like_presentation_review_type,Collage or unresolved source product-type mismatch
+flipkart_party:BRAE9Y5V963WTTNW,keep,single_product_presentation,
+flipkart_party:SNDEARQA4U9GY6TG,keep,single_product_presentation,
+flipkart_party:KTAEJHDKFWHH7YC8,keep,model_worn_outfit_context,
+flipkart_party:TOPEHZNZ9YZYYAPU,keep,model_worn_outfit_context,
+flipkart_party:SNDEDB2FPSNFBUTU,keep,single_product_presentation,
+flipkart_party:DREE6TUDFCEGGVWM,keep,model_worn_outfit_context,
+flipkart_party:BRAED6G6TVPF94CV,keep,single_product_presentation,
+flipkart_party:TOPEAP5VYCZKFHB3,keep,model_worn_outfit_context,
+flipkart_party:SHOEARZJRN6RGQR6,keep,single_product_presentation,
+flipkart_party:SHTE89H7YX7GFGUZ,keep,model_worn_outfit_context,
+flipkart_party:SNDEJGWQSWNHXXA3,keep,single_product_presentation,
+flipkart_party:SHODX5QPXCXZZQHC,keep,single_product_presentation,
+flipkart_party:SHTE3WVSJMHBAKUA,keep,model_worn_outfit_context,
+flipkart_party:SNDE7NSTNHAEACGG,keep,single_product_presentation,
+flipkart_party:SHOECFF6RGVPAVP8,keep,single_product_presentation,
+flipkart_party:TOPE4QK44FNX6PY5,keep,model_worn_outfit_context,
+flipkart_party:SHTE6SDPZKKHZWK4,keep,model_worn_outfit_context,
+flipkart_party:SHTEDFFJMHZWSYT2,keep,model_worn_outfit_context,
+flipkart_party:SHTE8VQHTDXGV5TM,keep,model_worn_outfit_context,
+flipkart_party:TOPDUEGZGBPZHJKQ,keep,model_worn_outfit_context,
+flipkart_party:TOPE6Y9NZYXUSA3R,keep,model_worn_outfit_context,
+flipkart_party:SNDE9ET8T6HZQKGW,withhold,mapped_Heels_may_be_flat_or_low_wedge_review_type,Collage or unresolved source product-type mismatch
+flipkart_party:LEHEGGEHYN4G2RPW,keep,model_worn_outfit_context,
+flipkart_party:BRAEAEGMZCHVXWXU,keep,single_product_presentation,
+flipkart_party:TOPEGBSUC8JDVQVY,keep,model_worn_outfit_context,
+flipkart_party:TOPE9ZZ8SGT9ENVF,keep,model_worn_outfit_context,
+flipkart_party:BRAEA7W7HPFRZUJG,keep,model_worn_outfit_context,
+flipkart_party:BRAED6G63H64TSXJ,keep,single_product_presentation,
+flipkart_party:SHTEFUMGZHHHKKQZ,keep,model_worn_outfit_context,
+flipkart_travel:HMBEJ9H43PGQWANN,keep,Single bag on white; original visually inspected,
+amazon_reviews_2023:B01LXGI8NQ,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B08SL2Y8X3,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B09TKVLCTV,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B08KW2KC8W,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B08B4J4KJK,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B00COHTVWA,withhold,,Flat print artwork without clear product form
+amazon_reviews_2023:B07RXK2SFX,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B08Z82ZZK2,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B087X3X7LS,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B089NRXL87,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B09KN11ZP1,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B08JL7CV7Y,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B08DTSCZ7R,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B0B5K4YZBF,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B09C3V551G,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B019OYU4NK,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B07R8T2G64,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B081R63GM5,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B07F1LDSH1,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B07VRZQL28,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B0BRY8XXHX,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B07XHH1VJM,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B07CR9JFGJ,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B084Q135JG,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B07FSDZMQB,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B0125XFB2G,withhold,,Flat print artwork without clear product form
+amazon_reviews_2023:B0BK5514Q2,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B075JBQ916,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B00GTHJLG2,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B015FNKUBK,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B01CV5EMDW,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B00UOU3WFQ,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B07SB54HFL,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B07CN7X4C2,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B08FG1G9FT,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B09YRBG1QQ,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B009DAHKNI,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B096FBT3R8,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B010UBXI8E,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B0C52TNGDF,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B08SC778LR,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B0BTMYKHLR,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B07R511SJJ,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B0BPBNTTNY,withhold,,Multiple products or competing scene context in the same photo
+amazon_reviews_2023:B0893C3QRM,keep,One clear cushion/cover; original and 60x80 preview inspected,
+amazon_reviews_2023:B08FDWTVY1,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B0BLMTBDX1,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B096PPJBS3,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B06WGR4VS6,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B0C4GL58FL,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B08CZ8BVXZ,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B0B4YJM5ZM,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B07G75F32N,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B0725HBCWQ,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B01N2I66QY,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B07YD75KDF,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B07DVZBM82,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B08MX3S8DQ,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B07238QJQ9,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B016ZORJC6,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B07YQPZWLS,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B08P8WDCLW,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B09N3T55TT,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B0174AI0E6,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B085W23D7X,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B09TQ977W1,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B0BNMH18Y3,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B016DXK5E8,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B07S47DMLM,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B08PB9LL1D,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B08H4TMVFZ,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B01HBB50FU,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B07N2WMZ3T,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B08465YM9L,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B08QZ5YQ5D,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B07PKS7VGT,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B07B38GFRY,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B01EJIK10W,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B0BWBFNKM8,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B082PDDD5K,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B09W5GD1JT,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B072QLMHRJ,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B07D66WGJX,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B01ICAHSX6,withhold,,Weak source purpose/type text is not an exact occasion/style label
+amazon_reviews_2023:B09XJZNRFF,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07116WMZ5,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B07116WPHF,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B0713SKPF5,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B0718YX1ZV,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B071KX6KB2,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B071RN7KNH,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B071RN7NC9,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B071Y62T7G,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B071YPBH4C,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B071YPBMZW,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B07255FKTS,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B07255V34N,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B0727R3L19,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B0727R3YBJ,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B0896X61TP,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B08GMZ6LSL,keep,Single boot/loafer photo; repeated source images need duplicate removal,
+Amazon Berkeley Objects:B076QFBFRG,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B076QJLCFY,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B078T95WPP,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B078TB372J,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B078TB6WWP,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B078TC331S,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07NBWPP5W,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B011J4BPWC,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B01GGNW2WI,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B01GGNW67O,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B01J24H2K0,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B01MR890RQ,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B076Q8MTX8,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B076QBF11M,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B076QBFYKL,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B076QJLCFT,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B076QJTKPX,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B079L8DHGH,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B079L8JS1G,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B079L91D2J,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B079L96VWL,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B079LCH6FX,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B079LCL9NG,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B079LCQVMF,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B079LG17Y2,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B079LG18LS,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B079LMFJSY,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B079LMMK7F,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B079LMXV35,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07BV8RPJR,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07CBY8383,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07HGV7JYJ,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07JL2997W,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07JL29Y7W,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07JLX4W8L,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07JLX4YT9,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07JM9J7MM,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07JM9JJC9,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07N9D7PZ2,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07QPB2R62,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07S96NM3X,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07SB9JJ3Z,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07SCMGKNQ,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07X55ZGV7,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B082B4R1WX,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B01AIVT5M4,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B01AIVT6NM,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B01J24HCL4,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B0735341P9,withhold,,Weak source purpose/type text is not an exact occasion/style label
+Amazon Berkeley Objects:B07BK1QHTG,withhold,,Weak source purpose/type text is not an exact occasion/style label

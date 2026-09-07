@@ -1,0 +1,10 @@
+{
+  "verified": true,
+  "runs": 4,
+  "predictions_checked": 131092,
+  "stability_rows": 72,
+  "failed_stability_checks": 64,
+  "sampled_prediction_flips": 0,
+  "maximum_probability_difference": 0.0021536350250244,
+  "limits": "Stability probabilities and frozen weights are attested by the saved GPU run; no local GPU rerun."
+}

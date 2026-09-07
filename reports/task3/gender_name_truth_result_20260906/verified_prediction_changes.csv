@@ -1,0 +1,9 @@
+group,rows,old_correct,new_correct,recovered,newly_wrong
+all,13110,11808,11914,283,177
+changed_labels,157,61,126,68,3
+unchanged_labels,12953,11747,11788,215,174
+Boys,356,212,260,64,16
+Girls,285,154,209,58,3
+Men,7023,6699,6719,78,58
+Unisex,707,375,370,19,24
+Women,4739,4368,4356,64,76

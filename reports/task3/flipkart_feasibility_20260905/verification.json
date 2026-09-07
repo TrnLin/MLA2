@@ -1,0 +1,22 @@
+{
+  "verified": true,
+  "source_rows": 20000,
+  "raw_occasion_fields_independently_counted": 9954,
+  "teacher_type_rows": 124,
+  "candidate_metadata_groups": 3094,
+  "sampled_products": 89,
+  "verified_saved_images": 78,
+  "saved_image_bytes": 15090509,
+  "teacher_cached_images": 44441,
+  "sample_exact_or_dhash_at_most_two_matches": 0,
+  "canonical_split_unchanged": true,
+  "protected_teacher_targets_read": false,
+  "training_rows_admitted": 0,
+  "network_requests": 0,
+  "dependency_hashes": 99,
+  "limits": [
+    "Metadata matches and exact name overlap do not validate image or occasion labels.",
+    "Cached overlap check applies to these 78 files and the declared threshold only.",
+    "No model was fitted or evaluated; no accuracy gain is claimed."
+  ]
+}

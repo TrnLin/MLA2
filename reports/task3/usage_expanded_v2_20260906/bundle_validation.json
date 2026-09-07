@@ -1,0 +1,12 @@
+{
+  "bundle": "reports/task3_usage_expanded_v2_20260906/teacher_plus_rare_usage_v2.zip",
+  "bytes": 18992727,
+  "sha256": "0bdc4fa82ab4b572b44ea4d9ba6333ff91e5a47022c6ba917db4dc621b383bb7",
+  "files": 744,
+  "external_images": 687,
+  "total_dataset_rows": 39299,
+  "teacher_images_reused_from_existing_project": true,
+  "archive_hashes_and_crc_verified": true,
+  "dataset_split_sha256": "0bd490672543b7022fa7a883be9b006d63681d7c168e497e0388616836696776",
+  "model_training_performed": false
+}

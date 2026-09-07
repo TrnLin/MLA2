@@ -1,0 +1,478 @@
+{
+  "schema_version": 1,
+  "target": "usage",
+  "status": "accepted",
+  "accepted_date": "2026-09-07",
+  "decision": "docs/decisions/0022-task3-usage-e1-final-model.md",
+  "experiment_id": "t3_primary_baseline_smallcnn",
+  "name": "E1 teacher-only scratch SmallCNN five-fold probability average",
+  "acceptance": {
+    "criterion": "Overall accuracy, with the macro-F1 and rare-class cost disclosed",
+    "accepted_by": "project owner",
+    "after_holdout_and_test_review": true,
+    "new_blind_selection": false
+  },
+  "artifact_type": "five_saved_fold_ensemble",
+  "all_development_refit": false,
+  "architecture": {
+    "implementation": "fashion.train.model.Task3BaselineCNN",
+    "parameters_per_model": 391209,
+    "pooling": "adaptive global average",
+    "classifier_dropout": 0.0,
+    "pretrained_weights": false
+  },
+  "class_names": [
+    "Casual",
+    "Ethnic",
+    "Formal",
+    "Home",
+    "NA",
+    "Party",
+    "Smart Casual",
+    "Sports",
+    "Travel"
+  ],
+  "input": {
+    "shape_chw": [
+      3,
+      80,
+      60
+    ],
+    "dtype": "float32",
+    "implementation": "fashion.data.images.load_and_transform_image",
+    "operations": [
+      "EXIF orientation",
+      "RGB conversion",
+      "Aspect-preserving LANCZOS resize and centred white letterbox to height 80, width 60",
+      "Scale pixel values to [0,1]",
+      "Apply each fold's saved RGB mean and standard deviation",
+      "Set letterbox padding to zero after standardization",
+      "Transpose HWC to CHW"
+    ],
+    "normalization_fit": "Each original fold-training complement; content pixels only",
+    "augmentation_at_inference": "none"
+  },
+  "inference": {
+    "fold_order": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "weights": [
+      0.2,
+      0.2,
+      0.2,
+      0.2,
+      0.2
+    ],
+    "per_fold": "Evaluation mode; softmax over nine logits",
+    "aggregation": "Equal arithmetic mean of all five saved fold probabilities; argmax",
+    "probability_accumulation_dtype": "float64",
+    "decision": "argmax; first index in class_names wins an exact tie",
+    "calibration_or_threshold_adjustment": "none",
+    "evaluated_device": "cpu",
+    "evaluated_torch_version": "2.11.0+cpu",
+    "development_oof": "Use only the model that held out the row's canonical fold; never average five models on development rows"
+  },
+  "source_recipe": {
+    "path": "reports/task3_usage_teacher_vs_expanded_test_20260906/inference_recipe.json",
+    "sha256": "d2b0c035967e375bd98726e10ee22effd1cbf17df401ce5bfed47a293f803e7d",
+    "declared_at_utc": "2026-09-06T11:01:16.847542+00:00"
+  },
+  "source_contracts": {
+    "data/processed/splits.csv": {
+      "sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
+    },
+    "data/processed/label_maps.json": {
+      "sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327"
+    },
+    "src/fashion/data/images.py": {
+      "sha256": "2a5683d9ef66e7ebf4ab033aab5f586c0af7122a758752ea0059bd3e2868883d"
+    },
+    "src/fashion/train/model.py": {
+      "sha256": "8e306a9588e5ba681f883b6eda143e63a592a9234665c4bd2f872d40de895cf1"
+    },
+    "src/fashion/train/config.py": {
+      "sha256": "bd5bed89b110b2465e5b126ce20f1c31b8bcc710157c2a42bde49f2f9ad59361"
+    },
+    "reports/task3_usage_teacher_vs_expanded_test_20260906/selection_contract.json": {
+      "sha256": "6dc7e47975b84af8070d4dd30d9adfbf264a6e67b9b7be09df609a049ddcf005"
+    },
+    "reports/task3_usage_teacher_vs_expanded_test_20260906/predict_original_models.py": {
+      "sha256": "25e78a92a95c26d8c9de8935369a23eef22026765781b948b91ef228d0f9417e"
+    },
+    "reports/task3_usage_expanded_e8_test_20260906/predict_test.py": {
+      "sha256": "9227a42943fd338bc703b41f939eb79647476c5e2f80dae14291a71390e586ee"
+    }
+  },
+  "folds": [
+    {
+      "model": "E1",
+      "fold": 0,
+      "run_id": "t3_baseline_usage_smallcnn_f0_s2753_b0458638128b_20260830T091143Zc4f554",
+      "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f0_s2753_b0458638128b_20260830T091143Zc4f554/final_epoch.pt",
+      "sha256": "84350e03e777b8730bf1880f72b53c7d31a64b21181fcf5f4be6d43314ceb66d",
+      "normalization": {
+        "channels": 3,
+        "total_pixels": 125844140,
+        "mean": [
+          0.8500121534933988,
+          0.8333477564155229,
+          0.8275403094469598
+        ],
+        "std": [
+          0.2711853888383693,
+          0.28264409513731564,
+          0.28631728791756544
+        ]
+      },
+      "checkpoint_bytes": 1579157,
+      "config": {
+        "target": "usage",
+        "image_height": 80,
+        "image_width": 60,
+        "channels": [
+          32,
+          64,
+          128,
+          256
+        ],
+        "batch_size": 128,
+        "epochs": 30,
+        "learning_rate": 0.001,
+        "weight_decay": 0.0001,
+        "minimum_learning_rate": 1e-05,
+        "seed": 2753,
+        "num_workers": 2,
+        "mixed_precision": false,
+        "early_stopping": false,
+        "augmentation": "none",
+        "loss_name": "cross_entropy",
+        "optimizer_name": "AdamW",
+        "scheduler_name": "CosineAnnealingLR",
+        "checkpoint_rule": "final_epoch",
+        "model_family": "task3_small_cnn",
+        "scratch": true,
+        "submission_eligible": true,
+        "num_classes": 9
+      },
+      "files": {
+        "config.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f0_s2753_b0458638128b_20260830T091143Zc4f554/config.json",
+          "sha256": "0edf5b8d2f9a3e6a95a4de3f06e27b532f34b9645fa0a768652a47e02a7e5e62"
+        },
+        "normalization.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f0_s2753_b0458638128b_20260830T091143Zc4f554/normalization.json",
+          "sha256": "133ab07aef9dca523dcca56d0d012f3adad6eb9ea7f3b35143360662c47e7c65"
+        },
+        "metrics.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f0_s2753_b0458638128b_20260830T091143Zc4f554/metrics.json",
+          "sha256": "a57dfdd925226fe0fc5619ede84546600a63a50e709bcb50c1934444094b4caa"
+        },
+        "oof_predictions.csv": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f0_s2753_b0458638128b_20260830T091143Zc4f554/oof_predictions.csv",
+          "sha256": "c0edd811d1e63de56a7ad0bce241bf346e58b916db16c8172e7973222a28776b"
+        }
+      }
+    },
+    {
+      "model": "E1",
+      "fold": 1,
+      "run_id": "t3_baseline_usage_smallcnn_f1_s2753_b0458638128b_20260830T092019Z358580",
+      "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f1_s2753_b0458638128b_20260830T092019Z358580/final_epoch.pt",
+      "sha256": "f04ce635ba9964f7ef21f2f3c4d100581e13568ae23d6974a4c13fba1a44a1fa",
+      "normalization": {
+        "channels": 3,
+        "total_pixels": 125829660,
+        "mean": [
+          0.84996919470065,
+          0.8333593518087566,
+          0.8277291340255762
+        ],
+        "std": [
+          0.27118972048267387,
+          0.2824981562598369,
+          0.2860710973852082
+        ]
+      },
+      "checkpoint_bytes": 1579157,
+      "config": {
+        "target": "usage",
+        "image_height": 80,
+        "image_width": 60,
+        "channels": [
+          32,
+          64,
+          128,
+          256
+        ],
+        "batch_size": 128,
+        "epochs": 30,
+        "learning_rate": 0.001,
+        "weight_decay": 0.0001,
+        "minimum_learning_rate": 1e-05,
+        "seed": 2753,
+        "num_workers": 2,
+        "mixed_precision": false,
+        "early_stopping": false,
+        "augmentation": "none",
+        "loss_name": "cross_entropy",
+        "optimizer_name": "AdamW",
+        "scheduler_name": "CosineAnnealingLR",
+        "checkpoint_rule": "final_epoch",
+        "model_family": "task3_small_cnn",
+        "scratch": true,
+        "submission_eligible": true,
+        "num_classes": 9
+      },
+      "files": {
+        "config.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f1_s2753_b0458638128b_20260830T092019Z358580/config.json",
+          "sha256": "0edf5b8d2f9a3e6a95a4de3f06e27b532f34b9645fa0a768652a47e02a7e5e62"
+        },
+        "normalization.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f1_s2753_b0458638128b_20260830T092019Z358580/normalization.json",
+          "sha256": "51541b5c2c4b6dda64c6dabdf990894342fb1bfc24b068b656637e707aff720d"
+        },
+        "metrics.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f1_s2753_b0458638128b_20260830T092019Z358580/metrics.json",
+          "sha256": "9f85a2d200518724464ae4f77d86f5bcd48674bb564e329327068e2947638be6"
+        },
+        "oof_predictions.csv": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f1_s2753_b0458638128b_20260830T092019Z358580/oof_predictions.csv",
+          "sha256": "21740232ae964ba443630225e0fa0f0307a7a4a9cb7a081b2da0d451b1beaf75"
+        }
+      }
+    },
+    {
+      "model": "E1",
+      "fold": 2,
+      "run_id": "t3_baseline_usage_smallcnn_f2_s2753_b0458638128b_20260830T092857Z8d67ab",
+      "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f2_s2753_b0458638128b_20260830T092857Z8d67ab/final_epoch.pt",
+      "sha256": "78bd58f612e21df23be35116065e6ebb009b866a97da5e3b5b35a041052612cc",
+      "normalization": {
+        "channels": 3,
+        "total_pixels": 125845000,
+        "mean": [
+          0.8501179889609487,
+          0.8333566129913569,
+          0.8278103497046361
+        ],
+        "std": [
+          0.2710161228351801,
+          0.282676241107007,
+          0.2861980885531506
+        ]
+      },
+      "checkpoint_bytes": 1579157,
+      "config": {
+        "target": "usage",
+        "image_height": 80,
+        "image_width": 60,
+        "channels": [
+          32,
+          64,
+          128,
+          256
+        ],
+        "batch_size": 128,
+        "epochs": 30,
+        "learning_rate": 0.001,
+        "weight_decay": 0.0001,
+        "minimum_learning_rate": 1e-05,
+        "seed": 2753,
+        "num_workers": 2,
+        "mixed_precision": false,
+        "early_stopping": false,
+        "augmentation": "none",
+        "loss_name": "cross_entropy",
+        "optimizer_name": "AdamW",
+        "scheduler_name": "CosineAnnealingLR",
+        "checkpoint_rule": "final_epoch",
+        "model_family": "task3_small_cnn",
+        "scratch": true,
+        "submission_eligible": true,
+        "num_classes": 9
+      },
+      "files": {
+        "config.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f2_s2753_b0458638128b_20260830T092857Z8d67ab/config.json",
+          "sha256": "0edf5b8d2f9a3e6a95a4de3f06e27b532f34b9645fa0a768652a47e02a7e5e62"
+        },
+        "normalization.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f2_s2753_b0458638128b_20260830T092857Z8d67ab/normalization.json",
+          "sha256": "ce688b6900a88612e30b662ec30a8529f501ceb4392c628ace4b7cabc4d0bf58"
+        },
+        "metrics.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f2_s2753_b0458638128b_20260830T092857Z8d67ab/metrics.json",
+          "sha256": "29b0a7853ec353f57729698e7779aec6e19345620c4f1f40a23121efee033860"
+        },
+        "oof_predictions.csv": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f2_s2753_b0458638128b_20260830T092857Z8d67ab/oof_predictions.csv",
+          "sha256": "818c269e0d3275ce7d98f9ab1e3b95c20f0be5bdae83812f41ede251c54c16ff"
+        }
+      }
+    },
+    {
+      "model": "E1",
+      "fold": 3,
+      "run_id": "t3_baseline_usage_smallcnn_f3_s2753_b0458638128b_20260830T093738Zdd75d3",
+      "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f3_s2753_b0458638128b_20260830T093738Zdd75d3/final_epoch.pt",
+      "sha256": "8a698590a38299a590963409308878af4249008e39010f2366ad615f845c1c38",
+      "normalization": {
+        "channels": 3,
+        "total_pixels": 125844420,
+        "mean": [
+          0.8503280838762073,
+          0.8332441108831903,
+          0.8276042957872293
+        ],
+        "std": [
+          0.2707286543633546,
+          0.2826541220275329,
+          0.2861782505843605
+        ]
+      },
+      "checkpoint_bytes": 1579157,
+      "config": {
+        "target": "usage",
+        "image_height": 80,
+        "image_width": 60,
+        "channels": [
+          32,
+          64,
+          128,
+          256
+        ],
+        "batch_size": 128,
+        "epochs": 30,
+        "learning_rate": 0.001,
+        "weight_decay": 0.0001,
+        "minimum_learning_rate": 1e-05,
+        "seed": 2753,
+        "num_workers": 2,
+        "mixed_precision": false,
+        "early_stopping": false,
+        "augmentation": "none",
+        "loss_name": "cross_entropy",
+        "optimizer_name": "AdamW",
+        "scheduler_name": "CosineAnnealingLR",
+        "checkpoint_rule": "final_epoch",
+        "model_family": "task3_small_cnn",
+        "scratch": true,
+        "submission_eligible": true,
+        "num_classes": 9
+      },
+      "files": {
+        "config.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f3_s2753_b0458638128b_20260830T093738Zdd75d3/config.json",
+          "sha256": "0edf5b8d2f9a3e6a95a4de3f06e27b532f34b9645fa0a768652a47e02a7e5e62"
+        },
+        "normalization.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f3_s2753_b0458638128b_20260830T093738Zdd75d3/normalization.json",
+          "sha256": "f3d070bc0401cb38a91dfa1eabbd944a4667a6d013fa3a54ea6c27906e553a53"
+        },
+        "metrics.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f3_s2753_b0458638128b_20260830T093738Zdd75d3/metrics.json",
+          "sha256": "d2e991fb591cdc0d4e37405ab281dc6ed957fff4af68895a588d95d7d14b8d7c"
+        },
+        "oof_predictions.csv": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f3_s2753_b0458638128b_20260830T093738Zdd75d3/oof_predictions.csv",
+          "sha256": "0076749ac0b3753bfb98c19f05c2ac531c96614a309866ea94e1f49ecc344f0f"
+        }
+      }
+    },
+    {
+      "model": "E1",
+      "fold": 4,
+      "run_id": "t3_baseline_usage_smallcnn_f4_s2753_b0458638128b_20260830T094617Z1d2e79",
+      "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f4_s2753_b0458638128b_20260830T094617Z1d2e79/final_epoch.pt",
+      "sha256": "f2f560fc2c9969733f38b0d88f6e10dfe5c7ff88397e8e1868b32bcebd967025",
+      "normalization": {
+        "channels": 3,
+        "total_pixels": 125826140,
+        "mean": [
+          0.8495636263875777,
+          0.8329553842997305,
+          0.8273403540325253
+        ],
+        "std": [
+          0.27143078550104954,
+          0.28283248105056275,
+          0.2862505320056004
+        ]
+      },
+      "checkpoint_bytes": 1579157,
+      "config": {
+        "target": "usage",
+        "image_height": 80,
+        "image_width": 60,
+        "channels": [
+          32,
+          64,
+          128,
+          256
+        ],
+        "batch_size": 128,
+        "epochs": 30,
+        "learning_rate": 0.001,
+        "weight_decay": 0.0001,
+        "minimum_learning_rate": 1e-05,
+        "seed": 2753,
+        "num_workers": 2,
+        "mixed_precision": false,
+        "early_stopping": false,
+        "augmentation": "none",
+        "loss_name": "cross_entropy",
+        "optimizer_name": "AdamW",
+        "scheduler_name": "CosineAnnealingLR",
+        "checkpoint_rule": "final_epoch",
+        "model_family": "task3_small_cnn",
+        "scratch": true,
+        "submission_eligible": true,
+        "num_classes": 9
+      },
+      "files": {
+        "config.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f4_s2753_b0458638128b_20260830T094617Z1d2e79/config.json",
+          "sha256": "0edf5b8d2f9a3e6a95a4de3f06e27b532f34b9645fa0a768652a47e02a7e5e62"
+        },
+        "normalization.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f4_s2753_b0458638128b_20260830T094617Z1d2e79/normalization.json",
+          "sha256": "caf86124f389d75a3fa8519c94ee46be4ee34007ec59efb7d552dae5d24b1131"
+        },
+        "metrics.json": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f4_s2753_b0458638128b_20260830T094617Z1d2e79/metrics.json",
+          "sha256": "b55503928400803f669c3d658cdab5c3fe0a630ec4c09a07b6b8c3e0b73c4b63"
+        },
+        "oof_predictions.csv": {
+          "path": "results/evidence/task3/baseline/usage/t3_baseline_usage_smallcnn_f4_s2753_b0458638128b_20260830T094617Z1d2e79/oof_predictions.csv",
+          "sha256": "4620ea3a71ab72cad9886ddefb0ae64117ce73899c4f3a4087c41b45b583bec9"
+        }
+      }
+    }
+  ],
+  "existing_predictions": {
+    "reports/task3_usage_teacher_vs_expanded_test_20260906/E1/usage_test_predictions.csv": {
+      "sha256": "9fd6af66df4cc926b58d06daa1d20d2af8f477a708a253b9a80dad3452ec2138"
+    },
+    "reports/task3_usage_teacher_vs_expanded_test_20260906/E1/usage_test_probabilities.csv": {
+      "sha256": "66f55233c101d3229dea78755ebaa1b650b073e13afd530dd85a434f2f5e8899"
+    },
+    "reports/task3_usage_teacher_vs_expanded_test_20260906/prediction_freeze.json": {
+      "sha256": "17234509e2975b61f79e88a80181596dd1aa5250f7aee5a2c8dc2541c4a592b1"
+    },
+    "reports/task3_usage_holdout_20260906/prediction_freeze.json": {
+      "sha256": "25623bf16d54343ff08faedf241821ef3b76c96fd5f3eec9594388f3588a491b"
+    }
+  },
+  "limitations": [
+    "E1 is the accuracy choice, not the macro-F1 winner",
+    "Test NA, Party, Smart Casual and Travel recall are zero; Home has no test support",
+    "Acceptance followed evaluation; these sets are no longer fresh selection evidence",
+    "Five forward passes cost more than one SmallCNN; no deployment latency benchmark is claimed",
+    "Usage-only predictions are not the complete four-target submission"
+  ]
+}

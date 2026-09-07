@@ -1,0 +1,11 @@
+condition,class_name,support,parent_correct,candidate_correct,newly_wrong,recovered
+clean,Boys,274,180,181,14,15
+clean,Girls,216,125,127,17,19
+clean,Men,7102,6755,6727,90,62
+clean,Unisex,708,365,376,23,34
+clean,Women,4810,4403,4400,72,69
+grayscale,Boys,274,159,169,9,19
+grayscale,Girls,216,60,104,5,49
+grayscale,Men,7102,6820,6776,96,52
+grayscale,Unisex,708,361,383,22,44
+grayscale,Women,4810,4153,4290,55,192

@@ -1,0 +1,28 @@
+{
+  "frozen_at_utc": "2026-09-06T17:45:46.962085+00:00",
+  "reference_labels_opened_in_this_inference": false,
+  "test_labels_previously_seen": true,
+  "test_rows": 5829,
+  "outputs": {
+    "inference_recipe.json": "6dcc005d2c972d624f96b02a403a5f11d8cd78fdd8de92039a99f3157b1c67fd",
+    "test_hash_matches_quarantine.csv": "d3d76a6d27b2fce5a5781934d7641ca61ca9272081009279b0285ce51762f3e0",
+    "usage_test_fold_0.csv": "fcddbb5a079a08ce746b5c2d82b6a67a95a0a6cac1fbbc2d018b9c9915535109",
+    "usage_test_fold_1.csv": "205eb81dc2f7b600bacd98025104f84d7499b75df3ef90e91c4f1aafd5d79def",
+    "usage_test_fold_2.csv": "205b92f653ef1274df5d70a070fbecb7eaf3a320f6170b077be62c7986b5925a",
+    "usage_test_fold_3.csv": "cf5b140fd29b3a89e29f058ba78d1e361b0f0f939d2155dfe4e76cc4ed489385",
+    "usage_test_fold_4.csv": "9bd542a89a1dd341b3d2e5ed531a21294974c94a2a97c61fe5c954f4bb64632e",
+    "usage_test_probabilities.csv": "395f2f3676dcbb377c488938fe7da8040c6f6a2d65f83bfec1e837b8865b4c93",
+    "usage_test_predictions.csv": "20f70c1d70580c35aaf33e1b96111d39e9a3020902f12f12a5f6a3afb9a80e2d"
+  },
+  "predicted_class_counts": {
+    "Casual": 4754,
+    "Ethnic": 682,
+    "NA": 189,
+    "Formal": 135,
+    "Sports": 56,
+    "Travel": 4,
+    "Party": 4,
+    "Smart Casual": 3,
+    "Home": 2
+  }
+}

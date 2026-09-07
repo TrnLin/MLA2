@@ -1,0 +1,21 @@
+{
+  "verified": true,
+  "comparisons": 144,
+  "summary": {
+    "ieee": {
+      "comparisons": 72,
+      "passed": 72,
+      "maximum_probability_difference": 7.748603820800781e-07,
+      "label_flips": 0
+    },
+    "runtime_default": {
+      "comparisons": 72,
+      "passed": 8,
+      "maximum_probability_difference": 0.002153635025024414,
+      "label_flips": 0
+    }
+  },
+  "cross_mode_maximum": 0.0018008947372436523,
+  "cross_mode_label_flips": 0,
+  "limitations": "Sampled inference only. Input preparation and unchanged state are attested by the GPU run; no local GPU rerun."
+}

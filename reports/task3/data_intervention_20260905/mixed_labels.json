@@ -1,0 +1,16 @@
+[
+  {
+    "target": "gender",
+    "mixed_families": 2,
+    "mixed_family_rows": 14,
+    "mixed_visual_components": 1,
+    "mixed_visual_component_rows": 2
+  },
+  {
+    "target": "usage",
+    "mixed_families": 238,
+    "mixed_family_rows": 1232,
+    "mixed_visual_components": 2,
+    "mixed_visual_component_rows": 4
+  }
+]

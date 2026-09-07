@@ -1,0 +1,71 @@
+usage,source_dataset,cv_fold,images
+Home,amazon_berkeley_objects,0,25
+Home,amazon_berkeley_objects,1,24
+Home,amazon_berkeley_objects,2,24
+Home,amazon_berkeley_objects,3,24
+Home,amazon_berkeley_objects,4,23
+Home,amazon_reviews_2023,0,3
+Home,amazon_reviews_2023,1,3
+Home,amazon_reviews_2023,2,3
+Home,amazon_reviews_2023,3,4
+Home,amazon_reviews_2023,4,3
+Party,flipkart_party,0,20
+Party,flipkart_party,1,20
+Party,flipkart_party,2,19
+Party,flipkart_party,3,19
+Party,flipkart_party,4,19
+Party,www.beginningboutique.com.au public catalogue,0,12
+Party,www.beginningboutique.com.au public catalogue,1,16
+Party,www.beginningboutique.com.au public catalogue,2,13
+Party,www.beginningboutique.com.au public catalogue,3,11
+Party,www.beginningboutique.com.au public catalogue,4,8
+Party,www.meshki.com.au public catalogue,0,9
+Party,www.meshki.com.au public catalogue,1,8
+Party,www.meshki.com.au public catalogue,2,7
+Party,www.meshki.com.au public catalogue,3,13
+Party,www.meshki.com.au public catalogue,4,11
+Party,www.reddress.com public catalogue,0,4
+Party,www.reddress.com public catalogue,1,1
+Party,www.reddress.com public catalogue,2,6
+Party,www.reddress.com public catalogue,3,2
+Party,www.reddress.com public catalogue,4,6
+Smart Casual,Amazon Berkeley Objects,0,49
+Smart Casual,Amazon Berkeley Objects,1,7
+Smart Casual,Amazon Berkeley Objects,2,14
+Smart Casual,Amazon Berkeley Objects,3,2
+Smart Casual,Amazon Berkeley Objects,4,12
+Smart Casual,Marks and Spencer public catalogue,1,21
+Smart Casual,Marks and Spencer public catalogue,2,15
+Smart Casual,Marks and Spencer public catalogue,3,26
+Smart Casual,Marks and Spencer public catalogue,4,16
+Travel,Amazon Berkeley Objects,0,13
+Travel,Amazon Berkeley Objects,1,12
+Travel,Amazon Berkeley Objects,2,3
+Travel,Amazon Berkeley Objects,3,10
+Travel,Amazon Berkeley Objects,4,8
+Travel,cotopaxi,0,5
+Travel,cotopaxi,1,6
+Travel,cotopaxi,2,1
+Travel,cotopaxi,3,4
+Travel,cotopaxi,4,3
+Travel,dakine,0,1
+Travel,dakine,1,4
+Travel,dakine,3,4
+Travel,dakine,4,4
+Travel,dbjourney,0,6
+Travel,dbjourney,1,2
+Travel,dbjourney,2,27
+Travel,dbjourney,3,8
+Travel,dbjourney,4,9
+Travel,eaglecreek,0,7
+Travel,eaglecreek,1,6
+Travel,eaglecreek,2,1
+Travel,eaglecreek,3,7
+Travel,eaglecreek,4,6
+Travel,flipkart_travel,0,1
+Travel,tombihn,1,1
+Travel,tombihn,2,1
+Travel,tombihn,4,1
+Travel,topodesigns,1,1
+Travel,topodesigns,2,1
+Travel,topodesigns,4,2

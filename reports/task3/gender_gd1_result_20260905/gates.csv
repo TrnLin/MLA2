@@ -1,0 +1,14 @@
+gate,value,rule,status
+screen.clean_gain,-0.004568567791786826,>= -0.005,pass
+screen.clean_ci_lower,-0.01825077951039541,>= -0.005,fail
+screen.classes,"{'Boys': -0.0061592065734783485, 'Girls': -0.015323166303558455, 'Men': -0.00030601905127736195, 'Unisex': -0.0020520890042334816, 'Women': 0.0009976419736131836}",every class >= -0.020,pass
+screen.dark_gain,0.15891587267087212,>= 0.030,pass
+screen.translation,-0.019651538801511645,>= -0.010,fail
+screen.fold_0.clean,-0.010793303643245822,>= -0.010,fail
+screen.fold_0.dark,0.1599634626677308,> 0,pass
+screen.fold_4.clean,0.0012728743274897925,>= -0.010,pass
+screen.fold_4.dark,0.15786828267401348,> 0,pass
+fold_0.gpu_memory_bytes,477585408,0 < value < 3000000000,pass
+fold_0.parameters,390181,== 390181,pass
+fold_4.gpu_memory_bytes,477585408,0 < value < 3000000000,pass
+fold_4.parameters,390181,== 390181,pass

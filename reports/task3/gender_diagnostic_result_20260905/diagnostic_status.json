@@ -1,0 +1,187 @@
+{
+  "status": "review_required",
+  "training_performed": false,
+  "runs": [
+    {
+      "model": "G2",
+      "fold": 0,
+      "run_id": "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6",
+      "source_sha256": {
+        "config.json": "12a00ed5d1f34ebb816ceb4e750600ca3481764d55379623ce3c751925ad437d",
+        "normalization.json": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e",
+        "history.csv": "cfc09a982d07b299ec8bd60fc675459d901595eee2117adda3f656330e1fe602",
+        "metrics.json": "4a72b9d2f32a4f95673c75ad9bb848fbbbf6b8857af5aa46d7724ce8bfa37cec",
+        "oof_predictions.csv": "b57fd083ccaee7ce3a51e029e43329866d1abcf9cf26145384273d9774a51898",
+        "robustness.csv": "c4a0f4336c407a67cda77c82dc1ace222e89d255e9a03f316d9f4756eac42385",
+        "final_epoch.pt": "0eaf3d0e7efe36e16bb5765dd9a62d4b776e38ba3eac2fe5eff6ad013cc6a71f"
+      },
+      "checks": [
+        {
+          "check": "train_macro_f1",
+          "actual": 0.9931472699932924,
+          "expected": 0.9931472699932924,
+          "pass": true
+        },
+        {
+          "check": "validation_macro_f1",
+          "actual": 0.7604983529055681,
+          "expected": 0.7604983529055681,
+          "pass": true
+        },
+        {
+          "check": "saved_validation_probabilities",
+          "max_abs_difference": 2.9767608600295148e-08,
+          "pass": true
+        },
+        {
+          "check": "weights_and_batchnorm_buffers_unchanged",
+          "pass": true
+        },
+        {
+          "check": "gpu_memory_under_3gb",
+          "peak_bytes": 177898496,
+          "pass": true
+        }
+      ],
+      "pass": false
+    },
+    {
+      "model": "G2",
+      "fold": 4,
+      "run_id": "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1",
+      "source_sha256": {
+        "config.json": "f63e98722733ef2a1752d0b8b8806852c923f831a996ca4f6023c9c533953f42",
+        "normalization.json": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2",
+        "history.csv": "75773ed37b6f52dc80740a8db1a4922ec3fd06d93ad26195c1c8a93e1d6f3a54",
+        "metrics.json": "c8c49172d99eb7349168d00061beb441481c8b2566e3a19d90db46520dc7e7b2",
+        "oof_predictions.csv": "94bc9531caa7c4fc2370398ec863ef5511689d806b626c9143fe93199996b286",
+        "robustness.csv": "cb54ac094c57df5152c601a8216209f9e6667b52bf1ae21d8c42d4cbb302017e",
+        "final_epoch.pt": "12399c4125bc67fcaca433dae0e6fe4e2a3f30a7ac745bdfa337c8595e82a43e"
+      },
+      "checks": [
+        {
+          "check": "train_macro_f1",
+          "actual": 0.9945832714929127,
+          "expected": 0.9945832714929127,
+          "pass": true
+        },
+        {
+          "check": "validation_macro_f1",
+          "actual": 0.7304612751770436,
+          "expected": 0.7304612751770436,
+          "pass": true
+        },
+        {
+          "check": "saved_validation_probabilities",
+          "max_abs_difference": 2.9790496847148518e-08,
+          "pass": true
+        },
+        {
+          "check": "weights_and_batchnorm_buffers_unchanged",
+          "pass": true
+        },
+        {
+          "check": "gpu_memory_under_3gb",
+          "peak_bytes": 177898496,
+          "pass": true
+        }
+      ],
+      "pass": false
+    },
+    {
+      "model": "CompactBlurCNN",
+      "fold": 0,
+      "run_id": "t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f0_s2753_029107022917_20260831T060941Z1f0fc7",
+      "source_sha256": {
+        "config.json": "54f9d8c3c796c1cf3383224b4214c4d74fe3ece3e8b464bb6b1bf5062676c97b",
+        "normalization.json": "643edd3763f7e5cec8a6e1031e02fff27e117d58329e44c49559c8cc8df5534a",
+        "history.csv": "432827bd263041a4b0b7ceb971de3ea43a0002dcfb192793ac9f16d2f6a8bdef",
+        "metrics.json": "5f549ea89750ef715c6c93f8387984ea047ca854ca1930610faec740f8fad07c",
+        "oof_predictions.csv": "e925fcbbbe8ceef1971ce28a1fa16b4434b407d76592019e9c43d41a3aa7769c",
+        "robustness.csv": "0b12b31e531342deebad675646efd321a7a700c53edd5d9a92c8c335f518d151",
+        "final_epoch.pt": "e1844e26590d4f0af6b2b6b8cf53402543cb1c8f3cf2c3ddd4d2e991327dabd8"
+      },
+      "checks": [
+        {
+          "check": "train_macro_f1",
+          "actual": 0.8721321030674621,
+          "expected": 0.8721321030674621,
+          "pass": true
+        },
+        {
+          "check": "validation_macro_f1",
+          "actual": 0.717580681717781,
+          "expected": 0.717580681717781,
+          "pass": true
+        },
+        {
+          "check": "saved_validation_probabilities",
+          "max_abs_difference": 2.9792785682936085e-08,
+          "pass": true
+        },
+        {
+          "check": "weights_and_batchnorm_buffers_unchanged",
+          "pass": true
+        },
+        {
+          "check": "gpu_memory_under_3gb",
+          "peak_bytes": 135195648,
+          "pass": true
+        }
+      ],
+      "pass": false
+    },
+    {
+      "model": "CompactBlurCNN",
+      "fold": 4,
+      "run_id": "t3_gender_e5_compact_blur_cnn_gender_compactblurcnn_f4_s2753_029107022917_20260831T064434Z46c915",
+      "source_sha256": {
+        "config.json": "e671baae0dd319b9a655b843abb515ec31f9a14884e3a6db765c91e3c9d4c9d2",
+        "normalization.json": "539e5174b1f44e350d36d1e7fed9a79b5b92e47e3d0ad1e8edf134f6cda70d87",
+        "history.csv": "43fda5e0173dedd425322c031a13b91c656a8a914e1497769763be68330c1f7a",
+        "metrics.json": "56a6cc7e8eabba32c9aef4556c971950d67d3811ae1c3ff4fd518ca9494a1977",
+        "oof_predictions.csv": "bf8a9b8a96a119da0a44bbc07b99f13f9dc35193e4e14824d385e5cf9e48edd2",
+        "robustness.csv": "cd0d8787a53a7adadcc250edc07b39314b9dd80b79626f0c7b2e6f2025d6823a",
+        "final_epoch.pt": "15e6401f5e0d2bac29c9ffb151b852d872d4d2ec71f4d2854ed16ecbb524d6e7"
+      },
+      "checks": [
+        {
+          "check": "train_macro_f1",
+          "actual": 0.8856178029995532,
+          "expected": 0.8856178029995532,
+          "pass": true
+        },
+        {
+          "check": "validation_macro_f1",
+          "actual": 0.7085293651532218,
+          "expected": 0.7085293651532218,
+          "pass": true
+        },
+        {
+          "check": "saved_validation_probabilities",
+          "max_abs_difference": 2.9789733901885995e-08,
+          "pass": true
+        },
+        {
+          "check": "weights_and_batchnorm_buffers_unchanged",
+          "pass": true
+        },
+        {
+          "check": "gpu_memory_under_3gb",
+          "peak_bytes": 135195648,
+          "pass": true
+        }
+      ],
+      "pass": false
+    }
+  ],
+  "runtime": {
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA L4"
+  },
+  "diagnostic_source_sha256": "a7ffdbe57bba3bd80ae516a6bb908a43e284b96aeab83e2167f1967f3b007bf7",
+  "split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+  "verified_input_images": 32773,
+  "interpretation": "Diagnostic checks only; no model acceptance or permission for more training."
+}

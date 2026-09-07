@@ -1,0 +1,36 @@
+{
+  "rows": 32773,
+  "fresh_vs_saved_contract_changes": {
+    "environment": {
+      "saved": {
+        "numpy": "2.5.2",
+        "pandas": "3.0.5",
+        "platform": "Linux-7.1.12-200.fc44.x86_64-x86_64-with-glibc2.43",
+        "python": "3.14.7",
+        "scipy": "1.16.3",
+        "skimage": "0.26.0",
+        "sklearn": "1.9.0"
+      },
+      "fresh": {
+        "python": "3.14.7",
+        "numpy": "2.5.2",
+        "pandas": "3.0.5",
+        "scipy": "1.16.3",
+        "skimage": "0.26.0",
+        "sklearn": "1.9.0",
+        "platform": "Linux-7.1.13-200.fc44.x86_64-x86_64-with-glibc2.43"
+      }
+    },
+    "audit_contract_hash": {
+      "saved": "92b53b8bc293168688bc5cbe6acbd5dd8483a9fea42cafd88111065605c39f79",
+      "fresh": "74cb33cdb6d3e0e05616436cecfd02b7a3ef234e9caed273d1d55cea23190fbb"
+    }
+  },
+  "old_manifest_pass_count": 44,
+  "old_manifest_count": 44,
+  "diagnostic_hash_pass": true,
+  "diagnostic_metadata_matches": true,
+  "remeasured_rows": 160,
+  "remeasure_max_error": 1.7763568394002505e-15,
+  "completion_hash": "da18800eda834813de427f2288ac2a383a5d0eca3c03e3d82cb617bd09d29232"
+}

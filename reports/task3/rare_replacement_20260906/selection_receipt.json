@@ -1,0 +1,11 @@
+{
+  "selected_images": 130,
+  "inputs": {
+    "reports/task3_rare_replacement_20260906/home/selected_candidates.csv": "2be1ec18faae675eed396d9ecf0c47b18245edaa27d209adc713eefa9a680678",
+    "reports/task3_rare_replacement_20260906/party/selected_candidates.csv": "da2af5f451e4df76ba6223dffbba71c9e79df0a4da8b27cfb55580ca457d8342",
+    "reports/task3_rare_replacement_20260906/smart_casual/selected_candidates.csv": "83a71096a360b4565e1802336e8c9fcdbb13b70cf5bfe4b26a1eef68397545a6",
+    "reports/task3_rare_replacement_20260906/travel/selected_candidates.csv": "13b60dec1fa7156388d0ddff5c11826ef8be27c04bfefc98593be7bac67552e1",
+    "reports/task3_rare_replacement_20260906/camera_travel/selected_candidates.csv": "89399f176e4e26a976a49fa747e88b4a18f2d39c50d589fa7b2a18d779e06d62"
+  },
+  "prepared_candidates_sha256": "51fc1560c0aecc0f57653e7fdd91582070a45840ef1838a1e2c26595e49415d9"
+}

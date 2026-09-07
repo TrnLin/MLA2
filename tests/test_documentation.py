@@ -134,9 +134,6 @@ def test_task4_baseline_decision_and_handoffs_are_frozen() -> None:
     figure_readme = (
         ROOT / "results/figures/task4/README.md"
     ).read_text(encoding="utf-8")
-    plan = (
-        ROOT / "docs/superpowers/plans/2026-08-27-task4-baseline-search.md"
-    ).read_text(encoding="utf-8")
 
     assert "0022-task4-baseline-search.md" in decision_index
     assert "- Status: Accepted" in decision
@@ -162,8 +159,9 @@ def test_task4_baseline_decision_and_handoffs_are_frozen() -> None:
     ):
         assert artifact in evidence_readme
     assert "baseline_examples.png" in figure_readme
-    assert "5e-8" not in plan
-    assert "1e-5" in plan
+    # The planning copy is local-only; the accepted decision is the public contract.
+    assert "5e-8" not in decision
+    assert "1e-5" in decision
     notebooks = [
         nbformat.read(ROOT / "notebooks/task-4" / filename, as_version=4)
         for filename in ("01_v1_eda.ipynb", "05_task4_visual_search.ipynb")

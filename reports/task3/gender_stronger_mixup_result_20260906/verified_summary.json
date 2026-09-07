@@ -1,0 +1,57 @@
+{
+  "status": "fail",
+  "passed": 17,
+  "total": 19,
+  "parent_validation_f1": 0.8089088049657726,
+  "candidate_validation_f1": 0.7987047274209031,
+  "parent_mean_train_f1": 0.9381230649694778,
+  "candidate_mean_train_f1": 0.9205654689787601,
+  "parent_mean_gap": 0.1291326731140856,
+  "candidate_mean_gap": 0.12195898114681636,
+  "failed": [
+    {
+      "gate": "vs_mixup20.fold_0.gap_reduction",
+      "rule": "> 0",
+      "status": "fail",
+      "value": -0.0004487098892267394
+    },
+    {
+      "gate": "vs_mixup20.mean_gap_reduction",
+      "rule": ">= 0.02",
+      "status": "fail",
+      "value": 0.007173691967269247
+    }
+  ],
+  "class_f1_delta": {
+    "Boys": -0.01878324887174443,
+    "Girls": -0.03031068451629193,
+    "Men": -0.0024756804276050426,
+    "Unisex": 0.0029883961653055513,
+    "Women": -0.0024391700740113986
+  },
+  "unisex_recall": {
+    "candidate": 0.5106082036775106,
+    "dropout": 0.5106082036775106
+  },
+  "extra_validation_errors": 41,
+  "validation_interval": {
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "families_by_fold": {
+      "0": 4564,
+      "4": 4570
+    },
+    "lower_95": -0.020515214106747053,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "point": -0.010204077544869405,
+    "repetitions": 10000,
+    "seed": 2753,
+    "selection_bias_removed": false,
+    "upper_95": -0.0003357170181873015
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "all_development_images_decoded_and_hash_checked": 33459,
+  "dataset": {
+    "folds": [
+      {
+        "fold": 0,
+        "new_added_training_rows": 436,
+        "new_added_validation_rows": 131,
+        "previous_added_training_rows": 96,
+        "previous_added_validation_rows": 24,
+        "teacher_training_rows": 26219,
+        "teacher_validation_rows": 6553,
+        "training_rows": 26751,
+        "validation_rows": 6708
+      },
+      {
+        "fold": 1,
+        "new_added_training_rows": 458,
+        "new_added_validation_rows": 109,
+        "previous_added_training_rows": 97,
+        "previous_added_validation_rows": 23,
+        "teacher_training_rows": 26216,
+        "teacher_validation_rows": 6556,
+        "training_rows": 26771,
+        "validation_rows": 6688
+      },
+      {
+        "fold": 2,
+        "new_added_training_rows": 457,
+        "new_added_validation_rows": 110,
+        "previous_added_training_rows": 95,
+        "previous_added_validation_rows": 25,
+        "teacher_training_rows": 26219,
+        "teacher_validation_rows": 6553,
+        "training_rows": 26771,
+        "validation_rows": 6688
+      },
+      {
+        "fold": 3,
+        "new_added_training_rows": 456,
+        "new_added_validation_rows": 111,
+        "previous_added_training_rows": 97,
+        "previous_added_validation_rows": 23,
+        "teacher_training_rows": 26219,
+        "teacher_validation_rows": 6553,
+        "training_rows": 26772,
+        "validation_rows": 6687
+      },
+      {
+        "fold": 4,
+        "new_added_training_rows": 461,
+        "new_added_validation_rows": 106,
+        "previous_added_training_rows": 95,
+        "previous_added_validation_rows": 25,
+        "teacher_training_rows": 26215,
+        "teacher_validation_rows": 6557,
+        "training_rows": 26771,
+        "validation_rows": 6688
+      }
+    ],
+    "holdout_rows": 5778,
+    "initialization": "fresh_scratch_weights",
+    "label_map_sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
+    "name": "teacher_plus_rare_usage_v2_20260906",
+    "new_added_rows": 567,
+    "previous_added_rows": 120,
+    "previous_external_folds_preserved": true,
+    "previous_split_sha256": "7d5f3a986ef8e00f53ee1c86d408f1c3a155d6b0a0ab99bef4c9f7eb27dbda77",
+    "quarantine_rows": 61,
+    "same_usage_target": true,
+    "source_geometry_sha256": "564f1141a475a321f6a7bb5661062957655bcad4c907ceb7b3bbc1c11fa1dc42",
+    "split_path": "data/processed/teacher_plus_rare_usage_v2_20260906/splits.csv",
+    "split_sha256": "0bd490672543b7022fa7a883be9b006d63681d7c168e497e0388616836696776",
+    "teacher_folds_preserved": true,
+    "teacher_rows": 38612,
+    "teacher_split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+    "total_rows": 39299,
+    "usage_development_rows": 33459
+  },
+  "production_training_started": false,
+  "protected_images_not_read": true,
+  "references": {
+    "previous_expansion": {
+      "macro_f1": 0.4086341339960346,
+      "rows": 32772,
+      "run_ids": [
+        "t3_usage_expanded_e8_usage_smallcnn_f0_s2753_6eb56854d557_20260906T091936Zd9a955",
+        "t3_usage_expanded_e8_usage_smallcnn_f1_s2753_6eb56854d557_20260906T092900Z43e2aa",
+        "t3_usage_expanded_e8_usage_smallcnn_f2_s2753_6eb56854d557_20260906T093831Zb99abd",
+        "t3_usage_expanded_e8_usage_smallcnn_f3_s2753_6eb56854d557_20260906T094801Z1a6eea",
+        "t3_usage_expanded_e8_usage_smallcnn_f4_s2753_6eb56854d557_20260906T095731Zaa2e15"
+      ]
+    },
+    "teacher_e8": {
+      "macro_f1": 0.41939320264210234,
+      "rows": 32772,
+      "run_ids": [
+        "t3_usage_e8_translation_usage_smallcnn_f0_s2753_be3cf562b9ab_20260831T173123Zd848db",
+        "t3_usage_e8_translation_usage_smallcnn_f1_s2753_be3cf562b9ab_20260831T174039Zabd68d",
+        "t3_usage_e8_translation_usage_smallcnn_f2_s2753_be3cf562b9ab_20260831T174953Z528158",
+        "t3_usage_e8_translation_usage_smallcnn_f3_s2753_be3cf562b9ab_20260831T175907Z3587b1",
+        "t3_usage_e8_translation_usage_smallcnn_f4_s2753_be3cf562b9ab_20260831T180832Z708926"
+      ]
+    }
+  }
+}

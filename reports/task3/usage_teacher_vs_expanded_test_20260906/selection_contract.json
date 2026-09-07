@@ -1,0 +1,33 @@
+{
+  "declared_at_utc": "2026-09-06T11:01:16.704941+00:00",
+  "scope": "Completed individual teacher-only experiments with all five canonical folds",
+  "validation_population": 32772,
+  "accuracy_reference": {
+    "model": "E1",
+    "experiment_id": "t3_primary_baseline_smallcnn",
+    "folds": "0,1,2,3,4",
+    "validation_rows": 32772,
+    "correct": 29265,
+    "accuracy": 0.8929879165140974,
+    "macro_f1": 0.37375599510324
+  },
+  "macro_f1_reference": {
+    "model": "E8",
+    "experiment_id": "t3_usage_translation_2px_smallcnn",
+    "folds": "0,1,2,3,4",
+    "validation_rows": 32772,
+    "correct": 29119,
+    "accuracy": 0.8885328939338459,
+    "macro_f1": 0.41939320264210234
+  },
+  "incomplete_screens": "S1, S2, U1, U2 and U3 have only folds 0 and 4",
+  "diagnostic_exclusions": "EDA probes use a smaller selected population; the previously declined E2/E3/E8 blend is a multi-experiment diagnostic, not an individual experiment",
+  "test_labels_used_for_selection": false,
+  "test_labels_were_seen_in_previous_expanded_model_comparison": true,
+  "inference_rule": "Equal mean of the five saved fold softmax vectors, then argmax",
+  "training_or_tuning": false,
+  "source_hashes": {
+    "results/runs.csv": "a142d6f13b0d09ed7880dc1a214bfab6b71b360bee14f4198c78132eab62e431",
+    "results/evidence/task3/results/runs.csv": "a896d900475018e8a6ad2af4046c8b2371df6478597e81a2f35d60d1c4e043b1"
+  }
+}

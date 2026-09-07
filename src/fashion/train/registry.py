@@ -13,16 +13,18 @@ import tempfile
 import time
 import uuid
 from collections.abc import Mapping
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timezone
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any, Iterator, Sequence
 
 import pandas as pd
 
 from fashion.config import RUNS_CSV
 from fashion.train.artifacts import atomic_write_csv, canonical_json_bytes
+from fashion.train.task3_registry import REGISTRY_COLUMNS
+from fashion.train.task3_registry import RunRegistry as Task3Registry
 
 RUN_STATUSES = frozenset({"running", "completed", "failed", "interrupted"})
 TERMINAL_STATUSES = RUN_STATUSES - {"running"}
@@ -112,8 +114,12 @@ TASK4_RUN_COLUMNS = (
     "error_message",
 )
 
-RUN_COLUMNS = TASK2_RUN_COLUMNS + tuple(
+TASK2_TASK4_RUN_COLUMNS = TASK2_RUN_COLUMNS + tuple(
     column for column in TASK4_RUN_COLUMNS if column not in TASK2_RUN_COLUMNS
+)
+
+RUN_COLUMNS = TASK2_TASK4_RUN_COLUMNS + tuple(
+    column for column in REGISTRY_COLUMNS if column not in TASK2_TASK4_RUN_COLUMNS
 )
 
 RUN_KINDS = frozenset({"smoke", "candidate", "benchmark", "stability", "final_refit"})
@@ -228,7 +234,13 @@ def _read_union_rows(path: Path) -> list[dict[str, str]]:
         with path.open(newline="", encoding="utf-8") as handle:
             reader = csv.DictReader(handle, strict=True)
             header = tuple(reader.fieldnames or ())
-            if header not in {TASK2_RUN_COLUMNS, TASK4_RUN_COLUMNS, RUN_COLUMNS}:
+            if header not in {
+                TASK2_RUN_COLUMNS,
+                TASK4_RUN_COLUMNS,
+                TASK2_TASK4_RUN_COLUMNS,
+                REGISTRY_COLUMNS,
+                RUN_COLUMNS,
+            }:
                 raise RegistrySchemaError(
                     f"registry schema mismatch at {path}; expected a supported run schema"
                 )
@@ -400,12 +412,55 @@ class RunRecord:
         return row
 
 
-class RunRegistry:
-    """Task 2 DataFrame view over the shared run ledger."""
+class RunRegistry(Task3Registry):
+    """Task 2 record API and Task 3 lifecycle API over one shared ledger.
 
-    def __init__(self, path: str | Path = RUNS_CSV) -> None:
-        self.path = Path(path)
-        self.lock_path = _lock_path(self.path)
+    Task 2 uses append/finalize/read; Task 3 uses start/update/complete/fail.
+    Each writer preserves the other tasks' fields and terminal states.
+    """
+
+    def __init__(self, path: str | Path = RUNS_CSV, mirrors: Sequence[str | Path] = ()) -> None:
+        super().__init__(path, mirrors)
+
+    def _read_rows(self) -> list[dict[str, str]]:
+        return _read_union_rows(self.path)
+
+    @contextmanager
+    def _locked(self) -> Iterator[None]:
+        paths = sorted({self.path.resolve(), *(p.resolve() for p in self.mirrors)})
+        with ExitStack() as locks:
+            for path in paths:
+                locks.enter_context(_registry_lock(path, exclusive=True))
+            yield
+
+    def _write_rows(self, rows: Sequence[Mapping[str, Any]]) -> None:
+        destinations = {self.path: list(rows)}
+        for mirror in self.mirrors:
+            if mirror.resolve() == self.path.resolve():
+                continue
+            mirrored = {row["run_id"]: row for row in _read_union_rows(mirror)}
+            for row in rows:
+                if row["task"] != "task3":
+                    continue
+                old = mirrored.get(row["run_id"])
+                if old is not None:
+                    if old["task"] != "task3":
+                        raise ValueError(f"mirror run ID belongs to another task: {row['run_id']}")
+                    if old["status"] in {"complete", "failed"} and any(
+                        old[key] != row.get(key, "") for key in REGISTRY_COLUMNS
+                    ):
+                        raise ValueError(f"final mirror row cannot change: {row['run_id']}")
+                mirrored[row["run_id"]] = {column: row.get(column, "") for column in RUN_COLUMNS}
+            destinations[mirror] = list(mirrored.values())
+        for path, destination_rows in destinations.items():
+            if all(row["task"] == "task3" for row in destination_rows):
+                Task3Registry(path)._write_rows(destination_rows)
+            else:
+                merged = [
+                    {column: row.get(column, "") for column in RUN_COLUMNS}
+                    for row in destination_rows
+                ]
+                _write_union_rows_with_csv(path, merged)
 
     def read(self) -> pd.DataFrame:
         """Return all rows as strings so identifiers and blank fields stay exact."""
@@ -414,12 +469,14 @@ class RunRegistry:
         task_rows = [
             {column: row[column] for column in TASK2_RUN_COLUMNS}
             for row in rows
-            if row["task"] != "task4"
+            if row["task"] == "task2"
         ]
         return pd.DataFrame(task_rows, columns=TASK2_RUN_COLUMNS)
 
     def append(self, record: RunRecord) -> None:
         """Append one new running row; never reuse a run ID."""
+        if record.task != "task2":
+            raise ValueError("task must be task2 for append")
         if record.status != "running":
             raise ValueError("new registry rows must start with status='running'")
         task2_row = record.to_row()
@@ -433,6 +490,8 @@ class RunRegistry:
 
     def finalize(self, record: RunRecord) -> None:
         """Replace a running row once, while preserving its starting identity."""
+        if record.task != "task2":
+            raise ValueError("task must be task2 for finalize")
         if record.status not in TERMINAL_STATUSES:
             raise ValueError("finalized run must have a terminal status")
         with _registry_lock(self.path, exclusive=True):
@@ -449,9 +508,7 @@ class RunRegistry:
             if current["status"] != "running":
                 raise ImmutableRunError(f"run is already final: {record.run_id}")
             new_row = record.to_row()
-            changed = [
-                name for name in IMMUTABLE_START_FIELDS if current[name] != new_row[name]
-            ]
+            changed = [name for name in IMMUTABLE_START_FIELDS if current[name] != new_row[name]]
             if changed:
                 raise ImmutableRunError(
                     f"cannot change run identity after start: {', '.join(changed)}"
@@ -460,13 +517,13 @@ class RunRegistry:
             _write_union_rows_with_pandas(self.path, rows)
 
     def interrupt(self, run_id: str, *, reason: str) -> None:
-        """Mark one running non-Task-4 row interrupted without losing other tasks."""
+        """Mark one running Task 2 row interrupted without changing other tasks."""
         with _registry_lock(self.path, exclusive=True):
             rows = _read_union_rows(self.path)
             matches = [
                 index
                 for index, row in enumerate(rows)
-                if row["run_id"] == run_id and row["task"] != "task4"
+                if row["run_id"] == run_id and row["task"] == "task2"
             ]
             if not matches:
                 raise RegistryError(f"run_id does not exist: {run_id}")
@@ -680,9 +737,7 @@ class Task4RunRegistry:
                     )
             return rows
         except (OSError, RegistrySchemaError, RunRegistryError) as error:
-            if isinstance(error, RunRegistryError) and str(error).startswith(
-                "malformed registry:"
-            ):
+            if isinstance(error, RunRegistryError) and str(error).startswith("malformed registry:"):
                 raise
             raise RunRegistryError(f"malformed registry: {error}") from error
 
@@ -712,8 +767,7 @@ class Task4RunRegistry:
     def _validate_row(self, row: Mapping[str, str], *, check_artifacts: bool) -> None:
         if row["schema_version"] != TASK4_SCHEMA_VERSION:
             raise RunRegistryError(
-                f"schema_version must be {TASK4_SCHEMA_VERSION}, "
-                f"got {row['schema_version']!r}"
+                f"schema_version must be {TASK4_SCHEMA_VERSION}, got {row['schema_version']!r}"
             )
         if row["task"] != "task4":
             raise RunRegistryError("task must be task4")
@@ -729,8 +783,7 @@ class Task4RunRegistry:
             raise RunRegistryError("pretrained runs must be comparison_only")
         if row["deployment_eligibility"] not in DEPLOYMENT_ELIGIBILITIES:
             raise RunRegistryError(
-                "deployment_eligibility has invalid value: "
-                f"{row['deployment_eligibility']}"
+                f"deployment_eligibility has invalid value: {row['deployment_eligibility']}"
             )
 
         started_at = _parse_task4_utc("started_at_utc", row["started_at_utc"])
@@ -745,13 +798,9 @@ class Task4RunRegistry:
             raise RunRegistryError("fold must be between 0 and 4")
         _parse_task4_int("seed", row["seed"], minimum=0)
         _parse_task4_int("embedding_dim", row["embedding_dim"], minimum=1)
-        planned_epochs = _parse_task4_int(
-            "planned_epochs", row["planned_epochs"], minimum=1
-        )
+        planned_epochs = _parse_task4_int("planned_epochs", row["planned_epochs"], minimum=1)
         if row["selected_epoch"]:
-            selected_epoch = _parse_task4_int(
-                "selected_epoch", row["selected_epoch"], minimum=1
-            )
+            selected_epoch = _parse_task4_int("selected_epoch", row["selected_epoch"], minimum=1)
             if selected_epoch > planned_epochs:
                 raise RunRegistryError("selected_epoch cannot exceed planned_epochs")
 
@@ -775,9 +824,7 @@ class Task4RunRegistry:
         status = row["status"]
         if status == "running":
             if completed_at is not None:
-                raise RunRegistryError(
-                    "completed_at_utc must be blank while status is running"
-                )
+                raise RunRegistryError("completed_at_utc must be blank while status is running")
             if row["error_type"] or row["error_message"]:
                 raise RunRegistryError("running rows cannot contain error fields")
         elif completed_at is None:
@@ -792,20 +839,14 @@ class Task4RunRegistry:
             ):
                 if not row[field_name]:
                     raise RunRegistryError(f"{field_name} is required for completed runs")
-            _validate_task4_hex_digest(
-                "checkpoint_sha256", row["checkpoint_sha256"], length=64
-            )
+            _validate_task4_hex_digest("checkpoint_sha256", row["checkpoint_sha256"], length=64)
             if check_artifacts:
                 self._validate_completion_artifacts(row)
         elif row["checkpoint_sha256"]:
-            _validate_task4_hex_digest(
-                "checkpoint_sha256", row["checkpoint_sha256"], length=64
-            )
+            _validate_task4_hex_digest("checkpoint_sha256", row["checkpoint_sha256"], length=64)
 
         if status == "failed" and (not row["error_type"] or not row["error_message"]):
-            raise RunRegistryError(
-                "error_type and error_message are required for failed runs"
-            )
+            raise RunRegistryError("error_type and error_message are required for failed runs")
         if len(row["error_message"]) > 500:
             raise RunRegistryError("error_message must be at most 500 characters")
 
@@ -832,9 +873,7 @@ def _parse_task4_utc(field_name: str, value: str) -> datetime:
     try:
         parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     except ValueError as error:
-        raise RunRegistryError(
-            f"{field_name} must be an ISO-8601 UTC timestamp"
-        ) from error
+        raise RunRegistryError(f"{field_name} must be an ISO-8601 UTC timestamp") from error
     if not value.endswith("Z") or parsed.tzinfo != timezone.utc:
         raise RunRegistryError(f"{field_name} must use UTC with a Z suffix")
     return parsed
@@ -867,12 +906,8 @@ def _parse_task4_float(field_name: str, value: str) -> float:
 
 
 def _validate_task4_hex_digest(field_name: str, value: str, *, length: int) -> None:
-    if len(value) != length or any(
-        character not in "0123456789abcdef" for character in value
-    ):
-        raise RunRegistryError(
-            f"{field_name} must be {length} lowercase hexadecimal characters"
-        )
+    if len(value) != length or any(character not in "0123456789abcdef" for character in value):
+        raise RunRegistryError(f"{field_name} must be {length} lowercase hexadecimal characters")
 
 
 def _sha256_file(path: Path) -> str:

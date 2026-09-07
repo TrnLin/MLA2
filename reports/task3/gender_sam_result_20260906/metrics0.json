@@ -1,0 +1,149 @@
+{
+  "accuracy": 0.9050816419960324,
+  "architecture_macs": null,
+  "auxiliary_loss_weight": 0.0,
+  "auxiliary_target": "none",
+  "balanced_accuracy": 0.7598971886592611,
+  "brier": 0.14527731104869265,
+  "checkpoint_policy": "final_epoch",
+  "class_counts": [
+    697,
+    558,
+    14054,
+    1409,
+    9502
+  ],
+  "class_weights": null,
+  "classifier_dropout": 0.3,
+  "clean_epoch_diagnostics_sha256": "1db1229d59240b388549d927b8ba4a7576c55fa11e85e273bf11a56f0abb32e5",
+  "confusion_matrix": [
+    [
+      122,
+      14,
+      14,
+      12,
+      9
+    ],
+    [
+      12,
+      101,
+      3,
+      6,
+      20
+    ],
+    [
+      5,
+      0,
+      3374,
+      31,
+      108
+    ],
+    [
+      8,
+      5,
+      114,
+      179,
+      48
+    ],
+    [
+      1,
+      7,
+      188,
+      17,
+      2155
+    ]
+  ],
+  "diagnostic_seconds": 32.80207862899988,
+  "early_stopped": false,
+  "ece_15": 0.022142897223163788,
+  "epochs_completed": 30,
+  "experiment_id": "t3_gender_name_truth_mixup_alpha020_sam005",
+  "final_train_eval_loss": 0.1792918409149125,
+  "final_train_eval_macro_f1": 0.9022492482039812,
+  "final_train_validation_macro_f1_gap": 0.10930164775310103,
+  "focal_gamma": 0.0,
+  "hypothesis_id": "t3_gender_name_truth_mixup_alpha020_sam005",
+  "input_view": "full",
+  "label_smoothing": 0.0,
+  "latency_ms_batch_1": 0.7021020599859185,
+  "loss": 0.28297534269944014,
+  "loss_name": "cross_entropy",
+  "macro_f1": 0.7929476004508802,
+  "mcc": 0.8330691087577509,
+  "mixup_receipt_sha256": "a0d5f606b119dbe44e1ae889f5298af59cc0a04ccfec752ee16dbc869e7e9648",
+  "model_family": "task3_small_cnn_gem_p3",
+  "nll": 0.2829753437659115,
+  "parameter_count": 390181,
+  "parent_run_ids": [
+    "t3_gender_name_truth_mixup_alpha020_gender_smallcnngem3_f0_s2753_4566a61e0e2d_20260906T070013Z8f7ca5"
+  ],
+  "peak_memory_bytes": 476876800,
+  "per_class": [
+    {
+      "class_index": 0,
+      "class_name": "Boys",
+      "f1": 0.7648902821316613,
+      "precision": 0.8243243243243243,
+      "predicted_count": 148,
+      "recall": 0.7134502923976608,
+      "support": 171
+    },
+    {
+      "class_index": 1,
+      "class_name": "Girls",
+      "f1": 0.7509293680297398,
+      "precision": 0.7952755905511811,
+      "predicted_count": 127,
+      "recall": 0.7112676056338029,
+      "support": 142
+    },
+    {
+      "class_index": 2,
+      "class_name": "Men",
+      "f1": 0.9357925391762585,
+      "precision": 0.9136203628486326,
+      "predicted_count": 3693,
+      "recall": 0.9590676520750426,
+      "support": 3518
+    },
+    {
+      "class_index": 3,
+      "class_name": "Unisex",
+      "f1": 0.5976627712854757,
+      "precision": 0.7306122448979592,
+      "predicted_count": 245,
+      "recall": 0.5056497175141242,
+      "support": 354
+    },
+    {
+      "class_index": 4,
+      "class_name": "Women",
+      "f1": 0.9154630416312658,
+      "precision": 0.9209401709401709,
+      "predicted_count": 2340,
+      "recall": 0.9100506756756757,
+      "support": 2368
+    }
+  ],
+  "primary_loss_weight": 1.0,
+  "run_id": "t3_gender_name_truth_mixup_alpha020_sam005_gender_smallcnngem3_f0_s2753_0f65d12d027f_20260906T091727Zb222b9",
+  "sam_receipt_sha256": "51aaa91457bd2a3d4d1030272c31946ccaaa4601d9e355ba69c1c75572c7946f",
+  "sample_weight_strategy": "none",
+  "selected_epoch": 30,
+  "selected_validation_macro_f1": 0.7929476004508802,
+  "support": 6553,
+  "target": "gender",
+  "train_seconds": 575.1454095169993,
+  "training_augmentation": "translation_2px_p05_mild_darkening_p025_grayscale_p010",
+  "training_rows_after_selection": 26220,
+  "training_rows_before_selection": 26220,
+  "training_selection_contract": {
+    "after_rows": 26220,
+    "before_rows": 26220,
+    "strategy": "all",
+    "validation_unchanged": true
+  },
+  "training_selection_strategy": "all",
+  "validation_fold": 0,
+  "weighted_f1": 0.9017145528681078
+}

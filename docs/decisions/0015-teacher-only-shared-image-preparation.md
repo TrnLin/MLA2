@@ -1,6 +1,6 @@
 # 0015 — Teacher-only shared image preparation
 
-- Status: Accepted
+- Status: Accepted; combined Task 3 dataset exception in [0018](0018-task3-external-source-label-intake.md)
 - Date: 2026-08-23
 - Supersedes: 0008, 0013, and the fixed shared protocol parts of 0009
 

@@ -1,0 +1,307 @@
+"""Frozen configuration for the Task 3 primary learnable baseline."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from dataclasses import asdict, dataclass
+from typing import Literal
+
+Task3Target = Literal["gender", "usage"]
+
+TARGET_CLASS_COUNTS: dict[Task3Target, int] = {"gender": 5, "usage": 9}
+TINYRESNET18_PM_WIDTHS = (12, 24, 48, 96)
+COMPACT_BLUR_CNN_WIDTHS = (24, 48, 96, 128)
+TINYHRNET20_WIDTHS = (20, 40, 80)
+TINYCONVNEXT18_WIDTHS = (18, 36, 72, 144)
+TINYCONVNEXT18_DEPTHS = (1, 1, 3, 1)
+NARROW_GEM3_FAMILY = "task3_small_cnn_gem_p3_narrow64"
+NARROW_GEM3_CHANNELS = (32, 64, 128, 64)
+
+
+@dataclass(frozen=True)
+class Task3BaselineConfig:
+    """One-factor-frozen configuration shared by every baseline fold."""
+
+    target: Task3Target
+    image_height: int = 80
+    image_width: int = 60
+    channels: tuple[int, int, int, int] = (32, 64, 128, 256)
+    batch_size: int = 128
+    epochs: int = 30
+    learning_rate: float = 0.001
+    weight_decay: float = 0.0001
+    minimum_learning_rate: float = 0.00001
+    seed: int = 2753
+    num_workers: int = 2
+    mixed_precision: bool = False
+    early_stopping: bool = False
+    augmentation: str = "none"
+    loss_name: str = "cross_entropy"
+    optimizer_name: str = "AdamW"
+    scheduler_name: str = "CosineAnnealingLR"
+    checkpoint_rule: str = "final_epoch"
+    model_family: str = "task3_small_cnn"
+    scratch: bool = True
+    submission_eligible: bool = True
+
+    def __post_init__(self) -> None:
+        if self.target not in TARGET_CLASS_COUNTS:
+            raise ValueError(f"unsupported Task 3 target: {self.target}")
+        if (self.image_height, self.image_width) != (80, 60):
+            raise ValueError("the primary baseline input must stay at 80x60")
+        if self.model_family == NARROW_GEM3_FAMILY:
+            if self.target != "gender" or self.channels != NARROW_GEM3_CHANNELS:
+                raise ValueError("narrow GeM requires gender and channels 32,64,128,64")
+        elif self.channels != (32, 64, 128, 256):
+            raise ValueError("the primary baseline channels must stay at 32,64,128,256")
+        for field_name in ("batch_size", "epochs", "num_workers"):
+            if getattr(self, field_name) < 0:
+                raise ValueError(f"{field_name} cannot be negative")
+        if self.batch_size == 0 or self.epochs == 0:
+            raise ValueError("batch_size and epochs must be positive")
+        if self.learning_rate <= 0 or self.minimum_learning_rate < 0:
+            raise ValueError("learning rates must be non-negative and start above zero")
+        if self.minimum_learning_rate >= self.learning_rate:
+            raise ValueError("minimum learning rate must be below the starting rate")
+        if self.augmentation != "none":
+            raise ValueError("augmentation is disabled for the primary baseline")
+        if self.loss_name != "cross_entropy":
+            raise ValueError("the primary baseline uses ordinary cross-entropy")
+        if not self.scratch or not self.submission_eligible:
+            raise ValueError("the primary baseline must be scratch-trained and eligible")
+
+    @property
+    def num_classes(self) -> int:
+        return TARGET_CLASS_COUNTS[self.target]
+
+    def to_dict(self) -> dict[str, object]:
+        payload = asdict(self)
+        payload["channels"] = list(self.channels)
+        payload["num_classes"] = self.num_classes
+        return payload
+
+
+def config_digest(config: Task3BaselineConfig, *, length: int = 12) -> str:
+    """Return a stable short digest for one frozen baseline configuration."""
+    if length < 8:
+        raise ValueError("config digest length must be at least 8")
+    payload = json.dumps(config.to_dict(), sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:length]
+
+
+def narrow_gem3_parameter_count() -> int:
+    """Four scratch convolutions, BatchNorm, fixed GeM and a five-class head."""
+    widths = (3, *NARROW_GEM3_CHANNELS)
+    convolution = sum(a * b * 9 for a, b in zip(widths[:-1], widths[1:], strict=True))
+    return convolution + 2 * sum(widths[1:]) + widths[-1] * 5 + 5
+
+
+def baseline_parameter_count(target: Task3Target) -> int:
+    """Calculate trainable parameters from the declared architecture, without PyTorch."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    channels = (3, 32, 64, 128, 256)
+    convolutions = sum(
+        input_channels * output_channels * 3 * 3
+        for input_channels, output_channels in zip(channels[:-1], channels[1:], strict=True)
+    )
+    batch_norm = sum(2 * output_channels for output_channels in channels[1:])
+    classes = TARGET_CLASS_COUNTS[target]
+    output_head = 256 * classes + classes
+    return convolutions + batch_norm + output_head
+
+
+def gender_audience_aux_parameter_count() -> int:
+    """Return E10's E6 parameters plus one training-only three-way head."""
+    return baseline_parameter_count("gender") + 256 * 3 + 3
+
+
+def tinyresnet18_pm_parameter_count(target: Task3Target) -> int:
+    """Calculate the parameter-matched TinyResNet contract without PyTorch."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    widths = TINYRESNET18_PM_WIDTHS
+    parameters = 3 * widths[0] * 3 * 3 + 2 * widths[0]
+    input_channels = widths[0]
+    for stage, output_channels in enumerate(widths):
+        for block in range(2):
+            stride = 2 if stage > 0 and block == 0 else 1
+            parameters += input_channels * output_channels * 3 * 3
+            parameters += 2 * output_channels
+            parameters += output_channels * output_channels * 3 * 3
+            parameters += 2 * output_channels
+            if stride != 1 or input_channels != output_channels:
+                parameters += input_channels * output_channels
+                parameters += 2 * output_channels
+            input_channels = output_channels
+    classes = TARGET_CLASS_COUNTS[target]
+    return parameters + widths[-1] * classes + classes
+
+
+def tinyresnet18_pm_macs(target: Task3Target) -> int:
+    """Return convolution and classifier MACs for the fixed 80x60 input."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    widths = TINYRESNET18_PM_WIDTHS
+    height, width = 80, 60
+    macs = height * width * 3 * widths[0] * 3 * 3
+    input_channels = widths[0]
+    for stage, output_channels in enumerate(widths):
+        for block in range(2):
+            stride = 2 if stage > 0 and block == 0 else 1
+            if stride == 2:
+                height = (height + 1) // 2
+                width = (width + 1) // 2
+            macs += height * width * input_channels * output_channels * 3 * 3
+            macs += height * width * output_channels * output_channels * 3 * 3
+            if stride != 1 or input_channels != output_channels:
+                macs += height * width * input_channels * output_channels
+            input_channels = output_channels
+    return macs + widths[-1] * TARGET_CLASS_COUNTS[target]
+
+
+def compact_blur_cnn_parameter_count(target: Task3Target) -> int:
+    """Calculate the fixed compact anti-aliased CNN contract without PyTorch."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    first, second, third, output = COMPACT_BLUR_CNN_WIDTHS
+    parameters = 3 * first * 3 * 3 + 2 * first
+    parameters += first * second * 3 * 3 + 2 * second
+    parameters += second * third * 3 * 3 + 2 * third
+    parameters += third * 3 * 3 + 2 * third
+    parameters += third * output + 2 * output
+    classes = TARGET_CLASS_COUNTS[target]
+    return parameters + output * classes + classes
+
+
+def compact_blur_cnn_macs(target: Task3Target) -> int:
+    """Return convolution, fixed BlurPool, and classifier MACs for an 80x60 input."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    first, second, third, output = COMPACT_BLUR_CNN_WIDTHS
+    height, width = 80, 60
+    macs = height * width * 3 * first * 3 * 3
+    height, width = (height + 1) // 2, (width + 1) // 2
+    macs += height * width * first * 3 * 3
+    macs += height * width * first * second * 3 * 3
+    height, width = (height + 1) // 2, (width + 1) // 2
+    macs += height * width * second * 3 * 3
+    macs += height * width * second * third * 3 * 3
+    height, width = (height + 1) // 2, (width + 1) // 2
+    macs += height * width * third * 3 * 3
+    macs += height * width * third * 3 * 3
+    macs += height * width * third * output
+    return macs + output * TARGET_CLASS_COUNTS[target]
+
+
+def tinyhrnet20_parameter_count(target: Task3Target) -> int:
+    """Calculate the fixed three-resolution TinyHRNet contract without PyTorch."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    high, middle, low = TINYHRNET20_WIDTHS
+
+    def conv_bn(input_channels: int, output_channels: int, kernel_size: int) -> int:
+        return input_channels * output_channels * kernel_size**2 + 2 * output_channels
+
+    def residual_block(channels: int) -> int:
+        return 2 * conv_bn(channels, channels, 3)
+
+    parameters = conv_bn(3, high, 3) + conv_bn(high, high, 3)
+    parameters += 2 * residual_block(high)
+    parameters += conv_bn(high, middle, 3)
+
+    two_branch_blocks = residual_block(high) + residual_block(middle)
+    two_branch_fusion = conv_bn(high, middle, 3) + conv_bn(middle, high, 1)
+    parameters += 2 * (two_branch_blocks + two_branch_fusion)
+
+    parameters += conv_bn(middle, low, 3)
+    parameters += residual_block(high) + residual_block(middle) + residual_block(low)
+    parameters += conv_bn(middle, high, 1) + conv_bn(low, high, 1)
+    parameters += conv_bn(high, middle, 3) + conv_bn(low, middle, 1)
+    parameters += conv_bn(high, middle, 3) + conv_bn(middle, low, 3)
+    parameters += conv_bn(middle, low, 3)
+
+    classes = TARGET_CLASS_COUNTS[target]
+    return parameters + sum(TINYHRNET20_WIDTHS) * classes + classes
+
+
+def tinyhrnet20_macs(target: Task3Target) -> int:
+    """Return convolution and classifier MACs for the fixed 80x60 TinyHRNet."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    high, middle, low = TINYHRNET20_WIDTHS
+    high_area, middle_area, low_area = 40 * 30, 20 * 15, 10 * 8
+
+    def conv_macs(
+        input_channels: int,
+        output_channels: int,
+        kernel_size: int,
+        output_area: int,
+    ) -> int:
+        return output_area * input_channels * output_channels * kernel_size**2
+
+    def residual_macs(channels: int, area: int) -> int:
+        return 2 * conv_macs(channels, channels, 3, area)
+
+    macs = conv_macs(3, high, 3, 80 * 60)
+    macs += conv_macs(high, high, 3, high_area)
+    macs += 2 * residual_macs(high, high_area)
+    macs += conv_macs(high, middle, 3, middle_area)
+
+    two_branch_blocks = residual_macs(high, high_area) + residual_macs(middle, middle_area)
+    two_branch_fusion = conv_macs(high, middle, 3, middle_area) + conv_macs(
+        middle, high, 1, middle_area
+    )
+    macs += 2 * (two_branch_blocks + two_branch_fusion)
+
+    macs += conv_macs(middle, low, 3, low_area)
+    macs += residual_macs(high, high_area)
+    macs += residual_macs(middle, middle_area)
+    macs += residual_macs(low, low_area)
+    macs += conv_macs(middle, high, 1, middle_area)
+    macs += conv_macs(low, high, 1, low_area)
+    macs += conv_macs(high, middle, 3, middle_area)
+    macs += conv_macs(low, middle, 1, low_area)
+    macs += conv_macs(high, middle, 3, middle_area)
+    macs += conv_macs(middle, low, 3, low_area)
+    macs += conv_macs(middle, low, 3, low_area)
+    return macs + sum(TINYHRNET20_WIDTHS) * TARGET_CLASS_COUNTS[target]
+
+
+def tinyconvnext18_parameter_count(target: Task3Target) -> int:
+    """Calculate the fixed TinyConvNeXt-18 contract without PyTorch."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    widths = TINYCONVNEXT18_WIDTHS
+    parameters = 3 * widths[0] * 3 * 3 + widths[0] + 2 * widths[0]
+    for channels, depth in zip(widths, TINYCONVNEXT18_DEPTHS, strict=True):
+        block = channels * 7 * 7 + channels
+        block += 2 * channels
+        block += channels * (4 * channels) + 4 * channels
+        block += (4 * channels) * channels + channels
+        block += channels
+        parameters += depth * block
+    for input_channels, output_channels in zip(widths[:-1], widths[1:], strict=True):
+        parameters += 2 * input_channels
+        parameters += input_channels * output_channels * 2 * 2 + output_channels
+    parameters += 2 * widths[-1]
+    classes = TARGET_CLASS_COUNTS[target]
+    return parameters + widths[-1] * classes + classes
+
+
+def tinyconvnext18_macs(target: Task3Target) -> int:
+    """Return convolution, linear, and classifier MACs for an 80x60 input."""
+    if target not in TARGET_CLASS_COUNTS:
+        raise ValueError(f"unsupported Task 3 target: {target}")
+    widths = TINYCONVNEXT18_WIDTHS
+    height, width = 80, 60
+    macs = height * width * 3 * widths[0] * 3 * 3
+    for stage, (channels, depth) in enumerate(zip(widths, TINYCONVNEXT18_DEPTHS, strict=True)):
+        area = height * width
+        block_macs = area * (channels * 7 * 7 + 8 * channels * channels)
+        macs += depth * block_macs
+        if stage < len(widths) - 1:
+            height, width = height // 2, width // 2
+            macs += height * width * channels * widths[stage + 1] * 2 * 2
+    return macs + widths[-1] * TARGET_CLASS_COUNTS[target]

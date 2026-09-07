@@ -1,0 +1,11 @@
+view,rows,pooled_macro_f1_nine,accuracy,listed_in_current_view_contract,sha256,scope
+border_hog,4878,0.32390193073878837,0.5764657646576465,True,e3ef2f0809f9451d9aa84e8cd6f401fa4d0cf0cb3565172e736f141b2b970257,"selected diagnostic sample, not a full candidate score"
+colour_summary,4878,0.30694852426250674,0.5701107011070111,True,ec2bd1b1f7cca3cca6c89ca173cae01dfbefe1f5e93772b1de74e62dbba9d745,"selected diagnostic sample, not a full candidate score"
+foreground_hog,4878,0.423934593085268,0.7064370643706437,False,56c3a1e876850b1d001f53e7da512f222df4fd5daaf4fa082f13187f7478b72f,"selected diagnostic sample, not a full candidate score"
+foreground_letterbox_hog,4878,0.4275761725235576,0.7156621566215662,True,1296fb5ca5848311e122c79aa7d4b819d897acb2d838ce52aaf097559f7be7e9,"selected diagnostic sample, not a full candidate score"
+foreground_masked_hog,4878,0.44404936515322774,0.7482574825748257,True,34e7929623213e703aff380eef7327bccd416e128f8677c76b38092f1ac1c6f0,"selected diagnostic sample, not a full candidate score"
+full_rgb_hog,4878,0.45405262475713987,0.7515375153751538,True,1c4799ec500a8d1464df893694ccab61d1cfb970bc64f933e878125a1444196c,"selected diagnostic sample, not a full candidate score"
+global_geometry_colour,4878,0.2801643368872667,0.511070110701107,True,d7fb2109da86b7eebef24f76c8c397a706206767d1ef1852c3c36da784730654,"selected diagnostic sample, not a full candidate score"
+grayscale_hog,4878,0.4314225800371849,0.7476424764247642,True,a71ad3ff3788e427993d553cf88934b89dc452ebbefa0a13c61eb35f33b50485,"selected diagnostic sample, not a full candidate score"
+nuisance_only,4878,0.2786129253472584,0.511480114801148,False,924763fea9a16fb6a62d7b41c0b2e77daee94e1722a1cab5583b445768986946,"selected diagnostic sample, not a full candidate score"
+silhouette_hog,4878,0.36460057943662844,0.6260762607626076,True,fb629ca67e6669db88f80b906dc1725ba7024b1c02d12d5f8d2f9e7fc4ab4a69,"selected diagnostic sample, not a full candidate score"

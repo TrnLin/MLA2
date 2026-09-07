@@ -12,3 +12,8 @@
 *.png binary
 *.pdf binary
 *.zip binary
+
+# Historical Task 3 receipts are hashed as bytes, including their original newlines.
+reports/task3/**/*.csv -text
+reports/task3/**/*.json -text
+reports/task3/**/licenses/* -text

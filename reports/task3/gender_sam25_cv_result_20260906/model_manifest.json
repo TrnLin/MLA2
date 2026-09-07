@@ -1,0 +1,204 @@
+{
+  "all_development_refit": false,
+  "checkpoint_epoch": 25,
+  "class_names": [
+    "Boys",
+    "Girls",
+    "Men",
+    "Unisex",
+    "Women"
+  ],
+  "evaluation": "OOF uses one held-out model per image, never the five-model average.",
+  "folds": [
+    {
+      "files": {
+        "config.json": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f0_s2753_cebc4858f043_20260906T112202Z13e60c/config.json",
+          "sha256": "18a4f91771d007c15c033c8c394d3f7a8ddd5de1da01a5f8c4dea9243edba75b"
+        },
+        "final_epoch.pt": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f0_s2753_cebc4858f043_20260906T112202Z13e60c/final_epoch.pt",
+          "sha256": "414a41366436c3f8b8558a85ebc14a34652a6538ff6b4d9a29fee8ec7732fc6c"
+        },
+        "normalization.json": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f0_s2753_cebc4858f043_20260906T112202Z13e60c/normalization.json",
+          "sha256": "a8aaaf456e252dea90ed1e1829f003729cbb04111795cf493a072180e675711e"
+        }
+      },
+      "fold": 0,
+      "run_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f0_s2753_cebc4858f043_20260906T112202Z13e60c"
+    },
+    {
+      "files": {
+        "config.json": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f1_s2753_cebc4858f043_20260906T113308Zefe5d2/config.json",
+          "sha256": "2f525d8240a2a6a0ff0e59ee39eef9afbdccc92f526dbf23360a3bdd7056ca71"
+        },
+        "final_epoch.pt": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f1_s2753_cebc4858f043_20260906T113308Zefe5d2/final_epoch.pt",
+          "sha256": "2365be0dd42bc613bf045e239a5d9d656ceb983e345e38bf7fcf360ed068e5fa"
+        },
+        "normalization.json": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f1_s2753_cebc4858f043_20260906T113308Zefe5d2/normalization.json",
+          "sha256": "5a8364f7c4f333d4f35c54fd945b354320eab3bae2bac30b850608698726a1e6"
+        }
+      },
+      "fold": 1,
+      "run_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f1_s2753_cebc4858f043_20260906T113308Zefe5d2"
+    },
+    {
+      "files": {
+        "config.json": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f2_s2753_cebc4858f043_20260906T114419Z1959d4/config.json",
+          "sha256": "06818fdd9f97899b50581aa0ceefb66b64c6905b81eb3d934f6c72f3a32b162c"
+        },
+        "final_epoch.pt": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f2_s2753_cebc4858f043_20260906T114419Z1959d4/final_epoch.pt",
+          "sha256": "d8b9770a572dc7f2861afac49a0dbb588e8eb419bac0f1e058233c5d166d3856"
+        },
+        "normalization.json": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f2_s2753_cebc4858f043_20260906T114419Z1959d4/normalization.json",
+          "sha256": "7b5a56f3fd5350bac34d50c3f4c32546996482d845cbf2c68e33d1c73dca2b0c"
+        }
+      },
+      "fold": 2,
+      "run_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f2_s2753_cebc4858f043_20260906T114419Z1959d4"
+    },
+    {
+      "files": {
+        "config.json": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f3_s2753_cebc4858f043_20260906T115531Z5216b9/config.json",
+          "sha256": "6a69c2b5233e8e55d3caa5fcee2ea02c29ba5027fa57306db173d1df8ade2b4b"
+        },
+        "final_epoch.pt": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f3_s2753_cebc4858f043_20260906T115531Z5216b9/final_epoch.pt",
+          "sha256": "c799cd2fdd3c54ff3256993aff4146a5c7b10b9b1a9de86dd732437816760ec1"
+        },
+        "normalization.json": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f3_s2753_cebc4858f043_20260906T115531Z5216b9/normalization.json",
+          "sha256": "3724fe3bd8d96a0cf6292d5451f66a1ae324dcd180296b66289e1acb6a3e1817"
+        }
+      },
+      "fold": 3,
+      "run_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f3_s2753_cebc4858f043_20260906T115531Z5216b9"
+    },
+    {
+      "files": {
+        "config.json": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f4_s2753_cebc4858f043_20260906T120642Za83c66/config.json",
+          "sha256": "851e9743a28e920c667303b3cca95fa3a1d169409085a307ebf15f751955bb0b"
+        },
+        "final_epoch.pt": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f4_s2753_cebc4858f043_20260906T120642Za83c66/final_epoch.pt",
+          "sha256": "252b3f3225b231058cd1ee83176de109d3e0f594b45788418df3dc989ef16d3f"
+        },
+        "normalization.json": {
+          "path": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f4_s2753_cebc4858f043_20260906T120642Za83c66/normalization.json",
+          "sha256": "cb2b548fcc1fcf02f13b78411cd916c68274148bb2247cb6f08d3c62502ad7c2"
+        }
+      },
+      "fold": 4,
+      "run_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv_gender_smallcnngem3_f4_s2753_cebc4858f043_20260906T120642Za83c66"
+    }
+  ],
+  "inference": "For new images, use each fold's own normalization and average the five softmax probability vectors; take argmax in class_names order.",
+  "recipe": {
+    "artifact_dir": "experiments/t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
+    "auxiliary_loss_weight": 0.0,
+    "auxiliary_target": "none",
+    "changed_factor": "five_fold_evaluation_of_fixed_sam25_recipe",
+    "checkpoint_policy": "final_epoch",
+    "class_weight_beta": null,
+    "class_weight_cap": null,
+    "classifier_dropout": 0.3,
+    "cosine_t_max": 30,
+    "darkening_rng": "persistent_worker_initial_seed_xor_0x474431",
+    "early_stopping_min_delta": 0.0,
+    "early_stopping_min_epoch": 0,
+    "early_stopping_patience": 0,
+    "execution_policy": "g2_training_defaults_ieee_comparison_under_3gb_v1",
+    "execution_scope": "five_fresh_scratch_folds_reuse_only_completed_cv_runs",
+    "experiment_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
+    "focal_gamma": 0.0,
+    "gender_label_variant": {
+      "canonical_split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+      "labels_sha256": "168f7513743fc28b37380ec6b43d0da05243d70e51dbe6d13d311f56a439764a",
+      "rule_version": "single_explicit_gender_cue_v1",
+      "summary_sha256": "f6e656d93d0af949d8cb0621e28b420fd671405fcf04a9347bcaab03a7cc14fe",
+      "variant_id": "gender_name_truth_v1"
+    },
+    "grayscale_probability": 0.1,
+    "grayscale_rng": "persistent_worker_initial_seed_xor_0x47524159",
+    "hypothesis_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
+    "independent_blind_test": false,
+    "input_view": "full",
+    "label_smoothing": 0.0,
+    "loss_name": "cross_entropy",
+    "mixup_policy": {
+      "alpha": 0.2,
+      "evaluation": "unmixed images, plain unweighted cross-entropy",
+      "lambda": "one Beta(alpha, alpha) draw per batch",
+      "loss": "lambda * CE(logits, y) + (1-lambda) * CE(logits, partner_y)",
+      "online_train_f1": "not_applicable_mixed_inputs",
+      "partners": "random permutation within the current training batch; self-pairs allowed",
+      "placement": "after existing image augmentation and RGB normalization",
+      "probability": 1.0,
+      "rng": "dedicated numpy PCG64; seed XOR 0x4D495855; persists across epochs",
+      "version": "gender_mixup_alpha020_v1"
+    },
+    "model_family": "task3_small_cnn_gem_p3",
+    "name": "gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
+    "parent_artifact_dir": "experiments/t3_gender_v2_g2_translation",
+    "parent_folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "parent_role": "same_fold_G2_comparison_only_no_weights_loaded",
+    "parent_run_ids": [
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f0_s2753_cb072542dbdc_20260904T135102Z6698e6",
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f1_s2753_cb072542dbdc_20260904T153837Z5db37d",
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f2_s2753_cb072542dbdc_20260904T154745Z7d81aa",
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f3_s2753_cb072542dbdc_20260904T155700Zb0abef",
+      "t3_gender_v2_g2_translation_gender_smallcnngem3_f4_s2753_cb072542dbdc_20260904T140011Z2211b1"
+    ],
+    "primary_loss_weight": 1.0,
+    "recipe_source_commit": "5f0789506239944f2e836348b00bdc5e34d5658d",
+    "recipe_source_run_ids": {
+      "0": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_gender_smallcnngem3_f0_s2753_5fcf4e0e0035_20260906T101038Z1eda8d",
+      "4": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_gender_smallcnngem3_f4_s2753_5fcf4e0e0035_20260906T102136Z29db40"
+    },
+    "run_model_token": "smallcnngem3",
+    "run_prefix": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
+    "sam_policy": {
+      "adaptive": false,
+      "base_optimizer": "AdamW",
+      "batch": "same augmented mixed inputs and labels for both passes",
+      "batchnorm": "training statistics twice; retain first-pass running buffers only",
+      "checkpoint": "final_epoch",
+      "diagnostic_epochs": [
+        10,
+        15,
+        20,
+        25
+      ],
+      "dropout": "same mask on both passes; advance torch RNG once",
+      "epsilon": 1e-12,
+      "gradient": "mixed cross-entropy before weight decay",
+      "norm": "global L2 over all trainable parameters, including BatchNorm affine",
+      "rho": 0.05,
+      "update": "restore exact original weights; apply second gradient and AdamW decay once",
+      "version": "gender_sam005_adamw_epoch25_v1"
+    },
+    "sample_weight_strategy": "none",
+    "screen_rule_version": "sam25_five_fold_fixed_recipe_v1",
+    "selection_basis": "04ai_epoch_diagnostics_post_selection",
+    "target": "gender",
+    "training_augmentation": "translation_2px_p05_mild_darkening_p025_grayscale_p010",
+    "training_epochs": 25,
+    "training_selection_strategy": "all"
+  },
+  "version": "sam25_cv_model_set_v1"
+}

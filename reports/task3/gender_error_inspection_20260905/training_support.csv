@@ -1,0 +1,486 @@
+fold,label,articleType,n,families
+0,Boys,Blazers,1,1
+0,Boys,Booties,3,2
+0,Boys,Capris,9,2
+0,Boys,Casual Shoes,17,14
+0,Boys,Churidar,1,1
+0,Boys,Clothing Set,4,4
+0,Boys,Flip Flops,11,10
+0,Boys,Gloves,4,2
+0,Boys,Innerwear Vests,3,1
+0,Boys,Jackets,2,1
+0,Boys,Jeans,21,8
+0,Boys,Kurta Sets,2,2
+0,Boys,Kurtas,5,4
+0,Boys,Leggings,3,3
+0,Boys,Rompers,4,3
+0,Boys,Sandals,8,6
+0,Boys,Shirts,52,22
+0,Boys,Shorts,39,22
+0,Boys,Socks,1,1
+0,Boys,Sports Shoes,2,2
+0,Boys,Sweatshirts,1,1
+0,Boys,Trousers,2,2
+0,Boys,Tshirts,346,198
+0,Boys,Waistcoat,2,2
+0,Boys,Watches,5,5
+0,Girls,Backpacks,1,1
+0,Girls,Booties,4,2
+0,Girls,Capris,21,11
+0,Girls,Casual Shoes,8,8
+0,Girls,Clothing Set,2,2
+0,Girls,Dresses,42,28
+0,Girls,Earrings,1,1
+0,Girls,Flip Flops,6,5
+0,Girls,Gloves,4,2
+0,Girls,Innerwear Vests,3,2
+0,Girls,Jeans,12,4
+0,Girls,Leggings,15,7
+0,Girls,Lehenga Choli,2,2
+0,Girls,Rompers,4,3
+0,Girls,Salwar,4,4
+0,Girls,Sandals,31,25
+0,Girls,Shirts,1,1
+0,Girls,Shorts,25,14
+0,Girls,Skirts,16,8
+0,Girls,Tops,154,78
+0,Girls,Tshirts,72,56
+0,Girls,Watches,8,2
+0,Men,Accessory Gift Set,74,26
+0,Men,Backpacks,36,23
+0,Men,Bangle,14,2
+0,Men,Belts,359,193
+0,Men,Blazers,4,4
+0,Men,Body Wash and Scrub,1,1
+0,Men,Boxers,27,22
+0,Men,Briefs,349,251
+0,Men,Caps,74,61
+0,Men,Casual Shoes,1432,1051
+0,Men,Churidar,6,5
+0,Men,Cufflinks,25,16
+0,Men,Deodorant,124,110
+0,Men,Duffel Bag,1,1
+0,Men,Flip Flops,323,282
+0,Men,Formal Shoes,414,180
+0,Men,Fragrance Gift Set,20,19
+0,Men,Free Gifts,26,18
+0,Men,Gloves,6,6
+0,Men,Handbags,1,1
+0,Men,Heels,1,1
+0,Men,Innerwear Vests,158,125
+0,Men,Jackets,120,105
+0,Men,Jeans,207,98
+0,Men,Kurtas,45,34
+0,Men,Kurtis,2,2
+0,Men,Laptop Bag,12,8
+0,Men,Lounge Pants,22,20
+0,Men,Lounge Shorts,16,12
+0,Men,Messenger Bag,9,9
+0,Men,Mufflers,22,19
+0,Men,Nehru Jackets,4,3
+0,Men,Night suits,10,6
+0,Men,Perfume and Body Mist,212,182
+0,Men,Rain Trousers,1,1
+0,Men,Ring,25,1
+0,Men,Sandals,486,305
+0,Men,Scarves,27,20
+0,Men,Shirts,1852,1040
+0,Men,Shoe Accessories,2,2
+0,Men,Shorts,251,200
+0,Men,Socks,316,160
+0,Men,Sports Sandals,18,17
+0,Men,Sports Shoes,1057,954
+0,Men,Sunglasses,412,164
+0,Men,Suspenders,28,14
+0,Men,Sweaters,134,111
+0,Men,Sweatshirts,149,123
+0,Men,Ties,145,68
+0,Men,Tights,1,1
+0,Men,Tops,1,1
+0,Men,Track Pants,141,107
+0,Men,Tracksuits,19,15
+0,Men,Trousers,282,169
+0,Men,Trunk,96,69
+0,Men,Tshirts,3449,2778
+0,Men,Tunics,1,1
+0,Men,Waist Pouch,1,1
+0,Men,Waistcoat,5,4
+0,Men,Wallets,277,127
+0,Men,Watches,869,564
+0,Men,Water Bottle,2,2
+0,Unisex,Backpacks,421,296
+0,Unisex,Basketballs,9,9
+0,Unisex,Belts,7,7
+0,Unisex,Caps,95,83
+0,Unisex,Casual Shoes,147,139
+0,Unisex,Cushion Covers,1,1
+0,Unisex,Deodorant,2,2
+0,Unisex,Duffel Bag,54,41
+0,Unisex,Flip Flops,101,91
+0,Unisex,Footballs,5,5
+0,Unisex,Fragrance Gift Set,1,1
+0,Unisex,Free Gifts,1,1
+0,Unisex,Handbags,42,38
+0,Unisex,Hat,2,2
+0,Unisex,Headband,4,4
+0,Unisex,Jackets,1,1
+0,Unisex,Key chain,1,1
+0,Unisex,Laptop Bag,35,23
+0,Unisex,Messenger Bag,21,20
+0,Unisex,Mobile Pouch,4,3
+0,Unisex,Mufflers,1,1
+0,Unisex,Perfume and Body Mist,5,4
+0,Unisex,Rain Jacket,1,1
+0,Unisex,Rucksacks,8,8
+0,Unisex,Sandals,63,57
+0,Unisex,Scarves,4,4
+0,Unisex,Shoe Accessories,14,12
+0,Unisex,Shoe Laces,1,1
+0,Unisex,Socks,47,33
+0,Unisex,Sports Shoes,30,30
+0,Unisex,Sunglasses,95,64
+0,Unisex,Sweatshirts,1,1
+0,Unisex,Swimwear,4,4
+0,Unisex,Tablet Sleeve,1,1
+0,Unisex,Track Pants,1,1
+0,Unisex,Travel Accessory,6,6
+0,Unisex,Trolley Bag,3,2
+0,Unisex,Tshirts,48,37
+0,Unisex,Waist Pouch,11,11
+0,Unisex,Wallets,15,11
+0,Unisex,Watches,88,75
+0,Unisex,Water Bottle,6,6
+0,Unisex,Wristbands,4,4
+0,Women,Baby Dolls,2,2
+0,Women,Backpacks,27,23
+0,Women,Bangle,18,15
+0,Women,Belts,176,129
+0,Women,Blazers,1,1
+0,Women,Bra,202,157
+0,Women,Bracelet,28,15
+0,Women,Briefs,107,73
+0,Women,Camisoles,10,10
+0,Women,Capris,80,67
+0,Women,Caps,16,16
+0,Women,Casual Shoes,215,188
+0,Women,Churidar,14,13
+0,Women,Clutches,152,124
+0,Women,Compact,4,1
+0,Women,Concealer,2,1
+0,Women,Deodorant,73,67
+0,Women,Dresses,190,156
+0,Women,Duffel Bag,4,4
+0,Women,Dupatta,80,58
+0,Women,Earrings,125,31
+0,Women,Eyeshadow,2,2
+0,Women,Flats,287,185
+0,Women,Flip Flops,146,100
+0,Women,Foundation and Primer,7,4
+0,Women,Fragrance Gift Set,17,17
+0,Women,Free Gifts,19,15
+0,Women,Handbags,935,596
+0,Women,Heels,710,379
+0,Women,Highlighter and Blush,4,1
+0,Women,Innerwear Vests,1,1
+0,Women,Ipad,1,1
+0,Women,Jackets,32,28
+0,Women,Jeans,138,72
+0,Women,Jeggings,18,11
+0,Women,Jewellery Set,32,12
+0,Women,Jumpsuit,8,8
+0,Women,Kajal and Eyeliner,8,7
+0,Women,Kurta Sets,49,45
+0,Women,Kurtas,1009,522
+0,Women,Kurtis,137,106
+0,Women,Laptop Bag,8,8
+0,Women,Leggings,91,81
+0,Women,Lip Gloss,4,4
+0,Women,Lip Liner,9,6
+0,Women,Lip Plumper,2,2
+0,Women,Lipstick,10,2
+0,Women,Lounge Pants,14,13
+0,Women,Lounge Shorts,7,6
+0,Women,Lounge Tshirts,1,1
+0,Women,Mobile Pouch,28,28
+0,Women,Mufflers,3,2
+0,Women,Nail Polish,12,11
+0,Women,Necklace and Chains,43,29
+0,Women,Night suits,38,20
+0,Women,Nightdress,27,21
+0,Women,Patiala,19,16
+0,Women,Pendant,100,7
+0,Women,Perfume and Body Mist,162,137
+0,Women,Ring,54,3
+0,Women,Robe,2,2
+0,Women,Salwar,19,16
+0,Women,Salwar and Dupatta,5,5
+0,Women,Sandals,1,1
+0,Women,Sarees,104,84
+0,Women,Scarves,44,35
+0,Women,Shapewear,2,2
+0,Women,Shirts,186,160
+0,Women,Shorts,44,41
+0,Women,Shrug,2,2
+0,Women,Skirts,64,57
+0,Women,Socks,54,44
+0,Women,Sports Sandals,26,26
+0,Women,Sports Shoes,263,247
+0,Women,Stockings,14,9
+0,Women,Stoles,62,41
+0,Women,Sunglasses,204,113
+0,Women,Sweaters,54,48
+0,Women,Sweatshirts,40,38
+0,Women,Swimwear,8,8
+0,Women,Tablet Sleeve,1,1
+0,Women,Tights,5,4
+0,Women,Tops,940,692
+0,Women,Track Pants,58,53
+0,Women,Travel Accessory,3,3
+0,Women,Trousers,66,53
+0,Women,Tshirts,682,608
+0,Women,Tunics,119,105
+0,Women,Umbrellas,4,3
+0,Women,Waistcoat,2,2
+0,Women,Wallets,273,201
+0,Women,Watches,553,404
+4,Boys,Booties,3,2
+4,Boys,Capris,11,3
+4,Boys,Casual Shoes,18,16
+4,Boys,Churidar,1,1
+4,Boys,Clothing Set,3,3
+4,Boys,Flip Flops,12,11
+4,Boys,Gloves,4,2
+4,Boys,Innerwear Vests,3,1
+4,Boys,Jackets,2,1
+4,Boys,Jeans,19,8
+4,Boys,Kurta Sets,2,2
+4,Boys,Kurtas,4,3
+4,Boys,Leggings,3,3
+4,Boys,Rompers,6,4
+4,Boys,Sandals,9,8
+4,Boys,Shirts,53,20
+4,Boys,Shorts,37,20
+4,Boys,Socks,1,1
+4,Boys,Sports Shoes,2,2
+4,Boys,Sweatshirts,1,1
+4,Boys,Trousers,3,2
+4,Boys,Tshirts,347,200
+4,Boys,Waistcoat,2,2
+4,Girls,Backpacks,1,1
+4,Girls,Booties,4,2
+4,Girls,Capris,21,12
+4,Girls,Casual Shoes,10,9
+4,Girls,Clothing Set,2,2
+4,Girls,Dresses,45,31
+4,Girls,Earrings,1,1
+4,Girls,Flip Flops,4,4
+4,Girls,Gloves,6,3
+4,Girls,Innerwear Vests,4,3
+4,Girls,Jeans,9,4
+4,Girls,Leggings,14,6
+4,Girls,Lehenga Choli,1,1
+4,Girls,Rompers,3,3
+4,Girls,Salwar,4,4
+4,Girls,Sandals,30,26
+4,Girls,Shirts,1,1
+4,Girls,Shorts,26,14
+4,Girls,Skirts,16,9
+4,Girls,Tops,154,81
+4,Girls,Tshirts,71,54
+4,Girls,Watches,7,1
+4,Men,Accessory Gift Set,73,27
+4,Men,Backpacks,36,21
+4,Men,Bangle,1,1
+4,Men,Belts,349,187
+4,Men,Blazers,4,4
+4,Men,Body Wash and Scrub,1,1
+4,Men,Boxers,27,21
+4,Men,Bracelet,16,1
+4,Men,Briefs,350,246
+4,Men,Caps,73,62
+4,Men,Casual Shoes,1432,1055
+4,Men,Churidar,6,5
+4,Men,Cufflinks,31,15
+4,Men,Deodorant,127,110
+4,Men,Duffel Bag,3,2
+4,Men,Flip Flops,318,280
+4,Men,Formal Shoes,415,178
+4,Men,Fragrance Gift Set,20,19
+4,Men,Free Gifts,25,15
+4,Men,Gloves,4,4
+4,Men,Handbags,4,3
+4,Men,Innerwear Vests,157,125
+4,Men,Jackets,124,109
+4,Men,Jeans,208,91
+4,Men,Kurtas,36,29
+4,Men,Kurtis,2,2
+4,Men,Laptop Bag,13,9
+4,Men,Lounge Pants,22,20
+4,Men,Lounge Shorts,19,14
+4,Men,Messenger Bag,8,8
+4,Men,Mufflers,20,18
+4,Men,Nehru Jackets,3,2
+4,Men,Night suits,12,8
+4,Men,Perfume and Body Mist,214,186
+4,Men,Ring,25,1
+4,Men,Sandals,478,302
+4,Men,Scarves,34,25
+4,Men,Shirts,1859,1040
+4,Men,Shoe Accessories,2,2
+4,Men,Shorts,253,204
+4,Men,Socks,313,156
+4,Men,Sports Sandals,19,18
+4,Men,Sports Shoes,1056,949
+4,Men,Stoles,1,1
+4,Men,Sunglasses,382,163
+4,Men,Suspenders,27,15
+4,Men,Sweaters,129,107
+4,Men,Sweatshirts,148,122
+4,Men,Ties,144,68
+4,Men,Tights,1,1
+4,Men,Track Pants,144,111
+4,Men,Tracksuits,19,16
+4,Men,Trousers,285,174
+4,Men,Trunk,96,69
+4,Men,Tshirts,3455,2786
+4,Men,Tunics,1,1
+4,Men,Waist Pouch,1,1
+4,Men,Waistcoat,4,4
+4,Men,Wallets,278,129
+4,Men,Watches,892,560
+4,Men,Water Bottle,2,2
+4,Unisex,Backpacks,417,298
+4,Unisex,Basketballs,10,10
+4,Unisex,Belts,6,6
+4,Unisex,Caps,96,84
+4,Unisex,Casual Shoes,150,139
+4,Unisex,Deodorant,3,3
+4,Unisex,Duffel Bag,53,40
+4,Unisex,Flip Flops,101,93
+4,Unisex,Footballs,6,6
+4,Unisex,Fragrance Gift Set,1,1
+4,Unisex,Free Gifts,1,1
+4,Unisex,Handbags,38,35
+4,Unisex,Hat,2,2
+4,Unisex,Headband,5,5
+4,Unisex,Jackets,1,1
+4,Unisex,Jeans,3,1
+4,Unisex,Key chain,1,1
+4,Unisex,Laptop Bag,34,24
+4,Unisex,Messenger Bag,22,21
+4,Unisex,Mobile Pouch,6,5
+4,Unisex,Mufflers,1,1
+4,Unisex,Perfume and Body Mist,7,5
+4,Unisex,Rain Jacket,1,1
+4,Unisex,Rucksacks,8,8
+4,Unisex,Sandals,64,59
+4,Unisex,Scarves,2,2
+4,Unisex,Shoe Accessories,14,11
+4,Unisex,Shoe Laces,1,1
+4,Unisex,Socks,46,31
+4,Unisex,Sports Sandals,3,3
+4,Unisex,Sports Shoes,29,29
+4,Unisex,Sunglasses,95,54
+4,Unisex,Sweatshirts,1,1
+4,Unisex,Swimwear,2,2
+4,Unisex,Track Pants,1,1
+4,Unisex,Travel Accessory,8,7
+4,Unisex,Trolley Bag,2,1
+4,Unisex,Tshirts,49,38
+4,Unisex,Waist Pouch,11,10
+4,Unisex,Wallets,14,12
+4,Unisex,Watches,88,75
+4,Unisex,Water Bottle,6,6
+4,Unisex,Wristbands,4,4
+4,Women,Baby Dolls,2,2
+4,Women,Backpacks,24,22
+4,Women,Bangle,36,16
+4,Women,Belts,185,135
+4,Women,Blazers,1,1
+4,Women,Bra,201,157
+4,Women,Bracelet,21,13
+4,Women,Briefs,105,77
+4,Women,Camisoles,10,10
+4,Women,Capris,77,65
+4,Women,Caps,15,14
+4,Women,Casual Shoes,214,189
+4,Women,Churidar,13,12
+4,Women,Clutches,151,123
+4,Women,Compact,4,1
+4,Women,Deodorant,69,65
+4,Women,Dresses,186,151
+4,Women,Duffel Bag,3,3
+4,Women,Dupatta,80,58
+4,Women,Earrings,160,29
+4,Women,Eyeshadow,3,2
+4,Women,Flats,284,186
+4,Women,Flip Flops,150,100
+4,Women,Foundation and Primer,9,4
+4,Women,Fragrance Gift Set,17,17
+4,Women,Free Gifts,21,17
+4,Women,Handbags,934,598
+4,Women,Heels,707,379
+4,Women,Highlighter and Blush,4,1
+4,Women,Innerwear Vests,1,1
+4,Women,Ipad,1,1
+4,Women,Jackets,28,25
+4,Women,Jeans,138,74
+4,Women,Jeggings,18,11
+4,Women,Jewellery Set,32,13
+4,Women,Jumpsuit,8,8
+4,Women,Kajal and Eyeliner,9,7
+4,Women,Kurta Sets,50,46
+4,Women,Kurtas,1015,526
+4,Women,Kurtis,136,105
+4,Women,Laptop Bag,7,7
+4,Women,Leggings,91,82
+4,Women,Lip Gloss,4,4
+4,Women,Lip Liner,7,6
+4,Women,Lip Plumper,3,3
+4,Women,Lipstick,6,1
+4,Women,Lounge Pants,14,13
+4,Women,Lounge Shorts,4,4
+4,Women,Lounge Tshirts,1,1
+4,Women,Mobile Pouch,26,26
+4,Women,Mufflers,6,3
+4,Women,Nail Polish,13,12
+4,Women,Necklace and Chains,42,29
+4,Women,Night suits,35,19
+4,Women,Nightdress,27,20
+4,Women,Patiala,18,16
+4,Women,Pendant,77,9
+4,Women,Perfume and Body Mist,158,133
+4,Women,Ring,51,2
+4,Women,Robe,2,2
+4,Women,Salwar,18,16
+4,Women,Salwar and Dupatta,5,5
+4,Women,Sandals,3,3
+4,Women,Sarees,104,84
+4,Women,Scarves,39,32
+4,Women,Shapewear,2,2
+4,Women,Shirts,187,164
+4,Women,Shorts,41,39
+4,Women,Shrug,2,2
+4,Women,Skirts,64,56
+4,Women,Socks,57,48
+4,Women,Sports Sandals,21,21
+4,Women,Sports Shoes,268,253
+4,Women,Stockings,18,8
+4,Women,Stoles,62,41
+4,Women,Sunglasses,223,125
+4,Women,Sweaters,59,53
+4,Women,Sweatshirts,40,38
+4,Women,Swimwear,10,9
+4,Women,Tablet Sleeve,1,1
+4,Women,Ties and Cufflinks,1,1
+4,Women,Tights,5,4
+4,Women,Tops,940,693
+4,Women,Track Pants,55,49
+4,Women,Travel Accessory,2,2
+4,Women,Trousers,60,46
+4,Women,Tshirts,679,604
+4,Women,Tunics,118,105
+4,Women,Umbrellas,3,3
+4,Women,Waistcoat,4,3
+4,Women,Wallets,271,200
+4,Women,Watches,546,400

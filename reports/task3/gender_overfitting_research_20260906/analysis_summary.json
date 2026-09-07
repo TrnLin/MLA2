@@ -1,0 +1,20 @@
+{
+  "notebook_sha256": {
+    "04af_task3_gender_mixup_screen.ipynb": "68b8721a77ec5cb51fd3818dd47ae16db23b7b295f0547e0fb0fe3251df006ad",
+    "04ah_task3_gender_stronger_mixup_screen.ipynb": "f6cfb408d9cca2e8c55b19fbe56465816cc8ac0d8625a049558ac7acfa973655"
+  },
+  "mixup20_class_gap_source_sha256": "22f3a8a9d3d8298580da698b419d5abd14ab42e21c6cde246e84d2990e54190d",
+  "minority_gap_share": {
+    "mixup20": 0.8674908074321328,
+    "mixup40": 0.8803414892248738
+  },
+  "probability_lambda_between_025_and_075": {
+    "0.2": 0.1718889609570537,
+    "0.4": 0.28733412535264125
+  },
+  "normalization_probe_mean_clean_gap": {
+    "clean_bn_cpu": 0.12913037065358268,
+    "original_cpu": 0.1291326731140856
+  },
+  "epoch20_training_ceiling_for_two_point_gap_reduction": 0.8911826731140856
+}

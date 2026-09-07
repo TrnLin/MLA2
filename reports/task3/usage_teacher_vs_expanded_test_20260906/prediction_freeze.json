@@ -1,0 +1,25 @@
+{
+  "frozen_at_utc": "2026-09-06T11:03:12.051553+00:00",
+  "test_rows": 5829,
+  "reference_labels_opened_by_this_inference_script": false,
+  "test_labels_were_seen_in_previous_expanded_model_comparison": true,
+  "outputs": {
+    "validation_ranking.csv": "6112a1e61b6686ca2bfdc746573b084516c9ecc3867a9828771367643e96fd55",
+    "selection_contract.json": "6dc7e47975b84af8070d4dd30d9adfbf264a6e67b9b7be09df609a049ddcf005",
+    "E1/usage_test_fold_0.csv": "c8f4a202e1dee83d8ed441a2dd927239878798d1ef1cc36c11350c5ecc7261c5",
+    "E1/usage_test_fold_1.csv": "dcc494d03515987ab3b80692d2762b6808a0ea8105d138d697ed0708b7318be0",
+    "E1/usage_test_fold_2.csv": "b091af3a72724ce4b75b68da9e760c08258cc5d6144c0588943ccecd88f20e66",
+    "E1/usage_test_fold_3.csv": "9cdbe184c64e80f1c9319dca5f7384a32f100ed87b629f1cf4dc0021fce4c2d1",
+    "E1/usage_test_fold_4.csv": "ec2acfe5054d0ba08843b85bce66972667de0fda25645f7e46a5ecf3efd054c0",
+    "E1/usage_test_probabilities.csv": "66f55233c101d3229dea78755ebaa1b650b073e13afd530dd85a434f2f5e8899",
+    "E1/usage_test_predictions.csv": "9fd6af66df4cc926b58d06daa1d20d2af8f477a708a253b9a80dad3452ec2138",
+    "E8/usage_test_fold_0.csv": "e9f06d4ee4f756e9f6c1fd5ea34e555f70040605d1fe58b2b4b7c8fba2b61528",
+    "E8/usage_test_fold_1.csv": "c7b17a64e8722ddfcaffa0abfc9476f012f0d5cef3e3b07038176b3d704d3cc3",
+    "E8/usage_test_fold_2.csv": "66d0a565156cf25b63dfe95a0cdbdfca8d9a5f91bd3062e7ddf2b68546b7f570",
+    "E8/usage_test_fold_3.csv": "75b9428abd4617a1cd2f785fbecf469f1837d28b7a704742d32dfb6103a09d0d",
+    "E8/usage_test_fold_4.csv": "18da20371cfb3ec06ac3bbc2dacceb0d8ffb4ea42c596d62f30f7ad90835c7f2",
+    "E8/usage_test_probabilities.csv": "175678696b25746022077a27d5b826552c2910a362c2f956df9154ab4472bee1",
+    "E8/usage_test_predictions.csv": "e4ca1c6fb70d0fad4deb9c33fcecb92f46a432ec69ece2cd888860750f8704fd",
+    "inference_recipe.json": "d2b0c035967e375bd98726e10ee22effd1cbf17df401ce5bfed47a293f803e7d"
+  }
+}

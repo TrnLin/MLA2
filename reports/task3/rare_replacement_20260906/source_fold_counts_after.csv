@@ -1,0 +1,133 @@
+usage,source_dataset,cv_fold,images
+Home,Swayam official catalogue,0,4
+Home,Swayam official catalogue,2,1
+Home,Swayam official catalogue,4,2
+Home,amazon_berkeley_objects,0,21
+Home,amazon_berkeley_objects,1,24
+Home,amazon_berkeley_objects,2,23
+Home,amazon_berkeley_objects,3,23
+Home,amazon_berkeley_objects,4,22
+Home,amazon_reviews_2023,0,3
+Home,amazon_reviews_2023,1,3
+Home,amazon_reviews_2023,2,3
+Home,amazon_reviews_2023,3,4
+Home,amazon_reviews_2023,4,3
+Party,Fastrack official Partywear collection,4,3
+Party,Oh Polly AU Party Dresses collection,0,1
+Party,Oh Polly AU Party Dresses collection,1,4
+Party,Oh Polly AU Party Dresses collection,2,2
+Party,Oh Polly AU Party Dresses collection,3,3
+Party,Oh Polly AU Party Dresses collection,4,2
+Party,Titan official Raga Cocktails collection,1,2
+Party,Titan official Raga Cocktails collection,2,1
+Party,bellavitaorganic.com public catalogue,0,1
+Party,bellavitaorganic.com public catalogue,2,1
+Party,bellavitaorganic.com public catalogue,4,6
+Party,flipkart_party,0,14
+Party,flipkart_party,1,12
+Party,flipkart_party,2,12
+Party,flipkart_party,3,16
+Party,flipkart_party,4,11
+Party,olgaberg.com public catalogue,0,7
+Party,olgaberg.com public catalogue,1,3
+Party,olgaberg.com public catalogue,2,3
+Party,olgaberg.com public catalogue,3,3
+Party,olgaberg.com public catalogue,4,2
+Party,www.beginningboutique.com.au public catalogue,0,10
+Party,www.beginningboutique.com.au public catalogue,1,16
+Party,www.beginningboutique.com.au public catalogue,2,13
+Party,www.beginningboutique.com.au public catalogue,3,9
+Party,www.beginningboutique.com.au public catalogue,4,8
+Party,www.meshki.com.au public catalogue,0,9
+Party,www.meshki.com.au public catalogue,1,7
+Party,www.meshki.com.au public catalogue,2,7
+Party,www.meshki.com.au public catalogue,3,12
+Party,www.meshki.com.au public catalogue,4,9
+Party,www.reddress.com public catalogue,0,3
+Party,www.reddress.com public catalogue,1,1
+Party,www.reddress.com public catalogue,2,6
+Party,www.reddress.com public catalogue,3,2
+Party,www.reddress.com public catalogue,4,3
+Smart Casual,Amazon Berkeley Objects,1,7
+Smart Casual,Amazon Berkeley Objects,2,14
+Smart Casual,Amazon Berkeley Objects,3,2
+Smart Casual,Amazon Berkeley Objects,4,12
+Smart Casual,Care of Carl public catalogue,0,2
+Smart Casual,Care of Carl public catalogue,1,1
+Smart Casual,Marks and Spencer public catalogue,1,15
+Smart Casual,Marks and Spencer public catalogue,2,13
+Smart Casual,Marks and Spencer public catalogue,3,24
+Smart Casual,Marks and Spencer public catalogue,4,13
+Smart Casual,aaiko.com public product catalogue,0,1
+Smart Casual,aaiko.com public product catalogue,1,2
+Smart Casual,aaiko.com public product catalogue,3,2
+Smart Casual,aaiko.com public product catalogue,4,1
+Smart Casual,dayt.ie public product catalogue,0,12
+Smart Casual,dayt.ie public product catalogue,2,1
+Smart Casual,dayt.ie public product catalogue,3,1
+Smart Casual,dayt.ie public product catalogue,4,2
+Smart Casual,jerusalemsandals.com public product catalogue,0,1
+Smart Casual,jerusalemsandals.com public product catalogue,4,1
+Smart Casual,roseborn.com public product catalogue,4,1
+Smart Casual,ruggedgentlemenshoppe.com public product catalogue,0,2
+Smart Casual,ruggedgentlemenshoppe.com public product catalogue,3,2
+Smart Casual,shop.timexindia.com public product catalogue,0,1
+Smart Casual,shop.timexindia.com public product catalogue,2,1
+Smart Casual,turnbullandasser.com public product catalogue,0,1
+Smart Casual,www.edmondsjewellers.com public product catalogue,0,8
+Smart Casual,www.edmondsjewellers.com public product catalogue,1,5
+Smart Casual,www.edmondsjewellers.com public product catalogue,2,3
+Smart Casual,www.edmondsjewellers.com public product catalogue,4,1
+Smart Casual,www.leatherplus.in public product catalogue,1,1
+Smart Casual,www.mjbale.com public product catalogue,0,4
+Smart Casual,www.mjbale.com public product catalogue,3,1
+Smart Casual,www.mjbale.com public product catalogue,4,2
+Smart Casual,www.rociashoes.in public product catalogue,2,1
+Smart Casual,www.tiesilk.com public product catalogue,0,1
+Travel,Amazon Berkeley Objects,0,12
+Travel,Amazon Berkeley Objects,1,12
+Travel,Amazon Berkeley Objects,2,3
+Travel,Amazon Berkeley Objects,3,10
+Travel,Amazon Berkeley Objects,4,7
+Travel,Anya Hindmarch official catalogue,3,1
+Travel,Billingham official catalogue,0,1
+Travel,Billingham official catalogue,2,1
+Travel,Billingham official catalogue,4,1
+Travel,Eastpak official catalogue,3,1
+Travel,Pacsafe official catalogue,1,1
+Travel,Pacsafe official catalogue,2,1
+Travel,Pacsafe official catalogue,3,1
+Travel,Pacsafe official catalogue,4,2
+Travel,Rothys official catalogue,2,1
+Travel,Tenba official catalogue,4,1
+Travel,Think Tank official catalogue,3,1
+Travel,Timbuk2 official catalogue,3,1
+Travel,Travelon official catalogue,0,1
+Travel,Travelon official catalogue,2,1
+Travel,WANDRD official catalogue,0,1
+Travel,cotopaxi,0,5
+Travel,cotopaxi,1,6
+Travel,cotopaxi,2,1
+Travel,cotopaxi,3,4
+Travel,cotopaxi,4,3
+Travel,dakine,0,1
+Travel,dakine,1,3
+Travel,dakine,3,4
+Travel,dakine,4,4
+Travel,dbjourney,0,6
+Travel,dbjourney,1,2
+Travel,dbjourney,2,23
+Travel,dbjourney,3,8
+Travel,dbjourney,4,9
+Travel,eaglecreek,0,5
+Travel,eaglecreek,1,6
+Travel,eaglecreek,2,1
+Travel,eaglecreek,3,2
+Travel,eaglecreek,4,4
+Travel,flipkart_travel,0,1
+Travel,tombihn,1,1
+Travel,tombihn,2,1
+Travel,tombihn,4,1
+Travel,topodesigns,1,1
+Travel,topodesigns,2,1
+Travel,topodesigns,4,1

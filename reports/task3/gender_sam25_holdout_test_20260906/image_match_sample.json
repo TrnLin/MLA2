@@ -1,0 +1,152 @@
+[
+  {
+    "id": 52120,
+    "teacher_path": "data/raw/teacher/test/images_test/52120.jpg",
+    "highres_path": "data/raw/external/fashion_product_images_v1_legacy_extras/fashion-dataset/images/52120.jpg",
+    "teacher_size": [
+      60,
+      80
+    ],
+    "highres_size": [
+      1080,
+      1440
+    ],
+    "teacher_sha256": "8847a0e3859218bc4f5b9fac4a4856c99ae53374184ab313bd62025efbe92338",
+    "highres_sha256": "9eaecfd2b5d026823440fc2fc6bd3f05319113d78f8d19da65a45a253ec71fef"
+  },
+  {
+    "id": 52121,
+    "teacher_path": "data/raw/teacher/test/images_test/52121.jpg",
+    "highres_path": "data/raw/external/fashion_product_images_v1_legacy_extras/fashion-dataset/images/52121.jpg",
+    "teacher_size": [
+      60,
+      80
+    ],
+    "highres_size": [
+      1080,
+      1440
+    ],
+    "teacher_sha256": "f34206c9b0d2667c5b12ec44599f9799a3f9cafc0fe948bc782f295a773cf30d",
+    "highres_sha256": "f005d9cfa939bcc991ae2043a9816f920732b70ef5b3f9b827780d72deca8d0c"
+  },
+  {
+    "id": 52123,
+    "teacher_path": "data/raw/teacher/test/images_test/52123.jpg",
+    "highres_path": "data/raw/external/fashion_product_images_v1_legacy_extras/fashion-dataset/images/52123.jpg",
+    "teacher_size": [
+      60,
+      80
+    ],
+    "highres_size": [
+      1080,
+      1440
+    ],
+    "teacher_sha256": "00e05f4a91ac3afc798c7232a0ca991ab357bd518ad8ed72a488768d063e86e9",
+    "highres_sha256": "b4cdaaba99c3ba0fd5739bce7bf2d533889f3dc79b52d7f28ea0480ec3ad5057"
+  },
+  {
+    "id": 52124,
+    "teacher_path": "data/raw/teacher/test/images_test/52124.jpg",
+    "highres_path": "data/raw/external/fashion_product_images_v1_legacy_extras/fashion-dataset/images/52124.jpg",
+    "teacher_size": [
+      60,
+      80
+    ],
+    "highres_size": [
+      1080,
+      1440
+    ],
+    "teacher_sha256": "b0a2399d6d2415a348eeabe3c9f4ca814c31d34cb7a1c9d2886e8eb747110e44",
+    "highres_sha256": "2f8426b2709460e336c7329c75a0426f52710764bd498c74c83453fd508720e8"
+  },
+  {
+    "id": 52023,
+    "teacher_path": "data/raw/teacher/test/images_test/52023.jpg",
+    "highres_path": "data/raw/external/fashion_product_images_v1_legacy_extras/fashion-dataset/images/52023.jpg",
+    "teacher_size": [
+      60,
+      80
+    ],
+    "highres_size": [
+      1080,
+      1440
+    ],
+    "teacher_sha256": "188a3a51cfaa6d109615f30904969529a7f58e545bafb8d6ba7ecb3b2ace95ca",
+    "highres_sha256": "8ee31113c0c7b7a3d2b904458046cca26fded8498909dffa92fc51a92bcd6b43"
+  },
+  {
+    "id": 52034,
+    "teacher_path": "data/raw/teacher/test/images_test/52034.jpg",
+    "highres_path": "data/raw/external/fashion_product_images_v1_legacy_extras/fashion-dataset/images/52034.jpg",
+    "teacher_size": [
+      60,
+      80
+    ],
+    "highres_size": [
+      1080,
+      1440
+    ],
+    "teacher_sha256": "75b6769454796dc55a043db5316434c56a70a36597fa434fb50fcfe28e98a8c0",
+    "highres_sha256": "db7c8a615e5551369edb6f13dab6d32560d70800dc1207cd042e168f37350ca4"
+  },
+  {
+    "id": 52026,
+    "teacher_path": "data/raw/teacher/test/images_test/52026.jpg",
+    "highres_path": "data/raw/external/fashion_product_images_v1_legacy_extras/fashion-dataset/images/52026.jpg",
+    "teacher_size": [
+      60,
+      80
+    ],
+    "highres_size": [
+      1080,
+      1440
+    ],
+    "teacher_sha256": "a8026b854019c7b2127dd738ff9763f3eb15ce159291068074c071f146ca2df4",
+    "highres_sha256": "1418cadf386253c1efc661408e8e0896aba87d104319937a434119fcf08cddd2"
+  },
+  {
+    "id": 52027,
+    "teacher_path": "data/raw/teacher/test/images_test/52027.jpg",
+    "highres_path": "data/raw/external/fashion_product_images_v1_legacy_extras/fashion-dataset/images/52027.jpg",
+    "teacher_size": [
+      60,
+      80
+    ],
+    "highres_size": [
+      1080,
+      1440
+    ],
+    "teacher_sha256": "909b9671cd0a8b1fccb56799e7b09500e49d4b450f5b360fc715d61eb2cdad75",
+    "highres_sha256": "85d665b6021e302a5fc4172f3e446a6b4f8b6d384a5ebf797289083b26790618"
+  },
+  {
+    "id": 52003,
+    "teacher_path": "data/raw/teacher/test/images_test/52003.jpg",
+    "highres_path": "data/raw/external/fashion_product_images_v1_legacy_extras/fashion-dataset/images/52003.jpg",
+    "teacher_size": [
+      60,
+      80
+    ],
+    "highres_size": [
+      1080,
+      1440
+    ],
+    "teacher_sha256": "1db9db8531ac96f30563eb50768a1ff895c3c0137ea3704fc4c2ecdac0ba0d5c",
+    "highres_sha256": "9acf13b5a296b1db164795ab1af69dc2318ecc8dfd113ff1d39f41d0147a8489"
+  },
+  {
+    "id": 52007,
+    "teacher_path": "data/raw/teacher/test/images_test/52007.jpg",
+    "highres_path": "data/raw/external/fashion_product_images_v1_legacy_extras/fashion-dataset/images/52007.jpg",
+    "teacher_size": [
+      60,
+      80
+    ],
+    "highres_size": [
+      1080,
+      1440
+    ],
+    "teacher_sha256": "34a65eb1a937f9ca424e702c73fec7300b272e00aa61121a77061c62a308f75d",
+    "highres_sha256": "5aabad9a731b01c69327075f3966b796ceb2bf1181f80d392c9ad9ac4fedfb04"
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "rows": 20000,
+  "metadata_groups": 11640,
+  "multirow_groups": 2243,
+  "rows_in_multirow_groups": 10603,
+  "groups_with_different_known_occasion_sets": 158,
+  "largest_group_rows": 141,
+  "edge_basis_counts": {
+    "exact_normalized_name_and_brand": 7009,
+    "shared_image_asset_path": 6610,
+    "product_id": 2
+  },
+  "claim_limit": "Grouping by product ID, exact normalized name plus brand, or shared image asset path; true independent product-family counts and image identity remain unverified. Conservative name collisions are possible."
+}

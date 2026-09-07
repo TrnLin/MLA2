@@ -1,0 +1,22 @@
+{
+  "analysis_scripts_parse": true,
+  "snapshotted_input_files_unchanged": true,
+  "input_files_checked": 73,
+  "changed_inputs": [],
+  "local_links_resolve": true,
+  "missing_links": [],
+  "support_totals_and_fold_rows": true,
+  "pixel_previews_in_training_scope": true,
+  "g2_failure_preserved": true,
+  "png_decode_checks": [
+    "spec_page-6.png",
+    "spec_page-7.png",
+    "rare_usage_contact_sheet.png",
+    "augmentation_preview.png",
+    "different_usage_neighbours.png",
+    "class_support.png",
+    "usage_error_tradeoffs.png"
+  ],
+  "visual_inspection": "All four old curve sheets, two relevant specification pages, and all five new figures inspected. NA label in support chart corrected and re-inspected.",
+  "no_training_or_new_model_inference": true
+}

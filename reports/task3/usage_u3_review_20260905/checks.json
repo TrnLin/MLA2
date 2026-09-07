@@ -1,0 +1,38 @@
+{
+  "pytest": {
+    "command": "./.venv/bin/python -m pytest -q tests/train/test_task3_usage_two_stage.py tests/train/test_task3_decisions.py",
+    "passed": 18,
+    "skipped": 1,
+    "failed": 1,
+    "skip_reason": "Optional torch-dependent test: PyTorch is not installed.",
+    "failure_reason": "test_notebook_code_compiles_without_training assumes blank outputs; the user-supplied notebook now contains completed results. No output was cleared."
+  },
+  "notebook_code_cells_compiled": 4,
+  "notebook_sha256": "62dae28975e85d4f2b78d51816b2b4190388c8f4552798b8f0a23b82986508d5",
+  "baseline_functions_used_by_u3_unchanged_between_attempts": [
+    "_loader",
+    "_pass",
+    "_prediction_frame",
+    "runtime_environment",
+    "set_reproducible_seed",
+    "validate_verified_colab_runtime"
+  ],
+  "old_baseline_commit": "c0600765ef2262e7f329b6a5c9ce8111e7e7b531",
+  "training_recipe_changed": false,
+  "host_limit_change": "7 GiB to 16 GiB; GPU stays 7 GiB",
+  "download_method": "rclone copy, remote reads only",
+  "source_folder": "https://drive.google.com/drive/folders/1RVc3GOPOEHNNYrAZeAzGapGjUbEf2UVO",
+  "registry": "https://drive.google.com/file/d/1wk8EvVnhkSqCHqUgSqkQKV5Wft54SUqr/view",
+  "review_only": true,
+  "visual_qa": {
+    "width": 1280,
+    "horizontal_overflow": false,
+    "figures_loaded": 2,
+    "figures_and_all_six_tables_inspected": true,
+    "html": [
+      "REVIEW.html",
+      "README.html"
+    ]
+  },
+  "source_notebook_unchanged": true
+}

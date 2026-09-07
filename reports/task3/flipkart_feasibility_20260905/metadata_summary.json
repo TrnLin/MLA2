@@ -1,0 +1,13 @@
+{
+  "rows": 20000,
+  "unique_source_ids": 20000,
+  "unique_product_ids": 19998,
+  "rows_with_image_urls": 19997,
+  "rows_with_occasion": 9954,
+  "occasion_entries": 9954,
+  "single_occasion_token_rows": 8142,
+  "multiple_occasion_token_rows": 1812,
+  "teacher_article_types": 124,
+  "canonical_split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db",
+  "training_rows_admitted": 0
+}

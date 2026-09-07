@@ -12,6 +12,8 @@ processing, evaluation, or the app.
 5. Explain the choice and its trade-offs.
 
 Use names like `0001-short-decision-name.md`.
+Some historical Task 3 and Task 4 records share a number. Use their full
+filenames to identify them; keep their original numbers and evidence links.
 
 Do not silently rewrite an accepted decision. If it changes, write a new record,
 mark the old one as superseded, and link both records.
@@ -21,10 +23,19 @@ mark the old one as superseded, and link both records.
 - `0001-data-roles-and-raw-immutability.md`
 - `0005-conflicting-exact-duplicate-quarantine.md`
 - `0006-python-constraints-workflow.md`
-- `0014-development-holdout-cv-boundary.md`
 - `0015-teacher-only-shared-image-preparation.md`
 - `0016-development-label-scope.md`
 - `0017-product-name-na-and-cv-refreeze.md`
+- `0018-task3-external-source-label-intake.md` — combined teacher + rare-class Task 3 dataset;
+  direct Usage labels, unchanged teacher folds, grouped folds for added images.
+- `0019-task3-text-supported-usage-expansion.md` — a new combined version adds 567 reviewed
+  product-text/collection-labelled images while preserving all earlier rows and folds.
+- `0020-task3-gender-sam25-final-model.md` — freeze the five SAM25 gender checkpoints
+  and their equal-probability ensemble; record evaluation limits and label bases.
+- `0021-task3-usage-gap-replacements.md` — replace 130 outside images in a new v3 dataset;
+  fill reviewed type/photo gaps while preserving class totals and retained rows/folds.
+- [0022-task3-usage-e1-final-model.md](0022-task3-usage-e1-final-model.md) — freeze the five
+  teacher-only E1 Usage checkpoints and equal probability average; record rare-class failures.
 - `0018-task4-v1-image-variant.md`
 - `0019-task4-retrieval-evaluation.md`
 - `0021-task4-high-resolution-input.md`
@@ -41,6 +52,9 @@ mark the old one as superseded, and link both records.
 
 ## Accepted with later amendments
 
+- `0014-development-holdout-cv-boundary.md` — Task 3 combined-data exception in 0018;
+  Gender and Usage final artifacts are five-fold ensembles under 0020 and 0022.
+  Other boundaries remain active.
 - `0002-single-split-and-duplicate-quarantine.md` — partition details superseded by 0014;
   the sole-split and duplicate-quarantine rules remain active.
 - `0011-auditable-family-review-boundary.md` — fixed partition counts superseded by 0014 and the

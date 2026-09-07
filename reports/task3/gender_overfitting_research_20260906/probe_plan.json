@@ -1,0 +1,18 @@
+{
+  "purpose": "Test a clean-image BatchNorm statistics mismatch before proposing another gradient-training experiment",
+  "source_recipe": "completed 04af MixUp alpha 0.2",
+  "source_commit": "68fef49ab1d55d671531113a71a3e71400a0e3fc",
+  "folds": [0, 4],
+  "seed": 2753,
+  "method": "Reset all four BatchNorm running means/variances; make one shuffled pass over every canonical fold-training image, without image augmentation or MixUp. Update BatchNorm buffers using image-count-weighted batch statistics. Keep learned parameters frozen and dropout disabled. Then freeze all layers for clean training and validation inference.",
+  "batch_size": 128,
+  "gradient_updates": 0,
+  "validation_used_to_fit_statistics": false,
+  "holdout_used": false,
+  "cpu_diagnostic_only": true,
+  "submission_eligible": false,
+  "selection": "One predetermined statistics recipe, no coefficient or subset sweep. Compare with the same source models replayed on CPU. Do not replace the original checkpoints or their saved decisions.",
+  "useful_gap_reduction_target": 0.02,
+  "validation_macro_f1_floor": 0.74,
+  "unisex_recall_must_not_fall": true
+}

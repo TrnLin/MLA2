@@ -1,0 +1,192 @@
+{
+  "clean_bn_cpu": {
+    "accuracy": 0.908695652173913,
+    "balanced_accuracy": 0.7780205187768721,
+    "macro_f1": 0.8071551792694522,
+    "weighted_f1": 0.9055648685480426,
+    "mcc": 0.8399127631542446,
+    "support": 13110,
+    "per_class": [
+      {
+        "class_index": 0,
+        "class_name": "Boys",
+        "support": 356,
+        "predicted_count": 311,
+        "precision": 0.842443729903537,
+        "recall": 0.7359550561797753,
+        "f1": 0.7856071964017992
+      },
+      {
+        "class_index": 1,
+        "class_name": "Girls",
+        "support": 285,
+        "predicted_count": 268,
+        "precision": 0.8208955223880597,
+        "recall": 0.7719298245614035,
+        "f1": 0.7956600361663653
+      },
+      {
+        "class_index": 2,
+        "class_name": "Men",
+        "support": 7023,
+        "predicted_count": 7331,
+        "precision": 0.9181557768380848,
+        "recall": 0.9584223266410365,
+        "f1": 0.9378570433328689
+      },
+      {
+        "class_index": 3,
+        "class_name": "Unisex",
+        "support": 707,
+        "predicted_count": 495,
+        "precision": 0.7252525252525253,
+        "recall": 0.5077793493635078,
+        "f1": 0.5973377703826955
+      },
+      {
+        "class_index": 4,
+        "class_name": "Women",
+        "support": 4739,
+        "predicted_count": 4705,
+        "precision": 0.9226354941551541,
+        "recall": 0.9160160371386369,
+        "f1": 0.9193138500635325
+      }
+    ],
+    "confusion_matrix": [
+      [
+        262,
+        28,
+        31,
+        12,
+        23
+      ],
+      [
+        22,
+        220,
+        6,
+        12,
+        25
+      ],
+      [
+        7,
+        4,
+        6731,
+        78,
+        203
+      ],
+      [
+        16,
+        5,
+        214,
+        359,
+        113
+      ],
+      [
+        4,
+        11,
+        349,
+        34,
+        4341
+      ]
+    ],
+    "nll": 0.27033858697824914,
+    "brier": 0.13844800006102173,
+    "ece_15": 0.010046198543567536
+  },
+  "original_cpu": {
+    "accuracy": 0.9090770404271549,
+    "balanced_accuracy": 0.782674799495134,
+    "macro_f1": 0.8089088049657726,
+    "weighted_f1": 0.9060887378134092,
+    "mcc": 0.8406914250929602,
+    "support": 13110,
+    "per_class": [
+      {
+        "class_index": 0,
+        "class_name": "Boys",
+        "support": 356,
+        "predicted_count": 322,
+        "precision": 0.8416149068322981,
+        "recall": 0.7612359550561798,
+        "f1": 0.799410029498525
+      },
+      {
+        "class_index": 1,
+        "class_name": "Girls",
+        "support": 285,
+        "predicted_count": 270,
+        "precision": 0.8111111111111111,
+        "recall": 0.7684210526315789,
+        "f1": 0.7891891891891891
+      },
+      {
+        "class_index": 2,
+        "class_name": "Men",
+        "support": 7023,
+        "predicted_count": 7337,
+        "precision": 0.9179501158511654,
+        "recall": 0.9589918838103375,
+        "f1": 0.9380222841225627
+      },
+      {
+        "class_index": 3,
+        "class_name": "Unisex",
+        "support": 707,
+        "predicted_count": 500,
+        "precision": 0.722,
+        "recall": 0.5106082036775106,
+        "f1": 0.5981772990886495
+      },
+      {
+        "class_index": 4,
+        "class_name": "Women",
+        "support": 4739,
+        "predicted_count": 4681,
+        "precision": 0.9254432813501389,
+        "recall": 0.9141169023000633,
+        "f1": 0.9197452229299363
+      }
+    ],
+    "confusion_matrix": [
+      [
+        271,
+        30,
+        28,
+        11,
+        16
+      ],
+      [
+        23,
+        219,
+        6,
+        13,
+        24
+      ],
+      [
+        8,
+        5,
+        6735,
+        78,
+        197
+      ],
+      [
+        16,
+        5,
+        213,
+        361,
+        112
+      ],
+      [
+        4,
+        11,
+        355,
+        37,
+        4332
+      ]
+    ],
+    "nll": 0.27026775201486225,
+    "brier": 0.13813421489507627,
+    "ece_15": 0.013195799687816246
+  }
+}

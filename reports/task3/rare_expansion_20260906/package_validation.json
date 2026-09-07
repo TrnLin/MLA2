@@ -1,0 +1,16 @@
+{
+  "archive": "reports/task3_rare_expansion_20260906/rare_usage_567_images.zip",
+  "sha256": "21d32571c8ac5fb3173698fc405bf144ce623d1078087c4f836586480a006d6d",
+  "bytes": 431059389,
+  "zip_members": 1247,
+  "accepted_images": 567,
+  "all_image_hashes_verified_inside_archive": true,
+  "all_prepared_images_decoded_inside_archive": true,
+  "archive_crc_passed": true,
+  "rejected_images_in_archive": false,
+  "prepared_directory_matches_manifest": true,
+  "prepared_archive": "reports/task3_rare_expansion_20260906/rare_usage_567_prepared.zip",
+  "prepared_archive_sha256": "c7bb408884debcc618ccaf432ffc4c04e33ad506459ee98d19786478c6eb332a",
+  "prepared_archive_bytes": 10148133,
+  "prepared_archive_hashes_and_crc_passed": true
+}

@@ -1,0 +1,48 @@
+{
+  "html": [
+    {
+      "file": "ACCESS.html",
+      "table_rows_including_headers": 0,
+      "images": 0,
+      "missing_local_links": []
+    },
+    {
+      "file": "CANDIDATE_ACCESS.html",
+      "table_rows_including_headers": 0,
+      "images": 0,
+      "missing_local_links": []
+    },
+    {
+      "file": "COVERAGE.html",
+      "table_rows_including_headers": 0,
+      "images": 0,
+      "missing_local_links": []
+    },
+    {
+      "file": "README.html",
+      "table_rows_including_headers": 0,
+      "images": 0,
+      "missing_local_links": []
+    },
+    {
+      "file": "REPORT.html",
+      "table_rows_including_headers": 23,
+      "images": 2,
+      "missing_local_links": []
+    },
+    {
+      "file": "TERMS_LABELS.html",
+      "table_rows_including_headers": 10,
+      "images": 0,
+      "missing_local_links": []
+    },
+    {
+      "file": "TYPE_COVERAGE.html",
+      "table_rows_including_headers": 125,
+      "images": 0,
+      "missing_local_links": []
+    }
+  ],
+  "source_hashes_rechecked_unchanged": 99,
+  "visual_inspection": "Seven figure PNGs inspected, including all four candidate sheets; revised shorter final sheet rechecked. Browser screenshots of README, REPORT tables/images/end, and TYPE_COVERAGE first/last rows inspected at 1280px. No visible overflow or cut-off content."
+}

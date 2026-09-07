@@ -1,0 +1,17 @@
+{
+  "source": "https://www.kaggle.com/datasets/PromptCloudHQ/flipkart-products",
+  "metadata_api": "https://www.kaggle.com/api/v1/datasets/view/PromptCloudHQ/flipkart-products",
+  "download_url": "https://www.kaggle.com/api/v1/datasets/download/PromptCloudHQ/flipkart-products?datasetVersionNumber=1",
+  "dataset_id": 2506,
+  "version": 1,
+  "publisher": "PromptCloud",
+  "declared_dataset_license": "CC BY-SA 4.0",
+  "license_limit": "Publisher's dataset declaration; separate image rights not established by this field alone.",
+  "retrieved_utc": "2026-09-05T14:01:28.524673+00:00",
+  "archive_bytes": 5765116,
+  "archive_sha256": "54a91fcd0b3d1923e3adb52c27e4dde557a7cd948dba066e3cb5bca542da1b9f",
+  "csv_bytes": 38114963,
+  "csv_sha256": "56f8f699c9e847356666c2eab3c3ab1244340f6a98ad08e39ea2199ebe993ad1",
+  "local_csv": "data/raw/external/flipkart_products_v1/flipkart_com-ecommerce_sample.csv",
+  "purpose": "Metadata and bounded image-access feasibility only; no training admission"
+}

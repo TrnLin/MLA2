@@ -1,0 +1,67 @@
+{
+  "status": "fail",
+  "passed_checks": 18,
+  "total_checks": 19,
+  "failed_checks": [
+    {
+      "gate": "vs_mixup20.unisex_recall_delta",
+      "rule": ">= 0.0",
+      "status": "fail",
+      "value": -0.007072135785007094
+    }
+  ],
+  "mean_parent_gap": 0.1291326731140856,
+  "mean_sam_gap": 0.10862370572251606,
+  "gap_reduction": 0.020508967391569544,
+  "mean_parent_training_f1": 0.9381230649694778,
+  "mean_sam_training_f1": 0.9029120122463494,
+  "parent_pooled_validation_f1": 0.8089088049657726,
+  "sam_pooled_validation_f1": 0.7943400936371426,
+  "validation_f1_delta": -0.014568711328629913,
+  "validation_f1_interval": {
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "families_by_fold": {
+      "0": 4564,
+      "4": 4570
+    },
+    "lower_95": -0.02567722626095221,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "point": -0.014568711328629913,
+    "repetitions": 10000,
+    "seed": 2753,
+    "selection_bias_removed": false,
+    "upper_95": -0.0034470592469183423
+  },
+  "class_f1_delta": {
+    "Boys": -0.029498525073746285,
+    "Girls": -0.032231860803289214,
+    "Men": -0.0014314857652160118,
+    "Unisex": -0.006815172842802308,
+    "Women": -0.0028665121580957464
+  },
+  "epoch25_diagnostic": {
+    "epoch": 25,
+    "mean_train_f1": 0.8979761564239742,
+    "mean_validation_f1": 0.7986185045784191,
+    "mean_gap": 0.09935765184555506,
+    "pooled_validation_f1": 0.7985792946813797,
+    "unisex_correct": 361,
+    "unisex_support": 707,
+    "unisex_recall": 0.5106082036775106
+  },
+  "sum_training_seconds": 1155.249690822,
+  "peak_gpu_memory_bytes": 476876800,
+  "verification": [
+    "Recomputed all 19 screen checks with the saved rule implementation.",
+    "Recomputed parent and candidate pooled F1 from their confusion matrices.",
+    "Verified SAM/MixUp receipts, diagnostic hashes, and canonical training rows for both folds.",
+    "No independent checkpoint download, model re-evaluation, or full registry audit."
+  ],
+  "checkpoint25_limit": "Diagnostics only; no saved weights or full IEEE/corruption checks."
+}

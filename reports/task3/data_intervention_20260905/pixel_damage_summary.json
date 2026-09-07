@@ -1,0 +1,37 @@
+{
+  "scope": "folds 1,2,3 only, at most 35 families per class per target; not population-weighted",
+  "n": 385,
+  "usable_mask_n": 375,
+  "fallback_n": 10,
+  "shift_grid_mean_removed_foreground": {
+    "median": 0.0,
+    "p95": 0.010383612595175343,
+    "max": 0.03131158917418459,
+    "above_005_count": 0
+  },
+  "shift_grid_worst_removed_foreground": {
+    "median": 0.0,
+    "p95": 0.03298664557968085,
+    "max": 0.0636032502101429,
+    "above_005_count": 3
+  },
+  "crop10pct_removed_foreground": {
+    "median": 0.017336485421591805,
+    "p95": 0.17672606520073708,
+    "max": 0.3199167244968772,
+    "above_005_count": 147
+  },
+  "center8x8_erased_foreground": {
+    "median": 0.04380561259411362,
+    "p95": 0.08994716550049979,
+    "max": 0.1461187214611872,
+    "above_005_count": 156
+  },
+  "bright115_newly_clipped_foreground_channel_fraction": {
+    "median": 0.10960960960960961,
+    "p95": 0.49943052475979305,
+    "max": 0.9172558261324955,
+    "above_005_count": 280
+  },
+  "dark090_max_near_white_fraction": 0.0
+}

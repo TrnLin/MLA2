@@ -1,0 +1,93 @@
+[
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_targeted_dataset_search_20260905/catalogue_probe.py"
+    ],
+    "exit_code": 0,
+    "output_file": "checks/01_catalogue_probe.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_targeted_dataset_search_20260905/catalogue_candidates.py"
+    ],
+    "exit_code": 0,
+    "output_file": "checks/02_catalogue_candidates.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_targeted_dataset_search_20260905/travel/inspect_fashionrec.py"
+    ],
+    "exit_code": 0,
+    "output_file": "checks/04_inspect_fashionrec.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_targeted_dataset_search_20260905/travel/abo_access/audit.py"
+    ],
+    "exit_code": 0,
+    "output_file": "checks/05_audit.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_targeted_dataset_search_20260905/render_findings.py"
+    ],
+    "exit_code": 0,
+    "output_file": "checks/06_render_findings.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_targeted_dataset_search_20260905/smart_casual/inspect_metadata.py"
+    ],
+    "exit_code": 0,
+    "output_file": "checks/03_inspect_metadata.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/python",
+      "reports/task3_targeted_dataset_search_20260905/verify_saved.py"
+    ],
+    "exit_code": 0,
+    "output_file": "checks/07_verify_saved.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/ruff",
+      "check",
+      "reports/task3_targeted_dataset_search_20260905/catalogue_probe.py",
+      "reports/task3_targeted_dataset_search_20260905/catalogue_candidates.py",
+      "reports/task3_targeted_dataset_search_20260905/render_findings.py",
+      "reports/task3_targeted_dataset_search_20260905/verify_saved.py",
+      "reports/task3_targeted_dataset_search_20260905/home_na/collect_metadata.py",
+      "reports/task3_targeted_dataset_search_20260905/home_na/followup.py",
+      "reports/task3_targeted_dataset_search_20260905/smart_casual/inspect_metadata.py",
+      "reports/task3_targeted_dataset_search_20260905/travel/inspect_fashionrec.py",
+      "reports/task3_targeted_dataset_search_20260905/travel/abo_access/audit.py"
+    ],
+    "exit_code": 0,
+    "output_file": "checks/08_ruff_check.txt"
+  },
+  {
+    "command": [
+      "./.venv/bin/ruff",
+      "format",
+      "--check",
+      "reports/task3_targeted_dataset_search_20260905/catalogue_probe.py",
+      "reports/task3_targeted_dataset_search_20260905/catalogue_candidates.py",
+      "reports/task3_targeted_dataset_search_20260905/render_findings.py",
+      "reports/task3_targeted_dataset_search_20260905/verify_saved.py",
+      "reports/task3_targeted_dataset_search_20260905/home_na/collect_metadata.py",
+      "reports/task3_targeted_dataset_search_20260905/home_na/followup.py",
+      "reports/task3_targeted_dataset_search_20260905/smart_casual/inspect_metadata.py",
+      "reports/task3_targeted_dataset_search_20260905/travel/inspect_fashionrec.py",
+      "reports/task3_targeted_dataset_search_20260905/travel/abo_access/audit.py"
+    ],
+    "exit_code": 0,
+    "output_file": "checks/09_ruff_format.txt"
+  }
+]
