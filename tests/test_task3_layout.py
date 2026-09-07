@@ -32,7 +32,13 @@ def test_all_companion_notebooks_have_one_retained_successor():
         rows = list(csv.DictReader(stream))
     assert len(rows) == 40
     assert len({row["original_notebook"] for row in rows}) == 40
-    assert {row["retained_notebook"] for row in rows} == {
+    # These refit notebooks were created after the move, so have no old path.
+    new_refits = {
+        "gender_sam25_refit.ipynb",
+        "usage_e1_refit.ipynb",
+        "usage_e8_refit.ipynb",
+    }
+    assert {row["retained_notebook"] for row in rows} | new_refits == {
         path.name for path in folder.glob("*.ipynb")
     }
     for row in rows:
