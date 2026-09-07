@@ -1,11 +1,15 @@
+from pathlib import Path
+
 import pandas as pd
 import pytest
 
 from fashion.task1.analysis import (
+    build_task1_confusion_detail,
     build_task1_confusion_pairs,
     build_task1_decision_evidence,
     build_task1_problem_profile,
     build_task1_weak_class_table,
+    load_task1_oof_predictions,
 )
 
 
@@ -160,3 +164,107 @@ def test_failure_tables_validate_required_columns(
 def test_failure_tables_reject_non_positive_limit(builder: object) -> None:
     with pytest.raises(ValueError, match="limit must be positive"):
         builder({}, limit=0)  # type: ignore[operator]
+
+
+def _registered_oof(tmp_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
+    fold_rows = []
+    registry_rows = []
+    for fold in range(5):
+        run_id = f"run-{fold}"
+        prediction_path = tmp_path / f"predictions-{fold}.csv"
+        pd.DataFrame(
+            {
+                "id": [fold + 1],
+                "true_label": ["Shoe"],
+                "predicted_label": ["Shoe" if fold else "Bag"],
+            }
+        ).to_csv(prediction_path, index=False)
+        fold_rows.append(
+            {"run_id": run_id, "fold": fold, "candidate_id": "scratch-cnn"}
+        )
+        registry_rows.append(
+            {
+                "run_id": run_id,
+                "status": "completed",
+                "prediction_path": prediction_path.name,
+            }
+        )
+    return pd.DataFrame(fold_rows), pd.DataFrame(registry_rows)
+
+
+def test_load_task1_oof_predictions_reads_exact_registered_folds(tmp_path: Path) -> None:
+    fold_metrics, registry = _registered_oof(tmp_path)
+
+    predictions = load_task1_oof_predictions(
+        fold_metrics,
+        registry,
+        candidate_id="scratch-cnn",
+        expected_ids=[1, 2, 3, 4, 5],
+        root=tmp_path,
+    )
+
+    assert predictions["id"].tolist() == [1, 2, 3, 4, 5]
+    assert predictions.loc[0, "predicted_label"] == "Bag"
+
+
+def test_load_task1_oof_predictions_rejects_duplicate_fold(tmp_path: Path) -> None:
+    fold_metrics, registry = _registered_oof(tmp_path)
+    fold_metrics.loc[4, "fold"] = 3
+
+    with pytest.raises(ValueError, match="exactly five folds"):
+        load_task1_oof_predictions(
+            fold_metrics,
+            registry,
+            candidate_id="scratch-cnn",
+            expected_ids=[1, 2, 3, 4, 5],
+            root=tmp_path,
+        )
+
+
+def test_load_task1_oof_predictions_rejects_incomplete_registry(tmp_path: Path) -> None:
+    fold_metrics, registry = _registered_oof(tmp_path)
+
+    with pytest.raises(ValueError, match="completed registry row"):
+        load_task1_oof_predictions(
+            fold_metrics,
+            registry.iloc[:-1],
+            candidate_id="scratch-cnn",
+            expected_ids=[1, 2, 3, 4, 5],
+            root=tmp_path,
+        )
+
+
+def test_confusion_detail_reports_count_support_rate_and_examples() -> None:
+    predictions = pd.DataFrame(
+        {
+            "id": [5, 2, 9, 1, 4, 3],
+            "true_label": ["Shoe", "Shoe", "Shoe", "Top", "Top", "Top"],
+            "predicted_label": ["Bag", "Bag", "Shoe", "Shirt", "Shirt", "Top"],
+        }
+    )
+
+    detail = build_task1_confusion_detail(
+        predictions, candidate_id="scratch-cnn", limit=2
+    )
+
+    assert list(detail.columns) == [
+        "rank",
+        "candidate_id",
+        "true_label",
+        "predicted_label",
+        "error_count",
+        "true_support",
+        "error_rate",
+        "example_ids",
+    ]
+    assert detail["rank"].tolist() == [1, 2]
+    assert detail["error_count"].tolist() == [2, 2]
+    assert detail["true_label"].tolist() == ["Shoe", "Top"]
+    assert detail["true_support"].tolist() == [3, 3]
+    assert detail["error_rate"].tolist() == pytest.approx([2 / 3, 2 / 3])
+    assert detail["example_ids"].tolist() == ["2,5", "1,4"]
+
+
+def test_confusion_detail_rejects_non_positive_limit() -> None:
+    with pytest.raises(ValueError, match="limit must be positive"):
+        build_task1_confusion_detail(pd.DataFrame(), candidate_id="scratch-cnn", limit=0)

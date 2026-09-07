@@ -1,10 +1,14 @@
 """Read-only Task 1 EDA and failure-analysis evidence helpers."""
 
+from collections.abc import Collection
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Mapping
 
 import pandas as pd
 
+from fashion.config import ROOT
+from fashion.task1.evaluation import validate_oof_predictions
 from fashion.task1.image_contract import TASK1_IMAGE_SIZE
 
 
@@ -180,3 +184,106 @@ def build_task1_confusion_pairs(
         grouped.insert(0, "candidate_id", candidate_id)
         output.append(grouped)
     return pd.concat(output, ignore_index=True) if output else pd.DataFrame(columns=columns)
+
+
+def load_task1_oof_predictions(
+    fold_metrics: pd.DataFrame,
+    registry_rows: pd.DataFrame,
+    *,
+    candidate_id: str,
+    expected_ids: Collection[int],
+    root: str | Path = ROOT,
+) -> pd.DataFrame:
+    """Load one candidate's five registered development OOF prediction files."""
+    fold_required = {"run_id", "fold", "candidate_id"}
+    if missing := fold_required.difference(fold_metrics.columns):
+        raise ValueError(f"fold metrics are missing columns: {sorted(missing)}")
+    registry_required = {"run_id", "status", "prediction_path"}
+    if missing := registry_required.difference(registry_rows.columns):
+        raise ValueError(f"registry rows are missing columns: {sorted(missing)}")
+
+    candidate = fold_metrics.loc[fold_metrics["candidate_id"].eq(candidate_id)].copy()
+    folds = pd.to_numeric(candidate["fold"], errors="raise").astype(int)
+    if len(candidate) != 5 or set(folds) != set(range(5)) or folds.duplicated().any():
+        raise ValueError("OOF loading requires exactly five folds labelled 0,1,2,3,4")
+    if candidate["run_id"].astype(str).duplicated().any():
+        raise ValueError("OOF loading requires one unique run ID per fold")
+
+    root_path = Path(root)
+    prediction_frames: list[pd.DataFrame] = []
+    for row in candidate.assign(fold=folds).sort_values("fold").itertuples(index=False):
+        matches = registry_rows.loc[
+            registry_rows["run_id"].astype(str).eq(str(row.run_id))
+            & registry_rows["status"].astype(str).eq("completed")
+        ]
+        if len(matches) != 1:
+            raise ValueError(f"run {row.run_id!r} must have exactly one completed registry row")
+        raw_path = str(matches.iloc[0]["prediction_path"]).strip()
+        if not raw_path:
+            raise ValueError(f"run {row.run_id!r} has no registered prediction path")
+        prediction_path = Path(raw_path)
+        if not prediction_path.is_absolute():
+            prediction_path = root_path / prediction_path
+        if not prediction_path.is_file():
+            raise ValueError(
+                f"registered prediction file does not exist for run {row.run_id!r}: "
+                f"{prediction_path}"
+            )
+        prediction_frames.append(pd.read_csv(prediction_path))
+
+    predictions = pd.concat(prediction_frames, ignore_index=True)
+    validate_oof_predictions(predictions, expected_ids)
+    return predictions.sort_values("id", kind="stable").reset_index(drop=True)
+
+
+def build_task1_confusion_detail(
+    predictions: pd.DataFrame,
+    *,
+    candidate_id: str,
+    limit: int = 10,
+) -> pd.DataFrame:
+    """Describe one candidate's largest directed OOF confusion pairs."""
+    if limit <= 0:
+        raise ValueError("limit must be positive")
+    required = {"id", "true_label", "predicted_label"}
+    if missing := required.difference(predictions.columns):
+        raise ValueError(f"OOF evidence is missing columns: {sorted(missing)}")
+    columns = [
+        "rank",
+        "candidate_id",
+        "true_label",
+        "predicted_label",
+        "error_count",
+        "true_support",
+        "error_rate",
+        "example_ids",
+    ]
+    if predictions.empty:
+        return pd.DataFrame(columns=columns)
+
+    support = predictions.groupby("true_label").size().rename("true_support")
+    errors = predictions.loc[predictions["true_label"].ne(predictions["predicted_label"])]
+    if errors.empty:
+        return pd.DataFrame(columns=columns)
+    detail = (
+        errors.groupby(["true_label", "predicted_label"], as_index=False)
+        .agg(
+            error_count=("id", "size"),
+            example_ids=(
+                "id",
+                lambda ids: ",".join(str(value) for value in sorted(map(int, ids))[:3]),
+            ),
+        )
+        .join(support, on="true_label")
+        .sort_values(
+            ["error_count", "true_label", "predicted_label"],
+            ascending=[False, True, True],
+            kind="stable",
+        )
+        .head(limit)
+        .reset_index(drop=True)
+    )
+    detail.insert(0, "candidate_id", str(candidate_id))
+    detail.insert(0, "rank", range(1, len(detail) + 1))
+    detail["error_rate"] = detail["error_count"] / detail["true_support"]
+    return detail.loc[:, columns]

@@ -35,12 +35,14 @@ def test_task1_notebook_is_evidence_led_and_run_all_safe() -> None:
         "## 4. Evaluation",
         "## 5. Candidate hypotheses",
         "## 6. Controlled preprocessing",
-        "## 7. Classical baselines and scratch CNN controllers",
-        "## 8. Learning-curve diagnosis",
-        "## 9. Balanced class-weighted loss",
-        "## 10. Combined five-fold and OOF comparison",
-        "## 11. Weak-class/confusion analysis",
-        "## 12. Development decision and Notebook 06 handoff",
+        "## 7. Scratch CNN control",
+        "## 8. HOG baselines",
+        "## 9. Mild data augmentation",
+        "## 10. Balanced class-weighted loss",
+        "## 11. Combined five-fold and OOF comparison",
+        "## 12. Learning-curve diagnosis",
+        "## 13. Weak-class/confusion analysis",
+        "## 14. Development decision and Notebook 06 handoff",
     ]
     positions = [source.index(heading) for heading in expected_headings]
     assert positions == sorted(positions)
@@ -50,6 +52,14 @@ def test_task1_notebook_is_evidence_led_and_run_all_safe() -> None:
         "build_task1_decision_evidence",
         "build_task1_weak_class_table",
         "build_task1_confusion_pairs",
+        "build_task1_confusion_detail",
+        "load_task1_oof_predictions",
+        "write_task1_confusion_pair_figure",
+        "write_task1_focused_confusion_figure",
+        "write_task1_confusion_example_figure",
+        "top_confusion_pairs.png",
+        "focused_confusion_matrix.png",
+        "confusion_examples.png",
         'RUN_MODE = "smoke"',
         'CLASSICAL_STAGE = "smoke"',
         'WEIGHTED_MODE = "smoke"',
@@ -60,7 +70,7 @@ def test_task1_notebook_is_evidence_led_and_run_all_safe() -> None:
         "0.5315 ± 0.0331",
         "0.5218 ± 0.0158",
         "0.4564 ± 0.0181",
-        "practical stability decision",
+        "practical lower-fold-variation decision",
         "task1_cnn_mild_aug_unweighted_v1",
         "results/runs.csv",
     )
@@ -75,14 +85,14 @@ def test_task1_notebook_is_evidence_led_and_run_all_safe() -> None:
     ):
         assert forbidden not in code_source
 
-    decision = source[source.index("## 12. Development decision and Notebook 06 handoff") :]
+    decision = source[source.index("## 14. Development decision and Notebook 06 handoff") :]
     assert "task1_cnn_mild_aug_unweighted_v1" in decision
-    assert "practical stability decision" in decision
+    assert "practical lower-fold-variation decision" in decision
     assert "did not pass" in decision
     assert "not ready" not in decision.lower()
 
 
-def test_task1_notebook_orders_diagnosis_before_weighted_experiment() -> None:
+def test_task1_notebook_restores_the_planned_experiment_flow() -> None:
     notebook = _notebook()
     headings = [
         line.strip()
@@ -91,9 +101,17 @@ def test_task1_notebook_orders_diagnosis_before_weighted_experiment() -> None:
         for line in cell.source.splitlines()
         if line.startswith("## ")
     ]
-    assert headings.index("## 8. Learning-curve diagnosis") < headings.index(
-        "## 9. Balanced class-weighted loss"
-    )
+    experiment_flow = [
+        "## 7. Scratch CNN control",
+        "## 8. HOG baselines",
+        "## 9. Mild data augmentation",
+        "## 10. Balanced class-weighted loss",
+        "## 11. Combined five-fold and OOF comparison",
+        "## 12. Learning-curve diagnosis",
+        "## 13. Weak-class/confusion analysis",
+    ]
+    positions = [headings.index(heading) for heading in experiment_flow]
+    assert positions == sorted(positions)
 
 
 def test_task1_notebook_defaults_weighted_controller_to_smoke() -> None:

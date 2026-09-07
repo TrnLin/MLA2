@@ -8,9 +8,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from PIL import Image, ImageOps
 from sklearn.metrics import confusion_matrix
 
-from fashion.config import TASK1_FIGURE_DIR
+from fashion.config import ROOT, TASK1_FIGURE_DIR
 
 
 def write_task1_comparison_figure(
@@ -215,5 +216,218 @@ def write_task1_confusion_figure(
     figure.text(0.5, 0.01, "Rows with no true examples are shown as zeros.", ha="center")
     figure.tight_layout(rect=(0, 0.03, 1, 1))
     figure.savefig(output_path, dpi=220)
+    plt.close(figure)
+    return output_path
+
+
+def write_task1_confusion_pair_figure(
+    confusion_detail: pd.DataFrame,
+    *,
+    output: str | Path = TASK1_FIGURE_DIR / "top_confusion_pairs.png",
+) -> Path:
+    """Write a readable bar chart of the largest directed OOF errors."""
+    required = {"true_label", "predicted_label", "error_count"}
+    if missing := required.difference(confusion_detail.columns):
+        raise ValueError(f"confusion detail is missing columns: {sorted(missing)}")
+    if confusion_detail.empty:
+        raise ValueError("confusion detail must contain at least one pair")
+    detail = confusion_detail.copy()
+    detail["error_count"] = pd.to_numeric(detail["error_count"], errors="raise")
+    detail = detail.sort_values(
+        ["error_count", "true_label", "predicted_label"],
+        ascending=[True, False, False],
+        kind="stable",
+    )
+    labels = detail["true_label"].astype(str) + " → " + detail["predicted_label"].astype(str)
+
+    output_path = Path(output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    figure_height = max(4.8, 0.5 * len(detail) + 1.8)
+    figure, axis = plt.subplots(figsize=(10, figure_height))
+    bars = axis.barh(labels, detail["error_count"], color="#4C78A8")
+    axis.bar_label(bars, labels=[str(int(value)) for value in detail["error_count"]], padding=4)
+    axis.set_xlabel("OOF errors")
+    axis.set_ylabel("True label → predicted label")
+    axis.set_title("Most common article-type confusion pairs")
+    axis.grid(axis="x", alpha=0.25)
+    axis.set_xlim(0, float(detail["error_count"].max()) * 1.14)
+    figure.tight_layout()
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+    return output_path
+
+
+def _focus_labels(confusion_detail: pd.DataFrame, max_classes: int) -> list[str]:
+    if max_classes < 2:
+        raise ValueError("max_classes must be at least 2")
+    required = {"true_label", "predicted_label"}
+    if missing := required.difference(confusion_detail.columns):
+        raise ValueError(f"confusion detail is missing columns: {sorted(missing)}")
+    labels: list[str] = []
+    for row in confusion_detail.itertuples(index=False):
+        for label in (str(row.true_label), str(row.predicted_label)):
+            if label not in labels and len(labels) < max_classes:
+                labels.append(label)
+    if len(labels) < 2:
+        raise ValueError("focused confusion figure requires at least two labels")
+    return labels
+
+
+def write_task1_focused_confusion_figure(
+    predictions: pd.DataFrame,
+    confusion_detail: pd.DataFrame,
+    *,
+    output: str | Path = TASK1_FIGURE_DIR / "focused_confusion_matrix.png",
+    max_classes: int = 8,
+) -> Path:
+    """Write an annotated OOF matrix for the classes in the largest errors."""
+    required = {"true_label", "predicted_label"}
+    if missing := required.difference(predictions.columns):
+        raise ValueError(f"predictions are missing columns: {sorted(missing)}")
+    labels = _focus_labels(confusion_detail, max_classes)
+    columns = [*labels, "Other"]
+    counts = pd.DataFrame(0, index=labels, columns=columns, dtype=int)
+    for row in predictions.loc[predictions["true_label"].astype(str).isin(labels)].itertuples(
+        index=False
+    ):
+        true_label = str(row.true_label)
+        predicted_label = str(row.predicted_label)
+        column = predicted_label if predicted_label in labels else "Other"
+        counts.loc[true_label, column] += 1
+    support = counts.sum(axis=1)
+    proportions = counts.div(support.replace(0, np.nan), axis=0).fillna(0.0)
+
+    output_path = Path(output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    figure, axis = plt.subplots(figsize=(11, max(6, 0.8 * len(labels) + 2)))
+    image = axis.imshow(proportions.to_numpy(), cmap="Blues", vmin=0.0, vmax=1.0)
+    figure.colorbar(image, ax=axis, fraction=0.035, pad=0.03, label="Within-class proportion")
+    axis.set_xticks(np.arange(len(columns)), columns, rotation=35, ha="right")
+    axis.set_yticks(np.arange(len(labels)), labels)
+    axis.set_xlabel("Predicted article type")
+    axis.set_ylabel("True article type")
+    axis.set_title("Closer look at the largest OOF confusions")
+    for row_index in range(len(labels)):
+        for column_index in range(len(columns)):
+            count = int(counts.iloc[row_index, column_index])
+            proportion = float(proportions.iloc[row_index, column_index])
+            color = "white" if proportion >= 0.55 else "black"
+            axis.text(
+                column_index,
+                row_index,
+                f"{count}\n{proportion:.0%}",
+                ha="center",
+                va="center",
+                fontsize=8,
+                color=color,
+            )
+    figure.text(
+        0.5,
+        0.01,
+        (
+            "Rows use all OOF examples for that true class; Other contains "
+            "predictions outside this view."
+        ),
+        ha="center",
+        fontsize=9,
+    )
+    figure.tight_layout(rect=(0, 0.04, 1, 1))
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+    return output_path
+
+
+def write_task1_confusion_example_figure(
+    predictions: pd.DataFrame,
+    splits: pd.DataFrame,
+    confusion_detail: pd.DataFrame,
+    *,
+    output: str | Path = TASK1_FIGURE_DIR / "confusion_examples.png",
+    pair_limit: int = 5,
+    examples_per_pair: int = 2,
+    root: str | Path = ROOT,
+) -> Path:
+    """Write representative source images for the largest directed OOF errors."""
+    if pair_limit <= 0 or examples_per_pair <= 0:
+        raise ValueError("pair_limit and examples_per_pair must be positive")
+    prediction_required = {"id", "true_label", "predicted_label"}
+    if missing := prediction_required.difference(predictions.columns):
+        raise ValueError(f"predictions are missing columns: {sorted(missing)}")
+    split_required = {"id", "partition", "path"}
+    if missing := split_required.difference(splits.columns):
+        raise ValueError(f"splits are missing columns: {sorted(missing)}")
+    detail_required = {"true_label", "predicted_label", "example_ids"}
+    if missing := detail_required.difference(confusion_detail.columns):
+        raise ValueError(f"confusion detail is missing columns: {sorted(missing)}")
+    if confusion_detail.empty:
+        raise ValueError("confusion detail must contain at least one pair")
+    if predictions["id"].duplicated().any():
+        raise ValueError("OOF predictions contain duplicate product IDs")
+    if splits["id"].duplicated().any():
+        raise ValueError("splits contain duplicate product IDs")
+
+    prediction_by_id = predictions.assign(id=predictions["id"].astype(int)).set_index("id")
+    split_by_id = splits.assign(id=splits["id"].astype(int)).set_index("id")
+    examples: list[tuple[int, str, str, Path]] = []
+    for pair in confusion_detail.head(pair_limit).itertuples(index=False):
+        ids = [int(value) for value in str(pair.example_ids).split(",") if value.strip()]
+        for product_id in ids[:examples_per_pair]:
+            if product_id not in prediction_by_id.index:
+                raise ValueError(f"example ID {product_id} is absent from OOF predictions")
+            prediction = prediction_by_id.loc[product_id]
+            if (
+                str(prediction["true_label"]) != str(pair.true_label)
+                or str(prediction["predicted_label"]) != str(pair.predicted_label)
+            ):
+                raise ValueError(f"example ID {product_id} does not match its confusion pair")
+            if product_id not in split_by_id.index:
+                raise ValueError(f"example ID {product_id} is absent from the saved split")
+            split = split_by_id.loc[product_id]
+            if str(split["partition"]) != "development":
+                raise ValueError(f"example ID {product_id} must belong to development")
+            image_path = Path(str(split["path"]))
+            if not image_path.is_absolute():
+                image_path = Path(root) / image_path
+            if not image_path.is_file():
+                raise ValueError(f"example image does not exist for ID {product_id}: {image_path}")
+            examples.append(
+                (product_id, str(pair.true_label), str(pair.predicted_label), image_path)
+            )
+    if not examples:
+        raise ValueError("confusion detail contains no example IDs")
+
+    pair_count = min(pair_limit, len(confusion_detail))
+    output_path = Path(output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    figure, axes = plt.subplots(
+        examples_per_pair,
+        pair_count,
+        figsize=(3.2 * pair_count, 3.5 * examples_per_pair),
+        squeeze=False,
+    )
+    for axis in axes.flat:
+        axis.axis("off")
+    position = 0
+    for pair_index, pair in enumerate(confusion_detail.head(pair_limit).itertuples(index=False)):
+        ids = [int(value) for value in str(pair.example_ids).split(",") if value.strip()]
+        for example_index, _ in enumerate(ids[:examples_per_pair]):
+            product_id, true_label, predicted_label, image_path = examples[position]
+            position += 1
+            try:
+                with Image.open(image_path) as raw_image:
+                    image = ImageOps.exif_transpose(raw_image).convert("RGB")
+                    axes[example_index, pair_index].imshow(image)
+            except OSError as error:
+                plt.close(figure)
+                raise ValueError(
+                    f"example image is unreadable for ID {product_id}: {image_path}"
+                ) from error
+            axes[example_index, pair_index].set_title(
+                f"ID {product_id}\n{true_label} → {predicted_label}", fontsize=9
+            )
+            axes[example_index, pair_index].axis("off")
+    figure.suptitle("Examples from the largest OOF confusion pairs", fontsize=14)
+    figure.tight_layout(rect=(0, 0, 1, 0.98))
+    figure.savefig(output_path, dpi=180)
     plt.close(figure)
     return output_path

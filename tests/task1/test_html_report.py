@@ -134,16 +134,26 @@ def test_report_result_tables_match_saved_evidence() -> None:
                 )
 
 
-def test_report_freezes_the_mild_unweighted_cnn_for_stability() -> None:
+def test_report_explains_the_development_tradeoff_and_confusion_detail() -> None:
     report = REPORT.read_text(encoding="utf-8")
 
     assert "task1_cnn_mild_aug_unweighted_v1" in report
-    assert "stability" in report.lower()
+    assert "lower fold variation" in report.lower()
+    assert "proof of repeat-run stability" in report.lower()
     assert "Choose the mildly augmented unweighted CNN" in report
     assert "Choose the plain scratch CNN" not in report
+    assert "Development decision:" in report
+    assert report.count("cnn_oof_confusion_task1_cnn_mild_aug_unweighted_v1.png") == 1
+    for filename in (
+        "top_confusion_pairs.png",
+        "focused_confusion_matrix.png",
+        "confusion_examples.png",
+        "top_confusion_pairs.csv",
+    ):
+        assert filename in report
 
 
 if __name__ == "__main__":
     test_report_navigation_and_local_assets_resolve()
     test_report_result_tables_match_saved_evidence()
-    test_report_freezes_the_mild_unweighted_cnn_for_stability()
+    test_report_explains_the_development_tradeoff_and_confusion_detail()

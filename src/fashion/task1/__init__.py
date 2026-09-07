@@ -2,10 +2,12 @@
 
 from fashion.task1.analysis import (
     Task1ProblemProfile,
+    build_task1_confusion_detail,
     build_task1_confusion_pairs,
     build_task1_decision_evidence,
     build_task1_problem_profile,
     build_task1_weak_class_table,
+    load_task1_oof_predictions,
 )
 from fashion.task1.candidates import (
     TASK1_BALANCED_WEIGHTED_CANDIDATE,
@@ -62,7 +64,10 @@ from fashion.task1.losses import (
 from fashion.task1.models import Task1ModelConfig, Task1SmallCNN, count_trainable_parameters
 from fashion.task1.plotting import (
     write_task1_comparison_figure,
+    write_task1_confusion_example_figure,
     write_task1_confusion_figure,
+    write_task1_confusion_pair_figure,
+    write_task1_focused_confusion_figure,
     write_task1_learning_curve_figure,
 )
 from fashion.task1.preprocessing import (
@@ -90,6 +95,8 @@ __all__ = [
     "build_task1_decision_evidence",
     "build_task1_weak_class_table",
     "build_task1_confusion_pairs",
+    "build_task1_confusion_detail",
+    "load_task1_oof_predictions",
     "TASK1_CONTROL_PREPROCESSING",
     "TASK1_IMAGE_SIZE",
     "TASK1_PAD_COLOR",
@@ -121,6 +128,9 @@ __all__ = [
     "run_task1_weighted_experiment",
     "write_task1_comparison_figure",
     "write_task1_confusion_figure",
+    "write_task1_confusion_pair_figure",
+    "write_task1_focused_confusion_figure",
+    "write_task1_confusion_example_figure",
     "write_task1_learning_curve_figure",
     "classification_metrics",
     "per_class_metrics",

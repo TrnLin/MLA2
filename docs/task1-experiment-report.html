@@ -267,7 +267,7 @@
         <article class="card"><p class="metric">32,773</p><p class="metric-label">labelled development products</p><p>These rows are used inside five saved training and validation folds.</p></article>
         <article class="card"><p class="metric">124</p><p class="metric-label">article-type classes</p><p>All labels stay in the score, even when a class is extremely rare.</p></article>
         <article class="card"><p class="metric">5</p><p class="metric-label">final model candidates</p><p>Three CNN candidates, HOG + KNN, and HOG + linear SVM.</p></article>
-        <article class="card wide"><h3>Main finding</h3><p>The plain CNN won mean macro-F1, but mild unweighted augmentation was frozen for its stronger stability and much lower fold validation loss. This is a stability trade-off, not a macro-F1 win.</p></article>
+        <article class="card wide"><h3>Main finding</h3><p>The plain CNN won mean macro-F1, but mild unweighted augmentation was frozen because its results varied less between folds and its fold validation loss was much lower. This is a development trade-off, not a macro-F1 win or proof of repeat-run stability.</p></article>
         <article class="card"><h3>Honest limit</h3><p>The selected CNN scored F1 = 0 for 21 classes. Most of these classes have tiny support. The result is useful, but rare-item performance is not solved.</p></article>
       </div>
     </section>
@@ -321,12 +321,6 @@
           <p><strong>Why:</strong> the assignment needs a model trained from scratch. A small network matches the tiny 60 × 80 inputs and gives a clear learned baseline without pretrained weights.</p>
         </article>
         <article class="card">
-          <p class="eyebrow">Controlled test</p>
-          <h3>No augmentation vs mild augmentation</h3>
-          <p>The control makes no random change. The test adds horizontal flips, ±5° rotation, ±5% movement, 0.95–1.05 scale, and 0.9–1.1 brightness and contrast.</p>
-          <p><strong>Question:</strong> does this help mean macro-F1 without making folds unstable?</p>
-        </article>
-        <article class="card">
           <p class="eyebrow">Candidate B</p>
           <h3>HOG + KNN</h3>
           <p>HOG turns each grayscale image into edge-direction counts. KNN predicts from nearby feature vectors.</p>
@@ -342,6 +336,12 @@
           <p class="eyebrow">Classic tuning</p>
           <h3>Coarse then fine HOG</h3>
           <p>16-pixel cells make 288 features. 10-pixel cells make 1,260 features. Fine HOG won. KNN tried k = 3, 5, 11 with uniform or distance votes. SVM tried C = 0.1, 1, 10 with normal or balanced weights.</p>
+        </article>
+        <article class="card">
+          <p class="eyebrow">Controlled test</p>
+          <h3>No augmentation vs mild augmentation</h3>
+          <p>The control makes no random change. The test adds horizontal flips, ±5° rotation, ±5% movement, 0.95–1.05 scale, and 0.9–1.1 brightness and contrast.</p>
+          <p><strong>Question:</strong> does this help mean macro-F1 while reducing differences between folds?</p>
         </article>
       </div>
       <div class="callout"><strong>Smoke runs are not evidence.</strong> Six registered smoke rows only checked that the pipeline worked. They covered three setup paths twice: CNN no augmentation (macro-F1 0.0016), coarse-HOG KNN (0.0396), and coarse-HOG SVM (0.0407). Each used only two small batches, so none was allowed to select a winner.</div>
@@ -501,21 +501,22 @@
       <div class="grid">
         <article class="card"><p class="metric">21 / 124</p><p class="metric-label">selected CNN classes with OOF F1 = 0</p><p>The selected mild unweighted CNN has 21 zero-F1 classes. The balanced weighted CNN has 20, but its overall metrics are much worse.</p></article>
         <article class="card"><p class="metric">0.0158</p><p class="metric-label">selected CNN fold SD</p><p>The mildly augmented unweighted CNN has about 52% lower fold variation than the plain CNN’s 0.0331.</p></article>
-        <article class="card"><p class="metric">98.09%</p><p class="metric-label">augmented CNN Top-5</p><p>Augmentation is often close to the answer, but its first-choice rare-class balance is still slightly worse.</p></article>
+        <article class="card"><p class="metric">98.09%</p><p class="metric-label">augmented CNN Top-5</p><p>The right label is usually among five guesses, even though the first guess still mixes similar classes.</p></article>
       </div>
       <div class="callout bad" style="margin-top:1rem"><strong>Unlearnable fold cases.</strong> Some validation labels have no matching training example in that fold. A zero for those cases is honest. Dropping them would make the score look better but would change the fixed 124-class question.</div>
+      <p>The full 124 × 124 matrix stays as the complete overview. The next three figures are a more detailed look: they rank the biggest mistakes, show their rates inside a smaller matrix, and give real image examples.</p>
       <div class="figure-grid" style="margin-top:1rem">
-        <figure><img src="../results/figures/task1/cnn_oof_confusion_task1_cnn_mild_aug_unweighted_v1.png" alt="Out-of-fold confusion matrix for the selected mildly augmented unweighted CNN"><figcaption>Chosen CNN. The full matrix shows where visually similar article types are mixed.</figcaption></figure>
-        <figure><img src="../results/figures/task1/cnn_oof_confusion_task1_rgb_60x80_mild_aug_v1.png" alt="Out-of-fold confusion matrix for the mildly augmented CNN"><figcaption>Augmented CNN. Compare the pattern, not only the total accuracy.</figcaption></figure>
-        <figure><img src="../results/figures/task1/classical_oof_confusion_task1_gray_hog_ppc10_v1-knn-k3-distance.png" alt="Out-of-fold confusion matrix for fine-HOG KNN"><figcaption>KNN keeps a strong macro-F1, but its Top-5 result is much lower than the CNNs.</figcaption></figure>
-        <figure><img src="../results/figures/task1/classical_oof_confusion_task1_gray_hog_ppc10_v1-linear-svm-c0.1-balanced.png" alt="Out-of-fold confusion matrix for fine-HOG linear SVM"><figcaption>The SVM’s Top-5 is better than KNN, but its mean macro-F1 and Top-1 are lower.</figcaption></figure>
+        <figure><img src="../results/figures/task1/cnn_oof_confusion_task1_cnn_mild_aug_unweighted_v1.png" alt="Full out-of-fold confusion matrix for the selected mildly augmented unweighted CNN"><figcaption>Complete view. This keeps all 124 labels, so the text is dense.</figcaption></figure>
+        <figure><img src="../results/figures/task1/top_confusion_pairs.png" alt="Ten most common confusion pairs for the selected CNN"><figcaption>Top mistakes by count. Casual Shoes → Sports Shoes is the largest pair.</figcaption></figure>
+        <figure><img src="../results/figures/task1/focused_confusion_matrix.png" alt="Focused confusion matrix for labels involved in the largest mistakes"><figcaption>Focused view. Each cell shows both the mistake count and its share of the true class.</figcaption></figure>
+        <figure><img src="../results/figures/task1/confusion_examples.png" alt="Example product images from the five largest confusion pairs"><figcaption>Image examples make the similar shapes behind the mistakes easier to see.</figcaption></figure>
       </div>
     </section>
 
     <section id="decision">
       <div class="section-head">
         <div><p class="eyebrow">Development decision</p><h2>Choose the mildly augmented unweighted CNN</h2></div>
-        <p>This is the model to carry into the locked final evaluation. It is frozen for stability, not because it wins mean macro-F1.</p>
+        <p>This is the model to carry into the locked final evaluation. It is frozen because it varied less between folds and had lower fold loss, not because it wins mean macro-F1.</p>
       </div>
       <div class="grid">
         <article class="card wide">
@@ -525,7 +526,7 @@
         </article>
         <article class="card">
           <h3>What this does not prove</h3>
-          <p>The 0.0097 macro-F1 gap between the plain and selected CNNs is a trade-off. This development choice values stability and lower loss; it does not prove augmentation always improves macro-F1.</p>
+          <p>The 0.0097 macro-F1 gap between the plain and selected CNNs is a trade-off. This development choice values lower fold variation and lower loss; it does not prove augmentation always improves macro-F1 or repeat-run stability.</p>
         </article>
         <article class="card">
           <h3>Next honest test</h3>
@@ -536,7 +537,7 @@
           <p>KNN is a useful fallback baseline. It reaches 0.5023 mean macro-F1 without neural training, but it needs stored training features at prediction time and has weaker Top-1 and Top-5 results.</p>
         </article>
       </div>
-      <div class="callout good"><strong>Ultimate judgement:</strong> carry <code>task1_cnn_mild_aug_unweighted_v1</code> with <code>task1_small_cnn_v1</code> into the independent final evaluation. Do not unlock the holdout to revisit this development choice.</div>
+      <div class="callout good"><strong>Development decision:</strong> carry <code>task1_cnn_mild_aug_unweighted_v1</code> with <code>task1_small_cnn_v1</code> into the independent final evaluation. Do not unlock the holdout to revisit this development choice.</div>
     </section>
 
     <section id="evidence">
@@ -556,6 +557,7 @@
           <li><a href="../results/evidence/task1/classical_comparison.csv">classic fold summary</a></li>
           <li><a href="../results/evidence/task1/classical_fold_metrics.csv">classic fold rows</a></li>
           <li><a href="../results/evidence/task1/classical_oof_metrics.csv">classic OOF scores</a></li>
+          <li><a href="../results/evidence/task1/top_confusion_pairs.csv">ranked confusion-pair evidence for the chosen CNN</a></li>
           <li><a href="../results/evidence/task1/per_class_task1_rgb_60x80_no_aug_v1.csv">per-class: plain CNN baseline</a></li>
           <li><a href="../results/evidence/task1/per_class_task1_rgb_60x80_mild_aug_v1.csv">per-class: chosen mildly augmented unweighted CNN</a></li>
           <li><a href="../results/evidence/task1/per_class_classical_task1_gray_hog_ppc10_v1-knn-k3-distance.csv">per-class: KNN</a></li>
