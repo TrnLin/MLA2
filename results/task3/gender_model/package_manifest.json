@@ -1,0 +1,36 @@
+{
+  "target": "gender",
+  "run_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_refit_20260907T061926Z_db0fc1ee",
+  "selected_epoch": 25,
+  "class_names": [
+    "Boys",
+    "Girls",
+    "Men",
+    "Unisex",
+    "Women"
+  ],
+  "path_base": "this folder",
+  "source_path_base": "repository root",
+  "requires": "Repository src/fashion code and its Python environment",
+  "files": {
+    "final_epoch.pt": {
+      "sha256": "41a5f5ea027805e8edbbf667d080564776ca9873d9146e0dec15c0d4bec2b272",
+      "source": "results/evidence/task3/gender_sam25_refit_20260907/final_epoch.pt",
+      "bytes": 1579253
+    },
+    "config.json": {
+      "sha256": "dfb83db84b5d914b4e296ccf48f703fd7e7456c79bb07e803bb73e10a9fd6c67",
+      "source": "results/evidence/task3/gender_sam25_refit_20260907/config.json",
+      "bytes": 5349
+    },
+    "normalization.json": {
+      "sha256": "050c61a7bf26c9a2747853cb56f15a76f204ea8d03ea3b916300eaacc2bdd501",
+      "source": "results/evidence/task3/gender_sam25_refit_20260907/normalization.json",
+      "bytes": 402
+    },
+    "class_names.json": {
+      "sha256": "324ee723e8da84e7dbcd0a2b22fe3a13c37f33de6834226897e4b204eb8c25c5",
+      "bytes": 56
+    }
+  }
+}
