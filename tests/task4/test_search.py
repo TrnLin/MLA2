@@ -15,6 +15,7 @@ from torch import nn
 import fashion.task4 as task4
 import fashion.task4.report_figures as report_figures_module
 import fashion.task4.search as search_module
+from fashion.config import ROOT
 from fashion.data.hashing import compute_sha256
 from fashion.task4.gallery_artifact import TeacherGallery
 from fashion.task4.preprocessing import PreprocessingContract
@@ -25,6 +26,14 @@ from fashion.task4.search import (
     SearchResponse,
     load_search_bundle,
     run_search,
+)
+
+REAL_SEARCH_ARTIFACTS = pytest.mark.skipif(
+    not (
+        (ROOT / "models/task4_r5/weights.pt").is_file()
+        and (ROOT / "models/task4_teacher_gallery/manifest.json").is_file()
+    ),
+    reason="real Task 4 model or teacher gallery is absent",
 )
 
 
@@ -859,3 +868,34 @@ def test_search_api_is_public() -> None:
     assert task4.SearchHit is SearchHit
     assert task4.load_search_bundle is load_search_bundle
     assert task4.run_search is run_search
+
+
+@REAL_SEARCH_ARTIFACTS
+def test_real_fold_one_query_returns_five_safe_ordered_results() -> None:
+    bundle = load_search_bundle(
+        model_package=ROOT / "models/task4_r5",
+        gallery_directory=ROOT / "models/task4_teacher_gallery",
+        splits_path=ROOT / "data/processed/splits.csv",
+        device="cpu",
+    )
+    query_id = int(bundle.query_catalogue["id"].astype(int).min())
+
+    response = run_search(bundle, query_id=query_id, top_k=5)
+
+    assert len(response.record.results) == 5
+    assert [hit.rank for hit in response.record.results] == [1, 2, 3, 4, 5]
+    assert all(hit.grade in {0, 1, 2} for hit in response.record.results)
+    opened_flags = {
+        name: value
+        for name, value in bundle.gallery.manifest["safety"].items()
+        if name.endswith("_opened")
+    }
+    opened_flags.update(
+        {
+            name: value
+            for name, value in response.record.safety.items()
+            if name.endswith("_opened")
+        }
+    )
+    assert opened_flags
+    assert all(value is False for value in opened_flags.values())
