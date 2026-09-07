@@ -176,10 +176,11 @@ def test_interrupted_fit_is_registered_and_cannot_silently_restart(fixture, monk
         refit.run_usage_e1_refit(root=fixture, output_root=fixture / "out")
 
 
-def test_notebook_is_unexecuted_and_compiles():
+def test_completed_notebook_has_no_errors_and_compiles():
     nb = nbformat.read(ROOT / "notebooks/task3_training/usage_e1_refit.ipynb", as_version=4)
     nbformat.validate(nb)
     for cell in nb.cells:
         if cell.cell_type == "code":
-            assert cell.execution_count is None and not cell.outputs
+            assert cell.execution_count is not None
+            assert all(output.output_type != "error" for output in cell.outputs)
             compile(cell.source, "usage_e1_refit.ipynb", "exec")
