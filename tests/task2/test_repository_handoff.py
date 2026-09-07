@@ -25,3 +25,15 @@ def test_live_registry_contains_exact_frozen_refit_row() -> None:
     assert live.reset_index(drop=True).equals(
         snapshot.loc[:, list(TASK2_RUN_COLUMNS)].reset_index(drop=True)
     )
+
+
+def test_shared_registry_preserves_all_recovered_task2_attempts() -> None:
+    registry = pd.read_csv(
+        ROOT / "results/runs.csv",
+        dtype=str,
+        keep_default_na=False,
+    )
+    task2 = registry.loc[registry["task"].eq("task2")]
+
+    assert len(task2) == 152
+    assert task2["run_id"].is_unique
