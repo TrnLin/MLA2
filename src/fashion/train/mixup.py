@@ -57,7 +57,9 @@ def usage_policy():
     )
 
 
-def training_contract(training, *, validation_fold, seed=2753, alpha=0.2, target="gender"):
+def training_contract(
+    training, *, validation_fold, seed=2753, alpha=0.2, target="gender", scope="fold_training"
+):
     if target not in {"gender", "usage"} or (target == "usage" and alpha != 0.2):
         raise ValueError("MixUp supports Gender or the frozen Usage alpha 0.2 recipe")
     columns = ["id", "cv_fold", "product_family_group", target]
@@ -65,18 +67,26 @@ def training_contract(training, *, validation_fold, seed=2753, alpha=0.2, target
         columns.append("source_dataset")
     classes = USAGE_CLASSES if target == "usage" else ["Boys", "Girls", "Men", "Unisex", "Women"]
     required = {*columns, "partition"}
-    if validation_fold not in range(5) or not required.issubset(training.columns):
+    refit = scope == "development_refit"
+    if scope not in {"fold_training", "development_refit"}:
+        raise ValueError("Unknown MixUp training scope")
+    if refit and (validation_fold is not None or target != "gender" or alpha != 0.2):
+        raise ValueError("Development refit requires Gender alpha 0.2 and no validation fold")
+    if (not refit and validation_fold not in range(5)) or not required.issubset(training.columns):
         raise ValueError("MixUp needs a canonical fold and complete training metadata")
+    allowed_folds = set(range(5)) if refit else set(range(5)) - {validation_fold}
     if (
         training.empty
         or training[list(required)].isna().any().any()
         or training.id.duplicated().any()
         or not training.partition.eq("development").all()
-        or not training.cv_fold.isin(set(range(5)) - {validation_fold}).all()
+        or not training.cv_fold.isin(allowed_folds).all()
         or not training[target].isin(classes).all()
+        or (refit and set(training.cv_fold) != allowed_folds)
     ):
         raise ValueError("MixUp may only use unique valid fold-training rows")
     return {
+        **({"scope": scope} if refit else {}),
         **({"target": target} if target == "usage" else {}),
         "policy": usage_policy() if target == "usage" else policy_for_alpha(alpha),
         "seed": seed,
@@ -92,10 +102,23 @@ class TrainingMixUp:
     """Keep every row once per epoch and reject any out-of-fold batch before mixing."""
 
     def __init__(
-        self, training, *, validation_fold, label_to_index, seed=2753, alpha=0.2, target="gender"
+        self,
+        training,
+        *,
+        validation_fold,
+        label_to_index,
+        seed=2753,
+        alpha=0.2,
+        target="gender",
+        scope="fold_training",
     ):
         self.contract = training_contract(
-            training, validation_fold=validation_fold, seed=seed, alpha=alpha, target=target
+            training,
+            validation_fold=validation_fold,
+            seed=seed,
+            alpha=alpha,
+            target=target,
+            scope=scope,
         )
         self.allowed = dict(zip(training.id.astype(int), training[target].map(label_to_index)))
         if any(not np.isfinite(value) for value in self.allowed.values()):
