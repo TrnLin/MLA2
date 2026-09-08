@@ -27,8 +27,9 @@ from fashion.task1.evaluation import validate_task1_label_map
 from fashion.task1.losses import build_task1_loss_weights
 from fashion.task1.models import Task1SmallCNN, count_trainable_parameters
 from fashion.task1.preprocessing import fit_task1_normalization
+from fashion.task1.registry import Task1RunRegistry as RunRegistry
 from fashion.train.artifacts import atomic_write_bytes, atomic_write_csv, canonical_sha256
-from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
+from fashion.train.registry import RunRecord, new_run_id, tracked_run
 from fashion.train.reproducibility import seed_everything
 
 
@@ -210,7 +211,7 @@ def train_task1_fold(
         label_map_sha256=canonical_sha256(label_map),
         implementation_sha256=canonical_sha256(dict(sorted(source_hashes.items()))),
     )
-    active_registry = registry or RunRegistry(record_task="task1")
+    active_registry = registry or RunRegistry()
     project_root = Path(root)
     selected_device = device or select_training_device()
 

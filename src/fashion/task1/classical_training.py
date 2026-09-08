@@ -45,13 +45,14 @@ from fashion.task1.evaluation import (
     classification_metrics,
     validate_task1_label_map,
 )
+from fashion.task1.registry import Task1RunRegistry as RunRegistry
 from fashion.train.artifacts import (
     atomic_write_bytes,
     atomic_write_csv,
     canonical_sha256,
     verify_artifact,
 )
-from fashion.train.registry import RunRecord, RunRegistry, new_run_id, tracked_run
+from fashion.train.registry import RunRecord, new_run_id, tracked_run
 
 __all__ = [
     "Task1KNNConfig",
@@ -258,7 +259,7 @@ def run_task1_classical_fold(
         "implementation_sha256": implementation_sha256,
     }
     config_sha256 = canonical_sha256(config_payload)
-    active_registry = registry or RunRegistry(record_task="task1")
+    active_registry = registry or RunRegistry()
     matches = active_registry.find(
         task="task1",
         experiment_id=experiment_id,

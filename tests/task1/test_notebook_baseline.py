@@ -53,7 +53,8 @@ def test_task1_notebook_is_evidence_led_and_run_all_safe() -> None:
         "build_task1_weak_class_table",
         "build_task1_confusion_pairs",
         "build_task1_confusion_detail",
-        "load_task1_oof_predictions",
+        "cnn_learning_histories.csv",
+        "selected_oof_predictions.csv",
         "write_task1_confusion_pair_figure",
         "write_task1_focused_confusion_figure",
         "write_task1_confusion_example_figure",
@@ -75,6 +76,7 @@ def test_task1_notebook_is_evidence_led_and_run_all_safe() -> None:
         "results/runs.csv",
     )
     assert all(token in source for token in required)
+    assert "RunRegistry" not in source
 
     for forbidden in (
         "train_test_split",

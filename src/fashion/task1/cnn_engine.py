@@ -72,7 +72,8 @@ def _evaluate(
     probabilities: list[np.ndarray] = []
     labels: list[np.ndarray] = []
     product_ids: list[np.ndarray] = []
-    losses: list[float] = []
+    loss_sum = 0.0
+    example_count = 0
     model.eval()
     with torch.no_grad():
         for batch_number, batch in enumerate(loader):
@@ -90,14 +91,16 @@ def _evaluate(
             probabilities.append(scores)
             labels.append(target.detach().cpu().numpy())
             product_ids.append(batch["id"].detach().cpu().numpy())
-            losses.append(float(loss.item()))
+            batch_size = int(target.numel())
+            loss_sum += float(loss.item()) * batch_size
+            example_count += batch_size
     if not probabilities:
         raise ValueError("validation loader produced no batches")
     matrix = np.concatenate(probabilities)
     y_true = np.concatenate(labels)
     ids = np.concatenate(product_ids)
     metrics = classification_metrics(y_true, matrix)
-    metrics["validation_loss"] = float(np.mean(losses))
+    metrics["validation_loss"] = loss_sum / example_count
     return metrics, build_prediction_frame(ids, y_true, matrix, class_names)
 
 

@@ -267,7 +267,7 @@
         <article class="card"><p class="metric">32,773</p><p class="metric-label">labelled development products</p><p>These rows are used inside five saved training and validation folds.</p></article>
         <article class="card"><p class="metric">124</p><p class="metric-label">article-type classes</p><p>All labels stay in the score, even when a class is extremely rare.</p></article>
         <article class="card"><p class="metric">5</p><p class="metric-label">final model candidates</p><p>Three CNN candidates, HOG + KNN, and HOG + linear SVM.</p></article>
-        <article class="card wide"><h3>Main finding</h3><p>The plain CNN won mean macro-F1, but mild unweighted augmentation was frozen because its results varied less between folds and its fold validation loss was much lower. This is a development trade-off, not a macro-F1 win or proof of repeat-run stability.</p></article>
+        <article class="card wide"><h3>Main finding</h3><p>The plain CNN won mean macro-F1, but mild unweighted augmentation was frozen because its results varied less between folds. The saved validation-loss values used an equal-batch average, so they are not used for this decision. This is a development trade-off, not a macro-F1 win or proof of repeat-run stability.</p></article>
         <article class="card"><h3>Honest limit</h3><p>The selected CNN scored F1 = 0 for 21 classes. Most of these classes have tiny support. The result is useful, but rare-item performance is not solved.</p></article>
       </div>
     </section>
@@ -375,7 +375,7 @@
               <tr data-source-row="2"><td data-field="candidate_id" data-value="task1_cnn_mild_aug_balanced_weighted_v1">Mild augmented balanced weighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_balanced_class_weighted_v1">Balanced weighted CE</td><td data-field="macro_f1_mean" data-value="0.4564129090193513">0.4564</td><td data-field="macro_f1_std" data-value="0.0181332514770149">0.0181</td><td data-field="weighted_f1_mean" data-value="0.7138776985288154">0.7139</td><td data-field="top1_accuracy_mean" data-value="0.6915100734713372">69.15%</td><td data-field="top5_accuracy_mean" data-value="0.952490724487458">95.25%</td></tr>
             </tbody>
           </table>
-        </div><p class="source-note">Loss is reported from the fold rows below because <a href="../results/evidence/task1/comparison.csv">comparison.csv</a> has no validation-loss mean.</p></div>
+        </div><p class="source-note">The fold table retains the old loss values for audit only. They used an equal-batch average and are not used for selection or the final judgement.</p></div>
       </details>
 
       <details>
@@ -521,7 +521,7 @@
       <div class="grid">
         <article class="card wide">
           <h3>Why it is frozen</h3>
-          <p>The plain CNN wins mean macro-F1 at <strong>0.5315 ± 0.0331</strong>. Mild unweighted augmentation is lower at 0.5218 ± 0.0158, so this is not a macro-F1 win. It is frozen because its fold variation is about 52% lower and its mean validation loss from the five fold rows is about 0.60 rather than 1.13.</p>
+          <p>The plain CNN wins mean macro-F1 at <strong>0.5315 ± 0.0331</strong>. Mild unweighted augmentation is lower at 0.5218 ± 0.0158, so this is not a macro-F1 win. It is frozen because its fold variation is about 52% lower. The saved validation-loss values used an equal-batch average and are retained only as legacy evidence.</p>
           <p>Balanced weighting is rejected: its mean macro-F1 is only <strong>0.4564 ± 0.0181</strong>, with worse weighted F1, Top-1, and Top-5 scores. The selected model has 21 zero-F1 classes; balanced weighting has 20, but that small count change does not outweigh its worse overall metrics.</p>
         </article>
         <article class="card">

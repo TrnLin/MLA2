@@ -14,10 +14,11 @@ from fashion.task1.candidates import (
     TASK1_MILD_AUG_CANDIDATE,
     TASK1_NO_AUG_CANDIDATE,
 )
+from fashion.task1.registry import Task1RunRegistry as RunRegistry
 from fashion.task1.training import Task1FoldResult, Task1TrainConfig
 from fashion.task1.weighted_experiments import run_task1_weighted_experiment
 from fashion.train.artifacts import canonical_sha256
-from fashion.train.registry import RunRecord, RunRegistry
+from fashion.train.registry import RunRecord
 
 
 def _label_map() -> dict[str, Any]:
@@ -121,7 +122,7 @@ def _fake_fold_runner(
 
 @pytest.fixture()
 def old_evidence(tmp_path: Path) -> tuple[RunRegistry, Path]:
-    registry = RunRegistry(tmp_path / "runs.csv", record_task="task1")
+    registry = RunRegistry(tmp_path / "runs.csv")
     rows = []
     for candidate in (TASK1_NO_AUG_CANDIDATE, TASK1_MILD_AUG_CANDIDATE):
         for fold in range(5):
@@ -175,7 +176,7 @@ def _run(tmp_path: Path, registry: RunRegistry, evidence: Path, **kwargs: Any) -
 
 def test_smoke_runs_only_weighted_fold_zero_without_old_evidence(tmp_path: Path) -> None:
     """Smoke must not require or emit report aggregates."""
-    registry = RunRegistry(tmp_path / "runs.csv", record_task="task1")
+    registry = RunRegistry(tmp_path / "runs.csv")
     evidence = tmp_path / "evidence"
     smoke = run_task1_weighted_experiment(
         _splits(),

@@ -20,12 +20,12 @@ from fashion.task1.candidates import (
 )
 from fashion.task1.losses import TASK1_UNWEIGHTED_LOSS
 from fashion.task1.preprocessing import TASK1_CONTROL_PREPROCESSING
+from fashion.task1.registry import Task1RunRegistry as RunRegistry
 from fashion.task1.training import (
     Task1TrainConfig,
     select_training_device,
     train_task1_fold,
 )
-from fashion.train.registry import RunRegistry
 
 
 def _label_map() -> dict[str, object]:
@@ -118,7 +118,7 @@ def test_train_task1_fold_writes_best_checkpoint_and_registered_artifacts(tmp_pa
     splits = _splits_with_images(tmp_path)
     split_path = tmp_path / "splits.csv"
     splits.to_csv(split_path, index=False)
-    registry = RunRegistry(tmp_path / "runs.csv", record_task="task1")
+    registry = RunRegistry(tmp_path / "runs.csv")
 
     result = train_task1_fold(
         splits,
@@ -166,7 +166,7 @@ def test_train_task1_fold_finalizes_registry_when_model_raises(tmp_path: Path) -
     splits = _splits_with_images(tmp_path)
     split_path = tmp_path / "splits.csv"
     splits.to_csv(split_path, index=False)
-    registry = RunRegistry(tmp_path / "runs.csv", record_task="task1")
+    registry = RunRegistry(tmp_path / "runs.csv")
 
     with pytest.raises(RuntimeError, match="model exploded"):
         train_task1_fold(
@@ -284,7 +284,7 @@ def test_weighted_fold_records_loss_candidate_and_fold_only_weights(tmp_path: Pa
     splits = _splits_with_images(tmp_path)
     split_path = tmp_path / "splits.csv"
     splits.to_csv(split_path, index=False)
-    registry = RunRegistry(tmp_path / "runs.csv", record_task="task1")
+    registry = RunRegistry(tmp_path / "runs.csv")
     result = train_task1_fold(
         splits,
         _label_map(),

@@ -119,8 +119,13 @@ def write_task1_learning_curve_figure(
     histories: Mapping[str, Sequence[pd.DataFrame]],
     *,
     output: str | Path = TASK1_FIGURE_DIR / "cnn_learning_curves.png",
+    include_validation_loss: bool = True,
 ) -> Path:
-    """Write mean CNN learning curves from candidate-keyed fold histories."""
+    """Write mean CNN learning curves from candidate-keyed fold histories.
+
+    Old Task 1 histories used an incorrect equal-batch validation-loss average.
+    Callers can omit that legacy series while retaining the unaffected macro-F1.
+    """
     candidates = _validated_learning_curve_data(histories)
     output_path = Path(output)
     figure, (loss_axis, f1_axis) = plt.subplots(1, 2, figsize=(15, 5.5))
@@ -137,12 +142,13 @@ def write_task1_learning_curve_figure(
             linestyle="--",
             label=f"{candidate_id} train",
         )
-        loss_axis.plot(
-            epochs,
-            mean_validation_loss,
-            color=color,
-            label=f"{candidate_id} validation",
-        )
+        if include_validation_loss:
+            loss_axis.plot(
+                epochs,
+                mean_validation_loss,
+                color=color,
+                label=f"{candidate_id} validation",
+            )
         f1_axis.plot(epochs, mean_macro_f1, color=color, label=candidate_id)
         if len(train_loss) == 5:
             loss_axis.fill_between(
@@ -152,13 +158,14 @@ def write_task1_learning_curve_figure(
                 color=color,
                 alpha=0.12,
             )
-            loss_axis.fill_between(
-                epochs,
-                mean_validation_loss - validation_loss.std(axis=0, ddof=1),
-                mean_validation_loss + validation_loss.std(axis=0, ddof=1),
-                color=color,
-                alpha=0.12,
-            )
+            if include_validation_loss:
+                loss_axis.fill_between(
+                    epochs,
+                    mean_validation_loss - validation_loss.std(axis=0, ddof=1),
+                    mean_validation_loss + validation_loss.std(axis=0, ddof=1),
+                    color=color,
+                    alpha=0.12,
+                )
             f1_axis.fill_between(
                 epochs,
                 mean_macro_f1 - macro_f1.std(axis=0, ddof=1),
@@ -168,7 +175,9 @@ def write_task1_learning_curve_figure(
             )
     loss_axis.set_xlabel("Epoch")
     loss_axis.set_ylabel("Loss")
-    loss_axis.set_title("Training and validation loss")
+    loss_axis.set_title(
+        "Training and validation loss" if include_validation_loss else "Training loss"
+    )
     loss_axis.grid(alpha=0.25)
     loss_axis.legend(fontsize=8)
     f1_axis.set_xlabel("Epoch")

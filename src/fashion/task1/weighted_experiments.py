@@ -32,9 +32,9 @@ from fashion.task1.evaluation import (
     validate_oof_predictions,
     validate_task1_label_map,
 )
+from fashion.task1.registry import Task1RunRegistry as RunRegistry
 from fashion.task1.training import Task1FoldResult, Task1TrainConfig, train_task1_fold
 from fashion.train.artifacts import atomic_write_bytes, atomic_write_csv, canonical_sha256
-from fashion.train.registry import RunRegistry
 
 _OLD_CANDIDATES = (TASK1_NO_AUG_CANDIDATE, TASK1_MILD_AUG_CANDIDATE)
 _CANDIDATES = {
@@ -355,7 +355,7 @@ def run_task1_weighted_experiment(
     if mode not in {"smoke", "full"}:
         raise ValueError("mode must be 'smoke' or 'full'")
     active_registry = (
-        registry if registry is not None else RunRegistry(record_task="task1")
+        registry if registry is not None else RunRegistry()
     )
     project_root, evidence_directory = Path(root), Path(evidence_root)
     old_results: tuple[Task1FoldResult, ...] = ()

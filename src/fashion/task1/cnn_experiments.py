@@ -23,9 +23,9 @@ from fashion.task1.evaluation import (
     per_class_metrics,
     validate_oof_predictions,
 )
+from fashion.task1.registry import Task1RunRegistry as RunRegistry
 from fashion.task1.training import Task1FoldResult, Task1TrainConfig, train_task1_fold
 from fashion.train.artifacts import atomic_write_csv
-from fashion.train.registry import RunRegistry
 
 
 @dataclass(frozen=True)

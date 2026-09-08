@@ -37,8 +37,8 @@ from fashion.task1.evaluation import (
     per_class_metrics,
     validate_oof_predictions,
 )
+from fashion.task1.registry import Task1RunRegistry as RunRegistry
 from fashion.train.artifacts import atomic_write_csv, atomic_write_json, canonical_sha256
-from fashion.train.registry import RunRegistry
 
 __all__ = [
     "Task1ClassicalSelection",

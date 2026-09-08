@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
 import torch
 import torch.nn.functional as functional
 from test_training import _label_map, _splits_with_images
@@ -23,6 +24,39 @@ def test_validation_cross_entropy_is_unweighted() -> None:
     assert torch.equal(
         cnn_engine.task1_validation_cross_entropy(logits, target), expected
     )
+
+
+def test_validation_loss_weights_an_uneven_final_batch_by_example() -> None:
+    """A short final batch must not count as much as a full batch."""
+    first_logits = torch.zeros((2, 124))
+    first_logits[:, 0] = 3.0
+    final_logits = torch.zeros((1, 124))
+    final_logits[:, 1] = 3.0
+    batches = [
+        {
+            "image": first_logits,
+            "label": torch.tensor([0, 0]),
+            "id": torch.tensor([1, 2]),
+        },
+        {
+            "image": final_logits,
+            "label": torch.tensor([0]),
+            "id": torch.tensor([3]),
+        },
+    ]
+
+    metrics, _ = cnn_engine._evaluate(
+        torch.nn.Identity(),
+        batches,  # type: ignore[arg-type]
+        device=torch.device("cpu"),
+        max_batches=None,
+        class_names=[f"class-{index}" for index in range(124)],
+    )
+
+    expected = functional.cross_entropy(
+        torch.cat([first_logits, final_logits]), torch.tensor([0, 0, 0])
+    )
+    assert metrics["validation_loss"] == pytest.approx(float(expected))
 
 
 def test_training_class_weights_change_real_one_epoch_updates(tmp_path: Path) -> None:

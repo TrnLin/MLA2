@@ -16,7 +16,7 @@ from fashion.task1.classical_training import (
     Task1ClassicalRunConfig,
     run_task1_classical_fold,
 )
-from fashion.train.registry import RunRegistry
+from fashion.task1.registry import Task1RunRegistry as RunRegistry
 
 
 def _label_map() -> dict[str, object]:
@@ -71,7 +71,7 @@ def test_classical_smoke_fold_writes_124_scores_and_registry_row(tmp_path: Path)
     splits = _splits_with_images(tmp_path)
     split_path = tmp_path / "splits.csv"
     splits.to_csv(split_path, index=False)
-    registry = RunRegistry(tmp_path / "runs.csv", record_task="task1")
+    registry = RunRegistry(tmp_path / "runs.csv")
 
     result = run_task1_classical_fold(
         splits,
@@ -104,7 +104,7 @@ def test_classical_smoke_fold_resumes_only_verified_completed_artifacts(tmp_path
     splits = _splits_with_images(tmp_path)
     split_path = tmp_path / "splits.csv"
     splits.to_csv(split_path, index=False)
-    registry = RunRegistry(tmp_path / "runs.csv", record_task="task1")
+    registry = RunRegistry(tmp_path / "runs.csv")
     kwargs = {
         "validation_fold": 0,
         "hog_spec": TASK1_HOG_COARSE,
@@ -130,7 +130,7 @@ def test_classical_smoke_fold_does_not_resume_a_stale_implementation(
     splits = _splits_with_images(tmp_path)
     split_path = tmp_path / "splits.csv"
     splits.to_csv(split_path, index=False)
-    registry = RunRegistry(tmp_path / "runs.csv", record_task="task1")
+    registry = RunRegistry(tmp_path / "runs.csv")
     implementation_sha256 = ["a" * 64]
     monkeypatch.setattr(
         "fashion.task1.classical_training._classical_implementation_sha256",
@@ -162,7 +162,7 @@ def test_classical_smoke_fold_does_not_resume_a_different_valid_label_order(
     splits = _splits_with_images(tmp_path)
     split_path = tmp_path / "splits.csv"
     splits.to_csv(split_path, index=False)
-    registry = RunRegistry(tmp_path / "runs.csv", record_task="task1")
+    registry = RunRegistry(tmp_path / "runs.csv")
     kwargs = {
         "validation_fold": 0,
         "hog_spec": TASK1_HOG_COARSE,
@@ -218,7 +218,7 @@ def test_classical_smoke_fold_passes_configured_batch_size_to_knn_query(
         hog_spec=TASK1_HOG_COARSE,
         model_config=Task1KNNConfig(3, "distance"),
         run_config=replace(Task1ClassicalRunConfig.smoke(), validation_batch_size=7),
-        registry=RunRegistry(tmp_path / "runs.csv", record_task="task1"),
+        registry=RunRegistry(tmp_path / "runs.csv"),
         root=tmp_path,
         result_root=tmp_path / "results",
         cache_root=tmp_path / "cache",
@@ -314,7 +314,7 @@ def test_classical_smoke_fold_finalizes_registry_when_classic_model_explodes(
     splits = _splits_with_images(tmp_path)
     split_path = tmp_path / "splits.csv"
     splits.to_csv(split_path, index=False)
-    registry = RunRegistry(tmp_path / "runs.csv", record_task="task1")
+    registry = RunRegistry(tmp_path / "runs.csv")
 
     def explode(*_: object, **__: object) -> tuple[object, np.ndarray]:
         raise RuntimeError("classic model exploded")

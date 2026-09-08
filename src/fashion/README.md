@@ -42,6 +42,8 @@ Reusable project code lives here. Notebooks import it instead of copying shared 
   `fashion.retrieval` imports. New code must not place logic there.
 
 - `task1/` owns reusable Task 1 article-type classification code.
+  - `registry.py` gives Task 1 a private view of the shared run ledger without changing
+    the Task 2/3 registry class.
   - `image_contract.py` defines the shared image size, padding colour, and tensor shape.
   - `analysis.py` turns prepared EDA and completed runs into decision and failure evidence.
   - `preprocessing.py` defines deterministic image transforms and fold-fitted normalization.

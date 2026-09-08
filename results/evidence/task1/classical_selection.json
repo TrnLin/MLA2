@@ -1,6 +1,6 @@
 {
   "hog_id": "task1_gray_hog_ppc10_v1",
-  "implementation_sha256": "68e13bc3d48ea49fcbdc3d900d49a876ff407d2562a2bd2b8150318b125d14b6",
+  "implementation_sha256": "5b524e1b55d4527dbf9357b2982dfd7d6ffb1671cd90d0b54aaf34465439b4a7",
   "knn_config_id": "knn-k3-distance",
   "label_map_sha256": "88d32ad9a4509292b339baedbe7f21f3161ee0e25e4c753315518fb5b342c353",
   "split_sha256": "f1c925da54e225268b98eb3ad7f7c3c56eea9872ca8a90709e09037144ac28ff",
