@@ -53,7 +53,7 @@ Learned-model and final-winner choices remain open.
 
 Every teammate working on Notebooks 02–05 **must use this block** to obtain training
 and validation folds. It is the same data-access method explained in Notebook 01,
-Section 17.
+Section 5.2.
 
 ```python
 from fashion.data.dataset import get_cv_split, iter_cv_folds, load_splits
