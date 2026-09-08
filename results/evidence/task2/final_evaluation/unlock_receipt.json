@@ -1,0 +1,25 @@
+{
+  "authorization": "explicit_user_instruction_in_current_task",
+  "blank_or_invalid_season_rows": 0,
+  "evaluation_id": "g9-task2-season-final-evaluation",
+  "holdout_opened": true,
+  "holdout_rows": 5778,
+  "model_retrained": false,
+  "model_retuned": false,
+  "opened_at_utc": "2026-09-08T02:47:52Z",
+  "prediction_receipt": {
+    "bytes": 5332,
+    "path": "results/evidence/task2/final_evaluation/prediction_receipt.json",
+    "sha256": "fb0f8c2ecca2a284f0110bf5bea8c45f70408e732dc1aa73281f2c5854d08fe2"
+  },
+  "quarantine_rows_excluded": 61,
+  "raw_teacher_csv": {
+    "bytes": 3875305,
+    "path": "data/raw/teacher/train/styles_train.csv",
+    "sha256": "54d503743f79f22bf03f9e2c216b53e75d5f2129eda5934cfa25c642c70af44d"
+  },
+  "schema_version": "1.0.0",
+  "temperature_refit": false,
+  "valid_season_rows": 5778,
+  "winner_changed": false
+}

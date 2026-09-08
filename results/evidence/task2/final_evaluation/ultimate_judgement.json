@@ -1,0 +1,24 @@
+{
+  "beats_b0_with_positive_grouped_interval": true,
+  "deployment_boundary": "Use as decision support with human review; do not treat Season as an objective visual fact or force low-confidence/shifted cases into automation.",
+  "development_to_holdout_macro_f1_change": 0.0006978408982745155,
+  "evaluation_id": "g9-task2-season-final-evaluation",
+  "i2_minus_b0_macro_f1_interval_95": [
+    0.5666774590701896,
+    0.6072286677590603
+  ],
+  "independent_holdout_balanced_accuracy": 0.7197059498222275,
+  "independent_holdout_macro_f1": 0.7533847968563716,
+  "limitations": [
+    "Season labels are contextual and can be ambiguous from pixels alone.",
+    "The internal holdout comes from the same source as development data.",
+    "Confidence ranking is diagnostic because no business-cost threshold was selected.",
+    "Brightness and other image shifts can materially change performance.",
+    "Grad-CAM development evidence is non-causal and was not used to alter the final model."
+  ],
+  "model_retrained_after_unlock": false,
+  "schema_version": "1.0.0",
+  "temperature_refit_after_unlock": false,
+  "ultimate_judgement": "conditionally_viable_for_catalogue_decision_support",
+  "winner_changed_after_unlock": false
+}

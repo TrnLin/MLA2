@@ -1,0 +1,9 @@
+model,true_label,Fall,Spring,Summer,Winter
+B0 majority,Fall,0,0,1575,0
+B0 majority,Spring,0,0,233,0
+B0 majority,Summer,0,0,2865,0
+B0 majority,Winter,0,0,1105,0
+I2 frozen,Fall,1035,1,463,76
+I2 frozen,Spring,21,147,48,17
+I2 frozen,Summer,294,7,2403,161
+I2 frozen,Winter,45,0,229,831

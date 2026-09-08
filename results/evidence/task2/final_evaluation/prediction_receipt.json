@@ -1,0 +1,150 @@
+{
+  "artifacts": {
+    "development_article_type_mapping": {
+      "bytes": 4691,
+      "path": "results/evidence/task2/final_evaluation/development_article_type_mapping.csv",
+      "rows": 124,
+      "sha256": "a362c1b508684a9a4a939259d0d1fe2179578ace4e577fadf6806f156ba702a9"
+    },
+    "development_file_size_boundaries": {
+      "bytes": 108,
+      "path": "results/evidence/task2/final_evaluation/development_file_size_boundaries.csv",
+      "rows": 1,
+      "sha256": "86ad4c9c0c56d63ee4e60485dd808432eb039011272ed5520e6dcd1cb1b57181"
+    },
+    "holdout_b0_predictions": {
+      "bytes": 542130,
+      "path": "results/evidence/task2/final_evaluation/holdout_b0_predictions.csv",
+      "rows": 5778,
+      "sha256": "c3f2b8d63e7d38ae7e3860b298e23925b8bf2851d77a5c26fb08ead3413cd20d"
+    },
+    "holdout_image_manifest": {
+      "bytes": 896656,
+      "path": "results/evidence/task2/final_evaluation/holdout_image_manifest.csv",
+      "rows": 5778,
+      "sha256": "8750cc0608a56f72a72d811b58a90e8e39251c71300a6bcbbcf765ce501d8c53"
+    },
+    "holdout_predictions": {
+      "bytes": 1269571,
+      "path": "results/evidence/task2/final_evaluation/holdout_predictions.csv",
+      "rows": 5778,
+      "sha256": "ff063af64d7c4e53dee7ce105ab11dda709308d0ed6a1b3a2c69b6991232cfa9"
+    },
+    "holdout_robustness_predictions": {
+      "bytes": 3767143,
+      "path": "results/evidence/task2/final_evaluation/holdout_robustness_predictions.csv",
+      "rows": 28890,
+      "sha256": "97f756c4ea728cb6a8bf63a7f76c466107acedef7aa1ded9bed81b27b18189bd"
+    },
+    "runtime": {
+      "bytes": 2878,
+      "path": "results/evidence/task2/final_evaluation/blind_runtime.json",
+      "sha256": "95903a711ae0d388d6a481e7355d8a848741cff9bbfd3354fe927385f66e2231"
+    },
+    "season_test_predictions": {
+      "bytes": 75251,
+      "path": "results/season_test_predictions.csv",
+      "rows": 5829,
+      "sha256": "513e9e523adae5974ed8d34a34764fca15f78f735bd21196764dc4664dbdfa4a"
+    },
+    "teacher_test_image_manifest": {
+      "bytes": 670350,
+      "path": "results/evidence/task2/final_evaluation/teacher_test_image_manifest.csv",
+      "rows": 5829,
+      "sha256": "c508b9ebaf847115aaf4dad11cb1f757d03e87cc0a3617ca7c6b44d185c2671c"
+    }
+  },
+  "authorization": "explicit_user_instruction_in_current_task",
+  "b0": {
+    "class_counts": {
+      "Fall": 8928,
+      "Spring": 1329,
+      "Summer": 16235,
+      "Winter": 6261
+    },
+    "class_probabilities": {
+      "Fall": 0.2725857173388697,
+      "Spring": 0.04057643574634385,
+      "Summer": 0.4956797850578573,
+      "Winter": 0.19115806185692913
+    },
+    "fit_scope": "all_valid_development_rows_only",
+    "majority_label": "Summer",
+    "training_id_sha256": "6f8540aff2511b2d63e23bea6d5aad24060cbbf3f352d40a8419248d4cdbcc54"
+  },
+  "coverage": {
+    "development_fit_rows": 32753,
+    "holdout_conditions": [
+      "clean",
+      "jpeg_quality_85",
+      "brightness_0_85",
+      "brightness_1_15",
+      "gaussian_blur_radius_1"
+    ],
+    "holdout_rows": 5778,
+    "quarantine_rows_excluded": 61,
+    "teacher_test_rows": 5829
+  },
+  "created_at_utc": "2026-09-08T02:45:07Z",
+  "evaluation_id": "g9-task2-season-final-evaluation",
+  "git": {
+    "commit": "532e9a4f1297442a5a58c9ff94d02d39c63bf0bb",
+    "tracked_files_dirty": false
+  },
+  "inputs": {
+    "config": {
+      "bytes": 3070,
+      "path": "configs/task2/g9_final_evaluation.json",
+      "sha256": "1a248c8626ef3d98497a148625e05b7c0d89cd01f778dedb2625810deca6957b"
+    },
+    "holdout_image_set_sha256": "1435bf617310fa222f9ed1c2ad5c7f5b3da731d7b381362f7327d968898f08fb",
+    "label_maps": {
+      "bytes": 10960,
+      "path": "data/processed/label_maps.json",
+      "sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327"
+    },
+    "model_manifest": {
+      "bytes": 6884,
+      "path": "models/task2_season.manifest.json",
+      "sha256": "25d918061dbd9b46501de9aa3671adabf951649862ce9613317983dadbac55d9"
+    },
+    "registry_snapshot": {
+      "bytes": 2114,
+      "path": "results/evidence/task2/final_handoff/registry_snapshot.csv",
+      "rows": 1,
+      "sha256": "b6d7b4c43bffaaad75a16bb555ca36d4c2fc42853979a470682373618d34bfc8"
+    },
+    "splits": {
+      "bytes": 15383827,
+      "path": "data/processed/splits.csv",
+      "sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
+    },
+    "teacher_test_image_set_sha256": "41b0e62976e596709a432214e88eee3ef6ebc512544c8fb12c36cd68ff3af920"
+  },
+  "labels_opened": false,
+  "model": {
+    "bundle_sha256": "5927eff73130acedc8015199e1df5a6c6edf64c0b45023ebd91c48d7ed40f93c",
+    "image_only_inference": true,
+    "labels": [
+      "Fall",
+      "Spring",
+      "Summer",
+      "Winter"
+    ],
+    "manifest_sha256": "25d918061dbd9b46501de9aa3671adabf951649862ce9613317983dadbac55d9",
+    "run_id": "task2-season-i2-refit-fall-s2753-637dd6378be9",
+    "scratch": true,
+    "temperature": 1.3650015953177774
+  },
+  "model_changed": false,
+  "phase": "blind_prediction_before_holdout_label_access",
+  "retuning_allowed": false,
+  "schema_version": "1.0.0",
+  "slice_fit": {
+    "article_type_count": 124,
+    "development_id_sha256": "6f8540aff2511b2d63e23bea6d5aad24060cbbf3f352d40a8419248d4cdbcc54",
+    "file_size_fit_rows": 32753,
+    "mapping_fit_rows": 32753
+  },
+  "teacher_test_scored": false
+}
