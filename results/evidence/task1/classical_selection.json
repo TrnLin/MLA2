@@ -1,0 +1,9 @@
+{
+  "hog_id": "task1_gray_hog_ppc10_v1",
+  "implementation_sha256": "5b524e1b55d4527dbf9357b2982dfd7d6ffb1671cd90d0b54aaf34465439b4a7",
+  "knn_config_id": "knn-k3-distance",
+  "label_map_sha256": "88d32ad9a4509292b339baedbe7f21f3161ee0e25e4c753315518fb5b342c353",
+  "split_sha256": "f1c925da54e225268b98eb3ad7f7c3c56eea9872ca8a90709e09037144ac28ff",
+  "svm_config_id": "linear-svm-c0.1-balanced",
+  "tuning_sha256": "80d7852a3cf5b4e90f096f04321a22d1598346a43c05ab6df1080f820af6d267"
+}

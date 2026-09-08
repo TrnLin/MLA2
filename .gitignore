@@ -40,10 +40,12 @@ __pycache__/
 !/data/processed/audit/product_family_summary.json
 !/data/processed/audit/target_class_counts.csv
 .agents/
+/.superpowers/
 /docs/superpowers/
 
 # Local scratch material and generated model weights.
 tmp/
+.worktrees/
 models/*.pt
 models/*.pth
 models/*.ckpt
@@ -81,3 +83,6 @@ results/evidence/task3/
 /results/evidence/task4/hog_fusion/timing_samples.csv
 /results/evidence/task4/**/*.lock
 /results/runs.csv.lock
+
+# Generated Task 1 model artifacts; compact evidence and figures stay trackable.
+/results/task1/
