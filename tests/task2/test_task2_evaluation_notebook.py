@@ -9,6 +9,8 @@ ROOT = Path(__file__).resolve().parents[2]
 NOTEBOOK = ROOT / "notebooks/06_task2_season_evaluation.ipynb"
 HTML = ROOT / "results/notebooks/06_task2_season_evaluation.html"
 PLAN = ROOT / "docs/plans/260908-task2-assessment3-evaluation/plan.md"
+REPORT = ROOT / "docs/task2-season-execution-report.md"
+NOTEBOOK_README = ROOT / "notebooks/README.md"
 
 
 def _source() -> str:
@@ -97,3 +99,41 @@ def test_task2_plan_freezes_baseline_and_assessment3_link() -> None:
     assert "Assessment 3 is directly connected to Assignment 2." in source
     assert "At least two additional peer-reviewed papers" in source
     assert "Success criteria" in source
+
+
+def test_task2_outputs_have_a_plain_language_glossary() -> None:
+    source = _source()
+    html = HTML.read_text(encoding="utf-8")
+
+    for term in (
+        "Plain-language output glossary",
+        "Macro-F1",
+        "Balanced accuracy",
+        "95% bootstrap interval",
+        "KDE",
+        "NLL",
+        "Brier score",
+        "ECE",
+        "Coverage",
+        "Selective risk",
+        "SHA-256",
+    ):
+        assert term in source
+        assert term in html
+
+
+def test_task2_completion_documents_match_the_final_artifacts() -> None:
+    plan = PLAN.read_text(encoding="utf-8")
+    report = REPORT.read_text(encoding="utf-8")
+    readme = NOTEBOOK_README.read_text(encoding="utf-8")
+
+    assert "status: complete" in plan
+    assert "5,778" in plan
+    assert "5,829" in plan
+    assert "0.7533847968563716" in plan
+    assert "6fda3688" in plan
+    assert "final evaluation remains locked" not in report
+    assert "one independent\nholdout evaluation after group freeze" not in report
+    assert "0.7533847968563716" in report
+    assert "[0.5666774590701896, 0.6072286677590603]" in report
+    assert "complete evaluation replay" in readme

@@ -1,19 +1,20 @@
 ---
 title: "Task 2 independent evaluation and Assessment 3 preparation"
 description: "Complete Kai's Season evaluation notebook from the frozen I2 bundle and turn the evidence into a defensible Assessment 3 presentation and interview pack."
-status: pending
+status: complete
 priority: P1
 effort: 2-4 days
 branch: evaluation/task2-assessment3-prep
 tags: [feature, docs, critical, task2, assessment3]
 created: 2026-09-08
+completed: 2026-09-08
 ---
 
 # Task 2 independent evaluation and Assessment 3 preparation
 
 ## 1. Outcome
 
-Produce a locked, replayable Task 2 evaluation notebook for Kai and an evidence pack that can support Assessment 3. The notebook must evaluate the frozen Season I2 bundle on the internal holdout after the group freeze. It must not retrain, retune, switch the winner, or change metrics after holdout labels are exposed.
+The planned result is complete: Kai now has a locked, replayable Task 2 evaluation notebook and an evidence pack that can support Assessment 3. The frozen Season I2 bundle was evaluated once on the internal holdout after the freeze. The process did not retrain, retune, switch the winner, refit temperature, or choose a review threshold after holdout labels were exposed.
 
 This plan is scoped to Task 2. The shared `06_final_evaluation.ipynb` remains the group-level aggregator. Kai's owner notebook is `notebooks/06_task2_season_evaluation.ipynb` and is later summarised in the shared Notebook 06.
 
@@ -26,7 +27,9 @@ This plan is scoped to Task 2. The shared `06_final_evaluation.ipynb` remains th
 - Frozen development primary metric is pooled five-fold OOF Season macro-F1: `0.7526869559580971`.
 - Frozen temperature is `1.3650015953177774`; no review threshold is justified yet.
 - The frozen model bundle is `models/task2_season.pt` and its manifest is `models/task2_season.manifest.json`.
-- The component handoff still says `group_freeze_verified=false`, `holdout_opened=false`, and `evaluation_claim_allowed=false`. No holdout scoring may run until the group records the freeze.
+- The one-shot evaluation manifest is `complete`: all `5,778` valid holdout rows were scored, all `61` quarantine rows were excluded, and the frozen model produced `5,829` unscored teacher-test Season predictions.
+- Independent holdout macro-F1 is `0.7533847968563716`; balanced accuracy is `0.7197059498222275`. The paired family-blocked I2-minus-B0 macro-F1 interval is `[0.5666774590701896, 0.6072286677590603]`.
+- The final judgement is **conditionally viable for catalogue decision support**. This means the model can assist a person, but dark images, ArticleType-conflict cases, and contextual Season labels make fully automatic use unsafe.
 
 ## 3. Baseline decision: B0 or B1
 
@@ -64,6 +67,10 @@ The development model-selection story remains `I2 versus C2`, with B0 and B1 sho
 Default mode is `artifact_replay`. It reads verified aggregate evidence and cannot silently open protected labels. A separate controlled scoring step creates the immutable evidence bundle after the group unlock receipt exists.
 
 ## 5. Execution phases
+
+**Completion note:** Phases 0-4 are complete and hash-verified. Phase 5 records how the
+finished evidence can be reused for Assessment 3; it is not a claim that the group's final
+slides or technical interview preparation are complete.
 
 ### Phase 0 - Branch and repository audit
 
@@ -104,9 +111,11 @@ Default mode is `artifact_replay`. It reads verified aggregate evidence and cann
 - Use deterministic error selection and clearly label Grad-CAM as a non-causal diagnostic.
 - State whether the model is appropriate for catalogue decision support, not just whether its accuracy is high.
 
-### Phase 5 - Assessment 3 evidence pack
+### Phase 5 - Assessment 3 evidence bridge
 
-Assessment 3 is directly connected to Assignment 2. The Task 2 notebook supplies the evidence, but it does not by itself satisfy the whole 40% assessment.
+Assessment 3 is directly connected to Assignment 2. The Task 2 notebook now supplies the
+evidence below, but it does not by itself satisfy the whole 40% assessment. Slide production,
+speaker timing, and the final interview practice pack are separate group work.
 
 Presentation timing:
 
@@ -150,6 +159,9 @@ Success criteria:
 
 ## 6. Commit sequence
 
+The list below was the planned order. Equivalent implementation commits were kept separate
+where the blind prediction and one-shot scoring boundaries required it.
+
 1. `docs(plan): preserve task2 evaluation and assessment3 roadmap`
 2. `test(task2): define evaluation preflight and baseline boundary`
 3. `feat(task2): add frozen evaluation preflight`
@@ -163,6 +175,20 @@ Success criteria:
 11. `test(task2): audit evaluation artifacts and notebook replay`
 12. `docs(task2): hand off holdout judgement to shared Notebook 06`
 
+### Actual completion trace
+
+| Commit | Completed work |
+|---|---|
+| `cba8abdc` | Froze this evaluation and Assessment 3 roadmap |
+| `57b761c3` | Defined immutable final-evaluation artifact tests |
+| `a8607908`, `532e9a4f` | Added the contract and frozen evaluation pipeline |
+| `61fab768` | Stored blind holdout and teacher-test predictions before labels were opened |
+| `5c5dc1d7` | Recorded the one-shot 5,778-row holdout score and final manifest |
+| `b5778afa`, `666d15a5` | Enforced and completed the owner notebook replay |
+| `fed0403b`, `b86db276` | Exported the notebook and explained the one-way file flow |
+| `41b5c523` | Mapped training and evaluation methods to academic sources |
+| `6fda3688` | Added the actual 10,000-draw histogram/KDE view and immediate output guides |
+
 Do not squash these commits. Do not commit protected raw labels or unreviewed prediction dumps unless the group explicitly approves the submission package.
 
 ## 7. Definition of done
@@ -175,8 +201,8 @@ Do not squash these commits. Do not commit protected raw labels or unreviewed pr
 - The notebook never calls a new split or `train_test_split`.
 - No model, temperature, threshold, or metric changes after holdout scoring.
 - The final judgement includes evidence, limitations, intended use, and human-review boundary.
-- Assessment 3 has a four-part timed story, at least two additional peer-reviewed papers, an extension formulation, a success metric plan, a short demo script, and interview questions with model answers.
-- Shared Notebook 06 receives only the compact Task 2 summary and links to the owner evidence.
+- Assessment 3 has a four-part proposed story, literature connections, an extension formulation, and measurable success criteria ready for later slide/interview work.
+- Shared Notebook 06 integration remains group-owned and does not block completion of this Task 2 owner evaluation.
 
 ## 8. Key references
 

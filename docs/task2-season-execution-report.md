@@ -110,12 +110,13 @@ strongest defensible submission path.
 | Season label | Four classes and 20 blank labels | Filter with `has_season_label` |
 | Notebook 03 | Complete and clean-kernel executed in `artifact_replay` mode: all 147 code cells have sequential counts, exactly one saved output, and no error | Run All verifies and displays frozen tables, figures, manifests, and the final bundle; it cannot launch training or rebuild evidence |
 | Shared training core | Implemented and unit-tested | Ready for physical Task 2 runs |
-| Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, verified image-only inference, and the locked component handoff are implemented | Wait for whole-group freeze; do not add or retune a candidate |
+| Task 2 foundation | Training, comparison, learning curves, EDA reflection, G5-G8 analysis, immutable freeze, hardened refit code, verified image-only inference, and one-shot independent evaluation are complete | Do not add or retune a candidate after seeing holdout results |
 | `results/runs.csv` | 152 recovered unique Task 2 rows: 143 completed, two failed, and seven interrupted | The provenance-hardened refit and every recoverable lifecycle outcome are preserved beside the Task 3 and Task 4 rows |
 | Training packages | Pinned and installed on the reference machine | CPU/CUDA selection is documented |
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
-| Current handoff gate | Ten component checks pass for run `task2-season-i2-refit-fall-s2753-637dd6378be9`; the portable registry snapshot, bundle, and image-only smoke prediction match the frozen hashes; final evaluation remains locked | Wait for a machine-readable whole-group freeze before Notebook 06 |
-| Current Task 2 verification | `pip check` and scoped Ruff pass; 431 Task 2, model-boundary, registry, and cache tests pass; 35 Task 2 notebook-contract tests pass; the headless plotting contract, clean-kernel Notebook Run All, real handoff, and CPU bundle load also verify | Task 2 is green on Windows. The full repository collection is still blocked by unchanged Task 3/4 Unix-only `resource` imports, and full-repository lint debt outside the files changed here remains teammate-owned; neither issue is hidden or changed in this branch |
+| Current handoff gate | Run `task2-season-i2-refit-fall-s2753-637dd6378be9` still matches the frozen bundle hash; the one-shot evaluation manifest is `complete` and confirms that the model, winner, and temperature did not change after unlock | Use the result only for reporting and downstream team integration; never feed holdout findings back into tuning |
+| Independent evaluation | I2 holdout macro-F1 `0.7533847968563716`; balanced accuracy `0.7197059498222275`; development-to-holdout change `+0.0006978408982745155`; paired I2-minus-B0 95% family-bootstrap interval `[0.5666774590701896, 0.6072286677590603]` | I2 clearly beats the prior-only baseline on this same-source holdout, but dark-image and shortcut failures still require human review |
+| Current Task 2 verification | All 371 scoped Task 2 tests pass; Notebook 03 and Notebook 06 Run All complete without errors; the evaluation HTML, source map, 10,000-draw distribution view, hashes, and CPU bundle replay verify | One unrelated Notebook Task 3 scaffold check still fails because `results/evidence/task3/` is absent; Task 2 does not hide or modify that teammate-owned issue |
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -1353,10 +1354,9 @@ Notebook presentation rules:
   `bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd`
   in every run.
 
-**Next safe action:** wait for a machine-readable whole-group freeze, then let the shared
-evaluation owner consume this locked Task 2 component in Notebook 06. Do not add another
-architecture, input size, augmentation, loss beta, auxiliary lambda, or tuning pair. Do
-not open holdout in this Task 2 workstream.
+**Next safe action:** hand the frozen two-column Season prediction file and the compact
+evaluation summary to the team. Do not add another architecture, input size, augmentation,
+loss beta, auxiliary lambda, tuning pair, or threshold after seeing holdout results.
 
 ### Phase 2 - Smoke tests and baselines, 1 day
 
@@ -1404,26 +1404,31 @@ not open holdout in this Task 2 workstream.
 - [x] Hash and verify the replacement model, config, preprocessing, history, and runtime.
 - [x] Package and verify the locked Task 2 component handoff without protected data.
 
-Blocked group actions, not Task 2 implementation checkboxes: hand the component to
-Notebook 06 and open holdout once only after every task owner provides the
-machine-readable group freeze.
+- [x] Freeze blind predictions before opening Task 2 Season holdout labels.
+- [x] Score all 5,778 valid holdout rows once and exclude all 61 quarantine rows.
+- [x] Verify that model, winner, temperature, and review-threshold decisions did not
+  change after unlock.
+- [x] Record discrimination, per-class, calibration, family-bootstrap, slice,
+  robustness, failure, and deployment evidence in a hash-bound final manifest.
 
 ### Phase 6 - Prediction and deferred integration, 1-2 days
 
 - [x] Provide the verified image-only Season API and explicit-path JSON launcher.
+- [x] Produce `results/season_test_predictions.csv` with exactly 5,829 unique rows and
+  schema `id,season`; Season has no blanks and uses only the four allowed labels.
 
-Pending shared-pipeline work after group freeze: produce exactly
-`id,gender,articleType,season,usage`, let Task 2 fill only `season`, then validate all
-5,829 IDs, their order, the four allowed Season labels, and absence of blanks.
+Pending team integration outside Task 2: merge the verified Season column into the shared
+five-column file `id,gender,articleType,season,usage`. Task 2 must fill only `season`; the
+other task owners control their columns.
 
 Future work outside the current analysis window: integrate the app workflow and assemble
 report tables and figures directly from verified artifacts.
 
 ### Definition of done
 
-Task 2 modelling and its sealed component handoff are complete. The remaining pending
-items are deliberately blocked by the whole-group freeze or deferred integration window;
-they are not Task 2 implementation checkboxes.
+Task 2 modelling, sealed handoff, independent holdout evaluation, and official two-column
+Season prediction output are complete. Only merging teammate-owned columns into the final
+shared submission file remains outside this Task 2 workstream.
 
 - [x] `results/runs.csv` contains all 152 recovered unique Task 2 attempts: 143 completed,
   two failed, and seven interrupted. The active refit passes identity, schema, provenance,
@@ -1449,10 +1454,14 @@ they are not Task 2 implementation checkboxes.
 - [x] a final scratch-trained checkpoint and hash-verified manifest exist after the integrity fix;
 - [x] a portable, immutable Task 2 component handoff passes all ten artifact and inference checks;
 - [x] a final image-only inference function exists;
+- [x] the frozen I2 bundle scores all 5,778 valid internal-holdout rows exactly once;
+- [x] the paired family-bootstrap uses 10,000 draws over 4,110 product-family groups;
+- [x] the final 5,829-row `id,season` teacher-test output passes schema, order, uniqueness,
+  label, blank-value, and hash checks;
 
-Remaining group/deferred verification, outside this Task 2 workstream: one independent
-holdout evaluation after group freeze and official prediction-file validation. The
-Notebook 03 figure/table trace run is complete.
+Remaining group work outside this Task 2 workstream: combine `season` with the other
+owners' `gender`, `articleType`, and `usage` predictions, then run the final five-column
+submission audit. Notebook 03 and the owner evaluation notebook are both executed replays.
 
 ## 11. Knowledge to understand
 
