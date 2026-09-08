@@ -6,13 +6,16 @@ import json
 import shutil
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 
 import pandas as pd
 import pytest
+from filelock import FileLock
 
 from fashion.config import ROOT
 from fashion.task2 import final_evaluation_runner as runner
 from fashion.task2.final_evaluation import load_final_evaluation_spec
+from fashion.train.artifacts import ArtifactVerificationError
 
 
 @pytest.fixture
@@ -71,7 +74,7 @@ def test_completed_evaluation_rejects_reexecution_before_data_access(
 def test_replay_verifies_nested_blind_artifacts(evidence_copy: Path) -> None:
     path = runner.FINAL_EVALUATION_DIR / "holdout_b0_predictions.csv"
     path.write_bytes(path.read_bytes() + b"\n")
-    with pytest.raises(ValueError, match="hash|SHA|sha|mismatch"):
+    with pytest.raises(ArtifactVerificationError, match="hash|SHA|sha|mismatch"):
         runner.load_verified_final_evaluation(project_root=evidence_copy)
 
 
@@ -87,3 +90,53 @@ def test_replay_rejects_changed_legacy_scorecard(evidence_copy: Path) -> None:
 def test_replay_does_not_need_raw_labels_or_images(evidence_copy: Path) -> None:
     assert not (evidence_copy / "data/raw").exists()
     assert runner.load_verified_final_evaluation(project_root=evidence_copy)["status"] == "complete"
+
+
+@pytest.fixture
+def empty_destination(tmp_path, monkeypatch):
+    directory = tmp_path / "evaluation"
+    monkeypatch.setattr(runner, "FINAL_EVALUATION_DIR", directory)
+    monkeypatch.setattr(runner, "FINAL_EVALUATION_FIGURE_DIR", tmp_path / "figures")
+    monkeypatch.setattr(runner, "PREDICTION_RECEIPT_PATH", directory / "prediction_receipt.json")
+    monkeypatch.setattr(runner, "UNLOCK_RECEIPT_PATH", directory / "unlock_receipt.json")
+    monkeypatch.setattr(runner, "EVALUATION_MANIFEST_PATH", directory / "evaluation_manifest.json")
+    monkeypatch.setattr(runner, "load_final_evaluation_spec", lambda **kw: SimpleNamespace(
+        official_output_path=tmp_path / "official.csv", evaluation_id="unit-test",
+    ))
+    return tmp_path
+
+
+def test_interrupted_prediction_cannot_restart(empty_destination):
+    calls = []
+
+    @runner._one_shot_phase("predict")
+    def failing(**kwargs):
+        calls.append(True)
+        raise RuntimeError("simulated process failure")
+
+    with pytest.raises(RuntimeError, match="simulated"):
+        failing(project_root=empty_destination)
+    assert (runner.FINAL_EVALUATION_DIR / "prediction_started.json").is_file()
+    with pytest.raises(ValueError, match="existing"):
+        failing(project_root=empty_destination)
+    assert len(calls) == 1
+
+
+def test_concurrent_evaluation_writer_is_rejected(empty_destination):
+    @runner._one_shot_phase("predict")
+    def forbidden(**kwargs):
+        pytest.fail("concurrent writer entered prediction")
+
+    with FileLock(str(runner.FINAL_EVALUATION_DIR.with_suffix(".lock"))):
+        with pytest.raises(ValueError, match="already active"):
+            forbidden(project_root=empty_destination)
+    assert not runner.FINAL_EVALUATION_DIR.exists()
+
+
+def test_missing_artifact_ledger_entry_is_rejected(evidence_copy):
+    path = runner.EVALUATION_MANIFEST_PATH
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    del manifest["artifacts"]["holdout_metrics"]
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(ValueError, match="ledger is incomplete"):
+        runner.load_verified_final_evaluation(project_root=evidence_copy)
