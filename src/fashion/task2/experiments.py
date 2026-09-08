@@ -241,6 +241,7 @@ def _implementation_paths(method: ExperimentMethod) -> tuple[str, ...]:
     common = (
         "src/fashion/task2/experiments.py",
         "src/fashion/config.py",
+        "src/fashion/data/dataset.py",
         "src/fashion/data/hashing.py",
         "src/fashion/data/metadata.py",
         "src/fashion/data/splits.py",
@@ -260,7 +261,6 @@ def _implementation_paths(method: ExperimentMethod) -> tuple[str, ...]:
         )
     return (
         *common,
-        "src/fashion/data/dataset.py",
         "src/fashion/data/images.py",
         "src/fashion/data/torch.py",
         "src/fashion/models/season.py",
