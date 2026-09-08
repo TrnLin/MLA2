@@ -24,7 +24,7 @@ TASK_SPECS = {
     "04_task3_gender_usage.ipynb": {
         "title": "Task 3 — Gender and Usage Classification",
         "tokens": ("gender", "usage", "negative transfer", "label-mask"),
-        "sections": 19,
+        "sections": 20,
     },
     "05_task4_visual_search.ipynb": {
         "title": "Task 4 — Fashion Visual Search",
@@ -34,7 +34,7 @@ TASK_SPECS = {
     "04_task3_final_evaluation.ipynb": {
         "title": "Task 3 — Final Evaluation and Ultimate Judgement",
         "tokens": ("holdout", "Gender", "Usage", "ultimate judgement"),
-        "sections": 14,
+        "sections": 16,
     },
     "06_final_evaluation.ipynb": {
         "title": "Final Evaluation and Ultimate Judgement",
