@@ -34,7 +34,7 @@ TASK_SPECS = {
     "04_task3_final_evaluation.ipynb": {
         "title": "Task 3 — Final Evaluation and Ultimate Judgement",
         "tokens": ("holdout", "Gender", "Usage", "ultimate judgement"),
-        "sections": 13,
+        "sections": 14,
     },
     "06_final_evaluation.ipynb": {
         "title": "Final Evaluation and Ultimate Judgement",
