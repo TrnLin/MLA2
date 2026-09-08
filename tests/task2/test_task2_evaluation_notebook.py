@@ -13,10 +13,7 @@ PLAN = ROOT / "docs/plans/260908-task2-assessment3-evaluation/plan.md"
 
 def _source() -> str:
     payload = json.loads(NOTEBOOK.read_text(encoding="utf-8"))
-    return "\n".join(
-        "".join(cell.get("source", []))
-        for cell in payload["cells"]
-    )
+    return "\n".join("".join(cell.get("source", [])) for cell in payload["cells"])
 
 
 def test_task2_owner_notebook_is_replay_safe_and_explicit() -> None:
@@ -26,7 +23,7 @@ def test_task2_owner_notebook_is_replay_safe_and_explicit() -> None:
     markdown_cells = [cell for cell in payload["cells"] if cell["cell_type"] == "markdown"]
 
     assert payload["metadata"]["owner"] == "Kai"
-    assert len(code_cells) == 15
+    assert len(code_cells) == 16
     assert 'EVALUATION_MODE = "artifact_replay"' in source
     assert "HOLDOUT_ROWS_EXPECTED = 5778" in source
     assert "B0" in source
@@ -45,16 +42,25 @@ def test_task2_owner_notebook_is_replay_safe_and_explicit() -> None:
     assert "holdout_slice_metrics.csv" in source
     assert "holdout_robustness_metrics.csv" in source
     assert "season_test_predictions.csv" in source
-    assert sum(
-        line.startswith("## ")
-        for cell in markdown_cells
-        for line in "".join(cell["source"]).splitlines()
-    ) == 15
-    assert sum(
-        line.startswith("### ")
-        for cell in markdown_cells
-        for line in "".join(cell["source"]).splitlines()
-    ) == 15
+    assert "Trace the one-way Task 2 file execution flow" in source
+    assert "results/figures/task2/file_impact_flow.png" in source
+    assert "full floating-point precision" in source
+    assert (
+        sum(
+            line.startswith("## ")
+            for cell in markdown_cells
+            for line in "".join(cell["source"]).splitlines()
+        )
+        == 15
+    )
+    assert (
+        sum(
+            line.startswith("### ")
+            for cell in markdown_cells
+            for line in "".join(cell["source"]).splitlines()
+        )
+        == 16
+    )
 
 
 def test_task2_evaluation_notebook_is_executed_and_each_leaf_is_interpreted() -> None:
@@ -62,7 +68,7 @@ def test_task2_evaluation_notebook_is_executed_and_each_leaf_is_interpreted() ->
     cells = payload["cells"]
     code_indices = [index for index, cell in enumerate(cells) if cell["cell_type"] == "code"]
 
-    assert [cells[index]["execution_count"] for index in code_indices] == list(range(1, 16))
+    assert [cells[index]["execution_count"] for index in code_indices] == list(range(1, 17))
     for index in code_indices:
         assert cells[index]["outputs"]
         assert not any(output.get("output_type") == "error" for output in cells[index]["outputs"])
@@ -77,8 +83,9 @@ def test_task2_evaluation_html_contains_the_final_replay() -> None:
     source = HTML.read_text(encoding="utf-8")
 
     assert "Task 2 — Independent Season Evaluation" in source
-    assert "I2 achieves 0.7534 macro-F1" in source
+    assert "I2 obtains 0.7534 macro-F1" in source
     assert "results/season_test_predictions.csv" in source
+    assert "Trace-the-one-way-Task-2-file-execution-flow" in source
     assert "15. Ultimate judgement and artifact audit" in source
 
 
