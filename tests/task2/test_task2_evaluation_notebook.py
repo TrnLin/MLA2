@@ -26,7 +26,7 @@ def test_task2_owner_notebook_is_replay_safe_and_explicit() -> None:
 
     assert payload["metadata"]["owner"] == "Kai"
     assert len(code_cells) == 15
-    assert "EVALUATION_MODE = 'artifact_replay'" in source
+    assert 'EVALUATION_MODE = "artifact_replay"' in source
     assert "HOLDOUT_ROWS_EXPECTED = 5778" in source
     assert "B0" in source
     assert "B1" in source
