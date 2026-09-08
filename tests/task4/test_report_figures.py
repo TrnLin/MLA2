@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import subprocess
 from pathlib import Path
 
@@ -44,6 +45,7 @@ def _search_catalogue(tmp_path: Path) -> pd.DataFrame:
                 "articleType": article_type,
                 "baseColour": base_colour,
                 "path": str(path),
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
                 "external_path": str(tmp_path / f"missing-external-{product_id}.png"),
             }
         )
@@ -89,7 +91,7 @@ def test_search_grid_draws_safe_teacher_rows_with_literal_grade_styles(
         original_guard(frame, require_development=require_development)
 
     def recording_open(path: object, *args: object, **kwargs: object) -> Image.Image:
-        events.append(("open", str(path)))
+        events.append(("open", "checked snapshot"))
         return original_open(path, *args, **kwargs)
 
     def capture_save(
@@ -128,14 +130,63 @@ def test_search_grid_draws_safe_teacher_rows_with_literal_grade_styles(
         "#b3801f",
         "#7d2727",
     ]
-    assert events[-6:] == [
+    assert events[1:7] == [
         ("guard", (20,)),
-        ("open", str(tmp_path / "20.png")),
+        ("open", "checked snapshot"),
         ("guard", (30,)),
-        ("open", str(tmp_path / "30.png")),
+        ("open", "checked snapshot"),
         ("guard", (40,)),
-        ("open", str(tmp_path / "40.png")),
+        ("open", "checked snapshot"),
     ]
+
+
+@pytest.mark.parametrize("change", ["bytes", "missing_hash", "protected_symlink"])
+def test_search_grid_rejects_changed_results_before_decode(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, change: str,
+) -> None:
+    catalogue = _search_catalogue(tmp_path)
+    path = Path(catalogue.loc[0, "path"])
+    if change == "bytes":
+        Image.new("RGB", (12, 16), "purple").save(path)
+    elif change == "missing_hash":
+        catalogue = catalogue.drop(columns="sha256")
+    else:
+        protected = tmp_path / "teacher/test/image.png"
+        protected.parent.mkdir(parents=True)
+        path.rename(protected)
+        path.symlink_to(protected)
+
+    def refuse_decode(*args: object, **kwargs: object) -> None:
+        pytest.fail("an unchecked result reached the image decoder")
+
+    monkeypatch.setattr(report_figures.Image, "open", refuse_decode)
+    with pytest.raises(ValueError, match="SHA-256|teacher-test"):
+        report_figures.render_search_grid(
+            query_pixels=np.zeros((16, 12, 3), dtype=np.uint8),
+            query_title="QUERY",
+            results=_search_hits(),
+            catalogue=catalogue,
+            destination=tmp_path / "rejected.png",
+        )
+    assert not (tmp_path / "rejected.png").exists()
+
+
+def test_search_result_decodes_the_checked_bytes_if_file_changes(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+) -> None:
+    row = _search_catalogue(tmp_path).iloc[0]
+    path = Path(row["path"])
+    expected = report_figures._search_result_pixels(row)
+    original_open = report_figures.Image.open
+
+    def replace_before_decode(source: object, *args: object, **kwargs: object) -> Image.Image:
+        Image.new("RGB", (12, 16), "purple").save(path)
+        return original_open(source, *args, **kwargs)
+
+    monkeypatch.setattr(report_figures.Image, "open", replace_before_decode)
+    actual = report_figures._search_result_pixels(row)
+    np.testing.assert_array_equal(actual, expected)
+    assert hashlib.sha256(path.read_bytes()).hexdigest() != row["sha256"]
 
 
 def test_search_grid_uses_one_neutral_unmarked_style_for_outside_results(
