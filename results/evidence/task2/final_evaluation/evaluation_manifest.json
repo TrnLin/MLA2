@@ -1,0 +1,319 @@
+{
+  "artifacts": {
+    "bootstrap": {
+      "bytes": 39844,
+      "path": "results/figures/task2/final_evaluation/holdout_bootstrap_intervals.png",
+      "sha256": "f9157cc81bee96bbc0bc7b82476cd147f754d56212003b0858df8d56603a30a9"
+    },
+    "calibration_risk": {
+      "bytes": 124491,
+      "path": "results/figures/task2/final_evaluation/holdout_calibration_risk.png",
+      "sha256": "d8b7dc3a38cdb5b645c1d55a865fedd333c8aaba4044276de61d43caa381e9a8"
+    },
+    "deployment_summary": {
+      "bytes": 363,
+      "path": "results/evidence/task2/final_evaluation/deployment_summary.csv",
+      "rows": 1,
+      "sha256": "4714ed69d069471a0f44195d7dc9380a3fc726a7245476c576be35b722e0348a"
+    },
+    "error_examples": {
+      "bytes": 208535,
+      "path": "results/figures/task2/final_evaluation/holdout_error_examples.png",
+      "sha256": "0e6461ffc49f4b1bd68208d192523a9a493e5aa033780a416339e3f6c0863ce0"
+    },
+    "holdout_bootstrap_intervals": {
+      "bytes": 1187,
+      "path": "results/evidence/task2/final_evaluation/holdout_bootstrap_intervals.csv",
+      "rows": 12,
+      "sha256": "b4403bb0bc40e454c2daebb4aa088773047eac0fe2e3732dda0a724535807dfb"
+    },
+    "holdout_calibration_summary": {
+      "bytes": 518,
+      "path": "results/evidence/task2/final_evaluation/holdout_calibration_summary.csv",
+      "rows": 2,
+      "sha256": "e8b21141852a549066d80e72e58c9eaa9436cc58e0dc2cea214ceeb971016398"
+    },
+    "holdout_confusion_counts": {
+      "bytes": 281,
+      "path": "results/evidence/task2/final_evaluation/holdout_confusion_counts.csv",
+      "rows": 8,
+      "sha256": "9aecb68084e9a568427ef401a1d7fee703d2e5a99fb34673d0de4920bb7def33"
+    },
+    "holdout_confusion_row_normalised": {
+      "bytes": 524,
+      "path": "results/evidence/task2/final_evaluation/holdout_confusion_row_normalised.csv",
+      "rows": 8,
+      "sha256": "ba7596b495384d50924ef41f742860382e4a3ff8629de473bbe18ccdd878def7"
+    },
+    "holdout_error_examples": {
+      "bytes": 5363,
+      "path": "results/evidence/task2/final_evaluation/holdout_error_examples.csv",
+      "rows": 12,
+      "sha256": "dbefa22932a5503eb104cdab4a2ddb5ea7ea70da697f642a8e4276b60ed4708e"
+    },
+    "holdout_error_routes": {
+      "bytes": 482,
+      "path": "results/evidence/task2/final_evaluation/holdout_error_routes.csv",
+      "rows": 11,
+      "sha256": "bec796823de4c7df9e774ec0353aa569279bb5d22f3fdcb2e05e2c5aae973d9f"
+    },
+    "holdout_metrics": {
+      "bytes": 7474,
+      "path": "results/evidence/task2/final_evaluation/holdout_metrics.json",
+      "sha256": "a44291bea664612e929dc87d1def99aa4e8661b426c5a5fc6c981ae7149681b0"
+    },
+    "holdout_per_class": {
+      "bytes": 518,
+      "path": "results/evidence/task2/final_evaluation/holdout_per_class.csv",
+      "rows": 8,
+      "sha256": "a0edbf02de11986218048205873ab2a7e4f17cfb34d9ec8d2ec25e2feab89d3c"
+    },
+    "holdout_predictions_and_labels": {
+      "bytes": 2437057,
+      "path": "results/evidence/task2/final_evaluation/holdout_predictions_and_labels.csv",
+      "rows": 5778,
+      "sha256": "0f9254c6896d5df7a9380e236882104ebd7cc9999ad7d21aa2974bfff8daf882"
+    },
+    "holdout_reliability_bins": {
+      "bytes": 3073,
+      "path": "results/evidence/task2/final_evaluation/holdout_reliability_bins.csv",
+      "rows": 30,
+      "sha256": "86e87e71fc826c5434ea87a5eae51f9860e7485c3517683ba7f1277f9af3103d"
+    },
+    "holdout_review_budgets": {
+      "bytes": 2942,
+      "path": "results/evidence/task2/final_evaluation/holdout_review_budgets.csv",
+      "rows": 12,
+      "sha256": "1d0477da73710cfb40ba4f8a0531666efba7312036906755e681630a41f3a2c4"
+    },
+    "holdout_risk_coverage": {
+      "bytes": 41531,
+      "path": "results/evidence/task2/final_evaluation/holdout_risk_coverage.csv",
+      "rows": 182,
+      "sha256": "09d0e936ab5b1f2462b35eda20d5217849fbe2b2701089009c0915e0ae07b4dd"
+    },
+    "holdout_robustness_metrics": {
+      "bytes": 2241,
+      "path": "results/evidence/task2/final_evaluation/holdout_robustness_metrics.csv",
+      "rows": 5,
+      "sha256": "fb996668edbbc3fd18176a961ea22c0486123375d400b0023b68db00b2032f14"
+    },
+    "holdout_scorecard": {
+      "bytes": 52339,
+      "path": "results/figures/task2/final_evaluation/holdout_scorecard.png",
+      "sha256": "0c856d515bbb4427dd12bda4decd5f3c6d88eff89480af0897db3c2d8ca99a32"
+    },
+    "holdout_slice_metrics": {
+      "bytes": 3238,
+      "path": "results/evidence/task2/final_evaluation/holdout_slice_metrics.csv",
+      "rows": 12,
+      "sha256": "f4005156b8b5dbd78a9b12e6fd96431730611c341c62c43e29599281c72d39ef"
+    },
+    "per_class_confusion": {
+      "bytes": 70526,
+      "path": "results/figures/task2/final_evaluation/holdout_per_class_confusion.png",
+      "sha256": "743752309b9b72668b0facccead2662c7f153d4cccf800534ad1f52ad2e0c347"
+    },
+    "slices_robustness": {
+      "bytes": 129296,
+      "path": "results/figures/task2/final_evaluation/holdout_slices_robustness.png",
+      "sha256": "d304c404fa088a7c35ffc8b78001c817db7571e55786a2fffa437c18ee8c8cdb"
+    },
+    "ultimate_judgement": {
+      "bytes": 1225,
+      "path": "results/evidence/task2/final_evaluation/ultimate_judgement.json",
+      "sha256": "aef1b79d43724517b4495696b637aab93e96e7e96773ccf449e3d56dfd946f8b"
+    },
+    "unlock_receipt": {
+      "bytes": 851,
+      "path": "results/evidence/task2/final_evaluation/unlock_receipt.json",
+      "sha256": "ce39ac703dd83e374e643c4a1414f700375b764e9092247e5d12d3d645a9703a"
+    }
+  },
+  "coverage": {
+    "holdout_rows": 5778,
+    "invalid_season_rows": 0,
+    "prediction_failures": 0,
+    "product_family_groups": 4110,
+    "quarantine_rows_excluded": 61,
+    "teacher_test_rows": 5829,
+    "valid_season_rows": 5778
+  },
+  "created_at_utc": "2026-09-08T02:48:00Z",
+  "evaluation_id": "g9-task2-season-final-evaluation",
+  "model": {
+    "bundle_sha256": "5927eff73130acedc8015199e1df5a6c6edf64c0b45023ebd91c48d7ed40f93c",
+    "candidate": "I2",
+    "image_only_inference": true,
+    "model_changed_after_unlock": false,
+    "run_id": "task2-season-i2-refit-fall-s2753-637dd6378be9",
+    "scratch": true
+  },
+  "official_test": {
+    "output": {
+      "bytes": 75251,
+      "path": "results/season_test_predictions.csv",
+      "rows": 5829,
+      "sha256": "513e9e523adae5974ed8d34a34764fca15f78f735bd21196764dc4664dbdfa4a"
+    },
+    "scored": false
+  },
+  "prediction_receipt": {
+    "bytes": 5332,
+    "path": "results/evidence/task2/final_evaluation/prediction_receipt.json",
+    "sha256": "fb0f8c2ecca2a284f0110bf5bea8c45f70408e732dc1aa73281f2c5854d08fe2"
+  },
+  "protocol": {
+    "b1_holdout_status": "not_run_no_prefrozen_predictions",
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 2753,
+    "primary_baseline": "B0 development-prior majority",
+    "primary_metric": "macro_f1",
+    "slice_fit": {
+      "article_type_count": 124,
+      "article_type_mapping": {
+        "Accessory Gift Set": "Fall",
+        "Baby Dolls": "Summer",
+        "Backpacks": "Summer",
+        "Bangle": "Summer",
+        "Basketballs": "Summer",
+        "Belts": "Summer",
+        "Blazers": "Summer",
+        "Body Wash and Scrub": "Spring",
+        "Booties": "Summer",
+        "Boxers": "Summer",
+        "Bra": "Summer",
+        "Bracelet": "Summer",
+        "Briefs": "Summer",
+        "Camisoles": "Winter",
+        "Capris": "Summer",
+        "Caps": "Summer",
+        "Casual Shoes": "Summer",
+        "Churidar": "Summer",
+        "Clothing Set": "Summer",
+        "Clutches": "Summer",
+        "Compact": "Spring",
+        "Concealer": "Spring",
+        "Cufflinks": "Fall",
+        "Cushion Covers": "Fall",
+        "Deodorant": "Spring",
+        "Dresses": "Summer",
+        "Duffel Bag": "Summer",
+        "Dupatta": "Summer",
+        "Earrings": "Summer",
+        "Eyeshadow": "Spring",
+        "Flats": "Winter",
+        "Flip Flops": "Summer",
+        "Footballs": "Fall",
+        "Formal Shoes": "Summer",
+        "Foundation and Primer": "Spring",
+        "Fragrance Gift Set": "Spring",
+        "Free Gifts": "Winter",
+        "Gloves": "Summer",
+        "Handbags": "Summer",
+        "Hat": "Fall",
+        "Headband": "Fall",
+        "Heels": "Winter",
+        "Highlighter and Blush": "Spring",
+        "Innerwear Vests": "Summer",
+        "Ipad": "Summer",
+        "Jackets": "Fall",
+        "Jeans": "Summer",
+        "Jeggings": "Summer",
+        "Jewellery Set": "Summer",
+        "Jumpsuit": "Summer",
+        "Kajal and Eyeliner": "Spring",
+        "Key chain": "Winter",
+        "Kurta Sets": "Fall",
+        "Kurtas": "Summer",
+        "Kurtis": "Summer",
+        "Laptop Bag": "Summer",
+        "Leggings": "Summer",
+        "Lehenga Choli": "Summer",
+        "Lip Gloss": "Spring",
+        "Lip Liner": "Spring",
+        "Lip Plumper": "Spring",
+        "Lipstick": "Spring",
+        "Lounge Pants": "Summer",
+        "Lounge Shorts": "Summer",
+        "Lounge Tshirts": "Summer",
+        "Messenger Bag": "Summer",
+        "Mobile Pouch": "Summer",
+        "Mufflers": "Fall",
+        "Nail Polish": "Spring",
+        "Necklace and Chains": "Winter",
+        "Nehru Jackets": "Summer",
+        "Night suits": "Summer",
+        "Nightdress": "Summer",
+        "Patiala": "Fall",
+        "Pendant": "Summer",
+        "Perfume and Body Mist": "Spring",
+        "Rain Jacket": "Summer",
+        "Rain Trousers": "Summer",
+        "Ring": "Summer",
+        "Robe": "Summer",
+        "Rompers": "Summer",
+        "Rucksacks": "Winter",
+        "Salwar": "Summer",
+        "Salwar and Dupatta": "Summer",
+        "Sandals": "Summer",
+        "Sarees": "Summer",
+        "Scarves": "Summer",
+        "Shapewear": "Summer",
+        "Shirts": "Fall",
+        "Shoe Accessories": "Fall",
+        "Shoe Laces": "Summer",
+        "Shorts": "Summer",
+        "Shrug": "Fall",
+        "Skirts": "Summer",
+        "Socks": "Summer",
+        "Sports Sandals": "Summer",
+        "Sports Shoes": "Summer",
+        "Stockings": "Summer",
+        "Stoles": "Summer",
+        "Sunglasses": "Winter",
+        "Suspenders": "Summer",
+        "Sweaters": "Fall",
+        "Sweatshirts": "Fall",
+        "Swimwear": "Fall",
+        "Tablet Sleeve": "Summer",
+        "Ties": "Summer",
+        "Ties and Cufflinks": "Summer",
+        "Tights": "Summer",
+        "Tops": "Summer",
+        "Track Pants": "Fall",
+        "Tracksuits": "Fall",
+        "Travel Accessory": "Summer",
+        "Trolley Bag": "Summer",
+        "Trousers": "Summer",
+        "Trunk": "Summer",
+        "Tshirts": "Summer",
+        "Tunics": "Summer",
+        "Umbrellas": "Summer",
+        "Waist Pouch": "Winter",
+        "Waistcoat": "Summer",
+        "Wallets": "Summer",
+        "Watches": "Winter",
+        "Water Bottle": "Fall",
+        "Wristbands": "Fall"
+      },
+      "development_id_sha256": "6f8540aff2511b2d63e23bea6d5aad24060cbbf3f352d40a8419248d4cdbcc54",
+      "file_size_boundaries": {
+        "q25_bytes": 2176.0,
+        "q50_bytes": 13863.0,
+        "q75_bytes": 20383.0
+      },
+      "file_size_fit_rows": 32753,
+      "mapping_fit_rows": 32753
+    },
+    "temperature": 1.3650015953177774,
+    "threshold_selected": false
+  },
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "unlock_receipt": {
+    "bytes": 851,
+    "path": "results/evidence/task2/final_evaluation/unlock_receipt.json",
+    "sha256": "ce39ac703dd83e374e643c4a1414f700375b764e9092247e5d12d3d645a9703a"
+  }
+}

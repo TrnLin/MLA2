@@ -1,0 +1,356 @@
+{
+  "B0_majority": {
+    "accuracy": 0.49584631360332293,
+    "balanced_accuracy": 0.25,
+    "brier": 0.6416336991187966,
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        1575,
+        0
+      ],
+      [
+        0,
+        0,
+        233,
+        0
+      ],
+      [
+        0,
+        0,
+        2865,
+        0
+      ],
+      [
+        0,
+        0,
+        1105,
+        0
+      ]
+    ],
+    "ece": 0.0001665285454654497,
+    "ece_bins": [
+      {
+        "accuracy": 0.49584631360332293,
+        "bin": 7,
+        "count": 5778,
+        "mean_confidence": 0.4956797850578575
+      }
+    ],
+    "labels": [
+      "Fall",
+      "Spring",
+      "Summer",
+      "Winter"
+    ],
+    "macro_f1": 0.16574106213120443,
+    "macro_precision": 0.12396157840083073,
+    "macro_recall": 0.25,
+    "n_samples": 5778,
+    "nll": 1.1479707752875168,
+    "per_class": {
+      "Fall": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 1575
+      },
+      "Spring": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 233
+      },
+      "Summer": {
+        "f1": 0.6629642485248177,
+        "precision": 0.49584631360332293,
+        "recall": 1.0,
+        "support": 2865
+      },
+      "Winter": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 1105
+      }
+    },
+    "weighted_f1": 0.3287283786818281
+  },
+  "I2_frozen_temperature": {
+    "accuracy": 0.7642782969885774,
+    "balanced_accuracy": 0.7197059498222275,
+    "brier": 0.3330719949316335,
+    "confusion_matrix": [
+      [
+        1035,
+        1,
+        463,
+        76
+      ],
+      [
+        21,
+        147,
+        48,
+        17
+      ],
+      [
+        294,
+        7,
+        2403,
+        161
+      ],
+      [
+        45,
+        0,
+        229,
+        831
+      ]
+    ],
+    "ece": 0.019471656418886266,
+    "ece_bins": [
+      {
+        "accuracy": 0.0,
+        "bin": 4,
+        "count": 8,
+        "mean_confidence": 0.31293059752613783
+      },
+      {
+        "accuracy": 0.37333333333333335,
+        "bin": 5,
+        "count": 150,
+        "mean_confidence": 0.37199530886086185
+      },
+      {
+        "accuracy": 0.5017921146953405,
+        "bin": 6,
+        "count": 279,
+        "mean_confidence": 0.43346004624602863
+      },
+      {
+        "accuracy": 0.5164410058027079,
+        "bin": 7,
+        "count": 517,
+        "mean_confidence": 0.502012414148738
+      },
+      {
+        "accuracy": 0.5955056179775281,
+        "bin": 8,
+        "count": 534,
+        "mean_confidence": 0.5661149801851131
+      },
+      {
+        "accuracy": 0.6809338521400778,
+        "bin": 9,
+        "count": 514,
+        "mean_confidence": 0.6322806111327369
+      },
+      {
+        "accuracy": 0.7258382642998028,
+        "bin": 10,
+        "count": 507,
+        "mean_confidence": 0.701359016617922
+      },
+      {
+        "accuracy": 0.7731755424063116,
+        "bin": 11,
+        "count": 507,
+        "mean_confidence": 0.7662437834667484
+      },
+      {
+        "accuracy": 0.8300653594771242,
+        "bin": 12,
+        "count": 612,
+        "mean_confidence": 0.8342402235108054
+      },
+      {
+        "accuracy": 0.8946629213483146,
+        "bin": 13,
+        "count": 712,
+        "mean_confidence": 0.9017433543831644
+      },
+      {
+        "accuracy": 0.9596662030598053,
+        "bin": 14,
+        "count": 1438,
+        "mean_confidence": 0.972917121995385
+      }
+    ],
+    "labels": [
+      "Fall",
+      "Spring",
+      "Summer",
+      "Winter"
+    ],
+    "macro_f1": 0.7533847968563716,
+    "macro_precision": 0.8051943386737554,
+    "macro_recall": 0.7197059498222275,
+    "n_samples": 5778,
+    "nll": 0.604535396566134,
+    "per_class": {
+      "Fall": {
+        "f1": 0.696969696969697,
+        "precision": 0.7419354838709677,
+        "recall": 0.6571428571428571,
+        "support": 1575
+      },
+      "Spring": {
+        "f1": 0.7577319587628866,
+        "precision": 0.9483870967741935,
+        "recall": 0.630901287553648,
+        "support": 233
+      },
+      "Summer": {
+        "f1": 0.7999334221038615,
+        "precision": 0.7645561565383392,
+        "recall": 0.8387434554973822,
+        "support": 2865
+      },
+      "Winter": {
+        "f1": 0.7589041095890411,
+        "precision": 0.7658986175115208,
+        "recall": 0.7520361990950226,
+        "support": 1105
+      }
+    },
+    "weighted_f1": 0.7623186421845758
+  },
+  "I2_raw": {
+    "accuracy": 0.7642782969885774,
+    "balanced_accuracy": 0.7197059498222275,
+    "brier": 0.33640556617040435,
+    "confusion_matrix": [
+      [
+        1035,
+        1,
+        463,
+        76
+      ],
+      [
+        21,
+        147,
+        48,
+        17
+      ],
+      [
+        294,
+        7,
+        2403,
+        161
+      ],
+      [
+        45,
+        0,
+        229,
+        831
+      ]
+    ],
+    "ece": 0.04756784392898516,
+    "ece_bins": [
+      {
+        "accuracy": 0.0,
+        "bin": 4,
+        "count": 4,
+        "mean_confidence": 0.318241234891742
+      },
+      {
+        "accuracy": 0.323943661971831,
+        "bin": 5,
+        "count": 71,
+        "mean_confidence": 0.3788139118252052
+      },
+      {
+        "accuracy": 0.42857142857142855,
+        "bin": 6,
+        "count": 168,
+        "mean_confidence": 0.4372635046930061
+      },
+      {
+        "accuracy": 0.4972375690607735,
+        "bin": 7,
+        "count": 362,
+        "mean_confidence": 0.5023664640739816
+      },
+      {
+        "accuracy": 0.5497630331753555,
+        "bin": 8,
+        "count": 422,
+        "mean_confidence": 0.5670506518045255
+      },
+      {
+        "accuracy": 0.5794392523364486,
+        "bin": 9,
+        "count": 428,
+        "mean_confidence": 0.6341087710160797
+      },
+      {
+        "accuracy": 0.7009803921568627,
+        "bin": 10,
+        "count": 408,
+        "mean_confidence": 0.699837554841006
+      },
+      {
+        "accuracy": 0.6911111111111111,
+        "bin": 11,
+        "count": 450,
+        "mean_confidence": 0.7665117538680414
+      },
+      {
+        "accuracy": 0.7687861271676301,
+        "bin": 12,
+        "count": 519,
+        "mean_confidence": 0.8337086035022654
+      },
+      {
+        "accuracy": 0.8089080459770115,
+        "bin": 13,
+        "count": 696,
+        "mean_confidence": 0.9018448970386876
+      },
+      {
+        "accuracy": 0.9342222222222222,
+        "bin": 14,
+        "count": 2250,
+        "mean_confidence": 0.9799520050137026
+      }
+    ],
+    "labels": [
+      "Fall",
+      "Spring",
+      "Summer",
+      "Winter"
+    ],
+    "macro_f1": 0.7533847968563716,
+    "macro_precision": 0.8051943386737554,
+    "macro_recall": 0.7197059498222275,
+    "n_samples": 5778,
+    "nll": 0.6313942527482964,
+    "per_class": {
+      "Fall": {
+        "f1": 0.696969696969697,
+        "precision": 0.7419354838709677,
+        "recall": 0.6571428571428571,
+        "support": 1575
+      },
+      "Spring": {
+        "f1": 0.7577319587628866,
+        "precision": 0.9483870967741935,
+        "recall": 0.630901287553648,
+        "support": 233
+      },
+      "Summer": {
+        "f1": 0.7999334221038615,
+        "precision": 0.7645561565383392,
+        "recall": 0.8387434554973822,
+        "support": 2865
+      },
+      "Winter": {
+        "f1": 0.7589041095890411,
+        "precision": 0.7658986175115208,
+        "recall": 0.7520361990950226,
+        "support": 1105
+      }
+    },
+    "weighted_f1": 0.7623186421845758
+  }
+}
