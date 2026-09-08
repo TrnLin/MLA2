@@ -96,6 +96,12 @@ REFIT_LOAD_COMPATIBILITY_PATHS = (
     "src/fashion/models/season.py",
     "src/fashion/task2/inference.py",
 )
+# Captured from the recorded training commit, not from today's checkout. This
+# trust anchor lets the delivered source ZIP verify the frozen model without Git.
+FROZEN_SOURCE_COMMIT = "6f76fa318a9938304d3fc9aefb3812de07fc6c63"
+FROZEN_SOURCE_RECEIPT_SHA256 = (
+    "04bc14b4310c1eb8c67d146e12158f2042f6a9d590bc8bf10b2384763cddc806"
+)
 HISTORY_COLUMNS = (
     "epoch",
     "train_loss",
@@ -521,6 +527,29 @@ def _outcome(manifest: Mapping[str, Any], manifest_path: Path, *, source: str) -
     )
 
 
+def _portable_runtime_digest(manifest: Mapping[str, Any], *, root: Path) -> str:
+    """Verify archived training provenance and return its inference-source digest."""
+    receipt = _load_json_object(
+        root / "results/evidence/task2/development_refit/source_provenance.json",
+        "frozen source provenance",
+    )
+    if canonical_sha256(receipt) != FROZEN_SOURCE_RECEIPT_SHA256:
+        raise ValueError("frozen source provenance trust anchor changed")
+    if (
+        receipt["git_commit"] != manifest["git_commit"]
+        or receipt["bundle_sha256"] != manifest["bundle"]["sha256"]
+        or receipt["implementation_sha256"] != manifest["implementation_sha256"]
+        or canonical_sha256(receipt["training_files"]) != manifest["implementation_sha256"]
+        or [row["path"] for row in receipt["training_files"]]
+        != list(REFIT_IMPLEMENTATION_PATHS)
+        or [row["path"] for row in receipt["runtime_files"]]
+        != list(REFIT_LOAD_COMPATIBILITY_PATHS)
+        or canonical_sha256(receipt["runtime_files"]) != receipt["runtime_sha256"]
+    ):
+        raise ValueError("frozen source provenance does not match the refit bundle")
+    return str(receipt["runtime_sha256"])
+
+
 def _load_verified_development_refit_package(
     path: str | Path = TASK2_MODEL_MANIFEST_JSON,
     *,
@@ -572,21 +601,26 @@ def _load_verified_development_refit_package(
     recorded_implementation = str(manifest["implementation_sha256"])
     current_implementation = implementation_sha256(*REFIT_IMPLEMENTATION_PATHS, root=root)
     if current_implementation != recorded_implementation:
-        try:
-            historical_implementation = implementation_sha256_at_commit(
-                *REFIT_IMPLEMENTATION_PATHS,
-                commit=str(manifest["git_commit"]),
-                root=root,
-            )
-            historical_runtime = implementation_sha256_at_commit(
-                *REFIT_LOAD_COMPATIBILITY_PATHS,
-                commit=str(manifest["git_commit"]),
-                root=root,
-            )
-        except (FileNotFoundError, OSError, subprocess.SubprocessError, ValueError) as error:
-            raise ValueError(
-                "development refit historical implementation is unverifiable"
-            ) from error
+        if manifest["git_commit"] == FROZEN_SOURCE_COMMIT:
+            historical_runtime = _portable_runtime_digest(manifest, root=root)
+            historical_implementation = recorded_implementation
+        else:
+            # Other experiments still require their own verifiable Git provenance.
+            try:
+                historical_implementation = implementation_sha256_at_commit(
+                    *REFIT_IMPLEMENTATION_PATHS,
+                    commit=str(manifest["git_commit"]),
+                    root=root,
+                )
+                historical_runtime = implementation_sha256_at_commit(
+                    *REFIT_LOAD_COMPATIBILITY_PATHS,
+                    commit=str(manifest["git_commit"]),
+                    root=root,
+                )
+            except (FileNotFoundError, OSError, subprocess.SubprocessError, ValueError) as error:
+                raise ValueError(
+                    "development refit historical implementation is unverifiable"
+                ) from error
         current_runtime = implementation_sha256(
             *REFIT_LOAD_COMPATIBILITY_PATHS,
             root=root,

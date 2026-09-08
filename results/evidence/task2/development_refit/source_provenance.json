@@ -1,0 +1,107 @@
+{
+  "bundle_sha256": "5927eff73130acedc8015199e1df5a6c6edf64c0b45023ebd91c48d7ed40f93c",
+  "git_commit": "6f76fa318a9938304d3fc9aefb3812de07fc6c63",
+  "implementation_sha256": "69d5214f6b6cdcebcf750ead122910a538ff9aec6645d75929d3ed20bf3e8af0",
+  "runtime_files": [
+    {
+      "path": "src/fashion/data/images.py",
+      "sha256": "2a5683d9ef66e7ebf4ab033aab5f586c0af7122a758752ea0059bd3e2868883d"
+    },
+    {
+      "path": "src/fashion/data/torch.py",
+      "sha256": "12f515e12b480e7c48c990e799ffe3397395cf90053a7cd9512ceffe7a681c98"
+    },
+    {
+      "path": "src/fashion/models/season.py",
+      "sha256": "c1b114a108a6167ed9688697eae680f3b2c1b286c51a915154ab33f297512c7f"
+    },
+    {
+      "path": "src/fashion/task2/inference.py",
+      "sha256": "9c323930b9d645e1984da74266316a1a878f066cc4837dff9b65b9b36e65f03f"
+    }
+  ],
+  "runtime_sha256": "bfc746b6f21000854e11fed83d8f641fd65edc5f38f6da8583b8b8b87ac25948",
+  "schema_version": "1.0.0",
+  "training_files": [
+    {
+      "path": "src/fashion/config.py",
+      "sha256": "514f345249f97e1410af988f2fa9dbe7782e14c1d3dbb3fcf478210f810af975"
+    },
+    {
+      "path": "src/fashion/data/dataset.py",
+      "sha256": "9137c2ee0aed8550d833fd7bb88fb0b9bc69b990934353eb42d2220961540db3"
+    },
+    {
+      "path": "src/fashion/data/hashing.py",
+      "sha256": "28709e3c9032ebc576bf8510131afefcc481347dd468e8173de3db0d11b90d55"
+    },
+    {
+      "path": "src/fashion/data/images.py",
+      "sha256": "2a5683d9ef66e7ebf4ab033aab5f586c0af7122a758752ea0059bd3e2868883d"
+    },
+    {
+      "path": "src/fashion/data/metadata.py",
+      "sha256": "ca432ec5f723662f20d9adfea8597e6dcade45d775b54b21613ba1e6c4a45725"
+    },
+    {
+      "path": "src/fashion/data/multitask.py",
+      "sha256": "8ad9b9cbf3967d23094a68aa8bd01c3eaf31ea27aeaba6a196415afaba1ca251"
+    },
+    {
+      "path": "src/fashion/data/splits.py",
+      "sha256": "9efe119241a92b41da4efdc7a54dc5ed289d35fc98a04282dc0a737f5172ce98"
+    },
+    {
+      "path": "src/fashion/data/torch.py",
+      "sha256": "12f515e12b480e7c48c990e799ffe3397395cf90053a7cd9512ceffe7a681c98"
+    },
+    {
+      "path": "src/fashion/models/season.py",
+      "sha256": "c1b114a108a6167ed9688697eae680f3b2c1b286c51a915154ab33f297512c7f"
+    },
+    {
+      "path": "src/fashion/task2/experiments.py",
+      "sha256": "0b63f56dbfc10fb38f9885a5e316ec218b5b8931ab31aa5d1782e99794490067"
+    },
+    {
+      "path": "src/fashion/task2/multitask.py",
+      "sha256": "142e75cd8349023b4ed3c298d26a37b78f60f8cc337dad62ddb3783223aa5873"
+    },
+    {
+      "path": "src/fashion/task2/refit.py",
+      "sha256": "77c170979e678a68a5600158cf51660082897dbc84a3acb4f6553dd4b9295270"
+    },
+    {
+      "path": "src/fashion/task2/ultimate_judgement.py",
+      "sha256": "5e4daf0e151f1b6ca5f5ee301db87a16ef73925ffa02904ff261608861026b30"
+    },
+    {
+      "path": "src/fashion/train/artifacts.py",
+      "sha256": "bcf732d33a2026371df6e19d459dfe1872b7823b58efcf1c5aae9e052f8ff969"
+    },
+    {
+      "path": "src/fashion/train/cache.py",
+      "sha256": "ef9b1b86b512e9b1d658862dfe7281c3b75f0cb63a77996d105a6dc69833524e"
+    },
+    {
+      "path": "src/fashion/train/engine.py",
+      "sha256": "90773302af49898efa228daa8fcf455236b1c3125b4680bc9df7fa743674d0e8"
+    },
+    {
+      "path": "src/fashion/train/metrics.py",
+      "sha256": "195091642e722b7ef1a189aaeab57c81c4b904b050f4063f697ce9addd5bfdca"
+    },
+    {
+      "path": "src/fashion/train/multitask.py",
+      "sha256": "1c892a387b64b5f18ec303dd096d4164a17994bd0404380883faf4bc2e2ef3fa"
+    },
+    {
+      "path": "src/fashion/train/registry.py",
+      "sha256": "3bf93c431bfe7bfafc97d4a756d328c1cecf918cdcdfc3696b34ca58d911ad91"
+    },
+    {
+      "path": "src/fashion/train/reproducibility.py",
+      "sha256": "794642f17303f8918497111cc086e17dc48f3ef07427da1543ebf14d4ab6c8ea"
+    }
+  ]
+}
