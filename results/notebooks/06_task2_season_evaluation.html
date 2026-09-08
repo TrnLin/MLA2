@@ -7804,6 +7804,109 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h1 id="Task-2-%E2%80%94-Independent-Season-Evaluation">Task 2 — Independent Season Evaluation<a class="anchor-link" href="#Task-2-%E2%80%94-Independent-Season-Evaluation">¶</a></h1><p>This notebook answers three fixed questions: <strong>(1)</strong> does the frozen I2 Season model beat a prior-only baseline on an untouched internal holdout, <strong>(2)</strong> does its development result transfer without a large collapse, and <strong>(3)</strong> where does it become unreliable? It is an artifact replay: it does not train, tune, refit, split data, or open raw labels. The blind prediction receipt was committed before the one-shot internal-holdout score was produced.</p>
 <p>Read from top to bottom: contract and file flow → frozen model provenance → incremental model choice → blind outputs → discrimination → uncertainty → calibration → slices → robustness → errors → cost → literature → final judgement. <strong>Precision note:</strong> committed CSV/JSON artifacts retain full floating-point precision. Tables round values only for reading; model selection and metric calculations do not use the rounded display values.</p>
+<p><strong>Plain-language output glossary</strong></p>
+<p>Read this once before interpreting the tables and charts.</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Simple meaning</th>
+<th>How to read it here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Accuracy</td>
+<td>Share of all images predicted correctly</td>
+<td>Higher is better, but Summer is common, so accuracy can hide weak smaller classes</td>
+</tr>
+<tr>
+<td>Precision</td>
+<td>Of the images predicted as one Season, the share that truly has that Season</td>
+<td>Low precision means many false alarms for that class</td>
+</tr>
+<tr>
+<td>Recall</td>
+<td>Of all true images in one Season, the share the model finds</td>
+<td>Low recall means many real examples of that class are missed</td>
+</tr>
+<tr>
+<td>F1</td>
+<td>One score balancing precision and recall</td>
+<td>High F1 requires both few false alarms and few missed cases</td>
+</tr>
+<tr>
+<td>Macro-F1</td>
+<td>Compute F1 for each of four Seasons, then give all four equal weight</td>
+<td>This is the primary score because Summer cannot dominate the average</td>
+</tr>
+<tr>
+<td>Balanced accuracy</td>
+<td>Compute recall for each Season, then average the four recalls equally</td>
+<td>Lower than accuracy means some classes are found less reliably than the majority class</td>
+</tr>
+<tr>
+<td>Delta (Δ)</td>
+<td>One result minus a reference result</td>
+<td>Positive is an improvement; negative is a drop</td>
+</tr>
+<tr>
+<td>Bootstrap draw</td>
+<td>Recalculate a statistic after resampling whole product families</td>
+<td>It shows how much the result changes when the observed family mix changes</td>
+</tr>
+<tr>
+<td>95% bootstrap interval</td>
+<td>The empirical 2.5th-to-97.5th percentile range across 10,000 draws</td>
+<td>A narrow interval is more stable; for I2−B0, an interval above 0 supports a positive difference</td>
+</tr>
+<tr>
+<td>KDE</td>
+<td>A smoothed line drawn over the bootstrap histogram</td>
+<td>It helps show distribution shape only; it does not calculate the interval</td>
+</tr>
+<tr>
+<td>NLL</td>
+<td>Negative log-likelihood: a large penalty when the true class receives low probability</td>
+<td>Lower is better</td>
+</tr>
+<tr>
+<td>Brier score</td>
+<td>Mean squared error across the four predicted probabilities</td>
+<td>Lower is better; zero would be perfect probability predictions</td>
+</tr>
+<tr>
+<td>ECE</td>
+<td>Expected calibration error: the weighted gap between confidence and observed accuracy across bins</td>
+<td>Lower is better, but its value depends on the chosen bins</td>
+</tr>
+<tr>
+<td>Coverage</td>
+<td>Share of images accepted automatically instead of sent to review</td>
+<td>Higher coverage means less human work, usually with more accepted-case errors</td>
+</tr>
+<tr>
+<td>Selective risk</td>
+<td>Error rate among automatically accepted images</td>
+<td>Lower is better; it equals <code>1 − selective accuracy</code></td>
+</tr>
+<tr>
+<td>Support / <code>n_samples</code></td>
+<td>Number of examples behind a row or class score</td>
+<td>Small support means wider uncertainty and weaker conclusions</td>
+</tr>
+<tr>
+<td>Run ID</td>
+<td>Unique name of one recorded model run</td>
+<td>Use it to trace a claim back to its config and artifacts</td>
+</tr>
+<tr>
+<td>SHA-256</td>
+<td>A file fingerprint</td>
+<td>Matching fingerprints show that the evaluated file bytes have not changed</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
