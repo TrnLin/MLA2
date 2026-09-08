@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import shutil
 import tempfile
@@ -263,14 +264,18 @@ def _load_source_cache(
 
     ids_path = source_cache / "ids.npy"
     features_path = source_cache / "features.npy"
+    with ids_path.open("rb") as ids_file:
+        ids_bytes = ids_file.read()
+    with features_path.open("rb") as features_file:
+        features_bytes = features_file.read()
     if (
-        compute_sha256(ids_path) != manifest["ids_sha256"]
-        or compute_sha256(features_path) != manifest["features_sha256"]
+        hashlib.sha256(ids_bytes).hexdigest() != manifest["ids_sha256"]
+        or hashlib.sha256(features_bytes).hexdigest() != manifest["features_sha256"]
     ):
         raise ValueError("source feature-cache array SHA-256 does not match")
     try:
-        ids = np.load(ids_path, allow_pickle=False)
-        features = np.load(features_path, allow_pickle=False)
+        ids = np.load(io.BytesIO(ids_bytes), allow_pickle=False)
+        features = np.load(io.BytesIO(features_bytes), allow_pickle=False)
     except (OSError, ValueError) as error:
         raise ValueError(f"source feature-cache arrays cannot be loaded: {error}") from error
     rows = manifest["rows"]

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import sys
 from pathlib import Path
@@ -316,6 +317,50 @@ def test_export_rejects_changed_source_array_bytes(
 
     with pytest.raises(ValueError, match="source.*SHA-256|source.*hash"):
         _export(synthetic_source, tmp_path / "gallery")
+
+
+def test_export_loads_the_same_source_array_bytes_that_passed_hash_check(
+    monkeypatch: pytest.MonkeyPatch,
+    synthetic_source: dict[str, Any],
+    tmp_path: Path,
+) -> None:
+    source_cache = synthetic_source["source_cache"]
+    original_load = gallery_artifact_module.np.load
+    source_load_count = 0
+    replacement_happened = False
+
+    def replace_features_path_before_numpy_load(
+        source: Any,
+        *args: object,
+        **kwargs: object,
+    ) -> np.ndarray:
+        nonlocal replacement_happened, source_load_count
+        retained_bytes = isinstance(source, io.BytesIO)
+        source_path = None if retained_bytes else Path(source)
+        source_array = retained_bytes or source_path.parent == source_cache
+        if source_array and not replacement_happened:
+            source_load_count += 1
+            if source_load_count == 2:
+                replacement = source_cache / ".replacement-features.npy"
+                replacement_features = np.zeros((5, 128), dtype=np.float32)
+                replacement_features[:, 1] = 1.0
+                np.save(replacement, replacement_features, allow_pickle=False)
+                replacement.replace(source_cache / "features.npy")
+                replacement_happened = True
+        return original_load(source, *args, **kwargs)
+
+    monkeypatch.setattr(
+        gallery_artifact_module.np,
+        "load",
+        replace_features_path_before_numpy_load,
+    )
+
+    exported = _export(synthetic_source, tmp_path / "gallery")
+    gallery = load_teacher_gallery_artifact(exported)
+
+    assert replacement_happened
+    assert np.all(gallery.features[:, 0] == 1.0)
+    assert np.all(gallery.features[:, 1] == 0.0)
 
 
 def test_export_rejects_source_id_set_different_from_development(
