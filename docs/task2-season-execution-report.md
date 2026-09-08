@@ -1,8 +1,8 @@
 ---
 title: "Task 2 - Fashion Season Classification: execution report and plan"
-status: task2-component-ready-for-group-freeze
+status: task2-independent-evaluation-complete
 created: 2026-08-25
-updated: 2026-09-07
+updated: 2026-09-09
 scope: task2-season
 ---
 
@@ -32,7 +32,7 @@ Recommended direction:
    and size. Do not select by accuracy alone.
 6. Freeze every choice before Notebook 06 opens the holdout once.
 
-Current position on 7 September 2026: corrected G3, I1, I2, the matched pretrained
+Current position on 9 September 2026: corrected G3, I1, I2, the matched pretrained
 boundary, G5 seed stability, shortcut/error slices, robustness/cost, calibration,
 paired grouped-bootstrap uncertainty, deterministic Grad-CAM/failure review, and the
 G7 Ultimate Judgement is complete. I2 lambda `0.3` is the
@@ -54,12 +54,18 @@ the same frozen I2 model choice, seed, 24 epochs, and 32,753 development rows; n
 occurred. The shared inference API and command-line launcher now load only this verified
 package, accept explicit image paths, and return calibrated Season probabilities with
 the run, manifest, and bundle hashes. They do not read holdout labels or write the
-official prediction CSV. Holdout remains sealed.
+official prediction CSV through that image-only inference interface. Independent
+evaluation has since completed in [Notebook 06 Task 2](../notebooks/06_task2_season_evaluation.ipynb):
+all 5,778 valid internal-holdout rows were scored, and the two-column `id,season`
+teacher-test export contains 5,829 rows. Holdout macro-F1 is `0.7533847968563716`;
+the frozen model, temperature, and selection were not changed after evaluation.
 The final Task 2 component audit now passes `10/10` checks. A CPU smoke prediction on
 development product `1163` loads the same frozen bytes and returns Summer with the
-expected four calibrated probabilities. The handoff status is
+expected four calibrated probabilities. The preserved pre-evaluation handoff status is
 `ready_for_group_freeze`; `notebook_06_unlocked`, `holdout_opened`, and
-`group_freeze_verified` all remain false.
+`group_freeze_verified` all remain false in that historical snapshot. These fields
+record the state before evaluation, not the current evaluation status. The separate
+final-evaluation manifest records `complete`; the earlier manifest is not rewritten.
 Handoff schema `1.1.0` also commits the exact completed refit registry row. The loader
 recomputes the audit instead of trusting a stored `PASS`, rejects rehashed semantic
 changes, and accepts a rebuild only when all package content is identical.
@@ -116,7 +122,35 @@ strongest defensible submission path.
 | Milestone C gate | `pip check`, Ruff, Notebook Run All smoke, and `162` tests passed | Foundation was pushed at commit `7eeaa75` |
 | Current handoff gate | Run `task2-season-i2-refit-fall-s2753-637dd6378be9` still matches the frozen bundle hash; the one-shot evaluation manifest is `complete` and confirms that the model, winner, and temperature did not change after unlock | Use the result only for reporting and downstream team integration; never feed holdout findings back into tuning |
 | Independent evaluation | I2 holdout macro-F1 `0.7533847968563716`; balanced accuracy `0.7197059498222275`; development-to-holdout change `+0.0006978408982745155`; paired I2-minus-B0 95% family-bootstrap interval `[0.5666774590701896, 0.6072286677590603]` | I2 clearly beats the prior-only baseline on this same-source holdout, but dark-image and shortcut failures still require human review |
-| Current Task 2 verification | All 371 scoped Task 2 tests pass; Notebook 03 and Notebook 06 Run All complete without errors; the evaluation HTML, source map, 10,000-draw distribution view, hashes, and CPU bundle replay verify | One unrelated Notebook Task 3 scaffold check still fails because `results/evidence/task3/` is absent; Task 2 does not hide or modify that teammate-owned issue |
+| Current Task 2 verification | All 600 scoped tests pass (Task 2, model boundaries, and relevant shared training/data contracts), plus all 35 Task 2 scaffold tests. Notebook 03 (147 code cells) and Notebook 06 Task 2 (16 code cells) pass in-memory Run All using the project environment; Ruff and `pip check` pass | This is artifact replay, not retraining or a second holdout evaluation. The existing evaluation HTML was refreshed; no teammate notebook was edited. The 600-test run is scoped verification, not a claim that every task's full suite was run |
+
+Final audit corrections (9 September 2026):
+
+- **Portable frozen bundle:** `f0d54387` reproduces the missing-Git-history failure;
+  `40852c36` adds a trusted historical source receipt at
+  `results/evidence/task2/development_refit/source_provenance.json`. Keep this file
+  in a source ZIP together with the manifest's declared inputs and the separately
+  delivered `.pt`. Current inference-runtime hashes are still checked. A real
+  Git-free package load and synthetic-image prediction pass; no refit is required.
+- **One-shot evaluation and complete verification:** `58678f18` reproduces overwrite
+  and ledger gaps; `14850af3` adds an exclusive writer lock, persistent failure
+  markers, nested receipt verification, and separate CSV/figure ledger keys.
+  The existing scorecard CSV is checked against its verified source metrics without
+  rewriting frozen evidence. Use the `audit` command in [Scripts](../scripts/README.md),
+  not `predict` or `score`, for the already-completed evaluation.
+- **Baseline cache dependency:** `84879cab` reproduces a cache that ignores
+  `dataset.py`; `0ae66b15` includes it. The full test run exposed an unintended deep
+  dependency-order change, corrected separately in `714f0ed4`. No historical run
+  or checkpoint is deleted, modified, or rerun.
+- **Narrative accuracy:** `c0e54b89` distinguishes the pre-evaluation handoff from
+  today's completed evaluation and corrects the bootstrap-interval interpretation.
+  `649ccfd0` corrects the evaluation command and the scope of the second-seed
+  comparison. I2 beats C1 at seed 2753; the two-seed comparison is against C2.
+
+The final model bytes, model manifest, canonical splits, label maps, and teacher-test
+CSV retain their pre-audit SHA-256 hashes. These are reliability and explanation fixes,
+not changes to the selected model or its measured performance. The reported sensitivity
+to dark images and ArticleType-conflict cases remains a real limitation.
 
 Important: **do not write a large training loop directly in the notebook**. Build the
 reusable dataset, training, metric, checkpoint, and registry paths under `src/fashion/`.
@@ -585,7 +619,9 @@ hashes. `review_required` remains `None` because no review threshold was frozen.
 `scripts/predict_task2_season.py` is the thin Windows-safe launcher. It accepts only
 explicit image paths and `--device`; it prints ordered JSON and fails with JSON error
 output for missing, corrupt, unsafe oversized, or otherwise invalid images. It has no
-holdout-manifest or official-CSV path. Those group-level actions remain sealed.
+holdout-manifest or official-CSV path. Those actions were subsequently completed by
+the separate final-evaluation workflow in Notebook 06 Task 2, without changing this
+inference interface or the pre-evaluation handoff snapshot.
 
 `fashion.task2.handoff` verifies the G7 decision, G8 bundle, history, runtime, canonical
 inputs, deployed inference source, and exact registry row. Schema `1.1.0` writes that row
@@ -593,8 +629,9 @@ to `results/evidence/task2/final_handoff/registry_snapshot.csv`, recomputes stor
 claims during load, validates probability semantics, and prevents non-identical package
 replacement. Its manifest records `task2_component_ready=true` but deliberately keeps
 `notebook_06_unlocked=false`. This separates “Task 2 is ready” from “the whole group is
-allowed to evaluate.” Notebook 03 Section 15 displays this stored ten-row audit and
-packaged snapshot hash; it does not silently substitute the mutable `results/runs.csv`.
+allowed to evaluate” at the time of that snapshot. Notebook 03 Section 15 displays this
+stored ten-row audit and packaged snapshot hash; it does not silently substitute the
+mutable `results/runs.csv`.
 
 ## 3. Task 2 contract
 
@@ -805,7 +842,7 @@ flowchart LR
 - **G3 follows the selected settings** and changes only the training budget and patience.
   Both models improved by about 2.8-2.9 macro-F1 points, so the eight-epoch screen was
   useful for filtering but not sufficient for the final ranking. The ordering reversed
-  by only 0.214 points; C1 becomes the provisional efficiency reference, while C2 remains
+  by only 0.263 points; C1 becomes the provisional efficiency reference, while C2 remains
   a comparator because it is more stable and slightly stronger on Spring and Summer.
 - **I1 and I2 follow G3** because the next question is no longer generic capacity. I1
   directly tests the Spring imbalance limitation. I2 tests whether ArticleType structure

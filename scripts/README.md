@@ -98,6 +98,36 @@ checkpoint, reconciles the raw OOF probabilities, and writes two contact sheets 
 non-causal attention and failure tables. Metadata is review context only. Holdout stays
 sealed, and this command does not change or freeze the candidate.
 
+## Task 2 final-package replay (after evaluation)
+
+The final Task 2 evaluation is already complete. Verify its saved receipts, tables,
+and figures from the repository root:
+
+```powershell
+& '.\.venv\Scripts\python.exe' scripts/build_task2_final_evaluation.py audit
+```
+
+Do not rerun `predict` or `score` to refresh a notebook. Both commands now refuse
+completed or partial evaluation outputs. A shared process lock prevents concurrent
+writers; a persistent attempt marker prevents automatic retries after a failure.
+Do not delete those records to bypass the one-shot boundary. Notebook 03 and
+`06_task2_season_evaluation.ipynb` replay saved artifacts without starting these phases.
+
+For a source ZIP, retain the tracked source, configs, prepared-data contracts,
+registry/evidence files and add the separately delivered `models/task2_season.pt`.
+In particular, keep
+`results/evidence/task2/development_refit/source_provenance.json`: this fixed,
+hash-checked receipt replaces the need for historical Git objects when loading the
+existing frozen bundle. It is not a replacement for the weights or their manifest.
+The loader still checks current inference-runtime bytes and rejects a changed model.
+Receipt source-file hashes describe the historical training commit, not today's files.
+
+The image prediction launcher uses `results/runs.csv` by default. An integration that
+packages the immutable registry snapshot instead can call `load_season_bundle` with
+`registry_path="results/evidence/task2/final_handoff/registry_snapshot.csv"` explicitly.
+No Git repository, raw training images, or new training run is needed for this bundle
+load; all files declared by its manifest and selection freeze must still be present.
+
 ## Task 4 preprocessing and baseline runners
 
 Task 4 has two thin runners:
