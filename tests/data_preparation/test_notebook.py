@@ -504,10 +504,14 @@ def test_saved_html_is_current_portable_and_hides_inputs() -> None:
 
     assert "DATA PREPARATION READY" in html
     assert "Shared Data Preparation" in html
+    assert "Dataset description and documentation limitations" in html
+    assert "EDA synthesis and task-linked pre-training hypotheses" in html
+    assert "Datasheets for Datasets" in html
     assert html.count("jp-mod-noInput") >= code_cell_count
     assert "from __future__ import annotations" not in html
-    assert len(re.findall(r"<h2[ >]", html)) == 18
-    assert len(re.findall(r"<h3[ >]", html)) == EXPECTED_DATA_CODE_CELLS
+    assert len(re.findall(r"<h2[ >]", html)) == 5
+    assert len(re.findall(r"<h3[ >]", html)) == len(DATA_GROUP_HEADINGS)
+    assert len(re.findall(r"<h4[ >]", html)) == EXPECTED_DATA_CODE_CELLS
     assert "/home/" not in html
     assert "c:\\" not in lowered
     for retired in (
