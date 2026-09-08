@@ -8,6 +8,7 @@ no sealed partition is opened.
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
@@ -23,11 +24,11 @@ from PIL import Image
 
 from fashion.config import ROOT
 from fashion.data.dataset import load_splits
-from fashion.data.splits import PROTECTED_PARTITIONS
 from fashion.task4.final_freeze import (
     FINAL_FREEZE_RELATIVE_PATH,
     validate_final_comparison_bundle,
 )
+from fashion.task4.image_safety import reject_protected_image_path, reject_sealed_image_rows
 from fashion.task4.preprocessing import PreprocessingContract, preprocess_image
 from fashion.task4.preprocessing_experiment import build_odd_aspect_canvas
 from fashion.task4.protocol import primary_relevance
@@ -47,6 +48,7 @@ __all__ = (
     "development_catalogue",
     "graded_relevance",
     "load_winner_retrieval_evidence",
+    "render_search_grid",
     "resolve_image_rows",
     "same_family",
     "select_retrieval_panels",
@@ -60,7 +62,6 @@ PANEL_COUNT = 5
 SLICE_TOP_K = 5
 
 CONTRACT = PreprocessingContract(width=240, height=320)
-_TEACHER_TEST_MARKERS = ("teacher/test", "images_test", "styles_prediction")
 _SLICE_ORDER = (
     "normal_success",
     "grayscale",
@@ -306,20 +307,7 @@ def development_catalogue(*, root: Path = ROOT) -> pd.DataFrame:
 
 
 def _reject_sealed(frame: pd.DataFrame) -> None:
-    if "partition" not in frame:
-        raise ValueError("image rows must carry canonical partition values")
-    protected = frame["partition"].isin(list(PROTECTED_PARTITIONS))
-    if protected.any():
-        ids = frame.loc[protected, "id"].astype(str).head(5).tolist()
-        raise ValueError(f"sealed holdout/quarantine rows reached image access: {ids}")
-    if not frame["partition"].eq("development").all():
-        raise ValueError("sealed or unknown partition rows reached image access")
-    for column in (name for name in frame.columns if str(name).endswith("_path")):
-        lowered = frame[column].astype(str).str.replace("\\", "/", regex=False).str.lower()
-        if lowered.map(
-            lambda value: any(marker in value for marker in _TEACHER_TEST_MARKERS)
-        ).any():
-            raise ValueError("official teacher-test path reached image access")
+    reject_sealed_image_rows(frame, require_development=True)
 
 
 def resolve_image_rows(
@@ -1393,8 +1381,13 @@ def build_chart_figures(
     return outputs
 
 
-def _display_pixels(row: pd.Series, variant: str) -> np.ndarray:
-    path = Path(str(row["external_path"]))
+def _display_pixels(
+    row: pd.Series,
+    variant: str,
+    *,
+    path_column: str = "external_path",
+) -> np.ndarray:
+    path = Path(str(row[path_column]))
     resolved = path if path.is_absolute() else ROOT / path
     with Image.open(resolved) as image:
         prepared = (
@@ -1403,6 +1396,99 @@ def _display_pixels(row: pd.Series, variant: str) -> np.ndarray:
             else image
         )
         return preprocess_image(prepared, CONTRACT).pixels
+
+
+def _search_result_pixels(row: pd.Series) -> np.ndarray:
+    """Decode only a checked snapshot of the image represented by the gallery."""
+    reject_sealed_image_rows(pd.DataFrame([row]), require_development=True)
+    path = Path(str(row["path"]))
+    resolved = reject_protected_image_path(path if path.is_absolute() else ROOT / path)
+    payload = resolved.read_bytes()
+    if hashlib.sha256(payload).hexdigest() != str(row.get("sha256", "")).lower():
+        raise ValueError("result image SHA-256 does not match gallery metadata")
+    with Image.open(io.BytesIO(payload)) as image:
+        return preprocess_image(image, CONTRACT).pixels
+
+
+def render_search_grid(
+    *,
+    query_pixels: np.ndarray,
+    query_title: str,
+    results: Sequence[Any],
+    catalogue: pd.DataFrame,
+    destination: Path,
+) -> Path:
+    """Draw one prepared query and its ordered, development-only result images."""
+
+    result_rows = resolve_image_rows(
+        catalogue,
+        [result.candidate_id for result in results],
+    )
+    result_pixels = [_search_result_pixels(row) for _, row in result_rows.iterrows()]
+    columns = len(results) + 1
+    figure, axes = plt.subplots(
+        1,
+        columns,
+        figsize=(1.65 * columns + 1.0, 3.0),
+        squeeze=False,
+        constrained_layout=True,
+    )
+    # Leave room for two-line titles at the saved 170 dpi.
+    figure.set_layout_engine("constrained", h_pad=0.12)
+    row_axes = axes[0]
+    query_axes = row_axes[0]
+    query_axes.imshow(query_pixels)
+    query_axes.set_title(query_title, fontsize=8, color=_INK)
+    for spine in query_axes.spines.values():
+        spine.set_edgecolor(_INK)
+        spine.set_linewidth(2.2)
+
+    for column_index, (result, pixels) in enumerate(
+        zip(results, result_pixels, strict=True),
+        start=1,
+    ):
+        cell = row_axes[column_index]
+        cell.imshow(pixels)
+        grade = result.grade
+        border = _MUTED if grade is None else _GRADE_COLOURS[grade]
+        mark = "" if grade is None else f" {_GRADE_MARKS[grade]} ·"
+        cell.set_title(
+            f"#{result.rank}{mark} {result.candidate_id} · d={result.distance:.3f}\n"
+            f"{result.article_type} · {result.base_colour}",
+            fontsize=7,
+            color=border,
+        )
+        for spine in cell.spines.values():
+            spine.set_edgecolor(border)
+            spine.set_linewidth(3.0)
+
+    for cell in row_axes:
+        cell.set_xticks([])
+        cell.set_yticks([])
+
+    known_grades = {result.grade for result in results if result.grade is not None}
+    if known_grades:
+        handles = [
+            plt.Rectangle(
+                (0, 0),
+                1,
+                1,
+                facecolor=_GRADE_COLOURS[grade],
+                edgecolor=_INK,
+                label=_GRADE_LABELS[grade],
+            )
+            for grade in (2, 1, 0)
+            if grade in known_grades
+        ]
+        figure.legend(
+            handles=handles,
+            fontsize=7.5,
+            loc="outside lower center",
+            ncol=len(handles),
+            frameon=False,
+        )
+    target = Path(destination)
+    return _save(figure, target.parent, target.name)
 
 
 def _draw_panels(

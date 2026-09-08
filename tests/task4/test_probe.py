@@ -11,6 +11,7 @@ from fashion.task4.probe import (
     EDGE_FEATURE_DIM,
     extract_spatial_probe,
     rank_probe_embeddings,
+    rank_single_embedding,
 )
 from fashion.task4.protocol import RetrievalViews
 
@@ -122,6 +123,98 @@ def test_generic_ranker_accepts_learned_embeddings_through_the_frozen_path() -> 
     assert ranked["candidate_id"].tolist() == [10, 3, 2]
     assert ranked["distance"].tolist() == pytest.approx([0.0, 1 - 2**-0.5, 1.0])
     assert task4.rank_embeddings is probe.rank_embeddings
+
+
+def test_single_ranker_uses_cosine_distance_and_numeric_id_ties() -> None:
+    ranked = rank_single_embedding(
+        query_feature=np.array([1.0, 0.0], dtype=np.float32),
+        gallery_ids=np.array([30, 10, 20], dtype=np.int64),
+        gallery_features=np.array(
+            [[1.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+            dtype=np.float32,
+        ),
+        max_k=3,
+    )
+
+    assert ranked.columns.tolist() == ["candidate_id", "distance", "rank"]
+    assert ranked["candidate_id"].tolist() == [10, 30, 20]
+    assert ranked["rank"].tolist() == [1, 2, 3]
+    assert ranked["distance"].tolist() == pytest.approx([0.0, 0.0, 1.0])
+    assert task4.rank_single_embedding is probe.rank_single_embedding
+
+
+@pytest.mark.parametrize("max_k", [0, 4])
+def test_single_ranker_rejects_k_outside_gallery_range(max_k: int) -> None:
+    with pytest.raises(ValueError, match="max_k"):
+        rank_single_embedding(
+            query_feature=np.array([1.0, 0.0], dtype=np.float32),
+            gallery_ids=np.array([10, 20, 30], dtype=np.int64),
+            gallery_features=np.array(
+                [[1.0, 0.0], [0.0, 1.0], [-1.0, 0.0]],
+                dtype=np.float32,
+            ),
+            max_k=max_k,
+        )
+
+
+def test_single_ranker_rejects_wrong_query_shape() -> None:
+    with pytest.raises(ValueError, match="query feature"):
+        rank_single_embedding(
+            query_feature=np.array([[1.0, 0.0]], dtype=np.float32),
+            gallery_ids=np.array([10], dtype=np.int64),
+            gallery_features=np.array([[1.0, 0.0]], dtype=np.float32),
+        )
+
+
+def test_single_ranker_rejects_dimension_mismatch() -> None:
+    with pytest.raises(ValueError, match="dimensions"):
+        rank_single_embedding(
+            query_feature=np.array([1.0, 0.0], dtype=np.float32),
+            gallery_ids=np.array([10], dtype=np.int64),
+            gallery_features=np.array([[1.0, 0.0, 0.0]], dtype=np.float32),
+        )
+
+
+@pytest.mark.parametrize(
+    ("query_feature", "gallery_features"),
+    [
+        (
+            np.array([np.nan, 0.0], dtype=np.float32),
+            np.array([[1.0, 0.0]], dtype=np.float32),
+        ),
+        (
+            np.array([1.0, 0.0], dtype=np.float32),
+            np.array([[np.inf, 0.0]], dtype=np.float32),
+        ),
+        (
+            np.array([0.0, 0.0], dtype=np.float32),
+            np.array([[1.0, 0.0]], dtype=np.float32),
+        ),
+        (
+            np.array([1.0, 0.0], dtype=np.float32),
+            np.array([[0.0, 0.0]], dtype=np.float32),
+        ),
+        (
+            np.array([2.0, 0.0], dtype=np.float32),
+            np.array([[1.0, 0.0]], dtype=np.float32),
+        ),
+        (
+            np.array([1.0, 0.0], dtype=np.float32),
+            np.array([[2.0, 0.0]], dtype=np.float32),
+        ),
+    ],
+)
+def test_single_ranker_rejects_invalid_feature_values(
+    query_feature: np.ndarray,
+    gallery_features: np.ndarray,
+) -> None:
+    with pytest.raises(ValueError):
+        rank_single_embedding(
+            query_feature=query_feature,
+            gallery_ids=np.array([10], dtype=np.int64),
+            gallery_features=gallery_features,
+            max_k=1,
+        )
 
 
 def test_ranker_filters_family_candidates_before_top_k() -> None:

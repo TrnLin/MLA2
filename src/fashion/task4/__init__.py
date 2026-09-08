@@ -116,6 +116,15 @@ from .external import (
     reconcile_external_ids,
     select_development_pairs,
 )
+from .gallery_artifact import (
+    GALLERY_ARTIFACT_SCHEMA_VERSION,
+    GALLERY_ARTIFACT_TYPE,
+    METADATA_COLUMNS,
+    SOURCE_IDENTITY_FIELDS,
+    TeacherGallery,
+    export_teacher_gallery_artifact,
+    load_teacher_gallery_artifact,
+)
 from .hog import (
     HOG_CONFIG,
     HOG_CONFIG_FINGERPRINT,
@@ -236,6 +245,7 @@ from .probe import (
     extract_spatial_probe,
     rank_embeddings,
     rank_probe_embeddings,
+    rank_single_embedding,
 )
 from .protocol import (
     COVERAGE_COLUMNS,
@@ -250,6 +260,22 @@ from .protocol import (
     family_relevance,
     prepare_rankings,
     primary_relevance,
+)
+from .search import (
+    DEFAULT_TOP_K,
+    MAX_TOP_K,
+    MIN_TOP_K,
+    OUTSIDE_RATINGS,
+    SEARCH_RECORD_SCHEMA_VERSION,
+    CropBox,
+    PreparedQuery,
+    SearchBundle,
+    SearchHit,
+    SearchRecord,
+    SearchResponse,
+    load_search_bundle,
+    run_search,
+    write_search_outputs,
 )
 from .training import (
     AMP_GROWTH_INTERVAL,
@@ -469,6 +495,7 @@ __all__ = (
     "primary_relevance",
     "rank_embeddings",
     "rank_probe_embeddings",
+    "rank_single_embedding",
     "query_normalization_source",
     "read_external_catalogue",
     "reconcile_external_ids",
@@ -542,4 +569,25 @@ __all__ = (
     "validate_learned_manifest",
     "validate_stability_evidence_artifact",
     "write_learned_artifacts",
+    "GALLERY_ARTIFACT_SCHEMA_VERSION",
+    "GALLERY_ARTIFACT_TYPE",
+    "METADATA_COLUMNS",
+    "SOURCE_IDENTITY_FIELDS",
+    "TeacherGallery",
+    "export_teacher_gallery_artifact",
+    "load_teacher_gallery_artifact",
+    "DEFAULT_TOP_K",
+    "MAX_TOP_K",
+    "MIN_TOP_K",
+    "OUTSIDE_RATINGS",
+    "SEARCH_RECORD_SCHEMA_VERSION",
+    "CropBox",
+    "PreparedQuery",
+    "SearchBundle",
+    "SearchHit",
+    "SearchRecord",
+    "SearchResponse",
+    "load_search_bundle",
+    "run_search",
+    "write_search_outputs",
 )

@@ -30,6 +30,7 @@ __all__ = (
     "extract_spatial_probe",
     "rank_embeddings",
     "rank_probe_embeddings",
+    "rank_single_embedding",
 )
 
 
@@ -188,6 +189,65 @@ def _validate_features(
     return numeric_ids, matrix
 
 
+def _ordered_top_k(
+    distances: np.ndarray,
+    numeric_gallery_ids: np.ndarray,
+    eligible: np.ndarray,
+    max_k: int,
+) -> np.ndarray:
+    eligible_indices = np.flatnonzero(eligible)
+    if len(eligible_indices) < max_k:
+        raise ValueError("query has fewer than max_k eligible candidates")
+    eligible_distances = distances[eligible_indices]
+    initial = np.argpartition(eligible_distances, max_k - 1)[:max_k]
+    threshold = float(eligible_distances[initial].max())
+    boundary = eligible_indices[eligible_distances <= threshold]
+    return boundary[
+        np.lexsort((numeric_gallery_ids[boundary], distances[boundary]))
+    ][:max_k]
+
+
+def rank_single_embedding(
+    *,
+    query_feature: np.ndarray,
+    gallery_ids: np.ndarray,
+    gallery_features: np.ndarray,
+    max_k: int = 5,
+) -> pd.DataFrame:
+    """Rank one unit embedding against a unit-normalized gallery."""
+    if isinstance(max_k, bool) or not isinstance(max_k, int) or max_k <= 0:
+        raise ValueError("max_k must be a positive integer")
+
+    query = np.asarray(query_feature, dtype=np.float32)
+    if query.ndim != 1 or query.shape[0] == 0 or not np.isfinite(query).all():
+        raise ValueError("query feature must be one finite, non-empty vector")
+    query_norm = float(np.linalg.norm(query))
+    if query_norm <= 0 or not np.isclose(query_norm, 1.0, atol=1e-5):
+        raise ValueError("query feature must have unit norm")
+
+    numeric_gallery, gallery_matrix = _validate_features(
+        gallery_ids, gallery_features, "gallery"
+    )
+    if query.shape[0] != gallery_matrix.shape[1]:
+        raise ValueError("query and gallery feature dimensions must match")
+
+    distances = np.clip(1.0 - gallery_matrix @ query, 0.0, 2.0)
+    ordered = _ordered_top_k(
+        distances,
+        numeric_gallery,
+        np.ones(len(numeric_gallery), dtype=bool),
+        max_k,
+    )
+    return pd.DataFrame(
+        {
+            "candidate_id": numeric_gallery[ordered],
+            "distance": distances[ordered],
+            "rank": np.arange(1, max_k + 1, dtype=np.int64),
+        },
+        columns=["candidate_id", "distance", "rank"],
+    )
+
+
 def _view_by_numeric_id(frame: pd.DataFrame, label: str) -> pd.DataFrame:
     if "id" not in frame:
         raise ValueError(f"{label} view is missing id")
@@ -245,19 +305,12 @@ def rank_embeddings(
                     queries_by_id.loc[query_id],
                     aligned_gallery,
                 ).to_numpy()
-            eligible_indices = np.flatnonzero(eligible)
-            if len(eligible_indices) < max_k:
-                raise ValueError(
-                    f"query {int(query_id)} has fewer than max_k eligible candidates"
-                )
-
-            eligible_distances = row_distances[eligible_indices]
-            initial = np.argpartition(eligible_distances, max_k - 1)[:max_k]
-            threshold = float(eligible_distances[initial].max())
-            boundary = eligible_indices[eligible_distances <= threshold]
-            ordered = boundary[
-                np.lexsort((numeric_gallery[boundary], row_distances[boundary]))
-            ][:max_k]
+            ordered = _ordered_top_k(
+                row_distances,
+                numeric_gallery,
+                eligible,
+                max_k,
+            )
             records.extend(
                 {
                     "query_id": int(query_id),

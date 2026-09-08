@@ -109,6 +109,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         *(name for name in TASK_SPECS if name != "05_task4_visual_search.ipynb"),
         "task-4/01_v1_eda.ipynb",
         "task-4/05_task4_visual_search.ipynb",
+        "task-4/07_task4_search_demo.ipynb",
     }
     present = {
         path.relative_to(ROOT / "notebooks").as_posix()
