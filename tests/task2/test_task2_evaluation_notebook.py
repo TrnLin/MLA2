@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 NOTEBOOK = ROOT / "notebooks/06_task2_season_evaluation.ipynb"
+HTML = ROOT / "results/notebooks/06_task2_season_evaluation.html"
 PLAN = ROOT / "docs/plans/260908-task2-assessment3-evaluation/plan.md"
 
 
@@ -69,6 +70,16 @@ def test_task2_evaluation_notebook_is_executed_and_each_leaf_is_interpreted() ->
         interpretation = cells[index + 1]
         assert interpretation["cell_type"] == "markdown"
         assert "".join(interpretation["source"]).startswith("**Interpretation.**")
+
+
+def test_task2_evaluation_html_contains_the_final_replay() -> None:
+    assert HTML.stat().st_size > 1_000_000
+    source = HTML.read_text(encoding="utf-8")
+
+    assert "Task 2 — Independent Season Evaluation" in source
+    assert "I2 achieves 0.7534 macro-F1" in source
+    assert "results/season_test_predictions.csv" in source
+    assert "15. Ultimate judgement and artifact audit" in source
 
 
 def test_task2_plan_freezes_baseline_and_assessment3_link() -> None:
