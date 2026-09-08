@@ -1,6 +1,8 @@
 """Check final Usage artifact identity and the two notebooks' evidence boundaries."""
 
+import hashlib
 import json
+import shutil
 
 import nbformat
 import pytest
@@ -10,10 +12,77 @@ from fashion.task3_final import (
     CHECKPOINT_SHA256,
     CLASS_NAMES,
     PACK,
+    _check_training_reference,
     check_hash,
     verify_usage_final,
     verify_usage_holdout_sources,
 )
+
+TASK1_PATH_ADDITIONS = (
+    'TASK1_RESULT_DIR = RESULTS_DIR / "task1"\n'
+    'TASK1_FIGURE_DIR = FIGURE_DIR / "task1"\n'
+    'TASK1_EVIDENCE_DIR = EVIDENCE_DIR / "task1"\n'
+    'TASK1_HOG_CACHE_DIR = PROCESSED_DATA_DIR / "task1_hog_cache"\n'
+)
+
+
+def test_task1_path_additions_do_not_invalidate_usage_model(tmp_path):
+    # Copy only the shared file being changed; keep the accepted artifacts read-only.
+    manifest = json.loads((ROOT / PACK / "model_manifest.json").read_text())
+    paths = set(manifest["files"])
+    paths.update(
+        manifest[key]["path"]
+        for key in ("checkpoint", "config", "normalization", "training_manifest")
+    )
+    paths.update(str(PACK / name) for name in ("model_manifest.json", "model_manifest.sha256"))
+    for relative in paths:
+        target = tmp_path / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if relative == "src/fashion/config.py":
+            shutil.copyfile(ROOT / relative, target)
+        else:
+            target.symlink_to(ROOT / relative)
+    config = tmp_path / "src/fashion/config.py"
+    source = config.read_text()
+    anchor = 'TASK2_EVIDENCE_DIR = EVIDENCE_DIR / "task2"\n'
+    assert anchor in source
+    config.write_text(source.replace(anchor, anchor + TASK1_PATH_ADDITIONS))
+    assert verify_usage_final(tmp_path)["checkpoint"]["sha256"] == CHECKPOINT_SHA256
+
+
+@pytest.mark.parametrize(
+    "replacement",
+    [
+        ("RANDOM_SEED = 2753", "RANDOM_SEED = 42"),
+        (
+            'SPLITS_CSV = PROCESSED_DATA_DIR / "splits.csv"',
+            'SPLITS_CSV = PROCESSED_DATA_DIR / "other.csv"',
+        ),
+        ("ROOT = _resolve_project_root()", 'ROOT = Path("/other")'),
+    ],
+)
+def test_task1_additions_do_not_hide_changes_to_existing_settings(tmp_path, replacement):
+    path = tmp_path / "src/fashion/config.py"
+    path.parent.mkdir(parents=True)
+    original = (ROOT / "src/fashion/config.py").read_bytes()
+    source = original.decode()
+    assert replacement[0] in source
+    path.write_text(source.replace(*replacement) + TASK1_PATH_ADDITIONS)
+    with pytest.raises(ValueError, match="Hash mismatch"):
+        _check_training_reference(
+            tmp_path, "src/fashion/config.py", hashlib.sha256(original).hexdigest()
+        )
+
+
+def test_unreviewed_shared_config_code_is_rejected(tmp_path):
+    path = tmp_path / "src/fashion/config.py"
+    path.parent.mkdir(parents=True)
+    original = (ROOT / "src/fashion/config.py").read_bytes()
+    path.write_bytes(original + b'\nTASK1_RESULT_DIR = Path("/different")\n')
+    with pytest.raises(ValueError, match="Hash mismatch"):
+        _check_training_reference(
+            tmp_path, "src/fashion/config.py", hashlib.sha256(original).hexdigest()
+        )
 
 
 def test_accepted_e8_artifact_and_holdout_sources_are_intact():
