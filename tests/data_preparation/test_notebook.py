@@ -42,6 +42,7 @@ DATA_GROUP_HEADINGS = (
     "### 4.5 Labelled development contact sheet",
     "### 4.6 Duplicate, missing-image, and quality-extreme examples",
     "### 4.7 Transform-risk illustration",
+    "### 4.8 EDA synthesis and task-linked pre-training hypotheses",
     "### 5.1 Artifact registry and lineage",
     "### 5.2 Using the prepared data for model development",
     "### 5.3 Completion gate",
@@ -232,6 +233,43 @@ def test_dataset_documentation_limits_are_explicit() -> None:
     assert "10.1145/3458723" in source
     assert "COSC2753_2026B_Assignment%202.pdf" in source
     assert "No undocumented collection detail is guessed" in normalized
+
+
+def test_eda_findings_drive_task_linked_hypotheses() -> None:
+    notebook = nbformat.read(NOTEBOOK, as_version=4)
+    hypothesis_cells = [
+        cell.source
+        for cell in notebook.cells
+        if cell.cell_type == "markdown"
+        and cell.source.startswith(
+            "### 4.8 EDA synthesis and task-linked pre-training hypotheses"
+        )
+    ]
+    assert len(hypothesis_cells) == 1
+    source = hypothesis_cells[0]
+    normalized = re.sub(r"\s+", " ", source)
+
+    for finding_id in (f"F{index:02d}" for index in range(1, 10)):
+        assert finding_id in source
+    for hypothesis_id in (f"H{index:02d}" for index in range(1, 8)):
+        assert hypothesis_id in source
+    for downstream_notebook in (
+        "02_task1_article_type.ipynb",
+        "03_task2_season.ipynb",
+        "06_task2_season_evaluation.ipynb",
+        "04_task3_gender_usage.ipynb",
+        "04_task3_final_evaluation.ipynb",
+        "task-4/05_task4_visual_search.ipynb",
+    ):
+        assert downstream_notebook in source
+
+    assert "formal preregistration" in normalized
+    assert "does **not** claim" in normalized
+    assert "contains no downstream model result" in normalized
+    assert "falsifiable" in normalized
+    assert "10.1038/s42256-020-00257-z" in source
+    assert "10.1016/j.patter.2023.100804" in source
+    assert "best model" not in source.lower()
 
 
 def test_hashing_reconciliation_and_analysis_contracts_are_visible() -> None:
