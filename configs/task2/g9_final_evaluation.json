@@ -100,7 +100,7 @@
   "official_test": {
     "expected_rows": 5829,
     "input_manifest": "data/processed/prediction_manifest.csv",
-    "output_path": "results/task2/season_model/season_predictions.csv",
+    "output_path": "results/season_test_predictions.csv",
     "output_columns": [
       "id",
       "season"
