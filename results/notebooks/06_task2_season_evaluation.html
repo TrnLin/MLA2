@@ -7938,8 +7938,8 @@ a.anchor-link {
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">DisplayImage</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTML</span><span class="p">,</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">display</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">DisplayImage</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_kde</span>
 
 <span class="n">ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
@@ -7948,7 +7948,8 @@ a.anchor-link {
 <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">ROOT</span> <span class="o">/</span> <span class="s2">"src"</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ROOT</span> <span class="o">/</span> <span class="s2">"src"</span><span class="p">))</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">fashion.train.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">paired_group_bootstrap</span>
+<span class="n">metrics_module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"fashion.train.metrics"</span><span class="p">)</span>
+<span class="n">paired_group_bootstrap</span> <span class="o">=</span> <span class="n">metrics_module</span><span class="o">.</span><span class="n">paired_group_bootstrap</span>
 
 <span class="n">evaluation_runner</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"fashion.task2.final_evaluation_runner"</span><span class="p">)</span>
 <span class="n">load_verified_final_evaluation</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="o">.</span><span class="n">load_verified_final_evaluation</span>
@@ -8075,7 +8076,7 @@ a.anchor-link {
         <span class="p">[</span>
             <span class="mi">4</span><span class="p">,</span>
             <span class="s2">"Frozen bundle + holdout/test images"</span><span class="p">,</span>
-            <span class="s2">"scripts/build_task2_final_evaluation.py blind"</span><span class="p">,</span>
+            <span class="s2">"scripts/build_task2_final_evaluation.py predict"</span><span class="p">,</span>
             <span class="s2">"holdout_predictions.csv + prediction_receipt.json + "</span>
             <span class="s2">"results/season_test_predictions.csv"</span><span class="p">,</span>
             <span class="s2">"Predicts before labels; no train, tune, refit, or score"</span><span class="p">,</span>
@@ -8185,7 +8186,7 @@ a.anchor-link {
 <th>3</th>
 <td>4</td>
 <td>Frozen bundle + holdout/test images</td>
-<td>scripts/build_task2_final_evaluation.py blind</td>
+<td>scripts/build_task2_final_evaluation.py predict</td>
 <td>holdout_predictions.csv + prediction_receipt.j...</td>
 <td>Predicts before labels; no train, tune, refit,...</td>
 </tr>
@@ -10412,7 +10413,7 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p><strong>Interpretation.</strong></p>
 <ul>
-<li><strong>Supported EDA insights:</strong> class imbalance made B0 accuracy misleading; B1 proved that shape and colour contain signal; learned features beat fixed HOG/HSV; and the ArticleType–Season relation was useful enough for I2 to improve C1 across two seeds.</li>
+<li><strong>Supported EDA insights:</strong> class imbalance made B0 accuracy misleading; B1 proved that shape and colour contain signal; learned features beat fixed HOG/HSV; and the ArticleType–Season relation was useful enough for I2 to improve C1 at seed 2753 and C2 at both seeds 2753 and 2026. The two-seed comparison is I2 versus C2; it does not establish a two-seed gain over C1.</li>
 <li><strong>Shortcut warning confirmed:</strong> ArticleType-aligned rows score 0.8564 macro-F1, while conflict rows fall to 0.4462 and conflict Spring recall to 0.0854. Auxiliary learning helped development conflict rows, but the final model still depends strongly on related visual structure.</li>
 <li><strong>Mixed or contradicted insights:</strong> Spring is not the weakest clean class; more capacity, a larger input, extra colour jitter, and effective-number class weighting did not improve the frozen development decision. File-size difficulty is non-monotonic: q3 is weakest (0.6941) while q4 is strongest (0.7467).</li>
 <li><strong>Acquisition and family checks:</strong> dominant 2011–2012 rows have lower macro-F1 (0.5600) than other years (0.6971), despite similar raw accuracy. Multirow families score 0.7588 versus 0.7421 for singletons, a modest gap that the grouped bootstrap addresses.</li>
@@ -11247,9 +11248,7 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTML</span>
-
-<span class="n">literature</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">literature</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="p">[</span>
             <span class="s2">"Training (repeated)"</span><span class="p">,</span>

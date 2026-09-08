@@ -8,7 +8,9 @@ import platform
 import subprocess
 import sys
 import time
+from collections.abc import Callable
 from datetime import UTC, datetime
+from functools import wraps
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -17,6 +19,7 @@ import numpy as np
 import pandas as pd
 import psutil
 import torch
+from filelock import FileLock, Timeout
 from matplotlib.figure import Figure
 from PIL import Image, ImageOps
 from torch.utils.data import DataLoader, Dataset
@@ -68,6 +71,65 @@ FROZEN_REGISTRY_PATH = TASK2_EVIDENCE_DIR / "final_handoff/registry_snapshot.csv
 PREDICTION_RECEIPT_PATH = FINAL_EVALUATION_DIR / "prediction_receipt.json"
 UNLOCK_RECEIPT_PATH = FINAL_EVALUATION_DIR / "unlock_receipt.json"
 EVALUATION_MANIFEST_PATH = FINAL_EVALUATION_DIR / "evaluation_manifest.json"
+
+
+def _one_shot_phase(phase: str) -> Callable:
+    """Serialize writers and retain an attempt marker even if the process fails.
+
+    A failed/partial attempt needs manual review, never an automatic rerun. Read-only
+    audit is deliberately outside this guard and does not reopen protected labels.
+    """
+    def decorate(function: Callable) -> Callable:
+        @wraps(function)
+        def guarded(**kwargs: Any) -> dict[str, Any]:
+            if phase == "score" and not kwargs.get("evaluation_unlocked", False):
+                raise ValueError("internal holdout scoring requires evaluation_unlocked=True")
+            root = Path(kwargs.get("project_root", ROOT)).resolve()
+            FINAL_EVALUATION_DIR.parent.mkdir(parents=True, exist_ok=True)
+            lock = FileLock(str(FINAL_EVALUATION_DIR.with_suffix(".lock")), timeout=0)
+            try:
+                lock.acquire()
+            except Timeout as error:
+                raise ValueError("a one-shot evaluation writer is already active") from error
+            try:
+                if UNLOCK_RECEIPT_PATH.exists() or EVALUATION_MANIFEST_PATH.exists():
+                    raise ValueError("one-shot holdout already opened; use audit for replay")
+                spec = load_final_evaluation_spec(project_root=root)
+                existing = (
+                    set(FINAL_EVALUATION_DIR.iterdir()) if FINAL_EVALUATION_DIR.exists() else set()
+                )
+                if phase == "predict":
+                    if existing or spec.official_output_path.exists():
+                        raise ValueError("existing blind prediction evidence; use audit for replay")
+                else:
+                    receipt = _verify_prediction_receipt(root=root, spec=spec)
+                    permitted = {
+                        (root / record["path"]).resolve()
+                        for record in receipt["artifacts"].values()
+                    } | {PREDICTION_RECEIPT_PATH, FINAL_EVALUATION_DIR / "prediction_started.json"}
+                    if existing - permitted:
+                        raise ValueError("existing partial scoring evidence requires manual review")
+                if FINAL_EVALUATION_FIGURE_DIR.exists() and any(
+                    FINAL_EVALUATION_FIGURE_DIR.iterdir()
+                ):
+                    raise ValueError("existing evaluation figures require manual review")
+                FINAL_EVALUATION_DIR.mkdir(parents=True, exist_ok=True)
+                marker_name = (
+                    "score_started.json" if phase == "score" else "prediction_started.json"
+                )
+                marker = FINAL_EVALUATION_DIR / marker_name
+                # Exclusive creation and the process lock precede *all* side effects,
+                # especially loading protected labels. A crash leaves this marker.
+                with marker.open("x", encoding="utf-8") as handle:
+                    json.dump(
+                        {"evaluation_id": spec.evaluation_id, "phase": phase,
+                         "started_at_utc": _utc_now()}, handle,
+                    )
+                return function(**kwargs)
+            finally:
+                lock.release()
+        return guarded
+    return decorate
 
 
 def _utc_now() -> str:
@@ -301,6 +363,7 @@ def _verified_bundle(spec: FinalEvaluationSpec, *, device: str, root: Path) -> S
     return bundle
 
 
+@_one_shot_phase("predict")
 def build_blind_prediction_evidence(
     *,
     device: str = "cpu",
@@ -509,28 +572,150 @@ def _read_json(path: str | Path) -> dict[str, Any]:
     return payload
 
 
+def _verify_record(
+    record: Mapping[str, Any], *, root: Path, expected_path: Path | None = None,
+) -> Path:
+    """Check a ledger entry, including path containment and optional CSV coverage."""
+    if not isinstance(record, dict) or not {"path", "sha256", "bytes"} <= record.keys():
+        raise ValueError("evaluation artifact record is incomplete")
+    path = (root / str(record["path"])).resolve()
+    _portable(path, root)
+    if expected_path is not None and path != expected_path.resolve():
+        raise ValueError("evaluation artifact path identity changed")
+    verify_artifact(path, str(record["sha256"]))
+    if int(record["bytes"]) != path.stat().st_size:
+        raise ValueError(f"evaluation artifact byte count changed: {path.name}")
+    if "rows" in record and len(pd.read_csv(path)) != int(record["rows"]):
+        raise ValueError(f"evaluation artifact row count changed: {path.name}")
+    return path
+
+
 def _verify_prediction_receipt(*, root: Path, spec: FinalEvaluationSpec) -> dict[str, Any]:
     receipt = _read_json(PREDICTION_RECEIPT_PATH)
     if receipt.get("schema_version") != "1.0.0" or receipt.get("evaluation_id") != (
         spec.evaluation_id
     ):
         raise ValueError("blind prediction receipt identity changed")
-    if receipt.get("labels_opened") is not False or receipt.get("model_changed") is not False:
+    if receipt.get("phase") != "blind_prediction_before_holdout_label_access" or any(
+        receipt.get(flag) is not False
+        for flag in ("labels_opened", "model_changed", "teacher_test_scored", "retuning_allowed")
+    ):
         raise ValueError("blind prediction receipt does not preserve the evaluation boundary")
     model = receipt.get("model", {})
     if model.get("run_id") != spec.run_id or model.get("bundle_sha256") != spec.bundle_sha256:
         raise ValueError("blind prediction receipt references a different model")
+    if (
+        tuple(model.get("labels", [])) != spec.labels
+        or model.get("temperature") != spec.temperature
+        or model.get("scratch") is not True
+        or model.get("image_only_inference") is not True
+    ):
+        raise ValueError("blind prediction model protocol changed")
     artifacts = receipt.get("artifacts")
-    if not isinstance(artifacts, dict) or not artifacts:
+    required_artifacts = {
+        "holdout_image_manifest", "teacher_test_image_manifest",
+        "development_article_type_mapping", "development_file_size_boundaries",
+        "holdout_b0_predictions", "holdout_predictions", "holdout_robustness_predictions",
+        "season_test_predictions", "runtime",
+    }
+    if not isinstance(artifacts, dict) or set(artifacts) != required_artifacts:
         raise ValueError("blind prediction receipt contains no artifact ledger")
     for name, record in artifacts.items():
-        if not isinstance(record, dict):
-            raise ValueError(f"blind artifact record is invalid: {name}")
-        path = (root / str(record["path"])).resolve()
-        verify_artifact(path, str(record["sha256"]))
-        if int(record["bytes"]) != path.stat().st_size:
-            raise ValueError(f"blind artifact byte count changed: {name}")
+        filename = "blind_runtime.json" if name == "runtime" else f"{name}.csv"
+        expected = (
+            spec.official_output_path if name == "season_test_predictions"
+            else FINAL_EVALUATION_DIR / filename
+        )
+        _verify_record(record, root=root, expected_path=expected)
+    inputs = receipt.get("inputs", {})
+    input_paths = {
+        "config": spec.config_path, "splits": SPLITS_CSV, "label_maps": LABEL_MAPS_JSON,
+        "model_manifest": TASK2_MODEL_MANIFEST_JSON, "registry_snapshot": FROZEN_REGISTRY_PATH,
+    }
+    if not input_paths.keys() <= inputs.keys():
+        raise ValueError("blind prediction input ledger is incomplete")
+    for name, path in input_paths.items():
+        _verify_record(inputs[name], root=root, expected_path=path)
+    if model.get("manifest_sha256") != inputs["model_manifest"]["sha256"]:
+        raise ValueError("blind prediction model manifest identity changed")
+    coverage = receipt.get("coverage", {})
+    for name, expected in (
+        ("holdout_rows", spec.expected_holdout_rows),
+        ("quarantine_rows_excluded", spec.expected_quarantine_rows),
+        ("teacher_test_rows", spec.expected_test_rows),
+        ("holdout_conditions", [condition.condition for condition in spec.conditions]),
+    ):
+        if coverage.get(name) != expected:
+            raise ValueError(f"blind prediction coverage changed: {name}")
     return receipt
+
+
+def _verify_unlock_receipt(*, root: Path, spec: FinalEvaluationSpec) -> dict[str, Any]:
+    unlock = _read_json(UNLOCK_RECEIPT_PATH)
+    if (
+        unlock.get("schema_version") != "1.0.0"
+        or unlock.get("evaluation_id") != spec.evaluation_id
+        or unlock.get("holdout_opened") is not True
+        or any(unlock.get(flag) is not False for flag in (
+            "model_retrained", "model_retuned", "winner_changed", "temperature_refit",
+        ))
+        or unlock.get("holdout_rows") != spec.expected_holdout_rows
+        or unlock.get("quarantine_rows_excluded") != spec.expected_quarantine_rows
+        or unlock.get("valid_season_rows", -1) + unlock.get("blank_or_invalid_season_rows", -1)
+        != spec.expected_holdout_rows
+    ):
+        raise ValueError("holdout unlock receipt identity or boundary changed")
+    _verify_record(unlock["prediction_receipt"], root=root, expected_path=PREDICTION_RECEIPT_PATH)
+    # The historical receipt records the raw source digest. Replay intentionally
+    # needs neither raw labels nor image files; it verifies the saved scored truth.
+    raw_source = unlock.get("raw_teacher_csv", {})
+    if not {"path", "sha256", "bytes"} <= raw_source.keys():
+        raise ValueError("holdout unlock source provenance is incomplete")
+    return unlock
+
+
+def _verify_legacy_scorecard(
+    *, root: Path, manifest: Mapping[str, Any], receipt: Mapping[str, Any],
+) -> None:
+    """Reconstruct the old unlisted CSV from already hash-verified evidence.
+
+    Schema 1.0.0 originally overwrote its CSV ledger key with the PNG. Preserve
+    that frozen manifest, but compare every scorecard column rather than trust
+    the orphaned CSV. B0 always predicts the development majority; its pooled
+    macro-F1 follows directly from the frozen class counts.
+    """
+    artifacts = manifest["artifacts"]
+    metrics = _read_json(root / artifacts["holdout_metrics"]["path"])
+    judgement = _read_json(root / artifacts["ultimate_judgement"]["path"])
+    counts = receipt["b0"]["class_counts"]
+    prior = counts[receipt["b0"]["majority_label"]] / sum(counts.values())
+    development = {
+        "B0 majority": 2 * prior / (1 + prior) / len(SEASON_LABELS),
+        "I2 frozen": metrics["I2_frozen_temperature"]["macro_f1"]
+        - judgement["development_to_holdout_macro_f1_change"],
+    }
+    rows = []
+    for model, role, key in (
+        ("B0 majority", "primary prior baseline", "B0_majority"),
+        ("I2 frozen", "ultimate judgement", "I2_frozen_temperature"),
+    ):
+        measured = metrics[key]
+        rows.append({
+            "model": model, "role": role,
+            **{name: measured[name] for name in (
+                "n_samples", "accuracy", "balanced_accuracy", "macro_precision",
+                "macro_recall", "macro_f1", "weighted_f1", "nll", "brier", "ece",
+            )},
+            "development_macro_f1": development[model],
+            "holdout_minus_development_macro_f1": measured["macro_f1"] - development[model],
+        })
+    try:
+        pd.testing.assert_frame_equal(
+            pd.read_csv(FINAL_EVALUATION_DIR / "holdout_scorecard.csv"), pd.DataFrame(rows),
+            check_dtype=False, check_exact=False, rtol=0, atol=1e-12,
+        )
+    except AssertionError as error:
+        raise ValueError("legacy holdout scorecard differs from hashed evidence") from error
 
 
 def _raw_prediction_variant(clean: pd.DataFrame) -> pd.DataFrame:
@@ -1028,6 +1213,7 @@ def _deployment_summary(root: Path, receipt: Mapping[str, Any]) -> pd.DataFrame:
     return pd.DataFrame([row])
 
 
+@_one_shot_phase("score")
 def score_internal_holdout(
     *,
     evaluation_unlocked: bool = False,
@@ -1229,7 +1415,7 @@ def score_internal_holdout(
     _write_full_precision_csv(output_paths["deployment_summary"], deployment)
 
     figure_paths = {
-        "holdout_scorecard": _plot_scorecard(
+        "holdout_scorecard_figure": _plot_scorecard(
             scorecard,
             FINAL_EVALUATION_FIGURE_DIR / "holdout_scorecard.png",
         ),
@@ -1372,15 +1558,51 @@ def load_verified_final_evaluation(
     model = manifest.get("model", {})
     if model.get("run_id") != spec.run_id or model.get("bundle_sha256") != spec.bundle_sha256:
         raise ValueError("Task 2 final evaluation model identity changed")
-    verify_artifact(PREDICTION_RECEIPT_PATH, manifest["prediction_receipt"]["sha256"])
-    verify_artifact(UNLOCK_RECEIPT_PATH, manifest["unlock_receipt"]["sha256"])
-    for name, record in manifest.get("artifacts", {}).items():
-        path = root / str(record["path"])
-        verify_artifact(path, str(record["sha256"]))
-        if int(record["bytes"]) != path.stat().st_size:
-            raise ValueError(f"final evaluation artifact size changed: {name}")
+    if (
+        model.get("scratch") is not True or model.get("image_only_inference") is not True
+        or model.get("model_changed_after_unlock") is not False
+        or manifest.get("official_test", {}).get("scored") is not False
+    ):
+        raise ValueError("Task 2 final evaluation boundary changed")
+    _verify_record(manifest["prediction_receipt"], root=root, expected_path=PREDICTION_RECEIPT_PATH)
+    _verify_record(manifest["unlock_receipt"], root=root, expected_path=UNLOCK_RECEIPT_PATH)
+    receipt = _verify_prediction_receipt(root=root, spec=spec)
+    unlock = _verify_unlock_receipt(root=root, spec=spec)
+    if not (
+        datetime.fromisoformat(receipt["created_at_utc"])
+        <= datetime.fromisoformat(unlock["opened_at_utc"])
+        <= datetime.fromisoformat(manifest["created_at_utc"])
+    ):
+        raise ValueError("final evaluation phase chronology changed")
+    required = {
+        "unlock_receipt", "holdout_predictions_and_labels", "holdout_scorecard", "holdout_metrics",
+        "holdout_per_class", "holdout_confusion_counts", "holdout_confusion_row_normalised",
+        "holdout_bootstrap_intervals", "holdout_calibration_summary", "holdout_reliability_bins",
+        "holdout_risk_coverage", "holdout_review_budgets", "holdout_slice_metrics",
+        "holdout_robustness_metrics", "holdout_error_routes", "holdout_error_examples",
+        "deployment_summary", "ultimate_judgement", "per_class_confusion", "bootstrap",
+        "calibration_risk", "slices_robustness", "error_examples",
+    }
+    artifacts = manifest.get("artifacts", {})
+    if not required <= artifacts.keys():
+        raise ValueError("final evaluation artifact ledger is incomplete")
+    for record in artifacts.values():
+        _verify_record(record, root=root)
+    if Path(artifacts["holdout_scorecard"]["path"]).suffix == ".png":
+        _verify_legacy_scorecard(root=root, manifest=manifest, receipt=receipt)
+    else:
+        _verify_record(
+            artifacts["holdout_scorecard"], root=root,
+            expected_path=FINAL_EVALUATION_DIR / "holdout_scorecard.csv",
+        )
+        _verify_record(
+            artifacts["holdout_scorecard_figure"], root=root,
+            expected_path=FINAL_EVALUATION_FIGURE_DIR / "holdout_scorecard.png",
+        )
     official = manifest.get("official_test", {}).get("output", {})
-    verify_artifact(root / str(official["path"]), str(official["sha256"]))
+    if official != receipt["artifacts"]["season_test_predictions"]:
+        raise ValueError("official output differs from the blind prediction receipt")
+    _verify_record(official, root=root, expected_path=spec.official_output_path)
     return manifest
 
 

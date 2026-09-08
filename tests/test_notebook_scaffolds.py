@@ -1422,7 +1422,7 @@ def test_task2_ultimate_judgement_cells_load_verified_freeze_evidence() -> None:
         "exactly `24` epochs",
         "no validation or holdout early stopping",
         "image-only",
-        "holdout remains sealed",
+        "holdout was sealed when this immutable decision was recorded",
     ):
         assert required in findings
 
@@ -1473,7 +1473,7 @@ def test_task2_refit_cell_loads_verified_bundle_without_evaluation_leakage() -> 
         "no validation selection, no early stopping, and no holdout labels",
         "temperature `1.365002`",
         "ArticleType is not an inference input",
-        "holdout remains sealed",
+        "holdout was sealed throughout this refit",
         "task2-season-i2-refit-fall-s2753-637dd6378be9",
     ):
         assert required in finding
