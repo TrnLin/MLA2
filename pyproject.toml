@@ -34,7 +34,7 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--import-mode=importlib"
-pythonpath = ["tests/data", "tests/train"]
+pythonpath = ["tests/data", "tests/train", "tests/task1"]
 
 [tool.ruff]
 extend-exclude = [".agents", ".claude"]

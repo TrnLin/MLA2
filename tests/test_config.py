@@ -32,3 +32,10 @@ def test_importing_config_does_not_create_task2_artifact_directories(tmp_path: P
     assert not nonexistent.exists()
     _ = config.TASK2_TMP_DIR
     assert not nonexistent.exists()
+
+
+def test_task1_result_paths_are_nested_under_shared_result_roots() -> None:
+    assert config.RUNS_CSV == config.RESULTS_DIR / "runs.csv"
+    assert config.TASK1_RESULT_DIR == config.RESULTS_DIR / "task1"
+    assert config.TASK1_FIGURE_DIR == config.FIGURE_DIR / "task1"
+    assert config.TASK1_EVIDENCE_DIR == config.EVIDENCE_DIR / "task1"

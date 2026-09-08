@@ -28,6 +28,7 @@ from fashion.train.task3_registry import RunRegistry as Task3Registry
 
 RUN_STATUSES = frozenset({"running", "completed", "failed", "interrupted"})
 TERMINAL_STATUSES = RUN_STATUSES - {"running"}
+RECORD_TASKS = frozenset({"task1", "task2"})
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 GIT_PATTERN = re.compile(r"^[0-9a-f]{40}$")
 _WINDOWS_TRANSIENT_WRITE_ERRORS = {5, 32}
@@ -427,13 +428,22 @@ class RunRecord:
 
 
 class RunRegistry(Task3Registry):
-    """Task 2 record API and Task 3 lifecycle API over one shared ledger.
+    """Task 1/2 record API and Task 3 lifecycle API over one shared ledger.
 
-    Task 2 uses append/finalize/read; Task 3 uses start/update/complete/fail.
+    Tasks 1 and 2 use append/finalize/read; Task 3 uses start/update/complete/fail.
     Each writer preserves the other tasks' fields and terminal states.
     """
 
-    def __init__(self, path: str | Path = RUNS_CSV, mirrors: Sequence[str | Path] = ()) -> None:
+    def __init__(
+        self,
+        path: str | Path = RUNS_CSV,
+        mirrors: Sequence[str | Path] = (),
+        *,
+        record_task: str = "task2",
+    ) -> None:
+        if record_task not in RECORD_TASKS:
+            raise ValueError(f"record_task must be one of {sorted(RECORD_TASKS)}")
+        self.record_task = record_task
         super().__init__(path, mirrors)
 
     def _read_rows(self) -> list[dict[str, str]]:
@@ -480,32 +490,32 @@ class RunRegistry(Task3Registry):
         """Return all rows as strings so identifiers and blank fields stay exact."""
         with _registry_lock(self.path, exclusive=False):
             rows = _read_union_rows(self.path)
-        task_rows = [
+        record_rows = [
             {column: row[column] for column in TASK2_RUN_COLUMNS}
             for row in rows
-            if row["task"] == "task2"
+            if row["task"] == self.record_task
         ]
-        return pd.DataFrame(task_rows, columns=TASK2_RUN_COLUMNS)
+        return pd.DataFrame(record_rows, columns=TASK2_RUN_COLUMNS)
 
     def append(self, record: RunRecord) -> None:
         """Append one new running row; never reuse a run ID."""
-        if record.task != "task2":
-            raise ValueError("task must be task2 for append")
+        if record.task != self.record_task:
+            raise ValueError(f"task must be {self.record_task} for append")
         if record.status != "running":
             raise ValueError("new registry rows must start with status='running'")
-        task2_row = record.to_row()
+        record_row = record.to_row()
         with _registry_lock(self.path, exclusive=True):
             rows = _read_union_rows(self.path)
             if any(row["run_id"] == record.run_id for row in rows):
                 raise DuplicateRunError(f"run_id already exists: {record.run_id}")
             merged = {column: "" for column in RUN_COLUMNS}
-            merged.update(task2_row)
+            merged.update(record_row)
             _write_union_rows_with_pandas(self.path, [*rows, merged])
 
     def finalize(self, record: RunRecord) -> None:
         """Replace a running row once, while preserving its starting identity."""
-        if record.task != "task2":
-            raise ValueError("task must be task2 for finalize")
+        if record.task != self.record_task:
+            raise ValueError(f"task must be {self.record_task} for finalize")
         if record.status not in TERMINAL_STATUSES:
             raise ValueError("finalized run must have a terminal status")
         with _registry_lock(self.path, exclusive=True):
@@ -531,13 +541,13 @@ class RunRegistry(Task3Registry):
             _write_union_rows_with_pandas(self.path, rows)
 
     def interrupt(self, run_id: str, *, reason: str) -> None:
-        """Mark one running Task 2 row interrupted without changing other tasks."""
+        """Mark one running Task 1/2 row interrupted without changing other tasks."""
         with _registry_lock(self.path, exclusive=True):
             rows = _read_union_rows(self.path)
             matches = [
                 index
                 for index, row in enumerate(rows)
-                if row["run_id"] == run_id and row["task"] == "task2"
+                if row["run_id"] == run_id and row["task"] == self.record_task
             ]
             if not matches:
                 raise RegistryError(f"run_id does not exist: {run_id}")

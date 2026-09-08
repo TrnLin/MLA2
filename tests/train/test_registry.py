@@ -756,7 +756,7 @@ def test_task2_interrupt_rejects_running_task3_without_changing_either_file(tmp_
 
 
 @pytest.mark.parametrize("operation", ["append", "finalize"])
-@pytest.mark.parametrize("wrong_task", ["task3", "task4", ""])
+@pytest.mark.parametrize("wrong_task", ["task1", "task3", "task4", ""])
 def test_task2_record_writes_reject_other_task_labels(
     tmp_path: Path, operation: str, wrong_task: str
 ) -> None:
@@ -772,6 +772,28 @@ def test_task2_record_writes_reject_other_task_labels(
     with pytest.raises(ValueError, match="task must be task2"):
         getattr(shared, operation)(record)
     assert (path.read_bytes(), mirror.read_bytes()) == before
+
+
+def test_task1_and_task2_record_views_share_the_ledger_without_mixing_rows(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "runs.csv"
+    task1_registry = Task2RunRegistry(path, record_task="task1")
+    task2_registry = Task2RunRegistry(path)
+    task1_record = _record("task1-run")
+    task1_record.task = "task1"
+
+    task1_registry.append(task1_record)
+    task2_registry.append(_record("task2-run"))
+
+    assert task1_registry.read().run_id.tolist() == ["task1-run"]
+    assert task2_registry.read().run_id.tolist() == ["task2-run"]
+    assert {row["task"] for row in task1_registry._read_rows()} == {"task1", "task2"}
+
+
+def test_record_view_rejects_non_record_tasks(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="record_task"):
+        Task2RunRegistry(tmp_path / "runs.csv", record_task="task3")
 
 
 @pytest.mark.parametrize("existing_file", [False, True])

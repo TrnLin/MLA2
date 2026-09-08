@@ -13,8 +13,8 @@ from fashion.data.hashing import compute_sha256
 TASK_SPECS = {
     "02_task1_article_type.ipynb": {
         "title": "Task 1 — Article Type Classification",
-        "tokens": ("articleType", "long-tail taxonomy", "rare-class error"),
-        "sections": 15,
+        "tokens": ("articleType", "rare class", "balanced class-weighted loss"),
+        "sections": 14,
     },
     "03_task2_season.ipynb": {
         "title": "Task 2 — Season Classification",
@@ -142,22 +142,9 @@ def test_task_notebooks_preserve_common_structure_and_safety() -> None:
         for required in ("data/processed/splits.csv", "results/runs.csv"):
             assert required in source
         assert all(token.lower() in lowered for token in spec["tokens"])
-        assert "train_test_split" not in source
-        assert "pretrained=True" not in source
-
-
-def test_task_1_scaffold_leaves_owner_decisions_open() -> None:
-    for filename in ("02_task1_article_type.ipynb",):
-        notebook = nbformat.read(_task_path(filename), as_version=4)
-        source = _source(notebook)
-
-        assert all(
-            cell.cell_type == "markdown" or not cell.source.strip() for cell in notebook.cells
-        )
-        assert "TODO(owner)" in source
-        assert "Final metric selected: yes" not in source
-        for unselected in ("macro-F1", "nDCG@", "Recall@", "Adam", "cross-entropy"):
-            assert unselected not in source
+        code_source = _code_source(notebook)
+        assert "train_test_split" not in code_source
+        assert "pretrained=True" not in code_source
 
 
 def _heading_level(cell: nbformat.NotebookNode) -> int | None:
@@ -1644,7 +1631,8 @@ def test_task2_analysis_cells_verify_all_declared_inputs_and_exact_claims() -> N
 
 def test_task_metric_placeholders_are_explicit() -> None:
     task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
-    assert "Primary development metric: TODO(owner)" in task1
+    assert "The main score is fixed-label macro-F1 across all 124 classes" in task1
+    assert "TODO(owner)" not in task1
 
     task2 = _source(nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4))
     assert "Primary development metric:** pooled out-of-fold macro-F1" in task2

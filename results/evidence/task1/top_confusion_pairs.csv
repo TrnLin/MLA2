@@ -1,0 +1,11 @@
+rank,candidate_id,true_label,predicted_label,error_count,true_support,error_rate,example_ids
+1,task1_cnn_mild_aug_unweighted_v1,Casual Shoes,Sports Shoes,350,2276,0.15377855887521968,"1545,1546,1547"
+2,task1_cnn_mild_aug_unweighted_v1,Tshirts,Tops,282,5748,0.049060542797494784,"1570,1763,1765"
+3,task1_cnn_mild_aug_unweighted_v1,Sports Shoes,Casual Shoes,243,1691,0.14370195150798346,"1548,1549,1728"
+4,task1_cnn_mild_aug_unweighted_v1,Tops,Tshirts,206,1369,0.15047479912344777,"2120,2294,2700"
+5,task1_cnn_mild_aug_unweighted_v1,Flats,Heels,169,356,0.4747191011235955,"2626,2627,2628"
+6,task1_cnn_mild_aug_unweighted_v1,Sandals,Flip Flops,96,735,0.1306122448979592,"2634,2636,7771"
+7,task1_cnn_mild_aug_unweighted_v1,Formal Shoes,Casual Shoes,86,517,0.16634429400386846,"2377,2642,2824"
+8,task1_cnn_mild_aug_unweighted_v1,Heels,Flats,79,890,0.08876404494382023,"2872,2890,3137"
+9,task1_cnn_mild_aug_unweighted_v1,Shirts,Tshirts,71,2619,0.027109583810614738,"2050,2104,2125"
+10,task1_cnn_mild_aug_unweighted_v1,Casual Shoes,Formal Shoes,63,2276,0.027680140597539545,"2371,2374,2376"
