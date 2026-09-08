@@ -241,7 +241,6 @@ def _implementation_paths(method: ExperimentMethod) -> tuple[str, ...]:
     common = (
         "src/fashion/task2/experiments.py",
         "src/fashion/config.py",
-        "src/fashion/data/dataset.py",
         "src/fashion/data/hashing.py",
         "src/fashion/data/metadata.py",
         "src/fashion/data/splits.py",
@@ -249,6 +248,7 @@ def _implementation_paths(method: ExperimentMethod) -> tuple[str, ...]:
         "src/fashion/train/cache.py",
         "src/fashion/train/metrics.py",
         "src/fashion/train/registry.py",
+        "src/fashion/data/dataset.py",
     )
     if method == "majority":
         return (*common, "src/fashion/task2/baselines.py")
