@@ -14,6 +14,7 @@ from fashion.task2.final_evaluation import (
     summarise_grouped_bootstrap,
     validate_prediction_frame,
 )
+from fashion.task2.final_evaluation_runner import score_internal_holdout
 
 LABELS = ("Fall", "Spring", "Summer", "Winter")
 
@@ -184,3 +185,8 @@ def test_official_predictions_have_only_id_and_season_in_manifest_order() -> Non
     assert official.columns.tolist() == ["id", "season"]
     assert official["id"].tolist() == [10, 13, 12]
     assert official["season"].tolist() == ["Fall", "Winter", "Summer"]
+
+
+def test_internal_holdout_scoring_requires_an_explicit_unlock() -> None:
+    with pytest.raises(ValueError, match="evaluation_unlocked=True"):
+        score_internal_holdout(evaluation_unlocked=False)

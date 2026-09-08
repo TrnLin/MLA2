@@ -328,27 +328,69 @@ def score_prediction_frame(
     return metrics, scored
 
 
-def _fit_article_type_mapping(
+def fit_development_slice_reference(
     development: pd.DataFrame,
     *,
-    labels: Sequence[str],
-) -> dict[str, str]:
-    required = {"articleType", "season"}
+    labels: Sequence[str] = SEASON_LABELS,
+) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, Any]]:
+    """Fit every holdout slice reference without reading any protected targets."""
+    required = {"id", "articleType", "season", "file_size_bytes"}
     missing = sorted(required - set(development))
     if missing:
         raise ValueError(f"development slice frame is missing columns: {missing}")
+    if development["id"].duplicated().any():
+        raise ValueError("development slice reference IDs must be unique")
     label_order = {str(label): index for index, label in enumerate(labels)}
-    mapping: dict[str, str] = {}
     valid = development.loc[
         development["articleType"].astype(str).str.strip().ne("")
         & development["season"].astype(str).isin(label_order)
     ]
+    mapping_rows: list[dict[str, Any]] = []
     for article_type, group in valid.groupby("articleType", sort=True, observed=True):
         counts = group["season"].astype(str).value_counts()
         maximum = int(counts.max())
         winners = [label for label, count in counts.items() if int(count) == maximum]
-        mapping[str(article_type)] = min(winners, key=label_order.__getitem__)
-    return mapping
+        majority = min(winners, key=label_order.__getitem__)
+        mapping_rows.append(
+            {
+                "articleType": str(article_type),
+                "shortcut_majority_season": majority,
+                "majority_count": maximum,
+                "training_labeled_count": len(group),
+                "majority_share": maximum / len(group),
+            }
+        )
+    mappings = pd.DataFrame(mapping_rows)
+
+    development_sizes = pd.to_numeric(development["file_size_bytes"], errors="raise")
+    if development_sizes.isna().any() or development_sizes.le(0).any():
+        raise ValueError("development file sizes must be positive")
+    boundaries = tuple(
+        float(value)
+        for value in development_sizes.quantile([0.25, 0.5, 0.75], interpolation="linear")
+    )
+    if not boundaries[0] < boundaries[1] < boundaries[2]:
+        raise ValueError("development file-size boundaries are not strictly increasing")
+    boundary_frame = pd.DataFrame(
+        [
+            {
+                "fit_scope": "all_valid_development_rows",
+                "training_products": len(development),
+                "q25_bytes": boundaries[0],
+                "q50_bytes": boundaries[1],
+                "q75_bytes": boundaries[2],
+            }
+        ]
+    )
+    audit = {
+        "mapping_fit_rows": len(development),
+        "file_size_fit_rows": len(development),
+        "article_type_count": len(mappings),
+        "development_id_sha256": canonical_sha256(
+            sorted(pd.to_numeric(development["id"], errors="raise").astype(int).tolist())
+        ),
+    }
+    return mappings, boundary_frame, audit
 
 
 def build_holdout_slice_assignments(
@@ -379,7 +421,17 @@ def build_holdout_slice_assignments(
     holdout = holdout_frame.copy().reset_index(drop=True)
     if development["id"].duplicated().any() or holdout["id"].duplicated().any():
         raise ValueError("slice input IDs must be unique")
-    mapping = _fit_article_type_mapping(development, labels=labels)
+    mappings, boundary_frame, reference_audit = fit_development_slice_reference(
+        development,
+        labels=labels,
+    )
+    mapping = dict(
+        zip(
+            mappings["articleType"].astype(str),
+            mappings["shortcut_majority_season"].astype(str),
+            strict=True,
+        )
+    )
     article_types = holdout["articleType"].astype(str)
     mapped = article_types.map(mapping)
     holdout_truth = holdout["season"].astype(str)
@@ -393,15 +445,11 @@ def build_holdout_slice_assignments(
         default="conflict",
     )
 
-    development_sizes = pd.to_numeric(development["file_size_bytes"], errors="raise")
-    if development_sizes.isna().any() or development_sizes.le(0).any():
-        raise ValueError("development file sizes must be positive")
+    boundary_row = boundary_frame.iloc[0]
     boundaries = tuple(
-        float(value)
-        for value in development_sizes.quantile([0.25, 0.5, 0.75], interpolation="linear")
+        float(boundary_row[column])
+        for column in ("q25_bytes", "q50_bytes", "q75_bytes")
     )
-    if not boundaries[0] < boundaries[1] < boundaries[2]:
-        raise ValueError("development file-size boundaries are not strictly increasing")
     holdout_sizes = pd.to_numeric(holdout["file_size_bytes"], errors="raise")
     quartiles = np.asarray(("q1_smallest", "q2", "q3", "q4_largest"), dtype=object)
     holdout["file_size_quartile"] = quartiles[
@@ -438,17 +486,13 @@ def build_holdout_slice_assignments(
         ],
     ].copy()
     audit = {
-        "mapping_fit_rows": len(development),
-        "file_size_fit_rows": len(development),
+        **reference_audit,
         "article_type_mapping": mapping,
         "file_size_boundaries": {
             "q25_bytes": boundaries[0],
             "q50_bytes": boundaries[1],
             "q75_bytes": boundaries[2],
         },
-        "development_id_sha256": canonical_sha256(
-            sorted(pd.to_numeric(development["id"], errors="raise").astype(int).tolist())
-        ),
     }
     return assignments, audit
 
@@ -533,6 +577,7 @@ __all__ = [
     "build_b0_prediction_frame",
     "build_holdout_slice_assignments",
     "build_official_predictions",
+    "fit_development_slice_reference",
     "load_final_evaluation_spec",
     "score_prediction_frame",
     "summarise_grouped_bootstrap",
