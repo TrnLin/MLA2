@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0.0",
+  "evaluation_id": "g9-task2-season-final-evaluation",
+  "target": "season",
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "frozen_selection": {
+    "freeze_id": "task2-season-i2-development-v1",
+    "candidate": "I2",
+    "experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+    "run_id": "task2-season-i2-refit-fall-s2753-637dd6378be9",
+    "bundle_path": "models/task2_season.pt",
+    "bundle_sha256": "5927eff73130acedc8015199e1df5a6c6edf64c0b45023ebd91c48d7ed40f93c",
+    "temperature": 1.3650015953177774
+  },
+  "internal_holdout": {
+    "partition": "holdout",
+    "expected_rows": 5778,
+    "quarantine_partition": "quarantine",
+    "expected_quarantine_rows": 61,
+    "quarantine_is_excluded": true,
+    "unlock_is_one_shot": true
+  },
+  "baseline": {
+    "id": "B0",
+    "rule": "most_frequent_season_in_development_only",
+    "primary_holdout_comparator": true,
+    "b1_holdout_status": "development_only_no_prefrozen_holdout_predictions"
+  },
+  "metrics": {
+    "primary": "macro_f1",
+    "secondary": [
+      "accuracy",
+      "balanced_accuracy",
+      "weighted_f1",
+      "macro_precision",
+      "macro_recall",
+      "nll",
+      "brier",
+      "ece_15"
+    ],
+    "per_class": [
+      "precision",
+      "recall",
+      "f1",
+      "support"
+    ],
+    "confusion": [
+      "count",
+      "row_normalised"
+    ]
+  },
+  "bootstrap": {
+    "unit": "product_family_group",
+    "replicates": 10000,
+    "random_seed": 2753,
+    "interval": "percentile_95",
+    "comparisons": [
+      "I2_minus_B0"
+    ]
+  },
+  "slices": {
+    "article_type_shortcut": "mapping_fit_on_all_development_rows_then_applied_to_holdout",
+    "acquisition_year": "metadata_after_prediction_only",
+    "file_size_quartile": "boundaries_fit_on_all_development_rows_then_applied_to_holdout",
+    "product_family_size": "holdout_family_group_size_after_prediction_only",
+    "image_mode": "structural_metadata_after_prediction_only"
+  },
+  "robustness": [
+    {
+      "condition": "clean",
+      "kind": "none"
+    },
+    {
+      "condition": "jpeg_quality_85",
+      "kind": "jpeg_reencode",
+      "quality": 85,
+      "subsampling": 2
+    },
+    {
+      "condition": "brightness_0_85",
+      "kind": "brightness",
+      "factor": 0.85
+    },
+    {
+      "condition": "brightness_1_15",
+      "kind": "brightness",
+      "factor": 1.15
+    },
+    {
+      "condition": "gaussian_blur_radius_1",
+      "kind": "gaussian_blur",
+      "radius": 1.0
+    }
+  ],
+  "official_test": {
+    "expected_rows": 5829,
+    "input_manifest": "data/processed/prediction_manifest.csv",
+    "output_path": "results/task2/season_model/season_predictions.csv",
+    "output_columns": [
+      "id",
+      "season"
+    ]
+  },
+  "safety": {
+    "retraining_after_unlock_allowed": false,
+    "retuning_after_unlock_allowed": false,
+    "winner_change_after_unlock_allowed": false,
+    "temperature_refit_after_unlock_allowed": false,
+    "official_test_labels_are_unavailable": true,
+    "raw_protected_labels_are_not_written_to_prediction_artifacts": true
+  }
+}
