@@ -1,0 +1,100 @@
+{
+  "environment": {
+    "cuda_available": true,
+    "cuda_runtime": "12.6",
+    "executable": "C:\\Users\\Khoai\\RMIT\\Machine_Learning\\Machine Learning at RMIT\\MLA2\\.venv\\Scripts\\python.exe",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.13",
+    "torch": "2.13.0+cu126"
+  },
+  "phase": "blind_prediction_before_holdout_label_access",
+  "runs": [
+    {
+      "batch_size": 128,
+      "condition": "clean",
+      "dataset": "internal_holdout",
+      "device": "cpu",
+      "images_per_second": 462.44326786328753,
+      "num_workers": 0,
+      "peak_vram_bytes": null,
+      "prediction_failures": 0,
+      "rows": 5778,
+      "rss_after_bytes": 933056512,
+      "rss_before_bytes": 878305280,
+      "runtime_seconds": 12.494505599999684
+    },
+    {
+      "batch_size": 128,
+      "condition": "jpeg_quality_85",
+      "dataset": "internal_holdout",
+      "device": "cpu",
+      "images_per_second": 441.02634356103704,
+      "num_workers": 0,
+      "peak_vram_bytes": null,
+      "prediction_failures": 0,
+      "rows": 5778,
+      "rss_after_bytes": 938180608,
+      "rss_before_bytes": 911355904,
+      "runtime_seconds": 13.101258200011216
+    },
+    {
+      "batch_size": 128,
+      "condition": "brightness_0_85",
+      "dataset": "internal_holdout",
+      "device": "cpu",
+      "images_per_second": 452.656955313046,
+      "num_workers": 0,
+      "peak_vram_bytes": null,
+      "prediction_failures": 0,
+      "rows": 5778,
+      "rss_after_bytes": 1153437696,
+      "rss_before_bytes": 908984320,
+      "runtime_seconds": 12.76463320000039
+    },
+    {
+      "batch_size": 128,
+      "condition": "brightness_1_15",
+      "dataset": "internal_holdout",
+      "device": "cpu",
+      "images_per_second": 411.5698891791156,
+      "num_workers": 0,
+      "peak_vram_bytes": null,
+      "prediction_failures": 0,
+      "rows": 5778,
+      "rss_after_bytes": 1158172672,
+      "rss_before_bytes": 1132142592,
+      "runtime_seconds": 14.038927900008275
+    },
+    {
+      "batch_size": 128,
+      "condition": "gaussian_blur_radius_1",
+      "dataset": "internal_holdout",
+      "device": "cpu",
+      "images_per_second": 388.4489429347991,
+      "num_workers": 0,
+      "peak_vram_bytes": null,
+      "prediction_failures": 0,
+      "rows": 5778,
+      "rss_after_bytes": 1158471680,
+      "rss_before_bytes": 1136455680,
+      "runtime_seconds": 14.874541699988185
+    },
+    {
+      "batch_size": 128,
+      "condition": "clean",
+      "dataset": "teacher_test",
+      "device": "cpu",
+      "images_per_second": 408.0739414019809,
+      "num_workers": 0,
+      "peak_vram_bytes": null,
+      "prediction_failures": 0,
+      "rows": 5829,
+      "rss_after_bytes": 1082384384,
+      "rss_before_bytes": 1138626560,
+      "runtime_seconds": 14.284176000001025
+    }
+  ],
+  "schema_version": "1.0.0"
+}
