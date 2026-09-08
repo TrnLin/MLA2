@@ -1433,6 +1433,8 @@ def render_search_grid(
         squeeze=False,
         constrained_layout=True,
     )
+    # Leave room for two-line titles at the saved 170 dpi.
+    figure.set_layout_engine("constrained", h_pad=0.12)
     row_axes = axes[0]
     query_axes = row_axes[0]
     query_axes.imshow(query_pixels)
