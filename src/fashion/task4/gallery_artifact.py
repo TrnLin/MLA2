@@ -7,7 +7,7 @@ import json
 import shutil
 import tempfile
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -102,6 +102,11 @@ class TeacherGallery:
     metadata: pd.DataFrame
     manifest: dict[str, Any]
     identity_sha256: str
+    _snapshot_owner: tempfile.TemporaryDirectory[str] | None = field(
+        default=None,
+        repr=False,
+        compare=False,
+    )
 
 
 def _canonical_json(value: object) -> bytes:
@@ -122,6 +127,32 @@ def _is_sha256(value: object) -> bool:
         isinstance(value, str)
         and len(value) == 64
         and all(character in "0123456789abcdef" for character in value)
+    )
+
+
+def _is_json_integer(value: object) -> bool:
+    return type(value) is int
+
+
+def _matches_contract(value: object) -> bool:
+    if not isinstance(value, Mapping) or value != _CONTRACT.to_dict():
+        return False
+    pad_color = value.get("pad_color")
+    return (
+        _is_json_integer(value.get("width"))
+        and _is_json_integer(value.get("height"))
+        and isinstance(pad_color, list)
+        and len(pad_color) == 3
+        and all(_is_json_integer(channel) for channel in pad_color)
+    )
+
+
+def _matches_safety(value: object) -> bool:
+    return (
+        isinstance(value, Mapping)
+        and set(value) == set(_SAFETY)
+        and all(type(value[field]) is bool for field in _SAFETY)
+        and value == _SAFETY
     )
 
 
@@ -200,21 +231,22 @@ def _load_source_cache(
     ):
         raise ValueError("source feature-cache identity does not match the pinned identity")
 
-    expected_contract = _CONTRACT.to_dict()
     if (
         identity["schema_version"] != "1.0.0"
         or identity["scope"] != "development"
         or identity["source"] != "teacher"
         or identity["method"] != "R5"
+        or not _is_json_integer(identity["fold"])
         or identity["fold"] != FIXED_VALIDATION_FOLD
+        or not _is_json_integer(identity["dimension"])
         or identity["dimension"] != EMBEDDING_DIM
-        or identity["contract"] != expected_contract
+        or not _matches_contract(identity["contract"])
         or identity["run_id"] != expected_run_id
         or identity["checkpoint_sha256"] != expected_checkpoint_sha256
         or manifest["feature_method"] != "R5"
     ):
         raise ValueError("source feature-cache identity fields do not match the selected R5 run")
-    for field in (
+    for sha_field in (
         "checkpoint_sha256",
         "config_hash",
         "split_fingerprint",
@@ -224,8 +256,10 @@ def _load_source_cache(
         "ids_sha256",
         "features_sha256",
     ):
-        if not _is_sha256(manifest[field]):
-            raise ValueError(f"source feature manifest {field} is not a valid SHA-256")
+        if not _is_sha256(manifest[sha_field]):
+            raise ValueError(
+                f"source feature manifest {sha_field} is not a valid SHA-256"
+            )
 
     ids_path = source_cache / "ids.npy"
     features_path = source_cache / "features.npy"
@@ -240,7 +274,7 @@ def _load_source_cache(
     except (OSError, ValueError) as error:
         raise ValueError(f"source feature-cache arrays cannot be loaded: {error}") from error
     rows = manifest["rows"]
-    if isinstance(rows, bool) or not isinstance(rows, int) or rows < 1:
+    if not _is_json_integer(rows) or rows < 1:
         raise ValueError("source feature-cache row count is invalid")
     _validate_arrays(ids, features, rows=rows, label="source feature-cache")
     return manifest, ids, features
@@ -409,8 +443,7 @@ def _validate_file_map(directory: Path, manifest: Mapping[str, Any]) -> None:
         expected_bytes = record["bytes"]
         expected_sha256 = record["sha256"]
         if (
-            isinstance(expected_bytes, bool)
-            or not isinstance(expected_bytes, int)
+            not _is_json_integer(expected_bytes)
             or expected_bytes < 0
             or not _is_sha256(expected_sha256)
         ):
@@ -445,12 +478,24 @@ def _load_metadata(path: Path) -> pd.DataFrame:
     return metadata
 
 
-def load_teacher_gallery_artifact(directory: str | Path) -> TeacherGallery:
-    """Strictly validate and memory-map a teacher-gallery artifact."""
+def _copy_snapshot_file(source: Path, destination: Path) -> None:
+    try:
+        with source.open("rb") as source_handle, destination.open("xb") as target_handle:
+            shutil.copyfileobj(source_handle, target_handle)
+    except OSError as error:
+        raise ValueError(f"gallery artifact file cannot be copied: {error}") from error
 
-    artifact_directory = Path(directory)
+
+def _load_teacher_gallery_snapshot(
+    snapshot_directory: Path,
+    *,
+    artifact_directory: Path,
+    snapshot_owner: tempfile.TemporaryDirectory[str],
+) -> TeacherGallery:
+    """Validate and map one already-copied private gallery snapshot."""
+
     manifest = _read_json(
-        artifact_directory / _MANIFEST_FILENAME,
+        snapshot_directory / _MANIFEST_FILENAME,
         label="gallery manifest",
     )
     if set(manifest) != _MANIFEST_FIELDS:
@@ -480,28 +525,29 @@ def load_teacher_gallery_artifact(directory: str | Path) -> TeacherGallery:
         or not _is_sha256(checkpoint["sha256"])
         or not _is_sha256(manifest["source_feature_cache_identity_sha256"])
         or not _is_sha256(manifest["split_fingerprint"])
+        or not _is_json_integer(manifest["fold"])
         or manifest["fold"] != FIXED_VALIDATION_FOLD
         or manifest["source"] != "teacher"
-        or manifest["contract"] != _CONTRACT.to_dict()
-        or isinstance(rows, bool)
-        or not isinstance(rows, int)
+        or not _matches_contract(manifest["contract"])
+        or not _is_json_integer(rows)
         or rows < 1
+        or not _is_json_integer(manifest["dimension"])
         or manifest["dimension"] != EMBEDDING_DIM
         or manifest["ids_dtype"] != "int64"
         or manifest["features_dtype"] != "float32"
-        or manifest["safety"] != _SAFETY
+        or not _matches_safety(manifest["safety"])
     ):
         raise ValueError("gallery manifest identity fields are invalid")
-    _validate_file_map(artifact_directory, manifest)
+    _validate_file_map(snapshot_directory, manifest)
 
     try:
         ids = np.load(
-            artifact_directory / "ids.npy",
+            snapshot_directory / "ids.npy",
             mmap_mode="r",
             allow_pickle=False,
         )
         features = np.load(
-            artifact_directory / "features.npy",
+            snapshot_directory / "features.npy",
             mmap_mode="r",
             allow_pickle=False,
         )
@@ -509,7 +555,7 @@ def load_teacher_gallery_artifact(directory: str | Path) -> TeacherGallery:
         raise ValueError(f"gallery arrays cannot be loaded: {error}") from error
     _validate_arrays(ids, features, rows=rows, label="gallery")
 
-    metadata = _load_metadata(artifact_directory / "metadata.csv")
+    metadata = _load_metadata(snapshot_directory / "metadata.csv")
     if len(metadata) != rows or metadata["id"].tolist() != ids.tolist():
         raise ValueError("gallery metadata row count or ID order does not match arrays")
     gallery_folds = set(range(CV_FOLD_COUNT)) - {FIXED_VALIDATION_FOLD}
@@ -529,7 +575,30 @@ def load_teacher_gallery_artifact(directory: str | Path) -> TeacherGallery:
         metadata=metadata,
         manifest=dict(manifest),
         identity_sha256=str(identity),
+        _snapshot_owner=snapshot_owner,
     )
+
+
+def load_teacher_gallery_artifact(directory: str | Path) -> TeacherGallery:
+    """Copy, strictly validate, and memory-map a private teacher-gallery snapshot."""
+
+    artifact_directory = Path(directory)
+    snapshot_owner = tempfile.TemporaryDirectory(prefix="task4-gallery-snapshot-")
+    snapshot_directory = Path(snapshot_owner.name)
+    try:
+        for filename in (_MANIFEST_FILENAME, *_ARTIFACT_FILES):
+            _copy_snapshot_file(
+                artifact_directory / filename,
+                snapshot_directory / filename,
+            )
+        return _load_teacher_gallery_snapshot(
+            snapshot_directory,
+            artifact_directory=artifact_directory,
+            snapshot_owner=snapshot_owner,
+        )
+    except Exception:
+        snapshot_owner.cleanup()
+        raise
 
 
 __all__ = (

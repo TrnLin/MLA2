@@ -11,6 +11,7 @@ import pandas as pd
 import pytest
 
 import fashion.task4 as task4
+import fashion.task4.gallery_artifact as gallery_artifact_module
 from fashion.data.splits import cv_assignment_digest
 from fashion.task4.gallery_artifact import (
     GALLERY_ARTIFACT_SCHEMA_VERSION,
@@ -194,6 +195,32 @@ def _rewrite_manifest(
     manifest_path.write_bytes(_canonical_json(manifest))
 
 
+def _rewrite_source_manifest(
+    source: dict[str, Any],
+    change: Callable[[dict[str, Any]], None],
+) -> None:
+    manifest_path = source["source_cache"] / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="ascii"))
+    change(manifest)
+    identity = {field: manifest[field] for field in SOURCE_IDENTITY_FIELDS}
+    source_identity = hashlib.sha256(_canonical_json(identity)).hexdigest()
+    manifest["feature_cache_identity_sha256"] = source_identity
+    manifest_path.write_bytes(_canonical_json(manifest))
+    source["source_identity"] = source_identity
+
+
+def _set_manifest_field(
+    manifest: dict[str, Any],
+    field: str,
+    value: object,
+) -> None:
+    parts = field.split("/")
+    target = manifest
+    for part in parts[:-1]:
+        target = target[part]
+    target[parts[-1]] = value
+
+
 def _reseal_file(directory: Path, filename: str) -> None:
     def update(manifest: dict[str, Any]) -> None:
         manifest["files"][filename]["sha256"] = _sha256(directory / filename)
@@ -244,6 +271,37 @@ def test_export_rejects_wrong_pinned_source_identity(
     synthetic_source["source_identity"] = "0" * 64
 
     with pytest.raises(ValueError, match="source.*identity"):
+        _export(synthetic_source, tmp_path / "gallery")
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("fold", True),
+        ("fold", 1.0),
+        ("rows", True),
+        ("rows", 5.0),
+        ("dimension", True),
+        ("dimension", 128.0),
+        ("contract/width", True),
+        ("contract/width", 240.0),
+        ("contract/height", True),
+        ("contract/height", 320.0),
+        ("contract/pad_color", [255.0, 255, 255]),
+    ],
+)
+def test_export_rejects_wrong_json_types_in_source_identity(
+    synthetic_source: dict[str, Any],
+    tmp_path: Path,
+    field: str,
+    value: object,
+) -> None:
+    _rewrite_source_manifest(
+        synthetic_source,
+        lambda manifest: _set_manifest_field(manifest, field, value),
+    )
+
+    with pytest.raises(ValueError, match="identity fields|row count|contract"):
         _export(synthetic_source, tmp_path / "gallery")
 
 
@@ -418,6 +476,113 @@ def test_loader_rejects_changed_exported_bytes(
         load_teacher_gallery_artifact(exported)
 
 
+def test_loader_stays_bound_to_snapshot_when_source_paths_are_replaced(
+    monkeypatch: pytest.MonkeyPatch,
+    synthetic_source: dict[str, Any],
+    tmp_path: Path,
+) -> None:
+    exported = _export(synthetic_source, tmp_path / "gallery")
+    original_validate = gallery_artifact_module._validate_file_map
+    replacement_happened = False
+
+    def replace_source_then_validate(
+        directory: Path,
+        manifest: dict[str, Any],
+    ) -> None:
+        nonlocal replacement_happened
+        replacement_happened = True
+        for filename in ("README.md", "ids.npy", "features.npy", "metadata.csv"):
+            (exported / filename).write_bytes(b"replaced source payload")
+        original_validate(directory, manifest)
+
+    monkeypatch.setattr(
+        gallery_artifact_module,
+        "_validate_file_map",
+        replace_source_then_validate,
+    )
+
+    gallery = load_teacher_gallery_artifact(exported)
+
+    assert replacement_happened
+    assert gallery.directory == exported
+    assert gallery.ids.tolist() == [2, 3, 4, 5]
+    assert np.all(gallery.features[:, 0] == 1.0)
+    assert gallery.metadata["id"].tolist() == [2, 3, 4, 5]
+    assert Path(gallery.ids.filename).parent != exported
+    assert Path(gallery.ids.filename).is_file()
+    assert Path(gallery.features.filename).is_file()
+
+
+def test_loader_copy_uses_retained_descriptor_when_source_path_is_replaced(
+    monkeypatch: pytest.MonkeyPatch,
+    synthetic_source: dict[str, Any],
+    tmp_path: Path,
+) -> None:
+    exported = _export(synthetic_source, tmp_path / "gallery")
+    original_copy = gallery_artifact_module.shutil.copyfileobj
+    copied_from_retained_descriptor = False
+
+    def replace_path_during_copy(
+        source: Any,
+        destination: Any,
+        length: int = 0,
+    ) -> None:
+        nonlocal copied_from_retained_descriptor
+        if Path(source.name).name == "features.npy":
+            copied_from_retained_descriptor = True
+            destination.write(source.read(64))
+            replacement = exported / ".replacement-features.npy"
+            np.save(replacement, np.zeros((4, 128), dtype=np.float32), allow_pickle=False)
+            replacement.replace(exported / "features.npy")
+        original_copy(source, destination, length)
+
+    monkeypatch.setattr(
+        gallery_artifact_module.shutil,
+        "copyfileobj",
+        replace_path_during_copy,
+    )
+
+    gallery = load_teacher_gallery_artifact(exported)
+
+    assert copied_from_retained_descriptor
+    assert np.all(gallery.features[:, 0] == 1.0)
+
+
+def test_loader_rejects_source_mutation_during_snapshot_copy(
+    monkeypatch: pytest.MonkeyPatch,
+    synthetic_source: dict[str, Any],
+    tmp_path: Path,
+) -> None:
+    exported = _export(synthetic_source, tmp_path / "gallery")
+    original_copy = gallery_artifact_module.shutil.copyfileobj
+    mutation_happened = False
+
+    def mutate_during_copy(
+        source: Any,
+        destination: Any,
+        length: int = 0,
+    ) -> None:
+        nonlocal mutation_happened
+        if Path(source.name).name == "features.npy":
+            mutation_happened = True
+            with (exported / "features.npy").open("r+b") as mutable:
+                mutable.seek(100)
+                original = mutable.read(1)
+                mutable.seek(100)
+                mutable.write(bytes([original[0] ^ 0xFF]))
+        original_copy(source, destination, length)
+
+    monkeypatch.setattr(
+        gallery_artifact_module.shutil,
+        "copyfileobj",
+        mutate_during_copy,
+    )
+
+    with pytest.raises(ValueError, match="SHA-256"):
+        load_teacher_gallery_artifact(exported)
+    assert mutation_happened
+
+
 @pytest.mark.parametrize(
     ("field", "value"),
     [
@@ -435,6 +600,44 @@ def test_loader_rejects_wrong_manifest_identity(
     _rewrite_manifest(exported, lambda manifest: manifest.__setitem__(field, value))
 
     with pytest.raises(ValueError, match="manifest identity"):
+        load_teacher_gallery_artifact(exported)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("fold", True),
+        ("fold", 1.0),
+        ("rows", True),
+        ("rows", 4.0),
+        ("dimension", True),
+        ("dimension", 128.0),
+        ("contract/width", True),
+        ("contract/width", 240.0),
+        ("contract/height", True),
+        ("contract/height", 320.0),
+        ("contract/pad_color", [255.0, 255, 255]),
+        ("safety/development_only", 1),
+        ("safety/holdout_opened", 0),
+        ("safety/quarantine_opened", 0),
+        ("safety/official_teacher_test_opened", 0),
+        ("files/ids.npy/bytes", True),
+        ("files/ids.npy/bytes", 160.0),
+    ],
+)
+def test_loader_rejects_wrong_json_types_in_strict_manifest_fields(
+    synthetic_source: dict[str, Any],
+    tmp_path: Path,
+    field: str,
+    value: object,
+) -> None:
+    exported = _export(synthetic_source, tmp_path / "gallery")
+    _rewrite_manifest(
+        exported,
+        lambda manifest: _set_manifest_field(manifest, field, value),
+    )
+
+    with pytest.raises(ValueError, match="identity fields|file size"):
         load_teacher_gallery_artifact(exported)
 
 

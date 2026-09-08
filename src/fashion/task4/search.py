@@ -715,21 +715,34 @@ def _query_key(query: PreparedQuery, top_k: int) -> str:
 
 def _model_identity(bundle: SearchBundle) -> dict[str, object]:
     manifest = bundle.model_manifest
+    weights = manifest.get("weights")
+    if not isinstance(weights, Mapping):
+        raise ValueError("portable R5 weight identity is missing")
     return {
         "method": manifest.get("method"),
         "architecture": manifest.get("architecture"),
         "manifest_sha256": bundle.model_manifest_sha256,
         "source_checkpoint": dict(manifest.get("source_checkpoint", {})),
+        "weights": dict(weights),
     }
 
 
 def _gallery_identity(bundle: SearchBundle) -> dict[str, object]:
     manifest = bundle.gallery.manifest
+    files = manifest.get("files")
+    if not isinstance(files, Mapping) or any(
+        not isinstance(record, Mapping) for record in files.values()
+    ):
+        raise ValueError("gallery payload file identities are missing")
     return {
         "artifact_identity_sha256": bundle.gallery.identity_sha256,
         "r5_checkpoint": dict(manifest.get("r5_checkpoint", {})),
         "fold": manifest.get("fold"),
         "rows": len(bundle.gallery.ids),
+        "files": {
+            str(filename): dict(record)
+            for filename, record in files.items()
+        },
     }
 
 
@@ -808,6 +821,9 @@ def run_search(
             "hash_checked_before_decode": True,
             "known_queries_fixed_fold_1": True,
             "protected_images_opened": False,
+            "holdout_opened": False,
+            "quarantine_opened": False,
+            "official_teacher_test_opened": False,
         },
     )
     return SearchResponse(record=record, result_metadata=result_metadata)

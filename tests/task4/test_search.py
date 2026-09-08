@@ -132,6 +132,28 @@ def _gallery(tmp_path: Path) -> TeacherGallery:
             "fold": 1,
             "rows": 3,
             "contract": PreprocessingContract(240, 320).to_dict(),
+            "files": {
+                "README.md": {
+                    "path": "README.md",
+                    "sha256": "1" * 64,
+                    "bytes": 101,
+                },
+                "ids.npy": {
+                    "path": "ids.npy",
+                    "sha256": "2" * 64,
+                    "bytes": 102,
+                },
+                "features.npy": {
+                    "path": "features.npy",
+                    "sha256": "3" * 64,
+                    "bytes": 103,
+                },
+                "metadata.csv": {
+                    "path": "metadata.csv",
+                    "sha256": "4" * 64,
+                    "bytes": 104,
+                },
+            },
         },
         identity_sha256="a" * 64,
     )
@@ -190,6 +212,11 @@ def bundle(tmp_path: Path) -> SearchBundle:
             "source_checkpoint": {
                 "run_id": "task4-r5-test",
                 "sha256": "c" * 64,
+            },
+            "weights": {
+                "path": "weights.pt",
+                "sha256": "d" * 64,
+                "bytes": 123,
             },
         },
         model_manifest_sha256="b" * 64,
@@ -420,6 +447,68 @@ def test_outside_search_prepares_encodes_ranks_and_redacts(
     assert tuple(model_input.shape) == (1, 3, 320, 240)
     padding = torch.from_numpy(~query.preprocessed.content_mask)
     assert torch.all(model_input[0, :, padding] == 0)
+
+
+def test_saved_search_evidence_copies_payload_hashes_and_open_flags(
+    monkeypatch: pytest.MonkeyPatch,
+    bundle: SearchBundle,
+    tmp_path: Path,
+) -> None:
+    outside_path = _save_image(tmp_path / "outside.png")
+    response = run_search(bundle, image_path=outside_path, top_k=1)
+    expected_weights = {
+        "path": "weights.pt",
+        "sha256": "d" * 64,
+        "bytes": 123,
+    }
+    expected_files = {
+        "README.md": {
+            "path": "README.md",
+            "sha256": "1" * 64,
+            "bytes": 101,
+        },
+        "ids.npy": {
+            "path": "ids.npy",
+            "sha256": "2" * 64,
+            "bytes": 102,
+        },
+        "features.npy": {
+            "path": "features.npy",
+            "sha256": "3" * 64,
+            "bytes": 103,
+        },
+        "metadata.csv": {
+            "path": "metadata.csv",
+            "sha256": "4" * 64,
+            "bytes": 104,
+        },
+    }
+
+    bundle.model_manifest["weights"]["sha256"] = "e" * 64
+    bundle.gallery.manifest["files"]["ids.npy"]["sha256"] = "f" * 64
+
+    def write_synthetic_png(**kwargs: object) -> Path:
+        destination = Path(kwargs["destination"])
+        destination.write_bytes(b"synthetic png")
+        return destination
+
+    monkeypatch.setattr(
+        report_figures_module,
+        "render_search_grid",
+        write_synthetic_png,
+    )
+    _, evidence_path = search_module.write_search_outputs(
+        response,
+        figure_directory=tmp_path / "figures",
+        evidence_directory=tmp_path / "evidence",
+    )
+    payload = json.loads(evidence_path.read_text(encoding="utf-8"))
+
+    assert payload["model_identity"]["weights"] == expected_weights
+    assert payload["gallery_identity"]["files"] == expected_files
+    assert payload["safety"]["holdout_opened"] is False
+    assert payload["safety"]["quarantine_opened"] is False
+    assert payload["safety"]["official_teacher_test_opened"] is False
 
 
 def test_known_fold_one_search_adds_literal_primary_grades(bundle: SearchBundle) -> None:
