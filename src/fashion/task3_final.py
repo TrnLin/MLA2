@@ -1,5 +1,6 @@
 """Read and verify the accepted Usage E8 refit without training or inference."""
 
+import ast
 import hashlib
 import json
 from pathlib import Path
@@ -21,12 +22,50 @@ CLASS_NAMES = [
     "Travel",
 ]
 
+# Reviewed additions from the Task 1 integration. Preserve the historical file hash;
+# only these independent path declarations may be absent from that frozen version.
+_SHARED_CONFIG_ADDITIONS = frozenset(
+    {
+        'TASK1_RESULT_DIR = RESULTS_DIR / "task1"',
+        'TASK1_FIGURE_DIR = FIGURE_DIR / "task1"',
+        'TASK1_EVIDENCE_DIR = EVIDENCE_DIR / "task1"',
+        'TASK1_HOG_CACHE_DIR = PROCESSED_DATA_DIR / "task1_hog_cache"',
+    }
+)
+
 
 def check_hash(path: Path, expected: str) -> None:
     """Fail instead of silently reading a changed model or evidence file."""
     with path.open("rb") as stream:
         actual = hashlib.file_digest(stream, "sha256").hexdigest()
     if actual != expected:
+        raise ValueError(f"Hash mismatch: {path}")
+
+
+def _check_training_reference(root: Path, relative: str, expected: str) -> None:
+    """Allow reviewed shared-path additions without relaxing any original source bytes."""
+    path = root / relative
+    if relative != "src/fashion/config.py":
+        check_hash(path, expected)
+        return
+    content = path.read_bytes()
+    if hashlib.sha256(content).hexdigest() == expected:
+        return
+    try:
+        source = content.decode("utf-8")
+        tree = ast.parse(source)
+    except (UnicodeDecodeError, SyntaxError) as error:
+        raise ValueError(f"Hash mismatch: {path}") from error
+    lines = source.splitlines(keepends=True)
+    additions = {
+        node.lineno - 1
+        for node in tree.body
+        if isinstance(node, ast.Assign)
+        and node.lineno == node.end_lineno
+        and lines[node.lineno - 1].rstrip("\r\n") in _SHARED_CONFIG_ADDITIONS
+    }
+    original = "".join(line for index, line in enumerate(lines) if index not in additions)
+    if hashlib.sha256(original.encode("utf-8")).hexdigest() != expected:
         raise ValueError(f"Hash mismatch: {path}")
 
 
@@ -44,7 +83,7 @@ def verify_usage_final(root: Path = ROOT) -> dict:
     ):
         raise ValueError("Final Usage model identity differs from the accepted E8 refit")
     for relative, expected in manifest["files"].items():
-        check_hash(root / relative, expected)
+        _check_training_reference(root, relative, expected)
     for key in ("checkpoint", "config", "normalization", "training_manifest"):
         entry = manifest[key]
         check_hash(root / entry["path"], entry["sha256"])
