@@ -8,6 +8,7 @@ no sealed partition is opened.
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
@@ -27,7 +28,7 @@ from fashion.task4.final_freeze import (
     FINAL_FREEZE_RELATIVE_PATH,
     validate_final_comparison_bundle,
 )
-from fashion.task4.image_safety import reject_sealed_image_rows
+from fashion.task4.image_safety import reject_protected_image_path, reject_sealed_image_rows
 from fashion.task4.preprocessing import PreprocessingContract, preprocess_image
 from fashion.task4.preprocessing_experiment import build_odd_aspect_canvas
 from fashion.task4.protocol import primary_relevance
@@ -1397,6 +1398,18 @@ def _display_pixels(
         return preprocess_image(prepared, CONTRACT).pixels
 
 
+def _search_result_pixels(row: pd.Series) -> np.ndarray:
+    """Decode only a checked snapshot of the image represented by the gallery."""
+    reject_sealed_image_rows(pd.DataFrame([row]), require_development=True)
+    path = Path(str(row["path"]))
+    resolved = reject_protected_image_path(path if path.is_absolute() else ROOT / path)
+    payload = resolved.read_bytes()
+    if hashlib.sha256(payload).hexdigest() != str(row.get("sha256", "")).lower():
+        raise ValueError("result image SHA-256 does not match gallery metadata")
+    with Image.open(io.BytesIO(payload)) as image:
+        return preprocess_image(image, CONTRACT).pixels
+
+
 def render_search_grid(
     *,
     query_pixels: np.ndarray,
@@ -1411,6 +1424,7 @@ def render_search_grid(
         catalogue,
         [result.candidate_id for result in results],
     )
+    result_pixels = [_search_result_pixels(row) for _, row in result_rows.iterrows()]
     columns = len(results) + 1
     figure, axes = plt.subplots(
         1,
@@ -1427,23 +1441,12 @@ def render_search_grid(
         spine.set_edgecolor(_INK)
         spine.set_linewidth(2.2)
 
-    for column_index, (result, candidate) in enumerate(
-        zip(results, result_rows.itertuples(index=False), strict=True),
+    for column_index, (result, pixels) in enumerate(
+        zip(results, result_pixels, strict=True),
         start=1,
     ):
-        candidate_row = pd.Series(candidate._asdict())
-        reject_sealed_image_rows(
-            pd.DataFrame([candidate_row]),
-            require_development=True,
-        )
         cell = row_axes[column_index]
-        cell.imshow(
-            _display_pixels(
-                candidate_row,
-                "clean",
-                path_column="path",
-            )
-        )
+        cell.imshow(pixels)
         grade = result.grade
         border = _MUTED if grade is None else _GRADE_COLOURS[grade]
         mark = "" if grade is None else f" {_GRADE_MARKS[grade]} ·"
