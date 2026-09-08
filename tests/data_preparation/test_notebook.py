@@ -17,26 +17,34 @@ PROBLEM_NOTEBOOK = ROOT / "notebooks/00_problem_definition.ipynb"
 NOTEBOOK = ROOT / "notebooks/01_data_preparation.ipynb"
 HTML = ROOT / "results/notebooks/01_data_preparation.html"
 
-DATA_HEADINGS = (
+DATA_PHASE_HEADINGS = (
     "# 01 — Shared Data Preparation",
-    "## 1. Runtime setup",
-    "## 2. Input/output map and run modes",
-    "## 3. Holdout boundary",
-    "## 4. Discover teacher sources",
-    "## 5. Hash raw bytes before image decode",
-    "## 6. Image integrity and exact ID reconciliation",
-    "## 7. Exact duplicates, perceptual candidates, families, and quarantine",
-    "## 8. Development, internal holdout, quarantine, and five CV folds",
-    "## 9. Development-only target analysis",
-    "## 10. Imbalance and class support by fold",
-    "## 11. Shortcut risks and categorical association",
-    "## 12. Development image profile and pixel diagnostics",
-    "## 13. Labelled development contact sheet",
-    "## 14. Duplicate, missing-image, and quality-extreme examples",
-    "## 15. Transform-risk illustration",
-    "## 16. Artifact registry and lineage",
-    "## 17. Using the prepared data for model development",
-    "## 18. Completion gate",
+    "## 1. Dataset understanding, scope, and execution contract",
+    "## 2. Data audit, cleaning decisions, and quarantine",
+    "## 3. Leakage-safe data preparation",
+    "## 4. Development-only exploratory data analysis and hypotheses",
+    "## 5. Reproducible artifacts and downstream handoff",
+)
+DATA_GROUP_HEADINGS = (
+    "### 1.1 Dataset description and documentation limitations",
+    "### 1.2 Runtime setup",
+    "### 1.3 Input/output map and run modes",
+    "### 1.4 Holdout boundary",
+    "### 1.5 Discover teacher sources",
+    "### 2.1 Hash raw bytes before image decode",
+    "### 2.2 Image integrity and exact ID reconciliation",
+    "### 2.3 Exact duplicates, perceptual candidates, families, and quarantine",
+    "### 3.1 Development, internal holdout, quarantine, and five CV folds",
+    "### 4.1 Development-only target analysis",
+    "### 4.2 Imbalance and class support by fold",
+    "### 4.3 Shortcut risks and categorical association",
+    "### 4.4 Development image profile and pixel diagnostics",
+    "### 4.5 Labelled development contact sheet",
+    "### 4.6 Duplicate, missing-image, and quality-extreme examples",
+    "### 4.7 Transform-risk illustration",
+    "### 5.1 Artifact registry and lineage",
+    "### 5.2 Using the prepared data for model development",
+    "### 5.3 Completion gate",
 )
 
 EXPECTED_DATA_CODE_CELLS = 64
@@ -141,11 +149,13 @@ def test_data_preparation_notebook_is_valid_executed_and_narrative() -> None:
     assert notebook.metadata["title"] == "Shared Data Preparation"
     headings = _headings(notebook)
     assert [heading for heading in headings if re.match(r"^#{1,2} ", heading)] == list(
-        DATA_HEADINGS
+        DATA_PHASE_HEADINGS
     )
-    subheadings = [heading for heading in headings if heading.startswith("### ")]
-    assert len(subheadings) == EXPECTED_DATA_CODE_CELLS
-    assert all(re.match(r"^### \d+\.\d+ ", heading) for heading in subheadings)
+    group_headings = [heading for heading in headings if heading.startswith("### ")]
+    assert group_headings == list(DATA_GROUP_HEADINGS)
+    leaf_headings = [heading for heading in headings if heading.startswith("#### ")]
+    assert len(leaf_headings) == EXPECTED_DATA_CODE_CELLS
+    assert all(re.match(r"^#### \d+\.\d+\.\d+ ", heading) for heading in leaf_headings)
     assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
 
     code_indexes = [i for i, cell in enumerate(notebook.cells) if cell.cell_type == "code"]
@@ -157,7 +167,7 @@ def test_data_preparation_notebook_is_valid_executed_and_narrative() -> None:
         assert not any(output.output_type == "error" for output in cell.outputs)
         assert index > 0
         assert notebook.cells[index - 1].cell_type == "markdown"
-        assert notebook.cells[index - 1].source.startswith("### ")
+        assert notebook.cells[index - 1].source.startswith("#### ")
         assert index + 1 < len(notebook.cells)
         assert notebook.cells[index + 1].cell_type == "markdown"
         assert re.match(
@@ -198,6 +208,30 @@ def test_notebook_keeps_shared_scope_teacher_only_and_holdout_sealed() -> None:
     pipeline_source = (ROOT / "src/fashion/data/pipeline.py").read_text(encoding="utf-8")
     for external_input in ("data/raw/external", "data/fashion-dataset", "images.csv"):
         assert external_input not in pipeline_source
+
+
+def test_dataset_documentation_limits_are_explicit() -> None:
+    source = _source(nbformat.read(NOTEBOOK, as_version=4))
+    normalized = re.sub(r"\s+", " ", source)
+
+    for documented_fact in (
+        "fashion e-commerce product images",
+        "approximate train and prediction sizes",
+        "education-only use boundary",
+    ):
+        assert documented_fact in normalized
+    for missing_context in (
+        "original business decision or research purpose",
+        "geographic market",
+        "Annotation instructions",
+        "capture, editing, resizing, background, and compression pipeline",
+        "represents all fashion products",
+    ):
+        assert missing_context in normalized
+    assert "catalogue labels" in normalized
+    assert "10.1145/3458723" in source
+    assert "COSC2753_2026B_Assignment%202.pdf" in source
+    assert "No undocumented collection detail is guessed" in normalized
 
 
 def test_hashing_reconciliation_and_analysis_contracts_are_visible() -> None:
