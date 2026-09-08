@@ -275,6 +275,7 @@ from .search import (
     SearchResponse,
     load_search_bundle,
     run_search,
+    write_search_outputs,
 )
 from .training import (
     AMP_GROWTH_INTERVAL,
@@ -588,4 +589,5 @@ __all__ = (
     "SearchResponse",
     "load_search_bundle",
     "run_search",
+    "write_search_outputs",
 )
