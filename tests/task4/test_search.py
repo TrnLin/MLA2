@@ -246,6 +246,7 @@ def _response_with_teacher_images(
         Image.new("RGB", (24, 32), colour).save(image_path)
         row = bundle.gallery.metadata["id"].eq(product_id)
         bundle.gallery.metadata.loc[row, "path"] = str(image_path)
+        bundle.gallery.metadata.loc[row, "sha256"] = compute_sha256(image_path)
         bundle.gallery.metadata.loc[row, "external_path"] = str(
             tmp_path / f"missing-external-{product_id}.png"
         )
