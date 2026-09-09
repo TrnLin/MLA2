@@ -62,7 +62,7 @@ Reusable project code lives here. Notebooks import it instead of copying shared 
 
 ### Task 1 classic-run handoff
 
-Run the controller in [`notebooks/02_task1_article_type.ipynb`](../../notebooks/02_task1_article_type.ipynb).
+Run the controller in [`notebooks/02_task1_part1_article_type.ipynb`](../../notebooks/02_task1_part1_article_type.ipynb).
 It defaults both `RUN_MODE` and `CLASSICAL_STAGE` to `"smoke"`. After smoke passes, run
 the CNN controller once with `RUN_MODE = "full"`, then run the classic controller once with
 `CLASSICAL_STAGE = "tune"`, then with `CLASSICAL_STAGE = "final"`. The final run
