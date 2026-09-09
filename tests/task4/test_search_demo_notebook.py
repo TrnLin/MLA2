@@ -5,7 +5,7 @@ import pytest
 
 from fashion.config import ROOT
 
-NOTEBOOK = ROOT / "notebooks/task-4/07_task4_search_demo.ipynb"
+NOTEBOOK = ROOT / "notebooks/task-4/11_task4_part4_search_demo.ipynb"
 
 
 @pytest.mark.parametrize("outside", [False, True])
