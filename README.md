@@ -1,174 +1,67 @@
-# Fashion Intelligence — COSC2753 Assignment 2
+# Fashion Intelligence
 
-Team project for four image-classification outputs and a Top-K visual search system.
-The shared data workflow is teacher-only, repeatable, and keeps the internal holdout sealed.
+The project has three parts:
 
-## Start here
+| Folder | Contents |
+| --- | --- |
+| [core](core/README.md) | Models, data, training code, notebooks, saved results, reports and assignment docs |
+| [be](be/README.md) | Python API, upload storage and API tests |
+| [fe](fe/README.md) | React website and sample images |
 
-1. Read `docs/COSC2753_2026B_Assignment 2.pdf`.
-2. Read `rubrics/RUBRIC.md`.
-3. Read `AGENTS.md`.
-4. Check `docs/decisions/` before changing a shared rule.
+## Run the demo
 
-## Notebook reading order
+Use Python 3.12–3.14 and Node 22.18 or newer. The shared Python environment is
+`.venv/` at this repository root. For a fresh setup, create the environment and
+install both local packages:
 
-Read the notebooks in this order, following the number at the start of each file name.
-The shared data preparation covers EDA (exploring the data) for Tasks 1–3.
-For each task, read the model comparisons before the final evaluation.
-Task 4 has its own image EDA and ends with a search demo.
-
-1. [00_problem_definition.ipynb](notebooks/00_problem_definition.ipynb): the problem, users, tasks, and success criteria.
-2. [01_data_preparation.ipynb](notebooks/01_data_preparation.ipynb): data checks, shared splits, and EDA.
-3. [02_task1_part1_article_type.ipynb](notebooks/02_task1_part1_article_type.ipynb): Task 1 article-type model comparisons and choices.
-4. [03_task1_part2_final_evaluation.ipynb](notebooks/03_task1_part2_final_evaluation.ipynb): Task 1 final model, evaluation, and predictions.
-5. [04_task2_part1_season.ipynb](notebooks/04_task2_part1_season.ipynb): Task 2 season model comparisons and choices.
-6. [05_task2_part2_final_evaluation.ipynb](notebooks/05_task2_part2_final_evaluation.ipynb): Task 2 final results, errors, and judgement.
-7. [06_task3_part1_gender_usage.ipynb](notebooks/06_task3_part1_gender_usage.ipynb): Task 3 gender and usage model comparisons and choices.
-8. [07_task3_part2_final_evaluation.ipynb](notebooks/07_task3_part2_final_evaluation.ipynb): Task 3 final results, errors, and judgement.
-9. [08_task4_part1_image_eda.ipynb](notebooks/task-4/08_task4_part1_image_eda.ipynb): Task 4 image checks and EDA.
-10. [09_task4_part2_visual_search.ipynb](notebooks/task-4/09_task4_part2_visual_search.ipynb): Task 4 search methods, comparisons, and final choice.
-11. [10_task4_part3_final_evaluation.ipynb](notebooks/task-4/10_task4_part3_final_evaluation.ipynb): Task 4 final search results, failures, and judgement.
-12. [11_task4_part4_search_demo.ipynb](notebooks/task-4/11_task4_part4_search_demo.ipynb): try visual search with a development image or a new image.
-
-## Setup
-
-Python 3.12 is the shared locked baseline. The checked development machine uses an
-NVIDIA driver that supports CUDA 12.6.
-
-Recommended cross-platform setup with `uv`:
-
-```bash
-uv venv --python 3.12 --seed .venv
-uv pip install --python .venv --torch-backend cu126 \
-  -c requirements/constraints-py312.txt -e ".[app,dev]"
-```
-
-Equivalent Linux or macOS `venv` setup for CUDA-capable machines:
-
-```bash
-cd MLA2-eda
+```sh
 python3.12 -m venv .venv
-./.venv/bin/python -m pip install \
-  --extra-index-url https://download.pytorch.org/whl/cu126 \
-  -c requirements/constraints-py312.txt -e ".[app,dev]"
+./.venv/bin/python -m pip install -e "./core[dev]" -e ./be
 ```
 
-Windows PowerShell uses the same constraints with this interpreter path:
+Start the API from this folder:
 
-```powershell
-.\.venv\Scripts\python.exe -m pip install `
-  --extra-index-url https://download.pytorch.org/whl/cu126 `
-  -c requirements\constraints-py312.txt -e ".[app,dev]"
+```sh
+./.venv/bin/python -m uvicorn fashion_api.api:app --host 127.0.0.1 --port 8000
 ```
 
-For a machine without a compatible NVIDIA GPU, select the CPU wheel explicitly:
+In a second terminal:
 
-```bash
-uv pip install --python .venv --torch-backend cpu \
-  -c requirements/constraints-py312.txt -e ".[app,dev]"
+```sh
+cd fe
+npm install
+npm run dev
 ```
 
-Verify the environment before running a notebook:
+Open http://127.0.0.1:5173/. Keep both terminals running. The API needs the local
+model weights and product photos listed in [be/README.md](be/README.md).
 
-```bash
-uv pip check --python .venv
-uv run --python .venv python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+## Model work
+
+Run model commands and notebooks from `core/`. Saved paths such as
+`data/processed/splits.csv` are relative to `core/`. The split, model weights and
+saved evidence keep their original bytes. See [core/README.md](core/README.md)
+for the notebook order and model setup.
+
+Older training notebooks check for `core/.venv`. On macOS/Linux, create the link
+once if it is missing: `ln -s ../.venv core/.venv`. This shares the root environment.
+
+```sh
+cd core
+../.venv/bin/python -m jupyter lab
 ```
 
-For a wheel install, point the package at this checkout:
+For a wheel install, set `FASHION_PROJECT_ROOT` to the absolute `core/` directory.
+API uploads stay in `be/tmp/demo-api/uploads/`; verified model snapshots stay in
+`core/tmp/demo-api/snapshots/`.
 
-```bash
-export FASHION_PROJECT_ROOT="/absolute/path/to/MLA2-eda"
-```
+## Checks
 
-## Shared data preparation
+From the repository root:
 
-Put the supplied teacher data under `data/raw/teacher/` as shown in
-`data/raw/README.md`. Then open [01_data_preparation.ipynb](notebooks/01_data_preparation.ipynb) in a fresh
-kernel and use **Run All**.
-
-Normal Run All validates the delivered cache. If teacher files changed, start Jupyter
-with full mode and use Run All:
-
-```bash
-FASHION_DATA_PREPARATION_MODE=full ./.venv/bin/python -m jupyter lab
-```
-
-Full mode rebuilds in a child process. This keeps protected target values out of the
-notebook kernel. It hashes raw teacher image bytes before decoding them, rebuilds all
-shared artifacts, and then runs development-only analysis. It does not read the
-Task 4 external images and does not fit a model or any learned image statistics.
-
-The saved code-free report is `results/notebooks/01_data_preparation.html`.
-
-## Task 4 external high-resolution images
-
-1. Download version 1 of the
-   [Fashion Product Images Dataset](https://www.kaggle.com/datasets/paramaggarwal/fashion-product-images-dataset/data).
-2. Extract the download outside Git. The Kaggle archive contains repeated/nested
-   folders; this project needs only one `images/` directory and its `images.csv`.
-   The `styles/` directories and `styles.csv` are not required.
-3. Put the required files in this exact local layout:
-```text
-data/raw/external/fashion_product_images_v1/
-├── images.csv
-└── images/        # 44,441 JPEG files
-```
-
-4. From the repository root, verify the local copy:
-
-```bash
-test -f data/raw/external/fashion_product_images_v1/images.csv
-test "$(find data/raw/external/fashion_product_images_v1/images \
-  -maxdepth 1 -type f -name '*.jpg' | wc -l)" -eq 44441
-printf '%s  %s\n' \
-  '64dfd2449f22e39120e2ab4b0230a4521f27a3b3513e5eee5cc000ad865df831' \
-  'data/raw/external/fashion_product_images_v1/images.csv' | sha256sum --check
-```
-Run the separate focused audit in
-[08_task4_part1_image_eda.ipynb](notebooks/task-4/08_task4_part1_image_eda.ipynb). It proves V1 is the same teacher catalogue at
-higher resolution and joins it to `data/processed/splits.csv` by ID. It never makes
-a second split. The main search work stays in
-[09_task4_part2_visual_search.ipynb](notebooks/task-4/09_task4_part2_visual_search.ipynb).
-
-The expected image data is about 14 GB. Raw images are ignored by Git and must not
-be committed.
-
-The frozen untrained Task 4 baseline and its development-only quality, timing,
-cost, slice, and example evidence are recorded in
-`docs/decisions/0022-task4-baseline-search.md` and
-`results/evidence/task4/`. Learned models and the final winner remain open.
-
-## One split, five folds
-
-`data/processed/splits.csv` is the only split:
-
-- 32,773 `development` rows, each assigned one `cv_fold` from 0 to 4;
-- 5,778 sealed `holdout` rows;
-- 61 `quarantine` rows.
-
-Task owners use `fashion.data.dataset.get_cv_split` or `iter_cv_folds`. Any value
-learned from data is fitted on that round's training folds only. Each task's authorised
-final-evaluation workflow may open its holdout once, after every choice is frozen.
-
-Tasks 1–3 use teacher images. Task 4 uses the required local collection at
-`data/raw/external/fashion_product_images_v1/`. Binary external data is outside Git
-and is not read by shared preparation.
-
-## Permanent project rules
-
-- Train submitted models from scratch. Pretrained models are comparison benchmarks only.
-- Append every training run through `fashion.train.registry` to `results/runs.csv`.
-- Do not create another split.
-- Prefer broad comparisons and honest failure analysis over one extra training run.
-
-## Repository structure
-
-```text
-data/             Raw teacher data and rebuildable processed data
-docs/             Assignment material, provenance, and decisions
-notebooks/        Problem, preparation, task, and final-evaluation workflows
-results/          Report figures, evidence, and saved notebook HTML
-src/fashion/      Reusable Python code
-tests/            Automated contract and leakage checks
+```sh
+./.venv/bin/python -m pytest be/tests -q
+./.venv/bin/python -m pytest core/tests -q
+npm --prefix fe test
+npm --prefix fe run build
 ```

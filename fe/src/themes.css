@@ -1,0 +1,291 @@
+/* Theme skins change surfaces, typography, and controls, never the demo grids. */
+:root {
+  --style-swatch: #bc4b2b;
+  --picker-bg: #fffdf8;
+  --picker-ink: #36392f;
+  --picker-line: #d6d8cd;
+}
+.compact-header .header-actions { flex-direction: row; align-items: center; gap: 22px; }
+.style-picker { display: flex; align-items: center; gap: 8px; border: 1px solid var(--picker-line); border-radius: 6px; background: var(--picker-bg); color: var(--picker-ink); padding: 0 10px; min-height: 36px; }
+.style-picker-label { font: 10px 'DM Sans', sans-serif; opacity: .75; }
+.style-swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--style-swatch); box-shadow: 0 0 0 1px #00000012; flex-shrink: 0; }
+.style-picker.select-trigger { font: 500 11px 'DM Sans', sans-serif; min-height: 36px; cursor: pointer; }
+.style-picker:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
+.style-picker.select-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* Shared palette contract for the five new styles. Original remains available. */
+html[data-style]:where(:not([data-style="original"])) {
+  --page: #ede4dd;
+  --page-art: none;
+  --ink: #bf2117;
+  --muted: #785950;
+  --line: #ccb9ab;
+  --accent: #bf2117;
+  --accent-ink: #fff7ee;
+  --panel: #f4ece6;
+  --soft: #e5d8ce;
+  --stage: #e7dbd0;
+  --stage-ink: #725347;
+  --radius: 0px;
+  --control-radius: 999px;
+  --panel-shadow: none;
+  --body-font: 'DM Sans', 'Avenir Next', sans-serif;
+  --serif: 'DM Sans', 'Avenir Next', sans-serif;
+  --picker-bg: var(--panel);
+  --picker-ink: var(--ink);
+  --picker-line: var(--line);
+  --style-swatch: var(--accent);
+  color-scheme: light;
+  color: var(--ink);
+  font-family: var(--body-font);
+  background-color: var(--page);
+  background-image: var(--page-art);
+  background-attachment: fixed;
+}
+html[data-style]:where(:not([data-style="original"])) ::selection { background: var(--accent); color: var(--accent-ink); }
+html[data-style]:where(:not([data-style="original"])) :where(button, a, select, summary):focus-visible { outline-color: var(--accent); }
+html[data-style]:where(:not([data-style="original"])) :where(
+  .header-caption, .small-label, .result-status, .filename, .upload-help, .privacy-note,
+  .sample-heading > span:last-child, .tabs > button, .results-intro p, .search-heading p,
+  .card-top, .card-top svg, .card-bottom > span:first-child, .task-label, .prediction-note,
+  .how-step > span, .how-step p, .how-link, footer, .footer-wordmark,
+  .empty-upload > span:not(.upload-circle), .empty-upload small, .result-empty, .search-empty,
+  .result-empty p, .search-empty p, .loading-title, .loading-results > p, .count-select,
+  .match-notice, .match-subtitle, .match-score, .score-heading, .score-row, .outline-tag,
+  .pipeline > div > span, .pipeline svg, .pipeline p, .pipeline-arrow,
+  .pipeline-branches > div > span, .pipeline-note, .technical-panel summary > span,
+  .technical-content p, .technical-content th, .technical-content td:last-child,
+  .config-foot, .preprocess-preview p, .search-config, dialog p
+) { color: var(--muted); }
+html[data-style]:where(:not([data-style="original"])) :where(
+  .demo-notice strong, .result-empty h3, .search-empty h3, .technical-panel summary,
+  .technical-content td, .config-foot > :last-child, .preprocess-preview strong,
+  .evaluation-content h3, .search-config b
+) { color: var(--ink); }
+html[data-style]:where(:not([data-style="original"])) :where(
+  .detail-card, .technical-panel, .search-empty, .search-config, dialog
+) { background: var(--panel); border: 1px solid var(--line); color: var(--ink); border-radius: var(--radius); box-shadow: var(--panel-shadow); }
+html[data-style]:where(:not([data-style="original"])) :where(
+  .demo-notice, .mode-switch, .discovery-card, .pipeline, .tab-count
+) { background: var(--soft); color: var(--muted); border-color: var(--line); border-radius: var(--radius); }
+html[data-style]:where(:not([data-style="original"])) :where(
+  .upload-frame, .sample-button, .match-image, .preprocess-preview > img, .match-dialog > img
+) { background: var(--stage); color: var(--stage-ink); border-color: var(--line); border-radius: var(--radius); }
+html[data-style]:where(:not([data-style="original"])) :where(
+  .query-image, .sample-button img, .match-image img, .match-dialog > img
+) { mix-blend-mode: normal; }
+html[data-style]:where(:not([data-style="original"])) :where(.image-topline, .image-caption, .sample-button > span, .match-rank) { color: var(--stage-ink); }
+html[data-style]:where(:not([data-style="original"])) .photo-corner { border-color: var(--stage-ink); opacity: .45; }
+html[data-style]:where(:not([data-style="original"])) .sample-button.selected { background: var(--stage); border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+html[data-style]:where(:not([data-style="original"])) :where(.demo-dot, .status-dot, .sample-button i) { background: var(--accent); }
+html[data-style]:where(:not([data-style="original"])) .sample-button i { color: var(--accent-ink); }
+html[data-style]:where(:not([data-style="original"])) :where(.icon-button, .match-expand) { background: var(--panel); color: var(--ink); border: 1px solid var(--line); }
+html[data-style]:where(:not([data-style="original"])) :where(.upload-button, .count-select .select-trigger, .style-picker) { background: var(--panel); color: var(--ink); border-color: var(--line); border-radius: var(--control-radius); }
+html[data-style]:where(:not([data-style="original"])) .upload-button > span { color: var(--ink); }
+html[data-style]:where(:not([data-style="original"])) .mode-switch { border-radius: var(--control-radius); }
+html[data-style]:where(:not([data-style="original"])) .mode-switch button { border-radius: var(--control-radius); color: var(--muted); }
+html[data-style]:where(:not([data-style="original"])) .mode-switch button.active { background: var(--panel); color: var(--ink); box-shadow: var(--panel-shadow); }
+html[data-style]:where(:not([data-style="original"])) .mode-switch button:hover:not(.active) { background: var(--panel); color: var(--ink); }
+html[data-style]:where(:not([data-style="original"])) :where(.tabs > button.active, .tabs > button:hover, .about-button:hover) { color: var(--accent); }
+html[data-style]:where(:not([data-style="original"])) .tabs > button.active { border-bottom-color: var(--accent); }
+html[data-style]:where(:not([data-style="original"])) .primary-button { background: var(--accent); color: var(--accent-ink); border-radius: var(--control-radius); }
+html[data-style]:where(:not([data-style="original"])) .primary-button:hover { filter: brightness(.91); }
+html[data-style]:where(:not([data-style="original"])) :where(.upload-button:hover, .icon-button:hover, .empty-upload:hover) { background: var(--soft); }
+html[data-style]:where(:not([data-style="original"])) :where(.tab-task, .outline-tag, .upload-circle, .search-illustration) { border-color: var(--line); color: var(--muted); }
+html[data-style]:where(:not([data-style="original"])) :where(.score-bars, .technical-content td, .config-foot, .how-link, .pipeline > .pipeline-branches) { border-color: var(--line); }
+html[data-style]:where(:not([data-style="original"])) .pipeline-branches > div { background: var(--panel); border-color: var(--line); border-radius: var(--radius); }
+html[data-style]:where(:not([data-style="original"])) .score-track { background: var(--soft); }
+html[data-style]:where(:not([data-style="original"])) .score-track i { background: var(--muted); }
+html[data-style]:where(:not([data-style="original"])) .score-row:nth-child(2) .score-track i { background: var(--accent); }
+html[data-style]:where(:not([data-style="original"])) .discovery-card :where(.eyebrow, p, h3 em) { color: var(--muted); }
+html[data-style]:where(:not([data-style="original"])) .discovery-card h3 { color: var(--ink); }
+html[data-style]:where(:not([data-style="original"])) .discovery-art { color: var(--line); }
+html[data-style]:where(:not([data-style="original"])) .how-title h2 em { color: var(--accent); }
+html[data-style]:where(:not([data-style="original"])) .drop-overlay { background: var(--panel); color: var(--accent); }
+html[data-style]:where(:not([data-style="original"])) .spinner { border-color: var(--line); border-top-color: var(--accent); }
+html[data-style]:where(:not([data-style="original"])) :where(.skeleton > span, .skeleton > strong, .match-skeleton) { background-image: linear-gradient(110deg, var(--soft) 25%, var(--panel) 50%, var(--soft) 75%); border-radius: var(--radius); }
+html[data-style]:where(:not([data-style="original"])) .skip-link { background: var(--panel); color: var(--ink); }
+
+/* 01 / OUTFIT: the reference's beige/red palette and direct graphic typography. */
+html[data-style="outfit"] .wordmark { font-family: var(--body-font); font-weight: 800; font-size: 30px; letter-spacing: -1.8px; }
+html[data-style="outfit"] :where(.demo-toolbar h1, .detail-card > strong, .results-intro h3, .search-heading h3, .discovery-card h3, .advanced-heading h2, .how-title h2, dialog h2) { font-weight: 650; letter-spacing: -1.1px; }
+html[data-style="outfit"] .detail-card > strong { font-size: 32px; }
+html[data-style="outfit"] :where(.card-top, .section-heading h2, .task-label, .image-topline, .match-rank) { font-weight: 700; text-transform: uppercase; }
+html[data-style="outfit"] .detail-card { border-width: 0 0 1px; background: transparent; }
+html[data-style="outfit"] .upload-frame { background-image: radial-gradient(#bd9f8940 .7px, transparent .7px); background-size: 7px 7px; }
+html[data-style="outfit"] .discovery-card { background: #e52417; }
+html[data-style="outfit"] .discovery-card :where(h3, h3 em, p, .eyebrow) { color: #ffffff; }
+html[data-style="outfit"] .discovery-card .primary-button { background: #fff1e4; color: #bd2116; }
+html[data-style="outfit"] .discovery-art { color: #fa4e38; }
+html[data-style="outfit"] .mode-switch button.active { background: var(--accent); color: var(--accent-ink); }
+html[data-style="outfit"] .primary-button { font-weight: 650; }
+html[data-style="outfit"] .style-swatch { background: linear-gradient(90deg, #e52417 50%, #ede4dd 50%); }
+
+/* 02 / LIQUID GLASS: a web interpretation of Apple's material and controls. */
+html[data-style="glass"] {
+  --page: #e7eef7;
+  --page-art: radial-gradient(ellipse at 6% 10%, #c3ddfff0, transparent 48%), radial-gradient(ellipse at 94% 38%, #b4e4d7b0, transparent 40%), radial-gradient(ellipse at 55% 100%, #f5d6b8b0, transparent 60%);
+  --ink: #25334a; --muted: #54657a; --line: #ffffffb8;
+  --accent: #0767d4; --accent-ink: #fff;
+  --panel: #ffffffb3; --soft: #e4edf580; --stage: #ffffff70; --stage-ink: #526780;
+  --radius: 22px; --control-radius: 999px;
+  --panel-shadow: 0 8px 30px #29486a0b, inset 0 1px 1px #fff;
+  --body-font: -apple-system, BlinkMacSystemFont, 'DM Sans', sans-serif;
+  --serif: -apple-system, BlinkMacSystemFont, 'DM Sans', sans-serif;
+  --picker-bg: #f4f8fc;
+}
+html[data-style="glass"] .compact-header { background: #ffffff36; border-color: #ffffff99; backdrop-filter: blur(24px) saturate(1.5); -webkit-backdrop-filter: blur(24px) saturate(1.5); }
+html[data-style="glass"] :where(.wordmark, .demo-toolbar h1, .results-intro h3, .search-heading h3, .advanced-heading h2, .detail-card > strong, .discovery-card h3, .how-title h2, dialog h2) { font-weight: 600; letter-spacing: -.9px; }
+html[data-style="glass"] .detail-card > strong { font-size: 32px; }
+html[data-style="glass"] :where(.detail-card, .upload-frame, .mode-switch, .style-picker, .discovery-card, .technical-panel, .pipeline, dialog) { backdrop-filter: blur(18px) saturate(1.35); -webkit-backdrop-filter: blur(18px) saturate(1.35); box-shadow: var(--panel-shadow); }
+html[data-style="glass"] .upload-frame { border: 1px solid #ffffffdd; box-shadow: inset 0 0 35px #ffffff60, 0 14px 35px #24466b0e; }
+html[data-style="glass"] .photo-corner { border-radius: 5px; opacity: .2; }
+html[data-style="glass"] .tabs { border: 1px solid #ffffffa0; background: #ffffff4d; border-radius: 999px; padding: 3px; gap: 3px; }
+html[data-style="glass"] .tabs > button { padding: 10px 14px; margin: 0; border: 0; border-radius: 999px; }
+html[data-style="glass"] .tabs > button.active { background: #ffffffd9; box-shadow: 0 2px 8px #37557013; }
+html[data-style="glass"] .primary-button { background: linear-gradient(#2687ed, #0767d4); border: 1px solid #ffffff60; box-shadow: inset 0 1px 1px #ffffff80, 0 5px 14px #0767d424; }
+html[data-style="glass"] .sample-button { border: 1px solid #ffffffb8; border-radius: 14px; }
+html[data-style="glass"] .discovery-card { border: 1px solid #ffffffa0; background: linear-gradient(120deg, #ffffffaa, #d6e8fd80); }
+html[data-style="glass"] .discovery-art { color: #bad3ed80; }
+html[data-style="glass"] .tab-task { border-color: #b1c4da; }
+html[data-style="glass"] .style-swatch { background: linear-gradient(135deg, #a8d4fa, #faffff 50%, #8bd0bd); }
+html[data-style="glass"] dialog::backdrop { background: #344b6c40; backdrop-filter: blur(12px); }
+
+/* 03 / BRUTALIST: raw outlines, loud marker colour, and hard pressed controls. */
+html[data-style="brutalist"] {
+  --page: #f3f2ed; --page-art: linear-gradient(#20202006 1px, transparent 1px), linear-gradient(90deg, #20202006 1px, transparent 1px);
+  --ink: #171717; --muted: #52524c; --line: #202020; --accent: #171717; --accent-ink: #e5fa45;
+  --panel: #fffef7; --soft: #e5fa45; --stage: #e7e6df; --stage-ink: #454541;
+  --radius: 0px; --control-radius: 0px; --panel-shadow: 4px 4px 0 #202020;
+  background-size: 32px 32px;
+}
+html[data-style="brutalist"] :where(.wordmark, .demo-toolbar h1, .detail-card > strong, .results-intro h3, .search-heading h3, .discovery-card h3, .advanced-heading h2, .how-title h2, dialog h2) { font-weight: 850; text-transform: uppercase; letter-spacing: -1.3px; }
+html[data-style="brutalist"] .wordmark { font-family: var(--body-font); font-size: 29px; }
+html[data-style="brutalist"] .detail-card > strong { font-size: 31px; }
+html[data-style="brutalist"] :where(.eyebrow, .card-top, .task-label, .section-heading h2, .image-topline, .score-heading, .outline-tag, .technical-panel summary, .match-rank) { font-family: 'Courier New', monospace; text-transform: uppercase; font-weight: 700; }
+html[data-style="brutalist"] :where(.detail-card, .technical-panel, .search-config, .upload-frame, .style-picker, .upload-button, .primary-button, .match-image, dialog) { border: 2px solid #202020; box-shadow: 4px 4px 0 #202020; }
+html[data-style="brutalist"] .compact-header { border-bottom: 2px solid #202020; }
+html[data-style="brutalist"] .brand-period { color: #d42c19; }
+html[data-style="brutalist"] .mode-switch { border: 2px solid #202020; padding: 2px; gap: 0; }
+html[data-style="brutalist"] .mode-switch button.active { background: #202020; color: #e5fa45; box-shadow: none; }
+html[data-style="brutalist"] .tabs { border-bottom: 2px solid #202020; gap: 10px; }
+html[data-style="brutalist"] .tabs > button { font-weight: 750; padding-left: 9px; padding-right: 9px; }
+html[data-style="brutalist"] .tabs > button.active { background: #e5fa45; color: #171717; }
+html[data-style="brutalist"] :where(.task-label, .tab-task) { color: #171717; background: #e5fa45; padding: 3px 5px; border: 1px solid #202020; border-radius: 0; }
+html[data-style="brutalist"] .sample-button { border: 2px solid #202020; }
+html[data-style="brutalist"] .sample-button.selected { box-shadow: 3px 3px 0 #202020; background: #e5fa45; }
+html[data-style="brutalist"] .discovery-card { border: 2px solid #202020; background: #e5fa45; box-shadow: 4px 4px 0 #202020; }
+html[data-style="brutalist"] .discovery-card :where(p, .eyebrow, h3 em) { color: #424923; }
+html[data-style="brutalist"] .discovery-art { color: #bace32; }
+html[data-style="brutalist"] .primary-button { color: #fffef7; }
+html[data-style="brutalist"] :where(.primary-button:active, .upload-button:active) { transform: translate(3px, 3px); box-shadow: 1px 1px 0 #202020; }
+html[data-style="brutalist"] :where(.icon-button, .match-expand, .style-swatch, .sample-button i, .score-track, .score-track i) { border-radius: 0; }
+html[data-style="brutalist"] .style-swatch { background: #e5fa45; border: 1px solid #202020; }
+html[data-style="brutalist"] .score-track { background: #dfdfd5; }
+html[data-style="brutalist"] .pipeline { background: #e8e7df; border: 2px solid #202020; }
+html[data-style="brutalist"] .pipeline-branches > div { border-color: #202020; }
+
+/* 04 / NOCTURNE: a quiet after-hours gallery, champagne ink, lit photo plinths. */
+html[data-style="nocturne"] {
+  --page: #15181c; --page-art: radial-gradient(ellipse at 60% 0%, #31373c80, transparent 62%);
+  --ink: #f1ebe0; --muted: #a8acb1; --line: #3d4249;
+  --accent: #dfc294; --accent-ink: #241f18; --panel: #20242a; --soft: #292d33;
+  --stage: #d8d6ce; --stage-ink: #4b4c48; --radius: 8px; --control-radius: 5px;
+  --panel-shadow: 0 8px 22px #00000020, inset 0 1px 0 #ffffff04;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  color-scheme: dark;
+}
+html[data-style="nocturne"] .wordmark { color: var(--accent); }
+html[data-style="nocturne"] .detail-card { background: linear-gradient(135deg, #282c32, #1e2227); border-top-color: #786956; }
+html[data-style="nocturne"] .detail-card > strong { color: #f0d7b0; }
+html[data-style="nocturne"] .detail-card .card-top svg { color: #bda17b; }
+html[data-style="nocturne"] .upload-frame { border-color: #5b5850; box-shadow: 0 18px 35px #00000030; background-image: radial-gradient(ellipse, #f2efe5, #cccac2); }
+html[data-style="nocturne"] .sample-button.selected { border-color: #ead2a8; box-shadow: 0 0 0 2px #c8ac7d; }
+html[data-style="nocturne"] .discovery-card { border: 1px solid #615342; background: linear-gradient(120deg, #3a332a, #24272c); }
+html[data-style="nocturne"] .discovery-card :where(p, .eyebrow, h3 em) { color: #cbb99f; }
+html[data-style="nocturne"] .discovery-art { color: #67543b60; }
+html[data-style="nocturne"] .primary-button { background: linear-gradient(120deg, #edcf9f, #c6a575); box-shadow: inset 0 1px 0 #fff3, 0 4px 12px #0003; }
+html[data-style="nocturne"] .mode-switch button.active { color: #f1d4a5; border: 1px solid #7d6a4e; }
+html[data-style="nocturne"] .style-picker { border-color: #796447; }
+html[data-style="nocturne"] :where(.tab-count, .tab-task, .outline-tag) { color: #d8bd94; }
+html[data-style="nocturne"] .error-message { background: #3e2827; color: #ffc1af; border-color: #895a4c; }
+html[data-style="nocturne"] dialog::backdrop { background: #080a10bc; }
+html[data-style="nocturne"] .how-title .eyebrow { color: #d8bd94; }
+
+/* 05 / FIELD NOTES: a tactile wardrobe notebook with stitched paper and sage tabs. */
+html[data-style="field"] {
+  --page: #f1eee4; --page-art: radial-gradient(#7b6a4620 .6px, transparent .8px);
+  --ink: #304e40; --muted: #59664f; --line: #b3bba4;
+  --accent: #365f48; --accent-ink: #fff9e8; --panel: #fbf8ec; --soft: #e2e7d7;
+  --stage: #e1e6d6; --stage-ink: #526249; --radius: 16px 3px 16px 3px; --control-radius: 6px;
+  --panel-shadow: 1px 3px 0 #c1c6b133;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  background-size: 6px 6px;
+}
+html[data-style="field"] .wordmark { font-style: italic; }
+html[data-style="field"] :where(.detail-card, .technical-panel, .pipeline, .search-config) { border-style: dashed; }
+html[data-style="field"] .detail-card { outline: 1px solid #fbf8ec; outline-offset: -5px; background-image: repeating-linear-gradient(0deg, transparent, transparent 26px, #80915e09 26px, #80915e09 27px); }
+html[data-style="field"] .detail-card > strong { font-style: italic; }
+html[data-style="field"] :where(.task-label, .image-topline, .eyebrow, .score-heading, .header-caption, .outline-tag) { font-family: 'Courier New', monospace; }
+html[data-style="field"] .upload-frame { border: 1px dashed #8d9e7b; outline: 1px solid #bbc5ac; outline-offset: -6px; background-image: radial-gradient(ellipse at center, #f1f0e3, transparent 80%); }
+html[data-style="field"] .photo-corner { border-color: #8c7955; width: 22px; height: 10px; border-width: 0; background: #cab48155; transform: rotate(-20deg); }
+html[data-style="field"] .tabs { gap: 8px; }
+html[data-style="field"] .tabs > button { padding-left: 12px; padding-right: 12px; border-radius: 10px 10px 0 0; }
+html[data-style="field"] .tabs > button.active { background: #dbe4ce; color: #2c503b; }
+html[data-style="field"] .sample-button { border: 1px dashed #9aa98a; border-radius: 3px; }
+html[data-style="field"] .sample-button.selected { background: #d4dfc4; box-shadow: inset 0 0 0 2px #d4dfc4; }
+html[data-style="field"] .discovery-card { background: #dfe7d3; border: 1px dashed #99aa85; }
+html[data-style="field"] .discovery-art { color: #bdcdaa; }
+html[data-style="field"] .primary-button { box-shadow: 0 3px 0 #243e30; }
+html[data-style="field"] .mode-switch { border: 1px dashed #a8b596; }
+html[data-style="field"] .mode-switch button.active { background: #fbf8ec; box-shadow: 1px 2px 0 #b6c0a750; }
+html[data-style="field"] .match-image { outline: 1px dashed #acb99c; outline-offset: -6px; }
+html[data-style="field"] .style-swatch { border-radius: 3px; background: linear-gradient(135deg, #365f48 50%, #d3dcbc 50%); }
+
+/* 06 / MINIMAL: neutral surfaces, quiet rules, and clear type. */
+html[data-style="minimal"] {
+  --page: #fafafa; --page-art: none;
+  --ink: #202020; --muted: #666666; --line: #dddddd;
+  --accent: #262626; --accent-ink: #ffffff;
+  --panel: #ffffff; --soft: #f2f2f2; --stage: #ededed; --stage-ink: #606060;
+  --radius: 6px; --control-radius: 6px; --panel-shadow: none;
+  --body-font: 'DM Sans', 'Avenir Next', sans-serif;
+  --serif: 'DM Sans', 'Avenir Next', sans-serif;
+}
+html[data-style="minimal"] .wordmark { font-family: var(--body-font); font-weight: 650; font-size: 30px; letter-spacing: -1.5px; }
+html[data-style="minimal"] :where(.demo-toolbar h1, .results-intro h3, .detail-card > strong, .advanced-heading h2, .similar-banner-heading h3, dialog h2) { font-weight: 500; letter-spacing: -.8px; }
+html[data-style="minimal"] .mode-switch button.active { background: var(--accent); color: var(--accent-ink); box-shadow: none; }
+html[data-style="minimal"] :where(.pipeline-note, .config-foot, .how-title .eyebrow) { color: var(--muted); }
+html[data-style="minimal"] .error-message { background: #f2f2f2; border-color: #a3a3a3; color: #303030; }
+html[data-style="minimal"] dialog::backdrop { background: #17171780; }
+html[data-style="minimal"] .select-content { box-shadow: 0 8px 24px #00000012; border-radius: 6px; }
+html[data-style="minimal"] .select-item { border-radius: 3px; }
+
+@media (max-width: 1000px) {
+  .compact-header .header-caption { display: none; }
+  .compact-header .header-actions { gap: 15px; }
+}
+@media (max-width: 600px) {
+  .compact-header .header-actions { gap: 10px; }
+  .compact-header .about-label { display: none; }
+  .compact-header .about-button { justify-content: center; width: 28px; }
+  .style-picker { padding: 0 7px; gap: 6px; }
+  .style-picker-label { display: none; }
+  .style-picker.select-trigger { max-width: 174px; font-size: 10px; }
+  html[data-style="glass"] .tabs > button { padding-left: 10px; padding-right: 10px; gap: 6px; }
+  html[data-style="brutalist"] :where(.results-intro h3, .search-heading h3) { font-size: 23px; }
+}
+@media (max-width: 370px) {
+  .compact-header .header-actions { gap: 5px; }
+  .compact-header .brand-symbol { display: none; }
+  .compact-header { gap: 10px !important; }
+  .style-picker.select-trigger { max-width: 156px; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  html[data-style="glass"] { --panel: #f7faff; --stage: #edf4fa; --soft: #dfe9f3; --line: #b9c8d9; }
+  html[data-style="glass"] :where(.detail-card, .upload-frame, .mode-switch, .style-picker, .discovery-card, .technical-panel, .pipeline, dialog, .compact-header) { backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+html[data-style="outfit"] .discovery-card h3 { color: #ffffff; }
+
+html[data-style="outfit"] :where(.wordmark, .demo-toolbar h1, .detail-card > strong, .results-intro h3, .search-heading h3, .advanced-heading h2) { color: #e52417; }

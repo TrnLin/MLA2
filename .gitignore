@@ -9,82 +9,88 @@ __pycache__/
 
 # Supplied raw datasets stay local. Only the exact lean protected-safe preparation pack is
 # deliverable so normal Run All does not need the slow forensic rebuild.
-/data/*
-!/data/README.md
-!/data/raw/
-/data/raw/*
-!/data/raw/README.md
-!/data/processed/
-/data/processed/*
-!/data/processed/README.md
-!/data/processed/preparation_cache.json
-!/data/processed/splits.csv
-!/data/processed/split_summary.json
-!/data/processed/cv_fold_summary.json
-!/data/processed/taxonomy.json
-!/data/processed/development_class_summary.csv
-!/data/processed/development_image_profile.json
-!/data/processed/label_maps.json
-!/data/processed/prediction_manifest.csv
-!/data/processed/audit/
-/data/processed/audit/*
-!/data/processed/audit/csv_summary.json
-!/data/processed/audit/exact_duplicate_groups.csv
-!/data/processed/audit/image_audit.csv.gz
-!/data/processed/audit/issues.csv
-!/data/processed/audit/missing_values.csv
-!/data/processed/audit/near_duplicate_candidates.csv.gz
-!/data/processed/audit/near_duplicate_summary.json
-!/data/processed/audit/perceptual_hashes.csv.gz
-!/data/processed/audit/product_family_groups.csv.gz
-!/data/processed/audit/product_family_summary.json
-!/data/processed/audit/target_class_counts.csv
+/core/data/*
+!/core/data/README.md
+!/core/data/raw/
+/core/data/raw/*
+!/core/data/raw/README.md
+!/core/data/processed/
+/core/data/processed/*
+!/core/data/processed/README.md
+!/core/data/processed/preparation_cache.json
+!/core/data/processed/splits.csv
+!/core/data/processed/split_summary.json
+!/core/data/processed/cv_fold_summary.json
+!/core/data/processed/taxonomy.json
+!/core/data/processed/development_class_summary.csv
+!/core/data/processed/development_image_profile.json
+!/core/data/processed/label_maps.json
+!/core/data/processed/prediction_manifest.csv
+!/core/data/processed/audit/
+/core/data/processed/audit/*
+!/core/data/processed/audit/csv_summary.json
+!/core/data/processed/audit/exact_duplicate_groups.csv
+!/core/data/processed/audit/image_audit.csv.gz
+!/core/data/processed/audit/issues.csv
+!/core/data/processed/audit/missing_values.csv
+!/core/data/processed/audit/near_duplicate_candidates.csv.gz
+!/core/data/processed/audit/near_duplicate_summary.json
+!/core/data/processed/audit/perceptual_hashes.csv.gz
+!/core/data/processed/audit/product_family_groups.csv.gz
+!/core/data/processed/audit/product_family_summary.json
+!/core/data/processed/audit/target_class_counts.csv
 .agents/
 /.superpowers/
-/docs/superpowers/
+/core/docs/superpowers/
 
 # Local scratch material and generated model weights.
 tmp/
 .worktrees/
-models/*.pt
-models/*.pth
-models/*.ckpt
-/models/task4_r5/
-/models/task4_r5_portable.zip
-/scripts/task4/queue_gpu0_r5_stability.sh
-/scripts/task4/queue_gpu1_r3_stability.sh
+core/models/*.pt
+core/models/*.pth
+core/models/*.ckpt
+/core/models/task4_r5/
+/core/models/task4_r5_portable.zip
+/core/scripts/task4/queue_gpu0_r5_stability.sh
+/core/scripts/task4/queue_gpu1_r3_stability.sh
 
 
 # Runtime registry lock.
-results/runs.csv.lock
-/results/evidence/task2/final_evaluation.lock
+core/results/runs.csv.lock
+/core/results/evidence/task2/final_evaluation.lock
 
 # Local copies of downloaded Task 3 training evidence. Keep report-selected figures trackable.
-results/evidence/task3/
+core/results/evidence/task3/
 # Generated Task 4 bulk; compact evidence and reports stay trackable.
-/results/cache/task4/
-/results/evidence/task4/checkpoints/
-/results/evidence/task4/smoke/
-/results/evidence/task4/.model_comparison_budget-*/
-/results/evidence/task4/learned/*/*
-/results/evidence/task4/phase_requests/
-/results/evidence/task4/phase_results/*
-!/results/evidence/task4/phase_results/task9-final-gallery-decision.json
-!/results/evidence/task4/phase_results/task9-gallery-result.json
-!/results/evidence/task4/phase_results/task9-post-stability-deployment.json
-/results/evidence/task4/logs/*
-/results/evidence/task4/model_comparison_budget*.json
-/results/evidence/task4/baseline_query_metrics.csv
-/results/evidence/task4/baseline_timing.csv
-/results/evidence/task4/final_evaluation/holdout_primary_rankings.csv
-/results/evidence/task4/hog/canvas_per_query.csv
-/results/evidence/task4/hog/query_metrics.csv
-/results/evidence/task4/hog/timing_samples.csv
-/results/evidence/task4/hog_fusion/canvas_per_query.csv
-/results/evidence/task4/hog_fusion/query_metrics.csv
-/results/evidence/task4/hog_fusion/timing_samples.csv
-/results/evidence/task4/**/*.lock
-/results/runs.csv.lock
+/core/results/cache/task4/
+/core/results/evidence/task4/checkpoints/
+/core/results/evidence/task4/smoke/
+/core/results/evidence/task4/.model_comparison_budget-*/
+/core/results/evidence/task4/learned/*/*
+/core/results/evidence/task4/phase_requests/
+/core/results/evidence/task4/phase_results/*
+!/core/results/evidence/task4/phase_results/task9-final-gallery-decision.json
+!/core/results/evidence/task4/phase_results/task9-gallery-result.json
+!/core/results/evidence/task4/phase_results/task9-post-stability-deployment.json
+/core/results/evidence/task4/logs/*
+/core/results/evidence/task4/model_comparison_budget*.json
+/core/results/evidence/task4/baseline_query_metrics.csv
+/core/results/evidence/task4/baseline_timing.csv
+/core/results/evidence/task4/final_evaluation/holdout_primary_rankings.csv
+/core/results/evidence/task4/hog/canvas_per_query.csv
+/core/results/evidence/task4/hog/query_metrics.csv
+/core/results/evidence/task4/hog/timing_samples.csv
+/core/results/evidence/task4/hog_fusion/canvas_per_query.csv
+/core/results/evidence/task4/hog_fusion/query_metrics.csv
+/core/results/evidence/task4/hog_fusion/timing_samples.csv
+/core/results/evidence/task4/**/*.lock
+/core/results/runs.csv.lock
 
 # Generated Task 1 model artifacts; compact evidence and figures stay trackable.
-/results/task1/
+/core/results/task1/
+
+/be/tmp/
+
+# Local deployment packages and runtime locks are not code deliverables.
+/core/model-weight/
+/core/results/**/*.lock

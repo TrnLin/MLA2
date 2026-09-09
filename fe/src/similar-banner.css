@@ -1,0 +1,51 @@
+/* Task 4 lives beside the labels in one continuous result, inside the banner. */
+.similar-banner {
+  --banner-bg: var(--soft, #e9edde);
+  --banner-ink: var(--ink, #353d2c);
+  --banner-muted: var(--muted, #69745b);
+  margin-top: 28px;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius, 4px);
+  background: var(--banner-bg);
+  color: var(--banner-ink);
+  container-type: inline-size;
+}
+.similar-banner-heading { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 24px; }
+.similar-banner-heading h3 { font-family: var(--serif); font-size: clamp(27px, 2.6vw, 38px); font-weight: 500; letter-spacing: -.8px; line-height: 1.15; margin: 10px 0 8px; }
+.similar-banner-heading p { font-size: 11px; line-height: 1.6; color: var(--banner-muted); }
+html .similar-banner :where(.eyebrow, .count-select, .match-name, .match-score b) { color: var(--banner-ink); }
+html .similar-banner :where(.match-notice, .match-subtitle, .match-score, .prediction-note, .loading-title) { color: var(--banner-muted); }
+html .similar-banner .matches-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 14px; }
+html .similar-banner .match-image { aspect-ratio: 1 / 1.12; }
+.similar-banner .match-card:focus-visible { outline-color: var(--banner-ink); outline-offset: 5px; border-radius: 3px; }
+.similar-banner .match-notice { gap: 8px; flex-wrap: wrap; font-size: 9px; }
+.similar-banner .prediction-note { margin-bottom: 0; }
+.similar-banner .search-empty { min-height: 240px; padding: 24px; }
+.similar-banner .search-config { margin-top: 20px; }
+.crop-search-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; font-size: 11px; color: var(--banner-ink); }
+.crop-search-summary > div { display: flex; gap: 10px; flex-wrap: wrap; }
+.crop-search-summary button { color: var(--banner-ink); background: transparent; border: 1px solid currentColor; border-radius: var(--radius, 4px); min-height: 36px; padding: 8px 12px; font: inherit; cursor: pointer; }
+.crop-search-summary button:hover { background: color-mix(in srgb, var(--banner-ink) 10%, transparent); }
+.crop-search-summary button:focus-visible { outline: 2px solid var(--banner-ink); outline-offset: 3px; }
+.similar-banner .match-skeleton { background: var(--stage, #e2e6d8); animation: pulse 1.4s ease-in-out infinite; }
+html[data-style="outfit"] .similar-banner { --banner-bg: #e52417; --banner-ink: #fff8ee; --banner-muted: #fff0e1; border-color: #e52417; }
+html[data-style="outfit"] .similar-banner-heading h3 { font-weight: 650; }
+html[data-style="glass"] .similar-banner { --banner-bg: linear-gradient(120deg, #ffffffaa, #d6e8fd80); border-color: #ffffffa0; box-shadow: var(--panel-shadow); }
+html[data-style="glass"] .similar-banner-heading h3 { font-weight: 600; }
+html[data-style="brutalist"] .similar-banner { --banner-bg: #e5fa45; --banner-muted: #424923; border: 2px solid #202020; box-shadow: 4px 4px 0 #202020; }
+html[data-style="brutalist"] .similar-banner-heading h3 { font-weight: 850; text-transform: uppercase; }
+html[data-style="nocturne"] .similar-banner { --banner-bg: linear-gradient(120deg, #3a332a, #24272c); --banner-muted: #cbb99f; border-color: #615342; }
+html[data-style="field"] .similar-banner { --banner-bg: #dfe7d3; border: 1px dashed #99aa85; }
+@container (min-width: 480px) { html .similar-banner .matches-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@container (min-width: 800px) { html .similar-banner .matches-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+  .similar-banner { padding: 18px 14px; }
+  .similar-banner-heading { gap: 10px; align-items: flex-start; }
+  .similar-banner-heading h3 { font-size: 27px; }
+  .similar-banner-heading .eyebrow { font-size: 7px; letter-spacing: .7px; gap: 5px; }
+  .similar-banner-heading .count-select { flex-direction: column; align-items: flex-start; gap: 5px; }
+  html .similar-banner .match-name { font-size: 10px; }
+  html .similar-banner .match-score { flex-wrap: wrap; font-size: 8px; }
+}
+@media (prefers-reduced-transparency: reduce) { html[data-style="glass"] .similar-banner { --banner-bg: #edf4fa; } }

@@ -1,0 +1,36 @@
+.crop-editor { color: var(--banner-ink); }
+.crop-editor-intro { margin-bottom: 18px; }
+.crop-editor-intro h4 { font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15; margin: 0 0 7px; }
+.crop-editor-intro p, .crop-move-help, .crop-fine-tune p, .crop-status { color: var(--banner-muted); font-size: 12px; line-height: 1.65; margin: 0; }
+.crop-editor-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+.crop-preview { display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0; padding: 12px; background: color-mix(in srgb, var(--banner-ink) 5%, transparent); border: 1px solid color-mix(in srgb, var(--banner-ink) 18%, transparent); border-radius: var(--radius, 4px); }
+.crop-stage { position: relative; max-width: 100%; width: 300px; overflow: hidden; line-height: 0; }
+.crop-image { display: block; width: 100%; height: auto; image-orientation: from-image; user-select: none; }
+.crop-selection { position: absolute; display: block; min-width: 0; padding: 0; border: 2px solid #fff; background: transparent; box-shadow: 0 0 0 1px #0009, 0 0 0 9999px #0009; cursor: grab; touch-action: none; transition: none; border-radius: 0; }
+.crop-selection:active { cursor: grabbing; }
+.crop-selection:focus-visible { outline: 3px solid #ffe17c; outline-offset: -6px; }
+.crop-crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #0008; color: #fff; font-size: 22px; font-weight: 400; line-height: 1; pointer-events: none; }
+.crop-ratio { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); padding: 5px 7px; border-radius: 2px; background: #000a; color: #fff; font-size: 9px; line-height: 1; white-space: nowrap; letter-spacing: 1px; pointer-events: none; }
+.crop-controls { min-width: 0; align-self: center; }
+.crop-move-help { margin-bottom: 20px; }
+.crop-size { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+.crop-size output { font-weight: 400; font-variant-numeric: tabular-nums; color: var(--banner-muted); }
+.crop-slider { display: block; width: 100%; margin: 0; height: 34px; accent-color: var(--banner-ink); cursor: pointer; }
+.crop-size-ends { display: flex; justify-content: space-between; font-size: 10px; color: var(--banner-muted); }
+.crop-fine-tune { margin-top: 20px; border-top: 1px solid color-mix(in srgb, var(--banner-ink) 22%, transparent); padding-top: 14px; }
+.crop-fine-tune summary { cursor: pointer; font-size: 12px; width: fit-content; min-height: 28px; }
+.crop-fine-tune p { font-size: 11px; margin: 5px 0 12px; }
+.crop-pixel-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.crop-pixel-field { display: grid; gap: 6px; font-size: 11px; min-width: 0; }
+.crop-pixel-field input { width: 100%; min-width: 0; height: 40px; padding: 8px; border: 1px solid color-mix(in srgb, var(--banner-ink) 35%, transparent); border-radius: var(--radius, 4px); background: transparent; color: var(--banner-ink); font-size: 13px; font-variant-numeric: tabular-nums; }
+.crop-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 22px; }
+.crop-actions button { min-height: 44px; border-radius: var(--radius, 4px); padding: 11px 15px; font-size: 12px; font-weight: 500; }
+.crop-actions .crop-apply { display: flex; align-items: center; justify-content: center; gap: 24px; background: var(--banner-ink); color: var(--page, #f8f7f3); border: 1px solid var(--banner-ink); }
+.crop-actions .crop-whole { background: transparent; color: var(--banner-ink); border: 1px solid color-mix(in srgb, var(--banner-ink) 45%, transparent); }
+.crop-actions .crop-cancel { background: transparent; color: var(--banner-muted); }
+.crop-actions button:not(:disabled):hover { filter: brightness(.9); }
+.crop-editor :is(input, summary, .crop-actions button):focus-visible { outline: 2px solid var(--banner-ink); outline-offset: 4px; }
+html[data-style="outfit"] .crop-actions .crop-apply { color: #b8180d; }
+html[data-style="brutalist"] .crop-actions .crop-apply { color: #e5fa45; }
+@container (min-width: 560px) { .crop-editor-body { grid-template-columns: minmax(0, 1fr) minmax(220px, .85fr); gap: 26px; } }
+@media (max-width: 420px) { .crop-actions .crop-apply, .crop-actions .crop-whole { flex: 1 1 100%; } }

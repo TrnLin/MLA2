@@ -1,0 +1,240 @@
+.color-mode-toggle { display: grid; place-items: center; flex-shrink: 0; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: var(--control-radius, 6px); color: var(--ink, #282921); background: var(--panel, #fffefa); }
+.color-mode-toggle:hover { background: var(--soft, #eeeee7); }
+html[data-appearance="light"] { color-scheme: light; }
+html[data-appearance="light"][data-style="original"] { --page: #f8f7f3; }
+
+/* Dark appearance. Each style keeps its own hue family, so dark reads as the same
+   theme with the lights off rather than one shared charcoal. Default = original. */
+html[data-appearance="dark"] {
+  color-scheme: dark;
+  /* original: warm paper and terracotta become warm ink-black and lit terracotta. */
+  --page: #17170f;
+  --page-art: radial-gradient(125% 72% at 50% -20%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 72%);
+  --ink: #f0efe4; --muted: #a5a596;
+  --line: #35352a; --line-strong: #47473a;
+  --panel: #1f1f16; --soft: #1b1b13; --raised: #2a2a1e; --hover: #303023;
+  --stage: #262619; --stage-ink: #97978a;
+  --accent: #ea8a60; --accent-ink: #17170f;
+  --panel-shadow: inset 0 1px 0 #ffffff0d, 0 14px 34px -14px #000000a6;
+  --picker-bg: var(--panel); --picker-ink: var(--ink); --picker-line: var(--line);
+  color: var(--ink); background-color: var(--page); background-image: var(--page-art);
+  background-repeat: no-repeat; background-attachment: fixed;
+}
+
+/* 01 / OUTFIT: beige + poster red -> warm brown-black + poster red. */
+html[data-appearance="dark"][data-style="outfit"] {
+  --page: #17100f; --soft: #1c1413; --panel: #221918; --stage: #2a201e;
+  --raised: #2f2422; --hover: #362927;
+  --line: #3d2d2a; --line-strong: #513c37;
+  --ink: #f7ebe4; --muted: #b39a92; --stage-ink: #ab938b;
+  --accent: #ff7059; --accent-ink: #23100c;
+}
+/* 02 / LIQUID GLASS: the same three light blooms, sunk into deep navy; panels stay translucent. */
+html[data-appearance="dark"][data-style="glass"] {
+  --page: #0d1520;
+  --page-art:
+    radial-gradient(ellipse at 6% 10%, #1d4d8ae6, transparent 48%),
+    radial-gradient(ellipse at 94% 38%, #135047b3, transparent 40%),
+    radial-gradient(ellipse at 55% 100%, #5b382bb3, transparent 60%);
+  --panel: #ffffff14; --soft: #ffffff0a; --stage: #ffffff12;
+  --raised: #17212e; --hover: #ffffff1f;
+  --line: #ffffff26; --line-strong: #ffffff42;
+  --ink: #e8f0fa; --muted: #a3b7cd; --stage-ink: #a3b7cd;
+  --accent: #64b5ff; --accent-ink: #06121f;
+  --panel-shadow: 0 10px 34px #00000059, inset 0 1px 1px #ffffff1f;
+}
+/* 03 / BRUTALIST: the black-on-white contract flipped to white-on-black. Lime stays lime. */
+html[data-appearance="dark"][data-style="brutalist"] {
+  --page: #101010;
+  --page-art: linear-gradient(#ffffff0d 1px, transparent 1px), linear-gradient(90deg, #ffffff0d 1px, transparent 1px);
+  --panel: #181818; --soft: #1e1e1a; --stage: #232320; --raised: #272727; --hover: #2f2f2a;
+  --line: #ebebe0; --line-strong: #ffffff;
+  --ink: #f5f5ec; --muted: #a3a39a; --stage-ink: #a3a39a;
+  --accent: #e5fa45; --accent-ink: #101010;
+  --panel-shadow: 4px 4px 0 #ebebe0;
+}
+/* 04 / NOCTURNE: already an after-hours palette in light mode, so dark just is it. */
+html[data-appearance="dark"][data-style="nocturne"] {
+  --page: #15181c;
+  --page-art: radial-gradient(ellipse at 60% 0%, #31373c80, transparent 62%);
+  --panel: #20242a; --soft: #292d33; --raised: #2e333a; --hover: #363c44;
+  --line: #3d4249; --line-strong: #525963;
+  --ink: #f1ebe0; --muted: #a8acb1;
+  --stage: #d8d6ce; --stage-ink: #4b4c48;
+  --accent: #dfc294; --accent-ink: #241f18;
+  --panel-shadow: 0 10px 26px #00000059, inset 0 1px 0 #ffffff0a;
+}
+/* 05 / FIELD NOTES: sage paper and its grain, dimmed to a forest-black notebook. */
+html[data-appearance="dark"][data-style="field"] {
+  --page: #111512;
+  --page-art: radial-gradient(#8fae8a1f .6px, transparent .8px);
+  --panel: #1a201b; --soft: #161b17; --stage: #212821; --raised: #262e27; --hover: #2c352d;
+  --line: #384338; --line-strong: #4c594c;
+  --ink: #e9efe6; --muted: #9dab97; --stage-ink: #9dab97;
+  --accent: #a9d49f; --accent-ink: #10190f;
+}
+/* 06 / MINIMAL: a straight neutral inversion, nothing added. */
+html[data-appearance="dark"][data-style="minimal"] {
+  --page: #0f0f0f; --page-art: none;
+  --panel: #1a1a1a; --soft: #151515; --stage: #202020; --raised: #242424; --hover: #2c2c2c;
+  --line: #2e2e2e; --line-strong: #3f3f3f;
+  --ink: #ededed; --muted: #9a9a9a; --stage-ink: #9a9a9a;
+  --accent: #ededed; --accent-ink: #0f0f0f;
+  --panel-shadow: none;
+}
+html[data-appearance="light"][data-style="nocturne"] { --page: #f7f4ee; --page-art: none; --ink: #30291f; --muted: #6b6050; --line: #d6cbbb; --panel: #fffdf8; --soft: #ebe4d9; --stage: #e4dfd4; --stage-ink: #655b4b; --accent: #79603c; --accent-ink: #ffffff; --panel-shadow: none; }
+
+/* Repaint fixed-colour accents as well as token-based surfaces. Keep photos true to colour. */
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) {
+  color: var(--ink); background-color: var(--page); background-image: var(--page-art);
+}
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) :where(.wordmark, .demo-toolbar h1, .results-intro h3, .detail-card > strong, .advanced-heading h2, .similar-banner-heading h3, .demo-notice strong, .technical-panel summary, .technical-content td, .config-foot > :last-child, .preprocess-preview strong, .evaluation-content h3, .search-config b, .result-empty h3, .search-empty h3, .empty-upload strong, .how-step h3, .pipeline h3, .section-heading h2, .match-name) { color: var(--ink); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) :where(.header-caption, .small-label, .result-status, .filename, .upload-help, .privacy-note, .sample-heading > span:last-child, .results-intro p, .card-top, .card-top svg, .card-bottom > span:first-child, .task-label, .prediction-note, .how-step > span, .how-step p, .how-link, footer, .footer-wordmark, .empty-upload > span:not(.upload-circle), .empty-upload small, .result-empty p, .loading-title, .loading-results > p, .match-notice, .match-subtitle, .score-heading, .score-row, .outline-tag, .pipeline > div > span, .pipeline svg, .pipeline p, .pipeline-arrow, .pipeline-branches > div > span, .pipeline-note, .technical-panel summary > span, .technical-content p, .technical-content th, .technical-content td:last-child, .config-foot, .preprocess-preview p, .search-config, dialog p, .hero-side > p, .tabs > button, .mode-hint, .demo-tag, .tab-count, .tab-task, .search-heading p, .match-score, .discovery-card p, .discovery-card .eyebrow, .discovery-card h3 em, .how-title h2 em) { color: var(--muted); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) :where(.detail-card, .technical-panel, .search-empty, .search-config, .pipeline-branches > div, .select-content, dialog) { background: var(--panel); color: var(--ink); border-color: var(--line); box-shadow: var(--panel-shadow); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) :where(.compact-header, .demo-notice, .mode-switch, .pipeline, .discovery-card) { background: var(--soft); border-color: var(--line); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) .demo-notice { color: var(--muted); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) :where(.upload-frame, .sample-button, .match-image, .preprocess-preview > img, .match-dialog > img) { background: var(--stage); border-color: var(--line); color: var(--stage-ink); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) :where(.image-topline, .image-caption, .sample-button > span, .match-rank) { color: var(--stage-ink); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) :where(.icon-button, .match-expand, .upload-button, .style-picker, .select-trigger) { background: var(--panel); color: var(--ink); border-color: var(--line); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) :where(.upload-button > span, .how-title .eyebrow, .brand-period, .step, .match-score b, .text-button) { color: var(--accent); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) :where(.score-bars, .technical-content td, .config-foot, .pipeline > .pipeline-branches, .how-link, .tab-task, .outline-tag, .upload-circle, .search-illustration, .demo-tag, .footer-preview) { border-color: var(--line); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) .mode-switch button { color: var(--muted); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) .mode-switch button.active { background: var(--accent); color: var(--accent-ink); border-color: transparent; box-shadow: none; }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) .primary-button { background: var(--accent); color: var(--accent-ink); border-color: var(--line); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) .similar-banner { --banner-bg: var(--soft); --banner-ink: var(--ink); --banner-muted: var(--muted); border-color: var(--line); }
+html:is([data-appearance="dark"], [data-appearance="light"][data-style="nocturne"]) .sample-button.selected { background: var(--stage); border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+
+/* Dark-only repairs: light-theme colours that would otherwise stay light on a dark page. */
+html[data-appearance="dark"] ::selection { background: var(--accent); color: var(--accent-ink); }
+html[data-appearance="dark"] :where(button, a, select, summary):focus-visible { outline-color: var(--accent); }
+html[data-appearance="dark"] .skip-link { background: var(--raised); color: var(--ink); border: 1px solid var(--line-strong); }
+html[data-appearance="dark"] :where(.query-image, .sample-button img, .match-image img, .match-dialog > img) { mix-blend-mode: normal; }
+html[data-appearance="dark"] .error-message { background: #2a1d1a; color: #f4b9a3; border-color: #6b4438; }
+html[data-appearance="dark"] dialog::backdrop { background: #05070999; backdrop-filter: blur(6px); }
+html[data-appearance="dark"] .dialog-close { background: var(--hover); color: var(--ink); }
+html[data-appearance="dark"] .drop-overlay { background: color-mix(in srgb, var(--page) 95%, transparent); border-color: var(--accent); color: var(--accent); }
+html[data-appearance="dark"] .photo-corner { border-color: var(--stage-ink); opacity: .5; }
+html[data-appearance="dark"] .spinner { border-color: var(--line-strong); border-top-color: var(--accent); }
+html[data-appearance="dark"] .score-track { background: var(--line); }
+html[data-appearance="dark"] .score-track i { background: var(--muted); }
+html[data-appearance="dark"] .score-row:nth-child(2) .score-track i { background: var(--accent); }
+html[data-appearance="dark"] :where(.demo-dot, .status-dot, .sample-button i) { background: var(--accent); }
+html[data-appearance="dark"] .sample-button i { color: var(--accent-ink); }
+html[data-appearance="dark"] :where(.tab-count, .task-label) { background: var(--hover); color: var(--muted); }
+html[data-appearance="dark"] :where(.tabs > button.active, .tabs > button:hover, .about-button:hover, .how-link:hover) { color: var(--accent); }
+html[data-appearance="dark"] :where(.tabs > button.active, .how-link:hover) { border-color: var(--accent); }
+html[data-appearance="dark"] :where(.upload-circle, .search-illustration, .discovery-art) { color: var(--muted); }
+html[data-appearance="dark"] .discovery-art { color: var(--line-strong); }
+html[data-appearance="dark"] :where(.skeleton > span, .skeleton > strong) { background-image: linear-gradient(110deg, var(--soft) 25%, var(--hover) 50%, var(--soft) 75%); }
+html[data-appearance="dark"] .match-skeleton { background: var(--stage); background-image: linear-gradient(110deg, var(--stage) 25%, var(--hover) 50%, var(--stage) 75%); }
+html[data-appearance="light"][data-style="nocturne"] .detail-card > strong { color: var(--accent); }
+html[data-appearance="light"][data-style="nocturne"] .detail-card .card-top svg { color: var(--muted); }
+/* themes.css paints nocturne's tan on a dark page; on the cream light page it needs darker ink. */
+html[data-appearance="light"][data-style="nocturne"] :is(.how-title .eyebrow) { color: var(--accent); }
+html[data-appearance="light"][data-style="nocturne"] :is(.tab-count, .tab-task, .outline-tag) { color: var(--muted); }
+
+/* Dark appearance uses one neutral surface scale. A style adds only small accents. */
+html[data-appearance="dark"][data-style] .compact-header { background: color-mix(in srgb, var(--page) 82%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom-color: var(--line); }
+html[data-appearance="dark"][data-style] .compact-notice { background: transparent; }
+html[data-appearance="dark"][data-style] .pipeline { background: var(--panel); }
+html[data-appearance="dark"][data-style] .pipeline-branches > div { background: var(--soft); }
+html[data-appearance="dark"][data-style] .mode-switch { background: color-mix(in srgb, #000 32%, var(--page)); border: 1px solid var(--line); }
+html[data-appearance="dark"][data-style] .mode-switch button.active { background: var(--raised); color: var(--ink); border-color: var(--line-strong); box-shadow: inset 0 1px 0 #ffffff10; }
+html[data-appearance="dark"][data-style] .mode-switch button:hover:not(.active) { background: var(--hover); color: var(--ink); }
+html[data-appearance="dark"][data-style] :where(.detail-card > strong, .similar-banner-heading h3) { color: var(--ink); }
+html[data-appearance="dark"][data-style] .detail-card .card-top svg { color: var(--accent); opacity: .8; }
+html[data-appearance="dark"][data-style] :where(.upload-frame, .match-image, .detail-card) { outline-color: var(--line); }
+html[data-appearance="dark"][data-style] :where(.upload-frame, .match-image) { background-image: radial-gradient(ellipse 78% 62% at 50% 34%, #ffffff10, transparent 72%); box-shadow: inset 0 0 0 1px #ffffff06; }
+html[data-appearance="dark"][data-style] .detail-card { border-color: var(--line); box-shadow: var(--panel-shadow); }
+html[data-appearance="dark"][data-style] .sample-button { border-color: var(--line); }
+html[data-appearance="dark"][data-style] .sample-button.selected { border-color: var(--accent); }
+html[data-appearance="dark"][data-style] :where(.task-label, .outline-tag) { color: var(--muted); background: transparent; border-color: var(--line); }
+html[data-appearance="dark"][data-style] :where(.upload-button:hover, .icon-button:hover, .color-mode-toggle:hover, .empty-upload:hover, .match-expand:hover, .style-picker:hover) { background: var(--hover); color: var(--ink); border-color: var(--line-strong); }
+html[data-appearance="dark"][data-style] .upload-button:hover { border-color: var(--accent); }
+html[data-appearance="dark"][data-style] .primary-button:hover { filter: brightness(1.08); }
+html[data-appearance="dark"][data-style] .select-content { background: var(--raised); border-color: var(--line-strong); box-shadow: 0 18px 40px #00000080; }
+html[data-appearance="dark"][data-style] .select-item[data-highlighted] { background: var(--hover); color: var(--ink); }
+html[data-appearance="dark"][data-style] .select-item[data-state="checked"] { color: var(--accent); }
+html[data-appearance="dark"][data-style] .select-item .style-option-copy small { color: var(--muted); opacity: 1; }
+html[data-appearance="dark"][data-style] .similar-banner { --banner-bg: var(--soft); box-shadow: var(--panel-shadow); }
+html[data-appearance="dark"][data-style] .discovery-card { background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, var(--soft)), var(--soft) 62%); border: 1px solid var(--line-strong); }
+/* The banner can carry its own background, so its text follows the banner's own tokens. */
+html[data-appearance="dark"] .similar-banner :is(.eyebrow, .count-select, .match-name, .match-score b, .similar-banner-heading h3) { color: var(--banner-ink); }
+html[data-appearance="dark"] .similar-banner :is(.match-notice, .match-subtitle, .match-score, .prediction-note, .loading-title, .similar-banner-heading p) { color: var(--banner-muted); }
+
+/* Style identity in dark: every skin keeps the signature moves it makes in light. */
+html[data-appearance="dark"]:is([data-style="brutalist"], [data-style="field"]) { background-repeat: repeat; }
+
+/* OUTFIT keeps red headings, the red discovery block and banner, and the dotted plinth. */
+html[data-appearance="dark"][data-style="outfit"] :is(.wordmark, .demo-toolbar h1, .detail-card > strong, .results-intro h3, .search-heading h3, .advanced-heading h2) { color: var(--accent); }
+html[data-appearance="dark"][data-style="outfit"] .discovery-card { background: #cf1d12; border-color: #e5432f; }
+html[data-appearance="dark"][data-style="outfit"] .discovery-card :where(h3, h3 em, p, .eyebrow) { color: #fff3ec; }
+html[data-appearance="dark"][data-style="outfit"] .discovery-card .primary-button { background: #fff1e4; color: #a8180f; }
+html[data-appearance="dark"][data-style="outfit"] .discovery-art { color: #ea4b34; }
+html[data-appearance="dark"][data-style="outfit"] .similar-banner { --banner-bg: #b8180d; --banner-ink: #fff6ef; --banner-muted: #f6cfc4; border-color: #d43425; }
+html[data-appearance="dark"][data-style="outfit"] :where(.upload-frame, .match-image) { background-image: radial-gradient(#ff705926 .7px, transparent .7px); background-size: 7px 7px; }
+html[data-appearance="dark"][data-style="outfit"] .mode-switch button.active { background: var(--accent); color: var(--accent-ink); border-color: transparent; box-shadow: none; }
+
+/* GLASS stays translucent; its light-mode whites become low-alpha whites over navy. */
+html[data-appearance="dark"][data-style="glass"] :where(.upload-frame, .sample-button, .tabs) { border-color: var(--line); }
+html[data-appearance="dark"][data-style="glass"] .upload-frame { box-shadow: inset 0 0 35px #ffffff0f, 0 14px 35px #00000059; }
+html[data-appearance="dark"][data-style="glass"] .tabs { background: #ffffff0d; }
+html[data-appearance="dark"][data-style="glass"] .tabs > button.active { background: #ffffff21; color: var(--ink); box-shadow: 0 2px 8px #00000040; }
+html[data-appearance="dark"][data-style="glass"] .primary-button { background: linear-gradient(#3f9bff, #1573e6); color: #ffffff; border: 1px solid #ffffff40; box-shadow: inset 0 1px 1px #ffffff4d, 0 5px 14px #0b4f9e59; }
+
+/* BRUTALIST flips its black rules and hard shadows to bone; lime stays the marker colour. */
+html[data-appearance="dark"][data-style="brutalist"] :where(.detail-card, .technical-panel, .search-config, .upload-frame, .style-picker, .upload-button, .primary-button, .match-image, .sample-button, .mode-switch, .tabs, .pipeline, .pipeline-branches > div, dialog) { border-color: var(--line); }
+html[data-appearance="dark"][data-style="brutalist"] :where(.detail-card, .technical-panel, .search-config, .upload-frame, .style-picker, .upload-button, .primary-button, .match-image, dialog) { box-shadow: 4px 4px 0 var(--line); }
+html[data-appearance="dark"][data-style="brutalist"] .sample-button.selected { background: var(--accent); box-shadow: 3px 3px 0 var(--line); }
+html[data-appearance="dark"][data-style="brutalist"] .sample-button.selected > span { color: var(--accent-ink); }
+html[data-appearance="dark"][data-style="brutalist"] .sample-button.selected i { background: var(--accent-ink); color: var(--accent); }
+html[data-appearance="dark"][data-style="brutalist"] :where(.task-label, .tab-task) { background: var(--accent); color: var(--accent-ink); border-color: var(--line); }
+html[data-appearance="dark"][data-style="brutalist"] .mode-switch button.active { background: var(--accent); color: var(--accent-ink); border-color: transparent; box-shadow: none; }
+html[data-appearance="dark"][data-style="brutalist"] .pipeline { background: var(--panel); }
+html[data-appearance="dark"][data-style="brutalist"] .discovery-card { background: var(--accent); border-color: var(--line); box-shadow: 4px 4px 0 var(--line); }
+html[data-appearance="dark"][data-style="brutalist"] .discovery-card :where(h3, h3 em, p, .eyebrow) { color: #33390f; }
+html[data-appearance="dark"][data-style="brutalist"] .discovery-art { color: #b6c93c; }
+html[data-appearance="dark"][data-style="brutalist"] .similar-banner { --banner-bg: var(--accent); --banner-ink: #171717; --banner-muted: #4a5216; border-color: var(--line); box-shadow: 4px 4px 0 var(--line); }
+html[data-appearance="dark"][data-style="brutalist"] .score-track { background: var(--stage); }
+html[data-appearance="dark"][data-style="brutalist"] .style-swatch { border-color: var(--line); }
+
+/* NOCTURNE is the same after-hours room in both modes, so let its own skin show through. */
+html[data-appearance="dark"][data-style="nocturne"] .wordmark { color: var(--accent); }
+html[data-appearance="dark"][data-style="nocturne"] .detail-card { background: linear-gradient(135deg, #282c32, #1e2227); border-top-color: #786956; }
+html[data-appearance="dark"][data-style="nocturne"] .detail-card > strong { color: #f0d7b0; }
+html[data-appearance="dark"][data-style="nocturne"] .detail-card .card-top svg { color: #bda17b; opacity: 1; }
+html[data-appearance="dark"][data-style="nocturne"] :where(.upload-frame, .match-image) { background-image: radial-gradient(ellipse, #f2efe5, #cccac2); box-shadow: 0 18px 35px #00000059; }
+html[data-appearance="dark"][data-style="nocturne"] .upload-frame { border-color: #5b5850; }
+html[data-appearance="dark"][data-style="nocturne"] .discovery-card { background: linear-gradient(120deg, #3a332a, #24272c); border-color: #615342; }
+html[data-appearance="dark"][data-style="nocturne"] .primary-button { background: linear-gradient(120deg, #edcf9f, #c6a575); border-color: transparent; box-shadow: inset 0 1px 0 #ffffff33, 0 4px 12px #00000059; }
+html[data-appearance="dark"][data-style="nocturne"] .similar-banner { --banner-bg: linear-gradient(120deg, #3a332a, #24272c); --banner-muted: #cbb99f; border-color: #615342; }
+html[data-appearance="dark"][data-style="nocturne"] .mode-switch button.active { background: transparent; color: #f1d4a5; border-color: #7d6a4e; box-shadow: none; }
+html[data-appearance="dark"][data-style="nocturne"] .style-picker { border-color: #796447; }
+html[data-appearance="dark"][data-style="nocturne"] :where(.tab-count, .task-label) { background: var(--soft); color: #d8bd94; }
+
+/* FIELD keeps its stitched sage tabs and chips, dropped onto the dark page. */
+html[data-appearance="dark"][data-style="field"] .tabs > button.active { background: #22301f; color: var(--accent); }
+html[data-appearance="dark"][data-style="field"] .sample-button.selected { background: #22301f; box-shadow: inset 0 0 0 2px var(--accent); }
+html[data-appearance="dark"][data-style="field"] .upload-frame { border-color: #4a5a48; }
+html[data-appearance="dark"][data-style="field"] .photo-corner { background: #7d6a4155; border-color: #7d6a41; }
+html[data-appearance="dark"][data-style="field"] .primary-button { box-shadow: 0 3px 0 #4c6a52; }
+
+/* MINIMAL mirrors light exactly: filled accent controls, one grey error box, plain card. */
+html[data-appearance="dark"][data-style="minimal"] .mode-switch button.active { background: var(--accent); color: var(--accent-ink); border-color: transparent; box-shadow: none; }
+html[data-appearance="dark"][data-style="minimal"] .error-message { background: var(--raised); border-color: var(--line-strong); color: var(--ink); }
+html[data-appearance="dark"][data-style="minimal"] .discovery-card { background: var(--soft); }
+
+@media (max-width: 600px) {
+  html .compact-header .wordmark { font-size: 26px; }
+  .compact-header .brand-symbol { display: none; }
+  .compact-header .header-actions { gap: 6px; }
+  .compact-header { gap: 8px; }
+  .style-picker.select-trigger { max-width: 125px; }
+  .color-mode-toggle { width: 32px; height: 36px; }
+  .compact-header .about-button { width: 24px; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  html[data-appearance="dark"][data-style="glass"] { --panel: #16202e; --soft: #121b27; --stage: #1a2534; --hover: #223042; --line: #2c3d52; --line-strong: #3f5470; }
+  html[data-appearance="dark"][data-style="glass"] .tabs { background: #16202e; }
+  html[data-appearance="dark"][data-style] .compact-header { background: var(--page); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
