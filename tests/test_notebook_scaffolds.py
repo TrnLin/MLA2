@@ -1691,7 +1691,7 @@ def test_task4_evaluation_protocol_is_frozen_and_executed() -> None:
         "Model quality remains unknown until the baseline and learned search methods are run."
         not in source
     )
-    assert "Only learned-model quality remains unknown." in source
+    assert "Section 8 reports learned-model quality from the frozen development evidence." in source
     assert (ROOT / "results/figures/task4/retrieval_protocol_overview.png").exists()
 
 
