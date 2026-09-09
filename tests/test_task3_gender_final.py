@@ -53,8 +53,8 @@ def test_holdout_tables_match_saved_confusion_counts():
 
 
 def test_gender_holdout_results_stay_in_final_notebook():
-    main = nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4)
-    final = nbformat.read(ROOT / "notebooks/04_task3_final_evaluation.ipynb", as_version=4)
+    main = nbformat.read(ROOT / "notebooks/06_task3_part1_gender_usage.ipynb", as_version=4)
+    final = nbformat.read(ROOT / "notebooks/07_task3_part2_final_evaluation.ipynb", as_version=4)
     main_code = "\n".join(c.source for c in main.cells if c.cell_type == "code")
     final_code = "\n".join(c.source for c in final.cells if c.cell_type == "code")
     assert "verify_gender_final" in main_code
