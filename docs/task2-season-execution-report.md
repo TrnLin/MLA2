@@ -55,7 +55,7 @@ occurred. The shared inference API and command-line launcher now load only this 
 package, accept explicit image paths, and return calibrated Season probabilities with
 the run, manifest, and bundle hashes. They do not read holdout labels or write the
 official prediction CSV through that image-only inference interface. Independent
-evaluation has since completed in [Notebook 06 Task 2](../notebooks/06_task2_season_evaluation.ipynb):
+evaluation has since completed in [Notebook 06 Task 2](../notebooks/05_task2_part2_final_evaluation.ipynb):
 all 5,778 valid internal-holdout rows were scored, and the two-column `id,season`
 teacher-test export contains 5,829 rows. Holdout macro-F1 is `0.7533847968563716`;
 the frozen model, temperature, and selection were not changed after evaluation.
@@ -98,7 +98,7 @@ strongest defensible submission path.
   rubric does not award a separate accuracy mark.
 - `AGENTS.md`, the repository README files, roadmap, notebook guide, and active
   decision records.
-- The complete `notebooks/03_task2_season.ipynb` scaffold, Notebook 00, the Season,
+- The complete `notebooks/04_task2_part1_season.ipynb` scaffold, Notebook 00, the Season,
   shortcut, and transform evidence in Notebook 01, and the holdout lock in Notebook 06.
 - The APIs under `src/fashion/data/`, the canonical split, label maps, class summaries,
   and generated figures and evidence.
