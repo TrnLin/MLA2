@@ -17,3 +17,7 @@
 reports/task3/**/*.csv -text
 reports/task3/**/*.json -text
 reports/task3/**/licenses/* -text
+
+# Task 1 frozen inputs must retain the exact bytes recorded by the saved evaluation.
+configs/task1/final_evaluation.json -text
+src/fashion/task1/refit.py -text
