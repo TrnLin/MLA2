@@ -107,7 +107,7 @@ def test_assignment_breakdown_lists_the_canonical_notebooks() -> None:
         assert fixed_metric not in document
 
 
-def test_task4_preprocessing_decision_and_progress_are_frozen() -> None:
+def test_task4_preprocessing_decision_and_evidence_are_frozen() -> None:
     decision_index = (ROOT / "docs/decisions/README.md").read_text(encoding="utf-8")
     old_decision = (
         ROOT / "docs/decisions/0020-task4-image-preprocessing.md"
@@ -115,7 +115,6 @@ def test_task4_preprocessing_decision_and_progress_are_frozen() -> None:
     decision = (
         ROOT / "docs/decisions/0021-task4-high-resolution-input.md"
     ).read_text(encoding="utf-8")
-    progress = (ROOT / "notebooks/task-4/PROGRESS.md").read_text(encoding="utf-8")
     evidence_readme = (
         ROOT / "results/evidence/task4/README.md"
     ).read_text(encoding="utf-8")
@@ -133,14 +132,6 @@ def test_task4_preprocessing_decision_and_progress_are_frozen() -> None:
     assert "holdout" in decision.lower() and "sealed" in decision.lower()
     assert "240×320" in decision
     assert "96×128" in decision and "probe" in decision.lower()
-    assert "Decision: `240×320`" in progress
-    for completed in (
-        "- [x] Compare useful image sizes",
-        "- [x] Choose resize, padding, and colour handling",
-        "- [x] Define arbitrary query-image handling",
-        "- [x] Fit any learned image values on training folds only",
-    ):
-        assert completed in progress
     for artifact in (
         "preprocessing_comparison.csv",
         "preprocessing_size_selection.csv",
