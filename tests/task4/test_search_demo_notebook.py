@@ -44,16 +44,12 @@ def test_search_demo_uses_public_output_writer() -> None:
 def test_search_demo_notebook_is_thin_safe_and_runnable() -> None:
     notebook = nbformat.read(NOTEBOOK, as_version=4)
     nbformat.validate(notebook)
-    assert [cell.cell_type for cell in notebook.cells] == [
-        "markdown",
-        "code",
-        "markdown",
-        "code",
-        "code",
-        "code",
-        "code",
-        "code",
-    ]
+    code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
+    assert len(code_cells) == 6
+    for index, cell in enumerate(notebook.cells):
+        if cell.cell_type == "code":
+            assert index > 0
+            assert notebook.cells[index - 1].cell_type == "markdown"
 
     markdown = "\n".join(
         cell.source for cell in notebook.cells if cell.cell_type == "markdown"
@@ -88,8 +84,7 @@ def test_search_demo_notebook_is_saved_clean() -> None:
     notebook = nbformat.read(NOTEBOOK, as_version=4)
     code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
 
-    assert len(notebook.cells) == 8
-    assert len({cell.id for cell in notebook.cells}) == 8
+    assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
     assert all(cell.execution_count is None for cell in code_cells)
     assert all(cell.outputs == [] for cell in code_cells)
     assert all("execution" not in cell.metadata for cell in notebook.cells)
