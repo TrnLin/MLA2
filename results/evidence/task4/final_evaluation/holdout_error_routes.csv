@@ -1,0 +1,386 @@
+query_articleType,candidate_articleType,count,mean_ndcg_at_10
+Tshirts,Tshirts,874,0.62102747626891575
+Shirts,Shirts,389,0.53737094067564362
+Casual Shoes,Casual Shoes,328,0.56474071290622196
+Watches,Watches,319,0.69772468134155152
+Sports Shoes,Sports Shoes,240,0.67291995545163275
+Kurtas,Kurtas,203,0.52331424134256765
+Handbags,Handbags,187,0.51796119799879159
+Sunglasses,Sunglasses,154,0.63811342411990635
+Tops,Tops,149,0.40100625766642312
+Heels,Heels,128,0.46151163007946422
+Belts,Belts,116,0.69905382400292604
+Wallets,Wallets,116,0.65432708586170962
+Flip Flops,Flip Flops,115,0.52688707881600361
+Backpacks,Backpacks,102,0.63039481511940465
+Briefs,Briefs,97,0.57834747015533905
+Sandals,Sandals,93,0.48476298503190446
+Socks,Socks,85,0.61359615282036251
+Formal Shoes,Formal Shoes,80,0.64056042482877573
+Jeans,Jeans,65,0.60890802942160949
+Trousers,Trousers,63,0.52487368768429143
+Shorts,Shorts,60,0.55320465563328691
+Perfume and Body Mist,Perfume and Body Mist,57,0.47538164105014646
+Shirts,Tshirts,49,0.1920809083320979
+Tshirts,Tops,47,0.23676800739424078
+Casual Shoes,Sports Shoes,44,0.27908585637895078
+Tops,Tshirts,44,0.19315101100385174
+Deodorant,Deodorant,42,0.61595850576992639
+Sports Shoes,Casual Shoes,42,0.31092245340835645
+Caps,Caps,41,0.60217519576729883
+Bra,Bra,39,0.70126208486436559
+Flats,Flats,34,0.36735638319055886
+Tshirts,Shirts,32,0.32715331682354754
+Track Pants,Track Pants,30,0.54943987112957937
+Ties,Ties,28,0.63191866871147473
+Earrings,Earrings,27,0.76345307374901716
+Innerwear Vests,Innerwear Vests,27,0.42472135836613062
+Sweatshirts,Sweatshirts,26,0.39505422421038028
+Clutches,Clutches,23,0.53612643067631838
+Dresses,Dresses,22,0.35788995796594691
+Sweaters,Sweaters,22,0.38411231492234638
+Heels,Flats,19,0.29089698273402614
+Sarees,Sarees,19,0.62028315371217002
+Flats,Heels,18,0.11313073885962893
+Trunk,Trunk,17,0.45351027489829926
+Casual Shoes,Formal Shoes,16,0.30458699649805016
+Dresses,Kurtas,16,0.10453759000606537
+Dupatta,Dupatta,16,0.60091384925566982
+Accessory Gift Set,Accessory Gift Set,15,0.52841290789839457
+Sandals,Flip Flops,15,0.15452783310593457
+Leggings,Leggings,14,0.41740882136156532
+Capris,Capris,13,0.45034719143238156
+Pendant,Pendant,13,0.604754185689099
+Jackets,Jackets,12,0.41409389902385424
+Perfume and Body Mist,Deodorant,12,0.1120848926705716
+Shirts,Tops,11,0.073014034517135604
+Handbags,Wallets,10,0.1472236882522393
+Kurta Sets,Kurta Sets,10,0.49545051376745358
+Kurtis,Kurtis,10,0.26753742702874034
+Sandals,Casual Shoes,10,0.09921414141995305
+Sweaters,Tops,10,0.033783608758765106
+Formal Shoes,Casual Shoes,9,0.31379265829299685
+Scarves,Scarves,9,0.41239357960938666
+Tops,Kurtas,9,0.15348364318816018
+Tops,Kurtis,9,0.15572626048640104
+Tops,Shirts,9,0.1413513656192964
+Track Pants,Trousers,9,0.30145117498590879
+Clutches,Wallets,8,0.089053045746523618
+Flip Flops,Sandals,8,0.41368016342623581
+Heels,Flip Flops,8,0.17267723710547414
+Kurtis,Kurtas,8,0.042825889246637397
+Kurtis,Tops,8,0.11600946911837076
+Stoles,Stoles,8,0.45030409057388082
+Duffel Bag,Duffel Bag,7,0.46335514474324963
+Fragrance Gift Set,Fragrance Gift Set,7,0.38949860971652422
+Jackets,Tshirts,7,0.049018629012350337
+Kurtas,Tunics,7,0.28531146162670024
+Necklace and Chains,Necklace and Chains,7,0.45178414790209842
+Trousers,Jeans,7,0.15738712818526465
+Tshirts,Sweaters,7,0.17116558720231523
+Tunics,Kurtas,7,0.038568302216031594
+Tunics,Tops,7,0.068024084538467824
+Casual Shoes,Flats,6,0.19015451065388847
+Innerwear Vests,Tshirts,6,0.12200732239310169
+Jackets,Shirts,6,0.042323553200146448
+Kurtas,Dresses,6,0.26130348467568693
+Kurtas,Kurtis,6,0.35787265623918718
+Night suits,Night suits,6,0.5427581255901569
+Skirts,Shorts,6,0.084963837257563665
+Tops,Dresses,6,0.15562416241591637
+Tops,Tunics,6,0.21135188370095195
+Tshirts,Innerwear Vests,6,0.37207066365152786
+Bracelet,Bracelet,5,0.69263417100755054
+Capris,Shorts,5,0.095740787419456005
+Casual Shoes,Heels,5,0.037181466725231246
+Cufflinks,Cufflinks,5,0.81535971307851762
+Duffel Bag,Handbags,5,0.064562968372741336
+Flats,Flip Flops,5,0.030130218377711841
+Free Gifts,Watches,5,0
+Handbags,Duffel Bag,5,0.10798132653994141
+Lipstick,Fragrance Gift Set,5,0.38728324278739334
+Mobile Pouch,Mobile Pouch,5,0.3095712639427049
+Sandals,Sports Sandals,5,0.40919222360916213
+Shorts,Capris,5,0.27551057427082887
+Skirts,Skirts,5,0.35092456892591894
+Sweaters,Tshirts,5,0.0617283961161482
+Sweatshirts,Jackets,5,0.2474173626746734
+Track Pants,Jeans,5,0.13832774464065842
+Tshirts,Sweatshirts,5,0.22614243192995631
+Bangle,Ring,4,0
+Casual Shoes,Sandals,4,0.27351753424880343
+Dresses,Tops,4,0.17009430521908936
+Flip Flops,Heels,4,0.30164152193752936
+Jackets,Sweaters,4,0.1465909367355876
+Jackets,Sweatshirts,4,0.20068252494991529
+Jeans,Trousers,4,0.36831208276829708
+Jewellery Set,Jewellery Set,4,0.61436236023007607
+Kurtas,Tops,4,0.26794881722744002
+Laptop Bag,Laptop Bag,4,0.53537242014755171
+Lounge Pants,Lounge Pants,4,0.40682523545439747
+Perfume and Body Mist,Tshirts,4,0.08627634589092914
+Perfume and Body Mist,Wallets,4,0.12501597151634702
+Salwar,Salwar,4,0.4484601375534743
+Scarves,Mufflers,4,0.31655889875501564
+Shirts,Sweatshirts,4,0.28608221438434389
+Shirts,Tunics,4,0.083338217156100916
+Shorts,Skirts,4,0.10459341119793171
+Sports Sandals,Sports Sandals,4,0.29447397911891171
+Sweatshirts,Shirts,4,0.16971526778594309
+Tunics,Tunics,4,0.14134974607508233
+Wallets,Clutches,4,0.2782094795547535
+Bangle,Bracelet,3,0.10316849694453789
+Booties,Booties,3,0.6909085190332851
+Capris,Jeans,3,0.084903531275806021
+Churidar,Churidar,3,0.61361801689893014
+Handbags,Clutches,3,0.29886414263959876
+Jeans,Track Pants,3,0.30375354508874297
+Kurtas,Tshirts,3,0.087066284936575422
+Leggings,Capris,3,0
+Mufflers,Mufflers,3,0.44058510824573965
+Sandals,Formal Shoes,3,0.25690038922004632
+Shorts,Jeans,3,0.22354896838356419
+Skirts,Caps,3,0.12175145841831757
+Sports Sandals,Sandals,3,0.028381039213873669
+Sweaters,Shirts,3,0.060613931967276526
+Sweatshirts,Sweaters,3,0.14243314352153952
+Sweatshirts,Tshirts,3,0.15785110946739503
+Tracksuits,Tracksuits,3,0.54899158434815554
+Trousers,Track Pants,3,0.31583238052037066
+Trunk,Briefs,3,0.15543711420000003
+Tshirts,Dresses,3,0.15182069703263271
+Tunics,Kurtis,3,0.11980301567400163
+Backpacks,Handbags,2,0.10311242841072275
+Boxers,Briefs,2,0.17151756710623373
+Briefs,Trunk,2,0.27761524248764791
+Clutches,Handbags,2,0.081826649000317497
+Deodorant,Perfume and Body Mist,2,0.36078354187016765
+Dresses,Kurtis,2,0.047264273332909043
+Dresses,Tunics,2,0.09312831302916498
+Flats,Sandals,2,0.064271586243451292
+Free Gifts,Free Gifts,2,0.34762004682695924
+Gloves,Gloves,2,0.67082032712334094
+Handbags,Laptop Bag,2,0.15046362131649774
+Handbags,Messenger Bag,2,0.10863035642611495
+Heels,Sandals,2,0.0850743563367376
+Innerwear Vests,Shirts,2,0.29485945374050354
+Jackets,Tops,2,0.047264273332909043
+Jeans,Jeggings,2,0.25633455937182159
+Jeans,Lounge Pants,2,0.37517453679117152
+Jewellery Set,Necklace and Chains,2,0
+Kurtis,Tshirts,2,0.10220202556990038
+Kurtis,Tunics,2,0.17850404155741456
+Laptop Bag,Backpacks,2,0.055022941574520048
+Laptop Bag,Duffel Bag,2,0.15606543960156669
+Laptop Bag,Handbags,2,0.19622958636946328
+Leggings,Track Pants,2,0.02224589643284489
+Lounge Shorts,Lounge Shorts,2,0.26402182755041009
+Lounge Shorts,Shorts,2,0.03668196104968003
+Messenger Bag,Handbags,2,0.12384411307437707
+Messenger Bag,Laptop Bag,2,0
+Mufflers,Scarves,2,0.03487548132971275
+Nail Polish,Nail Polish,2,0.87804146334511657
+Night suits,Tops,2,0
+Night suits,Tracksuits,2,0.15928225508905378
+Nightdress,Nightdress,2,0.15206321246868454
+Perfume and Body Mist,Fragrance Gift Set,2,0.055022941574520048
+Sandals,Flats,2,0.22590748772848779
+Sandals,Heels,2,0.19147161365059773
+Sarees,Free Gifts,2,0.42062327924817167
+Scarves,Socks,2,0.030556523602689852
+Shirts,Innerwear Vests,2,0.22024004647439749
+Shoe Accessories,Shoe Laces,2,0.1963045738700098
+Shorts,Lounge Shorts,2,0.29314139203177819
+Shorts,Trousers,2,0.16267275913907378
+Sports Shoes,Sandals,2,0.18231700469497403
+Suspenders,Suspenders,2,0.71351044904718974
+Sweatshirts,Tops,2,0
+Tops,Stoles,2,0.20645991540071268
+Tops,Sweaters,2,0.25322021056474842
+Track Pants,Lounge Pants,2,0.33926835440690023
+Tshirts,Bra,2,0.18735471430433814
+Tshirts,Camisoles,2,0.093941938148302748
+Tshirts,Jackets,2,0.21457662567014882
+Tshirts,Kurtis,2,0.068167538922369542
+Tshirts,Perfume and Body Mist,2,0.24890832702259466
+Tshirts,Shorts,2,0
+Tunics,Dresses,2,0.05600139037879389
+Tunics,Shirts,2,0.021285779410405253
+Backpacks,Caps,1,0.49251245051493175
+Bangle,Bangle,1,0.35895421017163476
+Basketballs,Basketballs,1,0.64893157533184664
+Blazers,Kurtis,1,0
+Boxers,Boxers,1,0.52939560980348388
+Boxers,Handbags,1,0
+Boxers,Shorts,1,0
+Bra,Flip Flops,1,0.088150053301714576
+Bra,Tshirts,1,0.15293625714824835
+Bracelet,Bangle,1,0.13260508364419593
+Bracelet,Shoe Accessories,1,0
+Briefs,Shoe Accessories,1,0.17926473178241972
+Camisoles,Swimwear,1,0
+Camisoles,Tops,1,0.16842717545221192
+Capris,Backpacks,1,0
+Capris,Leggings,1,0.07336392209936006
+Capris,Trousers,1,0
+Caps,Night suits,1,0
+Churidar,Salwar,1,0.062653411722288638
+Clothing Set,Deodorant,1,0
+Clutches,Mobile Pouch,1,0.055022941574520048
+Deodorant,Handbags,1,0.10900820726621221
+Dresses,Belts,1,0.14334596739450362
+Dresses,Dupatta,1,0.19883611643158369
+Dresses,Kurta Sets,1,0
+Dresses,Shorts,1,0.28981275271779527
+Dresses,Tshirts,1,0
+Duffel Bag,Wallets,1,0.25615213859675573
+Earrings,Deodorant,1,0.46065020313324229
+Flats,Casual Shoes,1,0.088798739491055975
+Flats,Dresses,1,0.086593316674113074
+Flats,Sports Sandals,1,0
+Flip Flops,Flats,1,0.27297805035198719
+Flip Flops,Sports Shoes,1,0
+Footballs,Footballs,1,0.52148310238909257
+Formal Shoes,Sandals,1,0.069431221936777282
+Foundation and Primer,Basketballs,1,0
+Fragrance Gift Set,Duffel Bag,1,0
+Free Gifts,Laptop Bag,1,0
+Free Gifts,Sarees,1,0.2458053074216261
+Free Gifts,Sunglasses,1,0
+Handbags,Caps,1,0
+Handbags,Flats,1,0
+Handbags,Mobile Pouch,1,0
+Handbags,Sports Shoes,1,0
+Handbags,Tops,1,0
+Handbags,Travel Accessory,1,0
+Handbags,Watches,1,0.25284102718517748
+Hat,Hat,1,0.61314719276545837
+Headband,Headband,1,0.48401862918875027
+Heels,Sports Sandals,1,0.37445921701963564
+Innerwear Vests,Dresses,1,0.18625662605832996
+Innerwear Vests,Tops,1,0.044491792865689779
+Jeans,Capris,1,0.24890832702259466
+Jeans,Leggings,1,0.47857137761523455
+Jeans,Night suits,1,0
+Jeans,Shorts,1,0
+Jeggings,Jeans,1,0.28361315709780693
+Jeggings,Jeggings,1,0.14982420171299152
+Jeggings,Trousers,1,0
+Jewellery Set,Pendant,1,0.11366150026645366
+Jumpsuit,Tracksuits,1,0
+Kajal and Eyeliner,Handbags,1,0
+Kajal and Eyeliner,Kajal and Eyeliner,1,0.56378845769022568
+Key chain,Wallets,1,0
+Kurta Sets,Sarees,1,0.15445080225357138
+Kurtas,Dupatta,1,0.35814372275148409
+Kurtas,Jackets,1,0.44731180687412497
+Kurtas,Nightdress,1,0.47520914587291962
+Kurtas,Shirts,1,0.31557216393067361
+Kurtas,Swimwear,1,0.26353360325837122
+Kurtis,Shirts,1,0.28078305268625803
+Laptop Bag,Messenger Bag,1,0.039199134489337671
+Laptop Bag,Wallets,1,0
+Leggings,Churidar,1,0.27423134307256558
+Leggings,Jeggings,1,0.16921740368789551
+Leggings,Shorts,1,0
+Leggings,Skirts,1,0.075698670548005026
+Leggings,Trousers,1,0.21026001589162324
+Lip Gloss,Lip Gloss,1,0.87567698271889494
+Lip Liner,Lip Liner,1,0.58907743392667833
+Lounge Pants,Capris,1,0.10218331334064326
+Lounge Pants,Jeans,1,0
+Lounge Pants,Shorts,1,0
+Lounge Pants,Track Pants,1,0.17236740644084636
+Lounge Shorts,Jeans,1,0
+Messenger Bag,Messenger Bag,1,0.22009176629808019
+Messenger Bag,Wallets,1,0
+Mobile Pouch,Handbags,1,0
+Mobile Pouch,Wallets,1,0
+Necklace and Chains,Jewellery Set,1,0.043537813281256159
+Necklace and Chains,Pendant,1,0.24309789328476908
+Nehru Jackets,Sweaters,1,0
+Nightdress,Dresses,1,0
+Nightdress,Kurtas,1,0
+Nightdress,Night suits,1,0.1100458831490401
+Patiala,Leggings,1,0
+Patiala,Lounge Pants,1,0.060614569639142094
+Patiala,Patiala,1,0.78198358546757563
+Patiala,Salwar,1,0.17366667134799182
+Pendant,Bangle,1,0.078398268978675342
+Pendant,Kajal and Eyeliner,1,0.39170347105873204
+Pendant,Lip Liner,1,0
+Pendant,Perfume and Body Mist,1,0.32776097292662437
+Perfume and Body Mist,Backpacks,1,0
+Perfume and Body Mist,Basketballs,1,0.031810394099475864
+Perfume and Body Mist,Handbags,1,0
+Perfume and Body Mist,Innerwear Vests,1,0.4498289803137826
+Rain Jacket,Tshirts,1,0
+Rompers,Rompers,1,0.94785573515344212
+Rucksacks,Rucksacks,1,0.19976560228398868
+Salwar and Dupatta,Salwar and Dupatta,1,0.49352327967774812
+Sarees,Night suits,1,0.094788364369550793
+Scarves,Tshirts,1,0
+Shirts,Jackets,1,0.24890832702259466
+Shirts,Kurtis,1,0.11840371077358892
+Shirts,Sports Shoes,1,0.23875220160403454
+Shirts,Sweaters,1,0.43859769843391361
+Shoe Accessories,Clothing Set,1,0
+Shorts,Boxers,1,0.45141747955497674
+Shorts,Leggings,1,0
+Shrug,Tops,1,0
+Skirts,Capris,1,0.088798739491055975
+Skirts,Dresses,1,0.36837563413888724
+Skirts,Tops,1,0
+Socks,Earrings,1,0
+Socks,Pendant,1,0
+Socks,Shorts,1,0.1100458831490401
+Socks,Track Pants,1,0.069431221936777282
+Socks,Trunk,1,0
+Sports Sandals,Casual Shoes,1,0
+Sports Sandals,Flip Flops,1,0
+Sports Shoes,Backpacks,1,0.039199134489337671
+Sports Shoes,Bracelet,1,0.22716217481924805
+Sports Shoes,Socks,1,0
+Stockings,Stockings,1,0.64476149411742878
+Stoles,Kurtas,1,0.069431221936777282
+Stoles,Mufflers,1,0.064525771509844954
+Stoles,Scarves,1,0
+Stoles,Tops,1,0.064256042983181549
+Sunglasses,Free Gifts,1,0.4593853387877373
+Sweaters,Jackets,1,0.034715610968388641
+Sweaters,Kurtas,1,0.13886244387355456
+Swimwear,Swimwear,1,0.35895421017163476
+Swimwear,Tops,1,0.11381311447980799
+Tablet Sleeve,Wallets,1,0
+Ties,Free Gifts,1,0.069431221936777282
+Tights,Stockings,1,0
+Tops,Bra,1,0.17010317160287544
+Tops,Handbags,1,0.031810394099475864
+Tops,Innerwear Vests,1,0
+Tops,Nightdress,1,0.47993005044570375
+Tops,Sarees,1,0
+Tops,Skirts,1,0.14498868258010594
+Tops,Sweatshirts,1,0.17936519370547874
+Tracksuits,Salwar,1,0.39715679013317784
+Travel Accessory,Travel Accessory,1,0.12222609441075941
+Trousers,Capris,1,0
+Trousers,Shorts,1,0.066526005067864505
+Trousers,Skirts,1,0.19058020410933821
+Trunk,Boxers,1,0.13886244387355456
+Tshirts,Kurtas,1,0
+Tshirts,Socks,1,0
+Tshirts,Tunics,1,0
+Tunics,Nightdress,1,0
+Tunics,Sweaters,1,0
+Waist Pouch,Handbags,1,0.13150106356477176
+Waist Pouch,Wallets,1,0
+Waistcoat,Waistcoat,1,0.42838543210841201
+Waistcoat,Wallets,1,0
+Wallets,Accessory Gift Set,1,0
+Wallets,Duffel Bag,1,0.13175847688434633
+Wallets,Laptop Bag,1,0.11041428151639367
+Wallets,Trunk,1,0.034715610968388641
+Watches,Free Gifts,1,0.63946748317632907
+Watches,Kurta Sets,1,0.37840548783583816
+Water Bottle,Water Bottle,1,0.32391343968871883
+Wristbands,Wristbands,1,0.42188156608798116

@@ -1,0 +1,7 @@
+protocol,k,total_queries,scored_queries,excluded_queries,zero_strict_queries,fewer_than_k_strict_queries
+primary,5,5778,5778,0,107,384
+primary,10,5778,5778,0,107,613
+primary,20,5778,5778,0,107,1052
+family,5,5778,2280,3498,3498,5040
+family,10,5778,2280,3498,3498,5525
+family,20,5778,2280,3498,3498,5757

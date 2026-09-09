@@ -13,14 +13,17 @@ import pytest
 
 import fashion.task4 as task4
 import fashion.task4.gallery_artifact as gallery_artifact_module
+from fashion.config import CV_FOLD_COUNT
 from fashion.data.splits import cv_assignment_digest
 from fashion.task4.gallery_artifact import (
+    ALL_DEVELOPMENT_FOLD,
     GALLERY_ARTIFACT_SCHEMA_VERSION,
     METADATA_COLUMNS,
     SOURCE_IDENTITY_FIELDS,
     export_teacher_gallery_artifact,
     load_teacher_gallery_artifact,
 )
+from fashion.task4.protocol import FIXED_VALIDATION_FOLD
 from scripts.task4 import export_teacher_gallery as launcher
 
 SOURCE_EXTRA_FIELDS = (
@@ -49,42 +52,60 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _split_row(product_id: int, fold: int) -> dict[str, object]:
+def _split_row(
+    product_id: int,
+    fold: int,
+    *,
+    partition: str = "development",
+) -> dict[str, object]:
+    sealed = partition != "development"
     return {
         "id": product_id,
         "path": f"data/raw/teacher/train/images/{product_id}.jpg",
         "sha256": f"{product_id:064x}",
-        "articleType": "Tshirts",
+        "articleType": "" if sealed else "Tshirts",
         "baseColour": "Blue",
         "productDisplayName": f"Product {product_id}",
         "duplicate_group": f"duplicate-{product_id}",
         "product_name_key": f"product-{product_id}",
         "product_family_group": f"family-{product_id}",
-        "partition": "development",
-        "cv_fold": fold,
+        "partition": partition,
+        "cv_fold": "" if sealed else fold,
         "is_cross_role_exact_duplicate": False,
         "is_cross_role_near_duplicate": False,
         "has_conflicting_target_labels": False,
         "conflicting_targets": "",
-        "quarantine_reason": "",
-        "season": "Summer",
-        "gender": "Unisex",
-        "usage": "Casual",
-        "has_articleType_label": True,
-        "has_season_label": True,
-        "has_gender_label": True,
-        "has_usage_label": True,
+        "quarantine_reason": "cross-role visual match" if partition == "quarantine" else "",
+        "season": "" if sealed else "Summer",
+        "gender": "" if sealed else "Unisex",
+        "usage": "" if sealed else "Casual",
+        "has_articleType_label": not sealed,
+        "has_season_label": not sealed,
+        "has_gender_label": not sealed,
+        "has_usage_label": not sealed,
     }
 
 
+def _development_split_rows() -> list[dict[str, object]]:
+    return [
+        _split_row(1, 1),
+        _split_row(2, 0),
+        _split_row(3, 2),
+        _split_row(4, 3),
+        _split_row(5, 4),
+    ]
+
+
 def _split_frame() -> pd.DataFrame:
+    return pd.DataFrame(_development_split_rows())
+
+
+def _split_frame_with_sealed_rows() -> pd.DataFrame:
     return pd.DataFrame(
         [
-            _split_row(1, 1),
-            _split_row(2, 0),
-            _split_row(3, 2),
-            _split_row(4, 3),
-            _split_row(5, 4),
+            *_development_split_rows(),
+            _split_row(6, 0, partition="holdout"),
+            _split_row(7, 0, partition="quarantine"),
         ]
     )
 
@@ -157,18 +178,27 @@ def _write_source_cache(
     return source_identity
 
 
-@pytest.fixture
-def synthetic_source(tmp_path: Path) -> dict[str, Any]:
-    splits = _split_frame()
-    splits_path = _write_splits(tmp_path / "splits.csv", splits)
+def _gallery_fixture(
+    tmp_path: Path,
+    *,
+    splits: pd.DataFrame | None = None,
+) -> dict[str, Any]:
+    frame = _split_frame() if splits is None else splits
+    tmp_path.mkdir(parents=True, exist_ok=True)
+    splits_path = _write_splits(tmp_path / "splits.csv", frame)
     source_cache = tmp_path / "source-cache"
-    source_identity = _write_source_cache(source_cache, splits)
+    source_identity = _write_source_cache(source_cache, frame)
     return {
-        "splits": splits,
+        "splits": frame,
         "splits_path": splits_path,
         "source_cache": source_cache,
         "source_identity": source_identity,
     }
+
+
+@pytest.fixture
+def synthetic_source(tmp_path: Path) -> dict[str, Any]:
+    return _gallery_fixture(tmp_path)
 
 
 def _export(source: dict[str, Any], destination: Path) -> Path:
@@ -179,6 +209,23 @@ def _export(source: dict[str, Any], destination: Path) -> Path:
         expected_source_identity_sha256=source["source_identity"],
         expected_checkpoint_sha256="c" * 64,
         expected_run_id="task4-r5-test",
+    )
+
+
+def _export_with_fold(
+    source: dict[str, Any],
+    destination: Path,
+    *,
+    fold: Any,
+) -> Path:
+    return export_teacher_gallery_artifact(
+        source["source_cache"],
+        destination,
+        splits_path=source["splits_path"],
+        expected_source_identity_sha256=source["source_identity"],
+        expected_checkpoint_sha256="c" * 64,
+        expected_run_id="task4-r5-test",
+        fold=fold,
     )
 
 
@@ -834,4 +881,146 @@ def test_pinned_exporter_forwards_only_export_inputs(
         ),
         "expected_run_id": "task4-candidate-r5-task9-preexec",
     }
+    assert capsys.readouterr().out == f"Teacher gallery: {destination}\n"
+
+
+def test_all_development_export_selects_every_development_row(tmp_path: Path) -> None:
+    fixture = _gallery_fixture(tmp_path)
+    destination = _export_with_fold(
+        fixture,
+        tmp_path / "all_dev_gallery",
+        fold=ALL_DEVELOPMENT_FOLD,
+    )
+    gallery = load_teacher_gallery_artifact(destination)
+    development_ids = sorted(
+        fixture["splits"].loc[fixture["splits"]["partition"].eq("development"), "id"]
+    )
+
+    assert sorted(gallery.ids.tolist()) == development_ids
+    assert gallery.manifest["fold"] == ALL_DEVELOPMENT_FOLD
+    assert gallery.manifest["rows"] == len(development_ids)
+    assert gallery.metadata["id"].tolist() == development_ids
+    assert set(gallery.metadata["partition"]) == {"development"}
+    assert set(gallery.metadata["cv_fold"]) == {0, 1, 2, 3, 4}
+
+
+def test_all_development_gallery_has_a_different_identity_than_fold_one(
+    tmp_path: Path,
+) -> None:
+    fixture = _gallery_fixture(tmp_path)
+    fold_one = load_teacher_gallery_artifact(
+        _export_with_fold(fixture, tmp_path / "g1", fold=FIXED_VALIDATION_FOLD)
+    )
+    all_development = load_teacher_gallery_artifact(
+        _export_with_fold(fixture, tmp_path / "g2", fold=ALL_DEVELOPMENT_FOLD)
+    )
+
+    assert fold_one.manifest["fold"] == FIXED_VALIDATION_FOLD
+    assert all_development.manifest["fold"] == ALL_DEVELOPMENT_FOLD
+    assert fold_one.identity_sha256 != all_development.identity_sha256
+
+
+def test_holdout_and_quarantine_rows_never_enter_an_all_development_gallery(
+    tmp_path: Path,
+) -> None:
+    fixture = _gallery_fixture(tmp_path, splits=_split_frame_with_sealed_rows())
+    gallery = load_teacher_gallery_artifact(
+        _export_with_fold(fixture, tmp_path / "gallery", fold=ALL_DEVELOPMENT_FOLD)
+    )
+    sealed = set(
+        fixture["splits"].loc[
+            fixture["splits"]["partition"].isin(("holdout", "quarantine")), "id"
+        ]
+    )
+
+    assert sealed == {6, 7}
+    assert sealed.isdisjoint(set(gallery.ids.tolist()))
+    assert gallery.ids.tolist() == [1, 2, 3, 4, 5]
+
+
+def test_all_development_gallery_loads_when_every_fold_is_present(
+    tmp_path: Path,
+) -> None:
+    fixture = _gallery_fixture(tmp_path)
+    gallery = load_teacher_gallery_artifact(
+        _export_with_fold(fixture, tmp_path / "gallery", fold=ALL_DEVELOPMENT_FOLD)
+    )
+
+    assert set(gallery.metadata["cv_fold"]) == set(range(CV_FOLD_COUNT))
+
+
+@pytest.mark.parametrize("missing_fold", [0, 2, 4])
+def test_loader_rejects_an_all_development_gallery_missing_a_fold(
+    tmp_path: Path,
+    missing_fold: int,
+) -> None:
+    fixture = _gallery_fixture(tmp_path)
+    exported = _export_with_fold(fixture, tmp_path / "gallery", fold=ALL_DEVELOPMENT_FOLD)
+    metadata = pd.read_csv(exported / "metadata.csv", keep_default_na=False)
+    replacement = next(fold for fold in range(CV_FOLD_COUNT) if fold != missing_fold)
+    metadata.loc[metadata["cv_fold"].eq(missing_fold), "cv_fold"] = replacement
+    metadata.to_csv(exported / "metadata.csv", index=False, lineterminator="\n")
+    _reseal_file(exported, "metadata.csv")
+
+    with pytest.raises(ValueError, match=f"every development fold.*{missing_fold}"):
+        load_teacher_gallery_artifact(exported)
+
+
+def test_loader_rejects_a_fold_one_gallery_relabelled_as_all_development(
+    tmp_path: Path,
+) -> None:
+    fixture = _gallery_fixture(tmp_path)
+    exported = _export_with_fold(fixture, tmp_path / "gallery", fold=FIXED_VALIDATION_FOLD)
+    _rewrite_manifest(
+        exported,
+        lambda manifest: _set_manifest_field(manifest, "fold", ALL_DEVELOPMENT_FOLD),
+    )
+
+    with pytest.raises(ValueError, match="every development fold"):
+        load_teacher_gallery_artifact(exported)
+
+
+@pytest.mark.parametrize("fold", [7, -2, True, 1.0], ids=["unknown", "negative", "bool", "float"])
+def test_unknown_fold_values_are_still_rejected(tmp_path: Path, fold: Any) -> None:
+    fixture = _gallery_fixture(tmp_path)
+
+    with pytest.raises(ValueError, match="fold"):
+        _export_with_fold(fixture, tmp_path / "gallery", fold=fold)
+    assert not (tmp_path / "gallery").exists()
+
+
+def test_all_development_launcher_flag_requests_the_sentinel_fold(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_export(
+        source_cache: Path,
+        destination: Path,
+        **kwargs: object,
+    ) -> Path:
+        captured.update(source_cache=source_cache, destination=destination, **kwargs)
+        return destination
+
+    destination = tmp_path / "holdout-gallery"
+    monkeypatch.setattr(launcher, "export_teacher_gallery_artifact", fake_export, raising=False)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "export_teacher_gallery.py",
+            "--all-development",
+            "--destination",
+            str(destination),
+        ],
+    )
+
+    launcher.main()
+
+    assert captured["fold"] == ALL_DEVELOPMENT_FOLD
+    assert captured["destination"] == destination
+    assert captured["splits_path"] == launcher.DEFAULT_SPLITS
+    assert captured["expected_run_id"] == launcher.SELECTED_RUN_ID
     assert capsys.readouterr().out == f"Teacher gallery: {destination}\n"

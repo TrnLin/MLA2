@@ -1,0 +1,49 @@
+{
+  "authorization": "explicit_user_instruction_in_current_task",
+  "blind_source_commit": "bf64d2b8e350f29d658eb1496eaec40a3048f836",
+  "conditions_changed": false,
+  "evaluation_id": "m8-task4-holdout-final-evaluation",
+  "git": {
+    "commit": "1e7ec4bd7d5f6bd30c99b27968c5cae645dce062",
+    "tracked_files_dirty": false
+  },
+  "holdout_article_type_rows": 5778,
+  "holdout_opened": true,
+  "holdout_rows": 5778,
+  "metric_changed": false,
+  "model_retrained": false,
+  "opened_at_utc": "2026-09-09T07:51:36Z",
+  "post_blind_changed_paths": [
+    "docs/decisions/0027-task4-post-blind-git-gate.md",
+    "results/evidence/task4/final_evaluation/blind_runtime.json",
+    "results/evidence/task4/final_evaluation/gallery_manifest.csv",
+    "results/evidence/task4/final_evaluation/holdout_family_rankings.csv",
+    "results/evidence/task4/final_evaluation/holdout_primary_rankings.csv",
+    "results/evidence/task4/final_evaluation/holdout_query_manifest.csv",
+    "results/evidence/task4/final_evaluation/prediction_receipt.json",
+    "src/fashion/task4_evaluation/audit.py",
+    "src/fashion/task4_evaluation/score.py",
+    "tests/task4_evaluation/test_score.py"
+  ],
+  "prediction_receipt": {
+    "bytes": 4097,
+    "path": "results/evidence/task4/final_evaluation/prediction_receipt.json",
+    "sha256": "dd7df4f5822727859537a87330f9fb1ddbcff9578b2327ef09eef118fd924f67"
+  },
+  "quarantine_rows_excluded": 61,
+  "raw_teacher_csv": {
+    "bytes": 3875305,
+    "path": "data/raw/teacher/train/styles_train.csv",
+    "sha256": "54d503743f79f22bf03f9e2c216b53e75d5f2129eda5934cfa25c642c70af44d"
+  },
+  "retuning_allowed": false,
+  "schema_version": "1.0.0",
+  "scoring_approval_commit": "1e7ec4bd7d5f6bd30c99b27968c5cae645dce062",
+  "scoring_approval_ref": "refs/tags/task4-holdout-scoring-approved-v1",
+  "unlock_attempt": {
+    "bytes": 1415,
+    "path": "results/evidence/task4/final_evaluation/unlock_attempt.json",
+    "sha256": "409a4348e9665a5d7f6ccb60759437c575596c34c9032602e6da8ee696f2a805"
+  },
+  "winner_changed": false
+}

@@ -1,0 +1,2 @@
+method,parameter_count,model_package_bytes,gallery_bytes,timed_queries,single_query_cpu_p50_ms,single_query_cpu_p95_ms
+r5_scratch_autoencoder,14276931,57196000,24421340,8,23.389003000000002,24.902833949999998

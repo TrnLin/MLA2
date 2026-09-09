@@ -1,0 +1,19 @@
+{
+  "benchmark_ceiling": "b1_pretrained_resnet18",
+  "benchmark_ceiling_role": "benchmark_only",
+  "conditions_changed_after_unlock": false,
+  "evaluation_id": "m8-task4-holdout-final-evaluation",
+  "judgement": "R5 remains the submitted scratch model",
+  "limitations": [
+    "The development reference is not comparable to holdout because it uses a different four-pairing estimand and fold-1 galleries.",
+    "Undefined queries are excluded rather than treated as zero.",
+    "The holdout is opened once, so no post-hoc retuning or rerun is allowed."
+  ],
+  "metric_changed_after_unlock": false,
+  "model_retrained_after_unlock": false,
+  "retuning_allowed": false,
+  "schema_version": "1.0.0",
+  "submitted_model": "r5_scratch_autoencoder",
+  "submitted_model_scratch": true,
+  "winner_changed_after_unlock": false
+}

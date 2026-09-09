@@ -1,0 +1,7 @@
+target_coverage,actual_coverage,distance_threshold,retained_queries,selective_ndcg_at_10,selective_recall_at_10,boundary_note
+1,1,0.54455357789993275,5778,0.51622035025447599,0.37786569045276475,retained_queries is authoritative when rank-1 distances tie; query ID breaks ties
+0.90000000000000002,0.90013845621322253,0.26573014259338368,5201,0.53571914128356046,0.38443811236752962,retained_queries is authoritative when rank-1 distances tie; query ID breaks ties
+0.80000000000000004,0.80010384215991692,0.22446733713150019,4623,0.54686044418229252,0.38993769177800197,retained_queries is authoritative when rank-1 distances tie; query ID breaks ties
+0.69999999999999996,0.70006922810661132,0.19610011577606201,4045,0.55728986139949621,0.396736361670046,retained_queries is authoritative when rank-1 distances tie; query ID breaks ties
+0.5,0.5,0.15303367376327509,2889,0.57792266664885561,0.42019429602044378,retained_queries is authoritative when rank-1 distances tie; query ID breaks ties
+0.29999999999999999,0.30010384215991692,0.1121987104415893,1734,0.59990391454087333,0.45675320406707426,retained_queries is authoritative when rank-1 distances tie; query ID breaks ties

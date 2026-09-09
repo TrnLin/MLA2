@@ -1,0 +1,7 @@
+scope,fold,size,query_source,gallery_source,protocol,slice,metric,k,aggregation,value,total_queries,scored_queries,excluded_queries,coverage
+holdout,holdout,240x320,teacher,teacher,primary,grayscale,ndcg,10,query_mean,0.67361470061091877,49,49,0,1
+holdout,holdout,240x320,teacher,teacher,primary,rare_article_type,ndcg,10,query_mean,0.45154553856798951,21,21,0,1
+holdout,holdout,240x320,teacher,teacher,primary,rare_type_colour,ndcg,10,query_mean,0.42581945115824227,613,613,0,1
+holdout,holdout,240x320,teacher,teacher,primary,unusual_geometry,ndcg,10,query_mean,0.52062260694403206,5,5,0,1
+holdout,holdout,240x320,teacher,teacher,family,family_unavailable,recall,10,query_mean,,3498,0,3498,0
+holdout,holdout,240x320,teacher,teacher,family,weak_family,recall,10,query_mean,0.42115218331171644,1542,1542,0,1

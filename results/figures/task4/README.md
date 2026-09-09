@@ -48,5 +48,20 @@ evidence artifacts, and the generator refuses any image whose
 
 The report also keeps its inline, labelled HTML/SVG charts, and reads the six
 learned manifests, ten stability records, canonical deployment/gallery JSON,
-gallery timing, and failed run-registry rows. Everything is development-only;
-the holdout remains sealed.
+gallery timing, and failed run-registry rows. The `final/` evidence is
+development-only; the separate one-shot holdout package follows.
+
+## `final_evaluation/` — figures from the one-shot holdout evaluation
+
+- `final_evaluation/holdout_scorecard.png` — frozen teacher and V1 query
+  comparisons against the all-development teacher gallery.
+- `final_evaluation/holdout_bootstrap_intervals.png` — family-blocked 95%
+  intervals for R5 and its paired differences from the comparators.
+- `final_evaluation/holdout_selective_retrieval.png` — the post-hoc
+  quality-versus-coverage curve, not a chosen service threshold.
+- `final_evaluation/holdout_source_robustness.png` — V1-to-teacher over
+  teacher-to-teacher source ratios; random is not applicable.
+- `final_evaluation/holdout_slices_robustness.png` — pre-declared slice scores
+  and query-condition changes with sample sizes.
+- `final_evaluation/holdout_error_examples.png` — selected failures used for
+  description, not metric or model changes.

@@ -450,7 +450,7 @@ def test_outside_search_prepares_encodes_ranks_and_redacts(
     assert torch.all(model_input[0, :, padding] == 0)
 
 
-def test_saved_search_evidence_copies_payload_hashes_and_open_flags(
+def test_saved_search_evidence_distinguishes_demo_access_from_project_holdout_state(
     monkeypatch: pytest.MonkeyPatch,
     bundle: SearchBundle,
     tmp_path: Path,
@@ -507,9 +507,25 @@ def test_saved_search_evidence_copies_payload_hashes_and_open_flags(
 
     assert payload["model_identity"]["weights"] == expected_weights
     assert payload["gallery_identity"]["files"] == expected_files
-    assert payload["safety"]["holdout_opened"] is False
-    assert payload["safety"]["quarantine_opened"] is False
-    assert payload["safety"]["official_teacher_test_opened"] is False
+    assert payload["schema_version"] == "1.1.0"
+    assert payload["safety"] == {
+        "path_checked_before_decode": True,
+        "hash_checked_before_decode": True,
+        "known_queries_fixed_fold_1": True,
+        "demo_accessed_protected_images": False,
+        "demo_accessed_holdout": False,
+        "demo_used_holdout_gallery": False,
+        "demo_accessed_quarantine": False,
+        "demo_accessed_official_teacher_test": False,
+        "project_holdout_status": "opened_once_for_final_evaluation_and_now_closed",
+        "project_holdout_receipt": (
+            "results/evidence/task4/final_evaluation/unlock_receipt.json"
+        ),
+        "project_holdout_manifest": (
+            "results/evidence/task4/final_evaluation/evaluation_manifest.json"
+        ),
+    }
+    assert "holdout_opened" not in payload["safety"]
 
 
 def test_known_fold_one_search_adds_literal_primary_grades(bundle: SearchBundle) -> None:

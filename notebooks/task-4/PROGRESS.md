@@ -127,14 +127,31 @@ attempts remain visible.
 Task 10 fix round 1/5 restored the full HOG/fusion comparison and added the
 final learned appendix. The notebook and report now read the compact,
 strictly validated `results/evidence/task4/final/task4-final-comparison.json`.
-Its source and template are ready to track, but they are not staged or
-committed. The holdout remains sealed.
+This development-only bundle stayed frozen before the one-shot holdout
+evaluation.
 
 ## 8. Final test
 
-- [ ] Refit the frozen method on all development data
-- [ ] Open the sealed holdout once in Notebook 06
-- [ ] Record final results and limitations
+- [x] Refit the frozen method on all development data — **superseded by decision 0026.**
+      The submitted model is the fold-1-trained R5 already exported to `models/task4_r5`.
+      Recorded cost: 6,556 fold-1 products (20.0% of development) are never used for
+      training.
+- [x] Open the sealed holdout once through
+      `scripts/build_task4_final_evaluation.py score --evaluation-unlocked`.
+- [x] Record final results and limitations.
+
+Headline: R5 teacher nDCG@10 is `0.5162`, versus random at `0.0343`.
+The paired R5-minus-random 95% interval is `[0.4733, 0.4903]`. The
+R5-minus-HOG interval is `[-0.0035, 0.0055]`, so it does not separate the two
+methods. Decisions 0026 and 0027 record the frozen evaluation and post-blind
+git gate.
+
+Proof limit: the real blind run at source commit `bf64d2b` used six non-image
+inputs before hashing their live paths. The clean commit and matching final
+hashes reduce concern, but cannot prove that no file changed during the run.
+Images and rankings were byte-bound, so the scores stand and cannot be rerun.
+Decision 0028 records this limit. Future blind runs snapshot all six inputs
+before use, and the public audit now checks all five nested blind artifacts.
 
 Done when: no model or evaluation rule changes after seeing holdout results.
 
@@ -150,6 +167,7 @@ final choice.
 
 ## Current next milestone
 
-**Milestone 8 — Final test**
+**Milestone 9 — App and report**
 
-The holdout remains sealed until Milestone 8.
+The holdout is permanently closed for model and rule choices. Milestone 9 uses
+only the completed, audited evaluation artifacts.

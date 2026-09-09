@@ -1,4 +1,4 @@
-"""Stable, hash-checked fold-1 teacher-gallery artifacts."""
+"""Stable, hash-checked development teacher-gallery artifacts."""
 
 from __future__ import annotations
 
@@ -26,6 +26,8 @@ from fashion.task4.protocol import FIXED_VALIDATION_FOLD, build_development_view
 
 GALLERY_ARTIFACT_SCHEMA_VERSION = "1.0.0"
 GALLERY_ARTIFACT_TYPE = "task4_teacher_gallery"
+ALL_DEVELOPMENT_FOLD: int = -1
+_ALLOWED_FOLDS: tuple[int, ...] = (ALL_DEVELOPMENT_FOLD, FIXED_VALIDATION_FOLD)
 SOURCE_IDENTITY_FIELDS = (
     "schema_version",
     "scope",
@@ -232,6 +234,10 @@ def _load_source_cache(
     ):
         raise ValueError("source feature-cache identity does not match the pinned identity")
 
+    # ``identity["fold"]`` is cache provenance: the R5 features were encoded by the
+    # fold-1 training session. It stays pinned to FIXED_VALIDATION_FOLD even when the
+    # exported gallery spans every development fold, because ALL_DEVELOPMENT_FOLD
+    # describes gallery membership, not which session produced these features.
     if (
         identity["schema_version"] != "1.0.0"
         or identity["scope"] != "development"
@@ -285,8 +291,12 @@ def _load_source_cache(
     return manifest, ids, features
 
 
-def _readme() -> str:
-    return """# Task 4 fold-1 teacher gallery
+def _fold_scope(fold: int) -> str:
+    return "all-development" if fold == ALL_DEVELOPMENT_FOLD else f"fold-{fold}"
+
+
+def _readme(fold: int) -> str:
+    return f"""# Task 4 {_fold_scope(fold)} teacher gallery
 
 This folder contains the fixed development-only teacher gallery for Task 4 visual search.
 It stores sorted product IDs, unit-normalized R5 features, and safe display metadata.
@@ -300,6 +310,7 @@ def _artifact_manifest(
     *,
     source_manifest: Mapping[str, Any],
     rows: int,
+    fold: int,
 ) -> dict[str, Any]:
     files = {
         name: {
@@ -320,7 +331,7 @@ def _artifact_manifest(
             "sha256": source_manifest["checkpoint_sha256"],
         },
         "split_fingerprint": source_manifest["split_fingerprint"],
-        "fold": FIXED_VALIDATION_FOLD,
+        "fold": int(fold),
         "source": "teacher",
         "contract": _CONTRACT.to_dict(),
         "rows": rows,
@@ -342,9 +353,12 @@ def export_teacher_gallery_artifact(
     expected_source_identity_sha256: str,
     expected_checkpoint_sha256: str,
     expected_run_id: str,
+    fold: int = FIXED_VALIDATION_FOLD,
 ) -> Path:
-    """Export the selected R5 teacher cache as a fixed fold-1 gallery."""
+    """Export the selected R5 teacher cache as a fixed fold-1 or all-development gallery."""
 
+    if not _is_json_integer(fold) or fold not in _ALLOWED_FOLDS:
+        raise ValueError(f"fold must be one of {_ALLOWED_FOLDS}")
     source_directory = Path(source_cache)
     destination_directory = Path(destination)
     if destination_directory.exists():
@@ -359,17 +373,18 @@ def export_teacher_gallery_artifact(
     splits = load_splits(splits_path)
     if cv_assignment_digest(splits) != source_manifest["split_fingerprint"]:
         raise ValueError("canonical split fingerprint does not match the source feature cache")
-    primary, _ = build_development_views(
-        splits,
-        validation_fold=FIXED_VALIDATION_FOLD,
-    )
+    if fold == ALL_DEVELOPMENT_FOLD:
+        gallery_frame = splits.loc[splits["partition"].eq("development")]
+    else:
+        primary, _ = build_development_views(splits, validation_fold=fold)
+        gallery_frame = primary.gallery
     development_ids = np.sort(
         splits.loc[splits["partition"].eq("development"), "id"].to_numpy(dtype=np.int64)
     )
     if not np.array_equal(source_ids, development_ids):
         raise ValueError("source feature-cache IDs do not match canonical development IDs")
 
-    gallery_ids = np.sort(primary.gallery["id"].to_numpy(dtype=np.int64))
+    gallery_ids = np.sort(gallery_frame["id"].to_numpy(dtype=np.int64))
     source_row_by_id = {
         int(product_id): row for row, product_id in enumerate(source_ids.tolist())
     }
@@ -385,10 +400,10 @@ def export_teacher_gallery_artifact(
         label="gallery output",
     )
 
-    missing_metadata = set(METADATA_COLUMNS).difference(primary.gallery.columns)
+    missing_metadata = set(METADATA_COLUMNS).difference(gallery_frame.columns)
     if missing_metadata:
         raise ValueError(f"gallery metadata is missing columns: {sorted(missing_metadata)}")
-    metadata = primary.gallery.loc[:, METADATA_COLUMNS].copy()
+    metadata = gallery_frame.loc[:, METADATA_COLUMNS].copy()
     metadata["id"] = pd.to_numeric(metadata["id"], errors="raise").astype(np.int64)
     metadata["cv_fold"] = pd.to_numeric(metadata["cv_fold"], errors="raise").astype(np.int64)
     metadata = metadata.sort_values("id", kind="stable").reset_index(drop=True)
@@ -405,7 +420,7 @@ def export_teacher_gallery_artifact(
         )
     )
     try:
-        (staging / "README.md").write_text(_readme(), encoding="utf-8")
+        (staging / "README.md").write_text(_readme(fold), encoding="utf-8")
         np.save(staging / "ids.npy", gallery_ids, allow_pickle=False)
         np.save(staging / "features.npy", gallery_features, allow_pickle=False)
         write_deterministic_csv(metadata, staging / "metadata.csv", index=False)
@@ -413,6 +428,7 @@ def export_teacher_gallery_artifact(
             staging,
             source_manifest=source_manifest,
             rows=len(gallery_ids),
+            fold=fold,
         )
         (staging / _MANIFEST_FILENAME).write_bytes(_canonical_json(manifest))
         load_teacher_gallery_artifact(staging)
@@ -531,7 +547,7 @@ def _load_teacher_gallery_snapshot(
         or not _is_sha256(manifest["source_feature_cache_identity_sha256"])
         or not _is_sha256(manifest["split_fingerprint"])
         or not _is_json_integer(manifest["fold"])
-        or manifest["fold"] != FIXED_VALIDATION_FOLD
+        or manifest["fold"] not in _ALLOWED_FOLDS
         or manifest["source"] != "teacher"
         or not _matches_contract(manifest["contract"])
         or not _is_json_integer(rows)
@@ -563,11 +579,24 @@ def _load_teacher_gallery_snapshot(
     metadata = _load_metadata(snapshot_directory / "metadata.csv")
     if len(metadata) != rows or metadata["id"].tolist() != ids.tolist():
         raise ValueError("gallery metadata row count or ID order does not match arrays")
-    gallery_folds = set(range(CV_FOLD_COUNT)) - {FIXED_VALIDATION_FOLD}
-    if not metadata["partition"].eq("development").all() or not metadata["cv_fold"].isin(
-        gallery_folds
-    ).all():
-        raise ValueError("gallery metadata must contain development fold-1 gallery rows")
+    manifest_fold = int(manifest["fold"])
+    development_folds = set(range(CV_FOLD_COUNT))
+    gallery_folds = development_folds
+    if manifest_fold != ALL_DEVELOPMENT_FOLD:
+        gallery_folds = development_folds - {manifest_fold}
+    observed_folds = {int(fold) for fold in metadata["cv_fold"]}
+    if not metadata["partition"].eq("development").all() or not observed_folds <= gallery_folds:
+        raise ValueError(
+            f"gallery metadata must contain development {_fold_scope(manifest_fold)} gallery rows"
+        )
+    # A subset check alone cannot tell an all-development gallery apart from a
+    # single-fold one, so the sentinel scope also has to prove every fold is present.
+    if manifest_fold == ALL_DEVELOPMENT_FOLD and observed_folds != development_folds:
+        missing_folds = sorted(development_folds - observed_folds)
+        raise ValueError(
+            "gallery metadata must span every development fold; "
+            f"missing folds {missing_folds}"
+        )
     reject_sealed_image_rows(metadata, require_development=True)
     _validate_metadata_paths(metadata)
 
@@ -607,6 +636,7 @@ def load_teacher_gallery_artifact(directory: str | Path) -> TeacherGallery:
 
 
 __all__ = (
+    "ALL_DEVELOPMENT_FOLD",
     "GALLERY_ARTIFACT_SCHEMA_VERSION",
     "GALLERY_ARTIFACT_TYPE",
     "METADATA_COLUMNS",

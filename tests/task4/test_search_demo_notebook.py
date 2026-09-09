@@ -63,7 +63,12 @@ def test_search_demo_notebook_is_thin_safe_and_runnable() -> None:
     )
 
     assert "Task 4 — Search Test Platform" in markdown
-    assert "holdout remains sealed" in markdown.lower()
+    assert "does not access holdout images, labels, or gallery" in markdown.lower()
+    assert (
+        "project holdout was opened once for final evaluation and is now "
+        "permanently closed"
+    ) in markdown.lower()
+    assert "holdout remains sealed" not in markdown.lower()
     assert "KNOWN_QUERY_ID = 1529" in code
     assert "OUTSIDE_IMAGE: Path | None = None" in code
     assert "load_search_bundle" in code
@@ -87,3 +92,4 @@ def test_search_demo_notebook_is_saved_clean() -> None:
     assert len({cell.id for cell in notebook.cells}) == 8
     assert all(cell.execution_count is None for cell in code_cells)
     assert all(cell.outputs == [] for cell in code_cells)
+    assert all("execution" not in cell.metadata for cell in notebook.cells)
