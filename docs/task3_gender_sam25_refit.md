@@ -50,7 +50,7 @@ The completed refit was accepted on 7 September 2026 in
 Use its [acceptance manifest](../reports/task3/gender_final_sam25_refit_20260907/model_manifest.json)
 for the final model. ADR 0020 and the five-model artifact remain historical evidence.
 The original training-only receipt remains unchanged; later holdout analysis is in
-[the Task 3 final evaluation notebook](../notebooks/04_task3_final_evaluation.ipynb).
+[the Task 3 final evaluation notebook](../notebooks/07_task3_part2_final_evaluation.ipynb).
 
 Equivalent command, from a checkout with the teacher images already available:
 
