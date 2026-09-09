@@ -1,6 +1,6 @@
 # Task 3 evidence
 
-Start with [the main notebook](../../notebooks/04_task3_gender_usage.ipynb),
+Start with [the main notebook](../../notebooks/06_task3_part1_gender_usage.ipynb),
 [the training index](../../notebooks/task3_training/README.md), and
 [asset setup and submission checklist](ASSETS.md).
 
