@@ -11,39 +11,36 @@ from fashion.config import ROOT
 from fashion.data.hashing import compute_sha256
 
 TASK_SPECS = {
-    "02_task1_article_type.ipynb": {
+    "02_task1_part1_article_type.ipynb": {
         "title": "Task 1 — Article Type Classification",
         "tokens": ("articleType", "rare class", "balanced class-weighted loss"),
         "sections": 14,
     },
-    "03_task2_season.ipynb": {
+    "04_task2_part1_season.ipynb": {
         "title": "Task 2 — Season Classification",
         "tokens": ("weak-visual-signal", "article-type shortcut", "calibration"),
         "sections": 15,
     },
-    "04_task3_gender_usage.ipynb": {
+    "06_task3_part1_gender_usage.ipynb": {
         "title": "Task 3 — Gender and Usage Classification",
         "tokens": ("gender", "usage", "negative transfer", "label-mask"),
         "sections": 20,
     },
-    "05_task4_visual_search.ipynb": {
+    "09_task4_part2_visual_search.ipynb": {
         "title": "Task 4 — Fashion Visual Search",
         "tokens": ("arbitrary query size", "optional additional image", "embedding", "Top-K"),
         "sections": 15,
     },
-    "04_task3_final_evaluation.ipynb": {
+    "07_task3_part2_final_evaluation.ipynb": {
         "title": "Task 3 — Final Evaluation and Ultimate Judgement",
         "tokens": ("holdout", "Gender", "Usage", "ultimate judgement"),
         "sections": 16,
     },
-    "06_final_evaluation.ipynb": {
-        "title": "Final Evaluation and Ultimate Judgement",
-        "tokens": ("holdout", "opened once", "official predictions", "ultimate judgement"),
-        "sections": 13,
-    },
 }
 TASK_PATHS = {
-    "05_task4_visual_search.ipynb": ROOT / "notebooks/task-4/05_task4_visual_search.ipynb"
+    "09_task4_part2_visual_search.ipynb": (
+        ROOT / "notebooks/task-4/09_task4_part2_visual_search.ipynb"
+    )
 }
 
 
@@ -106,14 +103,13 @@ def test_only_planned_notebook_names_are_present() -> None:
         "task3_training/usage_mixup_sam_screen.ipynb",
         "task3_training/usage_replaced_v3_mixup_sam.ipynb",
         "task3_training/usage_two_stage_screen.ipynb",
-            *(name for name in TASK_SPECS if name != "05_task4_visual_search.ipynb"),
-            "06_task2_season_evaluation.ipynb",
-            "02_task1_final_eval.ipynb",
-            "02_task1_final_run.ipynb",
-            "task-4/01_v1_eda.ipynb",
-        "task-4/05_task4_visual_search.ipynb",
-        "task-4/06_task4_search_evaluation.ipynb",
-        "task-4/07_task4_search_demo.ipynb",
+            *(name for name in TASK_SPECS if name != "09_task4_part2_visual_search.ipynb"),
+            "05_task2_part2_final_evaluation.ipynb",
+            "03_task1_part2_final_evaluation.ipynb",
+            "task-4/08_task4_part1_image_eda.ipynb",
+        "task-4/09_task4_part2_visual_search.ipynb",
+        "task-4/10_task4_part3_final_evaluation.ipynb",
+        "task-4/11_task4_part4_search_demo.ipynb",
     }
     present = {
         path.relative_to(ROOT / "notebooks").as_posix()
@@ -162,7 +158,7 @@ def _heading_level(cell: nbformat.NotebookNode) -> int | None:
 
 
 def test_task2_execution_scaffold_has_one_code_cell_per_leaf() -> None:
-    path = ROOT / "notebooks/03_task2_season.ipynb"
+    path = ROOT / "notebooks/04_task2_part1_season.ipynb"
     notebook = nbformat.read(path, as_version=4)
     nbformat.validate(notebook)
     source = _source(notebook)
@@ -249,7 +245,7 @@ def _display_calls(source: str) -> list[ast.Call]:
 
 
 def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     deep_analyses: list[tuple[str, str]] = []
 
     for index, cell in enumerate(notebook.cells):
@@ -337,7 +333,7 @@ def test_task2_notebook_has_one_readable_output_per_code_cell() -> None:
 
 
 def test_task2_notebook_has_no_accidental_matplotlib_output() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     for cell in notebook.cells:
         if cell.cell_type != "code" or "plt.subplots" not in cell.source:
             continue
@@ -345,7 +341,7 @@ def test_task2_notebook_has_no_accidental_matplotlib_output() -> None:
 
 
 def test_task2_notebook_maps_training_code_without_executing_it() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     title = next(cell.source for cell in notebook.cells if cell.id == "task2-title")
 
     for required in (
@@ -391,7 +387,7 @@ def test_task2_notebook_maps_training_code_without_executing_it() -> None:
 
 
 def test_task2_notebook_is_fully_executed_artifact_replay() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
     combined = "\n".join(cell.source for cell in code_cells)
 
@@ -443,7 +439,7 @@ def test_task2_notebook_is_fully_executed_artifact_replay() -> None:
 
 
 def test_task2_replay_locks_match_every_declared_root() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     setup = next(cell.source for cell in notebook.cells if cell.id == "s01-01-code")
     assignment = next(
         node
@@ -474,7 +470,7 @@ def test_task2_replay_locks_match_every_declared_root() -> None:
 
 
 def test_task2_data_protocol_cells_are_executable_orchestration() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     protocol_cell_ids = (
         "s01-01-code",
@@ -494,7 +490,7 @@ def test_task2_data_protocol_cells_are_executable_orchestration() -> None:
         cell = cells[cell_id]
         assert cell.cell_type == "code"
         assert not cell.source.startswith("# TODO:")
-        compile(cell.source, f"03_task2_season.ipynb:{cell_id}", "exec")
+        compile(cell.source, f"04_task2_part1_season.ipynb:{cell_id}", "exec")
 
     combined = "\n".join(cells[cell_id].source for cell_id in protocol_cell_ids)
     for required in (
@@ -522,14 +518,14 @@ def test_task2_data_protocol_cells_are_executable_orchestration() -> None:
 
 
 def test_task2_environment_table_uses_dataframe_compatible_reset_index() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     environment_cell = next(cell for cell in notebook.cells if cell.id == "s01-02-code")
 
     assert ".reset_index(name=" not in environment_cell.source
 
 
 def test_task2_preprocessing_mask_uses_an_informative_padding_example() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     preprocessing_cell = next(cell for cell in notebook.cells if cell.id == "s04-01-code")
 
     assert "nonstandard_aspect" in preprocessing_cell.source
@@ -542,7 +538,7 @@ def test_task2_preprocessing_mask_uses_an_informative_padding_example() -> None:
 
 
 def test_task2_model_and_registry_cells_use_shared_interfaces() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     wired_cell_ids = (
         "s06-01-01-code",
@@ -557,7 +553,7 @@ def test_task2_model_and_registry_cells_use_shared_interfaces() -> None:
         cell = cells[cell_id]
         assert cell.cell_type == "code"
         assert not cell.source.startswith("# TODO:")
-        compile(cell.source, f"03_task2_season.ipynb:{cell_id}", "exec")
+        compile(cell.source, f"04_task2_part1_season.ipynb:{cell_id}", "exec")
 
     combined = "\n".join(cells[cell_id].source for cell_id in wired_cell_ids)
     for required in (
@@ -576,13 +572,13 @@ def test_task2_model_and_registry_cells_use_shared_interfaces() -> None:
 
 
 def test_task2_g0_cell_records_a_non_comparison_pass() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     code = cells["s07-01-code"].source
     finding = cells["s07-01-finding"].source
 
     assert not code.startswith("# TODO:")
-    compile(code, "03_task2_season.ipynb:s07-01-code", "exec")
+    compile(code, "04_task2_part1_season.ipynb:s07-01-code", "exec")
     for required in (
         'TASK2_EVIDENCE_DIR / "g0/manifest.json"',
         "verify_artifact",
@@ -603,7 +599,7 @@ def test_task2_g0_tracked_evidence_uses_one_clean_run() -> None:
     evidence = ROOT / "results/evidence/task2/g0"
     manifest = json.loads((evidence / "manifest.json").read_text(encoding="utf-8"))
     snapshot = pd.read_csv(evidence / "registry_snapshot.csv", dtype=str)
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     finding = {cell.id: cell for cell in notebook.cells}["s07-01-finding"].source
 
     assert len(snapshot) == 1
@@ -615,13 +611,13 @@ def test_task2_g0_tracked_evidence_uses_one_clean_run() -> None:
 
 
 def test_task2_b0_cell_records_complete_five_fold_evidence() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     code = cells["s05-01-code"].source
     finding = cells["s05-01-finding"].source
 
     assert not code.startswith("# TODO:")
-    compile(code, "03_task2_season.ipynb:s05-01-code", "exec")
+    compile(code, "04_task2_part1_season.ipynb:s05-01-code", "exec")
     for required in (
         "results/evidence/task2/b0_majority/manifest.json",
         "load_verified_notebook_manifest",
@@ -641,13 +637,13 @@ def test_task2_b0_cell_records_complete_five_fold_evidence() -> None:
 
 
 def test_task2_b1_cell_records_uncalibrated_five_fold_evidence() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     code = cells["s05-02-code"].source
     finding = cells["s05-02-finding"].source
 
     assert not code.startswith("# TODO:")
-    compile(code, "03_task2_season.ipynb:s05-02-code", "exec")
+    compile(code, "04_task2_part1_season.ipynb:s05-02-code", "exec")
     for required in (
         "results/evidence/task2/b1_hog_hsv_svm/manifest.json",
         "load_verified_notebook_manifest",
@@ -669,13 +665,13 @@ def test_task2_b1_cell_records_uncalibrated_five_fold_evidence() -> None:
 
 
 def test_task2_g1_cell_records_equal_budget_family_screen() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     code = cells["s08-01-01-code"].source
     finding = cells["s08-01-01-finding"].source
 
     assert not code.startswith("# TODO:")
-    compile(code, "03_task2_season.ipynb:s08-01-01-code", "exec")
+    compile(code, "04_task2_part1_season.ipynb:s08-01-01-code", "exec")
     for required in (
         "results/evidence/task2/g1_family_screen/manifest.json",
         "load_verified_notebook_manifest",
@@ -706,13 +702,13 @@ def test_task2_g1_cell_records_equal_budget_family_screen() -> None:
 
 
 def test_task2_g3_cell_records_audited_full_budget_comparison() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     code = cells["s08-01-02-code"].source
     finding = cells["s08-01-02-finding"].source
 
     assert not code.startswith("# TODO:")
-    compile(code, "03_task2_season.ipynb:s08-01-02-code", "exec")
+    compile(code, "04_task2_part1_season.ipynb:s08-01-02-code", "exec")
     for required in (
         "results/evidence/task2/g3_full_budget/manifest.json",
         "load_verified_notebook_manifest",
@@ -753,7 +749,7 @@ def test_task2_g3_cell_records_audited_full_budget_comparison() -> None:
 
 
 def test_task2_g3_cell_scopes_validation_to_the_current_run_ids() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     code = {cell.id: cell for cell in notebook.cells}["s08-01-02-code"].source
 
     assert "g3_attempts = load_verified_input_registry_rows(g3_manifest)" in code
@@ -777,13 +773,13 @@ def test_task2_g3_notebook_preserves_registered_probability_note() -> None:
 
 
 def test_task2_i1_cell_records_audited_class_balance_decision() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     code = cells["s08-03-01-code"].source
     finding = cells["s08-03-01-finding"].source
 
     assert not code.startswith("# TODO:")
-    compile(code, "03_task2_season.ipynb:s08-03-01-code", "exec")
+    compile(code, "04_task2_part1_season.ipynb:s08-03-01-code", "exec")
     for required in (
         "results/evidence/task2/i1_class_balance/manifest.json",
         "load_verified_notebook_manifest",
@@ -819,14 +815,14 @@ def test_task2_i1_cell_records_audited_class_balance_decision() -> None:
 
 
 def test_task2_i2_cell_records_audited_multitask_decision() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     cell = cells["s08-03-02-code"]
     code = cell.source
     finding = cells["s08-03-02-finding"].source
 
     assert not code.startswith("# TODO:")
-    compile(code, "03_task2_season.ipynb:s08-03-02-code", "exec")
+    compile(code, "04_task2_part1_season.ipynb:s08-03-02-code", "exec")
     for required in (
         "results/evidence/task2/i2_multitask/manifest.json",
         "load_verified_notebook_manifest",
@@ -871,14 +867,14 @@ def test_task2_i2_cell_records_audited_multitask_decision() -> None:
 
 
 def test_task2_pstar_cell_records_matched_pretraining_boundary() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     cell = cells["s08-03-03-code"]
     code = cell.source
     finding = cells["s08-03-03-finding"].source
 
     assert not code.startswith("# TODO:")
-    compile(code, "03_task2_season.ipynb:s08-03-03-code", "exec")
+    compile(code, "04_task2_part1_season.ipynb:s08-03-03-code", "exec")
     for required in (
         "results/evidence/task2/pretraining_benchmark/manifest.json",
         "load_verified_notebook_manifest",
@@ -917,14 +913,14 @@ def test_task2_pstar_cell_records_matched_pretraining_boundary() -> None:
 
 
 def test_task2_g5_cell_records_second_seed_stability() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     cell = cells["s08-04-code"]
     code = cell.source
     finding = cells["s08-04-finding"].source
 
     assert not code.startswith("# TODO:")
-    compile(code, "03_task2_season.ipynb:s08-04-code", "exec")
+    compile(code, "04_task2_part1_season.ipynb:s08-04-code", "exec")
     for required in (
         'stability_root = TASK2_EVIDENCE_DIR / "seed_stability"',
         'stability_manifest_path = stability_root / "manifest.json"',
@@ -967,13 +963,13 @@ def test_task2_g5_cell_records_second_seed_stability() -> None:
 
 
 def test_task2_g2_size_cell_records_audited_selection() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     code = cells["s08-02-01-code"].source
     finding = cells["s08-02-01-finding"].source
 
     assert not code.startswith("# TODO:")
-    compile(code, "03_task2_season.ipynb:s08-02-01-code", "exec")
+    compile(code, "04_task2_part1_season.ipynb:s08-02-01-code", "exec")
     for required in (
         "results/evidence/task2/g2_input_size_ablation/manifest.json",
         "load_verified_notebook_manifest",
@@ -1006,13 +1002,13 @@ def test_task2_g2_size_cell_records_audited_selection() -> None:
 
 
 def test_task2_g2_tuning_cell_records_audited_incremental_selection() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     code = cells["s08-02-03-code"].source
     finding = cells["s08-02-03-finding"].source
 
     assert not code.startswith("# TODO:")
-    compile(code, "03_task2_season.ipynb:s08-02-03-code", "exec")
+    compile(code, "04_task2_part1_season.ipynb:s08-02-03-code", "exec")
     for required in (
         "results/evidence/task2/g2_compact_tuning/manifest.json",
         "results/evidence/task2/selection_story/manifest.json",
@@ -1047,7 +1043,7 @@ def test_task2_g2_tuning_cell_records_audited_incremental_selection() -> None:
 
 
 def test_task2_teacher_feedback_is_explicitly_connected_to_eda() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
 
     eda_handoff = "\n".join(
@@ -1103,7 +1099,7 @@ def test_task2_teacher_feedback_is_explicitly_connected_to_eda() -> None:
 
 
 def test_task2_results_cells_load_only_verified_measured_evidence() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     cell_ids = (
         "s09-01-code",
@@ -1115,7 +1111,7 @@ def test_task2_results_cells_load_only_verified_measured_evidence() -> None:
     for cell_id in cell_ids:
         code = cells[cell_id].source
         assert not code.startswith("# TODO:")
-        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+        compile(code, f"04_task2_part1_season.ipynb:{cell_id}", "exec")
 
     combined = (
         cells["s01-01-code"].source
@@ -1162,7 +1158,7 @@ def test_task2_results_cells_load_only_verified_measured_evidence() -> None:
 
 
 def test_task2_slice_cells_load_verified_post_inference_evidence() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     cell_ids = (
         "s10-01-01-code",
@@ -1176,7 +1172,7 @@ def test_task2_slice_cells_load_verified_post_inference_evidence() -> None:
     for cell_id in cell_ids:
         code = cells[cell_id].source
         assert not code.startswith("# TODO:")
-        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+        compile(code, f"04_task2_part1_season.ipynb:{cell_id}", "exec")
 
     combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
     for required in (
@@ -1229,14 +1225,14 @@ def test_task2_slice_cells_load_verified_post_inference_evidence() -> None:
 
 
 def test_task2_robustness_cells_load_verified_stress_and_cost_evidence() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     cell_ids = ("s11-01-code", "s11-02-01-code", "s11-02-02-code")
 
     for cell_id in cell_ids:
         code = cells[cell_id].source
         assert not code.startswith("# TODO:")
-        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+        compile(code, f"04_task2_part1_season.ipynb:{cell_id}", "exec")
 
     combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
     for required in (
@@ -1283,14 +1279,14 @@ def test_task2_robustness_cells_load_verified_stress_and_cost_evidence() -> None
 
 
 def test_task2_gradcam_cells_load_verified_noncausal_failure_evidence() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     cell_ids = ("s12-01-code", "s12-02-code", "s12-03-code")
 
     for cell_id in cell_ids:
         code = cells[cell_id].source
         assert not code.startswith("# TODO:")
-        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+        compile(code, f"04_task2_part1_season.ipynb:{cell_id}", "exec")
 
     combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
     for required in (
@@ -1331,14 +1327,14 @@ def test_task2_gradcam_cells_load_verified_noncausal_failure_evidence() -> None:
 
 
 def test_task2_statistical_and_literature_cells_keep_claim_boundaries() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     cell_ids = ("s13-01-code", "s13-02-code")
 
     for cell_id in cell_ids:
         code = cells[cell_id].source
         assert not code.startswith("# TODO:")
-        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+        compile(code, f"04_task2_part1_season.ipynb:{cell_id}", "exec")
 
     combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
     for required in (
@@ -1379,14 +1375,14 @@ def test_task2_statistical_and_literature_cells_keep_claim_boundaries() -> None:
 
 
 def test_task2_ultimate_judgement_cells_load_verified_freeze_evidence() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     cell_ids = ("s14-01-code", "s14-02-code")
 
     for cell_id in cell_ids:
         code = cells[cell_id].source
         assert not code.startswith("# TODO:")
-        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+        compile(code, f"04_task2_part1_season.ipynb:{cell_id}", "exec")
 
     combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
     for required in (
@@ -1431,12 +1427,12 @@ def test_task2_ultimate_judgement_cells_load_verified_freeze_evidence() -> None:
 
 
 def test_task2_refit_cell_loads_verified_bundle_without_evaluation_leakage() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     code = cells["s14-03-code"].source
 
     assert not code.startswith("# TODO:")
-    compile(code, "03_task2_season.ipynb:s14-03-code", "exec")
+    compile(code, "04_task2_part1_season.ipynb:s14-03-code", "exec")
     for required in (
         "load_verified_development_refit_manifest",
         'refit_manifest["gate"] == "G8-DEVELOPMENT-REFIT"',
@@ -1483,7 +1479,7 @@ def test_task2_refit_cell_loads_verified_bundle_without_evaluation_leakage() -> 
 
 
 def test_task2_markdown_matches_final_model_and_recovered_registry() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     model_manifest_path = ROOT / "models/task2_season.manifest.json"
     model_manifest = json.loads(model_manifest_path.read_text(encoding="utf-8"))
@@ -1538,14 +1534,14 @@ def test_task2_markdown_matches_final_model_and_recovered_registry() -> None:
 
 
 def test_task2_final_cells_build_only_the_locked_component_handoff() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
     cell_ids = ("s15-01-01-code", "s15-01-02-code", "s15-02-code")
 
     for cell_id in cell_ids:
         code = cells[cell_id].source
         assert not code.startswith("# TODO:")
-        compile(code, f"03_task2_season.ipynb:{cell_id}", "exec")
+        compile(code, f"04_task2_part1_season.ipynb:{cell_id}", "exec")
 
     combined = "\n".join(cells[cell_id].source for cell_id in cell_ids)
     for required in (
@@ -1608,7 +1604,7 @@ def test_task2_final_cells_build_only_the_locked_component_handoff() -> None:
 
 
 def test_task2_analysis_cells_verify_all_declared_inputs_and_exact_claims() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4)
     cells = {cell.id: cell for cell in notebook.cells}
 
     manifest_loader = cells["s01-01-code"].source
@@ -1635,23 +1631,27 @@ def test_task2_analysis_cells_verify_all_declared_inputs_and_exact_claims() -> N
 
 
 def test_task_metric_placeholders_are_explicit() -> None:
-    task1 = _source(nbformat.read(ROOT / "notebooks/02_task1_article_type.ipynb", as_version=4))
+    task1 = _source(
+        nbformat.read(ROOT / "notebooks/02_task1_part1_article_type.ipynb", as_version=4)
+    )
     assert "The main score is fixed-label macro-F1 across all 124 classes" in task1
     assert "TODO(owner)" not in task1
 
-    task2 = _source(nbformat.read(ROOT / "notebooks/03_task2_season.ipynb", as_version=4))
+    task2 = _source(nbformat.read(ROOT / "notebooks/04_task2_part1_season.ipynb", as_version=4))
     assert "Primary development metric:** pooled out-of-fold macro-F1" in task2
 
-    task3 = _source(nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4))
+    task3 = _source(
+        nbformat.read(ROOT / "notebooks/06_task3_part1_gender_usage.ipynb", as_version=4)
+    )
     assert "Primary development metric for `gender`: pooled five-fold OOF macro-F1" in task3
     assert "Primary development metric for `usage`: pooled five-fold OOF macro-F1" in task3
 
-    task4 = _source(nbformat.read(_task_path("05_task4_visual_search.ipynb"), as_version=4))
+    task4 = _source(nbformat.read(_task_path("09_task4_part2_visual_search.ipynb"), as_version=4))
     assert "Primary ranking-quality metric: mean per-query linear nDCG@10" in task4
 
 
 def test_task4_evaluation_protocol_is_frozen_and_executed() -> None:
-    notebook = nbformat.read(_task_path("05_task4_visual_search.ipynb"), as_version=4)
+    notebook = nbformat.read(_task_path("09_task4_part2_visual_search.ipynb"), as_version=4)
     source = _source(notebook)
     code_cells = [
         cell for cell in notebook.cells if cell.cell_type == "code" and cell.source.strip()
@@ -1696,7 +1696,7 @@ def test_task4_evaluation_protocol_is_frozen_and_executed() -> None:
 
 
 def test_active_task4_notebooks_use_canonical_import_owners() -> None:
-    for filename in ("01_v1_eda.ipynb", "05_task4_visual_search.ipynb"):
+    for filename in ("08_task4_part1_image_eda.ipynb", "09_task4_part2_visual_search.ipynb"):
         notebook = nbformat.read(ROOT / "notebooks/task-4" / filename, as_version=4)
         code_source = _code_source(notebook)
 
@@ -1705,7 +1705,7 @@ def test_active_task4_notebooks_use_canonical_import_owners() -> None:
 
 
 def test_task4_preprocessing_milestone_is_frozen_and_executed() -> None:
-    notebook = nbformat.read(_task_path("05_task4_visual_search.ipynb"), as_version=4)
+    notebook = nbformat.read(_task_path("09_task4_part2_visual_search.ipynb"), as_version=4)
     source = _source(notebook)
     preprocessing = source.split("## 5. Task-specific preprocessing and leakage rules", maxsplit=1)[
         1
@@ -1755,7 +1755,7 @@ def test_task4_preprocessing_milestone_is_frozen_and_executed() -> None:
 
 
 def test_task4_baseline_milestone_is_frozen_and_executed() -> None:
-    notebook = nbformat.read(_task_path("05_task4_visual_search.ipynb"), as_version=4)
+    notebook = nbformat.read(_task_path("09_task4_part2_visual_search.ipynb"), as_version=4)
     source = _source(notebook)
     start = next(
         index
@@ -1868,14 +1868,14 @@ def test_task4_preprocessing_artifacts_are_development_only_and_complete() -> No
     assert contract["selected_probe_rank"] == 3
 
     notebook_source = _source(
-        nbformat.read(_task_path("05_task4_visual_search.ipynb"), as_version=4)
+        nbformat.read(_task_path("09_task4_part2_visual_search.ipynb"), as_version=4)
     )
     assert "images_per_second" in notebook_source
     assert "float32_rgb_kib_per_image" in notebook_source
 
 
 def test_task4_v1_eda_is_separate_safe_and_executed() -> None:
-    notebook = nbformat.read(ROOT / "notebooks/task-4/01_v1_eda.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/task-4/08_task4_part1_image_eda.ipynb", as_version=4)
     nbformat.validate(notebook)
     source = _source(notebook)
     code_cells = [
@@ -2277,7 +2277,9 @@ def test_task3_e10_runner_trains_only_the_gender_audience_child() -> None:
 
 
 def test_task3_final_metric_contracts_are_explicit():
-    task3 = _source(nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4))
+    task3 = _source(
+        nbformat.read(ROOT / "notebooks/06_task3_part1_gender_usage.ipynb", as_version=4)
+    )
     assert "Primary development metric for `gender`: pooled five-fold OOF macro-F1" in task3
     assert "Primary development metric for `usage`: pooled five-fold OOF macro-F1" in task3
     stages = [
@@ -2309,7 +2311,7 @@ def test_task3_final_metric_contracts_are_explicit():
         "Reserved-holdout results and analysis remain in",
     ):
         assert contract in task3
-    notebook = nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/06_task3_part1_gender_usage.ipynb", as_version=4)
     executable = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
     assert "run_task3_baseline_cv" not in executable
     for internal_result in (
@@ -2326,7 +2328,7 @@ def test_task3_final_metric_contracts_are_explicit():
         "E1 misses every test NA",
     ):
         assert internal_result not in task3
-    notebook = nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4)
+    notebook = nbformat.read(ROOT / "notebooks/06_task3_part1_gender_usage.ipynb", as_version=4)
     for cell in notebook.cells:
         for output in cell.get("outputs", []):
             html = output.get("data", {}).get("text/html", "")
@@ -2340,7 +2342,7 @@ def test_task3_final_metric_contracts_are_explicit():
 
 
 def test_task3_final_report_structure() -> None:
-    for filename in ("04_task3_gender_usage.ipynb",):
+    for filename in ("06_task3_part1_gender_usage.ipynb",):
         spec = TASK_SPECS[filename]
         notebook = nbformat.read(ROOT / "notebooks" / filename, as_version=4)
         nbformat.validate(notebook)
@@ -2355,7 +2357,7 @@ def test_task3_final_report_structure() -> None:
 
         assert notebook.metadata["title"] == spec["title"]
         assert headings[0] == f"# {spec['title']}"
-        if filename == "04_task3_gender_usage.ipynb":
+        if filename == "06_task3_part1_gender_usage.ipynb":
             code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
             assert code_cells
             assert max(len(cell.source.splitlines()) for cell in code_cells) <= 25
@@ -2382,7 +2384,7 @@ def test_task3_final_report_structure() -> None:
 
         for required in ("data/processed/splits.csv", "results/runs.csv"):
             assert required in source
-        if filename == "04_task3_gender_usage.ipynb":
+        if filename == "06_task3_part1_gender_usage.ipynb":
             assert "TODO(owner)" not in source
             assert "single teacher-only E8 refit" in source
         else:
@@ -2391,17 +2393,17 @@ def test_task3_final_report_structure() -> None:
         assert "train_test_split" not in source
         assert "pretrained=True" not in source
         assert "Final metric selected: yes" not in source
-        if filename != "04_task3_gender_usage.ipynb":
+        if filename != "06_task3_part1_gender_usage.ipynb":
             for unselected in ("macro-F1", "nDCG@", "Recall@", "Adam", "cross-entropy"):
                 assert unselected not in source
 
 
 def test_task3_links_are_limited_to_the_opening_training_map() -> None:
-    for filename in ("04_task3_gender_usage.ipynb", "04_task3_final_evaluation.ipynb"):
+    for filename in ("06_task3_part1_gender_usage.ipynb", "07_task3_part2_final_evaluation.ipynb"):
         notebook = nbformat.read(ROOT / "notebooks" / filename, as_version=4)
         for index, cell in enumerate(notebook.cells):
             if cell.cell_type == "markdown":
-                if filename == "04_task3_gender_usage.ipynb" and index == 0:
+                if filename == "06_task3_part1_gender_usage.ipynb" and index == 0:
                     for link in re.findall(r"\[[^\]]*\]\(([^)]+)\)", cell.source):
                         assert (ROOT / "notebooks" / link).exists(), link
                 else:
