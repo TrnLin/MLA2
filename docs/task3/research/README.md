@@ -122,8 +122,8 @@ registered and its evidence bundle exists.
 - Do not tune, switch models, change metrics, or change thresholds after unlock.
 
 These rules come from the [assignment specification](<../../COSC2753_2026B_Assignment 2.pdf>),
-[accepted decisions](../../decisions/README.md), and the locked
-[final-evaluation notebook](../../../notebooks/06_final_evaluation.ipynb).
+[accepted decisions](../../decisions/README.md). The completed Task 3 results are in the
+[Task 3 final-evaluation notebook](../../../notebooks/07_task3_part2_final_evaluation.ipynb).
 
 ## Current readiness and implementation order
 
