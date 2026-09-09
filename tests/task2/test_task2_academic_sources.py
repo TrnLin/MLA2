@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-TRAINING_NOTEBOOK = ROOT / "notebooks/03_task2_season.ipynb"
-EVALUATION_NOTEBOOK = ROOT / "notebooks/06_task2_season_evaluation.ipynb"
+TRAINING_NOTEBOOK = ROOT / "notebooks/04_task2_part1_season.ipynb"
+EVALUATION_NOTEBOOK = ROOT / "notebooks/05_task2_part2_final_evaluation.ipynb"
 EVALUATION_HTML = ROOT / "results/notebooks/06_task2_season_evaluation.html"
 
 TRAINING_FOUNDATIONS = (
