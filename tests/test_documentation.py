@@ -95,12 +95,11 @@ def test_assignment_breakdown_lists_the_canonical_notebooks() -> None:
     for name in (
         "00_problem_definition.ipynb",
         "01_data_preparation.ipynb",
-        "02_task1_article_type.ipynb",
-        "03_task2_season.ipynb",
-        "04_task3_gender_usage.ipynb",
-        "01_v1_eda.ipynb",
-        "05_task4_visual_search.ipynb",
-        "06_final_evaluation.ipynb",
+        "02_task1_part1_article_type.ipynb",
+        "04_task2_part1_season.ipynb",
+        "06_task3_part1_gender_usage.ipynb",
+        "08_task4_part1_image_eda.ipynb",
+        "09_task4_part2_visual_search.ipynb",
     ):
         assert name in document
     for fixed_metric in ("Macro-F1", "nDCG@5", "Recall@5"):
@@ -192,7 +191,7 @@ def test_task4_baseline_decision_and_handoffs_are_frozen() -> None:
     assert "1e-5" in decision
     notebooks = [
         nbformat.read(ROOT / "notebooks/task-4" / filename, as_version=4)
-        for filename in ("01_v1_eda.ipynb", "05_task4_visual_search.ipynb")
+        for filename in ("08_task4_part1_image_eda.ipynb", "09_task4_part2_visual_search.ipynb")
     ]
     code_sources = [
         "\n".join(
