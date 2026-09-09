@@ -170,7 +170,12 @@ def test_notebook_replays_twice_without_writes_or_inference(final_project, monke
     notebook = json.loads(
         (runner.ROOT / "notebooks/02_task1_final_eval.ipynb").read_text(encoding="utf-8")
     )
-    code = ["".join(cell["source"]) for cell in notebook["cells"] if cell["cell_type"] == "code"]
+    # Real synthetic evidence exercises the scoring/export replay boundary.
+    # The merged report also needs full development histories and a genuine refit
+    # bundle; those displays are checked by the fresh-kernel artifact replay.
+    code = ["".join(cell["source"]) for cell in notebook["cells"]
+            if set(cell.get("metadata", {}).get("tags", [])) &
+            {"task1-stage-score", "task1-stage-export"}]
     assert any("audit_final_evaluation" in cell for cell in code)
     before = {str(p): compute_sha256(p) for p in root.rglob("*") if p.is_file()}
     monkeypatch.setenv("FASHION_PROJECT_ROOT", str(root))
@@ -181,7 +186,13 @@ def test_notebook_replays_twice_without_writes_or_inference(final_project, monke
         lambda *a, **kw: pytest.fail("notebook opened protected labels"),
     )
     for _ in range(2):
-        namespace = {"display": lambda *a, **kw: None}
+        namespace = {
+            "PROJECT_ROOT": root, "EVIDENCE_DIR": root / runner.EVIDENCE,
+            "RUN_MISSING_STAGES": False, "UNLOCK_HOLDOUT_SCORING": False,
+            "score_holdout": lambda *a, **kw: pytest.fail("replay scored raw labels"),
+            "predict_test": lambda *a, **kw: pytest.fail("replay exported predictions"),
+            "audit_final_evaluation": runner.audit_final_evaluation,
+        }
         for cell in code:
             exec(compile(cell, "notebook06", "exec"), namespace)
     assert before == {str(p): compute_sha256(p) for p in root.rglob("*") if p.is_file()}

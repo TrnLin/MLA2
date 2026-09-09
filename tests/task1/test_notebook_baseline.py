@@ -31,7 +31,7 @@ def test_task1_notebook_is_evidence_led_and_run_all_safe() -> None:
     expected_headings = [
         "## 1. Problem and output",
         "## 2. EDA evidence",
-        "## 3. Safety contract",
+        "## 3. Fair experiment setup",
         "## 4. Evaluation",
         "## 5. Candidate hypotheses",
         "## 6. Controlled preprocessing",
@@ -42,7 +42,7 @@ def test_task1_notebook_is_evidence_led_and_run_all_safe() -> None:
         "## 11. Combined five-fold and OOF comparison",
         "## 12. Learning-curve diagnosis",
         "## 13. Weak-class/confusion analysis",
-        "## 14. Development decision and Notebook 06 handoff",
+        "## 14. Development decision and final-workflow handoff",
     ]
     positions = [source.index(heading) for heading in expected_headings]
     assert positions == sorted(positions)
@@ -87,7 +87,7 @@ def test_task1_notebook_is_evidence_led_and_run_all_safe() -> None:
     ):
         assert forbidden not in code_source
 
-    decision = source[source.index("## 14. Development decision and Notebook 06 handoff") :]
+    decision = source[source.index("## 14. Development decision and final-workflow handoff") :]
     assert "Selected candidate: `task1_cnn_no_aug_unweighted_v1`" in decision
     assert "primary-metric decision" in decision
     assert "did not pass" in decision
