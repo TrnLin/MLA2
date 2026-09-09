@@ -34,7 +34,7 @@ preprocessing, comparison models, metrics, and error slices. Nothing is selected
 
 Decision 0018 fixes one boundary: V1 is a high-resolution copy of the same teacher
 catalogue, inherits `data/processed/splits.csv`, and is never split again. Its focused
-audit is in `notebooks/task-4/01_v1_eda.ipynb`.
+audit is in `notebooks/task-4/08_task4_part1_image_eda.ipynb`.
 
 Decisions 0019, 0021, and 0022 now fix the evaluation contract, the `240×320`
 input size, the arbitrary-query letterbox policy, and the untrained search
