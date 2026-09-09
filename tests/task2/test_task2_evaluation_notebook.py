@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-NOTEBOOK = ROOT / "notebooks/06_task2_season_evaluation.ipynb"
+NOTEBOOK = ROOT / "notebooks/05_task2_part2_final_evaluation.ipynb"
 HTML = ROOT / "results/notebooks/06_task2_season_evaluation.html"
 PLAN = ROOT / "docs/plans/260908-task2-assessment3-evaluation/plan.md"
 REPORT = ROOT / "docs/task2-season-execution-report.md"

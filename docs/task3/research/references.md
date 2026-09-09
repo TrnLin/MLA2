@@ -15,8 +15,8 @@ it does not override the assignment or accepted repository decisions.
 | [Project README](../../../README.md) | Project scope and hard constraints |
 | [Problem-definition notebook](../../../notebooks/00_problem_definition.ipynb) | Task framing and project roles |
 | [Data-preparation notebook](../../../notebooks/01_data_preparation.ipynb) | Official EDA, data quality, class, family, transform, and shortcut evidence |
-| [Task 3 notebook](../../../notebooks/04_task3_gender_usage.ipynb) | Narrative home for Task 3 experiments and decisions |
-| [Final-evaluation notebook](../../../notebooks/06_final_evaluation.ipynb) | Locked method-freeze, development refit, holdout unlock, and prediction workflow |
+| [Task 3 notebook](../../../notebooks/06_task3_part1_gender_usage.ipynb) | Narrative home for Task 3 experiments and decisions |
+| [Task 3 final-evaluation notebook](../../../notebooks/07_task3_part2_final_evaluation.ipynb) | Gender and Usage final results, errors, and ultimate judgement |
 | [`splits.csv`](../../../data/processed/splits.csv) | Canonical partitions, folds, families, paths, labels, and masks |
 | [`cv_fold_summary.json`](../../../data/processed/cv_fold_summary.json) | Five-fold sizes, class coverage, and fold-4 `Home` limitation |
 | [`development_class_summary.csv`](../../../data/processed/development_class_summary.csv) | Product/family/fold support for every development class |

@@ -12,10 +12,10 @@ receipts remain unchanged.
   the archived Drive registry named in `registry_provenance`; the live registry
   was not rewritten by this acceptance.
 - `holdout_sources.json` and its SHA-256 sidecar pin the separate saved holdout
-  evidence used in `notebooks/04_task3_final_evaluation.ipynb`. Model verification in Notebook 4 does not load it.
+  evidence used in `notebooks/07_task3_part2_final_evaluation.ipynb`. Model verification in Notebook 4 does not load it.
 
-Use [Notebook 4](../../../notebooks/04_task3_gender_usage.ipynb) for development,
-training and inference details, and [Task 3 evaluation](../../../notebooks/04_task3_final_evaluation.ipynb)
+Use [Notebook 4](../../../notebooks/06_task3_part1_gender_usage.ipynb) for development,
+training and inference details, and [Task 3 evaluation](../../../notebooks/07_task3_part2_final_evaluation.ipynb)
 for the holdout comparison and limits. The official teacher test set is prediction-only.
 
 From the repository root, verify the accepted model without training or inference:

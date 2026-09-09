@@ -38,7 +38,7 @@ or fold averaging applies at inference. Retain the saved normalization rather
 than recomputing it on evaluation or user images.
 
 Notebook 4 contains development evidence, refit training analysis and the frozen
-recipe. `04_task3_final_evaluation.ipynb` contains the reserved-holdout results and final judgement.
+recipe. `07_task3_part2_final_evaluation.ipynb` contains the reserved-holdout results and final judgement.
 Original teacher labels remain primary; the fixed name-rule diagnostic remains
 separate. The teacher test set is prediction-only in the submitted analysis.
 
@@ -73,8 +73,8 @@ must preserve `id,gender,articleType,season,usage`.
 
 ## Evidence
 
-- [Main notebook](../../notebooks/04_task3_gender_usage.ipynb)
-- [Final evaluation notebook](../../notebooks/04_task3_final_evaluation.ipynb)
+- [Main notebook](../../notebooks/06_task3_part1_gender_usage.ipynb)
+- [Final evaluation notebook](../../notebooks/07_task3_part2_final_evaluation.ipynb)
 - [Accepted model manifest](../../reports/task3/gender_final_sam25_refit_20260907/model_manifest.json)
 - [Completed training notebook](../../notebooks/task3_training/gender_sam25_refit.ipynb)
 - [Refit contract](../task3_gender_sam25_refit.md)

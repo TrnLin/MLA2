@@ -1,6 +1,6 @@
 # Task 3 training and experiment notebooks
 
-Read [the main report](../04_task3_gender_usage.ipynb) for the results.
+Read [the main report](../06_task3_part1_gender_usage.ipynb) for the results.
 Run a notebook here only when you mean to repeat that experiment.
 All 40 original companions are kept, including the EDA and saved-model diagnostics.
 

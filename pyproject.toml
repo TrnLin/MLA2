@@ -46,5 +46,5 @@ select = ["E", "F", "I", "W"]
 
 [tool.ruff.lint.per-file-ignores]
 "notebooks/01_data_preparation.ipynb" = ["E501"]
-"notebooks/task-4/01_v1_eda.ipynb" = ["F401"]
+"notebooks/task-4/08_task4_part1_image_eda.ipynb" = ["F401"]
 "scripts/task4/run_model_comparisons.py" = ["E402"]

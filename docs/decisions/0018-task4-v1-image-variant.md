@@ -14,7 +14,7 @@ project's single-split rule and could expose official prediction products.
 - Treat V1 as an ID-keyed high-resolution image variant, not as independent data.
 - Never make a new V1 train/test split. Valid teacher rows inherit `partition`,
   `cv_fold`, duplicate groups, and family groups from `data/processed/splits.csv`.
-- Keep the V1 audit in `notebooks/task-4/01_v1_eda.ipynb`; shared Notebook 01 stays
+- Keep the V1 audit in `notebooks/task-4/08_task4_part1_image_eda.ipynb`; shared Notebook 01 stays
   teacher-only.
 - Use only development rows for V1 pixel distributions and paired image analysis.
 - Read only V1 `images.csv` and `images/`. Do not read external style or label files.

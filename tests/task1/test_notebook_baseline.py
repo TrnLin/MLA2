@@ -4,7 +4,7 @@ import nbformat
 
 from fashion.config import ROOT
 
-NOTEBOOK = ROOT / "notebooks/02_task1_article_type.ipynb"
+NOTEBOOK = ROOT / "notebooks/02_task1_part1_article_type.ipynb"
 
 
 def _notebook() -> nbformat.NotebookNode:

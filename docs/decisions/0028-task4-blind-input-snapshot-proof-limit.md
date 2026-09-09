@@ -49,4 +49,4 @@ changed by this decision.
 - `tests/task4_evaluation/test_blind.py`
 - `tests/task4_evaluation/test_score.py`
 - `tests/task4_evaluation/test_notebook.py`
-- `notebooks/task-4/06_task4_search_evaluation.ipynb`
+- `notebooks/task-4/10_task4_part3_final_evaluation.ipynb`

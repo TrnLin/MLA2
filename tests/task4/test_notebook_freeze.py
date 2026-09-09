@@ -4,7 +4,7 @@ import nbformat
 
 from fashion.config import ROOT
 
-NOTEBOOK = ROOT / "notebooks/task-4/05_task4_visual_search.ipynb"
+NOTEBOOK = ROOT / "notebooks/task-4/09_task4_part2_visual_search.ipynb"
 ADR = ROOT / "docs/decisions/0023-task4-learned-model-comparison.md"
 
 

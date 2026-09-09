@@ -187,8 +187,9 @@ The freeze record needs a timestamp and team sign-off.
 
 ## 6. Final all-development refit
 
-The locked [final-evaluation notebook](../../../notebooks/06_final_evaluation.ipynb) states that the
-frozen method is refitted on all development before holdout unlock.
+The Task 3 protocol refits the frozen method on all development before holdout unlock.
+The completed results are recorded in the
+[Task 3 final-evaluation notebook](../../../notebooks/07_task3_part2_final_evaluation.ipynb).
 
 ### Procedure
 

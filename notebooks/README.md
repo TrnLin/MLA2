@@ -2,30 +2,43 @@
 
 Notebooks tell the investigation story. Reusable code lives in `src/fashion/`.
 
+File names use lowercase words separated by underscores. Shared notebooks use
+`NN_description.ipynb`; task notebooks use `NN_taskN_partN_description.ipynb`.
+The prefix `NN` runs once from `00` to `11` in reading order, with no gaps or repeats:
+shared setup, Task 1, Task 2, Task 3, then Task 4.
+`part1`, `part2`, and so on give the reading order within each task, so sorting
+by name puts development before final evaluation. Tasks 1–3 share the EDA in
+`01_data_preparation.ipynb`;
+their first task notebook covers model development and comparisons. Task 4 has
+its own image EDA, followed by model development, final evaluation, and the demo.
+Every task's final evaluation uses the suffix `final_evaluation.ipynb`.
+The separate `task3_training/` experiment names are exempt.
+
 ## Reading order
 
-| # | Notebook | Status | Purpose |
+| Order | Notebook | Status | Purpose |
 |---|---|---|---|
 | 00 | `00_problem_definition.ipynb` | complete | users, task boundaries, risks, and success dimensions |
 | 01 | `01_data_preparation.ipynb` | complete and executed | teacher audit, sole split, five folds, and development-only evidence |
-| 02 | `02_task1_article_type.ipynb` | planning scaffold | article-type comparisons and judgement |
-| 03 | `03_task2_season.ipynb` | complete and executed | season comparisons and judgement replayed from frozen evidence |
-| 04 | `04_task3_gender_usage.ipynb` | saved-results report | model comparisons, failures, and final choices |
-| 05a | `task-4/01_v1_eda.ipynb` | complete and executed | V1 provenance, geometry, and paired-image audit |
-| 05b | `task-4/05_task4_visual_search.ipynb` | baseline complete; model work open | Top-K search choices and comparisons |
-| 04 eval | `04_task3_final_evaluation.ipynb` | saved Task 3 evaluation | Gender and Usage holdout results, errors and ultimate judgement |
-| 06 | `06_final_evaluation.ipynb` | locked scaffold | one holdout evaluation and ultimate judgement |
-| 06 Task 2 | `06_task2_season_evaluation.ipynb` | complete evaluation replay | Kai's frozen Season bundle, one-shot holdout evidence, teacher-test output, and Assessment 3 evidence |
-| 06 Task 4 | `task-4/06_task4_search_evaluation.ipynb` | complete and executed | replay-only independent holdout evaluation, uncertainty, failures, and ultimate judgement |
+| 02 | `02_task1_part1_article_type.ipynb` | model comparisons | article-type comparisons and judgement |
+| 03 | `03_task1_part2_final_evaluation.ipynb` | staged execution and replay | final article-type training, evaluation, and judgement |
+| 04 | `04_task2_part1_season.ipynb` | complete and executed | season comparisons and judgement replayed from frozen evidence |
+| 05 | `05_task2_part2_final_evaluation.ipynb` | complete evaluation replay | Kai's frozen Season bundle, one-shot holdout evidence, teacher-test output, and Assessment 3 evidence |
+| 06 | `06_task3_part1_gender_usage.ipynb` | saved-results report | model comparisons, failures, and final choices |
+| 07 | `07_task3_part2_final_evaluation.ipynb` | saved Task 3 evaluation | Gender and Usage holdout results, errors and ultimate judgement |
+| 08 | `task-4/08_task4_part1_image_eda.ipynb` | complete and executed | V1 provenance, geometry, and paired-image audit |
+| 09 | `task-4/09_task4_part2_visual_search.ipynb` | frozen development comparison | Top-K search choices and comparisons |
+| 10 | `task-4/10_task4_part3_final_evaluation.ipynb` | complete and executed | replay-only independent holdout evaluation, uncertainty, failures, and ultimate judgement |
+| 11 | `task-4/11_task4_part4_search_demo.ipynb` | search demo | development or outside-image visual search |
 
-Notebook 02 and the shared Notebook 06 remain planning or locked scaffolds.
+Each task has its own final-evaluation notebook; there is no shared template.
 The Task 2 owner notebook replays the one completed, hash-verified holdout evaluation.
 Run All cannot independently unlock raw labels, retrain the model, or create a second
 holdout score.
 Task 3 has one report and [40 retained training notebooks](task3_training/README.md). Each
 `TODO(owner)` belongs to the task owner.
 
-Notebook 03 is the completed Task 2 report notebook. It contains one code cell per leaf
+Task 2, part 1 is the completed Season report notebook. It contains one code cell per leaf
 subsection and freezes the Season metric, experiment order, leakage controls, and final
 decision rule. **Run All does not train a model.** It uses `artifact_replay` to verify and
 display the saved manifests, tables, figures, and final bundle. A missing or changed
@@ -34,16 +47,15 @@ the replay roots and loose figures. Fold-0 preprocessing uses the already-frozen
 so it cannot fit or write a cache. Reusable implementations still belong in `src/fashion/`;
 the notebook only checks evidence and explains each output.
 
-The Task 4 EDA contains audit code only. The main Task 4 notebook has frozen its
-protocol, preprocessing, and untrained baseline from development evidence.
-Learned-model and final-winner choices remain open.
+The Task 4 EDA contains audit code only. The main Task 4 notebook records its
+frozen development choices. The evaluation notebook replays the saved holdout results.
 
 ## Shared rules
 
 - Load only `data/processed/splits.csv` through the shared APIs.
 - Choose one fixed `cv_fold` or all five folds before experiments.
 - Fit learned preprocessing only on the training folds of each round.
-- Keep holdout and quarantine targets sealed until Notebook 06.
+- Keep holdout targets sealed until each task's authorised final evaluation; keep quarantine targets sealed.
 - Train submitted models from scratch.
 - Write every run to `results/runs.csv` through `fashion.train.registry`.
 - Tasks 1–3 use `data/raw/teacher` images.
@@ -52,7 +64,7 @@ Learned-model and final-winner choices remain open.
 
 ## Required fold block for modelling notebooks
 
-Every teammate working on Notebooks 02–05 **must use this block** to obtain training
+Every teammate working on the model-development notebooks for Tasks 1–4 **must use this block** to obtain training
 and validation folds. It is the same data-access method explained in Notebook 01,
 Section 5.2.
 
@@ -152,7 +164,7 @@ rules in one place, so later notebooks cannot quietly use different rules.
                 +---------+----------+
                           |
                           v
-                 Notebooks 02--06
+                 Notebooks 02--11
               reuse the same contracts
 ```
 

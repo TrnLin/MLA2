@@ -30,7 +30,7 @@ Then open `http://127.0.0.1:4173/`.
 
 ## Main evidence
 
-- `notebooks/04_task3_gender_usage.ipynb`
+- `notebooks/06_task3_part1_gender_usage.ipynb`
 - `notebooks/task3_training/clean_slate_screen_1.ipynb`
 - `notebooks/task3_training/micro_swin_clean_slate_screen_2.ipynb`
 - `results/evidence/task3/results/runs.csv`

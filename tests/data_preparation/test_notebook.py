@@ -254,12 +254,12 @@ def test_eda_findings_drive_task_linked_hypotheses() -> None:
     for hypothesis_id in (f"H{index:02d}" for index in range(1, 8)):
         assert hypothesis_id in source
     for downstream_notebook in (
-        "02_task1_article_type.ipynb",
-        "03_task2_season.ipynb",
-        "06_task2_season_evaluation.ipynb",
-        "04_task3_gender_usage.ipynb",
-        "04_task3_final_evaluation.ipynb",
-        "task-4/05_task4_visual_search.ipynb",
+        "02_task1_part1_article_type.ipynb",
+        "04_task2_part1_season.ipynb",
+        "05_task2_part2_final_evaluation.ipynb",
+        "06_task3_part1_gender_usage.ipynb",
+        "07_task3_part2_final_evaluation.ipynb",
+        "task-4/09_task4_part2_visual_search.ipynb",
     ):
         assert downstream_notebook in source
 

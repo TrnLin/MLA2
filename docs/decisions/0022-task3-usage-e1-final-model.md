@@ -88,4 +88,4 @@ The existing E1 `id,usage` predictions do not replace the complete required
 - [Completed 687-image test comparison](../../reports/task3/usage_expanded_v2_e8_test_20260907/README.md)
 - [Two-fold v2 trial](../../reports/task3/usage_mixup_sam_result_20260906/README.md)
 - [Two-fold v3 replacement trial](../../reports/task3/usage_replaced_v3_mixup_sam_result_20260907/README.md)
-- [Main report notebook](../../notebooks/04_task3_gender_usage.ipynb)
+- [Main report notebook](../../notebooks/06_task3_part1_gender_usage.ipynb)

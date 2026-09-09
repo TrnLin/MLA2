@@ -5,7 +5,7 @@ import json
 import re
 from pathlib import Path
 
-NOTEBOOK = Path("notebooks/task-4/06_task4_search_evaluation.ipynb")
+NOTEBOOK = Path("notebooks/task-4/10_task4_part3_final_evaluation.ipynb")
 SCORED_ARTIFACT_NAMES = {
     "deployment_summary.csv",
     "holdout_bootstrap_intervals.csv",

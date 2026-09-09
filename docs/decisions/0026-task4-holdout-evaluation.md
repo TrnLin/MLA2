@@ -108,7 +108,7 @@ training. This is a permanent limitation.
 
 ### One holdout unlock
 
-Notebook `notebooks/task-4/06_task4_search_evaluation.ipynb` is replay-only. The
+Notebook `notebooks/task-4/10_task4_part3_final_evaluation.ipynb` is replay-only. The
 single unlock happens through
 `scripts/build_task4_final_evaluation.py score --evaluation-unlocked` and never
 again. This decision supersedes decision 0023's Holdout boundary statement that

@@ -17,7 +17,7 @@ Travel case. Home has no test examples. On the reserved holdout, it gets
 - [Decision 0022](../../../docs/decisions/0022-task3-usage-e1-final-model.md):
   the accepted trade-off and the Usage exception to the refit rule.
 - [Evidence lock](evidence_lock.json): hashes for the saved final comparisons.
-- [Main notebook](../../../notebooks/04_task3_gender_usage.ipynb): the complete
+- [Main notebook](../../../notebooks/06_task3_part1_gender_usage.ipynb): the complete
   report, including the preserved Gender analysis and finished Usage sections.
 - [HTML preview](../main_report_20260906/main_report.html): the executed
   notebook with working local links. This is a generated review artifact.

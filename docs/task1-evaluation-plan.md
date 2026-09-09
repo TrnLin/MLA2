@@ -19,7 +19,7 @@ Task 1 has a sound development study. Its main gap is the final evaluation and u
 
 These are progress comparisons. Scores from different targets are not a fair ranking of the tasks.
 
-Sources: `notebooks/02_task1_article_type.ipynb`, `docs/task2-season-execution-report.md`, `results/evidence/task2/final_handoff/manifest.json`, `notebooks/04_task3_final_evaluation.ipynb`, and ADRs 0024/0025.
+Sources: `notebooks/02_task1_part1_article_type.ipynb`, `docs/task2-season-execution-report.md`, `results/evidence/task2/final_handoff/manifest.json`, `notebooks/07_task3_part2_final_evaluation.ipynb`, and ADRs 0024/0025.
 
 ## Repair results and remaining work
 
@@ -56,9 +56,9 @@ Sources: `results/evidence/task1/comparison.csv`, `classical_comparison.csv`, `o
 6. **Predict the assignment test set.** Run that same checkpoint and saved preprocessing on the 5,829 official images. Fill only `articleType`; merge the other owners' outputs by ID. Preserve exactly `id,gender,articleType,season,usage`, template order, allowed labels and no blanks. The teacher supplied no test labels, so this is prediction, not an accuracy evaluation. Keep `styles_prediction.csv` as the source template and write the completed file separately.
 7. **Package and demo.** Include the model, small image-only prediction function, dependencies and exact run instructions. Test loading and predicting in a fresh process. Show an ordinary success and a meaningful failure in the GUI.
 
-## Notebook 06: use Tasks 2 and 3 as small workflow references
+## Task 1 evaluation: use Tasks 2 and 3 as small workflow references
 
-Use `notebooks/06_task2_season_evaluation.ipynb` as the main workflow reference and `notebooks/04_task3_final_evaluation.ipynb` as the reference for clear explanations. Keep Notebook 06 as the shared final-evaluation notebook: add Task 1's evidence and a short group status table, with links to the completed Task 2 and Task 3 analyses. Do not copy their whole notebooks or rerun their evaluations.
+Use `notebooks/05_task2_part2_final_evaluation.ipynb` as the main workflow reference and `notebooks/07_task3_part2_final_evaluation.ipynb` as the reference for clear explanations. Keep Task 1's evidence in `notebooks/03_task1_part2_final_evaluation.ipynb`, with links to the completed Task 2 and Task 3 analyses. Do not copy their whole notebooks or rerun their evaluations.
 
 Both reference notebooks replay saved results. Follow that pattern: a normal **Run All reads and verifies artifacts**, then shows tables, figures and explanations. It must not train, open raw holdout labels, run model inference or overwrite official predictions. If a required artifact is missing or its hash differs, stop with a clear message naming the missing stage.
 
@@ -150,7 +150,7 @@ Run these commands from the repository root, in order. Let each finish before st
 .venv/Scripts/python.exe scripts/build_task1_final_evaluation.py audit
 ```
 
-Open `notebooks/06_final_evaluation.ipynb` and Run All to review the saved results. Then export the assignment predictions:
+Open `notebooks/03_task1_part2_final_evaluation.ipynb` and Run All to review the saved results. Then export the assignment predictions:
 
 ```powershell
 .venv/Scripts/python.exe scripts/build_task1_final_evaluation.py predict-test
@@ -166,12 +166,12 @@ Verification: 15 focused refit/inference/evaluation checks passed after the fina
 
 ## Notebook separation — 9 September 2026
 
-At the owner's request, the implemented Task 1 artifact-replay notebook was copied unchanged to `notebooks/02_task1_final_eval.ipynb`. The shared `notebooks/06_final_evaluation.ipynb` was restored to its original committed scaffold. Use `02_task1_final_eval.ipynb` for the Task 1 replay steps above. Its contents were preserved exactly, including the existing headings. The proposed training/holdout/test execution notebook is still separate pending work.
+At the owner's request, the implemented Task 1 artifact-replay notebook was copied unchanged to `notebooks/03_task1_part2_final_evaluation.ipynb`. The shared scaffold was later removed because it was only a template. Use `03_task1_part2_final_evaluation.ipynb` for the Task 1 replay steps above. Its contents were preserved exactly, including the existing headings. The proposed training/holdout/test execution notebook is still separate pending work.
 
 
 ## Final-run notebook and epoch review
 
-`notebooks/02_task1_final_run.ipynb` now provides the execution cells: local or Colab/Drive setup, existing ZIP reuse, final refit, blind holdout predictions, explicit scoring and official test export. It has not been run on real data. `02_task1_final_eval.ipynb` stays artifact replay; Notebook 06 stays the original group scaffold.
+The earlier separate final-run notebook has been folded into `notebooks/03_task1_part2_final_evaluation.ipynb`, which provides staged execution and artifact replay. The unused shared final-evaluation scaffold has been removed.
 
 The five plain-CNN best development epochs are 20,19,18,19,20 (median19). Keeping epoch20 preserves the tested OneCycle schedule. Mean epoch20 macro-F1 is approximately0.5302 versus0.5315 for fold-selected checkpoints; this small difference supports retaining the fixed20 budget, not a claim of an optimal budget. No Task1 holdout evidence was used.
 

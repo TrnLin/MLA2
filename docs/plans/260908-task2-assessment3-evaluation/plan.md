@@ -16,7 +16,7 @@ completed: 2026-09-08
 
 The planned result is complete: Kai now has a locked, replayable Task 2 evaluation notebook and an evidence pack that can support Assessment 3. The frozen Season I2 bundle was evaluated once on the internal holdout after the freeze. The process did not retrain, retune, switch the winner, refit temperature, or choose a review threshold after holdout labels were exposed.
 
-This plan is scoped to Task 2. The shared `06_final_evaluation.ipynb` remains the group-level aggregator. Kai's owner notebook is `notebooks/06_task2_season_evaluation.ipynb` and is later summarised in the shared Notebook 06.
+This plan is scoped to Task 2. Kai's owner notebook is `notebooks/05_task2_part2_final_evaluation.ipynb`. The unused shared final-evaluation scaffold has been removed; final evaluation remains in each task's own notebook.
 
 ## 2. Current facts
 
@@ -46,7 +46,7 @@ The development model-selection story remains `I2 versus C2`, with B0 and B1 sho
 
 ## 4. Notebook architecture
 
-`notebooks/06_task2_season_evaluation.ipynb` will use English prose and one code cell per leaf subsection followed by one interpretation cell.
+`notebooks/05_task2_part2_final_evaluation.ipynb` will use English prose and one code cell per leaf subsection followed by one interpretation cell.
 
 1. Evaluation scope and holdout boundary.
 2. Frozen I2 bundle and hash audit.
@@ -62,7 +62,7 @@ The development model-selection story remains `I2 versus C2`, with B0 and B1 sho
 12. Deterministic error examples and Grad-CAM review.
 13. Runtime, memory, coverage, and practical viability.
 14. Literature comparison and ultimate judgement.
-15. Artifact audit and handoff to shared Notebook 06.
+15. Artifact audit and handoff to the group report.
 
 Default mode is `artifact_replay`. It reads verified aggregate evidence and cannot silently open protected labels. A separate controlled scoring step creates the immutable evidence bundle after the group unlock receipt exists.
 
@@ -173,7 +173,7 @@ where the blind prediction and one-shot scoring boundaries required it.
 9. `docs(notebook): add Kai task2 evaluation notebook`
 10. `docs(assessment3): add task2 literature and extension notes`
 11. `test(task2): audit evaluation artifacts and notebook replay`
-12. `docs(task2): hand off holdout judgement to shared Notebook 06`
+12. `docs(task2): hand off holdout judgement to group report`
 
 ### Actual completion trace
 
@@ -202,14 +202,14 @@ Do not squash these commits. Do not commit protected raw labels or unreviewed pr
 - No model, temperature, threshold, or metric changes after holdout scoring.
 - The final judgement includes evidence, limitations, intended use, and human-review boundary.
 - Assessment 3 has a four-part proposed story, literature connections, an extension formulation, and measurable success criteria ready for later slide/interview work.
-- Shared Notebook 06 integration remains group-owned and does not block completion of this Task 2 owner evaluation.
+- Group-report integration remains group-owned and does not block completion of this Task 2 owner evaluation.
 
 ## 8. Key references
 
 - [Assessment 3 PDF](C:/Users/Khoai/Downloads/Assessment%20Task%203_%20Presentation%20%26%20Technical%20Interview%20%2840%25%29_.pdf)
 - [Assignment 2 rubric](../../../rubrics/RUBRIC.md)
 - [Task 2 execution report](../../task2-season-execution-report.md)
-- [Shared final-evaluation scaffold](../../../notebooks/06_final_evaluation.ipynb)
+- [Task 2 final evaluation](../../../notebooks/05_task2_part2_final_evaluation.ipynb)
 - [PLOS One ResNet-BERT fashion classification](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0324621)
 - [Condition-CNN fashion hierarchy](https://www.sciencedirect.com/science/article/pii/S0957417421006291)
 - [Structured output fashion classification](https://arxiv.org/abs/1806.09445)

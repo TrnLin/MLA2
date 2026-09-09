@@ -6,7 +6,7 @@ import nbformat
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-NOTEBOOK = ROOT / "notebooks/02_task1_final_eval.ipynb"
+NOTEBOOK = ROOT / "notebooks/03_task1_part2_final_evaluation.ipynb"
 
 
 def cell(tag):

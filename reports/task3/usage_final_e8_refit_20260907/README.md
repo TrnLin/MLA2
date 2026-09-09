@@ -6,9 +6,9 @@ trained on all 32,772 eligible teacher development images.
 - [Frozen model manifest](model_manifest.json): checkpoint, configuration,
   normalization, class order, registered training evidence and source hashes.
 - [Decision 0024](../../../docs/decisions/0024-task3-usage-e8-refit-final-model.md).
-- [Notebook 4](../../../notebooks/04_task3_gender_usage.ipynb): development
+- [Notebook 4](../../../notebooks/06_task3_part1_gender_usage.ipynb): development
   analysis, refit training and the final recipe.
-- [Task 3 evaluation](../../../notebooks/04_task3_final_evaluation.ipynb): reserved-holdout
+- [Task 3 evaluation](../../../notebooks/07_task3_part2_final_evaluation.ipynb): reserved-holdout
   comparisons, class errors, practical limits and final judgement.
 
 Run ID: `t3_usage_e8_translation_teacher_all_development_refit_5553be0c138243e9`.

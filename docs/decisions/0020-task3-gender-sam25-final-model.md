@@ -70,4 +70,4 @@ The gender-only CSV is not the complete four-target submission.
 - [Holdout and test review](../../reports/task3/gender_sam25_holdout_test_20260906/README.md)
 - [Model manifest](../../reports/task3/gender_sam25_cv_result_20260906/model_manifest.json)
 - [Frozen predictions](../../reports/task3/gender_sam25_holdout_test_20260906/prediction_freeze.json)
-- [Main report notebook](../../notebooks/04_task3_gender_usage.ipynb)
+- [Main report notebook](../../notebooks/06_task3_part1_gender_usage.ipynb)
