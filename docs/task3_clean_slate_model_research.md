@@ -67,7 +67,7 @@ the [rubric](../rubrics/RUBRIC.md), [decision 0014](decisions/0014-development-h
 
 The main sources are:
 
-- [Task 3 narrative notebook](../notebooks/04_task3_gender_usage.ipynb);
+- [Task 3 narrative notebook](../notebooks/06_task3_part1_gender_usage.ipynb);
 - [main run registry](../results/runs.csv);
 - [Task 3 evidence registry](../results/evidence/task3/results/runs.csv);
 - [E9 pre-run audit](../results/evidence/task3/e9_prerun/e9_prerun_summary.json);
