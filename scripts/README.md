@@ -111,7 +111,7 @@ Do not rerun `predict` or `score` to refresh a notebook. Both commands now refus
 completed or partial evaluation outputs. A shared process lock prevents concurrent
 writers; a persistent attempt marker prevents automatic retries after a failure.
 Do not delete those records to bypass the one-shot boundary. Notebook 03 and
-`06_task2_season_evaluation.ipynb` replay saved artifacts without starting these phases.
+`05_task2_part2_final_evaluation.ipynb` replay saved artifacts without starting these phases.
 
 For a source ZIP, retain the tracked source, configs, prepared-data contracts,
 registry/evidence files and add the separately delivered `models/task2_season.pt`.
