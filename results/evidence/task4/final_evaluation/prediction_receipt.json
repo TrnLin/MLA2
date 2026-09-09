@@ -1,0 +1,119 @@
+{
+  "artifacts": {
+    "gallery_manifest": {
+      "bytes": 3887890,
+      "path": "results/evidence/task4/final_evaluation/gallery_manifest.csv",
+      "rows": 32773,
+      "sha256": "6b4be696b1d47c4aca6930c4bee789c94d9b8895483f426674de3ea93af697c9"
+    },
+    "holdout_family_rankings": {
+      "bytes": 30834037,
+      "path": "results/evidence/task4/final_evaluation/holdout_family_rankings.csv",
+      "rows": 520020,
+      "sha256": "22a48d83045ca22aa985deb5172a2cfa9a7bd0e538cad7f01b7cc041901718e4"
+    },
+    "holdout_primary_rankings": {
+      "bytes": 292330199,
+      "path": "results/evidence/task4/final_evaluation/holdout_primary_rankings.csv",
+      "rows": 3813480,
+      "sha256": "ed8e5864417b25450627b426ce3017aa6f1b947db147ca845cb7aadcd12e99f2"
+    },
+    "holdout_query_manifest": {
+      "bytes": 2033119,
+      "path": "results/evidence/task4/final_evaluation/holdout_query_manifest.csv",
+      "rows": 11556,
+      "sha256": "2c53768723802c0110d3aed850e7de8e3cde19356fc45a6ad28438bf0e4a195b"
+    },
+    "runtime": {
+      "bytes": 4345,
+      "path": "results/evidence/task4/final_evaluation/blind_runtime.json",
+      "sha256": "520036838a83520994908ffe62fb1634e1b01858b3a37673263e94e38e249f0a"
+    }
+  },
+  "authorization": "explicit_user_instruction_in_current_task",
+  "coverage": {
+    "conditions": [
+      "clean",
+      "jpeg_quality_85",
+      "gaussian_blur_radius_1",
+      "brightness_0_85",
+      "brightness_1_15",
+      "wide_canvas",
+      "tall_canvas"
+    ],
+    "development_gallery_rows": 32773,
+    "directions": [
+      "teacher",
+      "v1"
+    ],
+    "holdout_family_groups": 4110,
+    "holdout_rows": 5778,
+    "methods": [
+      "r5_scratch_autoencoder",
+      "random_floor",
+      "spatial_hsv_edge_probe",
+      "hog_hsv_edge_fusion",
+      "b1_pretrained_resnet18"
+    ],
+    "quarantine_rows_excluded": 61
+  },
+  "created_at_utc": "2026-09-09T00:15:09Z",
+  "evaluation_id": "m8-task4-holdout-final-evaluation",
+  "git": {
+    "commit": "bf64d2b8e350f29d658eb1496eaec40a3048f836",
+    "tracked_files_dirty": false
+  },
+  "inputs": {
+    "config": {
+      "bytes": 1567,
+      "path": "configs/task4/holdout_final_evaluation.json",
+      "sha256": "e635436f9850e63960f49e9b8fc2bf8045c23270e911df38ce170b3458f080e2"
+    },
+    "gallery_identity_sha256": "3612d94dd76ccf7ff55077c6381dc359e09ea6dd0cd586a0ff22fe194f261423",
+    "gallery_image_set_sha256": "1794e9e1fb91ad234a26798916f26fe4abd04017c263cbbce61283aa3edc14eb",
+    "gallery_manifest": {
+      "bytes": 1687,
+      "path": "models/task4_holdout_gallery/manifest.json",
+      "sha256": "04e1755d7ced7356c1b5f3cc78d1eae1ce908170deb47b4f25260a38c20220e5"
+    },
+    "model_manifest": {
+      "bytes": 1429,
+      "path": "models/task4_r5/manifest.json",
+      "sha256": "0fb8043ede83e98120328413e821c92e33544adf38bc7affde863658fc0e1a81"
+    },
+    "query_image_set_sha256": {
+      "teacher": "1435bf617310fa222f9ed1c2ad5c7f5b3da731d7b381362f7327d968898f08fb",
+      "v1": "5dbb588ad8ee72292bb484adcb754ad48c76d727af08f28d3f0ef121ace96dc7"
+    },
+    "runs": {
+      "bytes": 1383282,
+      "path": "results/runs.csv",
+      "rows": 590,
+      "sha256": "d2024878ae311b00560a1f601cca688cea9fa596af879791a7e23636df348ac2"
+    },
+    "splits": {
+      "bytes": 15383827,
+      "path": "data/processed/splits.csv",
+      "rows": 38612,
+      "sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
+    },
+    "variant_index": {
+      "bytes": 3341427,
+      "path": "data/processed/task4/external_variant_index.csv.gz",
+      "rows": 38612,
+      "sha256": "ab8b2ef440ecd9f550e3aedb98d68591998ece848711adbac0be55b9a072cea8"
+    }
+  },
+  "labels_opened": false,
+  "model": {
+    "checkpoint_sha256": "521e96f3df9e28853309bd607030523f59ef8425326da56dfcf2b754e97631b3",
+    "development_winner_score": 0.5028872133026174,
+    "run_id": "task4-candidate-r5-task9-preexec",
+    "scratch": true
+  },
+  "model_changed": false,
+  "phase": "blind_prediction_before_holdout_label_access",
+  "retuning_allowed": false,
+  "schema_version": "1.0.0",
+  "teacher_test_scored": false
+}

@@ -76,6 +76,7 @@ results/evidence/task3/
 /results/evidence/task4/model_comparison_budget*.json
 /results/evidence/task4/baseline_query_metrics.csv
 /results/evidence/task4/baseline_timing.csv
+/results/evidence/task4/final_evaluation/holdout_primary_rankings.csv
 /results/evidence/task4/hog/canvas_per_query.csv
 /results/evidence/task4/hog/query_metrics.csv
 /results/evidence/task4/hog/timing_samples.csv

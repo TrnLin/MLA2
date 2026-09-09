@@ -1,0 +1,42 @@
+{
+  "benchmark_only_methods": ["b1_pretrained_resnet18"],
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed": 2753,
+  "conditions": [
+    "clean",
+    "jpeg_quality_85",
+    "gaussian_blur_radius_1",
+    "brightness_0_85",
+    "brightness_1_15",
+    "wide_canvas",
+    "tall_canvas"
+  ],
+  "decision_record": "docs/decisions/0026-task4-holdout-evaluation.md",
+  "development_source_robustness_ratio": 0.999843704883488,
+  "development_winner_score": 0.5028872133026174,
+  "directions": ["teacher", "v1"],
+  "evaluation_id": "m8-task4-holdout-final-evaluation",
+  "expected_development_rows": 32773,
+  "expected_holdout_family_groups": 4110,
+  "expected_holdout_rows": 5778,
+  "expected_quarantine_rows": 61,
+  "gallery_directory": "models/task4_holdout_gallery",
+  "k_values": [5, 10, 20],
+  "methods": [
+    "r5_scratch_autoencoder",
+    "random_floor",
+    "spatial_hsv_edge_probe",
+    "hog_hsv_edge_fusion",
+    "b1_pretrained_resnet18"
+  ],
+  "model_checkpoint_sha256": "521e96f3df9e28853309bd607030523f59ef8425326da56dfcf2b754e97631b3",
+  "model_package_directory": "models/task4_r5",
+  "model_run_id": "task4-candidate-r5-task9-preexec",
+  "preprocessing_contract": "results/evidence/task4/preprocessing_contract.json",
+  "preprocessing_normalization": "results/evidence/task4/preprocessing_normalization_fold1.json",
+  "primary_metric": "protocol_a_ndcg_at_10_query_mean",
+  "random_floor_seed": 2753,
+  "schema_version": "1.0.0",
+  "split_fingerprint": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd",
+  "stressed_direction": "teacher"
+}

@@ -16,6 +16,7 @@ Notebooks tell the investigation story. Reusable code lives in `src/fashion/`.
 | 04 eval | `04_task3_final_evaluation.ipynb` | saved Task 3 evaluation | Gender and Usage holdout results, errors and ultimate judgement |
 | 06 | `06_final_evaluation.ipynb` | locked scaffold | one holdout evaluation and ultimate judgement |
 | 06 Task 2 | `06_task2_season_evaluation.ipynb` | complete evaluation replay | Kai's frozen Season bundle, one-shot holdout evidence, teacher-test output, and Assessment 3 evidence |
+| 06 Task 4 | `task-4/06_task4_search_evaluation.ipynb` | complete and executed | replay-only independent holdout evaluation, uncertainty, failures, and ultimate judgement |
 
 Notebook 02 and the shared Notebook 06 remain planning or locked scaffolds.
 The Task 2 owner notebook replays the one completed, hash-verified holdout evaluation.

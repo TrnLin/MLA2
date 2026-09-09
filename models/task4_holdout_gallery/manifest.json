@@ -1,0 +1,57 @@
+{
+  "artifact_identity_sha256": "3612d94dd76ccf7ff55077c6381dc359e09ea6dd0cd586a0ff22fe194f261423",
+  "artifact_type": "task4_teacher_gallery",
+  "contract": {
+    "colour_mode": "RGB",
+    "height": 320,
+    "pad_color": [
+      255,
+      255,
+      255
+    ],
+    "resample": "LANCZOS",
+    "resize": "aspect_preserving_letterbox",
+    "width": 240
+  },
+  "dimension": 128,
+  "features_dtype": "float32",
+  "files": {
+    "README.md": {
+      "bytes": 279,
+      "path": "README.md",
+      "sha256": "7515a1506f31d0e66114fcd1480813f657eb71f72788bef91aa775bcbf6cb6e5"
+    },
+    "features.npy": {
+      "bytes": 16779904,
+      "path": "features.npy",
+      "sha256": "adf76f4a9183d3536dac8d1a122cb53b7fdcfca7b8757681e253ee37e5cd7300"
+    },
+    "ids.npy": {
+      "bytes": 262312,
+      "path": "ids.npy",
+      "sha256": "033e89f0e31f4a31644332ed99a2ae817fffe2a28ac737c86237693fbe69a041"
+    },
+    "metadata.csv": {
+      "bytes": 7377158,
+      "path": "metadata.csv",
+      "sha256": "e614ece717459c3aec389421c5c7fc046f20e83a44468b43cc372f47cbdc6054"
+    }
+  },
+  "fold": -1,
+  "ids_dtype": "int64",
+  "r5_checkpoint": {
+    "run_id": "task4-candidate-r5-task9-preexec",
+    "sha256": "521e96f3df9e28853309bd607030523f59ef8425326da56dfcf2b754e97631b3"
+  },
+  "rows": 32773,
+  "safety": {
+    "development_only": true,
+    "holdout_opened": false,
+    "official_teacher_test_opened": false,
+    "quarantine_opened": false
+  },
+  "schema_version": "1.0.0",
+  "source": "teacher",
+  "source_feature_cache_identity_sha256": "00ea23461b4d5ef35a59d2078be8e7f6e9a24f5089e42a4057b1bfdd057747bc",
+  "split_fingerprint": "bad7bc4ae65fbbfd815567f4ccfa308d6e57dc650bc15c0b8e798867a335f2fd"
+}

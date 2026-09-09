@@ -46,13 +46,20 @@ from fashion.task4.protocol import (
     primary_relevance,
 )
 
-SEARCH_RECORD_SCHEMA_VERSION = "1.0.0"
+SEARCH_RECORD_SCHEMA_VERSION = "1.1.0"
 DEFAULT_TOP_K = 5
 MIN_TOP_K = 1
 MAX_TOP_K = 20
 OUTSIDE_RATINGS = ("good", "mixed", "bad")
 _EXPECTED_CONTRACT = PreprocessingContract(240, 320)
 _REDACTED_SPLIT_COLUMNS = ("id", "sha256", "partition", "cv_fold")
+_PROJECT_HOLDOUT_STATUS = "opened_once_for_final_evaluation_and_now_closed"
+_PROJECT_HOLDOUT_RECEIPT = (
+    "results/evidence/task4/final_evaluation/unlock_receipt.json"
+)
+_PROJECT_HOLDOUT_MANIFEST = (
+    "results/evidence/task4/final_evaluation/evaluation_manifest.json"
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -142,7 +149,7 @@ class SearchRecord:
     results: tuple[SearchHit, ...]
     rating: str | None
     note: str | None
-    safety: Mapping[str, bool]
+    safety: Mapping[str, object]
 
     def to_dict(self) -> dict[str, object]:
         query = self.query
@@ -820,10 +827,14 @@ def run_search(
             "path_checked_before_decode": True,
             "hash_checked_before_decode": True,
             "known_queries_fixed_fold_1": True,
-            "protected_images_opened": False,
-            "holdout_opened": False,
-            "quarantine_opened": False,
-            "official_teacher_test_opened": False,
+            "demo_accessed_protected_images": False,
+            "demo_accessed_holdout": False,
+            "demo_used_holdout_gallery": False,
+            "demo_accessed_quarantine": False,
+            "demo_accessed_official_teacher_test": False,
+            "project_holdout_status": _PROJECT_HOLDOUT_STATUS,
+            "project_holdout_receipt": _PROJECT_HOLDOUT_RECEIPT,
+            "project_holdout_manifest": _PROJECT_HOLDOUT_MANIFEST,
         },
     )
     return SearchResponse(record=record, result_metadata=result_metadata)

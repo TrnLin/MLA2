@@ -1,0 +1,6 @@
+method,holdout_ratio_definition,teacher_to_teacher_ndcg_at_10,v1_to_teacher_gallery_ndcg_at_10,holdout_source_robustness_ratio,status,development_source_robustness_ratio,development_ratio_comparable,development_ratio_basis
+r5_scratch_autoencoder,v1_to_teacher_gallery / teacher_to_teacher_gallery,0.51622035025447599,0.51521133209717862,0.99804537314966379,measured,0.99984370488348795,False,development used four source pairings and two fold-1 galleries; holdout uses teacher and V1 queries against one teacher gallery
+random_floor,not_applicable,0.034346236106939779,,,not_applicable_source_independent_single_frozen_ranking,,,
+spatial_hsv_edge_probe,v1_to_teacher_gallery / teacher_to_teacher_gallery,0.50962404128402283,0.46707992130221188,0.9165186165970135,measured,,,
+hog_hsv_edge_fusion,v1_to_teacher_gallery / teacher_to_teacher_gallery,0.51513147806999815,0.50445279100921314,0.97926997763601253,measured,,,
+b1_pretrained_resnet18,v1_to_teacher_gallery / teacher_to_teacher_gallery,0.31946236352148183,0.31946161850122656,0.99999766789349753,measured,,,

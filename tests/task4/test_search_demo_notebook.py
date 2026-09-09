@@ -44,16 +44,12 @@ def test_search_demo_uses_public_output_writer() -> None:
 def test_search_demo_notebook_is_thin_safe_and_runnable() -> None:
     notebook = nbformat.read(NOTEBOOK, as_version=4)
     nbformat.validate(notebook)
-    assert [cell.cell_type for cell in notebook.cells] == [
-        "markdown",
-        "code",
-        "markdown",
-        "code",
-        "code",
-        "code",
-        "code",
-        "code",
-    ]
+    code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
+    assert len(code_cells) == 6
+    for index, cell in enumerate(notebook.cells):
+        if cell.cell_type == "code":
+            assert index > 0
+            assert notebook.cells[index - 1].cell_type == "markdown"
 
     markdown = "\n".join(
         cell.source for cell in notebook.cells if cell.cell_type == "markdown"
@@ -63,7 +59,12 @@ def test_search_demo_notebook_is_thin_safe_and_runnable() -> None:
     )
 
     assert "Task 4 — Search Test Platform" in markdown
-    assert "holdout remains sealed" in markdown.lower()
+    assert "does not access holdout images, labels, or gallery" in markdown.lower()
+    assert (
+        "project holdout was opened once for final evaluation and is now "
+        "permanently closed"
+    ) in markdown.lower()
+    assert "holdout remains sealed" not in markdown.lower()
     assert "KNOWN_QUERY_ID = 1529" in code
     assert "OUTSIDE_IMAGE: Path | None = None" in code
     assert "load_search_bundle" in code
@@ -83,7 +84,7 @@ def test_search_demo_notebook_is_saved_clean() -> None:
     notebook = nbformat.read(NOTEBOOK, as_version=4)
     code_cells = [cell for cell in notebook.cells if cell.cell_type == "code"]
 
-    assert len(notebook.cells) == 8
-    assert len({cell.id for cell in notebook.cells}) == 8
+    assert len({cell.id for cell in notebook.cells}) == len(notebook.cells)
     assert all(cell.execution_count is None for cell in code_cells)
     assert all(cell.outputs == [] for cell in code_cells)
+    assert all("execution" not in cell.metadata for cell in notebook.cells)

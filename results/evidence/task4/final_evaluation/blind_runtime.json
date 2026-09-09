@@ -1,0 +1,159 @@
+{
+  "environment": {
+    "cuda_available": true,
+    "cuda_runtime": "13.0",
+    "executable": "/localhome/local-lintran/MLA2/.venv/bin/python",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "platform": "Linux-5.15.0-190-generic-x86_64-with-glibc2.35",
+    "python": "3.12.7",
+    "torch": "2.13.0+cu130"
+  },
+  "phase": "blind_prediction_before_holdout_label_access",
+  "runs": [
+    {
+      "condition": "clean",
+      "dataset": "development_gallery",
+      "device": "cuda",
+      "direction": "teacher",
+      "images_per_second": 25.878125532343507,
+      "methods": [
+        "spatial_hsv_edge_probe",
+        "hog_hsv_edge_fusion",
+        "b1_pretrained_resnet18"
+      ],
+      "prediction_failures": 0,
+      "rows": 32773,
+      "runtime_seconds": 1266.4363946700469
+    },
+    {
+      "condition": "clean",
+      "dataset": "holdout_queries",
+      "device": "cuda",
+      "direction": "teacher",
+      "images_per_second": 23.196040951720445,
+      "methods": [
+        "r5_scratch_autoencoder",
+        "spatial_hsv_edge_probe",
+        "hog_hsv_edge_fusion",
+        "b1_pretrained_resnet18"
+      ],
+      "prediction_failures": 0,
+      "rows": 5778,
+      "runtime_seconds": 249.0942317279987
+    },
+    {
+      "condition": "jpeg_quality_85",
+      "dataset": "holdout_queries",
+      "device": "cuda",
+      "direction": "teacher",
+      "images_per_second": 23.408172442567167,
+      "methods": [
+        "r5_scratch_autoencoder",
+        "spatial_hsv_edge_probe",
+        "hog_hsv_edge_fusion",
+        "b1_pretrained_resnet18"
+      ],
+      "prediction_failures": 0,
+      "rows": 5778,
+      "runtime_seconds": 246.83686922490597
+    },
+    {
+      "condition": "gaussian_blur_radius_1",
+      "dataset": "holdout_queries",
+      "device": "cuda",
+      "direction": "teacher",
+      "images_per_second": 23.773243979383572,
+      "methods": [
+        "r5_scratch_autoencoder",
+        "spatial_hsv_edge_probe",
+        "hog_hsv_edge_fusion",
+        "b1_pretrained_resnet18"
+      ],
+      "prediction_failures": 0,
+      "rows": 5778,
+      "runtime_seconds": 243.04634256102145
+    },
+    {
+      "condition": "brightness_0_85",
+      "dataset": "holdout_queries",
+      "device": "cuda",
+      "direction": "teacher",
+      "images_per_second": 23.781891828792606,
+      "methods": [
+        "r5_scratch_autoencoder",
+        "spatial_hsv_edge_probe",
+        "hog_hsv_edge_fusion",
+        "b1_pretrained_resnet18"
+      ],
+      "prediction_failures": 0,
+      "rows": 5778,
+      "runtime_seconds": 242.9579632098321
+    },
+    {
+      "condition": "brightness_1_15",
+      "dataset": "holdout_queries",
+      "device": "cuda",
+      "direction": "teacher",
+      "images_per_second": 24.007143860790354,
+      "methods": [
+        "r5_scratch_autoencoder",
+        "spatial_hsv_edge_probe",
+        "hog_hsv_edge_fusion",
+        "b1_pretrained_resnet18"
+      ],
+      "prediction_failures": 0,
+      "rows": 5778,
+      "runtime_seconds": 240.67835947102867
+    },
+    {
+      "condition": "wide_canvas",
+      "dataset": "holdout_queries",
+      "device": "cuda",
+      "direction": "teacher",
+      "images_per_second": 28.011877156399738,
+      "methods": [
+        "r5_scratch_autoencoder",
+        "spatial_hsv_edge_probe",
+        "hog_hsv_edge_fusion",
+        "b1_pretrained_resnet18"
+      ],
+      "prediction_failures": 0,
+      "rows": 5778,
+      "runtime_seconds": 206.26964654098265
+    },
+    {
+      "condition": "tall_canvas",
+      "dataset": "holdout_queries",
+      "device": "cuda",
+      "direction": "teacher",
+      "images_per_second": 24.961021396036546,
+      "methods": [
+        "r5_scratch_autoencoder",
+        "spatial_hsv_edge_probe",
+        "hog_hsv_edge_fusion",
+        "b1_pretrained_resnet18"
+      ],
+      "prediction_failures": 0,
+      "rows": 5778,
+      "runtime_seconds": 231.4809121119324
+    },
+    {
+      "condition": "clean",
+      "dataset": "holdout_queries",
+      "device": "cuda",
+      "direction": "v1",
+      "images_per_second": 11.040164442462228,
+      "methods": [
+        "r5_scratch_autoencoder",
+        "spatial_hsv_edge_probe",
+        "hog_hsv_edge_fusion",
+        "b1_pretrained_resnet18"
+      ],
+      "prediction_failures": 0,
+      "rows": 5778,
+      "runtime_seconds": 523.3617696650326
+    }
+  ],
+  "schema_version": "1.0.0"
+}

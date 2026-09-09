@@ -1,0 +1,7 @@
+query_id,ndcg_at_10,candidate_id,distance,query_path,query_articleType,query_baseColour,candidate_path,candidate_articleType,candidate_baseColour
+1579,0,2101,0.18642961978912351,data/raw/teacher/train/images_train/1579.jpg,Jackets,Grey,data/raw/teacher/train/images_train/2101.jpg,Shirts,Blue
+1918,0,43293,0.2724076509475708,data/raw/teacher/train/images_train/1918.jpg,Backpacks,Blue,data/raw/teacher/train/images_train/43293.jpg,Handbags,Blue
+2630,0,45370,0.16119253635406491,data/raw/teacher/train/images_train/2630.jpg,Flats,Red,data/raw/teacher/train/images_train/45370.jpg,Heels,Brown
+2663,0,9572,0.33426910638809199,data/raw/teacher/train/images_train/2663.jpg,Handbags,Brown,data/raw/teacher/train/images_train/9572.jpg,Travel Accessory,Black
+2701,0,22599,0.4014744758605957,data/raw/teacher/train/images_train/2701.jpg,Tops,Yellow,data/raw/teacher/train/images_train/22599.jpg,Tshirts,Yellow
+3823,0,3824,0.28399181365966791,data/raw/teacher/train/images_train/3823.jpg,Sandals,White,data/raw/teacher/train/images_train/3824.jpg,Flip Flops,Brown

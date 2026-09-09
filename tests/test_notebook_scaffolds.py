@@ -112,6 +112,7 @@ def test_only_planned_notebook_names_are_present() -> None:
             "02_task1_final_run.ipynb",
             "task-4/01_v1_eda.ipynb",
         "task-4/05_task4_visual_search.ipynb",
+        "task-4/06_task4_search_evaluation.ipynb",
         "task-4/07_task4_search_demo.ipynb",
     }
     present = {
@@ -1690,7 +1691,7 @@ def test_task4_evaluation_protocol_is_frozen_and_executed() -> None:
         "Model quality remains unknown until the baseline and learned search methods are run."
         not in source
     )
-    assert "Only learned-model quality remains unknown." in source
+    assert "Section 8 reports learned-model quality from the frozen development evidence." in source
     assert (ROOT / "results/figures/task4/retrieval_protocol_overview.png").exists()
 
 

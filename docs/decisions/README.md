@@ -41,6 +41,8 @@ mark the old one as superseded, and link both records.
 - `0019-task4-retrieval-evaluation.md`
 - `0021-task4-high-resolution-input.md`
 - `0022-task4-baseline-search.md`
+- `0028-task4-blind-input-snapshot-proof-limit.md` — keep the one-shot score,
+  disclose the historical non-image input proof limit, and snapshot future inputs first.
 
 ## Superseded decisions
 
