@@ -11,7 +11,7 @@ from nbclient import NotebookClient
 from nbconvert import HTMLExporter
 
 ROOT = next(p for p in Path(__file__).resolve().parents if (p / "pyproject.toml").is_file())
-NOTEBOOK = ROOT / "notebooks/04_task3_gender_usage.ipynb"
+NOTEBOOK = ROOT / "notebooks/06_task3_part1_gender_usage.ipynb"
 OUTPUT = Path(__file__).parent / "main_report.html"
 
 notebook = nbformat.read(NOTEBOOK, as_version=4)
