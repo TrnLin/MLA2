@@ -251,10 +251,10 @@
       </div>
       <aside class="hero-aside" aria-label="Winning result">
         <p class="eyebrow">Chosen development model</p>
-        <h3>Mildly augmented unweighted scratch CNN</h3>
-        <p class="winner-number">0.522</p>
+        <h3>Plain unweighted scratch CNN</h3>
+        <p class="winner-number">0.531</p>
         <p><strong>mean macro-F1</strong> across five folds</p>
-        <p class="fine">OOF macro-F1: 0.541 · Top-1: 84.3% · Top-5: 98.1%</p>
+        <p class="fine">OOF macro-F1: 0.557 · Top-1: 84.2% · Top-5: 97.8%</p>
       </aside>
     </section>
 
@@ -267,7 +267,7 @@
         <article class="card"><p class="metric">32,773</p><p class="metric-label">labelled development products</p><p>These rows are used inside five saved training and validation folds.</p></article>
         <article class="card"><p class="metric">124</p><p class="metric-label">article-type classes</p><p>All labels stay in the score, even when a class is extremely rare.</p></article>
         <article class="card"><p class="metric">5</p><p class="metric-label">final model candidates</p><p>Three CNN candidates, HOG + KNN, and HOG + linear SVM.</p></article>
-        <article class="card wide"><h3>Main finding</h3><p>The plain CNN won mean macro-F1, but mild unweighted augmentation was frozen because its results varied less between folds. The saved validation-loss values used an equal-batch average, so they are not used for this decision. This is a development trade-off, not a macro-F1 win or proof of repeat-run stability.</p></article>
+        <article class="card wide"><h3>Main finding</h3><p>The plain CNN is selected because it leads on mean and pooled macro-F1, the declared primary measure. Augmentation has lower fold variation, but that is not proof of repeat-run stability or robustness to customer photos. The old validation-loss values averaged batches, so they are excluded from selection.</p></article>
         <article class="card"><h3>Honest limit</h3><p>The selected CNN scored F1 = 0 for 21 classes. Most of these classes have tiny support. The result is useful, but rare-item performance is not solved.</p></article>
       </div>
     </section>
@@ -499,15 +499,15 @@
         <p>High accuracy is not the full story. The gap between about 84% accuracy and about 0.53 macro-F1 shows that common products are much easier than rare products.</p>
       </div>
       <div class="grid">
-        <article class="card"><p class="metric">21 / 124</p><p class="metric-label">selected CNN classes with OOF F1 = 0</p><p>The selected mild unweighted CNN has 21 zero-F1 classes. The balanced weighted CNN has 20, but its overall metrics are much worse.</p></article>
-        <article class="card"><p class="metric">0.0158</p><p class="metric-label">selected CNN fold SD</p><p>The mildly augmented unweighted CNN has about 52% lower fold variation than the plain CNN’s 0.0331.</p></article>
-        <article class="card"><p class="metric">98.09%</p><p class="metric-label">augmented CNN Top-5</p><p>The right label is usually among five guesses, even though the first guess still mixes similar classes.</p></article>
+        <article class="card"><p class="metric">21 / 124</p><p class="metric-label">selected CNN classes with OOF F1 = 0</p><p>The selected plain unweighted CNN has 21 zero-F1 classes. The balanced weighted CNN has 20, but its overall metrics are much worse.</p></article>
+        <article class="card"><p class="metric">0.0331</p><p class="metric-label">selected CNN fold SD</p><p>The plain CNN varies more across folds than the augmented CNN (0.0158). This is a limit of the chosen model.</p></article>
+        <article class="card"><p class="metric">97.80%</p><p class="metric-label">plain CNN Top-5</p><p>The right label is usually among five guesses, even though the first guess still mixes similar classes.</p></article>
       </div>
       <div class="callout bad" style="margin-top:1rem"><strong>Unlearnable fold cases.</strong> Some validation labels have no matching training example in that fold. A zero for those cases is honest. Dropping them would make the score look better but would change the fixed 124-class question.</div>
       <p>The full 124 × 124 matrix stays as the complete overview. The next three figures are a more detailed look: they rank the biggest mistakes, show their rates inside a smaller matrix, and give real image examples.</p>
       <div class="figure-grid" style="margin-top:1rem">
-        <figure><img src="../results/figures/task1/cnn_oof_confusion_task1_cnn_mild_aug_unweighted_v1.png" alt="Full out-of-fold confusion matrix for the selected mildly augmented unweighted CNN"><figcaption>Complete view. This keeps all 124 labels, so the text is dense.</figcaption></figure>
-        <figure><img src="../results/figures/task1/top_confusion_pairs.png" alt="Ten most common confusion pairs for the selected CNN"><figcaption>Top mistakes by count. Casual Shoes → Sports Shoes is the largest pair.</figcaption></figure>
+        <figure><img src="../results/figures/task1/cnn_oof_confusion_task1_cnn_no_aug_unweighted_v1.png" alt="Full out-of-fold confusion matrix for the selected plain unweighted CNN"><figcaption>Complete view. This keeps all 124 labels, so the text is dense.</figcaption></figure>
+        <figure><img src="../results/figures/task1/top_confusion_pairs.png" alt="Ten most common confusion pairs for the selected CNN"><figcaption>Top mistakes by count. Sports Shoes → Casual Shoes is the largest pair.</figcaption></figure>
         <figure><img src="../results/figures/task1/focused_confusion_matrix.png" alt="Focused confusion matrix for labels involved in the largest mistakes"><figcaption>Focused view. Each cell shows both the mistake count and its share of the true class.</figcaption></figure>
         <figure><img src="../results/figures/task1/confusion_examples.png" alt="Example product images from the five largest confusion pairs"><figcaption>Image examples make the similar shapes behind the mistakes easier to see.</figcaption></figure>
       </div>
@@ -515,18 +515,18 @@
 
     <section id="decision">
       <div class="section-head">
-        <div><p class="eyebrow">Development decision</p><h2>Choose the mildly augmented unweighted CNN</h2></div>
-        <p>This is the model to carry into the locked final evaluation. It is frozen because it varied less between folds and had lower fold loss, not because it wins mean macro-F1.</p>
+        <div><p class="eyebrow">Development decision</p><h2>Choose the plain scratch CNN</h2></div>
+        <p>Updated on 9 September 2026: carry the plain unweighted CNN into final refit. The choice uses saved development evidence, before Task 1 holdout evaluation.</p>
       </div>
       <div class="grid">
         <article class="card wide">
           <h3>Why it is frozen</h3>
-          <p>The plain CNN wins mean macro-F1 at <strong>0.5315 ± 0.0331</strong>. Mild unweighted augmentation is lower at 0.5218 ± 0.0158, so this is not a macro-F1 win. It is frozen because its fold variation is about 52% lower. The saved validation-loss values used an equal-batch average and are retained only as legacy evidence.</p>
+          <p>The plain CNN wins mean macro-F1 at <strong>0.5315 ± 0.0331</strong>, versus 0.5218 ± 0.0158 with augmentation. It also leads on pooled OOF macro-F1, 0.5569 versus 0.5408. We follow the declared primary metric. Lower fold variation alone does not justify selecting the lower-scoring model. The saved validation-loss values used an equal-batch average and are retained only as legacy evidence.</p>
           <p>Balanced weighting is rejected: its mean macro-F1 is only <strong>0.4564 ± 0.0181</strong>, with worse weighted F1, Top-1, and Top-5 scores. The selected model has 21 zero-F1 classes; balanced weighting has 20, but that small count change does not outweigh its worse overall metrics.</p>
         </article>
         <article class="card">
           <h3>What this does not prove</h3>
-          <p>The 0.0097 macro-F1 gap between the plain and selected CNNs is a trade-off. This development choice values lower fold variation and lower loss; it does not prove augmentation always improves macro-F1 or repeat-run stability.</p>
+          <p>The plain CNN leads augmentation by 0.0097 mean macro-F1 on these folds. This is not proof of a reliable advantage across seeds or customer photos. Its larger fold variation, overfitting gap and rare-class failures remain limits.</p>
         </article>
         <article class="card">
           <h3>Next honest test</h3>
@@ -537,7 +537,7 @@
           <p>KNN is a useful fallback baseline. It reaches 0.5023 mean macro-F1 without neural training, but it needs stored training features at prediction time and has weaker Top-1 and Top-5 results.</p>
         </article>
       </div>
-      <div class="callout good"><strong>Development decision:</strong> carry <code>task1_cnn_mild_aug_unweighted_v1</code> with <code>task1_small_cnn_v1</code> into the independent final evaluation. Do not unlock the holdout to revisit this development choice.</div>
+      <div class="callout good"><strong>Development decision:</strong> carry <code>task1_cnn_no_aug_unweighted_v1</code> with <code>task1_small_cnn_v1</code> into the independent final evaluation. Do not unlock the holdout to revisit this development choice.</div>
     </section>
 
     <section id="evidence">
@@ -559,7 +559,7 @@
           <li><a href="../results/evidence/task1/classical_oof_metrics.csv">classic OOF scores</a></li>
           <li><a href="../results/evidence/task1/top_confusion_pairs.csv">ranked confusion-pair evidence for the chosen CNN</a></li>
           <li><a href="../results/evidence/task1/per_class_task1_rgb_60x80_no_aug_v1.csv">per-class: plain CNN baseline</a></li>
-          <li><a href="../results/evidence/task1/per_class_task1_rgb_60x80_mild_aug_v1.csv">per-class: chosen mildly augmented unweighted CNN</a></li>
+          <li><a href="../results/evidence/task1/per_class_task1_cnn_no_aug_unweighted_v1.csv">per-class: chosen plain unweighted CNN</a></li>
           <li><a href="../results/evidence/task1/per_class_classical_task1_gray_hog_ppc10_v1-knn-k3-distance.csv">per-class: KNN</a></li>
           <li><a href="../results/evidence/task1/per_class_classical_task1_gray_hog_ppc10_v1-linear-svm-c0.1-balanced.csv">per-class: SVM</a></li>
           <li><a href="../src/fashion/task1/models.py">CNN source</a></li>

@@ -108,6 +108,8 @@ def test_only_planned_notebook_names_are_present() -> None:
         "task3_training/usage_two_stage_screen.ipynb",
             *(name for name in TASK_SPECS if name != "05_task4_visual_search.ipynb"),
             "06_task2_season_evaluation.ipynb",
+            "02_task1_final_eval.ipynb",
+            "02_task1_final_run.ipynb",
             "task-4/01_v1_eda.ipynb",
         "task-4/05_task4_visual_search.ipynb",
         "task-4/07_task4_search_demo.ipynb",

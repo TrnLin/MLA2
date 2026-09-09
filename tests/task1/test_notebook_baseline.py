@@ -71,8 +71,8 @@ def test_task1_notebook_is_evidence_led_and_run_all_safe() -> None:
         "0.5315 ± 0.0331",
         "0.5218 ± 0.0158",
         "0.4564 ± 0.0181",
-        "practical lower-fold-variation decision",
-        "task1_cnn_mild_aug_unweighted_v1",
+        "primary-metric decision",
+        "task1_cnn_no_aug_unweighted_v1",
         "results/runs.csv",
     )
     assert all(token in source for token in required)
@@ -88,8 +88,8 @@ def test_task1_notebook_is_evidence_led_and_run_all_safe() -> None:
         assert forbidden not in code_source
 
     decision = source[source.index("## 14. Development decision and Notebook 06 handoff") :]
-    assert "task1_cnn_mild_aug_unweighted_v1" in decision
-    assert "practical lower-fold-variation decision" in decision
+    assert "Selected candidate: `task1_cnn_no_aug_unweighted_v1`" in decision
+    assert "primary-metric decision" in decision
     assert "did not pass" in decision
     assert "not ready" not in decision.lower()
 

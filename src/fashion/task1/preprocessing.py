@@ -145,6 +145,47 @@ def fit_task1_normalization(
     )
 
 
+def fit_task1_development_normalization(
+    development_rows: pd.DataFrame,
+    *,
+    root: str | Path = ROOT,
+    config: Task1PreprocessingConfig = TASK1_CONTROL_PREPROCESSING,
+) -> Task1Normalization:
+    """Fit RGB statistics on every labelled development row for the final refit."""
+    required = {"id", "path", "partition"}
+    missing = required.difference(development_rows.columns)
+    if missing:
+        raise ValueError(f"development rows are missing columns: {sorted(missing)}")
+    if development_rows.empty:
+        raise ValueError("development rows must not be empty")
+    if not development_rows["partition"].eq("development").all():
+        raise ValueError("normalization may use development rows only")
+    if development_rows["id"].isna().any() or development_rows["id"].duplicated().any():
+        raise ValueError("development row IDs must be present and unique")
+    if development_rows["path"].astype(str).str.strip().eq("").any():
+        raise ValueError("development image paths must not be blank")
+
+    stats = StreamingStats(channels=3)
+    project_root = Path(root)
+    ordered_rows = development_rows.sort_values("id", kind="stable")
+    for row in ordered_rows.itertuples(index=False):
+        with Image.open(project_root / str(row.path)) as image:
+            array, content_mask = transform_image_with_mask(
+                image,
+                image_size=config.image_size,
+                pad_color=config.pad_color,
+                normalize_range=True,
+            )
+        stats.update(array, content_mask=content_mask)
+
+    return Task1Normalization(
+        mean=tuple(float(value) for value in stats.mean),
+        std=tuple(float(value) for value in stats.std),
+        fitted_products=len(ordered_rows),
+        fitted_ids_sha256=_ids_sha256(ordered_rows["id"].astype(int).tolist()),
+    )
+
+
 def _scale_canvas(
     image: Image.Image,
     content_mask: Image.Image,

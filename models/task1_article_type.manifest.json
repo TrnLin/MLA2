@@ -1,0 +1,39 @@
+{
+  "bundle": {
+    "path": "models/task1_article_type.pt",
+    "sha256": "c3d219980590a76aab7c58ad4d564a525d243056183d7857de2ac15ff38000ad"
+  },
+  "candidate_id": "task1_cnn_no_aug_unweighted_v1",
+  "canonical_inputs": {
+    "config": {
+      "path": "configs/task1/final_evaluation.json",
+      "sha256": "0c273763d6b849facd8a876d7ab159df902773251f7487143cffbc0bdac8982a"
+    },
+    "label_map": {
+      "path": "data/processed/label_maps.json",
+      "sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327"
+    },
+    "splits": {
+      "path": "data/processed/splits.csv",
+      "sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
+    }
+  },
+  "development_rows": 32773,
+  "final_epoch": 20,
+  "history": {
+    "path": "results/evidence/task1/development_refit/training_history.csv",
+    "sha256": "5ada5038cc43a80d0cb9ed17122c1878386f42df0102a0e08d6fe2bf025ab5bb"
+  },
+  "model_family": "task1_small_cnn_v1",
+  "run_id": "task1-cnn-task1_cnn_no_aug_unweighted_v1-final-refit-fall-s2753-25828f9946dd",
+  "schema_version": 1,
+  "scratch": true,
+  "status": "completed",
+  "target": "articleType",
+  "task": "task1",
+  "training": {
+    "checkpoint_rule": "fixed_last_epoch",
+    "normalization_scope": "development_only",
+    "validation_used": false
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "evaluation_id": "task1-plain-cnn-final-20260909",
+  "decision_date": "2026-09-09",
+  "candidate_id": "task1_cnn_no_aug_unweighted_v1",
+  "preprocessing_id": "task1_rgb_60x80_no_aug_v1",
+  "target": "articleType",
+  "num_classes": 124,
+  "refit": {
+    "augmentation_used": false,
+    "batch_size": 128,
+    "candidate_id": "task1_cnn_no_aug_unweighted_v1",
+    "checkpoint_rule": "fixed_last_epoch",
+    "epochs": 20,
+    "grad_clip_norm": 1.0,
+    "loss_id": "cross_entropy_unweighted_v1",
+    "max_lr": 0.001,
+    "model_family": "task1_small_cnn_v1",
+    "normalization_scope": "development_only",
+    "preprocessing_id": "task1_rgb_60x80_no_aug_v1",
+    "schema_version": 1,
+    "scratch": true,
+    "seed": 2753,
+    "target": "articleType",
+    "validation_used": false,
+    "weight_decay": 1e-05
+  },
+  "expected_rows": {
+    "development": 32773,
+    "holdout": 5778,
+    "quarantine": 61,
+    "official_test": 5829
+  },
+  "metrics": {
+    "primary": "macro_f1",
+    "fixed_labels": 124,
+    "absent_label_f1": 0,
+    "secondary": [
+      "weighted_f1",
+      "top1_accuracy",
+      "top5_accuracy"
+    ]
+  },
+  "bootstrap": {
+    "unit": "product_family_group",
+    "replicates": 10000,
+    "seed": 2753,
+    "interval": "percentile_95"
+  },
+  "slices": {
+    "development_class_counts": [
+      [
+        1,
+        20
+      ],
+      [
+        21,
+        100
+      ],
+      [
+        101,
+        null
+      ]
+    ],
+    "image_mode": [
+      "grayscale",
+      "colour"
+    ]
+  },
+  "robustness": [
+    {
+      "condition": "clean",
+      "kind": "none"
+    },
+    {
+      "condition": "jpeg_quality_85",
+      "kind": "jpeg",
+      "quality": 85,
+      "subsampling": 2
+    },
+    {
+      "condition": "brightness_0_85",
+      "kind": "brightness",
+      "factor": 0.85
+    },
+    {
+      "condition": "brightness_1_15",
+      "kind": "brightness",
+      "factor": 1.15
+    },
+    {
+      "condition": "gaussian_blur_radius_1",
+      "kind": "blur",
+      "radius": 1.0
+    }
+  ],
+  "confidence": {
+    "calibration": "none",
+    "reliability_bins": 10,
+    "risk_coverage": "diagnostic_only_no_threshold_selection"
+  },
+  "cost": {
+    "device": "cpu",
+    "warmup": 3,
+    "repeats": 30,
+    "batch_size": 128,
+    "loading_included": false,
+    "image_decode_included": true
+  },
+  "access_history": "Other targets have already used the shared holdout. Task 1 selected the plain CNN from development CV before this evaluation. Do not change this choice using holdout scores.",
+  "official_test": {
+    "output": "results/article_type_test_predictions.csv",
+    "columns": [
+      "id",
+      "articleType"
+    ],
+    "requires_completed_holdout_scoring": true
+  }
+}

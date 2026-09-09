@@ -1,0 +1,10 @@
+{
+  "access": "shared protected loader joins all target columns; scoring uses articleType only",
+  "prediction_receipt": {
+    "path": "results/evidence/task1/final_evaluation/prediction_receipt.json",
+    "sha256": "f71175a24386e6a55965295e800dcb99ef52256c2cd4d1410e5c50601f6f5223"
+  },
+  "prior_access": "Other targets have already used the shared holdout. Task 1 selected the plain CNN from development CV before this evaluation. Do not change this choice using holdout scores.",
+  "target": "articleType",
+  "unlocked_at": "2026-09-09T03:20:59.747049+00:00"
+}

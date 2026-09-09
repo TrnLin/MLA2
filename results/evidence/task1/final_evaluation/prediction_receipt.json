@@ -1,0 +1,40 @@
+{
+  "completed_at": "2026-09-09T03:20:54.396121+00:00",
+  "cost": {
+    "path": "results/evidence/task1/final_evaluation/cost.json",
+    "sha256": "3c0f715f5b6c8254e18ff5ccb06691f2315b640de05033da065052112962fed6"
+  },
+  "freeze": {
+    "path": "results/evidence/task1/final_evaluation/freeze.json",
+    "sha256": "9e828bc4a11a91ac38cebfdd92a4b73fb5ea6ebf57835296414c658f0b8e178b"
+  },
+  "labels_accessed": false,
+  "predictions": [
+    {
+      "condition": "clean",
+      "path": "results/evidence/task1/final_evaluation/holdout_predictions.csv",
+      "sha256": "bea0fe27b02fca41669320f3d9a9c51aaae1f08ea01ab6846d7a74a3b180e7ab"
+    },
+    {
+      "condition": "jpeg_quality_85",
+      "path": "results/evidence/task1/final_evaluation/holdout_jpeg_quality_85.csv",
+      "sha256": "2832c7ba8178db0c4bd46d6f238ed2004364af14587d88f4cfbb354e2ed1c3e9"
+    },
+    {
+      "condition": "brightness_0_85",
+      "path": "results/evidence/task1/final_evaluation/holdout_brightness_0_85.csv",
+      "sha256": "4b6ae43ae78adcf27c5b215ef2fb3fc6d902e87376f855018325b791a9378b73"
+    },
+    {
+      "condition": "brightness_1_15",
+      "path": "results/evidence/task1/final_evaluation/holdout_brightness_1_15.csv",
+      "sha256": "c5fced94d6b9f7e33c73d62c2f0029038e4f587e66aee5005335bf9dc338f26b"
+    },
+    {
+      "condition": "gaussian_blur_radius_1",
+      "path": "results/evidence/task1/final_evaluation/holdout_gaussian_blur_radius_1.csv",
+      "sha256": "39ee8002de178cc6030f82452ba0f9f4c80c47f272762db538837eafc4acc2f5"
+    }
+  ],
+  "rows": 5778
+}

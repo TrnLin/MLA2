@@ -1,0 +1,872 @@
+id,articleType,product_family_group,mode,predicted_label,confidence,correct
+1550,Footballs,family_c27484c7087191b2,RGB,Sports Shoes,0.992668092250824,False
+1561,Tshirts,family_8bcefa497af26e68,RGB,Tops,0.9114366769790648,False
+1579,Jackets,family_ec11f26d671bcc37,RGB,Shirts,0.9841842651367188,False
+1587,Sports Shoes,family_0252fa3e9d9c8c2c,RGB,Casual Shoes,0.957789421081543,False
+1634,Sports Shoes,family_ca05bc2bf73745fe,RGB,Casual Shoes,1.0,False
+1757,Tshirts,family_507c38cb8a975a83,RGB,Handbags,0.6970885396003723,False
+1806,Sandals,family_a78000a5ff630601,RGB,Sports Shoes,0.6048499941825867,False
+1862,Tshirts,family_169564455792f758,RGB,Shirts,0.996052384376526,False
+1918,Backpacks,family_54e87e2783378cd8,RGB,Handbags,0.99994158744812,False
+1932,Casual Shoes,family_01a0123885ebec5b,RGB,Sports Shoes,0.9996094107627868,False
+1990,Tshirts,family_a7be8e1fe282a37c,RGB,Tops,0.9383082389831544,False
+2351,Sports Shoes,family_9551dc186746041a,RGB,Casual Shoes,0.998457670211792,False
+2381,Formal Shoes,family_29725b74b899713d,RGB,Casual Shoes,0.8461114764213562,False
+2391,Formal Shoes,family_089d15bac8e0ff9f,RGB,Casual Shoes,0.9779369235038756,False
+2484,Tshirts,family_a2b00e8a452d83bf,RGB,Tops,0.98543381690979,False
+2507,Casual Shoes,family_ecb80fffef1947a5,RGB,Sandals,0.971001386642456,False
+2602,Tshirts,family_a24e43b7765e445a,RGB,Tops,0.7254243493080139,False
+2605,Tshirts,family_a81824dad073f33c,RGB,Tops,0.9308132529258728,False
+2608,Heels,family_32ea6aa8091a36e8,RGB,Sandals,0.5457714200019836,False
+2630,Flats,family_75ca28395bfc9ad1,RGB,Heels,0.9999772310256958,False
+2639,Formal Shoes,family_b0981fa41b7abd6f,RGB,Casual Shoes,0.9605830907821656,False
+2653,Handbags,family_862952ddccaf02d8,RGB,Laptop Bag,0.996199667453766,False
+2694,Shirts,family_6e457ff07c35fd71,RGB,Tshirts,0.9994420409202576,False
+2701,Tops,family_ce83293c66150ed4,RGB,Tshirts,0.999768316745758,False
+2706,Tops,family_f5e9b69ce10f94f8,RGB,Dresses,0.9996986389160156,False
+2718,Tops,family_c47e82e01e20ad22,RGB,Dresses,0.9419788718223572,False
+2738,Tshirts,family_44ab142b5171cd63,RGB,Night suits,0.8678311109542847,False
+2882,Heels,family_6d9eed144ee7038c,RGB,Flats,0.8296684622764587,False
+2892,Heels,family_36be8183ad9f1ed7,RGB,Sandals,0.6627577543258667,False
+3193,Tshirts,family_29c550b073ecb595,RGB,Shirts,0.6124258041381836,False
+3211,Tshirts,family_4a8ed6268c1741e4,RGB,Shirts,0.8648229837417603,False
+3236,Casual Shoes,family_83f317efec40450f,RGB,Flats,0.9342865943908693,False
+3255,Flats,family_c5f40d3880b454c1,RGB,Casual Shoes,0.8560137748718262,False
+3497,Casual Shoes,family_27335c6f0f67cb71,RGB,Sports Shoes,0.8830997943878174,False
+3571,Tshirts,family_2f619d680b998bca,RGB,Tops,0.7538399696350098,False
+3580,Casual Shoes,family_15bb14fd69723b98,RGB,Sports Shoes,0.9743786454200744,False
+3638,Casual Shoes,family_026916bfa9ab8dbe,RGB,Sports Shoes,0.9999221563339232,False
+3651,Sports Shoes,family_0ab77c56eece2d24,RGB,Casual Shoes,0.9691877961158752,False
+3720,Belts,family_3644cb1007be9e1b,RGB,Caps,0.8166930675506592,False
+3805,Sandals,family_a5b06020eb2ea3af,RGB,Flip Flops,0.9887083768844604,False
+3833,Sandals,family_93495fae156b6769,RGB,Flip Flops,0.9999873638153076,False
+3953,Tshirts,family_6a6a93367e7d0023,RGB,Tops,0.8002917170524597,False
+3958,Tops,family_015287fce017a7b8,RGB,Tshirts,0.9976315498352052,False
+3971,Tops,family_2a890496afdbf577,RGB,Tshirts,0.9941699504852296,False
+4106,Sandals,family_d8bbf6c1176f8226,RGB,Sports Sandals,0.9596627354621888,False
+4138,Casual Shoes,family_1f61c05e5a94a199,RGB,Sports Shoes,0.9552816152572632,False
+4213,Tshirts,family_7deb66de6038a305,RGB,Tops,0.9988262057304382,False
+4215,Tshirts,family_bb666ba5b78a13ad,RGB,Tops,0.9998360872268676,False
+4227,Tshirts,family_52144ce705561eb2,RGB,Innerwear Vests,0.886054277420044,False
+4261,Tshirts,family_2a0a5f36a397d7ef,RGB,Bra,1.0,False
+4262,Tshirts,family_cf7dee3443a85994,RGB,Bra,1.0,False
+4336,Sports Shoes,family_9544361c04facd3e,RGB,Casual Shoes,0.8745102882385254,False
+4441,Casual Shoes,family_6346fc1b001a16dd,RGB,Sports Shoes,0.6324655413627625,False
+4451,Caps,family_6f543685273d0e18,RGB,Dresses,0.4988818168640136,False
+4468,Casual Shoes,family_dc99a69a88c91874,RGB,Sports Shoes,0.996980607509613,False
+4573,Sports Shoes,family_f3a6399711da0b03,RGB,Heels,0.5202051401138306,False
+4621,Tops,family_c0d32e8f4dc23289,RGB,Tshirts,0.8576402068138123,False
+4717,Tshirts,family_7deb66de6038a305,RGB,Tops,0.9985296726226808,False
+4719,Tshirts,family_bb666ba5b78a13ad,RGB,Tops,0.9998416900634766,False
+4720,Tshirts,family_29d504c9de3a9308,RGB,Tops,0.9868578910827636,False
+4780,Tshirts,family_259748e36ea45836,RGB,Tops,0.9991307854652404,False
+4888,Tops,family_0dc2f3515bee8486,RGB,Tshirts,0.9995881915092468,False
+4889,Tops,family_0dc2f3515bee8486,RGB,Tshirts,0.9995881915092468,False
+4897,Tops,family_eda7ca2e850cca25,RGB,Tshirts,0.99850732088089,False
+4915,Tops,family_f2eca72c8cdf2c93,RGB,Tshirts,0.8095090389251709,False
+4916,Tops,family_f2eca72c8cdf2c93,RGB,Tshirts,0.7020705938339233,False
+4965,Tshirts,family_bdc1cc5988510c33,RGB,Dupatta,0.6046825647354126,False
+5004,Skirts,family_6078ab6da8612a51,RGB,Shorts,0.9961574673652648,False
+5037,Casual Shoes,family_78c549f9e428652c,RGB,Sports Shoes,0.9998008608818054,False
+5104,Sandals,family_99b057c8e3461b97,RGB,Heels,0.4007849097251892,False
+5119,Tshirts,family_77c53fd8faa9cd5a,RGB,Tops,0.8797488808631897,False
+5288,Sandals,family_61f5643dedd8af70,RGB,Flats,0.5970704555511475,False
+5317,Formal Shoes,family_197fadbf47ebfda1,RGB,Casual Shoes,0.9909056425094604,False
+5320,Casual Shoes,family_a06465366cbea9b3,RGB,Sports Shoes,0.8448867201805115,False
+5410,Flip Flops,family_5f7384f80b19355c,RGB,Caps,0.7235170006752014,False
+5411,Sports Shoes,family_5f7384f80b19355c,RGB,Caps,0.7860210537910461,False
+5575,Skirts,family_69c53542ac9ee1fc,RGB,Shorts,0.6061236262321472,False
+5600,Sports Shoes,family_e3be6803d0ccd399,RGB,Casual Shoes,0.6815686225891113,False
+5764,Tops,family_3c06bc19eae1dddc,RGB,Nightdress,0.9999943971633912,False
+5806,Tshirts,family_addcb3d9599cca85,RGB,Tops,0.987384796142578,False
+5842,Tshirts,family_016908412530c969,RGB,Sports Shoes,0.998728096485138,False
+5852,Handbags,family_c88df307576db793,RGB,Tshirts,0.9967806339263916,False
+5856,Handbags,family_6ef6a4c45ebe0bc7,RGB,Skirts,0.6550295352935791,False
+5904,Casual Shoes,family_726319add660a877,RGB,Sports Shoes,0.800373375415802,False
+6025,Tshirts,family_91010dd150a286fa,RGB,Tops,0.9948968291282654,False
+6037,Tshirts,family_11d59efd19009d5a,RGB,Tops,0.9918161034584044,False
+6065,Shirts,family_0e497cfde2219505,RGB,Jackets,0.9909974336624146,False
+6092,Tshirts,family_ceebaec62de7f127,RGB,Tops,0.7831316590309143,False
+6133,Casual Shoes,family_76c6b1efb7011428,RGB,Sports Shoes,0.617190957069397,False
+6145,Sandals,family_888523b7ea75e23c,RGB,Heels,0.8950827121734619,False
+6175,Flip Flops,family_cff0e3db64d0507c,RGB,Sandals,0.9086037874221802,False
+6381,Sports Shoes,family_1b36cd7951891f38,RGB,Casual Shoes,1.0,False
+6389,Sports Shoes,family_44fe5cd136d507c0,RGB,Casual Shoes,0.9999819993972778,False
+6391,Flats,family_5972b901807fac6a,RGB,Heels,0.9705020189285278,False
+6424,Flip Flops,family_66dcb4a67145fb49,RGB,Sandals,0.5706483125686646,False
+6478,Jackets,family_eba563fc7217d554,RGB,Shirts,0.9999949932098388,False
+6504,Jackets,family_ca9ceb6158f6b3bb,RGB,Shirts,0.9996346235275269,False
+6596,Tops,family_48c17e1d816afbb3,RGB,Tshirts,0.9799338579177856,False
+6606,Tshirts,family_bf163743e96880dc,RGB,Tops,0.9935924410820008,False
+6616,Shirts,family_20073d61961071df,RGB,Tshirts,0.999970316886902,False
+6634,Sports Shoes,family_b138c0b35a911311,RGB,Casual Shoes,0.9994584918022156,False
+6679,Sports Sandals,family_c03cd77a31b20f4f,RGB,Sandals,0.9998075366020204,False
+6696,Socks,family_a2e06365327c0511,RGB,Earrings,0.9966598749160768,False
+6738,Socks,family_c170ab55d53bb656,RGB,Deodorant,0.5954210758209229,False
+6815,Casual Shoes,family_905daf4b6cccc722,RGB,Sports Shoes,0.95958012342453,False
+6868,Dresses,family_1c8c47becf333f1a,RGB,Tops,0.9729410409927368,False
+6869,Tops,family_053d7b9eef98fc65,RGB,Tshirts,0.5738816261291504,False
+6884,Jackets,family_20bb38aa47c991ba,RGB,Tops,0.7068564295768738,False
+6950,Tops,family_352307e88925c08b,RGB,Shirts,0.983109414577484,False
+6969,Shirts,family_6161b2838ffa6ce1,RGB,Dresses,0.6698291897773743,False
+6979,Tops,family_40e3295b8dc6dfe7,RGB,Tshirts,0.8054967522621155,False
+6987,Tops,family_413285aad9a95e1a,RGB,Tshirts,0.9843472242355348,False
+7055,Tshirts,family_4508bd9ba16dee22,RGB,Tops,0.9492496848106384,False
+7183,Tops,family_882555fb1b4a06b0,RGB,Dresses,0.6849730014801025,False
+7194,Tops,family_4aaf3134cd70f84a,RGB,Tshirts,0.9949663281440736,False
+7199,Tops,family_1498a27661671620,RGB,Tshirts,0.9463401436805724,False
+7200,Tops,family_3c5d8ca315f8c36d,RGB,Tshirts,0.999920129776001,False
+7206,Tops,family_7ac9206afbb213cb,RGB,Tshirts,0.9983118772506714,False
+7209,Tshirts,family_7f6e59dc5994303f,RGB,Tops,0.9208818078041076,False
+7212,Tunics,family_de07769f3393873b,RGB,Kurtis,0.9910423755645752,False
+7381,Formal Shoes,family_f52c1308a6e3dcae,RGB,Casual Shoes,0.5211394429206848,False
+7432,Shorts,family_735fb136742e7177,RGB,Track Pants,0.8207260966300964,False
+7594,Sports Shoes,family_e4fccfc15307174f,RGB,Casual Shoes,0.7700327038764954,False
+7610,Messenger Bag,family_c393f6347e02530a,RGB,Handbags,0.9997870326042176,False
+7611,Wallets,family_9a47f769d7bf1bb3,RGB,Briefs,0.7386814951896667,False
+7702,Tops,family_caa43aab99273572,RGB,Tshirts,0.9595059156417848,False
+8094,Flip Flops,family_7385e90f8a1869d8,RGB,Sandals,0.999871015548706,False
+8235,Handbags,family_9638ab33113c7d13,RGB,Casual Shoes,0.929860770702362,False
+8243,Handbags,family_08af8411ea26217e,RGB,Messenger Bag,0.9999969005584716,False
+8244,Handbags,family_a7502e6a7421448e,RGB,Messenger Bag,0.6135455369949341,False
+8289,Flip Flops,family_b1085a6893111a20,RGB,Sandals,0.9845110177993774,False
+8342,Sports Shoes,family_303e652fb5d5c3ea,RGB,Casual Shoes,0.9999083280563354,False
+8360,Tshirts,family_8b87536f8a2b8b84,RGB,Tops,0.5209590196609497,False
+8372,Tshirts,family_ed00583ccc088f7d,RGB,Tops,0.871126651763916,False
+8375,Tshirts,family_ed00583ccc088f7d,RGB,Tops,0.871126651763916,False
+8414,Tshirts,family_67aad598c795ff94,RGB,Tops,0.9998780488967896,False
+8415,Tshirts,family_67aad598c795ff94,RGB,Tops,0.9998780488967896,False
+8440,Tshirts,family_6550bd8d08aa1c1a,RGB,Tops,0.7454738020896912,False
+8469,Tunics,family_6f6d5739a0a2b2c1,RGB,Tops,0.9472108483314514,False
+8542,Flip Flops,family_0448af7f4704b41c,RGB,Sandals,0.8188225030899048,False
+8546,Flip Flops,family_0448af7f4704b41c,RGB,Sandals,0.9866346120834352,False
+8581,Waistcoat,family_de70e19e8fec7261,RGB,Sweaters,0.5426677465438843,False
+8710,Sunglasses,family_f3b8f36ceb1a8fda,RGB,Necklace and Chains,0.8200342655181885,False
+8752,Sandals,family_de3daca6a937e505,RGB,Casual Shoes,0.9995524287223816,False
+8771,Sports Sandals,family_0193d52e5b146270,RGB,Flip Flops,0.9999938011169434,False
+8832,Sweaters,family_225e15bcc17ffce6,RGB,Tshirts,0.91632080078125,False
+8839,Trousers,family_c87a192c3eb69051,RGB,Jeans,0.8246333003044128,False
+8889,Shirts,family_07408b004e169bf3,RGB,Tshirts,0.924511194229126,False
+8914,Sports Shoes,family_4a1233956c391eb0,RGB,Casual Shoes,0.9978833794593812,False
+8949,Trousers,family_4ee6b655faf9c4fe,RGB,Track Pants,0.9342696070671082,False
+8974,Sports Shoes,family_51f857a7090afad9,RGB,Casual Shoes,0.9378234148025512,False
+8983,Casual Shoes,family_6cbb65e4607f0fee,RGB,Sports Shoes,0.7525482177734375,False
+9059,Sports Shoes,family_eb982d2b777ad8d0,RGB,Casual Shoes,0.9366070032119752,False
+9106,Tops,family_ee8621197232afef,RGB,Tshirts,0.9221210479736328,False
+9121,Sports Shoes,family_7e431cb8ac2b42ee,RGB,Casual Shoes,0.9990286827087402,False
+9335,Tshirts,family_8a5f0afcff319f80,RGB,Tops,0.9474840760231018,False
+9336,Tshirts,family_34fbd3ead861115d,RGB,Tops,0.5963299870491028,False
+9340,Tops,family_265b0b21bedad527,RGB,Tshirts,0.9907163381576538,False
+9384,Sports Shoes,family_ef60277e7dff8ca4,RGB,Casual Shoes,0.9919541478157043,False
+9399,Sports Shoes,family_96d93635d3a8822d,RGB,Casual Shoes,0.9985322952270508,False
+9408,Sunglasses,family_5ef3c7f1cde699af,RGB,Necklace and Chains,0.8114504218101501,False
+9428,Flats,family_5f0e92362198dc68,RGB,Heels,0.9214765429496764,False
+9487,Backpacks,family_004c5505872f96b5,RGB,Bra,0.9974699020385742,False
+9796,Sandals,family_13e0d2a0568eed19,RGB,Casual Shoes,0.9005818367004395,False
+9802,Tops,family_fda78461e836733f,RGB,Tshirts,0.9721487164497375,False
+9803,Tunics,family_fda78461e836733f,RGB,Tops,0.895837128162384,False
+9880,Shirts,family_bc5195c3e6ddd00f,RGB,Jackets,0.9840412139892578,False
+9881,Shirts,family_bc5195c3e6ddd00f,RGB,Jackets,0.9840412139892578,False
+9952,Tshirts,family_a03cdf8716fd211e,RGB,Flats,0.6185664534568787,False
+10270,Flats,family_08494e72f5bf7429,RGB,Heels,0.9610819816589355,False
+10273,Sandals,family_1b2f7d7e470f8f47,RGB,Casual Shoes,0.9808581471443176,False
+10340,Tshirts,family_aab0bf2c6c647eef,RGB,Tops,0.5385850667953491,False
+10360,Dresses,family_27fd5ea8a2fd81e1,RGB,Kurta Sets,0.9909000396728516,False
+10406,Dresses,family_cdd88e9889520cf6,RGB,Night suits,0.3578204810619354,False
+10426,Tshirts,family_628c2ed7cf6b9e79,RGB,Sweaters,0.5720593333244324,False
+10493,Tshirts,family_23f79dc3295e5ebe,RGB,Tops,0.7549304962158203,False
+10507,Tshirts,family_976baffa63246b26,RGB,Tops,0.6028995513916016,False
+10622,Flip Flops,family_0871c8a3bfa762bb,RGB,Flats,0.9834246039390564,False
+10656,Tops,family_2f0c4c6c0fff9471,RGB,Dresses,0.9999985694885254,False
+10678,Tops,family_7ae7dc84a03d6cc5,RGB,Tshirts,0.9930028319358826,False
+10718,Tops,family_0554934936addea6,RGB,Handbags,0.9844969511032104,False
+11010,Tops,family_4c9bf88bc02a3ea8,RGB,Shirts,0.9954517483711244,False
+11038,Tops,family_b6d740a5467734e2,RGB,Shirts,0.9859257340431212,False
+11078,Sweaters,family_9f4f7ed2dd26a7ae,RGB,Tshirts,0.9351229071617126,False
+11140,Scarves,family_cfe80cefe73f3d7a,RGB,Shorts,0.925524115562439,False
+11171,Sweaters,family_9f4f7ed2dd26a7ae,RGB,Tshirts,0.9645426273345948,False
+11176,Sweaters,family_9f4f7ed2dd26a7ae,RGB,Shirts,0.9943572878837584,False
+11376,Tops,family_1fd7fc77e0a4c780,RGB,Shirts,0.9999996423721312,False
+11433,Sweaters,family_0eb8ffe9a0deae65,RGB,Tops,0.9997718930244446,False
+11588,Kurtis,family_7804641b0093a8d0,RGB,Tops,0.9540376663208008,False
+11609,Kurtas,family_6a42036d7846de91,RGB,Kurtis,0.9997966885566713,False
+11615,Kurtas,family_8934df67d882eb57,RGB,Kurtis,0.9369770288467408,False
+11658,Tshirts,family_83a0030bcebc87b6,RGB,Tops,0.9905627965927124,False
+11759,Tops,family_6bc4241c53de1880,RGB,Tunics,0.9156854152679444,False
+11761,Tops,family_665b60a4fcf8949c,RGB,Kurtis,0.7779925465583801,False
+11815,Casual Shoes,family_a91d2ea4ef602bd8,RGB,Sports Shoes,0.8386465907096863,False
+11868,Sandals,family_d28281a2d0fe323a,RGB,Casual Shoes,0.4118520021438598,False
+11874,Formal Shoes,family_d28281a2d0fe323a,RGB,Sandals,0.9998904466629028,False
+11893,Sandals,family_d28281a2d0fe323a,RGB,Flip Flops,0.6072949767112732,False
+11927,Sports Shoes,family_b33860df3be254ba,RGB,Casual Shoes,0.6236737370491028,False
+12350,Shirts,family_db068c71019cf3af,RGB,Tshirts,0.8035025596618652,False
+12439,Hat,family_1c50287b342629cb,RGB,Caps,0.8185907006263733,False
+12464,Stoles,family_ea2aac749f884f0f,RGB,Scarves,0.9999939203262328,False
+12465,Stoles,family_43a599e19e8e2c7b,RGB,Scarves,0.99994957447052,False
+12535,Tshirts,family_19c52b3336e86e56,RGB,Shirts,0.5476875901222229,False
+12579,Tshirts,family_bc49610ac7b4e130,RGB,Tops,0.8808642625808716,False
+12607,Tops,family_4f33341ad8c920b9,RGB,Sweaters,0.9697023630142212,False
+12640,Tshirts,family_3dff5ac730d45103,RGB,Sweaters,0.9172136783599854,False
+12762,Jeans,family_72535a80d018ff4a,RGB,Trousers,0.936577081680298,False
+12780,Kurta Sets,family_d60827377b529031,RGB,Dupatta,0.7437078952789307,False
+12793,Tshirts,family_f768df8871597bed,RGB,Tops,0.6478112936019897,False
+12839,Skirts,family_7e7d9136e2ed8777,RGB,Shorts,0.5404183864593506,False
+12860,Formal Shoes,family_a1fac2e7ce6eef5f,RGB,Casual Shoes,0.9899531006813048,False
+12872,Formal Shoes,family_a1fac2e7ce6eef5f,RGB,Casual Shoes,0.981349527835846,False
+12916,Tshirts,family_0d66b810ef2ec67e,RGB,Sweaters,0.9359644055366516,False
+12994,Sports Shoes,family_4574409444e55985,L,Casual Shoes,0.8201526403427124,False
+13123,Formal Shoes,family_60d50ef2b2bcac8a,RGB,Casual Shoes,0.9564186930656432,False
+13144,Heels,family_df4446624b83bf80,RGB,Flats,0.8590134978294373,False
+13174,Flats,family_d168cb88c31ac8bc,RGB,Heels,0.9954506754875184,False
+13201,Sports Shoes,family_910769754620d570,RGB,Casual Shoes,0.9414018392562866,False
+13299,Shorts,family_3cd7ee13a93f35ca,L,Tops,0.9833599328994752,False
+13304,Skirts,family_c6addcd9de656d8a,RGB,Shorts,0.9999997615814208,False
+13305,Skirts,family_c6addcd9de656d8a,RGB,Shorts,0.9999997615814208,False
+13354,Casual Shoes,family_0e6a07c0e0cca885,RGB,Accessory Gift Set,0.9986394047737122,False
+13357,Casual Shoes,family_fea03f0b0237ebd3,RGB,Sports Sandals,0.4817135632038116,False
+13364,Casual Shoes,family_45901370f55c38f7,RGB,Dresses,0.8139854073524475,False
+13380,Shoe Accessories,family_5e25119e91122f54,RGB,Shoe Laces,0.8117333054542542,False
+13381,Casual Shoes,family_a0c1f96870ed2f8a,RGB,Sports Shoes,0.98851877450943,False
+13453,Tunics,family_c256a59672c70db5,RGB,Tops,0.9072970151901244,False
+13544,Flats,family_5b5307b0726a8442,RGB,Casual Shoes,0.6721924543380737,False
+13556,Heels,family_514d3f0b0b27c4eb,RGB,Flats,0.5866819024085999,False
+13578,Innerwear Vests,family_ceb98fa278816c53,RGB,Tshirts,0.9996979236602784,False
+13582,Innerwear Vests,family_ceb98fa278816c53,RGB,Tshirts,0.9994532465934752,False
+13632,Lounge Shorts,family_47137450b104df45,RGB,Capris,0.68901127576828,False
+13634,Lounge Pants,family_914a2d234a223b05,RGB,Track Pants,1.0,False
+13643,Flats,family_c946e50291fd3c9c,RGB,Heels,0.9886786341667176,False
+13649,Casual Shoes,family_84431d566e76f0fd,RGB,Sports Shoes,0.936887502670288,False
+13653,Casual Shoes,family_2438cbc1eade910b,RGB,Sports Shoes,0.7953130602836609,False
+13671,Jeans,family_e9af2bf09d12cbd4,RGB,Trousers,0.978849470615387,False
+13672,Jeans,family_e9af2bf09d12cbd4,RGB,Trousers,0.978849470615387,False
+13724,Caps,family_d07c4ea890afb2ae,RGB,Messenger Bag,0.7121661305427551,False
+13761,Shirts,family_17bea95c4d994bef,RGB,Tshirts,0.9671315550804138,False
+13939,Tshirts,family_d68bf29fb4c1a946,RGB,Shirts,0.9691590070724488,False
+13972,Casual Shoes,family_f4067a1ea3ebdcfe,RGB,Sports Shoes,0.8263742923736572,False
+13974,Sandals,family_802f83b07350b6d7,RGB,Flip Flops,0.9999959468841552,False
+13980,Sandals,family_8a5edcf749e61d96,RGB,Sports Sandals,0.9956892132759094,False
+14071,Tshirts,family_b17da71d428ae46f,RGB,Sweaters,0.6400637030601501,False
+14083,Sweaters,family_95fcfef789f6b982,RGB,Tops,0.9958621263504028,False
+14090,Tshirts,family_b478183547352ada,RGB,Sweaters,0.9921270608901978,False
+14103,Tshirts,family_92f4d5bb712acce4,RGB,Kurtis,0.6189296841621399,False
+14318,Sweaters,family_b493ecb53919fd5a,RGB,Tshirts,0.9982970356941224,False
+14352,Flats,family_c494c3208cb5d8bc,RGB,Casual Shoes,0.8293452858924866,False
+14360,Heels,family_ed55fcd0f4d34bfe,RGB,Flats,0.8855528831481934,False
+14386,Heels,family_ed55fcd0f4d34bfe,RGB,Flats,0.6153779029846191,False
+14398,Casual Shoes,family_cb308ace4da6b941,RGB,Heels,0.9998698234558104,False
+14544,Kurtis,family_0f5135115926fb85,RGB,Tshirts,0.9342067837715148,False
+14548,Kurtis,family_520c39da8f0618e9,RGB,Kurtas,0.9827517867088318,False
+14799,Handbags,family_4e225b16d8352096,RGB,Wallets,0.5880531668663025,False
+14961,Jackets,family_73fdedb8f28f6b52,RGB,Sweatshirts,0.9429841637611388,False
+14993,Sweaters,family_b493ecb53919fd5a,RGB,Tshirts,0.6102702617645264,False
+15006,Jackets,family_2df989c2a69a99bc,RGB,Innerwear Vests,0.9896848201751708,False
+15064,Formal Shoes,family_f832152975511154,RGB,Casual Shoes,0.9650991559028624,False
+15068,Sandals,family_4bc8c2bbc864e57a,RGB,Flip Flops,0.7866836190223694,False
+15070,Sandals,family_5b1103eabfb9acf3,RGB,Flip Flops,0.763351559638977,False
+15073,Sandals,family_4bc8c2bbc864e57a,RGB,Flip Flops,0.9420506954193116,False
+15074,Sandals,family_5b1103eabfb9acf3,RGB,Flip Flops,0.92627614736557,False
+15080,Kurtis,family_624b3200cffe8e5c,RGB,Tops,0.7055902481079102,False
+15253,Sandals,family_5987c08e62d18e3b,RGB,Flip Flops,0.9982435703277588,False
+15278,Socks,family_ea32b89205557234,L,Perfume and Body Mist,0.9744436144828796,False
+15315,Sports Shoes,family_5763aafce45eb22c,RGB,Casual Shoes,0.991346538066864,False
+15321,Jackets,family_06a95e796614c555,RGB,Sweatshirts,0.6423930525779724,False
+15338,Capris,family_c07813f1ad117b7b,RGB,Shorts,0.8903160095214844,False
+15409,Sandals,family_8d601fad07956dfe,RGB,Flip Flops,0.9996021389961244,False
+15518,Casual Shoes,family_63f51f684f8ca859,RGB,Sports Shoes,0.8730477094650269,False
+15622,Track Pants,family_fbce37a2857d2726,RGB,Lounge Pants,0.989334762096405,False
+15658,Free Gifts,family_0fab8090ad179e8e,RGB,Laptop Bag,0.9854891896247864,False
+15804,Briefs,family_3cf52d04dc55e85e,RGB,Tshirts,0.6433042883872986,False
+16073,Laptop Bag,family_be605d880164e8ef,RGB,Duffel Bag,0.9204521775245668,False
+16076,Laptop Bag,family_93b63fa77982d861,RGB,Backpacks,0.9857838153839112,False
+16120,Sandals,family_f502bc72b456a34e,RGB,Flip Flops,0.690838098526001,False
+16250,Shirts,family_e0da267d447b6d58,RGB,Tops,0.9978463649749756,False
+16915,Sweaters,family_d8841ff729977992,RGB,Jackets,0.938238561153412,False
+16929,Sweatshirts,family_76ee8ca009e6a6c6,RGB,Sweaters,0.9946487545967102,False
+16937,Free Gifts,family_d63756a323a2c373,RGB,Sunglasses,1.0,False
+17000,Flats,family_821031ef54fd58da,RGB,Heels,0.9888561367988586,False
+17001,Flats,family_3ff89028d473468d,RGB,Heels,0.8307374119758606,False
+17005,Flats,family_dd71b775941a3c2e,RGB,Heels,0.5744367837905884,False
+17011,Flats,family_dd71b775941a3c2e,RGB,Heels,0.9422469735145568,False
+17012,Flats,family_dd71b775941a3c2e,RGB,Heels,0.999200165271759,False
+17087,Wallets,family_5ff1a11109a6efd3,RGB,Clutches,0.5923885703086853,False
+17386,Mufflers,family_e9edefad439d785c,RGB,Stoles,0.953767478466034,False
+17425,Watches,family_53c045623d593c0e,RGB,Free Gifts,0.5184776186943054,False
+17515,Sweaters,family_96ccdf67acd958f6,RGB,Tshirts,0.9464614391326904,False
+17623,Track Pants,family_f4a36ebc5b628a04,RGB,Jeans,0.999658703804016,False
+17664,Casual Shoes,family_351cff49ce968bd6,RGB,Heels,1.0,False
+17732,Sports Shoes,family_d7508e75bd7e54d8,RGB,Casual Shoes,0.9733148217201232,False
+17737,Flats,family_86bb6a2319b6e8ac,RGB,Sandals,0.7431076765060425,False
+17826,Casual Shoes,family_df5f291bbd4aec1a,RGB,Sports Shoes,0.9175967574119568,False
+17832,Casual Shoes,family_6a91389bf293538f,RGB,Sports Shoes,0.9999997615814208,False
+18001,Lounge Pants,family_ecc2b198030289c0,RGB,Capris,0.956626832485199,False
+18200,Sweaters,family_79a71780b476637f,RGB,Tops,0.9982495903968812,False
+18404,Casual Shoes,family_52f9afc1615f8892,RGB,Formal Shoes,0.9928383231163024,False
+18411,Sports Shoes,family_092f40e5ba1ab82b,RGB,Casual Shoes,0.6077601313591003,False
+18442,Fragrance Gift Set,family_97679376cff0954c,RGB,Handbags,0.9614241123199464,False
+18517,Jackets,family_f7186a3986d33100,RGB,Scarves,0.6889256238937378,False
+18542,Casual Shoes,family_d7f955a8dafcc682,RGB,Flats,0.9763805866241456,False
+18545,Casual Shoes,family_d7f955a8dafcc682,RGB,Heels,0.9999977350234984,False
+18556,Heels,family_ed55fcd0f4d34bfe,RGB,Flats,0.640304684638977,False
+18649,Flip Flops,family_6238d90de5abb1fb,RGB,Sandals,0.766471803188324,False
+18674,Sports Shoes,family_f11f5266dd66610e,RGB,Casual Shoes,0.5800333023071289,False
+18725,Sweaters,family_d4c662df36dc5668,RGB,Tops,0.6620173454284668,False
+18737,Tops,family_0a2079ba8f1a4910,RGB,Shirts,0.992375910282135,False
+18740,Tops,family_7a26e38437503394,RGB,Tunics,0.7193979024887085,False
+18743,Tops,family_5e097e52a09ae93a,RGB,Tunics,0.5503250956535339,False
+18762,Shirts,family_727f1cf0f2254148,RGB,Sweatshirts,0.5922225117683411,False
+18893,Tops,family_228b250c2a6cc7bd,RGB,Tunics,0.7093404531478882,False
+18895,Dresses,family_92d2a22b3e45224d,RGB,Kurtas,0.9991466999053956,False
+18900,Tops,family_97bc30958636d678,RGB,Shirts,0.6381109952926636,False
+19242,Capris,family_3fffbe60124d249d,RGB,Shorts,0.9111685752868652,False
+19279,Watches,family_9b7d87bc53166042,RGB,Tshirts,0.9981858134269714,False
+19336,Jackets,family_0d2d7706f629880e,RGB,Shirts,0.9989053010940552,False
+19380,Boxers,family_c9bc3d91f72b48b0,RGB,Shorts,0.6036162972450256,False
+19385,Innerwear Vests,family_caa53ddc9ccb0c02,RGB,Tshirts,0.9966142773628236,False
+19394,Jackets,family_6ef081a9d8dac53b,RGB,Sweatshirts,0.8679027557373047,False
+19441,Gloves,family_7da3052327e32adf,RGB,Sports Shoes,0.9992390871047974,False
+19473,Sweatshirts,family_01862143473a207d,RGB,Jackets,0.9553609490394592,False
+19476,Sweatshirts,family_6c621f68b91a8c43,RGB,Jackets,0.7361017465591431,False
+19552,Sweatshirts,family_04d4da1d4a6683a1,RGB,Sweaters,0.6366252303123474,False
+19561,Tshirts,family_3030ef5d31d39b0c,RGB,Sweaters,0.9967736601829528,False
+19573,Track Pants,family_b16407af3ba9818b,RGB,Jeans,0.945178747177124,False
+19576,Tops,family_a5acb592104daa7f,RGB,Innerwear Vests,0.6872862577438354,False
+19579,Tops,family_89c3dab96d487918,RGB,Tshirts,0.6772875189781189,False
+19586,Tshirts,family_741749837dbd0627,RGB,Tops,0.9511613845825196,False
+19592,Tops,family_80076b06d7687d5f,RGB,Shirts,0.994599461555481,False
+19602,Tops,family_8d3ca5ca47844e79,RGB,Kurtas,0.9905185103416444,False
+19619,Tops,family_a5acb592104daa7f,RGB,Tshirts,0.992456078529358,False
+19663,Tops,family_a5acb592104daa7f,RGB,Tshirts,0.6742926239967346,False
+19669,Tshirts,family_c437b83082f0c83a,RGB,Tops,0.9992584586143494,False
+19678,Tops,family_8d3ca5ca47844e79,RGB,Tshirts,0.9848042726516724,False
+19684,Tops,family_024ff71d4a2635e5,RGB,Tshirts,0.9883042573928832,False
+19726,Shirts,family_761e60ff0d3f9d65,RGB,Sweaters,0.9363531470298768,False
+19747,Scarves,family_015b11c9d38cd6d8,RGB,Handbags,0.5917006134986877,False
+19779,Mufflers,family_543bb60db9596625,RGB,Scarves,0.9562084078788756,False
+19796,Tshirts,family_55d4c458b97342c6,RGB,Backpacks,0.5216727256774902,False
+19810,Sweatshirts,family_3a76aa6073ab3d5e,RGB,Sweaters,0.919641137123108,False
+19813,Sweatshirts,family_98801a8a63b03392,RGB,Shirts,0.7600659132003784,False
+19914,Waist Pouch,family_1c73433917ae9fb6,RGB,Handbags,0.621298611164093,False
+19950,Sweatshirts,family_4e1491851e0882fb,RGB,Sweaters,0.5782454013824463,False
+19977,Tshirts,family_bd27d19b9299dd10,RGB,Tops,0.635349690914154,False
+20016,Tops,family_80076b06d7687d5f,RGB,Tshirts,0.9744415879249572,False
+20039,Tights,family_ebe98aee2a523ab7,RGB,Stockings,1.0,False
+20046,Wallets,family_20bf27811c449966,RGB,Mobile Pouch,0.7876126766204834,False
+20091,Sweaters,family_033e5efa2816c5ed,RGB,Tops,0.848555862903595,False
+20104,Kurtas,family_15a5a7e9ba6fca33,RGB,Tunics,0.9831314086914062,False
+20127,Tops,family_a16b3a383b0e7d32,RGB,Shirts,0.6809273362159729,False
+20137,Shirts,family_d9ec272326901c84,RGB,Tops,0.5423539876937866,False
+20196,Tshirts,family_c952ff3cbfac9959,RGB,Sweaters,0.9999873638153076,False
+20208,Jackets,family_56f6faaaf70e17cc,RGB,Dupatta,0.9926241636276244,False
+20241,Tshirts,family_47c379d134cc687f,RGB,Sweaters,0.9735606908798218,False
+20245,Tshirts,family_47c379d134cc687f,RGB,Sweaters,0.7379012703895569,False
+20246,Tops,family_2d55c7dc5e57bb44,RGB,Tshirts,0.9135116934776306,False
+20248,Tshirts,family_c022e1335d07f9c8,RGB,Tops,0.999772012233734,False
+20307,Sweaters,family_f5079eebfbbaf245,RGB,Tops,0.4197220206260681,False
+20309,Sweaters,family_88c9406e40b4d253,RGB,Shirts,0.9778801798820496,False
+20328,Kurtas,family_b39673b7e758f1e4,RGB,Kurtis,0.8608664274215698,False
+20463,Mobile Pouch,family_f705c53ecd26fdc5,RGB,Wallets,0.5014606714248657,False
+20765,Flats,family_5c26be133ac26aa2,RGB,Heels,0.9989400506019592,False
+20771,Flats,family_516d4a492c2de1e0,RGB,Heels,0.9983217120170592,False
+20778,Flats,family_5c26be133ac26aa2,RGB,Heels,0.9980929493904114,False
+20790,Jackets,family_9af2f8394d883d67,RGB,Shirts,0.9490289092063904,False
+20794,Sandals,family_25e026e2b22336de,RGB,Flip Flops,0.999818742275238,False
+21126,Shirts,family_294515d31b39d0f4,RGB,Tshirts,0.8067308068275452,False
+21147,Sweatshirts,family_1660a73afbecbfda,RGB,Nightdress,0.910923421382904,False
+21148,Tops,family_352307e88925c08b,RGB,Shirts,0.991336703300476,False
+21152,Tshirts,family_db1a7ebf37273c8c,RGB,Sweaters,0.9999997615814208,False
+21160,Tshirts,family_b103b4b4663950f9,RGB,Tops,0.6753259897232056,False
+21172,Tunics,family_3f0532be0ac39abd,RGB,Tops,0.9418013095855712,False
+21499,Handbags,family_a2da08120b4d31c6,RGB,Duffel Bag,0.9963217973709106,False
+21500,Handbags,family_a2da08120b4d31c6,RGB,Duffel Bag,0.6684794425964355,False
+21532,Handbags,family_42abc539c609ac31,RGB,Laptop Bag,0.9892478585243224,False
+21591,Tshirts,family_c437b83082f0c83a,RGB,Tops,0.9942659735679626,False
+21725,Sweatshirts,family_240b560f82267384,RGB,Kurtas,0.8197934031486511,False
+21732,Heels,family_ed55fcd0f4d34bfe,RGB,Flip Flops,0.7980924844741821,False
+21928,Kurtas,family_da52b26b27d33dde,RGB,Tunics,0.8916653990745544,False
+22016,Kurtas,family_854a48ded598e572,RGB,Tunics,0.9508905410766602,False
+22149,Sandals,family_6ccfb089828d80db,RGB,Flip Flops,0.7433962225914001,False
+22152,Sandals,family_b06ff75a0fa32bc8,RGB,Casual Shoes,0.7542875409126282,False
+22162,Casual Shoes,family_a26c793221afae6c,RGB,Sports Shoes,0.999884843826294,False
+22391,Tshirts,family_3a0d2b7efd9090a2,RGB,Tops,0.9999998807907104,False
+22500,Casual Shoes,family_5cf32bc59bfee397,RGB,Flats,0.5361658334732056,False
+22502,Heels,family_e5ca8364e10b24b2,RGB,Flip Flops,0.995054006576538,False
+22504,Casual Shoes,family_5cf32bc59bfee397,RGB,Flats,0.4261036217212677,False
+22510,Sandals,family_d34272bcc35b36a1,RGB,Flip Flops,0.9632657170295716,False
+22540,Heels,family_b09ae6bc51d928fb,RGB,Sandals,0.9993504881858826,False
+22564,Handbags,family_9f648e6b31991e2e,RGB,Laptop Bag,0.8055498003959656,False
+22567,Shirts,family_42ad6bd0a71a6140,RGB,Tshirts,0.9915163516998292,False
+22570,Shirts,family_42ad6bd0a71a6140,RGB,Tshirts,0.998498797416687,False
+22627,Sweaters,family_4eef66874e5ab8d3,RGB,Tshirts,0.9999171495437622,False
+22677,Laptop Bag,family_5f5973c026ea9923,RGB,Handbags,0.9962368011474608,False
+22679,Messenger Bag,family_d6451ac3a140bfe6,RGB,Handbags,0.9493473768234252,False
+22685,Waist Pouch,family_7be309a4ab81800e,RGB,Handbags,0.9996172189712524,False
+22687,Casual Shoes,family_ad126037a9a01beb,RGB,Sports Shoes,0.5459280014038086,False
+22691,Sports Shoes,family_67962c89e104623f,RGB,Casual Shoes,0.9791983366012572,False
+22779,Kurtas,family_6d43634fea175c9b,RGB,Tunics,0.8411335349082947,False
+22870,Casual Shoes,family_68fd40495d464be0,RGB,Sports Shoes,0.5994457006454468,False
+23047,Sweaters,family_dab286aaca8e2a29,RGB,Tops,0.9621171355247498,False
+23049,Shirts,family_1697cd2479ed0900,RGB,Tshirts,0.9663914442062378,False
+23050,Dresses,family_5997714e9b8d5d88,RGB,Tops,0.9163340926170348,False
+23150,Jackets,family_4fb91ffba51e6440,RGB,Sweatshirts,0.9997718930244446,False
+23161,Tshirts,family_f7e0e2e50e1d16d7,RGB,Dresses,0.9784212112426758,False
+23209,Kurtis,family_a92002012ad0025c,RGB,Tshirts,0.8927383422851562,False
+23535,Perfume and Body Mist,family_e2a00caee9694c84,RGB,Fragrance Gift Set,0.9941537976264954,False
+23566,Perfume and Body Mist,family_0c018698c42b5711,RGB,Fragrance Gift Set,0.5355657935142517,False
+23569,Perfume and Body Mist,family_3e954a93ab63854c,RGB,Fragrance Gift Set,0.9978048205375672,False
+23574,Perfume and Body Mist,family_0a11760cc03d56ea,RGB,Deodorant,0.924842357635498,False
+23612,Perfume and Body Mist,family_4fddf9a9561d565f,RGB,Deodorant,0.9757267832756042,False
+23649,Tshirts,family_8e65531db660d1a8,RGB,Innerwear Vests,0.6906992793083191,False
+23894,Flats,family_133d48350158b6fe,RGB,Sports Sandals,0.9864158034324646,False
+23954,Shirts,family_8949fc620aa2d550,RGB,Tshirts,0.9999985694885254,False
+24100,Sandals,family_26a9f3727d0f5f01,RGB,Casual Shoes,0.8595497608184814,False
+24167,Kurtis,family_b12054c3d27f4ed6,RGB,Tunics,0.9817582964897156,False
+24168,Kurtis,family_cc8bec3e1e898788,RGB,Tops,0.9476844668388368,False
+24170,Kurtis,family_03fcf2a78ae52e5d,RGB,Tops,0.8355764150619507,False
+24171,Kurtis,family_03fcf2a78ae52e5d,RGB,Shirts,0.9490105509757996,False
+24273,Tshirts,family_b5c98d9d480bc133,RGB,Sweatshirts,0.7178485989570618,False
+24444,Socks,family_968010b609748575,L,Backpacks,0.6644823551177979,False
+24455,Sports Shoes,family_37bf33a9eb8951eb,RGB,Casual Shoes,0.6307039856910706,False
+24535,Kurtis,family_1869d694223e5729,RGB,Kurtas,0.9947006702423096,False
+24609,Shirts,family_2d208a1b1586682a,RGB,Tshirts,0.9990750551223756,False
+24699,Sports Shoes,family_0764a1a54e9fa4c0,RGB,Casual Shoes,0.8388186097145081,False
+24701,Casual Shoes,family_24e6b780225b2a7c,RGB,Sports Shoes,0.9899587035179138,False
+24729,Tshirts,family_c65458234122d958,RGB,Shirts,0.8071144223213196,False
+24788,Belts,family_a5d907d79de5ff35,RGB,Casual Shoes,0.5266707539558411,False
+24816,Tops,family_a0acf640e79d16af,RGB,Sweaters,0.901641845703125,False
+24845,Jackets,family_5d15b4c5651b5aed,RGB,Kurtis,0.6934080123901367,False
+24876,Dresses,family_5b90bd825771b64a,RGB,Tops,0.8444019556045532,False
+24946,Tops,family_d7b0327fb8e1d968,RGB,Tshirts,0.949418842792511,False
+24949,Tshirts,family_f8f16d1d7c0b254c,RGB,Tops,0.9552161693572998,False
+24995,Jeans,family_ef9decf33b87ffab,RGB,Shorts,0.9999094009399414,False
+25020,Sweatshirts,family_aa9364604f5a6340,RGB,Jackets,0.8437190055847168,False
+25036,Leggings,family_166c6333a79e403d,RGB,Track Pants,0.9953263998031616,False
+25285,Handbags,family_feb7d01a3703f2a2,RGB,Wallets,0.9685925245285034,False
+25364,Trunk,family_886f1ac2f5ef0479,RGB,Messenger Bag,0.9965961575508118,False
+25400,Mufflers,family_0314b65c6c8ac7ef,RGB,Backpacks,0.9420251846313475,False
+25448,Sports Sandals,family_1e4399f97336562b,RGB,Sandals,0.884350061416626,False
+25492,Sandals,family_91e79ac747780635,RGB,Casual Shoes,0.9876574277877808,False
+25528,Shirts,family_3e59e2e65f7f5e3b,RGB,Tunics,0.5340898036956787,False
+25691,Tops,family_84f52563e962ce5a,RGB,Tunics,0.4422043561935425,False
+25719,Handbags,family_8e839330fcff34ca,RGB,Duffel Bag,0.999998927116394,False
+25970,Tops,family_c9f3140ef5b72b61,RGB,Tshirts,0.9224069714546204,False
+25987,Perfume and Body Mist,family_1e444c3cc0159034,RGB,Caps,0.724168062210083,False
+26003,Perfume and Body Mist,family_94de985682c66748,RGB,Deodorant,0.9677391648292542,False
+26004,Perfume and Body Mist,family_15f9906ebfa40812,RGB,Deodorant,0.9843224883079528,False
+26114,Shirts,family_ae10ae3b8cbf55ed,RGB,Tshirts,0.7411510348320007,False
+26182,Handbags,family_05fb43a07d18d98b,RGB,Flats,0.6888521909713745,False
+26210,Perfume and Body Mist,family_b903ed7c1d1dbac0,RGB,Deodorant,0.99785977602005,False
+26213,Perfume and Body Mist,family_b903ed7c1d1dbac0,RGB,Deodorant,0.998528242111206,False
+26254,Track Pants,family_8877ada2c7b7fb71,RGB,Trousers,0.9997857213020324,False
+26273,Tshirts,family_70e69c33ebc122ac,RGB,Shirts,0.9784704446792604,False
+26315,Track Pants,family_8877ada2c7b7fb71,RGB,Lounge Pants,0.990743100643158,False
+26365,Shirts,family_1697cd2479ed0900,RGB,Jackets,0.9992623925209044,False
+26368,Shirts,family_16efc3d3c1c65a20,RGB,Tshirts,0.8989494442939758,False
+26548,Casual Shoes,family_9c47a4c7c590c8ea,RGB,Sports Shoes,0.5713284611701965,False
+26585,Sports Shoes,family_f7d3a879178bc630,RGB,Casual Shoes,0.5509688854217529,False
+26595,Sports Shoes,family_993e8c316519b2d3,RGB,Casual Shoes,0.9313401579856871,False
+26626,Sports Sandals,family_b49fd92275ad2289,RGB,Casual Shoes,0.8475615382194519,False
+26627,Sandals,family_6b66f534dc5970e4,RGB,Casual Shoes,0.9871147871017456,False
+26646,Casual Shoes,family_925d263ac900e823,RGB,Sports Shoes,0.9926797151565552,False
+26653,Casual Shoes,family_5f0575c5ce2b02a1,RGB,Sports Shoes,0.954186201095581,False
+26855,Perfume and Body Mist,family_9dde532937b79d28,RGB,Dresses,0.6646418571472168,False
+26911,Tops,family_8170e66f3cb2eec0,RGB,Shirts,0.6246556639671326,False
+26982,Capris,family_ee70d32e1aadaa09,RGB,Leggings,0.9355525970458984,False
+26986,Shorts,family_c82e1dea44d9d43a,RGB,Skirts,0.9991759657859802,False
+26990,Shorts,family_a115248182ef6202,RGB,Leggings,0.8814053535461426,False
+26994,Jeans,family_596738cde5cfe021,RGB,Leggings,0.5288439989089966,False
+27027,Shorts,family_b8c3d16c1df648b2,RGB,Skirts,0.7328856587409973,False
+27044,Clutches,family_37305a06ac3fe41f,RGB,Wallets,0.4877933859825134,False
+27074,Flats,family_e5ca8364e10b24b2,RGB,Heels,0.7842860817909241,False
+27084,Heels,family_c494c3208cb5d8bc,RGB,Flats,0.5500230193138123,False
+27089,Kurtas,family_a5ac4c724d1f0c9a,RGB,Kurtis,0.992644190788269,False
+27109,Kurtas,family_6342dd407001f048,RGB,Kurtis,0.5567147135734558,False
+27316,Perfume and Body Mist,family_5c8457b1be00e0cf,RGB,Deodorant,0.9967418313026428,False
+27384,Night suits,family_ca03bf1943772d99,RGB,Kurta Sets,0.9973255395889282,False
+27385,Night suits,family_ca03bf1943772d99,RGB,Kurta Sets,0.9564573168754578,False
+27386,Night suits,family_ca03bf1943772d99,RGB,Shorts,0.9907820820808412,False
+27408,Capris,family_aeffdba349a131d7,RGB,Jeans,1.0,False
+27412,Lounge Pants,family_231186a7d7002737,RGB,Jeans,0.8754245042800903,False
+27425,Lounge Shorts,family_73e3f25b14a6f9d8,RGB,Shorts,0.9999998807907104,False
+27490,Briefs,family_c5aba95c1e0417ed,RGB,Trunk,0.9116535782814026,False
+27520,Heels,family_b95393a403908e76,RGB,Flats,0.5392812490463257,False
+27715,Handbags,family_f7b8645f4ed2e94e,RGB,Wallets,0.9992163181304932,False
+27724,Handbags,family_4d8e9dff3d345fce,RGB,Clutches,0.7771833539009094,False
+27846,Blazers,family_d273eeb6bed0cf59,RGB,Sweatshirts,0.7901374697685242,False
+27860,Shirts,family_45503762ec186985,RGB,Tops,0.9684498310089112,False
+27861,Shirts,family_45503762ec186985,RGB,Tunics,0.4584558606147766,False
+27875,Shirts,family_0f42191a89b46f1f,RGB,Tops,0.9882418513298036,False
+27876,Shirts,family_0f42191a89b46f1f,RGB,Tops,0.5584840178489685,False
+27882,Shirts,family_a766e2eced855b02,RGB,Kurtis,0.4962663352489471,False
+27910,Trousers,family_3f239ac154e513a9,RGB,Jeans,0.967772662639618,False
+27973,Innerwear Vests,family_0e1e0339711de130,RGB,Tshirts,0.9666267037391664,False
+28011,Trunk,family_20fc636b68916e1a,RGB,Camisoles,0.7706357836723328,False
+28452,Leggings,family_3539617ba866aa92,RGB,Jeans,0.9972359538078308,False
+28453,Leggings,family_e820d476d23da238,RGB,Trousers,0.9834972620010376,False
+28463,Shorts,family_98e669698b7a0c31,RGB,Capris,0.804895281791687,False
+28476,Kurtas,family_88e2bfa138a9ac63,RGB,Dresses,0.9998310804367064,False
+28478,Tunics,family_daa44a82b99540ea,RGB,Kurtas,0.964365780353546,False
+28656,Sports Shoes,family_5ea38f5cc135fe4a,RGB,Casual Shoes,0.6849629282951355,False
+28776,Kurtis,family_2e6f1bebd4b552e4,RGB,Tops,0.5255956649780273,False
+28818,Jeans,family_71de466001278fd6,RGB,Trousers,0.6683342456817627,False
+28834,Kurtas,family_849e8f3998951492,RGB,Dresses,0.7508142590522766,False
+28836,Kurtas,family_849e8f3998951492,RGB,Tunics,0.5006141066551208,False
+28854,Tshirts,family_576f3bd7090a543a,RGB,Shirts,0.9705623388290404,False
+28939,Kurtas,family_6cf5336915a07704,RGB,Tunics,0.8882984519004822,False
+28953,Kurtis,family_8f3bb05d1e21fe6b,RGB,Kurtas,0.8711116909980774,False
+29020,Track Pants,family_761d7cf88e3688ad,RGB,Jeans,0.5742111206054688,False
+29102,Wallets,family_6bef34052dbfadee,RGB,Handbags,0.5610328316688538,False
+29157,Tshirts,family_60f0351266133f67,RGB,Tops,0.545703649520874,False
+29158,Dresses,family_f7458621f3f4231f,RGB,Kurtas,0.9909306168556212,False
+29168,Tshirts,family_f8f16d1d7c0b254c,RGB,Tops,0.99273282289505,False
+29169,Tops,family_18b4ab44c7a7f7d9,RGB,Tshirts,0.9991360306739808,False
+29190,Laptop Bag,family_f6b33bc6ffa210dc,RGB,Handbags,0.9974453449249268,False
+29227,Sports Shoes,family_f08a43a7052ada19,RGB,Casual Shoes,0.991133987903595,False
+29236,Sports Sandals,family_9345414503675104,RGB,Sandals,0.5421999096870422,False
+29286,Shirts,family_e36fcb159fe163c4,RGB,Tshirts,0.8230912089347839,False
+29981,Free Gifts,family_6ea94a21e25c3ed2,RGB,Watches,1.0,False
+30029,Free Gifts,family_c77355a52d06b2ff,RGB,Watches,0.9999988079071044,False
+30739,Nehru Jackets,family_36f7ce966a63c987,RGB,Shirts,0.996633231639862,False
+30778,Kurtas,family_c6c690113c8149b9,RGB,Shirts,0.9884032607078552,False
+30827,Churidar,family_9680a234b44cb68a,RGB,Leggings,0.758090078830719,False
+30900,Salwar,family_e4232498d7ce2d24,RGB,Leggings,0.350037157535553,False
+30906,Jackets,family_57fe59894c61fbcd,RGB,Tops,0.9995392560958862,False
+30921,Trousers,family_1aa812d1d5471e3b,RGB,Track Pants,0.9990358352661132,False
+30936,Kurtis,family_170630100f701403,RGB,Shirts,0.9473723769187928,False
+30943,Kurtis,family_13cfa0a859c6cb05,RGB,Tunics,0.4798631072044372,False
+31078,Stoles,family_255347fcc03a7c08,RGB,Mufflers,0.9960371851921082,False
+31109,Tshirts,family_ddb6e664994fcac7,RGB,Tops,0.9995763897895812,False
+31167,Dresses,family_54c75f4f4c35bcc8,RGB,Tops,0.649780809879303,False
+31213,Casual Shoes,family_20260e459de6f152,RGB,Sports Shoes,1.0,False
+31302,Shirts,family_ae10ae3b8cbf55ed,RGB,Tshirts,0.7411510348320007,False
+31311,Kurtas,family_0614cd1721b429ab,RGB,Nightdress,0.9995276927947998,False
+31332,Casual Shoes,family_ea3775164b97d08a,RGB,Formal Shoes,0.8250579237937927,False
+31692,Casual Shoes,family_6cbb25c8778f8280,RGB,Sports Shoes,0.7141848802566528,False
+31693,Formal Shoes,family_6cbb25c8778f8280,RGB,Sandals,0.5320558547973633,False
+31725,Pendant,family_8809ca77e5c01166,RGB,Ring,0.9989005327224731,False
+31979,Sports Shoes,family_dd2f7c585f88d634,RGB,Casual Shoes,0.997769832611084,False
+32174,Sports Shoes,family_2a4603d88b0a901b,RGB,Casual Shoes,0.955682337284088,False
+32247,Patiala,family_a0b548a69133c048,RGB,Leggings,0.9398233890533448,False
+32251,Skirts,family_a710bf2254470971,RGB,Capris,0.8864705562591553,False
+32256,Tunics,family_827d4e8faeb782a8,RGB,Tops,0.6440471410751343,False
+32262,Tunics,family_d54ad3e70d3772e5,RGB,Kurtis,0.9796233773231506,False
+32263,Tunics,family_c42ce0bff819a983,RGB,Tops,0.9971863627433776,False
+32382,Tops,family_c6637a0da819950e,RGB,Kurtis,0.3578397035598755,False
+32535,Perfume and Body Mist,family_2f8df803a762a890,RGB,Fragrance Gift Set,0.5066308379173279,False
+32571,Sweaters,family_3e04638ad8c3ee40,RGB,Sweatshirts,0.8626580238342285,False
+32622,Tshirts,family_27c3d3af42cc2113,RGB,Tops,0.9988654851913452,False
+32816,Flip Flops,family_5df22846cd2e2e7b,RGB,Heels,0.8665611147880554,False
+32824,Heels,family_3f323a15ec6b6ceb,RGB,Flats,0.7372274994850159,False
+32836,Flats,family_f6614fc976d59671,RGB,Flip Flops,0.997885286808014,False
+32837,Heels,family_67dedf37add3ed3c,RGB,Flats,0.4797804951667785,False
+32948,Casual Shoes,family_cf2e4504404acfca,RGB,Sports Shoes,0.9998871088027954,False
+33052,Tops,family_a4ebe595200828ce,RGB,Shirts,0.5232262015342712,False
+33115,Casual Shoes,family_95b14dd9a0427ebe,RGB,Sports Shoes,0.7881290316581726,False
+33121,Heels,family_c494c3208cb5d8bc,RGB,Flip Flops,0.9998360872268676,False
+33135,Heels,family_7caff4ca7dbf0a62,RGB,Flats,0.6410022974014282,False
+33162,Tunics,family_97912382a4337218,RGB,Kurtas,0.6906645894050598,False
+33188,Tops,family_01c94b1da44ed264,RGB,Tunics,0.79429030418396,False
+33191,Tunics,family_f5b7d2acd090f2e1,RGB,Tops,0.9771804809570312,False
+33199,Dresses,family_36405a0a4770d346,RGB,Kurtas,0.9653370380401612,False
+33203,Dresses,family_0eda26abecf96406,RGB,Kurtas,0.5194219946861267,False
+33204,Tunics,family_c9b71679a0427ec2,RGB,Dresses,0.5414411425590515,False
+33230,Laptop Bag,family_747d7d22eb0838d7,RGB,Handbags,0.9990767240524292,False
+33256,Tshirts,family_2010cf1cb3fe2564,RGB,Tops,0.9999998807907104,False
+33352,Formal Shoes,family_4319c9f0b21bab68,RGB,Casual Shoes,0.549569308757782,False
+33537,Flats,family_b8c366535a293c4d,RGB,Casual Shoes,0.941669762134552,False
+33637,Free Gifts,family_3779e14aa5769045,RGB,Watches,1.0,False
+33703,Formal Shoes,family_251d0bacffe7b574,RGB,Casual Shoes,0.9460800290107728,False
+33706,Casual Shoes,family_c2c805e363fe8dfe,RGB,Formal Shoes,0.9998942613601683,False
+33720,Leggings,family_e3d3aba0143df775,RGB,Capris,0.5687728524208069,False
+33748,Tunics,family_aa983702ae71fa3e,RGB,Tops,0.5879499316215515,False
+33865,Sports Sandals,family_87cd8ff313ae99f3,RGB,Sandals,0.9769107103347778,False
+33996,Shirts,family_3bf08d2e060d010d,RGB,Kurtis,0.8133861422538757,False
+34020,Tshirts,family_ddb6e664994fcac7,RGB,Tops,0.9995763897895812,False
+34021,Tshirts,family_ddb6e664994fcac7,RGB,Tops,0.9995763897895812,False
+34206,Tshirts,family_93fcfe9e82d8a9eb,RGB,Shirts,0.9981563687324524,False
+34304,Stoles,family_ac37dde628ece787,RGB,Tops,0.988278865814209,False
+34305,Stoles,family_255347fcc03a7c08,RGB,Dupatta,0.5385105609893799,False
+34440,Tshirts,family_ae727840a2ad943c,RGB,Tops,0.9984309077262878,False
+34447,Tshirts,family_f97c5b670ad67200,RGB,Tops,0.5046652555465698,False
+34516,Flip Flops,family_740dc63a68380cc8,RGB,Flats,0.6391186118125916,False
+34585,Dresses,family_f9afc86957a3a9ca,RGB,Dupatta,0.8529428243637085,False
+34596,Shirts,family_d5e28e9ccb2bc731,RGB,Tops,0.9367722272872924,False
+34601,Briefs,family_3b8c1eeaa4f8c1c8,RGB,Trunk,0.9999959468841552,False
+34602,Briefs,family_3b8c1eeaa4f8c1c8,RGB,Trunk,0.9999616146087646,False
+34639,Casual Shoes,family_1eeacb924ae12904,RGB,Sports Shoes,0.893302857875824,False
+34721,Trousers,family_df1dc930f345ce4f,RGB,Jeans,1.0,False
+34736,Casual Shoes,family_401473d21a833f1e,RGB,Sports Shoes,0.9999991655349731,False
+34785,Sports Sandals,family_5326fbdb78edc8df,RGB,Sandals,0.9998069405555724,False
+35007,Stoles,family_2cf2b4a05b612f14,RGB,Dupatta,0.9408265352249146,False
+35049,Patiala,family_940e3659fa3fb8d2,RGB,Lounge Pants,0.5771031975746155,False
+35099,Stoles,family_169a202477973c63,RGB,Scarves,0.9994851350784302,False
+35100,Stoles,family_1997300775a44b9f,RGB,Tshirts,0.6095776557922363,False
+35124,Pendant,family_e97d7aa7e9a9dccc,RGB,Ring,0.5082017779350281,False
+35128,Bracelet,family_f342bd6f36f1db1f,RGB,Belts,0.993639886379242,False
+35142,Handbags,family_4ba3c0467005312a,L,Laptop Bag,0.998827874660492,False
+35144,Clutches,family_4ba3c0467005312a,RGB,Duffel Bag,0.5217132568359375,False
+35146,Clutches,family_20688ddc7ca3733c,RGB,Wallets,0.9931052327156068,False
+35378,Heels,family_6ecebbd7c2416051,RGB,Flats,0.619601845741272,False
+35657,Formal Shoes,family_b3a68ec8a1ebc593,RGB,Casual Shoes,0.990315854549408,False
+35702,Sandals,family_44aa515481ee3ee9,RGB,Flip Flops,0.6374058723449707,False
+35706,Casual Shoes,family_37bf33a9eb8951eb,RGB,Sports Shoes,0.9132170081138612,False
+35817,Casual Shoes,family_4b6f85092075769a,RGB,Flats,0.976902723312378,False
+35927,Clutches,family_e5b69fc7629cd792,RGB,Wallets,0.9559420943260192,False
+35994,Capris,family_2e077642b4d00c35,RGB,Shorts,0.8533570170402527,False
+36037,Handbags,family_aa9513a98e8597d4,RGB,Clutches,0.5645102262496948,False
+36047,Backpacks,family_54b38a9a38161151,RGB,Handbags,0.6561959385871887,False
+36061,Duffel Bag,family_ec6d56a225b60d17,RGB,Handbags,0.8949277400970459,False
+36068,Duffel Bag,family_46f556f173732c56,RGB,Handbags,0.9983758926391602,False
+36069,Duffel Bag,family_ec6d56a225b60d17,RGB,Handbags,0.9946501851081848,False
+36208,Jackets,family_626b026e0e0ce70b,RGB,Tops,0.9073413014411926,False
+36209,Jackets,family_034b846ea7ce64c3,RGB,Tshirts,0.9778379797935486,False
+36417,Sports Shoes,family_57f9200a892efa0a,RGB,Casual Shoes,0.8626397848129272,False
+36736,Tshirts,family_d2f879d5105515a4,RGB,Tops,0.8541343212127686,False
+36841,Jeans,family_a7637ccffa00aa38,RGB,Trousers,0.9998334646224976,False
+37202,Jeans,family_cb7e190eb6140eaa,RGB,Capris,0.9923710823059082,False
+37204,Jumpsuit,family_623093361ad12425,RGB,Kurta Sets,0.833700954914093,False
+37205,Jeans,family_3a0e2841069cdfa4,RGB,Trousers,0.7544264197349548,False
+37223,Tops,family_18b4ab44c7a7f7d9,RGB,Tshirts,0.6249992251396179,False
+37241,Casual Shoes,family_1eb614a64cbef0cc,RGB,Sports Shoes,0.8726580739021301,False
+37247,Casual Shoes,family_1eb614a64cbef0cc,RGB,Sandals,0.9159942865371704,False
+37638,Accessory Gift Set,family_5d676a0b990b4e63,RGB,Sports Shoes,0.5697318315505981,False
+37639,Wallets,family_5d676a0b990b4e63,RGB,Sports Shoes,0.9562065601348876,False
+37886,Socks,family_46927c1f898ed0be,RGB,Trunk,0.9996398687362672,False
+37925,Tops,family_e958115fe5b045a9,RGB,Shirts,0.5652770400047302,False
+37945,Tunics,family_0a64c79c66306a52,RGB,Shirts,0.99776291847229,False
+37948,Shirts,family_b09f4ac8ceaf88bd,RGB,Tops,0.5527605414390564,False
+37963,Heels,family_f2f3c440c4ed84fe,RGB,Sports Sandals,0.6164474487304688,False
+38152,Tshirts,family_490a17ea97be111a,RGB,Shirts,0.4880440235137939,False
+38307,Scarves,family_6dbf807097021a16,RGB,Mufflers,0.4489945769309997,False
+38335,Tops,family_fba277f8f6fa24a7,RGB,Tshirts,0.9998568296432496,False
+38447,Mobile Pouch,family_0146d35100ee95f7,RGB,Clutches,0.7014536261558533,False
+38522,Casual Shoes,family_5fe0960de950b49d,RGB,Sports Shoes,0.9075378179550172,False
+38550,Sports Sandals,family_bad2eafc45d2090e,RGB,Sandals,0.7552779912948608,False
+38657,Sports Shoes,family_2fbe882363465c05,RGB,Casual Shoes,0.6561720371246338,False
+38736,Messenger Bag,family_fbd8d37ec8426569,RGB,Handbags,0.9999924898147584,False
+38768,Tshirts,family_2010cf1cb3fe2564,RGB,Tops,0.9999998807907104,False
+38769,Tshirts,family_2010cf1cb3fe2564,RGB,Tops,0.9999998807907104,False
+38838,Dresses,family_e549c08722f084b7,RGB,Nightdress,0.9614791870117188,False
+38850,Tops,family_ae4d24c5207d4434,RGB,Shirts,0.5934314727783203,False
+38964,Rucksacks,family_37907c4d158a57f3,RGB,Backpacks,0.9858468174934388,False
+38997,Dresses,family_c3dd42d3a8fbbe93,RGB,Tops,0.999155044555664,False
+39123,Leggings,family_aa6e3c31416abdb1,RGB,Tshirts,0.886059582233429,False
+39138,Kurta Sets,family_fde5655806c4c064,RGB,Nightdress,0.5820968747138977,False
+39150,Kurtas,family_b379329485f6c186,RGB,Tops,0.7907096743583679,False
+39158,Kurtis,family_f6d01e2f8bbdb970,RGB,Kurtas,0.9983673691749572,False
+39239,Nightdress,family_188e55e7ef8ec4e5,RGB,Watches,0.9982946515083312,False
+39241,Nightdress,family_188e55e7ef8ec4e5,RGB,Tracksuits,0.8850996494293213,False
+39290,Casual Shoes,family_e34a961f4beb93f3,RGB,Sports Shoes,0.8229023218154907,False
+39293,Sandals,family_7a3ca9f3ac0bad6b,RGB,Casual Shoes,0.7434593439102173,False
+39299,Sandals,family_7a3ca9f3ac0bad6b,RGB,Casual Shoes,0.9983903169631958,False
+39377,Watches,family_8495bd6db46096e1,RGB,Nightdress,0.5282337665557861,False
+39452,Kurtas,family_15a5a7e9ba6fca33,RGB,Stoles,0.4229938983917236,False
+39461,Kurtis,family_45aef5d0196a9158,RGB,Kurtas,0.999992847442627,False
+39470,Kurtis,family_6d0584510daf929d,RGB,Kurtas,0.5986946225166321,False
+39516,Laptop Bag,family_18367fd1e3d6cd04,RGB,Messenger Bag,0.6452781558036804,False
+39749,Shorts,family_5295f9b5437afbcf,RGB,Backpacks,0.8127161264419556,False
+39750,Shorts,family_5295f9b5437afbcf,RGB,Backpacks,0.8127161264419556,False
+39888,Sports Shoes,family_21d748f743c3c112,RGB,Casual Shoes,0.8793571591377258,False
+39922,Laptop Bag,family_eae0c318e071b8c9,L,Handbags,0.7492004036903381,False
+39927,Tablet Sleeve,family_8865f620a52124cd,RGB,Handbags,0.6022446155548096,False
+39932,Laptop Bag,family_eae0c318e071b8c9,RGB,Backpacks,0.9947079420089722,False
+39938,Laptop Bag,family_1b45552086ba4343,RGB,Clutches,0.8022576570510864,False
+39974,Casual Shoes,family_089d7950d63341c7,RGB,Formal Shoes,0.7545557618141174,False
+40070,Capris,family_0aac3e0a2e7117d4,RGB,Shorts,0.6285792589187622,False
+40119,Tshirts,family_117892e2b930e237,RGB,Tops,0.9837184548377992,False
+40128,Tops,family_5cefbbba6532c560,RGB,Dresses,0.9971635937690736,False
+40147,Capris,family_77d46c51dba257c8,RGB,Shorts,0.8958086967468262,False
+40148,Dresses,family_2227ee55d5e51ce6,RGB,Tops,0.9596666097640992,False
+40184,Kurtis,family_1fda69597d8cb358,RGB,Tops,0.9990097284317015,False
+40197,Kurtis,family_5959d10ec4636aeb,RGB,Tops,0.9948177933692932,False
+40203,Kurtas,family_5e3337dbfead7616,RGB,Tops,0.5211862921714783,False
+40405,Dresses,family_4127ec95703bb5f1,RGB,Nightdress,0.9999923706054688,False
+40413,Dresses,family_7638ae9aba5dd602,RGB,Nightdress,0.999990940093994,False
+40430,Dresses,family_eb1d3d46da28f32f,RGB,Kurtas,0.8756503462791443,False
+40599,Kurtis,family_7e58fd458f25b576,RGB,Kurtas,0.8713659048080444,False
+40657,Kurtas,family_0f032155aebb4869,RGB,Tunics,0.7959004044532776,False
+40741,Flip Flops,family_b083fc7ac145d1e0,RGB,Sandals,0.7946003079414368,False
+40742,Flip Flops,family_b083fc7ac145d1e0,RGB,Sandals,0.901883602142334,False
+40938,Tops,family_c8719d25c75ec760,RGB,Tshirts,0.9999902248382568,False
+41236,Capris,family_6efaf58ac8253741,RGB,Shorts,0.987616002559662,False
+41327,Dupatta,family_efe1ffceee7da3ae,RGB,Dresses,0.9973101615905762,False
+41378,Tops,family_529d65a4c6239e47,RGB,Shirts,0.9587206244468688,False
+41381,Tops,family_bbe561864ff65d26,RGB,Sweaters,0.4324948191642761,False
+41603,Shirts,family_3c120ec625e8751d,RGB,Tshirts,0.5538448691368103,False
+41775,Tops,family_d830e0739f0e3bb7,RGB,Tshirts,0.9902251362800598,False
+41995,Capris,family_77d46c51dba257c8,RGB,Shorts,0.8958086967468262,False
+42020,Casual Shoes,family_4bc8110ce6201558,RGB,Sports Shoes,0.9999988079071044,False
+42066,Key chain,family_fa1a95fd873117ea,RGB,Wallets,0.999886393547058,False
+42144,Sports Shoes,family_abb428f9416240b2,RGB,Casual Shoes,0.5965350866317749,False
+42198,Tunics,family_cf3747767f8f3032,RGB,Kurtas,0.9397658109664916,False
+42222,Tunics,family_c9b71679a0427ec2,RGB,Kurtis,0.6969998478889465,False
+42228,Tops,family_58f8adf078e1e5e8,RGB,Tunics,0.5229423642158508,False
+42238,Tunics,family_c9b71679a0427ec2,RGB,Tops,0.5602522492408752,False
+42349,Leggings,family_d647d2eb50fe2af9,RGB,Trousers,0.9859291911125184,False
+42399,Tshirts,family_93cc22deb2ea84ba,RGB,Tunics,0.9916858077049256,False
+42408,Briefs,family_50f2db4837e19115,RGB,Trunk,0.6364019513130188,False
+42417,Messenger Bag,family_f19ce99b2b7066e1,RGB,Handbags,0.8443551659584045,False
+42520,Shirts,family_6efcf252b3015161,RGB,Tshirts,0.998552143573761,False
+42583,Waistcoat,family_d73f676a34a0bcaa,RGB,Backpacks,0.9801954627037048,False
+42620,Earrings,family_a9456628e930b39f,RGB,Socks,0.8206707239151001,False
+42696,Flats,family_c00a72da42f98f32,RGB,Heels,0.941553831100464,False
+42701,Flats,family_c00a72da42f98f32,RGB,Heels,0.935002863407135,False
+42732,Flats,family_c00a72da42f98f32,RGB,Heels,0.5503014922142029,False
+42749,Heels,family_dd71b775941a3c2e,RGB,Flats,0.9999219179153442,False
+42750,Heels,family_dd71b775941a3c2e,RGB,Flats,0.9998579025268556,False
+42856,Clutches,family_5b65a0b0c777580b,RGB,Handbags,0.9995737671852112,False
+42866,Clutches,family_4b55ca2aabbbf668,RGB,Wallets,0.9981221556663512,False
+42876,Clutches,family_822dc17400fcb884,RGB,Handbags,0.9983322024345398,False
+42879,Clutches,family_c879d9f0460cf12b,RGB,Wallets,0.9533659815788268,False
+42893,Clutches,family_822dc17400fcb884,RGB,Wallets,0.9440504908561708,False
+42989,Sports Shoes,family_75948dfc69622895,RGB,Casual Shoes,0.8955390453338623,False
+43092,Perfume and Body Mist,family_2d9efc41b538e9f4,RGB,Backpacks,0.9556472897529602,False
+43094,Perfume and Body Mist,family_16ed2aa821e98379,RGB,Deodorant,0.9999550580978394,False
+43122,Perfume and Body Mist,family_4ce107f6d51e799d,RGB,Handbags,0.9997897744178772,False
+43125,Perfume and Body Mist,family_745258dec76aad78,RGB,Gloves,0.7530091404914856,False
+43239,Sports Shoes,family_15bfc05c86b78893,RGB,Casual Shoes,0.9966525435447692,False
+43252,Kurtas,family_7a38e59f1a58c931,RGB,Dresses,0.8759660124778748,False
+43256,Kurtas,family_634ddfa6a055bef6,RGB,Tunics,0.565578818321228,False
+43263,Kurtas,family_b379329485f6c186,RGB,Dresses,0.9865478873252868,False
+43303,Dresses,family_27fd5ea8a2fd81e1,RGB,Free Gifts,0.7540672421455383,False
+43320,Tshirts,family_f8f16d1d7c0b254c,RGB,Tops,0.9203326106071472,False
+43327,Tshirts,family_c65458234122d958,RGB,Tops,0.953221559524536,False
+43329,Tshirts,family_f8f16d1d7c0b254c,RGB,Tops,0.9858167171478271,False
+43364,Flats,family_de232f3ed9951dca,RGB,Casual Shoes,0.4693848192691803,False
+43512,Dresses,family_17527c8db3aae1cc,RGB,Nightdress,0.9914745092391968,False
+43515,Dresses,family_17527c8db3aae1cc,RGB,Kurtas,0.926452100276947,False
+43540,Free Gifts,family_3779e14aa5769045,RGB,Watches,0.9999996423721312,False
+43620,Tops,family_b862916ff4dfa299,RGB,Tshirts,0.812515139579773,False
+43660,Tunics,family_c21986e1549581e2,RGB,Kurtis,0.6564340591430664,False
+43663,Tunics,family_69f2ca5557aebd66,RGB,Kurtis,0.9421812295913696,False
+43665,Tunics,family_c21986e1549581e2,RGB,Tops,0.6266636848449707,False
+43882,Flats,family_e80ac64c614b4182,RGB,Casual Shoes,0.6350181698799133,False
+43909,Kurtas,family_41134c18296440d6,RGB,Dresses,0.9859813451766968,False
+43952,Heels,family_c494c3208cb5d8bc,RGB,Flats,0.7542364001274109,False
+43975,Perfume and Body Mist,family_8a937a5d71c15e17,RGB,Caps,0.5443690419197083,False
+44030,Perfume and Body Mist,family_543f5b7aa436809c,RGB,Tops,0.7444176077842712,False
+44098,Perfume and Body Mist,family_927fe5b02737adbc,RGB,Fragrance Gift Set,0.9985576272010804,False
+44183,Perfume and Body Mist,family_1a3b27e06b3e3537,RGB,Deodorant,0.997524082660675,False
+44245,Handbags,family_891058d9df898985,RGB,Laptop Bag,0.9998216032981871,False
+44404,Sports Shoes,family_fc68eeec98f2cd30,RGB,Casual Shoes,0.9807422161102296,False
+44405,Sports Shoes,family_e7c3301f6e2211f4,RGB,Casual Shoes,0.8501163125038147,False
+44425,Sandals,family_66f340bb0fcddc39,RGB,Flip Flops,0.9932265877723694,False
+44426,Sandals,family_84e25f978998e884,RGB,Flip Flops,0.7448884844779968,False
+44497,Casual Shoes,family_81adb202f2d45af8,RGB,Sports Shoes,0.7027345299720764,False
+44572,Sports Sandals,family_370d0403ad4904e4,RGB,Sandals,0.9736765623092652,False
+44648,Tops,family_e940fef272327509,RGB,Tshirts,0.990203022956848,False
+44677,Tunics,family_d1bdd9bfefa4a467,RGB,Kurtas,0.5509877800941467,False
+44705,Tops,family_944dcf3e7e8cc1de,RGB,Bra,0.998257339000702,False
+44706,Tops,family_944dcf3e7e8cc1de,RGB,Scarves,0.999537229537964,False
+44760,Casual Shoes,family_33e9df2918cc2278,RGB,Sports Shoes,0.9739744067192078,False
+44800,Tops,family_48c17e1d816afbb3,RGB,Tshirts,0.9791834950447084,False
+44906,Shorts,family_4c5df787a1a11377,RGB,Trousers,0.7000361084938049,False
+44925,Trousers,family_729c45a0f0191a57,RGB,Lounge Pants,0.7659626007080078,False
+44938,Casual Shoes,family_6cbb25c8778f8280,RGB,Formal Shoes,0.7229112982749939,False
+44992,Free Gifts,family_331a67186c3d0dee,RGB,Watches,1.0,False
+45076,Bra,family_07181e7b2e575ad8,RGB,Flip Flops,0.8958510160446167,False
+45082,Nightdress,family_c562613a736ce727,RGB,Tshirts,0.5709618926048279,False
+45084,Nightdress,family_25116af3e58eb0d9,RGB,Dresses,0.9701171517372132,False
+45336,Heels,family_df67e10e7afddd05,RGB,Flats,0.9913827776908876,False
+45657,Briefs,family_f2589310b18a414a,RGB,Trunk,1.0,False
+45693,Perfume and Body Mist,family_24e659874ebc640f,RGB,Wallets,0.9303426146507264,False
+45710,Perfume and Body Mist,family_09d94798f69f224e,RGB,Deodorant,0.9989935755729676,False
+45731,Kurtas,family_ac03a8d9af1fc00a,RGB,Dresses,0.6746304035186768,False
+45735,Kurtas,family_ac03a8d9af1fc00a,RGB,Dresses,0.8573770523071289,False
+45778,Tunics,family_093de8e5d76df61b,RGB,Tops,0.9986069798469543,False
+45781,Tops,family_914dcd84f3b693f1,RGB,Dresses,0.7482314109802246,False
+45941,Tops,family_7a7e771f3b2092e1,RGB,Tunics,0.9499950408935548,False
+45943,Tops,family_b5f3ce77f91272e8,RGB,Kurtis,0.9899154901504515,False
+46020,Kurtis,family_170630100f701403,RGB,Tops,0.5993228554725647,False
+46021,Kurtis,family_170630100f701403,RGB,Tops,0.9958749413490297,False
+46034,Jewellery Set,family_0c14511e7893d74c,RGB,Pendant,0.6011938452720642,False
+46036,Jewellery Set,family_0c14511e7893d74c,RGB,Necklace and Chains,0.999779999256134,False
+46096,Flats,family_5a2d493628cfa99b,RGB,Heels,0.8038817644119263,False
+46162,Necklace and Chains,family_c11d1397e6d92b01,RGB,Bra,0.5115902423858643,False
+46242,Kurtas,family_a0d326a4531676d2,RGB,Dresses,0.978249490261078,False
+46278,Tunics,family_e75052ce9d843a03,RGB,Tops,0.9999595880508424,False
+46290,Sports Shoes,family_1c1ac0f8c63543bb,RGB,Casual Shoes,0.9996140599250792,False
+46610,Heels,family_c494c3208cb5d8bc,RGB,Flats,0.5672476887702942,False
+46946,Perfume and Body Mist,family_c00be2c217d4ebbf,RGB,Tshirts,0.8534225821495056,False
+47064,Patiala,family_d5ce3ac846271913,RGB,Salwar,0.9982328414916992,False
+47151,Capris,family_6efaf58ac8253741,RGB,Shorts,0.987616002559662,False
+47192,Formal Shoes,family_f832152975511154,RGB,Casual Shoes,0.6924326419830322,False
+47214,Formal Shoes,family_f832152975511154,RGB,Casual Shoes,0.5178802609443665,False
+47304,Clutches,family_acb3cf37330caa86,RGB,Wallets,0.4206367135047912,False
+47351,Handbags,family_80042fe163e5640f,RGB,Wallets,0.9891118407249452,False
+47400,Mobile Pouch,family_d91c675701f1daeb,RGB,Clutches,0.5106815695762634,False
+47403,Wallets,family_fd8076aaf780e716,RGB,Clutches,0.913388729095459,False
+47420,Clutches,family_5b744708df17b977,RGB,Handbags,0.6832859516143799,False
+47450,Flats,family_c39bf72a3e4b99c0,RGB,Heels,0.7505355477333069,False
+47456,Flip Flops,family_401e65f1b6249005,RGB,Flats,0.7216065526008606,False
+47476,Flats,family_2c8115a86f4ff5ad,RGB,Heels,0.7826679348945618,False
+47542,Flats,family_5e30ae9bc1ad82fc,RGB,Heels,0.6185089945793152,False
+47551,Heels,family_a98a0b28700029a4,RGB,Flats,0.996309220790863,False
+47557,Heels,family_2d400b8a290ea2ed,RGB,Flats,0.938889741897583,False
+47558,Heels,family_c009d9abfd0936c2,RGB,Flats,0.9280986189842224,False
+47633,Casual Shoes,family_3429506310462050,RGB,Flats,0.914364755153656,False
+47646,Formal Shoes,family_591571b34a1d7971,RGB,Casual Shoes,0.8525837063789368,False
+47671,Scarves,family_132513e5601d28f9,RGB,Tops,0.954506516456604,False
+47673,Tops,family_6559d8caefe3d38d,RGB,Kurtis,0.7882537841796875,False
+47682,Casual Shoes,family_1885ddaac696e030,RGB,Sandals,0.8518848419189453,False
+48083,Dresses,family_17527c8db3aae1cc,RGB,Kurtas,0.5099647045135498,False
+48177,Wallets,family_3e2a003384499809,RGB,Clutches,0.5860753059387207,False
+48313,Bracelet,family_526a3c343def2616,RGB,Bangle,0.9730398654937744,False
+48335,Necklace and Chains,family_89a9201269f376a9,RGB,Pendant,0.791245698928833,False
+48382,Jeans,family_604fcfb90c36c4c3,RGB,Lounge Pants,0.8519598245620728,False
+48398,Jeans,family_604fcfb90c36c4c3,RGB,Jewellery Set,0.8919592499732971,False
+48505,Tops,family_1915149fc65b2fec,RGB,Kurtas,0.7729121446609497,False
+48520,Tops,family_1c0e78013ec0a994,RGB,Nightdress,0.4211379885673523,False
+48747,Bangle,family_e7bb1510da974fbe,RGB,Bracelet,0.9998292922973632,False
+48748,Bangle,family_e7bb1510da974fbe,RGB,Bracelet,0.883496105670929,False
+48749,Bangle,family_e7bb1510da974fbe,RGB,Bracelet,0.6780470013618469,False
+48750,Bangle,family_e7bb1510da974fbe,RGB,Ring,0.9997839331626892,False
+48751,Bangle,family_e7bb1510da974fbe,RGB,Ring,0.9942209720611572,False
+48752,Bangle,family_e7bb1510da974fbe,RGB,Ring,0.9999959468841552,False
+48753,Bangle,family_e7bb1510da974fbe,RGB,Ring,0.9999701976776124,False
+48791,Pendant,family_7ee304fedabe3165,RGB,Backpacks,0.9676130414009094,False
+49080,Lipstick,family_4eb97f4443ee4bc8,RGB,Mobile Pouch,0.9713746905326844,False
+49081,Lipstick,family_4eb97f4443ee4bc8,RGB,Mobile Pouch,0.9429202675819396,False
+49083,Lipstick,family_4eb97f4443ee4bc8,RGB,Mobile Pouch,0.9860113859176636,False
+49109,Foundation and Primer,family_692976b9f97d0f48,RGB,Basketballs,0.9997355341911316,False
+49114,Lipstick,family_4eb97f4443ee4bc8,RGB,Mobile Pouch,0.972938060760498,False
+49115,Lipstick,family_4eb97f4443ee4bc8,RGB,Mobile Pouch,0.9515948295593262,False
+49548,Clutches,family_c2c23a81a3bfc9c3,RGB,Handbags,0.5570316910743713,False
+49635,Skirts,family_6a42c4ac3163a76b,RGB,Free Gifts,0.9114733338356018,False
+49699,Ties,family_7831672ab91e149e,RGB,Free Gifts,0.9753326773643494,False
+49781,Night suits,family_3d72a9c662edbbc4,RGB,Dresses,0.998570680618286,False
+49785,Night suits,family_3d72a9c662edbbc4,RGB,Dresses,0.9997685551643372,False
+49938,Innerwear Vests,family_8ce46efaf7837237,RGB,Tshirts,0.9998798370361328,False
+49962,Tshirts,family_fd1836f468da3403,RGB,Socks,0.9998788833618164,False
+50020,Leggings,family_8d94a002a70a491a,RGB,Shorts,0.8028000593185425,False
+50028,Lounge Shorts,family_d6d7420b647dce39,RGB,Shorts,0.9999998807907104,False
+50051,Innerwear Vests,family_8ce46efaf7837237,RGB,Tshirts,0.6087397336959839,False
+50178,Heels,family_df06bf29a8ae8efa,RGB,Flats,0.7026247382164001,False
+50181,Kajal and Eyeliner,family_af7979671e3803c3,RGB,Handbags,1.0,False
+50190,Camisoles,family_0c4bd528dc66762c,RGB,Briefs,0.5553619861602783,False
+50191,Camisoles,family_b4e7329e13380810,RGB,Tops,0.814398467540741,False
+50344,Kurtas,family_aef2f13f436e0b53,RGB,Tunics,0.5756274461746216,False
+50401,Watches,family_98c57fe9b39b873d,RGB,Socks,0.9999756813049316,False
+50429,Messenger Bag,family_4bf3d69dbc2d1b68,RGB,Handbags,0.9928159713745116,False
+50550,Boxers,family_20cced3966561916,RGB,Shorts,0.9910532832145692,False
+50575,Trunk,family_d76daba5bd022e65,RGB,Briefs,0.9630661010742188,False
+50733,Sandals,family_7a3ca9f3ac0bad6b,RGB,Flats,0.3886303603649139,False
+50854,Sarees,family_c9d8dd0da058f047,RGB,Dresses,0.9975405931472778,False
+50992,Nightdress,family_b180031796f960a5,RGB,Dresses,0.9845513701438904,False
+51077,Free Gifts,family_27a6c99fe2fc86a4,RGB,Sarees,0.9999969005584716,False
+51245,Flats,family_0bd4a31bed6b3eea,RGB,Heels,0.9970589876174928,False
+51269,Watches,family_ce2ba50e81fb84f5,RGB,Trousers,0.9783410429954528,False
+51272,Watches,family_1c478bbb71c46ce7,RGB,Trousers,0.4863905310630798,False
+51301,Watches,family_229eb26ee3e9f397,RGB,Lounge Pants,0.9736536145210266,False
+51331,Rain Jacket,family_1b2401ce5f1b1913,RGB,Jackets,0.9918290972709656,False
+51359,Capris,family_c9c9dd46424bd9da,RGB,Leggings,0.9392812252044678,False
+51390,Boxers,family_18e2482528ffe13e,RGB,Trunk,0.9862359166145324,False
+51423,Shirts,family_21c0a117c2a5b008,RGB,Innerwear Vests,0.998364269733429,False
+51439,Tops,family_f7fa407ca185024c,RGB,Scarves,0.5856645107269287,False
+51444,Shirts,family_92b1e6cbdba03723,RGB,Tops,0.9953802824020386,False
+51448,Dresses,family_1f4570eb8d47ee8f,RGB,Tunics,0.9790090918540956,False
+51455,Shrug,family_eac592bddb3f7fe8,RGB,Tops,0.5250957012176514,False
+51617,Jeggings,family_54037ac535a79aab,RGB,Jeans,0.9845801591873168,False
+51619,Jeggings,family_c4fe2161992e1bda,RGB,Trousers,0.8175881505012512,False
+51711,Sunglasses,family_0486b80dca76500b,RGB,Briefs,0.7102079391479492,False
+51776,Briefs,family_014557b76e5ecf7b,RGB,Tshirts,0.951343595981598,False
+51960,Laptop Bag,family_ecb6e7799389c63e,RGB,Handbags,0.951729655265808,False

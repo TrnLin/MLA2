@@ -1,0 +1,74 @@
+{
+  "completed_at": "2026-09-09T03:21:06.404372+00:00",
+  "figures": [
+    {
+      "path": "results/figures/task1/final_evaluation/robustness.png",
+      "sha256": "c81fa7eced0b6a9cb7edc36d76b5d1e84f230f965ed41f05efbfa878dd990a7e"
+    },
+    {
+      "path": "results/figures/task1/final_evaluation/risk_coverage.png",
+      "sha256": "76cc65bbc143fa1342192c79281440cb9916cf033568692c0fb6f264f9490fe8"
+    }
+  ],
+  "label_source_sha256": "54d503743f79f22bf03f9e2c216b53e75d5f2129eda5934cfa25c642c70af44d",
+  "limitations": [
+    "same-source catalogue holdout",
+    "other targets accessed shared holdout earlier",
+    "124-class macro-F1 includes absent-class zeros",
+    "family bootstrap intervals do not measure distribution shift",
+    "photo probes do not establish customer-photo performance",
+    "confidence is uncalibrated; no review threshold was selected"
+  ],
+  "prediction_receipt": {
+    "path": "results/evidence/task1/final_evaluation/prediction_receipt.json",
+    "sha256": "f71175a24386e6a55965295e800dcb99ef52256c2cd4d1410e5c50601f6f5223"
+  },
+  "rows": 5778,
+  "tables": {
+    "confusion_pairs": {
+      "path": "results/evidence/task1/final_evaluation/confusion_pairs.csv",
+      "sha256": "87a73aa337e6af83ece021e77e1c5aa9590bfc3fd37fdc91542f34d572aa7871"
+    },
+    "errors": {
+      "path": "results/evidence/task1/final_evaluation/errors.csv",
+      "sha256": "34d72f65858d1c9df917f603f1547a25cf34ff1346bdf6d353b83af31434aaac"
+    },
+    "metrics": {
+      "path": "results/evidence/task1/final_evaluation/metrics.csv",
+      "sha256": "3b3f5544434592008ed4b2885083084cccfb018a0fbe17d94fe5a54e47f85d90"
+    },
+    "per_class": {
+      "path": "results/evidence/task1/final_evaluation/per_class.csv",
+      "sha256": "79bb0fc8a53641a7326229b441adc83dbd2da002ca7a9ef1cbfe99b00e3dc1cc"
+    },
+    "reliability": {
+      "path": "results/evidence/task1/final_evaluation/reliability.csv",
+      "sha256": "47acded80b7d0cf72b5ab4d297d67648d7d6b17350c964b6a82ae3751f270079"
+    },
+    "risk_coverage": {
+      "path": "results/evidence/task1/final_evaluation/risk_coverage.csv",
+      "sha256": "fc94e4ca2bec794f35d1d4a4231e854aed336c3f2d67500d542a738f300244d6"
+    },
+    "robustness": {
+      "path": "results/evidence/task1/final_evaluation/robustness.csv",
+      "sha256": "62bdd0b0559f46e679d62b788bfa163e229c6221c151d5dd069bf46a69bbf9b6"
+    },
+    "scored_rows": {
+      "path": "results/evidence/task1/final_evaluation/scored_rows.csv",
+      "sha256": "67a036b0b69a987f35fb081da80300c1627c3285e15553b48950f75107108e9b"
+    },
+    "slices": {
+      "path": "results/evidence/task1/final_evaluation/slices.csv",
+      "sha256": "cc60e62476604a4d9ab2019c1b75527fc2ad1bc66ff5aebe72f4352030602530"
+    },
+    "uncertainty": {
+      "path": "results/evidence/task1/final_evaluation/uncertainty.csv",
+      "sha256": "a61eae38b27e486599c9e73ae82cae52f64d946345734ff84629524a28621f93"
+    }
+  },
+  "target": "articleType",
+  "unlock_receipt": {
+    "path": "results/evidence/task1/final_evaluation/unlock_receipt.json",
+    "sha256": "096c1eddc987decea008f301f0a263ef865752be688c98d018034ce9b4a440e4"
+  }
+}

@@ -140,10 +140,10 @@ def test_report_explains_the_development_tradeoff_and_confusion_detail() -> None
     assert "task1_cnn_mild_aug_unweighted_v1" in report
     assert "lower fold variation" in report.lower()
     assert "proof of repeat-run stability" in report.lower()
-    assert "Choose the mildly augmented unweighted CNN" in report
-    assert "Choose the plain scratch CNN" not in report
+    assert "Choose the plain scratch CNN" in report
+    assert "Choose the mildly augmented unweighted CNN" not in report
     assert "Development decision:" in report
-    assert report.count("cnn_oof_confusion_task1_cnn_mild_aug_unweighted_v1.png") == 1
+    assert report.count("cnn_oof_confusion_task1_cnn_no_aug_unweighted_v1.png") == 1
     for filename in (
         "top_confusion_pairs.png",
         "focused_confusion_matrix.png",

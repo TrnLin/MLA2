@@ -28,6 +28,12 @@ def test_compact_selected_predictions_cover_each_development_product_once() -> N
     assert set(predictions["id"].astype(int)) == development_ids
     assert set(predictions["fold"].astype(int)) == set(range(5))
     assert not any(column.startswith("prob_") for column in predictions.columns)
+    fold_metrics = pd.read_csv(TASK1_EVIDENCE_DIR / "fold_metrics.csv")
+    selected_runs = fold_metrics.loc[
+        fold_metrics["candidate_id"].eq("task1_cnn_no_aug_unweighted_v1"), "run_id"
+    ]
+    assert len(selected_runs) == 5
+    assert set(predictions["run_id"]) == set(selected_runs)
 
 
 def test_compact_predictions_rebuild_the_saved_confusion_detail() -> None:
@@ -36,7 +42,7 @@ def test_compact_predictions_rebuild_the_saved_confusion_detail() -> None:
 
     actual = build_task1_confusion_detail(
         predictions,
-        candidate_id="task1_cnn_mild_aug_unweighted_v1",
+        candidate_id="task1_cnn_no_aug_unweighted_v1",
         limit=10,
     )
 

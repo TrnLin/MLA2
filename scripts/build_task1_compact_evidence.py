@@ -14,7 +14,7 @@ from fashion.task1.evaluation import validate_oof_predictions
 from fashion.task1.plotting import write_task1_learning_curve_figure
 from fashion.train.artifacts import atomic_write_csv
 
-SELECTED_CANDIDATE = "task1_cnn_mild_aug_unweighted_v1"
+SELECTED_CANDIDATE = "task1_cnn_no_aug_unweighted_v1"
 HISTORY_COLUMNS = (
     "epoch",
     "train_loss",
