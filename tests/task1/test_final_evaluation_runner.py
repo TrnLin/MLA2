@@ -168,7 +168,9 @@ def test_notebook_replays_twice_without_writes_or_inference(final_project, monke
     runner.score_holdout(root, evaluation_unlocked=True)
     runner.predict_test(root)
     notebook = json.loads(
-        (runner.ROOT / "notebooks/02_task1_final_eval.ipynb").read_text(encoding="utf-8")
+        (runner.ROOT / "notebooks/03_task1_part2_final_evaluation.ipynb").read_text(
+            encoding="utf-8"
+        )
     )
     # Real synthetic evidence exercises the scoring/export replay boundary.
     # The merged report also needs full development histories and a genuine refit
