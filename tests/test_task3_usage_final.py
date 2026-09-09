@@ -118,8 +118,8 @@ def test_modified_acceptance_manifest_is_rejected(tmp_path):
 
 
 def test_holdout_analysis_stays_in_task3_evaluation_and_test_scores_stay_private():
-    main = nbformat.read(ROOT / "notebooks/04_task3_gender_usage.ipynb", as_version=4)
-    final = nbformat.read(ROOT / "notebooks/04_task3_final_evaluation.ipynb", as_version=4)
+    main = nbformat.read(ROOT / "notebooks/06_task3_part1_gender_usage.ipynb", as_version=4)
+    final = nbformat.read(ROOT / "notebooks/07_task3_part2_final_evaluation.ipynb", as_version=4)
     main_code = "\n".join(c.source for c in main.cells if c.cell_type == "code")
     final_source = "\n".join(c.source for c in final.cells)
     assert "e1_e8_comparison.csv" not in main_code
