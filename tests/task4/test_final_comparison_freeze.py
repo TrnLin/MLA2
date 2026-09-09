@@ -23,7 +23,7 @@ BUNDLE_RELATIVE = Path(
 TEMPLATE_RELATIVE = Path(
     "scripts/task4/templates/task4-model-comparison-base.html"
 )
-NOTEBOOK = ROOT / "notebooks/task-4/05_task4_visual_search.ipynb"
+NOTEBOOK = ROOT / "notebooks/task-4/09_task4_part2_visual_search.ipynb"
 
 
 def _canonical_sha256(payload: dict[str, object]) -> str:
