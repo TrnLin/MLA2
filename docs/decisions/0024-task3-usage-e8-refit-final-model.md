@@ -38,7 +38,7 @@ or average the earlier fold checkpoints. Preserve the class order:
 
 Notebook 4 holds development analysis, refit training details and the frozen
 recipe. Reserved-holdout scores, errors and final evaluation analysis belong
-in `04_task3_final_evaluation.ipynb`. The teacher test set is prediction-only in the submitted work;
+in `07_task3_part2_final_evaluation.ipynb`. The teacher test set is prediction-only in the submitted work;
 the teacher did not supply its labels. Do not include private external-reference
 test scores in either notebook or the final report.
 
@@ -52,7 +52,7 @@ refit, which has no validation split or early stopping.
 
 The completed refit uses one model and all eligible development rows. The
 reserved-holdout comparison and its small-class limitations are recorded in
-[Task 3 evaluation](../../notebooks/04_task3_final_evaluation.ipynb). Acceptance followed
+[Task 3 evaluation](../../notebooks/07_task3_part2_final_evaluation.ipynb). Acceptance followed
 evaluation review; it must not be presented as a newly blind selection or a
 first opening of the holdout. This record does not backdate the choice.
 
@@ -75,8 +75,8 @@ application or generate a new submission.
 
 ## Evidence
 
-- [Main development notebook](../../notebooks/04_task3_gender_usage.ipynb)
-- [Reserved-holdout analysis](../../notebooks/04_task3_final_evaluation.ipynb)
+- [Main development notebook](../../notebooks/06_task3_part1_gender_usage.ipynb)
+- [Reserved-holdout analysis](../../notebooks/07_task3_part2_final_evaluation.ipynb)
 - [Accepted model manifest](../../reports/task3/usage_final_e8_refit_20260907/model_manifest.json)
 - [Completed E8 training notebook](../../notebooks/task3_training/usage_e8_refit.ipynb)
 - [Original E8 training contract](../task3_usage_e8_refit.md)
