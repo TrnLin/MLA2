@@ -10,6 +10,26 @@ The shared data workflow is teacher-only, repeatable, and keeps the internal hol
 3. Read `AGENTS.md`.
 4. Check `docs/decisions/` before changing a shared rule.
 
+## Notebook reading order
+
+Read the notebooks in this order, following the number at the start of each file name.
+The shared data preparation covers EDA (exploring the data) for Tasks 1–3.
+For each task, read the model comparisons before the final evaluation.
+Task 4 has its own image EDA and ends with a search demo.
+
+1. [00_problem_definition.ipynb](notebooks/00_problem_definition.ipynb): the problem, users, tasks, and success criteria.
+2. [01_data_preparation.ipynb](notebooks/01_data_preparation.ipynb): data checks, shared splits, and EDA.
+3. [02_task1_part1_article_type.ipynb](notebooks/02_task1_part1_article_type.ipynb): Task 1 article-type model comparisons and choices.
+4. [03_task1_part2_final_evaluation.ipynb](notebooks/03_task1_part2_final_evaluation.ipynb): Task 1 final model, evaluation, and predictions.
+5. [04_task2_part1_season.ipynb](notebooks/04_task2_part1_season.ipynb): Task 2 season model comparisons and choices.
+6. [05_task2_part2_final_evaluation.ipynb](notebooks/05_task2_part2_final_evaluation.ipynb): Task 2 final results, errors, and judgement.
+7. [06_task3_part1_gender_usage.ipynb](notebooks/06_task3_part1_gender_usage.ipynb): Task 3 gender and usage model comparisons and choices.
+8. [07_task3_part2_final_evaluation.ipynb](notebooks/07_task3_part2_final_evaluation.ipynb): Task 3 final results, errors, and judgement.
+9. [08_task4_part1_image_eda.ipynb](notebooks/task-4/08_task4_part1_image_eda.ipynb): Task 4 image checks and EDA.
+10. [09_task4_part2_visual_search.ipynb](notebooks/task-4/09_task4_part2_visual_search.ipynb): Task 4 search methods, comparisons, and final choice.
+11. [10_task4_part3_final_evaluation.ipynb](notebooks/task-4/10_task4_part3_final_evaluation.ipynb): Task 4 final search results, failures, and judgement.
+12. [11_task4_part4_search_demo.ipynb](notebooks/task-4/11_task4_part4_search_demo.ipynb): try visual search with a development image or a new image.
+
 ## Setup
 
 Python 3.12 is the shared locked baseline. The checked development machine uses an
@@ -64,7 +84,7 @@ export FASHION_PROJECT_ROOT="/absolute/path/to/MLA2-eda"
 ## Shared data preparation
 
 Put the supplied teacher data under `data/raw/teacher/` as shown in
-`data/raw/README.md`. Then open `notebooks/01_data_preparation.ipynb` in a fresh
+`data/raw/README.md`. Then open [01_data_preparation.ipynb](notebooks/01_data_preparation.ipynb) in a fresh
 kernel and use **Run All**.
 
 Normal Run All validates the delivered cache. If teacher files changed, start Jupyter
@@ -106,10 +126,10 @@ printf '%s  %s\n' \
   'data/raw/external/fashion_product_images_v1/images.csv' | sha256sum --check
 ```
 Run the separate focused audit in
-`notebooks/task-4/01_v1_eda.ipynb`. It proves V1 is the same teacher catalogue at
+[08_task4_part1_image_eda.ipynb](notebooks/task-4/08_task4_part1_image_eda.ipynb). It proves V1 is the same teacher catalogue at
 higher resolution and joins it to `data/processed/splits.csv` by ID. It never makes
 a second split. The main search work stays in
-`notebooks/task-4/05_task4_visual_search.ipynb`.
+[09_task4_part2_visual_search.ipynb](notebooks/task-4/09_task4_part2_visual_search.ipynb).
 
 The expected image data is about 14 GB. Raw images are ignored by Git and must not
 be committed.
@@ -128,8 +148,8 @@ cost, slice, and example evidence are recorded in
 - 61 `quarantine` rows.
 
 Task owners use `fashion.data.dataset.get_cv_split` or `iter_cv_folds`. Any value
-learned from data is fitted on that round's training folds only. Notebook 06 may open
-the holdout once, after every choice is frozen.
+learned from data is fitted on that round's training folds only. Each task's authorised
+final-evaluation workflow may open its holdout once, after every choice is frozen.
 
 Tasks 1–3 use teacher images. Task 4 uses the required local collection at
 `data/raw/external/fashion_product_images_v1/`. Binary external data is outside Git
