@@ -55,19 +55,10 @@ def test_task2_training_notebook_maps_training_and_evaluation_sources() -> None:
 def test_task2_evaluation_repeats_only_relevant_training_sources() -> None:
     source = _notebook_source(EVALUATION_NOTEBOOK)
 
-    for token in (
-        *TRAINING_FOUNDATIONS[:4],
-        TRAINING_FOUNDATIONS[5],
-        TRAINING_FOUNDATIONS[7],
-        TRAINING_FOUNDATIONS[8],
-        TRAINING_FOUNDATIONS[9],
-        *EVALUATION_FOUNDATIONS,
-    ):
+    for token in (*TRAINING_FOUNDATIONS, *EVALUATION_FOUNDATIONS):
         assert token in source
     assert '"Training (repeated)"' in source
     assert '"Evaluation"' in source
-    assert TRAINING_FOUNDATIONS[4] not in source
-    assert TRAINING_FOUNDATIONS[6] not in source
     assert "2007.00602" not in source
 
 

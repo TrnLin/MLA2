@@ -49,6 +49,11 @@ from fashion.task2.inference import (
     predict_manifest,
     predict_season,
 )
+from fashion.task2.model_comparison import (
+    build_development_model_comparison_evidence,
+    load_verified_development_model_comparison,
+    plot_development_model_comparison,
+)
 from fashion.task2.pretraining import (
     run_pretraining_matrix,
     validate_pretraining_config,
@@ -109,13 +114,16 @@ __all__ = [
     "InvalidSeasonImageError",
     "audit_task2_artifacts",
     "build_task2_handoff_evidence",
+    "build_development_model_comparison_evidence",
     "load_experiment_config",
+    "load_verified_development_model_comparison",
     "load_season_bundle",
     "load_verified_task2_handoff",
     "load_ultimate_judgement_spec",
     "load_verified_selection_freeze",
     "load_verified_ultimate_judgement_manifest",
     "plot_file_impact_flow",
+    "plot_development_model_comparison",
     "predict_manifest",
     "predict_season",
     "run_matrix",

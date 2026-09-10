@@ -25,7 +25,7 @@ def test_task2_owner_notebook_is_replay_safe_and_explicit() -> None:
     markdown_cells = [cell for cell in payload["cells"] if cell["cell_type"] == "markdown"]
 
     assert payload["metadata"]["owner"] == "Kai"
-    assert len(code_cells) == 16
+    assert len(code_cells) == 18
     assert 'EVALUATION_MODE = "artifact_replay"' in source
     assert "HOLDOUT_ROWS_EXPECTED = 5778" in source
     assert "B0" in source
@@ -46,6 +46,15 @@ def test_task2_owner_notebook_is_replay_safe_and_explicit() -> None:
     assert "season_test_predictions.csv" in source
     assert "Trace the one-way Task 2 file execution flow" in source
     assert "results/figures/task2/file_impact_flow.png" in source
+    assert "load_verified_development_model_comparison" in source
+    assert "results/evidence/task2/development_model_comparison/manifest.json" in source
+    assert "Audit every trained development configuration" in source
+    assert "Compare all development configurations visually" in source
+    assert "all 20 registered" in source
+    assert "Notebook 04" in source
+    assert "Notebook 05" in source
+    assert "Notebook 03" not in source
+    assert "Notebook 06" not in source
     assert "full floating-point precision" in source
     assert (
         sum(
@@ -61,7 +70,7 @@ def test_task2_owner_notebook_is_replay_safe_and_explicit() -> None:
             for cell in markdown_cells
             for line in "".join(cell["source"]).splitlines()
         )
-        == 16
+        == 18
     )
 
 
@@ -70,7 +79,7 @@ def test_task2_evaluation_notebook_is_executed_and_each_leaf_is_interpreted() ->
     cells = payload["cells"]
     code_indices = [index for index, cell in enumerate(cells) if cell["cell_type"] == "code"]
 
-    assert [cells[index]["execution_count"] for index in code_indices] == list(range(1, 17))
+    assert [cells[index]["execution_count"] for index in code_indices] == list(range(1, 19))
     for index in code_indices:
         assert cells[index]["outputs"]
         assert not any(output.get("output_type") == "error" for output in cells[index]["outputs"])
@@ -88,6 +97,17 @@ def test_task2_evaluation_html_contains_the_final_replay() -> None:
     assert "I2 obtains 0.7534 macro-F1" in source
     assert "results/season_test_predictions.csv" in source
     assert "Trace-the-one-way-Task-2-file-execution-flow" in source
+    assert "Audit-every-trained-development-configuration" in source
+    assert "Compare-all-development-configurations-visually" in source
+    assert "all 20 registered development OOF configurations" in source
+    for displayed_model in (
+        "G1 C3 MobileNetV3",
+        "G2 C2 P1 input size",
+        "G2 C2 A1 augmentation",
+        "G4 I2 multi-task (lambda=0.1)",
+        "G5 I2 lambda=0.3 [seed 2026]",
+    ):
+        assert displayed_model in source
     assert "15. Ultimate judgement and artifact audit" in source
 
 

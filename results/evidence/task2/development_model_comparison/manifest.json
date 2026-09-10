@@ -1,0 +1,116 @@
+{
+  "artifacts": {
+    "catalog": {
+      "path": "results/evidence/task2/development_model_comparison/all_model_oof_metrics.csv",
+      "sha256": "cec73fa34ff35c0c3a4eccd3a23fcfd3341e0a471b50f17428529126a4daadae"
+    },
+    "figure": {
+      "path": "results/figures/task2/development_model_comparison.png",
+      "sha256": "8c6c3f323a70b666ec87e2fd4ee3ad326b75b297162f125f692ce3254eceb8e9"
+    }
+  },
+  "canonical_inputs": {
+    "coverage_id_set_sha256": "7e278f240c9be8e59b9bf070866f725c71906f73ce910be49a752daf3e2c5b85",
+    "label_map_sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
+    "split_sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
+  },
+  "claim_boundary": "This inventory compares pooled five-fold development OOF artifacts. It does not create, replace, or compare internal-holdout predictions; stage-specific causal claims still require their matched gate evidence.",
+  "expected_row_count_per_experiment": 32753,
+  "gate": "Task2-development-model-comparison",
+  "input_manifests": {
+    "b0-majority": {
+      "path": "results/evidence/task2/b0_majority/manifest.json",
+      "sha256": "07da81144fe37bdd9624f37b075b38ec4ea526e7f3da9748c0459f4f152e2d11"
+    },
+    "b1-hog-hsv-svm": {
+      "path": "results/evidence/task2/b1_hog_hsv_svm/manifest.json",
+      "sha256": "039b619327986a8e72a89f0193cc3e84fe973ea13240ebb41b62065f24d7d46b"
+    },
+    "g1-c1-smallcnn": {
+      "path": "results/evidence/task2/g1_c1_smallcnn/manifest.json",
+      "sha256": "0bd07c367d9be97a71a2f9734465ad5b2d4731422688c028619e3cf6cab3c18f"
+    },
+    "g1-c2-resnet18": {
+      "path": "results/evidence/task2/g1_c2_resnet18/manifest.json",
+      "sha256": "f3bd02374fab4c91e6f013e04de3d1ba019fdb2b10d28226d89ce7c0308b69c0"
+    },
+    "g1-c3-mobilenetv3": {
+      "path": "results/evidence/task2/g1_c3_mobilenetv3/manifest.json",
+      "sha256": "39b2c7de2a7af2fdf1c1afa66bfd3e15f029f4c83c363e070a351760c2436ecd"
+    },
+    "g2-a1-c2-resnet18": {
+      "path": "results/evidence/task2/g2_a1_c2_resnet18/manifest.json",
+      "sha256": "e62c2e0a0e6058f9492ba5d32cab433b7bb95c2bc37f04ee3853ca0c15f76343"
+    },
+    "g2-p1-c2-resnet18": {
+      "path": "results/evidence/task2/g2_p1_c2_resnet18/manifest.json",
+      "sha256": "f7068aec69d66a4e0d9cf70f8118806885a09ed665bcfc7dded1406017621e45"
+    },
+    "g2-t1-c1-smallcnn": {
+      "path": "results/evidence/task2/g2_t1_c1_smallcnn/manifest.json",
+      "sha256": "48e5c1c5f9a20e2f95b879d7c10b7ebe42471a0a2c9138292b2e0acfcd36fae0"
+    },
+    "g2-t1-c2-resnet18": {
+      "path": "results/evidence/task2/g2_t1_c2_resnet18/manifest.json",
+      "sha256": "303df17e14992a8ae2f74ed5225912adb9862ce85e978f7d7f26842c7406acac"
+    },
+    "g2-t2-c1-smallcnn": {
+      "path": "results/evidence/task2/g2_t2_c1_smallcnn/manifest.json",
+      "sha256": "6073c408c7183ebe339673c780cd4708b051dd130ce0f3fffcba14b89f9a729a"
+    },
+    "g2-t2-c2-resnet18": {
+      "path": "results/evidence/task2/g2_t2_c2_resnet18/manifest.json",
+      "sha256": "45daef683e1d636f350053da0c4c0cc3c5084218d5a4c1fed25ef8066a07e8fb"
+    },
+    "g3-c1-t1-smallcnn": {
+      "path": "results/evidence/task2/g3_c1_t1_smallcnn/manifest.json",
+      "sha256": "2f487c4147f7f6e117c1cf77cec6ec445755ef083b4e9857e821618c83abc3eb"
+    },
+    "g3-c2-t0-resnet18": {
+      "path": "results/evidence/task2/g3_c2_t0_resnet18/manifest.json",
+      "sha256": "fa99e1d4500610c69e56a0a7412bba7fde3455c68b3be8de338bbac4f34e59ca"
+    },
+    "g4-i1-effective-number-c1": {
+      "path": "results/evidence/task2/g4_i1_effective_number_c1/manifest.json",
+      "sha256": "7cadbb28b0ee79a1e31ee6ee97211d9bb0390373420774145be5c4be53a67fb0"
+    },
+    "g4-i2-article-type-lambda-0-1-c1": {
+      "path": "results/evidence/task2/g4_i2_article_type_lambda_0_1_c1/manifest.json",
+      "sha256": "a8dce94e1ed7e8cb51bf8a187c7f5f7d266d5d157b2ce4863e14e59cab3934f3"
+    },
+    "g4-i2-article-type-lambda-0-3-c1": {
+      "path": "results/evidence/task2/g4_i2_article_type_lambda_0_3_c1/manifest.json",
+      "sha256": "4606ec36122acefbf3d04b1e45d8cfaa95fbca27a7e6d0749c9c339147aceae5"
+    },
+    "g4-p0s-resnet18-standard-scratch": {
+      "path": "results/evidence/task2/g4_p0s_resnet18_standard_scratch/manifest.json",
+      "sha256": "59ea81e86bbd259fd246aa6668553972cbe3c307f14e1c7b34a1f64df32016a2"
+    },
+    "g4-pstar-resnet18-standard-pretrained": {
+      "path": "results/evidence/task2/g4_pstar_resnet18_standard_pretrained/manifest.json",
+      "sha256": "1b55c35b92b38d244d8ce1c7f7e159bca7a2d6bf9ecfcdf51c0c85db62deefb1"
+    },
+    "g5-c2-t0-resnet18-s2026": {
+      "path": "results/evidence/task2/g5_c2_t0_resnet18_s2026/manifest.json",
+      "sha256": "f844b0d6a1978cb782588988608bd8ea923b77014f1e887ef4e51b680e710587"
+    },
+    "g5-i2-article-type-lambda-0-3-c1-s2026": {
+      "path": "results/evidence/task2/g5_i2_article_type_lambda_0_3_c1_s2026/manifest.json",
+      "sha256": "741e28829da35b0fce17a8ae2efa1e8c51f7e116398ad126bb6a18d6fce293bb"
+    }
+  },
+  "metric_columns": [
+    "macro_f1",
+    "accuracy",
+    "balanced_accuracy"
+  ],
+  "model_count": 20,
+  "schema_version": "1.0.0",
+  "selection_freeze": {
+    "path": "results/evidence/task2/selection_freeze.json",
+    "selected_experiment_id": "g4-i2-article-type-lambda-0-3-c1",
+    "sha256": "51475a6e83c3e49e904633e1fa8a7e86bcc5e2f592c81f981561dac9f7cff995"
+  },
+  "source_partition": "development_oof",
+  "status": "complete"
+}

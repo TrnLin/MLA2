@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import base64
+
 import nbformat
 
 from fashion.config import ROOT
@@ -121,3 +123,41 @@ def test_task1_notebook_defaults_weighted_controller_to_smoke() -> None:
     assert 'WEIGHTED_MODE = "smoke"' in source
     assert "run_task1_weighted_experiment(" in source
     assert "train_test_split" not in source
+
+
+def test_task1_notebook_keeps_figures_and_tables_frontend_portable() -> None:
+    notebook = _notebook()
+    code_source = _notebook_code_source()
+
+    png_outputs = [
+        output.data["image/png"]
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.get("outputs", [])
+        if output.get("output_type") in {"display_data", "execute_result"}
+        and "image/png" in output.get("data", {})
+    ]
+    assert len(png_outputs) >= 5
+    assert all(
+        base64.b64decode(payload).startswith(b"\x89PNG\r\n\x1a\n")
+        for payload in png_outputs
+    )
+
+    assert "attachment:" not in _notebook_source()
+    assert 'pd.set_option("display.max_columns", None)' in code_source
+    assert 'pd.set_option("display.max_rows", None)' in code_source
+    assert 'pd.set_option("display.max_colwidth", None)' in code_source
+
+    table_outputs = [
+        output.data
+        for cell in notebook.cells
+        if cell.cell_type == "code"
+        for output in cell.get("outputs", [])
+        if output.get("output_type") in {"display_data", "execute_result"}
+        and "<table" in output.get("data", {}).get("text/html", "")
+    ]
+    assert table_outputs
+    for output in table_outputs:
+        assert "..." not in output["text/html"] and "…" not in output["text/html"]
+        assert "..." not in output.get("text/plain", "")
+        assert "…" not in output.get("text/plain", "")
