@@ -8,6 +8,53 @@ The project has three parts:
 | [be](be/README.md) | Python API, upload storage and API tests |
 | [fe](fe/README.md) | React website and sample images |
 
+## Where to put the dataset
+
+All dataset paths below start at this repository root. Extract the image files
+before starting the app; a ZIP file alone is not enough.
+
+**For the demo**, put the original teacher product photos here:
+
+```text
+core/
+└── data/
+    ├── train/
+    │   └── images_train/
+    │       ├── <id>.jpg
+    │       └── ...
+    └── processed/
+        └── splits.csv       # Use the existing shared split.
+```
+
+The API reads `core/data/train/images_train/<id>.jpg` to show Task 4 matches.
+Keep the original file names and image bytes. Avoid an extra nested
+`images_train/` folder when extracting. Model weights go in the separate paths
+listed in [be/README.md](be/README.md).
+
+**For data preparation and model work**, the source dataset belongs here:
+
+```text
+core/data/raw/teacher/
+├── train/
+│   ├── styles_train.csv
+│   └── images_train/
+│       └── <id>.jpg
+└── test/
+    ├── styles_prediction.csv
+    └── images_test/
+        └── <id>.jpg
+```
+
+If the photos are on another drive, these folders can be symbolic links
+(shortcuts to the real folders), so you do not need a second copy. Keep that
+drive connected while using the app or notebooks. Raw datasets stay local and
+are ignored by Git.
+
+The optional Task 4 high-resolution dataset belongs in
+`core/data/raw/external/fashion_product_images_v1/`, with `images.csv` and an
+`images/` folder inside. It is only needed for the experiments described in
+[core/README.md](core/README.md#task-4-external-high-resolution-images).
+
 ## Run the demo
 
 Use Python 3.12–3.14 and Node 22.18 or newer. The shared Python environment is
