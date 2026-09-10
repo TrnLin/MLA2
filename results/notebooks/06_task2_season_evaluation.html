@@ -7981,7 +7981,16 @@ a.anchor-link {
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">show_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">note</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">display</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">option_context</span><span class="p">(</span>
+            <span class="s2">"display.max_rows"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"display.max_columns"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"display.max_colwidth"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"display.width"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
     <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&gt; **How to read this table.** </span><span class="si">{</span><span class="n">note</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
 
 
@@ -8165,10 +8174,10 @@ a.anchor-link {
 <tr>
 <th>0</th>
 <td>1</td>
-<td>data/processed/splits.csv + label_maps.json + ...</td>
-<td>fashion.data.torch + fashion.task2.experiments...</td>
+<td>data/processed/splits.csv + label_maps.json + configs/task2/*.json</td>
+<td>fashion.data.torch + fashion.task2.experiments + fashion.train.engine</td>
 <td>results/runs.csv + hashed development evidence</td>
-<td>Creates comparable five-fold development runs;...</td>
+<td>Creates comparable five-fold development runs; cannot read holdout labels</td>
 </tr>
 <tr>
 <th>1</th>
@@ -8183,7 +8192,7 @@ a.anchor-link {
 <td>3</td>
 <td>selection_freeze.json + development rows</td>
 <td>fashion.task2.refit</td>
-<td>models/task2_season.pt + task2_season.manifest...</td>
+<td>models/task2_season.pt + task2_season.manifest.json</td>
 <td>Creates one image-only frozen inference bundle</td>
 </tr>
 <tr>
@@ -8191,16 +8200,16 @@ a.anchor-link {
 <td>4</td>
 <td>Frozen bundle + holdout/test images</td>
 <td>scripts/build_task2_final_evaluation.py predict</td>
-<td>holdout_predictions.csv + prediction_receipt.j...</td>
-<td>Predicts before labels; no train, tune, refit,...</td>
+<td>holdout_predictions.csv + prediction_receipt.json + results/season_test_predictions.csv</td>
+<td>Predicts before labels; no train, tune, refit, or score</td>
 </tr>
 <tr>
 <th>4</th>
 <td>5</td>
-<td>Committed blind receipt + internal-holdout Sea...</td>
-<td>scripts/build_task2_final_evaluation.py score ...</td>
-<td>holdout metrics, intervals, slices, robustness...</td>
-<td>Scores frozen predictions once; results cannot...</td>
+<td>Committed blind receipt + internal-holdout Season labels</td>
+<td>scripts/build_task2_final_evaluation.py score --evaluation-unlocked</td>
+<td>holdout metrics, intervals, slices, robustness, figures</td>
+<td>Scores frozen predictions once; results cannot flow back to the model</td>
 </tr>
 <tr>
 <th>5</th>
@@ -8208,7 +8217,7 @@ a.anchor-link {
 <td>Verified final-evaluation artifacts</td>
 <td>notebooks/05_task2_part2_final_evaluation.ipynb</td>
 <td>Executed evaluation narrative</td>
-<td>Read-only replay; full-precision files, rounde...</td>
+<td>Read-only replay; full-precision files, rounded display</td>
 </tr>
 <tr>
 <th>6</th>
@@ -8216,7 +8225,7 @@ a.anchor-link {
 <td>Executed Notebook 05</td>
 <td>jupyter nbconvert --to html</td>
 <td>results/notebooks/06_task2_season_evaluation.html</td>
-<td>Self-contained presentation; no model or metri...</td>
+<td>Self-contained presentation; no model or metric change</td>
 </tr>
 </tbody>
 </table>
@@ -8385,7 +8394,7 @@ a.anchor-link {
 <tr>
 <th>8</th>
 <td>Bundle SHA-256</td>
-<td>5927eff73130acedc8015199e1df5a6c6edf64c0b45023...</td>
+<td>5927eff73130acedc8015199e1df5a6c6edf64c0b45023ebd91c48d7ed40f93c</td>
 </tr>
 </tbody>
 </table>
@@ -8588,7 +8597,7 @@ a.anchor-link {
 <tr>
 <th>1</th>
 <td>B1 HOG + HSV SVM</td>
-<td>Do hand-crafted shape and colour features carr...</td>
+<td>Do hand-crafted shape and colour features carry signal?</td>
 <td>0.6096</td>
 <td>+0.4439 vs B0</td>
 <td>Keep as serious classical baseline</td>
@@ -8612,7 +8621,7 @@ a.anchor-link {
 <tr>
 <th>4</th>
 <td>I1 class-balanced C1</td>
-<td>Does effective-number weighting repair rare Sp...</td>
+<td>Does effective-number weighting repair rare Spring?</td>
 <td>0.7015</td>
 <td>-0.0362 vs C1</td>
 <td>Reject: precision and macro-F1 fall</td>
@@ -8620,7 +8629,7 @@ a.anchor-link {
 <tr>
 <th>5</th>
 <td>I2 multi-task C1</td>
-<td>Does training-only ArticleType supervision imp...</td>
+<td>Does training-only ArticleType supervision improve representation?</td>
 <td>0.7527</td>
 <td>+0.0150 vs C1</td>
 <td>Freeze as best eligible scratch model</td>
@@ -8628,7 +8637,7 @@ a.anchor-link {
 <tr>
 <th>6</th>
 <td>P* pretrained ResNet18</td>
-<td>How much does ImageNet initialisation add in a...</td>
+<td>How much does ImageNet initialisation add in a matched pair?</td>
 <td>0.7542</td>
 <td>+0.0230 vs P0S</td>
 <td>Benchmark ceiling only; final-ineligible</td>
@@ -12259,7 +12268,7 @@ a.anchor-link {
 <tr>
 <th>0</th>
 <td>Decision</td>
-<td>conditionally_viable_for_catalogue_decision_su...</td>
+<td>conditionally_viable_for_catalogue_decision_support</td>
 </tr>
 <tr>
 <th>1</th>
