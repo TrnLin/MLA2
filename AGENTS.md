@@ -5,7 +5,7 @@ Group ML project over ~38.6k 60×80 fashion product images: four classification 
 
 ## What the grade rewards
 
-`rubrics/RUBRIC.md` scores Approach (50), Ultimate Judgement (30), Report (20).
+`core/rubrics/RUBRIC.md` scores Approach (50), Ultimate Judgement (30), Report (20).
 **No criterion scores accuracy.** Marks come from comparison breadth, justified choices,
 and honest analysis of failures. Given a choice between one more training run and better
 analysis of the runs already done, choose the analysis.
@@ -14,33 +14,33 @@ analysis of the runs already done, choose the analysis.
 
 - **Train models from scratch.** Pretrained weights belong in the comparison benchmarks
   only — a submitted model carrying `pretrained=True` violates the spec.
-- **`data/processed/splits.csv` is the only split.** Every notebook, the search index, and
+- **`core/data/processed/splits.csv` is the only split.** Every notebook, the search index, and
   the app read it. A `train_test_split` call anywhere else invalidates cross-model
   comparison and leaks evaluation images into the Task 4 index.
   **Task 3 expanded dataset:** ADR 0018 permits
-  `data/processed/teacher_plus_rare_usage_20260906/splits.csv`: teacher rows plus admitted
+  `core/data/processed/teacher_plus_rare_usage_20260906/splits.csv`: teacher rows plus admitted
   external images using the same `usage` target and nine-class map. Select this version
   explicitly; preserve the original teacher folds and keep the search gallery unchanged.
-  ADR 0019 also permits `data/processed/teacher_plus_rare_usage_v2_20260906/splits.csv`,
+  ADR 0019 also permits `core/data/processed/teacher_plus_rare_usage_v2_20260906/splits.csv`,
   which keeps the earlier 120 additions and appends 567 reviewed images with labels
   supported by product text or retailer collections. Keep its saved family folds intact.
-  ADR 0021 also permits `data/processed/teacher_plus_rare_usage_v3_20260906/splits.csv`,
+  ADR 0021 also permits `core/data/processed/teacher_plus_rare_usage_v3_20260906/splits.csv`,
   which replaces 130 outside images to fill reviewed gaps while keeping class totals,
   all teacher rows and every retained outside row/fold fixed. Select v3 explicitly.
-- **Every training run appends a row to `results/runs.csv`** through
+- **Every training run appends a row to `core/results/runs.csv`** through
   `fashion.train.registry`. The report's comparison tables are generated from that file.
-- **`data/raw/teacher/test/styles_prediction.csv` format is fixed**:
+- **`core/data/raw/teacher/test/styles_prediction.csv` format is fixed**:
   `id,gender,articleType,season,usage`.
   This is why Task 3 predicts gender and usage as separate targets.
 
 ## Conventions
 
-- `notebooks/01_data_preparation.ipynb` is the official data-preparation exception: its
+- `core/notebooks/01_data_preparation.ipynb` is the official data-preparation exception: its
   audits, analysis, and plot code stay visible so one Run All tells the whole shared-data
   story. Reusable dataset, split, image-variant, training, and evaluation contracts stay
-  in `src/fashion/`.
-- Later notebooks stay narrative and import reusable logic from `src/fashion/`.
-- Write a figure to `results/figures/` when the report will cite it.
+  in `core/src/fashion/`.
+- Later notebooks stay narrative and import reusable logic from `core/src/fashion/`.
+- Write a figure to `core/results/figures/` when the report will cite it.
 - Use `./.venv/bin/python`.
 - For future training experiments, reuse existing data ZIPs in Drive and fetch code updates
   from GitHub. Code-only changes must not require another data ZIP upload. Keep each
@@ -60,7 +60,14 @@ Keep paths and commands exact.
 
 ## Where to look
 
-- `rubrics/RUBRIC.md` — marking bands and HD checklists. Read when scoping work or
+- `core/rubrics/RUBRIC.md` — marking bands and HD checklists. Read when scoping work or
   deciding what to cut.
-- `docs/COSC2753_2026B_Assignment 2.pdf` — the spec. Read for deliverables, submission
+- `core/docs/COSC2753_2026B_Assignment 2.pdf` — the spec. Read for deliverables, submission
   format, and naming conventions.
+
+## Project layout
+
+- `core/` owns model code, data, notebooks, reports and saved evidence. Model paths in saved files are relative to `core/`.
+- `be/` owns the HTTP API and its tests.
+- `fe/` owns the website.
+- The shared Python environment stays at root `.venv/`. Run model commands from `core/` with `../.venv/bin/python`.

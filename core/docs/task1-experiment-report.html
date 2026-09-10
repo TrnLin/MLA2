@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Detailed, evidence-linked explanation of MLA2 Task 1 article-type classification experiments and results.">
+  <title>Task 1 — Article Type Classification</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17201d;
+      --muted: #5e6a65;
+      --paper: #f6f2e9;
+      --card: #fffdf8;
+      --line: #d9d2c5;
+      --green: #164c3b;
+      --mint: #dceadf;
+      --orange: #c96533;
+      --gold: #f0c86c;
+      --red: #9c3d32;
+      --shadow: 0 16px 45px rgba(32, 46, 39, 0.10);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 4%, rgba(240, 200, 108, .28), transparent 25rem),
+        linear-gradient(180deg, #fbf8f1 0, var(--paper) 42rem);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+    a { color: var(--green); text-underline-offset: 3px; }
+    a:hover { color: var(--orange); }
+    code {
+      padding: .12rem .35rem;
+      border-radius: .35rem;
+      background: #eee8dc;
+      font-size: .88em;
+      overflow-wrap: anywhere;
+    }
+
+    .topbar {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      border-bottom: 1px solid rgba(217, 210, 197, .85);
+      background: rgba(255, 253, 248, .91);
+      backdrop-filter: blur(14px);
+    }
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: min(1180px, calc(100% - 2rem));
+      min-height: 64px;
+      margin: auto;
+      gap: 1rem;
+    }
+    .brand { font-weight: 900; letter-spacing: -.02em; }
+    .brand span { color: var(--orange); }
+    nav { display: flex; gap: .35rem; overflow-x: auto; scrollbar-width: none; }
+    nav a {
+      padding: .45rem .65rem;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 750;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    nav a:hover, nav a:focus-visible { color: var(--green); background: var(--mint); }
+
+    main { width: min(1180px, calc(100% - 2rem)); margin: auto; }
+    section { scroll-margin-top: 86px; margin: 5rem 0; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap: 2rem;
+      align-items: end;
+      min-height: 560px;
+      margin-top: 0;
+      padding: 5.5rem 0 3.5rem;
+    }
+    .eyebrow {
+      margin: 0 0 1rem;
+      color: var(--orange);
+      font-size: .78rem;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { line-height: 1.08; letter-spacing: -.035em; }
+    h1 { max-width: 850px; margin: 0; font-size: clamp(3.4rem, 8vw, 7rem); }
+    h1 em { color: var(--green); font-family: Georgia, serif; font-weight: 500; }
+    h2 { margin: 0 0 1rem; font-size: clamp(2.2rem, 4.5vw, 4rem); }
+    h3 { margin: 0 0 .65rem; font-size: 1.25rem; }
+    .lead { max-width: 760px; color: var(--muted); font-size: 1.18rem; }
+    .hero-aside {
+      padding: 1.4rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    .winner-number { margin: .15rem 0; color: var(--green); font-size: 3.2rem; font-weight: 900; line-height: 1; }
+    .fine { color: var(--muted); font-size: .86rem; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .35rem .7rem;
+      border-radius: 999px;
+      background: var(--mint);
+      color: var(--green);
+      font-size: .78rem;
+      font-weight: 850;
+    }
+    .dot { width: .55rem; height: .55rem; border-radius: 50%; background: var(--green); }
+
+    .section-head { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: end; margin-bottom: 1.8rem; }
+    .section-head p { margin: 0; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; }
+    .card {
+      grid-column: span 4;
+      padding: 1.35rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: 0 6px 20px rgba(32, 46, 39, .055);
+    }
+    .card.wide { grid-column: span 8; }
+    .card.full { grid-column: 1 / -1; }
+    .card p:last-child { margin-bottom: 0; }
+    .metric { margin: 0 0 .35rem; color: var(--green); font-size: 2rem; font-weight: 900; line-height: 1.05; }
+    .metric-label { color: var(--muted); font-size: .83rem; font-weight: 750; }
+    .callout {
+      padding: 1.3rem 1.4rem;
+      border-left: 5px solid var(--orange);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      background: #fff5e7;
+    }
+    .callout.good { border-color: var(--green); background: #eaf3ec; }
+    .callout.bad { border-color: var(--red); background: #f8e9e5; }
+    .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: .7rem; counter-reset: step; }
+    .flow div {
+      position: relative;
+      min-height: 130px;
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--card);
+    }
+    .flow div::before {
+      counter-increment: step;
+      content: "0" counter(step);
+      display: block;
+      margin-bottom: .65rem;
+      color: var(--orange);
+      font-weight: 900;
+    }
+    .flow strong { display: block; }
+
+    .bar-chart { display: grid; gap: .9rem; }
+    .bar-row { display: grid; grid-template-columns: minmax(170px, 1.2fr) 4fr 72px; gap: .7rem; align-items: center; }
+    .track { height: 18px; overflow: hidden; border-radius: 999px; background: #e9e3d7; }
+    .fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--green), #419176); }
+    .fill.orange { background: linear-gradient(90deg, var(--orange), var(--gold)); }
+    .bar-row strong { text-align: right; font-variant-numeric: tabular-nums; }
+
+    details {
+      margin: 1rem 0;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--card);
+    }
+    summary { padding: 1rem 1.15rem; cursor: pointer; font-weight: 850; }
+    summary::marker { color: var(--orange); }
+    .details-body { padding: 0 1.15rem 1.15rem; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: .82rem; font-variant-numeric: tabular-nums; }
+    th, td { padding: .62rem .7rem; border-bottom: 1px solid #e7e1d7; text-align: right; white-space: nowrap; }
+    th { background: #eee8dc; color: #3d4944; font-size: .71rem; letter-spacing: .04em; text-transform: uppercase; }
+    th:first-child, td:first-child { text-align: left; }
+    tbody tr:hover { background: #f6f0e5; }
+    tbody tr:last-child td { border-bottom: 0; }
+    .winner-row { background: #eaf3ec; }
+    .run-id { max-width: 310px; overflow: hidden; text-overflow: ellipsis; }
+    .source-note { margin: .7rem 0 0; color: var(--muted); font-size: .8rem; }
+    .figure-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    figure { margin: 0; padding: .8rem; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
+    figure img { display: block; width: 100%; height: auto; border-radius: 10px; background: #fff; }
+    figcaption { padding: .7rem .25rem .1rem; color: var(--muted); font-size: .82rem; }
+    .evidence-list { columns: 2; column-gap: 2rem; padding-left: 1.2rem; }
+    .evidence-list li { break-inside: avoid; margin-bottom: .55rem; }
+    footer { padding: 2rem 0 4rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .86rem; }
+
+    @media (max-width: 850px) {
+      .topbar-inner { align-items: flex-start; flex-direction: column; padding: .7rem 0; }
+      nav { width: 100%; }
+      .hero, .section-head { grid-template-columns: 1fr; }
+      .hero { min-height: auto; padding-top: 4rem; }
+      .card, .card.wide { grid-column: 1 / -1; }
+      .flow { grid-template-columns: 1fr; }
+      .figure-grid { grid-template-columns: 1fr; }
+      .evidence-list { columns: 1; }
+    }
+    @media (max-width: 560px) {
+      main, .topbar-inner { width: min(100% - 1.15rem, 1180px); }
+      h1 { font-size: 3rem; }
+      section { margin: 3.5rem 0; }
+      .bar-row { grid-template-columns: 1fr 58px; }
+      .track { grid-column: 1 / -1; grid-row: 2; }
+    }
+    @media print {
+      .topbar { display: none; }
+      body { background: white; }
+      main { width: 100%; }
+      section, details { break-inside: avoid; }
+      details > * { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">MLA2 <span>/ Task 1</span></div>
+      <nav aria-label="Page sections">
+        <a href="#overview">Overview</a>
+        <a href="#data">Data</a>
+        <a href="#method">Method</a>
+        <a href="#experiments">Choices</a>
+        <a href="#results">Results</a>
+        <a href="#failures">Failures</a>
+        <a href="#decision">Decision</a>
+        <a href="#evidence">Evidence</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="overview">
+      <div>
+        <p class="eyebrow">Fashion intelligence · 124-way image classification</p>
+        <h1>What kind of <em>fashion item</em> is this?</h1>
+        <p class="lead">Task 1 turns one product image into one <code>articleType</code> label. We tested a scratch CNN against two classic shape-based methods, using the same safe five-fold split for every final comparison.</p>
+        <p><span class="tag"><span class="dot"></span> Development decision complete</span></p>
+      </div>
+      <aside class="hero-aside" aria-label="Winning result">
+        <p class="eyebrow">Chosen development model</p>
+        <h3>Plain unweighted scratch CNN</h3>
+        <p class="winner-number">0.531</p>
+        <p><strong>mean macro-F1</strong> across five folds</p>
+        <p class="fine">OOF macro-F1: 0.557 · Top-1: 84.2% · Top-5: 97.8%</p>
+      </aside>
+    </section>
+
+    <section aria-labelledby="plain-title">
+      <div class="section-head">
+        <div><p class="eyebrow">In plain words</p><h2 id="plain-title">The whole task in 30 seconds</h2></div>
+        <p>The model sees pixels only. It must pick one name from 124 choices, such as “Tshirts”, “Watches”, or “Handbags”. The hard part is that some names have thousands of examples while others have only one.</p>
+      </div>
+      <div class="grid">
+        <article class="card"><p class="metric">32,773</p><p class="metric-label">labelled development products</p><p>These rows are used inside five saved training and validation folds.</p></article>
+        <article class="card"><p class="metric">124</p><p class="metric-label">article-type classes</p><p>All labels stay in the score, even when a class is extremely rare.</p></article>
+        <article class="card"><p class="metric">5</p><p class="metric-label">final model candidates</p><p>Three CNN candidates, HOG + KNN, and HOG + linear SVM.</p></article>
+        <article class="card wide"><h3>Main finding</h3><p>The plain CNN is selected because it leads on mean and pooled macro-F1, the declared primary measure. Augmentation has lower fold variation, but that is not proof of repeat-run stability or robustness to customer photos. The old validation-loss values averaged batches, so they are excluded from selection.</p></article>
+        <article class="card"><h3>Honest limit</h3><p>The selected CNN scored F1 = 0 for 21 classes. Most of these classes have tiny support. The result is useful, but rare-item performance is not solved.</p></article>
+      </div>
+    </section>
+
+    <section id="data">
+      <div class="section-head">
+        <div><p class="eyebrow">Data and safety</p><h2>One split. No peeking.</h2></div>
+        <p>Fair comparison matters more than a lucky score. Every model reads <code>data/processed/splits.csv</code>. Product-family groups do not cross folds, and the holdout stays locked until Notebook 06.</p>
+      </div>
+      <div class="grid">
+        <article class="card"><h3>Development</h3><p class="metric">32,773</p><p>Used for model building and five-fold comparison.</p></article>
+        <article class="card"><h3>Holdout</h3><p class="metric">5,778</p><p>Not used to choose Task 1’s winner.</p></article>
+        <article class="card"><h3>Quarantine</h3><p class="metric">61</p><p>Kept away because of duplicate or label risks.</p></article>
+        <article class="card full">
+          <h3>Why this task is hard</h3>
+          <p>The images are tiny: normally 60 × 80 pixels. There are also 294 grayscale files. The largest class, <strong>Tshirts</strong>, has 5,748 products. Several classes have one product. Twelve classes can appear in a validation fold while being absent from that fold’s training rows. No model can learn a class it has never seen.</p>
+        </article>
+      </div>
+      <div class="callout"><strong>No shortcuts.</strong> The models do not use product names, year, file size, gender, season, or usage. Those fields could leak easy catalogue patterns instead of teaching the model to read the image.</div>
+    </section>
+
+    <section id="method">
+      <div class="section-head">
+        <div><p class="eyebrow">Shared method</p><h2>How every fair run works</h2></div>
+        <p>The same seed, folds, class list, and main metric are fixed before comparing models. This makes the result about the model choice, not a changed test.</p>
+      </div>
+      <div class="flow" aria-label="Experiment flow">
+        <div><strong>Read the saved fold</strong><span>Use four folds to train and one to validate.</span></div>
+        <div><strong>Prepare images safely</strong><span>Fix EXIF, convert to RGB, keep shape, pad to 60 × 80.</span></div>
+        <div><strong>Fit on training rows</strong><span>Normalization is learned inside each training fold only.</span></div>
+        <div><strong>Score 124 labels</strong><span>Macro-F1 is the main score. Accuracy is supporting evidence.</span></div>
+        <div><strong>Pool OOF predictions</strong><span>Join each product’s prediction from the fold where it was unseen.</span></div>
+      </div>
+      <div class="grid" style="margin-top:1rem">
+        <article class="card"><h3>Macro-F1</h3><p>Scores each class, then gives every class the same weight. This is the decision metric because the data has a very long rare tail.</p></article>
+        <article class="card"><h3>Weighted F1</h3><p>Gives common classes more weight. It tells us how the model behaves on the typical catalogue mix.</p></article>
+        <article class="card"><h3>Top-1 / Top-5</h3><p>Top-1 asks whether the first guess is right. Top-5 asks whether the right label is anywhere in the first five guesses.</p></article>
+      </div>
+    </section>
+
+    <section id="experiments">
+      <div class="section-head">
+        <div><p class="eyebrow">Experiment choices</p><h2>What we tested, and why</h2></div>
+        <p>The experiment set covers learned image features, hand-built shape features, a local neighbour rule, a linear boundary, and one controlled augmentation test.</p>
+      </div>
+      <div class="grid">
+        <article class="card wide">
+          <p class="eyebrow">Candidate A</p>
+          <h3>Small CNN from scratch</h3>
+          <p>Five 5 × 5 convolution layers learn colour, edge, texture, and shape clues directly from RGB images. The model has 475,516 trainable parameters, a 128-unit hidden layer, and 124 outputs. It uses unweighted cross-entropy, Adam, OneCycle learning rate, 20 epochs, batch size 128, maximum learning rate 0.001, weight decay 0.00001, gradient clipping at 1.0, and seed 2753.</p>
+          <p><strong>Why:</strong> the assignment needs a model trained from scratch. A small network matches the tiny 60 × 80 inputs and gives a clear learned baseline without pretrained weights.</p>
+        </article>
+        <article class="card">
+          <p class="eyebrow">Candidate B</p>
+          <h3>HOG + KNN</h3>
+          <p>HOG turns each grayscale image into edge-direction counts. KNN predicts from nearby feature vectors.</p>
+          <p><strong>Why:</strong> fashion shapes are strong clues, and KNN makes very few shape assumptions.</p>
+        </article>
+        <article class="card">
+          <p class="eyebrow">Candidate C</p>
+          <h3>HOG + linear SVM</h3>
+          <p>The same HOG features feed a linear separator. Balanced class weights were tested to give rare classes more influence.</p>
+          <p><strong>Why:</strong> it checks whether a simple global boundary beats local neighbour voting.</p>
+        </article>
+        <article class="card">
+          <p class="eyebrow">Classic tuning</p>
+          <h3>Coarse then fine HOG</h3>
+          <p>16-pixel cells make 288 features. 10-pixel cells make 1,260 features. Fine HOG won. KNN tried k = 3, 5, 11 with uniform or distance votes. SVM tried C = 0.1, 1, 10 with normal or balanced weights.</p>
+        </article>
+        <article class="card">
+          <p class="eyebrow">Controlled test</p>
+          <h3>No augmentation vs mild augmentation</h3>
+          <p>The control makes no random change. The test adds horizontal flips, ±5° rotation, ±5% movement, 0.95–1.05 scale, and 0.9–1.1 brightness and contrast.</p>
+          <p><strong>Question:</strong> does this help mean macro-F1 while reducing differences between folds?</p>
+        </article>
+      </div>
+      <div class="callout"><strong>Smoke runs are not evidence.</strong> Six registered smoke rows only checked that the pipeline worked. They covered three setup paths twice: CNN no augmentation (macro-F1 0.0016), coarse-HOG KNN (0.0396), and coarse-HOG SVM (0.0407). Each used only two small batches, so none was allowed to select a winner.</div>
+    </section>
+
+    <section id="results">
+      <div class="section-head">
+        <div><p class="eyebrow">All saved experiment results</p><h2>The numbers, from broad view to raw folds</h2></div>
+        <p>Mean ± standard deviation answers the planned five-fold question. OOF means “out of fold”: every development product is scored once by a model that did not train on it.</p>
+      </div>
+
+      <article class="card full">
+        <h3>Mean macro-F1 comparison</h3>
+        <div class="bar-chart" aria-label="Five-fold mean macro-F1 comparison">
+          <div class="bar-row"><span>CNN · no augmentation</span><div class="track"><div class="fill" style="width:88.6%"></div></div><strong>0.531</strong></div>
+          <div class="bar-row"><span>CNN · mild augmentation</span><div class="track"><div class="fill orange" style="width:87.0%"></div></div><strong>0.522</strong></div>
+          <div class="bar-row"><span>CNN · mild augmentation + balanced weights</span><div class="track"><div class="fill orange" style="width:76.1%"></div></div><strong>0.456</strong></div>
+          <div class="bar-row"><span>HOG · KNN</span><div class="track"><div class="fill orange" style="width:83.7%"></div></div><strong>0.502</strong></div>
+          <div class="bar-row"><span>HOG · linear SVM</span><div class="track"><div class="fill orange" style="width:81.5%"></div></div><strong>0.489</strong></div>
+        </div>
+      </article>
+
+      <details open>
+        <summary>CNN five-fold summary — 3 conditions</summary>
+        <div class="details-body"><div class="table-wrap">
+          <table data-evidence-table="cnn-summary">
+            <thead><tr><th scope="col">Candidate</th><th scope="col">Preprocessing</th><th scope="col">Loss</th><th scope="col">Macro-F1 mean</th><th scope="col">SD</th><th scope="col">Weighted F1</th><th scope="col">Top-1</th><th scope="col">Top-5</th></tr></thead>
+            <tbody>
+              <tr data-source-row="0"><td data-field="candidate_id" data-value="task1_cnn_no_aug_unweighted_v1">Plain unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_no_aug_v1">No augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1_mean" data-value="0.5314734657546019">0.5315</td><td data-field="macro_f1_std" data-value="0.03307034651599474">0.0331</td><td data-field="weighted_f1_mean" data-value="0.8381059171412577">0.8381</td><td data-field="top1_accuracy_mean" data-value="0.8421856893311549">84.22%</td><td data-field="top5_accuracy_mean" data-value="0.9779692116924515">97.80%</td></tr>
+              <tr class="winner-row" data-source-row="1"><td data-field="candidate_id" data-value="task1_cnn_mild_aug_unweighted_v1">Mild augmented unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1_mean" data-value="0.521784453526665">0.5218</td><td data-field="macro_f1_std" data-value="0.015782512940757956">0.0158</td><td data-field="weighted_f1_mean" data-value="0.8373490284103354">0.8373</td><td data-field="top1_accuracy_mean" data-value="0.8429181690264519">84.29%</td><td data-field="top5_accuracy_mean" data-value="0.980929026755607">98.09%</td></tr>
+              <tr data-source-row="2"><td data-field="candidate_id" data-value="task1_cnn_mild_aug_balanced_weighted_v1">Mild augmented balanced weighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_balanced_class_weighted_v1">Balanced weighted CE</td><td data-field="macro_f1_mean" data-value="0.4564129090193513">0.4564</td><td data-field="macro_f1_std" data-value="0.0181332514770149">0.0181</td><td data-field="weighted_f1_mean" data-value="0.7138776985288154">0.7139</td><td data-field="top1_accuracy_mean" data-value="0.6915100734713372">69.15%</td><td data-field="top5_accuracy_mean" data-value="0.952490724487458">95.25%</td></tr>
+            </tbody>
+          </table>
+        </div><p class="source-note">The fold table retains the old loss values for audit only. They used an equal-batch average and are not used for selection or the final judgement.</p></div>
+      </details>
+
+      <details>
+        <summary>CNN fold-by-fold results — 15 runs</summary>
+        <div class="details-body"><div class="table-wrap">
+          <table data-evidence-table="cnn-folds">
+            <thead><tr><th scope="col">Run ID</th><th scope="col">Fold</th><th scope="col">Candidate</th><th scope="col">Preprocessing</th><th scope="col">Loss ID</th><th scope="col">Macro-F1</th><th scope="col">Weighted F1</th><th scope="col">Top-1</th><th scope="col">Top-5</th><th scope="col">Loss</th></tr></thead>
+            <tbody>
+              <tr data-source-row="0"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_no_aug_unweighted_v1-f0-s2753-2b671c263f75">task1-cnn-task1_cnn_no_aug_unweighted_v1-f0-s2753-2b671c263f75</td><td data-field="fold" data-value="0">0</td><td data-field="candidate_id" data-value="task1_cnn_no_aug_unweighted_v1">Plain unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_no_aug_v1">No augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1" data-value="0.4980518959235437">0.4981</td><td data-field="weighted_f1" data-value="0.8345387860434922">0.8345</td><td data-field="top1_accuracy" data-value="0.8377842209674958">83.78%</td><td data-field="top5_accuracy" data-value="0.9778727300473066">97.79%</td><td data-field="validation_loss" data-value="1.0721256314561918">1.0721</td></tr>
+              <tr data-source-row="1"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_no_aug_unweighted_v1-f1-s2753-326863573f92">task1-cnn-task1_cnn_no_aug_unweighted_v1-f1-s2753-326863573f92</td><td data-field="fold" data-value="1">1</td><td data-field="candidate_id" data-value="task1_cnn_no_aug_unweighted_v1">Plain unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_no_aug_v1">No augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1" data-value="0.519481722470777">0.5195</td><td data-field="weighted_f1" data-value="0.8444844015616044">0.8445</td><td data-field="top1_accuracy" data-value="0.8482306284319707">84.82%</td><td data-field="top5_accuracy" data-value="0.9789505796217206">97.90%</td><td data-field="validation_loss" data-value="1.0587083181509604">1.0587</td></tr>
+              <tr data-source-row="2"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_no_aug_unweighted_v1-f2-s2753-4a2ad5b813b3">task1-cnn-task1_cnn_no_aug_unweighted_v1-f2-s2753-4a2ad5b813b3</td><td data-field="fold" data-value="2">2</td><td data-field="candidate_id" data-value="task1_cnn_no_aug_unweighted_v1">Plain unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_no_aug_v1">No augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1" data-value="0.5175998847353388">0.5176</td><td data-field="weighted_f1" data-value="0.8265420857847612">0.8265</td><td data-field="top1_accuracy" data-value="0.8321379520830154">83.21%</td><td data-field="top5_accuracy" data-value="0.9734472760567678">97.34%</td><td data-field="validation_loss" data-value="1.2538132564379618">1.2538</td></tr>
+              <tr data-source-row="3"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_no_aug_unweighted_v1-f3-s2753-cbd14501bc35">task1-cnn-task1_cnn_no_aug_unweighted_v1-f3-s2753-cbd14501bc35</td><td data-field="fold" data-value="3">3</td><td data-field="candidate_id" data-value="task1_cnn_no_aug_unweighted_v1">Plain unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_no_aug_v1">No augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1" data-value="0.5369938545634481">0.5370</td><td data-field="weighted_f1" data-value="0.8397102884807383">0.8397</td><td data-field="top1_accuracy" data-value="0.84330180042722">84.33%</td><td data-field="top5_accuracy" data-value="0.978791577662496">97.88%</td><td data-field="validation_loss" data-value="1.1684899897529528">1.1685</td></tr>
+              <tr data-source-row="4"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_no_aug_unweighted_v1-f4-s2753-15a400dd82cb">task1-cnn-task1_cnn_no_aug_unweighted_v1-f4-s2753-15a400dd82cb</td><td data-field="fold" data-value="4">4</td><td data-field="candidate_id" data-value="task1_cnn_no_aug_unweighted_v1">Plain unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_no_aug_v1">No augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1" data-value="0.5852399710799019">0.5852</td><td data-field="weighted_f1" data-value="0.8452540238356923">0.8453</td><td data-field="top1_accuracy" data-value="0.8494738447460729">84.95%</td><td data-field="top5_accuracy" data-value="0.9807838950739668">98.08%</td><td data-field="validation_loss" data-value="1.1110617782060916">1.1111</td></tr>
+              <tr class="winner-row" data-source-row="5"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_mild_aug_unweighted_v1-f0-s2753-f2c7e21f5564">task1-cnn-task1_cnn_mild_aug_unweighted_v1-f0-s2753-f2c7e21f5564</td><td data-field="fold" data-value="0">0</td><td data-field="candidate_id" data-value="task1_cnn_mild_aug_unweighted_v1">Mild augmented unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1" data-value="0.5080677908805822">0.5081</td><td data-field="weighted_f1" data-value="0.8344926205760802">0.8345</td><td data-field="top1_accuracy" data-value="0.8408362582023501">84.08%</td><td data-field="top5_accuracy" data-value="0.9795513505264763">97.96%</td><td data-field="validation_loss" data-value="0.5818117619133912">0.5818</td></tr>
+              <tr class="winner-row" data-source-row="6"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_mild_aug_unweighted_v1-f1-s2753-f2c26f1489bd">task1-cnn-task1_cnn_mild_aug_unweighted_v1-f1-s2753-f2c26f1489bd</td><td data-field="fold" data-value="1">1</td><td data-field="candidate_id" data-value="task1_cnn_mild_aug_unweighted_v1">Mild augmented unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1" data-value="0.52163347825604">0.5216</td><td data-field="weighted_f1" data-value="0.8436484131529811">0.8436</td><td data-field="top1_accuracy" data-value="0.8486882245271506">84.87%</td><td data-field="top5_accuracy" data-value="0.984136668700427">98.41%</td><td data-field="validation_loss" data-value="0.5542900163966876">0.5543</td></tr>
+              <tr class="winner-row" data-source-row="7"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_mild_aug_unweighted_v1-f2-s2753-692a6f40bb5d">task1-cnn-task1_cnn_mild_aug_unweighted_v1-f2-s2753-692a6f40bb5d</td><td data-field="fold" data-value="2">2</td><td data-field="candidate_id" data-value="task1_cnn_mild_aug_unweighted_v1">Mild augmented unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1" data-value="0.5232512734343034">0.5233</td><td data-field="weighted_f1" data-value="0.829862279483676">0.8299</td><td data-field="top1_accuracy" data-value="0.8365634060735541">83.66%</td><td data-field="top5_accuracy" data-value="0.9784831374942774">97.85%</td><td data-field="validation_loss" data-value="0.6792894859726613">0.6793</td></tr>
+              <tr class="winner-row" data-source-row="8"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_mild_aug_unweighted_v1-f3-s2753-5a03cc0c3f2d">task1-cnn-task1_cnn_mild_aug_unweighted_v1-f3-s2753-5a03cc0c3f2d</td><td data-field="fold" data-value="3">3</td><td data-field="candidate_id" data-value="task1_cnn_mild_aug_unweighted_v1">Mild augmented unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1" data-value="0.5088911524813756">0.5089</td><td data-field="weighted_f1" data-value="0.8346359545159628">0.8346</td><td data-field="top1_accuracy" data-value="0.8379615501983522">83.80%</td><td data-field="top5_accuracy" data-value="0.980622520598108">98.06%</td><td data-field="validation_loss" data-value="0.5980437125724095">0.5980</td></tr>
+              <tr class="winner-row" data-source-row="9"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_mild_aug_unweighted_v1-f4-s2753-46fe12567d54">task1-cnn-task1_cnn_mild_aug_unweighted_v1-f4-s2753-46fe12567d54</td><td data-field="fold" data-value="4">4</td><td data-field="candidate_id" data-value="task1_cnn_mild_aug_unweighted_v1">Mild augmented unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1" data-value="0.5470785725810239">0.5471</td><td data-field="weighted_f1" data-value="0.8441058743229771">0.8441</td><td data-field="top1_accuracy" data-value="0.8505414061308525">85.05%</td><td data-field="top5_accuracy" data-value="0.9818514564587464">98.19%</td><td data-field="validation_loss" data-value="0.6048234543548181">0.6048</td></tr>
+              <tr data-source-row="10"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_mild_aug_balanced_weighted_v1-f0-s2753-3ee5a5fe81b3">task1-cnn-task1_cnn_mild_aug_balanced_weighted_v1-f0-s2753-3ee5a5fe81b3</td><td data-field="fold" data-value="0">0</td><td data-field="candidate_id" data-value="task1_cnn_mild_aug_balanced_weighted_v1">Mild augmented balanced weighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_balanced_class_weighted_v1">Balanced weighted CE</td><td data-field="macro_f1" data-value="0.4520946874672633">0.4521</td><td data-field="weighted_f1" data-value="0.7145398753111516">0.7145</td><td data-field="top1_accuracy" data-value="0.6908286281092629">69.08%</td><td data-field="top5_accuracy" data-value="0.9560506638180986">95.61%</td><td data-field="validation_loss" data-value="1.0636346661127531">1.0636</td></tr>
+              <tr data-source-row="11"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_mild_aug_balanced_weighted_v1-f1-s2753-bbb859949c56">task1-cnn-task1_cnn_mild_aug_balanced_weighted_v1-f1-s2753-bbb859949c56</td><td data-field="fold" data-value="1">1</td><td data-field="candidate_id" data-value="task1_cnn_mild_aug_balanced_weighted_v1">Mild augmented balanced weighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_balanced_class_weighted_v1">Balanced weighted CE</td><td data-field="macro_f1" data-value="0.467498645810433">0.4675</td><td data-field="weighted_f1" data-value="0.7278181589453513">0.7278</td><td data-field="top1_accuracy" data-value="0.7063758389261745">70.64%</td><td data-field="top5_accuracy" data-value="0.9562233068944478">95.62%</td><td data-field="validation_loss" data-value="1.0632522805378988">1.0633</td></tr>
+              <tr data-source-row="12"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_mild_aug_balanced_weighted_v1-f2-s2753-0b41fbf934d5">task1-cnn-task1_cnn_mild_aug_balanced_weighted_v1-f2-s2753-0b41fbf934d5</td><td data-field="fold" data-value="2">2</td><td data-field="candidate_id" data-value="task1_cnn_mild_aug_balanced_weighted_v1">Mild augmented balanced weighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_balanced_class_weighted_v1">Balanced weighted CE</td><td data-field="macro_f1" data-value="0.4278424930624588">0.4278</td><td data-field="weighted_f1" data-value="0.6722935791576138">0.6723</td><td data-field="top1_accuracy" data-value="0.6500839310239585">65.01%</td><td data-field="top5_accuracy" data-value="0.9392644590264001">93.93%</td><td data-field="validation_loss" data-value="1.2626816504276717">1.2627</td></tr>
+              <tr data-source-row="13"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_mild_aug_balanced_weighted_v1-f3-s2753-4755f42b965d">task1-cnn-task1_cnn_mild_aug_balanced_weighted_v1-f3-s2753-4755f42b965d</td><td data-field="fold" data-value="3">3</td><td data-field="candidate_id" data-value="task1_cnn_mild_aug_balanced_weighted_v1">Mild augmented balanced weighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_balanced_class_weighted_v1">Balanced weighted CE</td><td data-field="macro_f1" data-value="0.4595759250685238">0.4596</td><td data-field="weighted_f1" data-value="0.7203591124507972">0.7204</td><td data-field="top1_accuracy" data-value="0.6959108941104669">69.59%</td><td data-field="top5_accuracy" data-value="0.9569728410131217">95.70%</td><td data-field="validation_loss" data-value="1.089558533177926">1.0896</td></tr>
+              <tr data-source-row="14"><td class="run-id" data-field="run_id" data-value="task1-cnn-task1_cnn_mild_aug_balanced_weighted_v1-f4-s2753-89abf6776fe5">task1-cnn-task1_cnn_mild_aug_balanced_weighted_v1-f4-s2753-89abf6776fe5</td><td data-field="fold" data-value="4">4</td><td data-field="candidate_id" data-value="task1_cnn_mild_aug_balanced_weighted_v1">Mild augmented balanced weighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_balanced_class_weighted_v1">Balanced weighted CE</td><td data-field="macro_f1" data-value="0.47505279368807746">0.4751</td><td data-field="weighted_f1" data-value="0.734377766779163">0.7344</td><td data-field="top1_accuracy" data-value="0.7143510751868233">71.44%</td><td data-field="top5_accuracy" data-value="0.9539423516852219">95.39%</td><td data-field="validation_loss" data-value="1.0763819057207842">1.0764</td></tr>
+            </tbody>
+          </table>
+        </div><p class="source-note">Source: <a href="../results/evidence/task1/fold_metrics.csv">fold_metrics.csv</a></p></div>
+      </details>
+
+      <details>
+        <summary>CNN out-of-fold results — 3 conditions</summary>
+        <div class="details-body"><div class="table-wrap">
+          <table data-evidence-table="cnn-oof">
+            <thead><tr><th scope="col">Candidate</th><th scope="col">Preprocessing</th><th scope="col">Loss</th><th scope="col">Macro-F1</th><th scope="col">Weighted F1</th><th scope="col">Top-1</th><th scope="col">Top-5</th></tr></thead>
+            <tbody>
+              <tr data-source-row="0"><td data-field="candidate_id" data-value="task1_cnn_no_aug_unweighted_v1">Plain unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_no_aug_v1">No augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1_124" data-value="0.556926169275759">0.5569</td><td data-field="weighted_f1" data-value="0.8392084010098373">0.8392</td><td data-field="top1_accuracy" data-value="0.8421871662649132">84.22%</td><td data-field="top5_accuracy" data-value="0.9779696701553108">97.80%</td></tr>
+              <tr class="winner-row" data-source-row="1"><td data-field="candidate_id" data-value="task1_cnn_mild_aug_unweighted_v1">Mild augmented unweighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_unweighted_v1">Unweighted CE</td><td data-field="macro_f1_124" data-value="0.5407552880957798">0.5408</td><td data-field="weighted_f1" data-value="0.8385822098783946">0.8386</td><td data-field="top1_accuracy" data-value="0.8429194763982547">84.29%</td><td data-field="top5_accuracy" data-value="0.9809294236108992">98.09%</td></tr>
+              <tr data-source-row="2"><td data-field="candidate_id" data-value="task1_cnn_mild_aug_balanced_weighted_v1">Mild augmented balanced weighted</td><td data-field="preprocessing_id" data-value="task1_rgb_60x80_mild_aug_v1">Mild augmentation</td><td data-field="loss_id" data-value="cross_entropy_balanced_class_weighted_v1">Balanced weighted CE</td><td data-field="macro_f1_124" data-value="0.4663830584661558">0.4664</td><td data-field="weighted_f1" data-value="0.714510011069428">0.7145</td><td data-field="top1_accuracy" data-value="0.6915143563299058">69.15%</td><td data-field="top5_accuracy" data-value="0.9524913800994721">95.25%</td></tr>
+            </tbody>
+          </table>
+        </div><p class="source-note">Source: <a href="../results/evidence/task1/oof_metrics.csv">oof_metrics.csv</a></p></div>
+      </details>
+
+      <details>
+        <summary>Classic fold-0 tuning — all 14 settings</summary>
+        <div class="details-body">
+          <p>Fold 0 selected one KNN and one SVM setting. This was a tuning step, not the final comparison.</p>
+          <div class="table-wrap"><table data-evidence-table="classic-tuning">
+            <thead><tr><th scope="col">Candidate</th><th scope="col">HOG</th><th scope="col">Family</th><th scope="col">Fold</th><th scope="col">Macro-F1</th><th scope="col">Weighted F1</th><th scope="col">Top-1</th><th scope="col">Top-5</th></tr></thead>
+            <tbody>
+              <tr data-source-row="0"><td data-field="candidate_id" data-value="task1_gray_hog_ppc16_v1-knn-k5-distance">coarse · KNN k5 distance</td><td data-field="hog_id" data-value="task1_gray_hog_ppc16_v1">ppc16</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.43427549459768827">0.4343</td><td data-field="weighted_f1" data-value="0.7441183636497208">0.7441</td><td data-field="top1_accuracy" data-value="0.7591942621699985">75.92%</td><td data-field="top5_accuracy" data-value="0.9032504196551198">90.33%</td></tr>
+              <tr data-source-row="1"><td data-field="candidate_id" data-value="task1_gray_hog_ppc16_v1-linear-svm-c1-normal">coarse · SVM C1 normal</td><td data-field="hog_id" data-value="task1_gray_hog_ppc16_v1">ppc16</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.40234819142832245">0.4023</td><td data-field="weighted_f1" data-value="0.7351524549388213">0.7352</td><td data-field="top1_accuracy" data-value="0.7564474286586297">75.64%</td><td data-field="top5_accuracy" data-value="0.9471997558370212">94.72%</td></tr>
+              <tr data-source-row="2"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k5-distance">fine · KNN k5 distance</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.4700810913990897">0.4701</td><td data-field="weighted_f1" data-value="0.7854767085277484">0.7855</td><td data-field="top1_accuracy" data-value="0.7974973294674195">79.75%</td><td data-field="top5_accuracy" data-value="0.9232412635434152">92.32%</td></tr>
+              <tr data-source-row="3"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c1-normal">fine · SVM C1 normal</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.45103358880883054">0.4510</td><td data-field="weighted_f1" data-value="0.7890568883965753">0.7891</td><td data-field="top1_accuracy" data-value="0.798870746223104">79.89%</td><td data-field="top5_accuracy" data-value="0.9357546162063177">93.58%</td></tr>
+              <tr data-source-row="4"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k3-uniform">fine · KNN k3 uniform</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.4590743941914837">0.4591</td><td data-field="weighted_f1" data-value="0.77824242087768">0.7782</td><td data-field="top1_accuracy" data-value="0.7883412177628567">78.83%</td><td data-field="top5_accuracy" data-value="0.8902792614069892">89.03%</td></tr>
+              <tr class="winner-row" data-source-row="5"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k3-distance">fine · KNN k3 distance</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.48968460848526935">0.4897</td><td data-field="weighted_f1" data-value="0.7891926827510485">0.7892</td><td data-field="top1_accuracy" data-value="0.7984129406378758">79.84%</td><td data-field="top5_accuracy" data-value="0.8902792614069892">89.03%</td></tr>
+              <tr data-source-row="6"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k5-uniform">fine · KNN k5 uniform</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.4489351032890695">0.4489</td><td data-field="weighted_f1" data-value="0.7789407047959007">0.7789</td><td data-field="top1_accuracy" data-value="0.791393254997711">79.14%</td><td data-field="top5_accuracy" data-value="0.9232412635434152">92.32%</td></tr>
+              <tr data-source-row="7"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k11-uniform">fine · KNN k11 uniform</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.39828142486557416">0.3983</td><td data-field="weighted_f1" data-value="0.7620015096030999">0.7620</td><td data-field="top1_accuracy" data-value="0.7817793377079201">78.18%</td><td data-field="top5_accuracy" data-value="0.9540668396154434">95.41%</td></tr>
+              <tr data-source-row="8"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k11-distance">fine · KNN k11 distance</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.4228864647465019">0.4229</td><td data-field="weighted_f1" data-value="0.7679720571837138">0.7680</td><td data-field="top1_accuracy" data-value="0.787120402868915">78.71%</td><td data-field="top5_accuracy" data-value="0.9539142377537005">95.39%</td></tr>
+              <tr data-source-row="9"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c0.1-normal">fine · SVM C0.1 normal</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.44336693885069506">0.4434</td><td data-field="weighted_f1" data-value="0.7855487146147676">0.7855</td><td data-field="top1_accuracy" data-value="0.8019227834579582">80.19%</td><td data-field="top5_accuracy" data-value="0.9549824507858996">95.50%</td></tr>
+              <tr class="winner-row" data-source-row="10"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c0.1-balanced">fine · SVM C0.1 balanced</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.46237518494135577">0.4624</td><td data-field="weighted_f1" data-value="0.782172476669366">0.7822</td><td data-field="top1_accuracy" data-value="0.7781168930260949">77.81%</td><td data-field="top5_accuracy" data-value="0.946284144666565">94.63%</td></tr>
+              <tr data-source-row="11"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c1-balanced">fine · SVM C1 balanced</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.44371274905934827">0.4437</td><td data-field="weighted_f1" data-value="0.7816700019038323">0.7817</td><td data-field="top1_accuracy" data-value="0.7790325041965512">77.90%</td><td data-field="top5_accuracy" data-value="0.9256828933312986">92.57%</td></tr>
+              <tr data-source-row="12"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c10-normal">fine · SVM C10 normal</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.4189723590105194">0.4190</td><td data-field="weighted_f1" data-value="0.7650440699437338">0.7650</td><td data-field="top1_accuracy" data-value="0.7697237906302457">76.97%</td><td data-field="top5_accuracy" data-value="0.9023348084846635">90.23%</td></tr>
+              <tr data-source-row="13"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c10-balanced">fine · SVM C10 balanced</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="fold" data-value="0">0</td><td data-field="macro_f1" data-value="0.4179081295395396">0.4179</td><td data-field="weighted_f1" data-value="0.7620916726461511">0.7621</td><td data-field="top1_accuracy" data-value="0.757820845414314">75.78%</td><td data-field="top5_accuracy" data-value="0.8945521135357851">89.46%</td></tr>
+            </tbody>
+          </table></div>
+          <p class="source-note">Every row also has a full registered run ID in <a href="../results/evidence/task1/classical_tuning.csv">classical_tuning.csv</a>.</p>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Final classic five-fold summary — 2 selected candidates</summary>
+        <div class="details-body"><div class="table-wrap">
+          <table data-evidence-table="classic-summary">
+            <thead><tr><th scope="col">Candidate</th><th scope="col">HOG</th><th scope="col">Family</th><th scope="col">Macro-F1 mean</th><th scope="col">SD</th><th scope="col">Weighted F1</th><th scope="col">Top-1</th><th scope="col">Top-5</th></tr></thead>
+            <tbody>
+              <tr class="winner-row" data-source-row="0"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k3-distance">KNN k3 distance</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="macro_f1_mean" data-value="0.5022892580512888">0.5023</td><td data-field="macro_f1_std" data-value="0.014017825710501771">0.0140</td><td data-field="weighted_f1_mean" data-value="0.7860372820149344">0.7860</td><td data-field="top1_accuracy_mean" data-value="0.7955325018990275">79.55%</td><td data-field="top5_accuracy_mean" data-value="0.8952180953684815">89.52%</td></tr>
+              <tr data-source-row="1"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c0.1-balanced">SVM C0.1 balanced</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="macro_f1_mean" data-value="0.48885695647584326">0.4889</td><td data-field="macro_f1_std" data-value="0.016528962731918406">0.0165</td><td data-field="weighted_f1_mean" data-value="0.7802456905291064">0.7802</td><td data-field="top1_accuracy_mean" data-value="0.7764621662167521">77.65%</td><td data-field="top5_accuracy_mean" data-value="0.9445883687393322">94.46%</td></tr>
+            </tbody>
+          </table>
+        </div><p class="source-note">The source also keeps the standard deviations for every supporting metric: <a href="../results/evidence/task1/classical_comparison.csv">classical_comparison.csv</a>.</p></div>
+      </details>
+
+      <details>
+        <summary>Final classic fold-by-fold results — 10 runs</summary>
+        <div class="details-body"><div class="table-wrap">
+          <table data-evidence-table="classic-folds">
+            <thead><tr><th scope="col">Run ID</th><th scope="col">Fold</th><th scope="col">Candidate</th><th scope="col">HOG</th><th scope="col">Family</th><th scope="col">Macro-F1</th><th scope="col">Weighted F1</th><th scope="col">Top-1</th><th scope="col">Top-5</th></tr></thead>
+            <tbody>
+              <tr data-source-row="0"><td class="run-id" data-field="run_id" data-value="task1-classical-task1_gray_hog_ppc10_v1-knn-k3-distance-f0-s2753-9f5f95123120">…KNN…f0…9f5f95</td><td data-field="fold" data-value="0">0</td><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k3-distance">KNN k3</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="macro_f1" data-value="0.48968460848526935">0.4897</td><td data-field="weighted_f1" data-value="0.7891926827510485">0.7892</td><td data-field="top1_accuracy" data-value="0.7984129406378758">79.84%</td><td data-field="top5_accuracy" data-value="0.8902792614069892">89.03%</td></tr>
+              <tr data-source-row="1"><td class="run-id" data-field="run_id" data-value="task1-classical-task1_gray_hog_ppc10_v1-knn-k3-distance-f1-s2753-8e4becf844d3">…KNN…f1…8e4bec</td><td data-field="fold" data-value="1">1</td><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k3-distance">KNN k3</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="macro_f1" data-value="0.4969200228827351">0.4969</td><td data-field="weighted_f1" data-value="0.7823126811336962">0.7823</td><td data-field="top1_accuracy" data-value="0.7914887126296523">79.15%</td><td data-field="top5_accuracy" data-value="0.8984136668700428">89.84%</td></tr>
+              <tr data-source-row="2"><td class="run-id" data-field="run_id" data-value="task1-classical-task1_gray_hog_ppc10_v1-knn-k3-distance-f2-s2753-909aa6366e74">…KNN…f2…909aa6</td><td data-field="fold" data-value="2">2</td><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k3-distance">KNN k3</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="macro_f1" data-value="0.49626970509129137">0.4963</td><td data-field="weighted_f1" data-value="0.7803327817950452">0.7803</td><td data-field="top1_accuracy" data-value="0.790325041965512">79.03%</td><td data-field="top5_accuracy" data-value="0.891957881886159">89.20%</td></tr>
+              <tr data-source-row="3"><td class="run-id" data-field="run_id" data-value="task1-classical-task1_gray_hog_ppc10_v1-knn-k3-distance-f3-s2753-1af447897bf5">…KNN…f3…1af447</td><td data-field="fold" data-value="3">3</td><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k3-distance">KNN k3</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="macro_f1" data-value="0.5025767000297232">0.5026</td><td data-field="weighted_f1" data-value="0.7867988349769192">0.7868</td><td data-field="top1_accuracy" data-value="0.7955447055233446">79.55%</td><td data-field="top5_accuracy" data-value="0.8992981385413488">89.93%</td></tr>
+              <tr data-source-row="4"><td class="run-id" data-field="run_id" data-value="task1-classical-task1_gray_hog_ppc10_v1-knn-k3-distance-f4-s2753-a1d500a7cca0">…KNN…f4…a1d500</td><td data-field="fold" data-value="4">4</td><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k3-distance">KNN k3</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_knn_v1">KNN</td><td data-field="macro_f1" data-value="0.5259952537674246">0.5260</td><td data-field="weighted_f1" data-value="0.7915494294179626">0.7915</td><td data-field="top1_accuracy" data-value="0.8018911087387525">80.19%</td><td data-field="top5_accuracy" data-value="0.896141528137868">89.61%</td></tr>
+              <tr data-source-row="5"><td class="run-id" data-field="run_id" data-value="task1-classical-task1_gray_hog_ppc10_v1-linear-svm-c0-1-balanced-f0-s2753-b428eb88cfd4">…SVM…f0…b428eb</td><td data-field="fold" data-value="0">0</td><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c0.1-balanced">SVM C0.1</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="macro_f1" data-value="0.46237518494135577">0.4624</td><td data-field="weighted_f1" data-value="0.782172476669366">0.7822</td><td data-field="top1_accuracy" data-value="0.7781168930260949">77.81%</td><td data-field="top5_accuracy" data-value="0.946284144666565">94.63%</td></tr>
+              <tr data-source-row="6"><td class="run-id" data-field="run_id" data-value="task1-classical-task1_gray_hog_ppc10_v1-linear-svm-c0-1-balanced-f1-s2753-986fb4e276d7">…SVM…f1…986fb4</td><td data-field="fold" data-value="1">1</td><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c0.1-balanced">SVM C0.1</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="macro_f1" data-value="0.5022508298736166">0.5023</td><td data-field="weighted_f1" data-value="0.7846863594197945">0.7847</td><td data-field="top1_accuracy" data-value="0.7791336180597925">77.91%</td><td data-field="top5_accuracy" data-value="0.9438682123245882">94.39%</td></tr>
+              <tr data-source-row="7"><td class="run-id" data-field="run_id" data-value="task1-classical-task1_gray_hog_ppc10_v1-linear-svm-c0-1-balanced-f2-s2753-503f56d068c4">…SVM…f2…503f56</td><td data-field="fold" data-value="2">2</td><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c0.1-balanced">SVM C0.1</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="macro_f1" data-value="0.5005426673200413">0.5005</td><td data-field="weighted_f1" data-value="0.7720626455298545">0.7721</td><td data-field="top1_accuracy" data-value="0.7691133831832748">76.91%</td><td data-field="top5_accuracy" data-value="0.9385014497176866">93.85%</td></tr>
+              <tr data-source-row="8"><td class="run-id" data-field="run_id" data-value="task1-classical-task1_gray_hog_ppc10_v1-linear-svm-c0-1-balanced-f3-s2753-0cb9f2d4a639">…SVM…f3…0cb9f2</td><td data-field="fold" data-value="3">3</td><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c0.1-balanced">SVM C0.1</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="macro_f1" data-value="0.48345037195292906">0.4835</td><td data-field="weighted_f1" data-value="0.7852989090695094">0.7853</td><td data-field="top1_accuracy" data-value="0.7813548977723528">78.14%</td><td data-field="top5_accuracy" data-value="0.9488861763808362">94.89%</td></tr>
+              <tr data-source-row="9"><td class="run-id" data-field="run_id" data-value="task1-classical-task1_gray_hog_ppc10_v1-linear-svm-c0-1-balanced-f4-s2753-b60d15185fe8">…SVM…f4…b60d15</td><td data-field="fold" data-value="4">4</td><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c0.1-balanced">SVM C0.1</td><td data-field="hog_id" data-value="task1_gray_hog_ppc10_v1">ppc10</td><td data-field="model_family" data-value="task1_hog_linear_svm_v1">SVM</td><td data-field="macro_f1" data-value="0.4956657282912734">0.4957</td><td data-field="weighted_f1" data-value="0.7770080619570074">0.7770</td><td data-field="top1_accuracy" data-value="0.7745920390422449">77.46%</td><td data-field="top5_accuracy" data-value="0.945401860606985">94.54%</td></tr>
+            </tbody>
+          </table>
+        </div><p class="source-note">Source: <a href="../results/evidence/task1/classical_fold_metrics.csv">classical_fold_metrics.csv</a></p></div>
+      </details>
+
+      <details>
+        <summary>Classic out-of-fold results — 2 selected candidates</summary>
+        <div class="details-body"><div class="table-wrap">
+          <table data-evidence-table="classic-oof">
+            <thead><tr><th scope="col">Candidate</th><th scope="col">Macro-F1</th><th scope="col">Weighted F1</th><th scope="col">Top-1</th><th scope="col">Top-5</th></tr></thead>
+            <tbody>
+              <tr class="winner-row" data-source-row="0"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-knn-k3-distance">KNN k3 distance</td><td data-field="macro_f1" data-value="0.5268785652938714">0.5269</td><td data-field="weighted_f1" data-value="0.7871570366321843">0.7872</td><td data-field="top1_accuracy" data-value="0.795532908186617">79.55%</td><td data-field="top5_accuracy" data-value="0.8952186250877247">89.52%</td></tr>
+              <tr data-source-row="1"><td data-field="candidate_id" data-value="task1_gray_hog_ppc10_v1-linear-svm-c0.1-balanced">SVM C0.1 balanced</td><td data-field="macro_f1" data-value="0.5059121622667486">0.5059</td><td data-field="weighted_f1" data-value="0.7808489262349558">0.7808</td><td data-field="top1_accuracy" data-value="0.7764623317975162">77.65%</td><td data-field="top5_accuracy" data-value="0.9445885332438287">94.46%</td></tr>
+            </tbody>
+          </table>
+        </div><p class="source-note">Source: <a href="../results/evidence/task1/classical_oof_metrics.csv">classical_oof_metrics.csv</a></p></div>
+      </details>
+    </section>
+
+    <section id="failures">
+      <div class="section-head">
+        <div><p class="eyebrow">Failure analysis</p><h2>Where the models still break</h2></div>
+        <p>High accuracy is not the full story. The gap between about 84% accuracy and about 0.53 macro-F1 shows that common products are much easier than rare products.</p>
+      </div>
+      <div class="grid">
+        <article class="card"><p class="metric">21 / 124</p><p class="metric-label">selected CNN classes with OOF F1 = 0</p><p>The selected plain unweighted CNN has 21 zero-F1 classes. The balanced weighted CNN has 20, but its overall metrics are much worse.</p></article>
+        <article class="card"><p class="metric">0.0331</p><p class="metric-label">selected CNN fold SD</p><p>The plain CNN varies more across folds than the augmented CNN (0.0158). This is a limit of the chosen model.</p></article>
+        <article class="card"><p class="metric">97.80%</p><p class="metric-label">plain CNN Top-5</p><p>The right label is usually among five guesses, even though the first guess still mixes similar classes.</p></article>
+      </div>
+      <div class="callout bad" style="margin-top:1rem"><strong>Unlearnable fold cases.</strong> Some validation labels have no matching training example in that fold. A zero for those cases is honest. Dropping them would make the score look better but would change the fixed 124-class question.</div>
+      <p>The full 124 × 124 matrix stays as the complete overview. The next three figures are a more detailed look: they rank the biggest mistakes, show their rates inside a smaller matrix, and give real image examples.</p>
+      <div class="figure-grid" style="margin-top:1rem">
+        <figure><img src="../results/figures/task1/cnn_oof_confusion_task1_cnn_no_aug_unweighted_v1.png" alt="Full out-of-fold confusion matrix for the selected plain unweighted CNN"><figcaption>Complete view. This keeps all 124 labels, so the text is dense.</figcaption></figure>
+        <figure><img src="../results/figures/task1/top_confusion_pairs.png" alt="Ten most common confusion pairs for the selected CNN"><figcaption>Top mistakes by count. Sports Shoes → Casual Shoes is the largest pair.</figcaption></figure>
+        <figure><img src="../results/figures/task1/focused_confusion_matrix.png" alt="Focused confusion matrix for labels involved in the largest mistakes"><figcaption>Focused view. Each cell shows both the mistake count and its share of the true class.</figcaption></figure>
+        <figure><img src="../results/figures/task1/confusion_examples.png" alt="Example product images from the five largest confusion pairs"><figcaption>Image examples make the similar shapes behind the mistakes easier to see.</figcaption></figure>
+      </div>
+    </section>
+
+    <section id="decision">
+      <div class="section-head">
+        <div><p class="eyebrow">Development decision</p><h2>Choose the plain scratch CNN</h2></div>
+        <p>Updated on 9 September 2026: carry the plain unweighted CNN into final refit. The choice uses saved development evidence, before Task 1 holdout evaluation.</p>
+      </div>
+      <div class="grid">
+        <article class="card wide">
+          <h3>Why it is frozen</h3>
+          <p>The plain CNN wins mean macro-F1 at <strong>0.5315 ± 0.0331</strong>, versus 0.5218 ± 0.0158 with augmentation. It also leads on pooled OOF macro-F1, 0.5569 versus 0.5408. We follow the declared primary metric. Lower fold variation alone does not justify selecting the lower-scoring model. The saved validation-loss values used an equal-batch average and are retained only as legacy evidence.</p>
+          <p>Balanced weighting is rejected: its mean macro-F1 is only <strong>0.4564 ± 0.0181</strong>, with worse weighted F1, Top-1, and Top-5 scores. The selected model has 21 zero-F1 classes; balanced weighting has 20, but that small count change does not outweigh its worse overall metrics.</p>
+        </article>
+        <article class="card">
+          <h3>What this does not prove</h3>
+          <p>The plain CNN leads augmentation by 0.0097 mean macro-F1 on these folds. This is not proof of a reliable advantage across seeds or customer photos. Its larger fold variation, overfitting gap and rare-class failures remain limits.</p>
+        </article>
+        <article class="card">
+          <h3>Next honest test</h3>
+          <p>Freeze this choice. Refit using all allowed development data. Then evaluate once on the locked holdout in Notebook 06. Report rare-class failures, speed, and model size with the final score.</p>
+        </article>
+        <article class="card">
+          <h3>Practical note</h3>
+          <p>KNN is a useful fallback baseline. It reaches 0.5023 mean macro-F1 without neural training, but it needs stored training features at prediction time and has weaker Top-1 and Top-5 results.</p>
+        </article>
+      </div>
+      <div class="callout good"><strong>Development decision:</strong> carry <code>task1_cnn_no_aug_unweighted_v1</code> with <code>task1_small_cnn_v1</code> into the independent final evaluation. Do not unlock the holdout to revisit this development choice.</div>
+    </section>
+
+    <section id="evidence">
+      <div class="section-head">
+        <div><p class="eyebrow">Traceability</p><h2>Open the real evidence</h2></div>
+        <p>The page rounds numbers for reading. Raw decimals, run IDs, predictions, and per-class results remain in the saved project files below.</p>
+      </div>
+      <article class="card full">
+        <ul class="evidence-list">
+          <li><a href="../notebooks/02_task1_part1_article_type.ipynb">Task 1 notebook</a></li>
+          <li><a href="../results/evidence/task1/fold_metrics.csv">tracked CNN fold evidence (contains the registered Task 1 CNN run IDs)</a></li>
+          <li><a href="../results/evidence/task1/comparison.csv">CNN fold summary</a></li>
+          <li><a href="../results/evidence/task1/fold_metrics.csv">CNN fold rows</a></li>
+          <li><a href="../results/evidence/task1/oof_metrics.csv">CNN OOF scores</a></li>
+          <li><a href="../results/evidence/task1/classical_tuning.csv">all classic tuning rows</a></li>
+          <li><a href="../results/evidence/task1/classical_selection.json">selected classic settings</a></li>
+          <li><a href="../results/evidence/task1/classical_comparison.csv">classic fold summary</a></li>
+          <li><a href="../results/evidence/task1/classical_fold_metrics.csv">classic fold rows</a></li>
+          <li><a href="../results/evidence/task1/classical_oof_metrics.csv">classic OOF scores</a></li>
+          <li><a href="../results/evidence/task1/top_confusion_pairs.csv">ranked confusion-pair evidence for the chosen CNN</a></li>
+          <li><a href="../results/evidence/task1/per_class_task1_rgb_60x80_no_aug_v1.csv">per-class: plain CNN baseline</a></li>
+          <li><a href="../results/evidence/task1/per_class_task1_cnn_no_aug_unweighted_v1.csv">per-class: chosen plain unweighted CNN</a></li>
+          <li><a href="../results/evidence/task1/per_class_classical_task1_gray_hog_ppc10_v1-knn-k3-distance.csv">per-class: KNN</a></li>
+          <li><a href="../results/evidence/task1/per_class_classical_task1_gray_hog_ppc10_v1-linear-svm-c0.1-balanced.csv">per-class: SVM</a></li>
+          <li><a href="../src/fashion/task1/models.py">CNN source</a></li>
+          <li><a href="../src/fashion/task1/classical_models.py">classic-model source</a></li>
+        </ul>
+      </article>
+      <p class="fine">Evidence status: 32 complete experiment runs and 6 complete smoke runs are registered for Task 1. The report’s three CNN evidence tables are checked against their CSV sources; classic-model tables remain traceability references.</p>
+    </section>
+  </main>
+
+  <footer>
+    <main>MLA2 · COSC2753 Assignment 2 · Task 1 article-type classification · Evidence read from the project on 5 September 2026.</main>
+  </footer>
+</body>
+</html>
