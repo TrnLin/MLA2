@@ -88,3 +88,11 @@ results/evidence/task3/
 
 # Generated Task 1 model artifacts; compact evidence and figures stay trackable.
 /results/task1/
+
+# Local datasets, model artifacts and dependencies from the earlier app layout.
+/core/data/
+/core/model-weight/
+/core/models/
+/core/reports/
+/core/results/
+node_modules/
