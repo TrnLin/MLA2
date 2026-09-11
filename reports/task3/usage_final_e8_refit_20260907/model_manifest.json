@@ -51,11 +51,10 @@
     "class_weight_probability_adjustment": false
   },
   "report_scope": {
-    "development_and_recipe": "notebooks/04_task3_gender_usage.ipynb",
-    "reserved_holdout_analysis": "notebooks/06_final_evaluation.ipynb",
+    "development_and_recipe": "notebooks/06_task3_part1_gender_usage.ipynb",
+    "reserved_holdout_analysis": "notebooks/07_task3_part2_final_evaluation.ipynb",
     "teacher_test": "prediction_only",
-    "test_scores_in_report": false,
-    "acceptance_timing": "after evaluation review; not a new blind selection"
+    "test_scores_in_report": false
   },
   "files": {
     "data/processed/label_maps.json": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327",
