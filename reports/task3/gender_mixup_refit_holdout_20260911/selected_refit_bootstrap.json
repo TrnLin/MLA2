@@ -1,0 +1,20 @@
+{
+  "Gender MixUp": {
+    "macro_f1": 0.7874314252351635,
+    "lower_95": 0.752997155539793,
+    "upper_95": 0.8166214336944682,
+    "families": 4110,
+    "draws": 10000,
+    "seed": 2753,
+    "method": "whole-family percentile; fixed class map"
+  },
+  "Usage E8": {
+    "macro_f1": 0.42255916821300676,
+    "lower_95": 0.3661536288667226,
+    "upper_95": 0.4846374519305651,
+    "families": 4110,
+    "draws": 10000,
+    "seed": 2753,
+    "method": "whole-family percentile; fixed class map"
+  }
+}
