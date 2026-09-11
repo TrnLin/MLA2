@@ -1,25 +1,12 @@
-# Accepted final Gender model
+# Gender SAM25 training reference
 
-The owner accepted the **single full-development SAM25 refit, epoch 25**, on
-7 September 2026 after reviewing the saved reserved-holdout comparison.
-[Decision 0025](../../../docs/decisions/0025-task3-gender-sam25-refit-final-model.md)
-supersedes the earlier five-model artifact. Original training and evaluation
-receipts remain unchanged.
+This folder retains the SAM25 refit's training identity and registered run.
+It supports the development inventory and comparison of completed training.
+The underlying scratch checkpoint, configuration and training records are in
+`results/evidence/task3/gender_sam25_refit_20260907/`.
 
-- `model_manifest.json` and its SHA-256 sidecar pin the final checkpoint, recipe,
-  normalization, class order, source files and training evidence.
-- `refit_runs.csv` preserves the completed training registry row. Its source is
-  the archived Drive registry named in `registry_provenance`; the live registry
-  was not rewritten by this acceptance.
-- `holdout_sources.json` and its SHA-256 sidecar pin the separate saved holdout
-  evidence used in `notebooks/07_task3_part2_final_evaluation.ipynb`. Model verification in Notebook 4 does not load it.
-
-Use [Notebook 4](../../../notebooks/06_task3_part1_gender_usage.ipynb) for development,
-training and inference details, and [Task 3 evaluation](../../../notebooks/07_task3_part2_final_evaluation.ipynb)
-for the holdout comparison and limits. The official teacher test set is prediction-only.
-
-From the repository root, verify the accepted model without training or inference:
-
-```bash
-./.venv/bin/python -m fashion.task3_gender_final
-```
+The selected Gender model is the **MixUp 0.20 refit at epoch 30**. Its selection
+is in [Notebook 06](../../../notebooks/06_task3_part1_gender_usage.ipynb), and its
+assessment is in [Notebook 07](../../../notebooks/07_task3_part2_final_evaluation.ipynb).
+Use `fashion.task3_gender_final.verify_gender_final` to verify that selected
+MixUp checkpoint.
