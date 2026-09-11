@@ -1,8 +1,8 @@
 # SAM25 five-fold review — 6 September 2026
 
-**The fixed recipe holds up across all five folds. Keep it fixed and move to
-the reserved holdout evaluation.** This supports keeping SAM25 as a candidate;
-it does not establish that it beats every earlier model.
+**The fixed recipe completed all five development folds.** SAM25 contributes
+to the full candidate comparison; these results do not establish that it beats
+every earlier model.
 
 All five scratch runs finished the planned 25 epochs. Their saved predictions
 cover all 32,773 eligible development images exactly once, with the correct
@@ -90,9 +90,9 @@ were not downloaded or rehashed, the registry was not independently reaudited,
 and no new model inference or training was performed. The saved
 `complete_for_review` status is not an automatic model acceptance gate.
 
-Next: evaluate the five saved models together on the reserved holdout using
-their own normalization and the fixed probability-average rule. Keep the
-recipe fixed. Report the remaining Unisex errors and label-definition limits.
+The full comparison and MixUp recipe choice are in
+[Notebook 06](../../../notebooks/06_task3_part1_gender_usage.ipynb).
+The remaining Unisex errors and label-definition limits stay part of the analysis.
 
 Source: [completed five-fold result folder](https://drive.google.com/drive/folders/1jhi-nRZ10DYpVz3Cgln0CnOwU0DV8z0Z).
 Exact file links are in `sources.json`. The review script, retained records,
