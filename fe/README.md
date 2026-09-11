@@ -1,6 +1,23 @@
 # Thread — Fashion intelligence
 
-The existing React/TypeScript page connected to five frozen local models.
+An animated landing page and a React/TypeScript demo connected to five frozen local models.
+
+## Pages
+
+- `/`: Thread landing page, with GSAP scroll animation and Lenis smooth scrolling.
+- `/demo`: the existing image upload, classification, and adjustable Task 4 search.
+
+The landing page works without the API. Its motion switch and the system's
+reduced-motion preference can turn animation off. Animation code loads only on
+the landing page. Photos are served locally; their sources are recorded in
+`public/landing/sources.json` and `public/samples/sources.json`.
+
+The landing page and demo share the Style picker and its saved choice: Outfit,
+Liquid Glass, Brutalist, Nocturne, Field Notes, Minimal, and Original Thread.
+The landing treatments live in `src/landing-themes.css`.
+
+When hosting the frontend, route both `/` and `/demo` to `index.html` so direct
+links and refreshes work. Vite already does this during development and preview.
 
 ## Run locally
 

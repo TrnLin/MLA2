@@ -94,3 +94,4 @@ core/results/evidence/task3/
 # Local deployment packages and runtime locks are not code deliverables.
 /core/model-weight/
 /core/results/**/*.lock
+.claude/

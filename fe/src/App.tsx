@@ -49,7 +49,6 @@ function App() {
   const [error, setError] = useState('');
   const [dragging, setDragging] = useState(false);
   const [imageOptionsOpen, setImageOptionsOpen] = useState(true);
-  const [aboutOpen, setAboutOpen] = useState(false);
   const [activeMatch, setActiveMatch] = useState<SimilarItem | null>(null);
   const [searchSelection, setSearchSelection] = useState<{ source: string; crop: CropBox | null } | null>(null);
   const [cropEditorOpen, setCropEditorOpen] = useState(false);
@@ -59,7 +58,6 @@ function App() {
   const generation = useRef(0);
   const objectUrl = useRef<string | null>(null);
   const timerIds = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const aboutDialog = useRef<HTMLDialogElement>(null);
   const matchDialog = useRef<HTMLDialogElement>(null);
   const searchPanel = useRef<HTMLElement>(null);
   const searchFocus = useRef<'editor' | 'results' | null>(null);
@@ -68,7 +66,6 @@ function App() {
     timerIds.current.forEach(clearTimeout);
     if (objectUrl.current) URL.revokeObjectURL(objectUrl.current);
   }, []);
-  useEffect(() => { if (aboutOpen) aboutDialog.current?.showModal(); else aboutDialog.current?.close(); }, [aboutOpen]);
   useEffect(() => { if (activeMatch !== null) matchDialog.current?.showModal(); else matchDialog.current?.close(); }, [activeMatch]);
 
   const metadata = useModelMetadata();
@@ -161,9 +158,9 @@ function App() {
     <>
       <a className="skip-link" href="#workspace">Skip to demo</a>
       <header className="site-header compact-header">
-        <a className="wordmark" href="#" aria-label="Thread home"><span className="brand-symbol" aria-hidden="true"><i /><i /><i /></span>thread<span className="brand-period">.</span></a>
+        <a className="wordmark" href="/" aria-label="Thread home"><span className="brand-symbol" aria-hidden="true"><i /><i /><i /></span>thread<span className="brand-period">.</span></a>
         <span className="header-caption">FASHION INTELLIGENCE</span>
-        <div className="header-actions"><StylePicker /><ColorModeToggle /><button className="about-button" aria-label="About the project" onClick={() => setAboutOpen(true)}><span className="about-label">About the project</span><Icon name="arrow" size={16} /></button></div>
+        <div className="header-actions"><StylePicker /><ColorModeToggle /><a className="about-button" href="/" aria-label="About the project"><span className="about-label">About the project</span><Icon name="arrow" size={16} /></a></div>
       </header>
 
       <main className={advanced ? 'is-advanced' : undefined}>
@@ -227,7 +224,6 @@ function App() {
       </main>
       <footer><a className="footer-wordmark" href="#">thread.</a><span>FASHION INTELLIGENCE · COSC2753</span><span>Made to look a little closer.</span><span className="footer-preview">LOCAL MODEL DEMO</span></footer>
 
-      <dialog ref={aboutDialog} onCancel={() => setAboutOpen(false)} onClick={event => { if (event.target === event.currentTarget) setAboutOpen(false); }} aria-labelledby="about-title"><button className="dialog-close icon-button" onClick={() => setAboutOpen(false)} aria-label="Close project information"><Icon name="close" /></button><div className="eyebrow">COSC2753 · ASSIGNMENT 2</div><h2 id="about-title">A little vision.<br /><em>A lot to explore.</em></h2><p>Thread brings four fashion machine-learning tasks into one flow: item type, season, gender and occasion, and visual search.</p><p>This demo runs five trained models on a local server. Each model prepares the original image with its own saved settings. Uploads stay in the server’s local cache on this computer.</p><button className="primary-button" onClick={() => setAboutOpen(false)}>Explore the demo <Icon name="arrow" size={18} /></button></dialog>
       <dialog ref={matchDialog} onCancel={() => setActiveMatch(null)} onClick={event => { if (event.target === event.currentTarget) setActiveMatch(null); }} aria-labelledby="match-title" className="match-dialog"><button className="dialog-close icon-button" onClick={() => setActiveMatch(null)} aria-label="Close item preview"><Icon name="close" /></button>{activeMatch !== null && <><img src={activeMatch.image} alt={activeMatch.name} /><div className="eyebrow">SIMILAR ITEM / {String(activeMatch.rank).padStart(2, '0')}</div><h2 id="match-title">{activeMatch.name}</h2><p>A product found by the visual-search model in the saved development gallery.</p>{advanced && <p>Cosine similarity: <strong>{activeMatch.score.toFixed(2)}</strong></p>}</>}</dialog>
     </>
   );

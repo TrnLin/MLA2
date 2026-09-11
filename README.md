@@ -80,7 +80,8 @@ npm install
 npm run dev
 ```
 
-Open http://127.0.0.1:5173/. Keep both terminals running. The API needs the local
+Open http://127.0.0.1:5173/ for the landing page, then choose **Try the demo**,
+or go straight to http://127.0.0.1:5173/demo. Keep both terminals running. The API needs the local
 model weights and product photos listed in [be/README.md](be/README.md).
 
 ## Model work
