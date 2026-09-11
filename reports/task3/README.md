@@ -4,18 +4,19 @@ Start with [the main notebook](../../notebooks/06_task3_part1_gender_usage.ipynb
 [the training index](../../notebooks/task3_training/README.md), and
 [asset setup and submission checklist](ASSETS.md).
 
-Gender is the accepted SAM25 five-fold ensemble. Usage is the selected
-teacher-only E1 five-fold average. Both final choices are in the main notebook.
-Earlier reports below are dated evidence, not overrides of the final decisions.
+Gender uses the single MixUp 0.20 refit at epoch 30. Usage uses the single
+teacher-only E8 refit at epoch 30. The main notebook compares the development
+models and fixes the recipes. The [final notebook](../../notebooks/07_task3_part2_final_evaluation.ipynb)
+assesses only those two refits.
 
 ## Main evidence
 
 - [Main report source pack](main_report_20260906/README.md)
-- [Gender final manifest](gender_sam25_cv_result_20260906/model_manifest.json)
-- [Gender reserved holdout and label checks](gender_sam25_holdout_test_20260906/README.md)
+- [Gender development choice](gender_mixup_selection_20260911/development_selection.json)
+- [Gender MixUp refit evaluation](gender_mixup_refit_holdout_20260911/README.md)
 - [Usage E1/E8 comparison and prediction recipe](usage_teacher_vs_expanded_test_20260906/README.md)
-- [Usage final E1 manifest and report](usage_final_e1_20260907/README.md)
-- [Usage saved holdout](usage_holdout_20260906/README.md)
+- [Usage E8 refit manifest](usage_final_e8_refit_20260907/model_manifest.json)
+- [Usage E8 refit evaluation](usage_e8_refit_holdout_20260907/README.md)
 - [Usage 687-addition E8 result](usage_expanded_v2_e8_test_20260907/README.md)
 - [Failed replacement trial](usage_replaced_v3_mixup_sam_result_20260907/README.md)
 
@@ -50,7 +51,6 @@ large source inputs and duplicate snapshots use the asset setup above.
 | gender overfitting research 20260906 | [README.md](gender_overfitting_research_20260906/README.md) |
 | gender precision result 20260905 | [README.md](gender_precision_result_20260905/README.md) |
 | gender sam25 cv result 20260906 | [README.md](gender_sam25_cv_result_20260906/README.md) |
-| gender sam25 holdout test 20260906 | [README.md](gender_sam25_holdout_test_20260906/README.md) |
 | gender sam25 result 20260906 | [README.md](gender_sam25_result_20260906/README.md) |
 | gender sam result 20260906 | [README.md](gender_sam_result_20260906/README.md) |
 | gender stronger dropout plan 20260905 | [PLAN.md](gender_stronger_dropout_plan_20260905/PLAN.md) |
@@ -70,7 +70,6 @@ large source inputs and duplicate snapshots use the asset setup above.
 | usage expanded v2 e8 20260906 | [README.md](usage_expanded_v2_e8_20260906/README.md) |
 | usage expanded v2 e8 result 20260906 | [README.md](usage_expanded_v2_e8_result_20260906/README.md) |
 | usage expanded v2 e8 test 20260907 | [README.md](usage_expanded_v2_e8_test_20260907/README.md) |
-| usage holdout 20260906 | [README.md](usage_holdout_20260906/README.md) |
 | usage mixup sam 20260906 | [README.md](usage_mixup_sam_20260906/README.md) |
 | usage mixup sam result 20260906 | [README.md](usage_mixup_sam_result_20260906/README.md) |
 | usage replaced v3 mixup sam 20260907 | [README.md](usage_replaced_v3_mixup_sam_20260907/README.md) |
