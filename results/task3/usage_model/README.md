@@ -1,5 +1,7 @@
 # Final Usage model
 
+Selected model: E8 with class-balanced loss and translation, trained from scratch on all eligible teacher development rows for 30 epochs.
+
 Run from the repository root. Install PyTorch if missing:
 
 ```bash
