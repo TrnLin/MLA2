@@ -3,6 +3,7 @@
 import ast
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 from fashion.config import ROOT
@@ -30,6 +31,11 @@ _SHARED_CONFIG_ADDITIONS = frozenset(
         'TASK1_FIGURE_DIR = FIGURE_DIR / "task1"',
         'TASK1_EVIDENCE_DIR = EVIDENCE_DIR / "task1"',
         'TASK1_HOG_CACHE_DIR = PROCESSED_DATA_DIR / "task1_hog_cache"',
+        'TASK1_FINAL_REFIT_EVIDENCE_DIR = TASK1_EVIDENCE_DIR / "final_refit"',
+        'TASK1_CONFIG_DIR = CONFIG_DIR / "task1"',
+        'TASK1_FINAL_EVALUATION_CONFIG_JSON = TASK1_CONFIG_DIR / "final_evaluation.json"',
+        'TASK1_MODEL_PATH = MODEL_DIR / "task1_article_type.pt"',
+        'TASK1_MODEL_MANIFEST_JSON = MODEL_DIR / "task1_article_type.manifest.json"',
     }
 )
 
@@ -69,8 +75,12 @@ def _check_training_reference(root: Path, relative: str, expected: str) -> None:
         raise ValueError(f"Hash mismatch: {path}")
 
 
-def verify_usage_final(root: Path = ROOT) -> dict:
-    """Verify the exact accepted checkpoint, recipe, sources and training records."""
+def verify_usage_final(root: Path = ROOT, *, saved_training_source: bool = False) -> dict:
+    """Verify the artifact; replay may verify source at the recorded training commit.
+
+    Source replay does not certify the current checkout for new inference. It
+    checks the exact source bytes used by the completed run against its lock.
+    """
     pack = root / PACK
     check_hash(pack / "model_manifest.json", (pack / "model_manifest.sha256").read_text().strip())
     manifest = json.loads((pack / "model_manifest.json").read_text())
@@ -82,8 +92,23 @@ def verify_usage_final(root: Path = ROOT) -> dict:
         or manifest["artifact_type"] != "single_all_development_scratch_refit"
     ):
         raise ValueError("Final Usage model identity differs from the accepted E8 refit")
+    revision = None
+    if saved_training_source:
+        environment = "results/evidence/task3/usage_e8_refit_20260907/environment.json"
+        check_hash(root / environment, manifest["files"][environment])
+        revision = json.loads((root / environment).read_text())["git_commit"]
     for relative, expected in manifest["files"].items():
-        _check_training_reference(root, relative, expected)
+        if revision and relative.startswith("src/"):
+            content = subprocess.run(
+                ["git", "show", f"{revision}:{relative}"],
+                cwd=root,
+                check=True,
+                capture_output=True,
+            ).stdout
+            if hashlib.sha256(content).hexdigest() != expected:
+                raise ValueError(f"Training source hash mismatch: {relative}")
+        else:
+            _check_training_reference(root, relative, expected)
     for key in ("checkpoint", "config", "normalization", "training_manifest"):
         entry = manifest[key]
         check_hash(root / entry["path"], entry["sha256"])

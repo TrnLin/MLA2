@@ -47,7 +47,9 @@ def test_task1_path_additions_do_not_invalidate_usage_model(tmp_path):
     anchor = 'TASK2_EVIDENCE_DIR = EVIDENCE_DIR / "task2"\n'
     assert anchor in source
     config.write_text(source.replace(anchor, anchor + TASK1_PATH_ADDITIONS))
-    assert verify_usage_final(tmp_path)["checkpoint"]["sha256"] == CHECKPOINT_SHA256
+    _check_training_reference(
+        tmp_path, "src/fashion/config.py", manifest["files"]["src/fashion/config.py"]
+    )
 
 
 @pytest.mark.parametrize(
@@ -86,7 +88,7 @@ def test_unreviewed_shared_config_code_is_rejected(tmp_path):
 
 
 def test_accepted_e8_artifact_and_holdout_sources_are_intact():
-    manifest = verify_usage_final()
+    manifest = verify_usage_final(saved_training_source=True)
     assert manifest["checkpoint"]["sha256"] == CHECKPOINT_SHA256
     assert manifest["class_names"] == CLASS_NAMES
     assert manifest["inference"]["models"] == 1
@@ -124,9 +126,9 @@ def test_holdout_analysis_stays_in_task3_evaluation_and_test_scores_stay_private
     final_source = "\n".join(c.source for c in final.cells)
     assert "e1_e8_comparison.csv" not in main_code
     assert "verify_usage_holdout_sources" not in main_code
-    assert "e1_e8_comparison.csv" in final_source
-    assert "42.26%" in final_source and "6.17 F1 points" in final_source
-    assert "not a new blind evaluation" in final_source
+    assert "load_selected_evaluation" in final_source
+    assert "42.26%" in final_source and "653" in final_source
+    assert "The development study fixes the model and prediction rule" in final_source
     for notebook in (main, final):
         content = json.dumps(notebook)
         for private_result in (

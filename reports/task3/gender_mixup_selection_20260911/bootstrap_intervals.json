@@ -1,0 +1,227 @@
+{
+  "all_five": {
+    "point": 0.0073811393095638556,
+    "lower_95": 9.366827769780388e-05,
+    "upper_95": 0.014951944229447007,
+    "repetitions": 10000,
+    "seed": 2753,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "families_by_fold": {
+      "0": 4564,
+      "1": 4593,
+      "2": 4577,
+      "3": 4601,
+      "4": 4570
+    },
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "selection_bias_removed": false
+  },
+  "all_five_100000_draw_sensitivity": {
+    "point": 0.0073811393095638556,
+    "lower_95": -7.973714000294961e-05,
+    "upper_95": 0.014916912893234819,
+    "repetitions": 100000,
+    "seed": 2753,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "families_by_fold": {
+      "0": 4564,
+      "1": 4593,
+      "2": 4577,
+      "3": 4601,
+      "4": 4570
+    },
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "selection_bias_removed": false
+  },
+  "screen_folds": {
+    "point": 0.014192153836632304,
+    "lower_95": 0.0037661451330144235,
+    "upper_95": 0.024748208112414065,
+    "repetitions": 10000,
+    "seed": 2753,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "families_by_fold": {
+      "0": 4564,
+      "4": 4570
+    },
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "selection_bias_removed": false
+  },
+  "additional_folds": {
+    "point": 0.002701098516737943,
+    "lower_95": -0.007554661875012148,
+    "upper_95": 0.01328230073870676,
+    "repetitions": 10000,
+    "seed": 2753,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "families_by_fold": {
+      "1": 4593,
+      "2": 4577,
+      "3": 4601
+    },
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "selection_bias_removed": false
+  },
+  "original_teacher": {
+    "point": 0.004067771190813363,
+    "lower_95": -0.003787749503789678,
+    "upper_95": 0.011959534258934175,
+    "repetitions": 10000,
+    "seed": 2753,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "families_by_fold": {
+      "0": 4564,
+      "1": 4593,
+      "2": 4577,
+      "3": 4601,
+      "4": 4570
+    },
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "selection_bias_removed": false
+  },
+  "jpeg_75": {
+    "point": 0.003984231463524557,
+    "lower_95": -0.003811825775351549,
+    "upper_95": 0.01186281607125452,
+    "repetitions": 10000,
+    "seed": 2753,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "families_by_fold": {
+      "0": 4564,
+      "1": 4593,
+      "2": 4577,
+      "3": 4601,
+      "4": 4570
+    },
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "selection_bias_removed": false
+  },
+  "brightness_085": {
+    "point": 0.01247836601099328,
+    "lower_95": 0.0029330766786124507,
+    "upper_95": 0.022082290486467884,
+    "repetitions": 10000,
+    "seed": 2753,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "families_by_fold": {
+      "0": 4564,
+      "1": 4593,
+      "2": 4577,
+      "3": 4601,
+      "4": 4570
+    },
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "selection_bias_removed": false
+  },
+  "brightness_115": {
+    "point": 0.0018058307957409259,
+    "lower_95": -0.00715202781170281,
+    "upper_95": 0.01097386337198494,
+    "repetitions": 10000,
+    "seed": 2753,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "families_by_fold": {
+      "0": 4564,
+      "1": 4593,
+      "2": 4577,
+      "3": 4601,
+      "4": 4570
+    },
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "selection_bias_removed": false
+  },
+  "grayscale": {
+    "point": 0.004264029425153915,
+    "lower_95": -0.003880111816937356,
+    "upper_95": 0.012252958080887397,
+    "repetitions": 10000,
+    "seed": 2753,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "families_by_fold": {
+      "0": 4564,
+      "1": 4593,
+      "2": 4577,
+      "3": 4601,
+      "4": 4570
+    },
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "selection_bias_removed": false
+  },
+  "translation_003": {
+    "point": 0.006944584542454724,
+    "lower_95": -0.0017322256818403075,
+    "upper_95": 0.01542485780778594,
+    "repetitions": 10000,
+    "seed": 2753,
+    "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+    "families_by_fold": {
+      "0": 4564,
+      "1": 4593,
+      "2": 4577,
+      "3": 4601,
+      "4": 4570
+    },
+    "classes": [
+      "Boys",
+      "Girls",
+      "Men",
+      "Unisex",
+      "Women"
+    ],
+    "selection_bias_removed": false
+  }
+}

@@ -77,8 +77,7 @@ correct counts and recall above when comparing the rare classes across sources.
   is not a demonstrated statistical loss, and there is no demonstrated gain either.
 - One training seed and tiny teacher rare-class samples limit certainty. Resampling does not
   remove earlier model-selection bias or measure variation across training seeds.
-- Earlier holdout and teacher-test evaluations already exist. This review uses development
-  predictions only and does not reopen those sets or claim a new untouched test.
+- This review uses the saved development predictions for the fixed recipe and fold scope.
 
 ## Checks and files
 

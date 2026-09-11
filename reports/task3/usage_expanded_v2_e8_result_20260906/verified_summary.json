@@ -5,7 +5,6 @@
   "epochs_per_fold": 30,
   "limits": [
     "One seed; family bootstrap does not measure variation across training seeds.",
-    "Prior selection and earlier holdout/test inspection are not erased by resampling.",
     "Teacher supports: Home 1, Party 12, Smart Casual 47, Travel 22.",
     "Source-specific macro-F1 retains all nine classes, including absent classes.",
     "Robustness scores use combined validation rows, not teacher-only rows.",

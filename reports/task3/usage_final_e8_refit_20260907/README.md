@@ -3,10 +3,22 @@
 The accepted model is the single E8 + translation scratch refit, epoch 30,
 trained on all 32,772 eligible teacher development images.
 
+The development rationale accepts E8's observed class coverage, small-shift
+tolerance and probability quality in exchange for lower overall accuracy and
+worse dark-image performance. Its paired family-bootstrap comparisons do not
+establish a clear clean-score lead over E2/E3, and its earlier improvement gates
+remain failed. The full comparison follows E1 → E2, each E3–E9 branch, S1/S2 and
+U1/U2/U3 screens, probability diagnostics and the data expansions. E5 retains
+a dark-image advantage and E6 a slight NLL advantage. The three-model average
+has higher development F1 but lacks matched corruption and final-refit evidence.
+This is an explicit trade-off choice across those alternatives. The full-development refit
+implements that fixed recipe; it has no new validation score. See Decision 0024
+for the development evidence and the final-evaluation notebook for holdout analysis.
+
 - [Frozen model manifest](model_manifest.json): checkpoint, configuration,
   normalization, class order, registered training evidence and source hashes.
 - [Decision 0024](../../../docs/decisions/0024-task3-usage-e8-refit-final-model.md).
-- [Notebook 4](../../../notebooks/06_task3_part1_gender_usage.ipynb): development
+- [Development notebook](../../../notebooks/06_task3_part1_gender_usage.ipynb): development
   analysis, refit training and the final recipe.
 - [Task 3 evaluation](../../../notebooks/07_task3_part2_final_evaluation.ipynb): reserved-holdout
   comparisons, class errors, practical limits and final judgement.

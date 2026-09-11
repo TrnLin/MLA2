@@ -1,0 +1,87 @@
+{
+  "class_names": [
+    "Boys",
+    "Girls",
+    "Men",
+    "Unisex",
+    "Women"
+  ],
+  "config_hash": "7ffc50dd972ce429079827b01ee9b923cfcc14c9219a4020eb3ae1faf13d40bc",
+  "experiment_id": "t3_gender_name_truth_mixup_alpha020_refit",
+  "files": {
+    "config.json": {
+      "path": "t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e/config.json",
+      "sha256": "332c7637968aa28c283f67d1006118f2623db42abc8ca0b4c31ef399e82e6a04"
+    },
+    "final_epoch.pt": {
+      "path": "t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e/final_epoch.pt",
+      "sha256": "860f688162cccfcd903e8e4874b368697c0637b6e6a15baae3b4d4a3008f4ef9"
+    },
+    "history.csv": {
+      "path": "t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e/history.csv",
+      "sha256": "b98e0a622059a5c4851ceee12e98fdf6ef6e6025a1e4a4feee157e0db4eafc01"
+    },
+    "metrics.json": {
+      "path": "t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e/metrics.json",
+      "sha256": "04c8404092bb855da6f79fdb7e275a15ce0e9a9ff464817ebdf2c2c2fe2b2432"
+    },
+    "mixup_training.json": {
+      "path": "t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e/mixup_training.json",
+      "sha256": "c9661f44bf98574fd48a3e7e5781352ad1e0c12f12c40c140b99e33e9dcdb7a8"
+    },
+    "normalization.json": {
+      "path": "t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e/normalization.json",
+      "sha256": "050c61a7bf26c9a2747853cb56f15a76f204ea8d03ea3b916300eaacc2bdd501"
+    },
+    "training_rows.csv": {
+      "path": "t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e/training_rows.csv",
+      "sha256": "b1eaa6ec14e37fbc1d6e94f1364864edacca417b375e7b92cf1a9918787b8f5f"
+    }
+  },
+  "final_model_changed": false,
+  "holdout_evaluated": false,
+  "inference": "one model; saved development normalization; softmax then argmax",
+  "metrics": {
+    "checkpoint_policy": "final_epoch",
+    "epochs_completed": 30,
+    "holdout_evaluated": false,
+    "online_train_f1": "not_applicable_mixed_inputs",
+    "peak_memory_bytes": 476603392,
+    "scope": "development_refit_training_only",
+    "selected_epoch": 30,
+    "teacher_test_evaluated": false,
+    "train_mixed_loss": 0.3439075712512302,
+    "train_seconds": 559.7897134490004,
+    "training_rows": 32773,
+    "validation_rows": 0,
+    "validation_used": false
+  },
+  "run_id": "t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e",
+  "scratch": true,
+  "selected_epoch": 30,
+  "selection_status": "selected_from_development",
+  "status": "complete",
+  "teacher_test_evaluated": false,
+  "training_scope": "all_development",
+  "validation_used": false,
+  "checkpoint": {
+    "path": "reports/task3/gender_mixup_selection_20260911/refit/t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e/final_epoch.pt",
+    "sha256": "860f688162cccfcd903e8e4874b368697c0637b6e6a15baae3b4d4a3008f4ef9"
+  },
+  "config": {
+    "path": "reports/task3/gender_mixup_selection_20260911/refit/t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e/config.json",
+    "sha256": "332c7637968aa28c283f67d1006118f2623db42abc8ca0b4c31ef399e82e6a04"
+  },
+  "normalization": {
+    "path": "reports/task3/gender_mixup_selection_20260911/refit/t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e/normalization.json",
+    "sha256": "050c61a7bf26c9a2747853cb56f15a76f204ea8d03ea3b916300eaacc2bdd501"
+  },
+  "history": {
+    "path": "reports/task3/gender_mixup_selection_20260911/refit/t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e/history.csv",
+    "sha256": "b98e0a622059a5c4851ceee12e98fdf6ef6e6025a1e4a4feee157e0db4eafc01"
+  },
+  "training_rows": 32773,
+  "parameter_count": 390181,
+  "selected_on": "2026-09-11",
+  "selection_basis": "development only"
+}

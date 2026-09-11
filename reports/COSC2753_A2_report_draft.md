@@ -55,8 +55,8 @@ complete five-fold run, each eligible development row serves as validation once;
 controlled tuning and pooled out-of-fold comparison. The intended protocol keeps the holdout
 untouched until the task-level model and hyperparameters are frozen, then opens it once to estimate
 generalisation to unseen, same-source catalogue data; it cannot prove transfer to new retailers or
-cameras. Task 3's later post-review refit acceptance is therefore reported separately in Section 5
-as non-blind. Development has 22,905 conservative families and zero active family crossings.
+cameras. Task 3's selected-refit assessment and its limits are reported in Section 5.
+Development has 22,905 conservative families and zero active family crossings.
 Season has 20 blank development labels and Usage has one. All teacher-only work reads
 `data/processed/splits.csv`; documented Task 3 external-data
 comparisons use versioned derived manifests that preserve the original teacher folds. During
@@ -205,42 +205,65 @@ Season oracle. Complete evaluation and limitations:
 
 ## 5. Task 3 - Gender and Usage Classification
 
+EDA suggested different interventions for Gender and Usage. Figures 2–3 cover the full
+development comparison; separate fold and scoring-label groups prevent unlike scores from
+being treated as one ranking.
+
 ### 5.1 Gender
 
-Gender EDA exposed dominant Men/Women support, ambiguous Unisex boundaries, label conflicts with
-product-name cues, and a large training-validation gap. The shared scratch SmallCNN baseline was
-therefore followed by pooling, augmentation, fixed label-basis review, MixUp [16], and
-sharpness-aware minimisation (SAM) [17]. The final model uses four 3 x 3 convolution stages
-(32/64/128/256 channels), fixed GeM pooling, a 256-value representation, and five logits. During
-training, MixUp alpha 0.20 blends examples, SAM radius 0.05 searches for a flatter update, and 30%
-dropout regularises the head. The selected single 25-epoch refit has 390,181 parameters.
+Men/Women account for 90.9% of development labels, while image review exposed overlapping
+adult, child and Unisex cues. The later name audit found explicit Boys/Girls descriptions
+labelled Men/Women, suggesting that inconsistent targets contributed to the difficulty.
+A fixed rule therefore treated exactly one explicit name cue as authoritative, changing
+350 development labels, including 182 Men→Boys and 156 Women→Girls. Ambiguous names stayed
+unchanged. This tests a documented label convention, not proof that every supplied label was
+wrong: canonical labels and folds remain intact, and corrected-label scores stay separate.
 
-On the same 5,778 holdout images, it achieved **0.7744 macro-F1 and 90.00% accuracy**, compared
-with 0.7714 and 89.82% for the earlier five-model average. The improvement is only ten net correct
-images, while Unisex recall remains 47.27%. Hence the simpler one-checkpoint handoff is accepted,
-but every audience label remains an editable catalogue suggestion rather than a statement about a
-person. The original-label score is primary; the fixed name-rule score is a separate diagnostic.
+Near-perfect training fit with weaker validation motivated regularisation rather than simply
+more capacity. **Select MixUp 0.20/30** [16]: original-label five-fold F1 reaches 0.7573,
+trading translation's 90.34% accuracy for 90.03% and better equal-class recognition. Stronger
+dropout/mixing lost useful signal; SAM [17] shrank the gap mainly through lower training fit.
+The retained GeM, dropout, augmentation and label-review recipe balances these costs; neither
+its score nor the uncertain paired comparison isolates MixUp's contribution.
+
+![Figure 2 - All Task 3 Gender development models](../results/figures/task3/gender_development_model_comparison.png)
+
+**Figure 2.** All Gender model variants and the BatchNorm diagnostic. Green marks the selected
+recipe; fold/label panels and audited re-scoring remain separate.
 
 ### 5.2 Usage
 
-Usage EDA found a 76.86% Casual holdout share and extremely small Home, Party, Smart Casual, and
-Travel support. The experiment path tested the baseline, class weighting, translation, classical
-HOG-SVM, rare-source additions, MixUp/SAM, and source-transfer diagnostics. The final E8 scratch
-SmallCNN uses the same four convolution widths, average pooling, a 256-value vector, and nine
-logits. Effective-number class weights (beta 0.999, capped at 5) influence weighted cross-entropy;
-they do not alter probabilities after inference.
+Casual accounts for 76.7% of eligible development rows; Home has one example, Party 12,
+Travel 22 and Smart Casual 47. Weighting could increase their influence but could not supply
+missing visual variety. This motivated 120, then 687 total reviewed external images, keeping
+teacher folds fixed and scoring transfer on teacher rows. The larger expansion recognised
+outside Party/Smart Casual images but missed all teacher examples of both classes. Different
+product coverage and source appearance were plausible limits; MixUp/SAM and 130 replacements
+did not repair them. More outside data therefore did not justify replacing teacher-only E8.
 
-E8 improved development OOF macro-F1 from E1's 0.3738 to **0.4194**. On holdout, the single E8
-refit reached **0.4226 macro-F1 and 88.70% accuracy**, versus E1's 0.3609 and 89.46%: a 6.17-point
-class-balanced gain at the cost of 44 more wrong predictions. It detected some NA, Smart Casual,
-and Travel cases, but Party remained missed and Home had no holdout examples. Added external images
-did not establish transfer to teacher catalogue images, so the submitted E8 model is teacher-only.
+**Select single E8** with class weighting [11] and translation: five-fold F1 improves from
+E1's 0.3738 to 0.4194, while accuracy falls from 89.30% to 88.85%. Against weighted E2,
+shift damage falls from 8.69 to 2.69 F1 points, but darkening damage rises from 12.89 to 16.19.
+The E2+E3+E8 average scores higher (0.4231), yet needs three passes and lacks matched corruption
+evidence. E8 prioritises measured shift tolerance and one-model inference over those gains.
 
-These Task 3 refits were accepted after holdout review. Reserved images were not used for fitting,
-but final acceptance is not a fresh blind confirmation; repeated development selection can bias
-small apparent gains [18]. The honest judgement is limited viability for human-reviewed tagging.
-The full path is in [Notebook 06, Sections 9-19](../notebooks/06_task3_part1_gender_usage.ipynb),
-with final evidence in [Notebook 07, Sections 9-12](../notebooks/07_task3_part2_final_evaluation.ipynb).
+![Figure 3 - All Task 3 Usage development models](../results/figures/task3/usage_development_model_comparison.png)
+
+**Figure 3.** All Usage model variants and prediction diagnostics on teacher rows. Orange marks
+diagnostics; the three-model average's advantage remains visible.
+
+### 5.3 Final assessment
+
+On 5,778 original-label holdout images, the scratch epoch-30 refits achieve **0.7874 macro-F1 /
+90.46% accuracy** for Gender and **0.4226 / 88.70%** for Usage. Gender misses 140/311 Unisex
+products; Usage finds only five of 22 rare-occasion examples. Unsupported Home remains in the
+nine-class score. These results support reviewed suggestions; one seed, repeated selection [18]
+and untested refit robustness limit broader claims.
+
+See [Notebook 06, Sections 3–8 (EDA), 9–15 (Gender) and 16–18 (Usage)](../notebooks/06_task3_part1_gender_usage.ipynb)
+for experiment labels, rules and trade-offs; Section 2 inventories probes and incomplete attempts.
+[Notebook 07, Sections 3–15](../notebooks/07_task3_part2_final_evaluation.ipynb) gives recipes,
+uncertainty, cost and final judgement.
 
 ## 6. Task 4 - Visual Search
 
@@ -259,9 +282,9 @@ returns the smallest-distance unique IDs. R1/R2 non-finite failures, R3/R4 weake
 pretrained B1 comparison, five-fold stability, and teacher/V1/two-view gallery policies remain
 visible in [Notebook 09, Sections 6-15](../notebooks/task-4/09_task4_part2_visual_search.ipynb).
 
-![Figure 2 - Task 4 development method comparison](../results/figures/task4/final/method_quality_comparison.png)
+![Figure 4 - Task 4 development method comparison](../results/figures/task4/final/method_quality_comparison.png)
 
-**Figure 2.** R5 led the frozen development comparison; pretrained B1 is hatched because it was
+**Figure 4.** R5 led the frozen development comparison; pretrained B1 is hatched because it was
 never eligible for submission. The strong fixed-feature methods remain essential baselines.
 
 On holdout, R5 achieved **0.5162 teacher-query nDCG@10**, versus 0.5151 for HOG fusion, 0.5096
@@ -286,14 +309,16 @@ evidence only if the team's final application actually implements and tests it.*
 Our overall judgement is therefore task-specific, not a claim that one system is universally
 ready. Task 1 is useful for Top-5 assisted type suggestions but fails rare labels; Task 2 is the
 strongest calibrated classifier on same-source data but is brightness-sensitive; Task 3 supports
-editable Gender/Usage suggestions with weak rare-class and independence evidence; and Task 4 gives
+editable Gender/Usage suggestions with weak rare-class recognition and unproven new-source transfer; and Task 4 gives
 useful ranked catalogue matches but is statistically tied with its strongest fixed baseline and
 fragile to large canvases. The system is suitable for a monitored catalogue-assistance pilot with
 human approval. Fully automatic publication and transfer to new retailers, cameras, or populations
 remain unproven.
 
-The four official classifier exports each contain all **5,829** requested IDs and must be merged in
-the required unchanged order and schema: `id,gender,articleType,season,usage`. Because this official
+The four official classifier exports must each contain all **5,829** requested IDs and be merged in
+the required unchanged order and schema: `id,gender,articleType,season,usage`. Task 3's selected-refit
+assessment does not create that combined file; export coverage must be checked against the exact
+selected checkpoints. Because this official
 prediction set has no ground-truth labels, it verifies coverage and format but cannot support a
 performance claim. Future improvement requires a target-domain dataset with documented source,
 sampling, annotation rules, time and capture conditions, representative labels, and a new untouched
@@ -325,15 +350,17 @@ KDE is only a smooth visual guide and orange marks the empirical middle 95%. The
 interval stays above zero, supporting improvement over the baseline but not a p-value or a
 new-source guarantee. Source: Notebook 05, Section 8.
 
-![Figure A4 - Task 3 Gender holdout comparison](../results/figures/task3/final_evaluation/gender_refit_vs_average_f1.png)
+![Figure A4 - Task 3 Gender MixUp refit errors](../results/figures/task3/selected_refit_evaluation/gender_confusion.png)
 
-**Figure A4. Task 3 Gender class F1.** The single refit is similar to the five-model average;
-Unisex remains the principal weakness. Source: Notebook 07, Section 10.1.
+**Figure A4. Task 3 Gender MixUp refit confusion matrix.** Counts and row percentages show
+the 140 missed Unisex products, including 86 tagged Men and 45 tagged Women. Reference labels
+are unchanged; the matrix assesses the single selected refit. Source: Notebook 07, Section 7.
 
-![Figure A5 - Task 3 Usage holdout comparison](../results/figures/task3/final_evaluation/usage_refits_holdout_f1.png)
+![Figure A5 - Task 3 Usage E8 refit errors](../results/figures/task3/selected_refit_evaluation/usage_confusion.png)
 
-**Figure A5. Task 3 Usage class F1.** E8 expands observed rare-class coverage, but Party remains
-zero and Home is unassessed. Source: Notebook 07, Sections 9.5 and 10.3.
+**Figure A5. Task 3 Usage E8 refit confusion matrix.** Common classes account for most correct
+predictions; only five of 22 rare-occasion examples are recognised. Party remains missed and
+Home is unassessed, although its zero F1 stays in the nine-class mean. Source: Notebook 07, Section 8.
 
 ![Figure A6 - Task 4 holdout uncertainty](../results/figures/task4/final_evaluation/holdout_bootstrap_intervals.png)
 
@@ -348,7 +375,7 @@ The concise report deliberately points to, rather than duplicates, the full audi
 - Shared provenance, cleaning, family-safe folds, EDA, and hypotheses: [Notebook 01](../notebooks/01_data_preparation.ipynb), especially Sections 1-5.
 - Task 1 development and final evidence: [Notebook 02](../notebooks/02_task1_part1_article_type.ipynb), Sections 7-14; [Notebook 03](../notebooks/03_task1_part2_final_evaluation.ipynb), Sections 7-12.
 - Task 2 gates and final evidence: [Notebook 04](../notebooks/04_task2_part1_season.ipynb), Sections 8-14; [Notebook 05](../notebooks/05_task2_part2_final_evaluation.ipynb), Sections 3-15.
-- Task 3 development and evaluation: [Notebook 06](../notebooks/06_task3_part1_gender_usage.ipynb), Sections 9-20; [Notebook 07](../notebooks/07_task3_part2_final_evaluation.ipynb), Sections 9-16.
+- Task 3 development and evaluation: [Notebook 06](../notebooks/06_task3_part1_gender_usage.ipynb), Sections 9–19; [Notebook 07](../notebooks/07_task3_part2_final_evaluation.ipynb), Sections 6–15.
 - Task 4 development and evaluation: [Notebook 09](../notebooks/task-4/09_task4_part2_visual_search.ipynb), Sections 6-15; [Notebook 10](../notebooks/task-4/10_task4_part3_final_evaluation.ipynb), Sections 3-15.
 
 Before submission, replace the author placeholders; confirm the actual application state; generate

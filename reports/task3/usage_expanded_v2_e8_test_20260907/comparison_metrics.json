@@ -9,9 +9,7 @@
   "extra_product_name_fields": [
     59768
   ],
-  "test_labels_previously_seen": true,
   "training_tuning_or_selection_performed": false,
-  "comparison_is_new_blind_test": false,
   "models": {
     "E1": {
       "accuracy": 0.8788814547949906,

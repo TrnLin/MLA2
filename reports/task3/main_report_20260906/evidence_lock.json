@@ -4,7 +4,7 @@
   "baseline_selection": "Use the completed five-fold 2026-08-30 baseline pack; exclude the earlier superseded fold-0 run.",
   "stages": {
     "baseline": {
-      "label": "E1 \u00b7 SmallCNN",
+      "label": "E1 · SmallCNN",
       "experiment_id": "t3_primary_baseline_smallcnn",
       "target": "gender",
       "labels": "Original",
@@ -31,7 +31,7 @@
       ]
     },
     "brightness": {
-      "label": "E2 \u00b7 Brightness",
+      "label": "E2 · Brightness",
       "experiment_id": "t3_gender_brightness_smallcnn",
       "target": "gender",
       "labels": "Original",
@@ -58,7 +58,7 @@
       ]
     },
     "balance": {
-      "label": "E3 \u00b7 Class weights",
+      "label": "E3 · Class weights",
       "experiment_id": "t3_gender_class_balanced_smallcnn",
       "target": "gender",
       "labels": "Original",
@@ -85,7 +85,7 @@
       ]
     },
     "resnet": {
-      "label": "E4 \u00b7 TinyResNet",
+      "label": "E4 · TinyResNet",
       "experiment_id": "t3_gender_tinyresnet18_pm",
       "target": "gender",
       "labels": "Original",
@@ -112,7 +112,7 @@
       ]
     },
     "blur": {
-      "label": "E5 \u00b7 CompactBlurCNN",
+      "label": "E5 · CompactBlurCNN",
       "experiment_id": "t3_gender_compact_blur_cnn",
       "target": "gender",
       "labels": "Original",
@@ -139,7 +139,7 @@
       ]
     },
     "gem": {
-      "label": "E6 \u00b7 GeM pooling",
+      "label": "E6 · GeM pooling",
       "experiment_id": "t3_gender_gem_p3_smallcnn",
       "target": "gender",
       "labels": "Original",
@@ -166,7 +166,7 @@
       ]
     },
     "hrnet": {
-      "label": "E7 \u00b7 TinyHRNet",
+      "label": "E7 · TinyHRNet",
       "experiment_id": "t3_gender_tinyhrnet20",
       "target": "gender",
       "labels": "Original",
@@ -193,7 +193,7 @@
       ]
     },
     "early": {
-      "label": "E8 \u00b7 Early stopping",
+      "label": "E8 · Early stopping",
       "experiment_id": "t3_gender_gem_p3_early_stopping",
       "target": "gender",
       "labels": "Original",
@@ -220,7 +220,7 @@
       ]
     },
     "filter": {
-      "label": "E9 \u00b7 Semantic filter",
+      "label": "E9 · Semantic filter",
       "experiment_id": "t3_gender_semantic_filter_gem_p3",
       "target": "gender",
       "labels": "Original",
@@ -247,7 +247,7 @@
       ]
     },
     "aux": {
-      "label": "E10 \u00b7 Audience head",
+      "label": "E10 · Audience head",
       "experiment_id": "t3_gender_audience_aux_gem_p3",
       "target": "gender",
       "labels": "Original",
@@ -274,7 +274,7 @@
       ]
     },
     "translation": {
-      "label": "G2 \u00b7 Translation",
+      "label": "G2 · Translation",
       "experiment_id": "t3_gender_v2_g2_translation",
       "target": "gender",
       "labels": "Original",
@@ -378,7 +378,7 @@
       ]
     },
     "sam30": {
-      "label": "SAM \u00b7 30 epochs",
+      "label": "SAM · 30 epochs",
       "experiment_id": "t3_gender_name_truth_mixup_alpha020_sam005",
       "target": "gender",
       "labels": "Name-corrected",
@@ -392,7 +392,7 @@
       ]
     },
     "sam25": {
-      "label": "SAM \u00b7 25 epochs",
+      "label": "SAM · 25 epochs",
       "experiment_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25",
       "target": "gender",
       "labels": "Name-corrected",
@@ -406,7 +406,7 @@
       ]
     },
     "final": {
-      "label": "SAM25 \u00b7 Five folds",
+      "label": "SAM25 · Five folds",
       "experiment_id": "t3_gender_name_truth_mixup_alpha020_sam005_epoch25_cv",
       "target": "gender",
       "labels": "Name-corrected",
@@ -426,7 +426,7 @@
       ]
     },
     "usage1": {
-      "label": "Usage E1 \u00b7 Baseline",
+      "label": "Usage E1 · Baseline",
       "experiment_id": "t3_primary_baseline_smallcnn",
       "target": "usage",
       "labels": "Original",
@@ -446,7 +446,7 @@
       ]
     },
     "usage2": {
-      "label": "Usage E2 \u00b7 Class weights",
+      "label": "Usage E2 · Class weights",
       "experiment_id": "t3_usage_class_balanced_smallcnn",
       "target": "usage",
       "labels": "Original",
@@ -473,7 +473,7 @@
       ]
     },
     "usage8": {
-      "label": "Usage E8 \u00b7 Translation",
+      "label": "Usage E8 · Translation",
       "experiment_id": "t3_usage_translation_2px_smallcnn",
       "target": "usage",
       "labels": "Original",
@@ -500,7 +500,7 @@
       ]
     },
     "baseline04": {
-      "label": "E1 \u00b7 SmallCNN",
+      "label": "E1 · SmallCNN",
       "experiment_id": "t3_primary_baseline_smallcnn",
       "target": "gender",
       "labels": "Original",
@@ -514,7 +514,7 @@
       ]
     },
     "gem04": {
-      "label": "E6 \u00b7 GeM pooling",
+      "label": "E6 · GeM pooling",
       "experiment_id": "t3_gender_gem_p3_smallcnn",
       "target": "gender",
       "labels": "Original",
@@ -528,7 +528,7 @@
       ]
     },
     "translation04": {
-      "label": "G2 \u00b7 Translation",
+      "label": "G2 · Translation",
       "experiment_id": "t3_gender_v2_g2_translation",
       "target": "gender",
       "labels": "Original",
@@ -542,7 +542,7 @@
       ]
     },
     "usage3": {
-      "label": "Usage E3 \u00b7 Dropout 0.20",
+      "label": "Usage E3 · Dropout 0.20",
       "target": "usage",
       "folds": [
         0,
@@ -568,7 +568,7 @@
       ]
     },
     "usage4": {
-      "label": "Usage E4 \u00b7 TinyResNet",
+      "label": "Usage E4 · TinyResNet",
       "target": "usage",
       "folds": [
         0,
@@ -594,7 +594,7 @@
       ]
     },
     "usage5": {
-      "label": "Usage E5 \u00b7 Label smoothing",
+      "label": "Usage E5 · Label smoothing",
       "target": "usage",
       "folds": [
         0,
@@ -620,7 +620,7 @@
       ]
     },
     "usage6": {
-      "label": "Usage E6 \u00b7 Focal loss",
+      "label": "Usage E6 · Focal loss",
       "target": "usage",
       "folds": [
         0,
@@ -646,7 +646,7 @@
       ]
     },
     "usage7": {
-      "label": "Usage E7 \u00b7 TinyConvNeXt",
+      "label": "Usage E7 · TinyConvNeXt",
       "target": "usage",
       "folds": [
         0,
@@ -672,7 +672,7 @@
       ]
     },
     "usage9": {
-      "label": "Usage E9 \u00b7 Exception balance",
+      "label": "Usage E9 · Exception balance",
       "target": "usage",
       "folds": [
         0,
@@ -698,7 +698,7 @@
       ]
     },
     "g1": {
-      "label": "G1 \u00b7 Foreground mask",
+      "label": "G1 · Foreground mask",
       "target": "gender",
       "folds": [
         0,
@@ -711,7 +711,7 @@
       ]
     },
     "g3": {
-      "label": "G3 \u00b7 Component weights",
+      "label": "G3 · Component weights",
       "target": "gender",
       "folds": [
         0,
@@ -724,7 +724,7 @@
       ]
     },
     "gd1": {
-      "label": "GD1 \u00b7 Mild darkening",
+      "label": "GD1 · Mild darkening",
       "target": "gender",
       "folds": [
         0,
@@ -802,7 +802,7 @@
       ]
     },
     "u1": {
-      "label": "U1 \u00b7 Component weights",
+      "label": "U1 · Component weights",
       "target": "usage",
       "folds": [
         0,
@@ -815,7 +815,7 @@
       ]
     },
     "swin_u": {
-      "label": "Usage \u00b7 Scratch Micro-Swin",
+      "label": "Usage · Scratch Micro-Swin",
       "target": "usage",
       "folds": [
         0,
@@ -828,7 +828,7 @@
       ]
     },
     "usage104": {
-      "label": "Usage E1 \u00b7 Baseline",
+      "label": "Usage E1 · Baseline",
       "experiment_id": "t3_primary_baseline_smallcnn",
       "target": "usage",
       "labels": "Original",
@@ -842,7 +842,7 @@
       ]
     },
     "usage204": {
-      "label": "Usage E2 \u00b7 Class weights",
+      "label": "Usage E2 · Class weights",
       "experiment_id": "t3_usage_class_balanced_smallcnn",
       "target": "usage",
       "labels": "Original",
@@ -863,7 +863,7 @@
       ]
     },
     "hog_g": {
-      "label": "Gender S1 \u00b7 HOG SVM",
+      "label": "Gender S1 · HOG SVM",
       "target": "gender",
       "folds": [
         0,
@@ -876,7 +876,7 @@
       ]
     },
     "type_u": {
-      "label": "Usage S1 \u00b7 Type cascade",
+      "label": "Usage S1 · Type cascade",
       "target": "usage",
       "folds": [
         0,
@@ -889,7 +889,7 @@
       ]
     },
     "hog_u": {
-      "label": "Usage U2 \u00b7 HOG SVM",
+      "label": "Usage U2 · HOG SVM",
       "target": "usage",
       "folds": [
         0,
@@ -904,8 +904,7 @@
   },
   "figures": {
     "cv": "reports/task3_gender_sam25_cv_result_20260906/fold_summary.png",
-    "curves": "reports/task3_gender_sam25_cv_result_20260906/learning_curves.png",
-    "holdout": "results/figures/task3/main_gender_holdout.png"
+    "curves": "reports/task3_gender_sam25_cv_result_20260906/learning_curves.png"
   },
   "files": {
     "reports/task3_main_report_20260906/results/runs.csv": "aae3e2b64332a892548ad86eed7c1e0bbecf97340913c4ec1a3999ab179b7ba5",
@@ -913,10 +912,6 @@
     "reports/task3_gender_sam25_cv_result_20260906/model_manifest.json": "7a65fb64f18221ddb11d2c43cb4f1200a1ed970f4a938ec53673a303fb766819",
     "reports/task3_gender_sam25_cv_result_20260906/fold0/config.json": "18a4f91771d007c15c033c8c394d3f7a8ddd5de1da01a5f8c4dea9243edba75b",
     "reports/task3_gender_sam25_cv_result_20260906/fold_summary.png": "9f75acb1cc4059b3fa18d76c1ea130e9502156c537377764d9b05c4cb4a72d77",
-    "reports/task3_gender_sam25_cv_result_20260906/learning_curves.png": "f871c449f37e8225b42231a0a99fa5979ad4b614cea61637ca887a1e83775156",
-    "reports/task3_main_report_20260906/holdout_summary.csv": "49a5155b5f13ede93b251503ec62df6d555bca954901bbfa3ee382dbd670f384",
-    "reports/task3_main_report_20260906/holdout_per_class.csv": "94f2f8b73a1b94de56ea544df3de0d4b0e91f435d22d3be34de3526cf8964b4a",
-    "reports/task3_main_report_20260906/holdout_confusion_matrix.csv": "058d8657d60098e5ab8085807e138d87c34f450371f2aea035b84315911a68e7",
-    "results/figures/task3/main_gender_holdout.png": "0f908ca4b4492d7a37f230fe0850cfb0390c6feac5663ab8803fc3cf5e2bb353"
+    "reports/task3_gender_sam25_cv_result_20260906/learning_curves.png": "f871c449f37e8225b42231a0a99fa5979ad4b614cea61637ca887a1e83775156"
   }
 }

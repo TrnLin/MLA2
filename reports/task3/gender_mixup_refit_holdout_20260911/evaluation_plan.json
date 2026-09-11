@@ -1,0 +1,10 @@
+{
+  "recorded_at_utc": "2026-09-11T05:34:40.846261+00:00",
+  "run_id": "t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e",
+  "checkpoint_sha256": "860f688162cccfcd903e8e4874b368697c0637b6e6a15baae3b4d4a3008f4ef9",
+  "primary_metric": "five-class macro-F1 on original teacher labels",
+  "rule": "single fixed epoch-30 checkpoint; saved normalization; eval; softmax then argmax",
+  "scope": "Final evaluation of the fixed Gender MixUp epoch-30 refit",
+  "user_request": "final eval will only use the refitted mixuse to analyze",
+  "teacher_test_evaluated": false
+}

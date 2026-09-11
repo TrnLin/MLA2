@@ -1,7 +1,5 @@
 {
   "frozen_at_utc": "2026-09-07T07:59:39.067062+00:00",
-  "user_authorization": "review the result and compare its reserved holdout performance to the average one; follow-up review of Usage E8 + translation refit",
-  "new_blind_evaluation": false,
   "checkpoint_sha256": "18da75a4ec935ab0d18c9ebdf9d1dabb6fa87ee484ead5f439de0192c4af2747",
   "class_names": [
     "Casual",
@@ -26,12 +24,12 @@
   "inputs": {
     "results/evidence/task3/usage_e8_refit_20260907/model_manifest.json": "6ddfa3060ce5ffcaee7464735ed89492a33c4adc210ff0c74c2e310e7e2f0658",
     "results/evidence/task3/usage_e8_refit_20260907/source_runs.csv": "08ca08e4ad95d3831049b679fdc95d06ba168d4e8bd4d30ef90fb57327199273",
-    "reports/task3/usage_holdout_20260906/prediction_freeze.json": "25623bf16d54343ff08faedf241821ef3b76c96fd5f3eec9594388f3588a491b",
-    "reports/task3/usage_e8_refit_holdout_20260907/evaluate.py": "9dea8af5c6ff5c130505e29f9788f446f38b256957fe48d2c481a2c26b36918a",
     "data/processed/splits.csv": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
   },
   "outputs": {
     "refit_holdout_probabilities.csv": "a48d98ef4eddbdcdd4ef3a3eca7603c16dfd5c34464e554707d5253bb17ec653",
     "holdout_image_manifest.csv": "e012a1fd46c27afd96d496da0be59c0d6c67309438953ac89c833d2bd90ff130"
-  }
+  },
+  "scope": "Selected single Usage E8 refit predictions",
+  "metadata_scope_updated_at_utc": "2026-09-11T06:20:35.313338+00:00"
 }

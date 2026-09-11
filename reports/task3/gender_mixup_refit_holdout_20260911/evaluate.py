@@ -1,0 +1,184 @@
+"""Score only the fixed full-development MixUp refit for final evaluation."""
+
+import json
+import time
+from dataclasses import fields
+from datetime import datetime, timezone
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import torch
+from torch.utils.data import DataLoader, Dataset
+
+from fashion.config import ROOT
+from fashion.data import load_splits
+from fashion.data.dataset import load_splits_for_final_evaluation
+from fashion.data.hashing import compute_sha256
+from fashion.data.images import load_and_transform_image
+from fashion.task3_development import verify_mixup_selection
+from fashion.train.config import Task3BaselineConfig
+from fashion.train.metrics import classification_metrics
+from fashion.train.model import Task3GeM3CNN
+from fashion.train.task3_gender_precision import ieee_precision
+
+REPORT = Path(__file__).resolve().parent
+CLASSES = ["Boys", "Girls", "Men", "Unisex", "Women"]
+COLS = [f"probability_{i}_{name}" for i, name in enumerate(CLASSES)]
+
+
+def save(name, value):
+    (REPORT / name).write_text(json.dumps(value, indent=2) + "\n")
+
+
+class Images(Dataset):
+    def __init__(self, rows, statistics):
+        self.rows, self.statistics = rows, statistics
+
+    def __len__(self):
+        return len(self.rows)
+
+    def __getitem__(self, index):
+        array = load_and_transform_image(
+            ROOT / self.rows.iloc[index].path,
+            image_size=(80, 60),
+            mean=self.statistics["mean"],
+            std=self.statistics["std"],
+        )
+        return torch.from_numpy(array.transpose(2, 0, 1).copy())
+
+
+def main():
+    if (REPORT / "evaluation.json").exists():
+        raise FileExistsError("Saved evaluation exists; replay it instead of rerunning inference")
+    torch.set_num_threads(2)
+    manifest = verify_mixup_selection(ROOT)
+    config = json.loads((ROOT / manifest["config"]["path"]).read_text())
+    statistics = json.loads((ROOT / manifest["normalization"]["path"]).read_text())
+    for relative in ("train/model.py", "train/config.py", "data/images.py"):
+        assert (
+            compute_sha256(ROOT / "src/fashion" / relative)
+            == config["implementation_sha256"][relative]
+        )
+    checkpoint = torch.load(
+        ROOT / manifest["checkpoint"]["path"], map_location="cpu", weights_only=True
+    )
+    assert checkpoint["config"] == config and checkpoint["run_id"] == manifest["run_id"]
+    assert checkpoint["class_names"] == CLASSES
+    assert checkpoint["epochs_completed"] == checkpoint["selected_epoch"] == 30
+    for key, value in checkpoint["normalization"].items():
+        assert statistics[key] == value
+    kwargs = {field.name: config[field.name] for field in fields(Task3BaselineConfig)}
+    kwargs["channels"] = tuple(kwargs["channels"])
+    model = Task3GeM3CNN(Task3BaselineConfig(**kwargs), classifier_dropout=0.3)
+    model.load_state_dict(checkpoint["model_state_dict"], strict=True)
+    model.eval().requires_grad_(False)
+    before = {name: value.clone() for name, value in model.state_dict().items()}
+    splits = load_splits(ROOT / "data/processed/splits.csv")
+    training = splits.loc[splits.partition.eq("development")]
+    holdout = splits.loc[splits.partition.eq("holdout")].sort_values("id").reset_index(drop=True)
+    assert len(training) == 32773 and len(holdout) == 5778
+    assert set(holdout.id).isdisjoint(training.id)
+    assert set(holdout.product_family_group).isdisjoint(training.product_family_group)
+    for row in holdout.itertuples():
+        assert compute_sha256(ROOT / row.path) == row.sha256
+    image_manifest = holdout[["id", "path", "sha256", "product_family_group"]]
+    image_manifest.to_csv(REPORT / "holdout_image_manifest.csv", index=False)
+    save(
+        "evaluation_plan.json",
+        {
+            "recorded_at_utc": datetime.now(timezone.utc).isoformat(),
+            "run_id": manifest["run_id"],
+            "checkpoint_sha256": manifest["checkpoint"]["sha256"],
+            "primary_metric": "five-class macro-F1 on original teacher labels",
+            "rule": (
+                "single fixed epoch-30 checkpoint; saved normalization; eval; softmax then argmax"
+            ),
+            "new_blind_evaluation": False,
+            "scope": "final evaluation only; reserved rows already opened in prior project work",
+            "user_request": "final eval will only use the refitted mixuse to analyze",
+            "teacher_test_evaluated": False,
+        },
+    )
+    print("Verified fixed MixUp checkpoint and all 5,778 evaluation image hashes", flush=True)
+    start = time.perf_counter()
+    batches = []
+    with ieee_precision(torch), torch.inference_mode():
+        for batch in DataLoader(Images(holdout, statistics), batch_size=32, shuffle=False):
+            batches.append(torch.softmax(model(batch), dim=1).numpy())
+    elapsed = time.perf_counter() - start
+    probabilities = np.concatenate(batches).astype(np.float64)
+    np.testing.assert_allclose(probabilities.sum(1), 1, atol=1e-6, rtol=0)
+    assert all(torch.equal(value, before[name]) for name, value in model.state_dict().items())
+    predictions = image_manifest.copy()
+    predictions[COLS] = probabilities
+    predictions["predicted_index"] = probabilities.argmax(1)
+    predictions["predicted_gender"] = np.asarray(CLASSES)[probabilities.argmax(1)]
+    predictions["confidence"] = probabilities.max(1)
+    predictions.to_csv(REPORT / "refit_holdout_probabilities.csv", index=False)
+    save(
+        "prediction_freeze.json",
+        {
+            "frozen_at_utc": datetime.now(timezone.utc).isoformat(),
+            "checkpoint_sha256": manifest["checkpoint"]["sha256"],
+            "predictions_sha256": compute_sha256(REPORT / "refit_holdout_probabilities.csv"),
+            "device": "cpu",
+            "threads": 2,
+            "batch_size": 32,
+            "torch": torch.__version__,
+            "precision": "IEEE float32",
+            "weights_and_buffers_unchanged": True,
+            "inference_seconds_including_image_preprocessing": elapsed,
+        },
+    )
+    # Predictions are frozen before the protected loader joins reference labels.
+    labels = (
+        load_splits_for_final_evaluation(evaluation_unlocked=True).set_index("id").loc[holdout.id]
+    )
+    y = labels.gender.map(dict(zip(CLASSES, range(5)))).to_numpy(dtype=int)
+    metrics = classification_metrics(y, probabilities, CLASSES)
+    predictions["actual_gender"] = labels.gender.to_numpy()
+    predictions["true_index"] = y
+    predictions["articleType"] = labels.articleType.to_numpy()
+    predictions.to_csv(REPORT / "holdout_predictions_and_labels.csv", index=False)
+    pd.DataFrame(metrics["per_class"]).to_csv(REPORT / "holdout_per_class.csv", index=False)
+    save(
+        "evaluation.json",
+        {
+            "run_id": manifest["run_id"],
+            "checkpoint_sha256": manifest["checkpoint"]["sha256"],
+            "checks_passed": True,
+            "holdout_images": len(y),
+            "metrics": metrics,
+            "training": manifest["metrics"],
+            "new_blind_evaluation": False,
+            "teacher_test_evaluated": False,
+            "scored_at_utc": datetime.now(timezone.utc).isoformat(),
+            "inference_seconds_including_image_preprocessing": elapsed,
+        },
+    )
+    inputs = [Path(manifest[key]["path"]) for key in ["checkpoint", "config", "normalization"]]
+    inputs += [Path("data/processed/splits.csv"), Path(__file__).resolve().relative_to(ROOT)]
+    save(
+        "evaluation_provenance.json",
+        {
+            "inputs": {str(path): compute_sha256(ROOT / path) for path in inputs},
+            "outputs": {
+                path.name: compute_sha256(path)
+                for path in REPORT.iterdir()
+                if path.suffix in {".csv", ".json"} and path.name != "evaluation_provenance.json"
+            },
+        },
+    )
+    print(
+        json.dumps(
+            {key: metrics[key] for key in ["macro_f1", "accuracy", "nll", "brier", "ece_15"]},
+            indent=2,
+        )
+    )
+    print(pd.DataFrame(metrics["per_class"]).to_string(index=False))
+    print(f"Inference: {elapsed:.3f} seconds", flush=True)
+
+
+if __name__ == "__main__":
+    main()

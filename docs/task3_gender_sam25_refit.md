@@ -1,4 +1,4 @@
-# Final Gender SAM25 refit
+# Gender SAM25 comparison refit
 
 Open `notebooks/task3_training/gender_sam25_refit.ipynb` in a fresh Colab L4
 runtime after the new code is available on GitHub, then Run All.
@@ -45,12 +45,12 @@ No holdout/test evaluation or submission file is produced here. Mixed training
 loss is a training diagnostic; it cannot establish validation performance.
 The five-fold scores belong to the earlier fold models, not this new checkpoint.
 
-The completed refit was accepted on 7 September 2026 in
+The completed training artifact is described in
 [ADR 0025](decisions/0025-task3-gender-sam25-refit-final-model.md).
-Use its [acceptance manifest](../reports/task3/gender_final_sam25_refit_20260907/model_manifest.json)
-for the final model. ADR 0020 and the five-model artifact remain historical evidence.
-The original training-only receipt remains unchanged; later holdout analysis is in
-[the Task 3 final evaluation notebook](../notebooks/07_task3_part2_final_evaluation.ipynb).
+Its original training receipt remains unchanged. SAM25 contributes to the
+development comparison; the selected Gender model is the MixUp 0.20 refit at
+epoch 30. See [the main notebook](../notebooks/06_task3_part1_gender_usage.ipynb)
+for the full candidate comparison and recipe choice.
 
 Equivalent command, from a checkout with the teacher images already available:
 

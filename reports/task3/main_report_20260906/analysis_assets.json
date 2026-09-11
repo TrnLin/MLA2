@@ -130,9 +130,6 @@
   "reports/task3_gender_sam25_cv_result_20260906/fold4/history.csv": "2233fa9f79f2c769b5adc488b04071f68d7277d473af28abc5ca7029e2853efb",
   "reports/task3_gender_sam25_cv_result_20260906/model_manifest.json": "7a65fb64f18221ddb11d2c43cb4f1200a1ed970f4a938ec53673a303fb766819",
   "reports/task3_gender_sam25_cv_result_20260906/fold0/config.json": "18a4f91771d007c15c033c8c394d3f7a8ddd5de1da01a5f8c4dea9243edba75b",
-  "reports/task3_main_report_20260906/holdout_summary.csv": "49a5155b5f13ede93b251503ec62df6d555bca954901bbfa3ee382dbd670f384",
-  "reports/task3_main_report_20260906/holdout_per_class.csv": "94f2f8b73a1b94de56ea544df3de0d4b0e91f435d22d3be34de3526cf8964b4a",
-  "reports/task3_main_report_20260906/holdout_confusion_matrix.csv": "058d8657d60098e5ab8085807e138d87c34f450371f2aea035b84315911a68e7",
   "data/processed/teacher_plus_rare_usage_20260906/splits.csv": "7d5f3a986ef8e00f53ee1c86d408f1c3a155d6b0a0ab99bef4c9f7eb27dbda77",
   "data/processed/teacher_plus_rare_usage_v2_20260906/splits.csv": "0bd490672543b7022fa7a883be9b006d63681d7c168e497e0388616836696776"
 }

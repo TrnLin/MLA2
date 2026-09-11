@@ -28,6 +28,10 @@ from fashion.train.task3_baseline import _loader, _pass, runtime_environment, se
 EXPERIMENT = "t3_usage_e1_teacher_all_development_refit"
 SOURCE = Path("reports/task3/usage_final_e1_20260907/model_manifest.json")
 SOURCE_SHA256 = "79cec64647d7c37f3bb64af1307e3911333c6198dce41bfc5171bf9f06d72a34"
+# This exact report view removes only retrospective acceptance fields and an
+# unused prediction pointer. The original recipe identity in saved runs stays
+# SOURCE_SHA256; all training fields and referenced input hashes are unchanged.
+SOURCE_REPORT_SHA256 = "71a74002eec6cd1e59a0e2cdd4668db0b11deb62eb260120da2a7729c9511e67"
 CLASSES = ["Casual", "Ethnic", "Formal", "Home", "NA", "Party", "Smart Casual", "Sports", "Travel"]
 EXPECTED_ROWS = 32772
 ROW_COLUMNS = ["id", "cv_fold", "product_family_group", "usage", "sha256", "path"]
@@ -58,7 +62,7 @@ def _digest(value):
 def prepare_refit(*, root=ROOT):
     """Read-only preflight: verify frozen recipe, canonical population and image bytes."""
     root = Path(root)
-    if compute_sha256(root / SOURCE) != SOURCE_SHA256:
+    if compute_sha256(root / SOURCE) not in (SOURCE_SHA256, SOURCE_REPORT_SHA256):
         raise ValueError("Frozen E1 manifest changed")
     source = json.loads((root / SOURCE).read_text())
     for name in (

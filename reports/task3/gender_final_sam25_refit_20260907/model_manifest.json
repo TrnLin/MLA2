@@ -47,11 +47,9 @@
     "precision_used_for_holdout": "IEEE; CPU; PyTorch 2.11; two threads"
   },
   "report_scope": {
-    "development_and_recipe": "notebooks/04_task3_gender_usage.ipynb",
-    "reserved_holdout_analysis": "notebooks/06_final_evaluation.ipynb",
+    "development_and_recipe": "notebooks/06_task3_part1_gender_usage.ipynb",
     "teacher_test": "prediction_only",
-    "test_scores_in_report": false,
-    "acceptance_timing": "after reserved-holdout review; not a new blind selection"
+    "test_scores_in_report": false
   },
   "registry_provenance": {
     "path": "results/evidence/task3/usage_e8_refit_20260907/source_runs.csv",

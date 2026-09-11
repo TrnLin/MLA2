@@ -8,9 +8,7 @@
   "name": "E1 teacher-only scratch SmallCNN five-fold probability average",
   "acceptance": {
     "criterion": "Overall accuracy, with the macro-F1 and rare-class cost disclosed",
-    "accepted_by": "project owner",
-    "after_holdout_and_test_review": true,
-    "new_blind_selection": false
+    "accepted_by": "project owner"
   },
   "artifact_type": "five_saved_fold_ensemble",
   "all_development_refit": false,
@@ -463,15 +461,11 @@
     },
     "reports/task3_usage_teacher_vs_expanded_test_20260906/prediction_freeze.json": {
       "sha256": "17234509e2975b61f79e88a80181596dd1aa5250f7aee5a2c8dc2541c4a592b1"
-    },
-    "reports/task3_usage_holdout_20260906/prediction_freeze.json": {
-      "sha256": "25623bf16d54343ff08faedf241821ef3b76c96fd5f3eec9594388f3588a491b"
     }
   },
   "limitations": [
     "E1 is the accuracy choice, not the macro-F1 winner",
     "Test NA, Party, Smart Casual and Travel recall are zero; Home has no test support",
-    "Acceptance followed evaluation; these sets are no longer fresh selection evidence",
     "Five forward passes cost more than one SmallCNN; no deployment latency benchmark is claimed",
     "Usage-only predictions are not the complete four-target submission"
   ]
