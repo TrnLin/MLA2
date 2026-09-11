@@ -91,6 +91,7 @@ def test_only_planned_notebook_names_are_present() -> None:
         "task3_training/gender_name_truth_screen.ipynb",
         "task3_training/gender_group_weight_screen.ipynb",
         "task3_training/gender_mixup_screen.ipynb",
+        "task3_training/gender_mixup_five_fold.ipynb",
         "task3_training/usage_expanded_e8.ipynb",
         "task3_training/gender_stronger_mixup_screen.ipynb",
         "task3_training/gender_sam_screen.ipynb",
