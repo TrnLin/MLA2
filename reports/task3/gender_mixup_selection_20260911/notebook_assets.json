@@ -1,0 +1,17 @@
+{
+  "reports/task3/gender_mixup_selection_20260911/summary.json": "4bed7d54a7c703f13dfe005bb1ba13e3eeb5fd2e0ba84666f2e28c0b6ca135d5",
+  "reports/task3/gender_mixup_selection_20260911/fold_comparison.csv": "a8dd74ae7b863df2cb47f678c0a7e5e53e541ae756593f788a7bf2ea8ddf8f61",
+  "reports/task3/gender_mixup_selection_20260911/class_comparison.csv": "9b4c1409a051f8eba3326449a09e7cf005e6f2c38edb2877e235d33339727b36",
+  "reports/task3/gender_mixup_selection_20260911/class_gaps.csv": "cd6f9741a203eb304066270f71205d5078e10c8980ec0cab36abdc1486db4b97",
+  "reports/task3/gender_mixup_selection_20260911/robustness_comparison.csv": "aa44b28d80969e53a05263e19e9e28623d075924721e2ef408da0edc03e5a7b8",
+  "reports/task3/gender_mixup_selection_20260911/original_label_robustness.csv": "3d70e2545031dce1807c49488dacc278923bf8c44c98981198b235eb1f609e73",
+  "reports/task3/gender_mixup_selection_20260911/article_error_changes.csv": "18444179d358e2d6ef331345f144a5796ddc968527a34b0787a2a25d2b3e1cea",
+  "reports/task3/gender_mixup_selection_20260911/bootstrap_intervals.json": "7b1ccb69497d84454fcac82ca9ce148812964288944f28663fd16bf1d594b442",
+  "reports/task3/gender_mixup_selection_20260911/notebook_run_inventory.csv": "5750ad81113981e5a9fd88568eadc646ee99fc761764a1461d21425c8d76b711",
+  "reports/task3/gender_mixup_selection_20260911/notebook_experiment_coverage.csv": "f8c633a1afef805fd6e99a6e5797672b0f4d7dc716f6141fbb47b41da9a767ed",
+  "reports/task3/gender_mixup_selection_20260911/development_selection.json": "29a2e7f726c7a19b165db62487391f8de9db87d7ddc3b9b9979308d2f9e62d4d",
+  "reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv": "27eb79c71d999d3a21bce2f9c84bf57efb3722747452147574e2aed75b042263",
+  "results/figures/task3/gender_mixup_selection_20260911.png": "9e9bec1fd665c0d654d65335273bb7e57514f45db5611b192beb068abb2d5eae",
+  "results/figures/task3/gender_mixup_learning_curves_20260911.png": "585bc247576f5dca959824291f2ab9007edc7c4b2d60f5f756830674e99352db",
+  "results/figures/task3/gender_mixup_fold_losses_20260911.png": "92ae8ffa43c5163321ecc3c3a178c1c5b24236d081bc3e4aa93a96b6b77fa92a"
+}
