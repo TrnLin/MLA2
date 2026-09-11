@@ -140,51 +140,68 @@ Detailed results for each label and tests on altered images are in
 
 ## 4. Task 2 - Season Classification
 
-Season has four labels but weak visual ground truth: colour and garment form can suggest a season,
-while year, compression, ArticleType, and catalogue policy can also leak context. The investigation
-therefore moved incrementally. B0 predicted the training-fold majority (0.1657 OOF macro-F1). B1
-concatenated HOG edges and HSV colour, standardised the vector, and applied LinearSVC (0.6096).
-C1 SmallCNN, C2 small-stem ResNet18, and C3 MobileNetV3-Small then tested learned features under an
-equal eight-epoch budget. Input size, augmentation, learning rate, and weight decay were changed
-one declared factor at a time before C1 and C2 received equal full budgets. However, G1/G2 remain
-exploratory because their initial weights were not seed-controlled; selection-critical comparisons
-begin at corrected G3.
+Season has weak visual ground truth: form/colour may help, while imbalance, ArticleType, year,
+compression, and catalogue policy may mislead. Development-only EDA therefore motivated
+family-safe folds, pooled OOF macro-F1, shortcut slices, and robustness tests. Its hypothesis
+register was retrospective, not preregistered; holdout labels stayed sealed. See
+[Notebook 01, Section 4.8](../notebooks/01_data_preparation.ipynb) and
+[Notebook 04, Sections 2-4](../notebooks/04_task2_part1_season.ipynb).
 
-The targeted I1 intervention used effective-number class weights [11] but fell to 0.7015 macro-F1.
-I2 instead shared C1's four convolution blocks and 256-value embedding between a four-logit Season
-head and a 124-logit ArticleType training head. Its loss was
-`CE(Season) + 0.3 x masked CE(ArticleType)`; inference still requires only the image and discards the
-auxiliary head. This multi-task mechanism [12] improved the primary-seed OOF result to **0.7527**
-and also led C2 under seed 2026 (0.7447 versus 0.7331). A standard-stem ImageNet ResNet18 scored
-0.7542, only 0.0230 above its matched scratch control, but remained final-ineligible.
+**G0, B0, B1 - verify and establish baselines.** SmallCNN overfit and registry/checkpoint smoke tests
+passed, validating implementation, not performance. Training-fold-majority B0 obtained 0.4957
+accuracy through Summer-only predictions, hence 0.1657 macro-F1. B1 used
+`image -> [HOG edges || HSV colour histogram] -> standardisation -> four LinearSVC margins -> argmax`
+[2], [3] and reached 0.6096: fixed shape/colour carried signal but could not learn task-specific
+spatial features, justifying CNNs.
 
-The page limit prevents repeating all 20 configurations and their experiment labels. Read
-[Notebook 04, Sections 5-8](../notebooks/04_task2_part1_season.ipynb) for each label where it is
-introduced. Then read [Notebook 05, Sections 3.1-3.3](../notebooks/05_task2_part2_final_evaluation.ipynb)
-for the complete configuration/technical audit, G0-G9 question-rule-result-action map, and
-all-model chart. Notebook 04, Sections 5-15 retains the fold evidence, learning curves, rejected
-results, run IDs, hashes, freeze, and refit trace.
+**G1-G3 - screen, ablate, then correct the shortlist.** Equal eight-epoch, five-fold G1 mapped
+padded 80 x 60 RGB through C1 four-block SmallCNN, C2 small-stem ResNet18, or C3
+MobileNetV3-Small, pooling/classification, and four cross-entropy logits [4]-[6]. C2/C1/C3 scored
+0.7071/0.6999/0.6385, advancing C1/C2. G2 isolated size, colour jitter, or AdamW learning
+rate/weight decay [7]: P1-P0 = -0.0018, A1-A0 = -0.0104, C1-T1 = +0.0082, and C2-T2 = +0.0011,
+yielding P0/A0 and C1-T1/C2-T0. An audit found construction preceded seeding, making G1/G2
+descriptive, not causal. Corrected G3 seeded first and trained up to 30 epochs: C1 = 0.7377, C2 =
+0.7350. Their 0.0026 gap was below the 0.005 rule; both remained, while discarded options stayed
+unvalidated.
 
-![Figure 1 - All Task 2 development configurations](../results/figures/task2/development_model_comparison.png)
+**G4 - test EDA-driven interventions and the pretrained boundary.** Effective-number loss I1
+($\beta=0.9999$) tested minority repair [11], but macro-F1 fell to 0.7015 and Spring worsened. I2
+tested related-label transfer [12]: C1's four blocks/256-value embedding fed four Season logits and
+124 training-only ArticleType logits under
+$L=CE_{Season}+\lambda CE_{ArticleType}^{masked}$. Both $\lambda=0.1/0.3$ passed; 0.3 achieved
+0.7527, +0.0150 over C1 and +0.0276 on the ArticleType-conflict slice. Inference remains image-only
+and discards the auxiliary head. Matched standard-stem ResNet18 found ImageNet P* [13] +0.0230
+above scratch P0S; both were benchmark-only, and P* was final-ineligible under the scratch rule.
 
-**Figure 1.** All 20 registered configurations use the same 32,753 labelled development rows.
-Hatching marks benchmark-only controls and the dark border marks the selected primary-seed I2.
-These are point estimates from different gates, budgets, and seeds; the gate map, not raw rank,
-determines eligibility and advancement.
+**G5-G7 - test stability, diagnose, and freeze.** At seed 2026, I2 again led C2 (0.7447 versus
+0.7331). G6 added no models: it tested shortcut/error slices, perturbations [10], cost, calibration,
+10,000 family-bootstrap draws [9], and Grad-CAM. I2 passed all six predeclared G7 checks and was frozen.
+Figure 1 combines selection and uncertainty without equating different budgets/seeds. Full gates:
+[Notebook 05, Sections 3.1-3.3 and 8](../notebooks/05_task2_part2_final_evaluation.ipynb); fold
+evidence, curves, rejected results, run IDs, hashes, and freeze trace are in
+[Notebook 04, Sections 5-15](../notebooks/04_task2_part1_season.ipynb).
 
-The frozen I2 model was refitted for 24 epochs and evaluated once. Holdout macro-F1 was **0.7534**,
-balanced accuracy 0.7197, and accuracy 0.7643; class F1 was 0.6970 Fall, 0.7577 Spring, 0.7999
-Summer, and 0.7589 Winter. The family-blocked 95% interval was **[0.7333, 0.7720]**, while the
-I2-minus-B0 interval was **[0.5667, 0.6072]** (Figure A3). For logits $z$ and $T>0$, temperature
-scaling uses $p_k(T)=\exp(z_k/T)/\sum_j\exp(z_j/T)$. The development-OOF value $T=1.365$ was frozen
-before holdout; it softened confidence without changing the winning class and reduced holdout ECE
-from 0.0476 to 0.0195 [13]. The model has 1.21 M parameters, a 4.86 MB bundle, and 6.49 ms
-development CPU median latency. The key failure is shift: brightness 0.85 reduced macro-F1 to
-0.3712 and Spring recall to
-0.0043. Grad-CAM is used only as a non-causal review aid [14]. We judge I2 conditionally viable for
-reviewed, same-source catalogue support, not as an objective or fully automatic Season oracle. See
-[Notebook 05, Sections 5-15](../notebooks/05_task2_part2_final_evaluation.ipynb), especially Section
-8 for the 10,000-draw uncertainty distributions and their limits.
+![Figure 1 - Task 2 selection evidence and holdout uncertainty](../results/figures/task2/task2_report_selection_uncertainty.png)
+
+**Figure 1.** Left: three metrics for all 20 configurations on the same 32,753 development rows;
+the red ring marks primary-seed I2 and `[bench.]` marks controls. Right: 10,000 product-family
+resamples, KDE guides, empirical middle 95%, medians, and paired zero-effect reference. Full-size
+plots/interpretation: Notebook 05 Sections 3.3 and 8; Figure A3 retains the full uncertainty view.
+
+**G8-G9 - refit once, evaluate once, then judge.** G8 retrained frozen I2 from random weights for 24
+epochs on all 32,753 labelled development rows, packaging image-only inference without reopening
+selection. G9 predicted before label unlock and scored once: holdout macro-F1 =
+**0.7534**, balanced accuracy = 0.7197, accuracy = 0.7643, and Fall/Spring/Summer/Winter F1 =
+0.6970/0.7577/0.7999/0.7589. Family-blocked 95% intervals were **[0.7333, 0.7720]** for I2 and
+**[0.5667, 0.6072]** for I2-minus-B0.
+
+Temperature scaling applies $p_k(T)=\exp(z_k/T)/\sum_j\exp(z_j/T)$. Frozen development-OOF
+$T=1.365$ changed confidence, not labels, and reduced holdout ECE from 0.0476 to 0.0195 [14]. The
+1.21 M-parameter, 4.86 MB bundle measured 6.49 ms development CPU median latency. Yet brightness
+0.85 cut macro-F1 to 0.3712 and Spring recall to 0.0043; Grad-CAM was only a non-causal review aid
+[15]. I2 is conditionally viable for reviewed, same-source support, not as an objective/automatic
+Season oracle. Complete evaluation and limitations:
+[Notebook 05, Sections 5-15](../notebooks/05_task2_part2_final_evaluation.ipynb).
 
 ## 5. Task 3 - Gender and Usage Classification
 
@@ -192,8 +209,8 @@ reviewed, same-source catalogue support, not as an objective or fully automatic 
 
 Gender EDA exposed dominant Men/Women support, ambiguous Unisex boundaries, label conflicts with
 product-name cues, and a large training-validation gap. The shared scratch SmallCNN baseline was
-therefore followed by pooling, augmentation, fixed label-basis review, MixUp [15], and
-sharpness-aware minimisation (SAM) [16]. The final model uses four 3 x 3 convolution stages
+therefore followed by pooling, augmentation, fixed label-basis review, MixUp [16], and
+sharpness-aware minimisation (SAM) [17]. The final model uses four 3 x 3 convolution stages
 (32/64/128/256 channels), fixed GeM pooling, a 256-value representation, and five logits. During
 training, MixUp alpha 0.20 blends examples, SAM radius 0.05 searches for a flatter update, and 30%
 dropout regularises the head. The selected single 25-epoch refit has 390,181 parameters.
@@ -221,7 +238,7 @@ did not establish transfer to teacher catalogue images, so the submitted E8 mode
 
 These Task 3 refits were accepted after holdout review. Reserved images were not used for fitting,
 but final acceptance is not a fresh blind confirmation; repeated development selection can bias
-small apparent gains [17]. The honest judgement is limited viability for human-reviewed tagging.
+small apparent gains [18]. The honest judgement is limited viability for human-reviewed tagging.
 The full path is in [Notebook 06, Sections 9-19](../notebooks/06_task3_part1_gender_usage.ipynb),
 with final evidence in [Notebook 07, Sections 9-12](../notebooks/07_task3_part2_final_evaluation.ipynb).
 
@@ -229,13 +246,13 @@ with final evidence in [Notebook 07, Sections 9-12](../notebooks/07_task3_part2_
 
 Task 4 returns Top-K unique products rather than a class. Protocol A gives relevance grade 2 to the
 same ArticleType and base colour, 1 to the same ArticleType only, and 0 otherwise. It selects by
-mean linear nDCG@10, which rewards relevant results near the top [18]. Protocol B separately checks
+mean linear nDCG@10, which rewards relevant results near the top [19]. Protocol B separately checks
 same-family recovery. These metadata rules are reproducible proxies for visual relevance, not
 human similarity judgements.
 
 The baseline maps a 240 x 320 letterboxed image to spatial HSV and edge features, then ranks exact
 cosine distance. HOG fusion strengthened this fixed representation. Learned candidates mapped the
-image through scratch ResNet encoders trained with VICReg [19], family triplet loss, or, for R5, a
+image through scratch ResNet encoders trained with VICReg [20], family triplet loss, or, for R5, a
 scratch convolutional autoencoder. R5 reconstructs the image during training, L2-normalises its
 128-value bottleneck at inference, collapses duplicate product views by minimum distance, and
 returns the smallest-distance unique IDs. R1/R2 non-finite failures, R3/R4 weaker scores, the
@@ -254,7 +271,7 @@ R5 remains final because it was the pre-holdout eligible winner. Its package is 
 24.4 MB, and CPU query p50/p95 23.39/24.90 ms. Wide and tall canvases caused severe drops, so input
 validation/cropping and human inspection are required. Published fashion retrieval systems use
 different datasets, relevance rules, and often pretrained backbones; their scores are context, not
-a common leaderboard [20], [21]. See [Notebook 10, Sections 3-15](../notebooks/task-4/10_task4_part3_final_evaluation.ipynb).
+a common leaderboard [21], [22]. See [Notebook 10, Sections 3-15](../notebooks/task-4/10_task4_part3_final_evaluation.ipynb).
 
 ## 7. Integrated Application and Overall Judgement
 
@@ -383,38 +400,42 @@ in *Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR)*, 2019, pp. 9268-
 [12] R. Caruana, [“Multitask learning,”](https://doi.org/10.1023/A:1007379606734)
 *Mach. Learn.*, vol. 28, pp. 41-75, 1997.
 
-[13] C. Guo, G. Pleiss, Y. Sun, and K. Q. Weinberger,
+[13] J. Deng, W. Dong, R. Socher, L.-J. Li, K. Li, and L. Fei-Fei,
+[“ImageNet: A large-scale hierarchical image database,”](https://doi.org/10.1109/CVPR.2009.5206848)
+in *Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR)*, 2009, pp. 248-255.
+
+[14] C. Guo, G. Pleiss, Y. Sun, and K. Q. Weinberger,
 [“On calibration of modern neural networks,”](https://proceedings.mlr.press/v70/guo17a.html)
 in *Proc. 34th Int. Conf. Mach. Learn. (ICML)*, 2017, pp. 1321-1330.
 
-[14] R. R. Selvaraju *et al*.,
+[15] R. R. Selvaraju *et al*.,
 [“Grad-CAM: Visual explanations from deep networks via gradient-based localization,”](https://openaccess.thecvf.com/content_iccv_2017/html/Selvaraju_Grad-CAM_Visual_Explanations_ICCV_2017_paper.html)
 in *Proc. IEEE Int. Conf. Comput. Vis. (ICCV)*, 2017, pp. 618-626.
 
-[15] H. Zhang, M. Cisse, Y. N. Dauphin, and D. Lopez-Paz,
+[16] H. Zhang, M. Cisse, Y. N. Dauphin, and D. Lopez-Paz,
 [“mixup: Beyond empirical risk minimization,”](https://openreview.net/forum?id=r1Ddp1-Rb)
 in *Proc. Int. Conf. Learn. Representations (ICLR)*, 2018.
 
-[16] P. Foret, A. Kleiner, H. Mobahi, and B. Neyshabur,
+[17] P. Foret, A. Kleiner, H. Mobahi, and B. Neyshabur,
 [“Sharpness-aware minimization for efficiently improving generalization,”](https://openreview.net/forum?id=6Tm1mposlrM)
 in *Proc. Int. Conf. Learn. Representations (ICLR)*, 2021.
 
-[17] G. C. Cawley and N. L. C. Talbot,
+[18] G. C. Cawley and N. L. C. Talbot,
 [“On over-fitting in model selection and subsequent selection bias in performance evaluation,”](https://www.jmlr.org/papers/v11/cawley10a.html)
 *J. Mach. Learn. Res.*, vol. 11, pp. 2079-2107, 2010.
 
-[18] K. Järvelin and J. Kekäläinen,
+[19] K. Järvelin and J. Kekäläinen,
 [“Cumulated gain-based evaluation of IR techniques,”](https://doi.org/10.1145/582415.582418)
 *ACM Trans. Inf. Syst.*, vol. 20, no. 4, pp. 422-446, 2002.
 
-[19] A. Bardes, J. Ponce, and Y. LeCun,
+[20] A. Bardes, J. Ponce, and Y. LeCun,
 [“VICReg: Variance-invariance-covariance regularization for self-supervised learning,”](https://openreview.net/forum?id=xm6YD62D1Ub)
 in *Proc. Int. Conf. Learn. Representations (ICLR)*, 2022.
 
-[20] Z. Liu, P. Luo, S. Qiu, X. Wang, and X. Tang,
+[21] Z. Liu, P. Luo, S. Qiu, X. Wang, and X. Tang,
 [“DeepFashion: Powering robust clothes recognition and retrieval with rich annotations,”](https://openaccess.thecvf.com/content_cvpr_2016/html/Liu_DeepFashion_Powering_Robust_CVPR_2016_paper.html)
 in *Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR)*, 2016, pp. 1096-1104.
 
-[21] M. H. Kiapour, X. Han, S. Lazebnik, A. C. Berg, and T. L. Berg,
+[22] M. H. Kiapour, X. Han, S. Lazebnik, A. C. Berg, and T. L. Berg,
 [“Where to buy it: Matching street clothing photos in online shops,”](https://openaccess.thecvf.com/content_iccv_2015/html/Kiapour_Where_to_Buy_ICCV_2015_paper.html)
 in *Proc. IEEE Int. Conf. Comput. Vis. (ICCV)*, 2015, pp. 3343-3351.
