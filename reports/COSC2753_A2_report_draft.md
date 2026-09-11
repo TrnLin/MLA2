@@ -124,15 +124,19 @@ adaptive average pooling, a 128-unit hidden layer, and 124 logits. Controlled ch
 augmentation and inverse-frequency weighting while keeping the architecture, folds, and budget
 fixed. The plain CNN led development at **0.5315 +/- 0.0331 mean fold macro-F1**, versus 0.5218
 with augmentation, 0.5023 for HOG-kNN, 0.4889 for HOG-SVM, and 0.4564 for the weighted CNN.
-Weighting reduced zero-F1 classes only from 21 to 20 while damaging common performance, so it was
+Weighting reduced zero-F1 classes only from 21 to 20 while lowering overall macro-F1, so it was
 rejected rather than assumed helpful. See [Notebook 02, Sections 7-14](../notebooks/02_task1_part1_article_type.ipynb).
 
 The frozen plain CNN was refitted from scratch on all development rows for 20 epochs. On the
 5,778-row holdout it achieved **0.5752 macro-F1, 84.93% Top-1 accuracy, and 98.43% Top-5
-coverage**. However, 18 represented labels had zero F1, 14 more were absent, and brightness 0.85
-reduced macro-F1 to 0.3236. Its 1.91 MB checkpoint and measured CPU median of 5.58 ms support an
-assisted suggestion workflow, not autonomous tagging of all 124 labels. This is the Task 1
-ultimate judgement; errors and robustness are in [Notebook 03, Sections 7-10](../notebooks/03_task1_part2_final_evaluation.ipynb).
+coverage**. However, 18 labels present in the holdout had zero F1, and 14 labels were absent,
+so their performance could not be assessed. Reducing image brightness to 85% of its original
+level lowered macro-F1 to 0.3236, showing sensitivity to lighting changes. The baseline CNN model
+was selected because it achieved the highest average macro-F1 during development. Its high Top-5 coverage
+suggests it could help users choose a product label from five predictions. However, failures on
+some labels and poorer results on darker images mean its predictions still need checking.
+Detailed results for each label and tests on altered images are in
+[Notebook 03, Sections 7-10](../notebooks/03_task1_part2_final_evaluation.ipynb).
 
 ## 4. Task 2 - Season Classification
 
