@@ -1,5 +1,7 @@
 # Final Gender model
 
+Selected model: MixUp (alpha 0.2), trained from scratch on all development rows for 30 epochs.
+
 Run from the repository root. Install PyTorch if missing:
 
 ```bash
