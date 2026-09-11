@@ -1,0 +1,23 @@
+{
+  "point": 0.0073811393095638556,
+  "lower_95": -7.973714000294961e-05,
+  "upper_95": 0.014916912893234819,
+  "repetitions": 100000,
+  "seed": 2753,
+  "method": "paired_whole_family_percentile_stratified_by_canonical_fold",
+  "families_by_fold": {
+    "0": 4564,
+    "1": 4593,
+    "2": 4577,
+    "3": 4601,
+    "4": 4570
+  },
+  "classes": [
+    "Boys",
+    "Girls",
+    "Men",
+    "Unisex",
+    "Women"
+  ],
+  "selection_bias_removed": false
+}
