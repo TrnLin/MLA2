@@ -1,0 +1,36 @@
+panel,label,macro_f1,source,role
+5 folds,E2 Class weights,0.4081705198162049,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+5 folds,E3 Dropout,0.4161327837704003,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+5 folds,E4 TinyResNet,0.38782037072761,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+5 folds,E5 Label smoothing,0.4048637653144517,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+5 folds,E6 Focal loss,0.4093852071360374,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+5 folds,E7 TinyConvNeXt,0.3450941383150376,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+5 folds,E8 Translation,0.4193932026421023,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,selected
+5 folds,E9 Exception balance,0.3955232931239503,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+Folds 0 + 4,U1 Component weights,0.4137951063370886,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+Folds 0 + 4,U2 Calibrated HOG-SVM,0.362931882514629,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+Folds 0 + 4,S1 Type cascade,0.3193236363096896,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+Folds 0 + 4,S2 Micro-Swin,0.3972980414558151,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+5 folds,E1 SmallCNN,0.37375599510324,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+Folds 0 + 4,E2 Class weights (reference),0.4073193918794228,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,candidate
+Folds 0 + 4,E8 Translation (reference),0.4242716243953489,reports/task3/usage_deep_investigation_20260905/model_comparison.csv,selected
+5 folds,E8 +120 images,0.4086341339960346,reports/task3/usage_expanded_e8_result_20260906/verified_summary.json,candidate
+5 folds,E8 +687 images,0.4092772793718664,reports/task3/usage_expanded_v2_e8_result_20260906/verified_summary.json,candidate
+Folds 0 + 4,E8 +687 (reference),0.4009838938723467,reports/task3/usage_mixup_sam_result_20260906/verified_summary.json,candidate
+Folds 0 + 4,"v2 +687, MixUp + SAM",0.3897902658068634,reports/task3/usage_mixup_sam_result_20260906/verified_summary.json,candidate
+Folds 0 + 4,v3 130 replacements,0.3777734325580388,reports/task3/usage_replaced_v3_mixup_sam_result_20260907/verified_summary.json,candidate
+Folds 0 + 4,U3 Stage A [artifact],0.3843019257489259,reports/task3/usage_u3_review_20260905/summary.csv,candidate
+Folds 0 + 4,U3 Stage B [artifact],0.4033901883848909,reports/task3/usage_u3_review_20260905/summary.csv,candidate
+Folds 0 + 4,U2 Raw-margin diagnostic,0.4059456510939483,reports/task3/usage_deep_investigation_20260905/u2_mechanism_summary.json,diagnostic
+5 folds,E2+E3 average,0.4182025695722424,reports/task3/usage_deep_investigation_20260905/fixed_blend_diagnostics.csv,diagnostic
+5 folds,E2+E8 average,0.4124538148449843,reports/task3/usage_deep_investigation_20260905/fixed_blend_diagnostics.csv,diagnostic
+5 folds,E3+E8 average,0.4189990659233197,reports/task3/usage_deep_investigation_20260905/fixed_blend_diagnostics.csv,diagnostic
+5 folds,E2+E3+E8 average,0.4231467111689681,reports/task3/usage_deep_investigation_20260905/fixed_blend_diagnostics.csv,diagnostic
+Folds 0 + 4,E2+U2 average,0.4145845835822175,reports/task3/usage_deep_investigation_20260905/fixed_blend_diagnostics.csv,diagnostic
+5 folds,E2+E9 average,0.4180621002790664,reports/task3/usage_deep_investigation_20260905/fixed_blend_diagnostics.csv,diagnostic
+5 folds,E2 prior^0.25,0.4149892208745412,reports/task3/usage_deep_investigation_20260905/fixed_prior_diagnostics.csv,diagnostic
+Folds 0 + 4,E2 prior^0.25,0.4257037368356594,reports/task3/usage_deep_investigation_20260905/fixed_prior_diagnostics.csv,diagnostic
+5 folds,E3 prior^0.25,0.4078995854012896,reports/task3/usage_deep_investigation_20260905/fixed_prior_diagnostics.csv,diagnostic
+Folds 0 + 4,E3 prior^0.25,0.4121991120100713,reports/task3/usage_deep_investigation_20260905/fixed_prior_diagnostics.csv,diagnostic
+5 folds,E8 prior^0.25,0.3958930002472012,reports/task3/usage_deep_investigation_20260905/fixed_prior_diagnostics.csv,diagnostic
+Folds 0 + 4,E8 prior^0.25,0.4026069593545422,reports/task3/usage_deep_investigation_20260905/fixed_prior_diagnostics.csv,diagnostic
