@@ -91,6 +91,8 @@ def test_only_planned_notebook_names_are_present() -> None:
         "task3_training/gender_name_truth_screen.ipynb",
         "task3_training/gender_group_weight_screen.ipynb",
         "task3_training/gender_mixup_screen.ipynb",
+        "task3_training/gender_mixup_five_fold.ipynb",
+        "task3_training/gender_mixup_refit.ipynb",
         "task3_training/usage_expanded_e8.ipynb",
         "task3_training/gender_stronger_mixup_screen.ipynb",
         "task3_training/gender_sam_screen.ipynb",
@@ -2286,9 +2288,9 @@ def test_task3_final_metric_contracts_are_explicit():
         "Start with the baseline",
         "Gender: pooling and photo sensitivity",
         "Review the labels",
-        "Add MixUp",
-        "Choose the SAM25 trade-off",
-        "Confirm the fixed recipe on five folds",
+        "Test regularisation: MixUp, stronger blending, BatchNorm and SAM",
+        "Compare all Gender candidates",
+        "Choose the Gender recipe, then refit",
         "Usage: class weighting, then translation",
         "Usage: the effect of adding rare-class images",
         "Refit the fixed Usage recipes on all development images",
@@ -2307,10 +2309,10 @@ def test_task3_final_metric_contracts_are_explicit():
         "single teacher-only E8 refit",
         "32,772 teacher images",
         "13,110 teacher images",
-        "no test scores are reported here",
-        "Reserved-holdout results and analysis remain in",
     ):
         assert contract in task3
+    assert "holdout" not in task3.lower()
+    assert "Select MixUp alpha 0.20 with a fixed 30-epoch budget" in task3
     notebook = nbformat.read(ROOT / "notebooks/06_task3_part1_gender_usage.ipynb", as_version=4)
     executable = "\n".join(cell.source for cell in notebook.cells if cell.cell_type == "code")
     assert "run_task3_baseline_cv" not in executable
