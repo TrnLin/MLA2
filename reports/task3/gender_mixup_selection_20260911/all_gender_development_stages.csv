@@ -1,0 +1,33 @@
+stage,experiment,folds,label_basis,rows,macro_f1,accuracy,numerical_basis
+baseline,E1 · SmallCNN,"[0, 1, 2, 3, 4]",Original,32773,0.7117526876849081,0.8767583071430751,historical registered confusion counts; see IEEE audits
+brightness,E2 · Brightness,"[0, 1, 2, 3, 4]",Original,32773,0.6988984177872888,0.8729747047874775,historical registered confusion counts; see IEEE audits
+balance,E3 · Class weights,"[0, 1, 2, 3, 4]",Original,32773,0.7081138687532522,0.873218808165258,historical registered confusion counts; see IEEE audits
+resnet,E4 · TinyResNet,"[0, 1, 2, 3, 4]",Original,32773,0.712078572347374,0.8770634363653007,historical registered confusion counts; see IEEE audits
+blur,E5 · CompactBlurCNN,"[0, 1, 2, 3, 4]",Original,32773,0.7068535254966595,0.8871632136209685,historical registered confusion counts; see IEEE audits
+gem,E6 · GeM pooling,"[0, 1, 2, 3, 4]",Original,32773,0.7335205888652532,0.8932047722210356,historical registered confusion counts; see IEEE audits
+hrnet,E7 · TinyHRNet,"[0, 1, 2, 3, 4]",Original,32773,0.7025170247569043,0.8735239373874836,historical registered confusion counts; see IEEE audits
+early,E8 · Early stopping,"[0, 1, 2, 3, 4]",Original,32773,0.7411986031235207,0.8912214322765691,historical registered confusion counts; see IEEE audits
+filter,E9 · Semantic filter,"[0, 1, 2, 3, 4]",Original,32773,0.7450844829143997,0.8929606688432551,historical registered confusion counts; see IEEE audits
+aux,E10 · Audience head,"[0, 1, 2, 3, 4]",Original,32773,0.7268771316434709,0.8930216946877002,historical registered confusion counts; see IEEE audits
+translation,G2 · Translation,"[0, 1, 2, 3, 4]",Original,32773,0.7502173957741934,0.9034266011655936,historical registered confusion counts; see IEEE audits
+dropout,Dropout 0.30,"[0, 4]",Original,13110,0.754219748575229,0.9016018306636155,historical registered confusion counts; see IEEE audits
+dark,Add mild darkening,"[0, 4]",Original,13110,0.7421802355877188,0.9022120518688025,historical registered confusion counts; see IEEE audits
+gray,Add grayscale 10%,"[0, 4]",Original,13110,0.7479420762933161,0.9009153318077803,historical registered confusion counts; see IEEE audits
+name,Name-corrected labels,"[0, 4]",Name-corrected,13110,0.7944403076808579,0.9087719298245615,historical registered confusion counts; see IEEE audits
+mixup,MixUp alpha 0.20,"[0, 4]",Name-corrected,13110,0.8089088049657726,0.9090770404271549,historical registered confusion counts; see IEEE audits
+mixup40,MixUp alpha 0.40,"[0, 4]",Name-corrected,13110,0.79939055051086,0.9060259344012205,historical registered confusion counts; see IEEE audits
+sam30,SAM · 30 epochs,"[0, 4]",Name-corrected,13110,0.7943040870763872,0.9055682684973303,historical registered confusion counts; see IEEE audits
+sam25,SAM · 25 epochs,"[0, 4]",Name-corrected,13110,0.7985792946813797,0.9050343249427918,historical registered confusion counts; see IEEE audits
+final,SAM25 · Five folds,"[0, 1, 2, 3, 4]",Name-corrected,32773,0.7973666152629011,0.9046166051322735,historical registered confusion counts; see IEEE audits
+baseline04,E1 · SmallCNN,"[0, 4]",Original,13110,0.7130990558367877,0.8768878718535469,historical registered confusion counts; see IEEE audits
+gem04,E6 · GeM pooling,"[0, 4]",Original,13110,0.7229610344261563,0.8919145690312739,historical registered confusion counts; see IEEE audits
+translation04,G2 · Translation,"[0, 4]",Original,13110,0.7457260919007412,0.9031273836765827,historical registered confusion counts; see IEEE audits
+g1,G1 · Foreground mask,"[0, 4]",Original,13110,0.7295373647213312,0.892601067887109,historical registered confusion counts; see IEEE audits
+g3,G3 · Component weights,"[0, 4]",Original,13110,0.7244733280435899,0.8919908466819222,historical registered confusion counts; see IEEE audits
+gd1,GD1 · Mild darkening,"[0, 4]",Original,13110,0.7411575241089544,0.9028985507246376,historical registered confusion counts; see IEEE audits
+wd1,Weight decay 0.001,"[0, 4]",Original,13110,0.7486702356479596,0.9045003813882533,historical registered confusion counts; see IEEE audits
+narrow,Narrow 64 channels,"[0, 4]",Original,13110,0.736018229280903,0.9000762776506483,historical registered confusion counts; see IEEE audits
+drop45,Dropout 0.45 + dark,"[0, 4]",Original,13110,0.7296615165044417,0.8974828375286041,historical registered confusion counts; see IEEE audits
+group,Article-group weights,"[0, 4]",Name-corrected,13110,0.8009911069759783,0.9037376048817697,historical registered confusion counts; see IEEE audits
+swin_g,Scratch Micro-Swin,"[0, 4]",Original,13110,0.6846634219949939,0.8696414950419528,historical registered confusion counts; see IEEE audits
+hog_g,Gender S1 · HOG SVM,"[0, 4]",Original,13110,0.6607654816652765,0.8527841342486652,historical registered confusion counts; see IEEE audits
