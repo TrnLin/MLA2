@@ -1,0 +1,12 @@
+{
+  "frozen_at_utc": "2026-09-11T05:34:52.708386+00:00",
+  "checkpoint_sha256": "860f688162cccfcd903e8e4874b368697c0637b6e6a15baae3b4d4a3008f4ef9",
+  "predictions_sha256": "c8a03b4d18bfed18451c40650b5eb584cb829422b95e70da5d5585ba85422af1",
+  "device": "cpu",
+  "threads": 2,
+  "batch_size": 32,
+  "torch": "2.13.0+cpu",
+  "precision": "IEEE float32",
+  "weights_and_buffers_unchanged": true,
+  "inference_seconds_including_image_preprocessing": 11.817415605999997
+}
