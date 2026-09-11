@@ -22,6 +22,9 @@ recorded in [Decision 0025](../../docs/decisions/0025-task3-gender-sam25-refit-f
 The new [MixUp 0.20 five-fold runner](gender_mixup_five_fold.ipynb) trains all five
 folds in Colab for a matched development comparison. See the
 [run guide](../../docs/task3_gender_mixup_five_fold.md).
+The [MixUp refit runner](gender_mixup_refit.ipynb) fits that same 30-epoch recipe
+on all development rows in Colab. It saves a separate candidate model; see the
+[refit guide](../../docs/task3_gender_mixup_refit.md).
 The original E1 Usage runner is [SmallCNN baselines](smallcnn_baseline_training.ipynb).
 
 ## Find an experiment
