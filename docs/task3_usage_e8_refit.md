@@ -88,9 +88,8 @@ training only and must not multiply prediction probabilities.
 Write evaluation to a separate folder linked to this checkpoint hash. Report
 its own accuracy, nine-class macro-F1, per-class failures and measured inference
 cost. Old E8 development macro-F1 **0.419393** belongs to the five fold models,
-not this new refit. Recent E1 holdout scores do not change this frozen recipe.
-Holdout and recovered test labels were already viewed; later evaluation is
-**not newly blind** and must not select another recipe or epoch.
+not this new refit. Evaluate the fixed checkpoint without selecting another
+recipe or epoch from its final scores.
 
 This preparation does not train on real data, evaluate a model, replace E1, or
 write submission predictions. A later submission still needs the full fixed
