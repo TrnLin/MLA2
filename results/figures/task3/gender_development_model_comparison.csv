@@ -1,0 +1,37 @@
+panel,label,macro_f1,source,role
+5 folds | original labels,E1 SmallCNN,0.7117526876849081,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+5 folds | original labels,E2 Brightness,0.6988984177872888,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+5 folds | original labels,E3 Class weights,0.7081138687532522,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+5 folds | original labels,E4 TinyResNet,0.712078572347374,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+5 folds | original labels,E5 CompactBlurCNN,0.7068535254966595,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+5 folds | original labels,E6 GeM pooling,0.7335205888652532,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+5 folds | original labels,E7 TinyHRNet,0.7025170247569043,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+5 folds | original labels,E8 Early stopping,0.7411986031235207,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+5 folds | original labels,E9 Semantic filter,0.7450844829143997,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+5 folds | original labels,E10 Audience head,0.7268771316434709,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+5 folds | original labels,G2 Translation,0.7502173957741934,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,Dropout 0.30,0.754219748575229,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,Dropout + darkening,0.7421802355877188,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,Dropout + dark + gray 10%,0.7479420762933161,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | corrected labels,Name-corrected labels,0.7944403076808579,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | corrected labels,MixUp alpha 0.20,0.8089088049657726,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,selected
+Folds 0 + 4 | corrected labels,MixUp alpha 0.40,0.79939055051086,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | corrected labels,SAM 30 epochs,0.7943040870763872,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | corrected labels,SAM 25 epochs,0.7985792946813797,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,E1 SmallCNN,0.7130990558367877,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,E6 GeM pooling,0.7229610344261563,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,G2 Translation,0.7457260919007412,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,G1 Foreground mask,0.7295373647213312,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,G3 Component weights,0.7244733280435899,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,GD1 Mild darkening,0.7411575241089544,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,Weight decay 0.001,0.7486702356479596,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,Narrow 64 channels,0.736018229280903,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,Dropout 0.45 + dark,0.7296615165044417,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | corrected labels,Article-group weights,0.8009911069759783,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,Scratch Micro-Swin,0.6846634219949939,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+Folds 0 + 4 | original labels,Gender S1 HOG SVM,0.6607654816652765,reports/task3/gender_mixup_selection_20260911/all_gender_development_stages.csv,candidate
+5 folds | original labels,MixUp 0.20 / 30 [audit],0.7573372366824067,reports/task3/gender_mixup_selection_20260911/summary.json,selected
+5 folds | original labels,MixUp + SAM25 [audit],0.7532694654915931,reports/task3/gender_mixup_selection_20260911/summary.json,candidate
+5 folds | corrected labels,MixUp 0.20 / 30 [audit],0.8046393617972235,reports/task3/gender_mixup_selection_20260911/summary.json,selected
+5 folds | corrected labels,MixUp + SAM25 [audit],0.7972582224876598,reports/task3/gender_mixup_selection_20260911/summary.json,candidate
+Folds 0 + 4 | corrected labels,BatchNorm recalibration,0.8071551792694522,reports/task3/gender_overfitting_research_20260906/bn_probe_pooled.json,diagnostic
