@@ -1,0 +1,119 @@
+{
+  "run_id": "t3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e",
+  "checkpoint_sha256": "860f688162cccfcd903e8e4874b368697c0637b6e6a15baae3b4d4a3008f4ef9",
+  "checks_passed": true,
+  "holdout_images": 5778,
+  "metrics": {
+    "accuracy": 0.904638283142956,
+    "balanced_accuracy": 0.7927167208025198,
+    "macro_f1": 0.7874314252351635,
+    "weighted_f1": 0.9031292077614896,
+    "mcc": 0.8310734651266963,
+    "support": 5778,
+    "per_class": [
+      {
+        "class_index": 0,
+        "class_name": "Boys",
+        "support": 120,
+        "predicted_count": 138,
+        "precision": 0.6884057971014492,
+        "recall": 0.7916666666666666,
+        "f1": 0.7364341085271318
+      },
+      {
+        "class_index": 1,
+        "class_name": "Girls",
+        "support": 95,
+        "predicted_count": 105,
+        "precision": 0.6952380952380952,
+        "recall": 0.7684210526315789,
+        "f1": 0.73
+      },
+      {
+        "class_index": 2,
+        "class_name": "Men",
+        "support": 3130,
+        "predicted_count": 3215,
+        "precision": 0.9219284603421461,
+        "recall": 0.9469648562300319,
+        "f1": 0.9342789598108746
+      },
+      {
+        "class_index": 3,
+        "class_name": "Unisex",
+        "support": 311,
+        "predicted_count": 240,
+        "precision": 0.7125,
+        "recall": 0.5498392282958199,
+        "f1": 0.6206896551724137
+      },
+      {
+        "class_index": 4,
+        "class_name": "Women",
+        "support": 2122,
+        "predicted_count": 2080,
+        "precision": 0.925,
+        "recall": 0.9066918001885014,
+        "f1": 0.9157544026653975
+      }
+    ],
+    "confusion_matrix": [
+      [
+        95,
+        7,
+        7,
+        5,
+        6
+      ],
+      [
+        8,
+        73,
+        1,
+        1,
+        12
+      ],
+      [
+        27,
+        4,
+        2964,
+        42,
+        93
+      ],
+      [
+        6,
+        3,
+        86,
+        171,
+        45
+      ],
+      [
+        2,
+        18,
+        157,
+        21,
+        1924
+      ]
+    ],
+    "nll": 0.28734271459482313,
+    "brier": 0.1444424945170292,
+    "ece_15": 0.01699503167932445
+  },
+  "training": {
+    "checkpoint_policy": "final_epoch",
+    "epochs_completed": 30,
+    "holdout_evaluated": false,
+    "online_train_f1": "not_applicable_mixed_inputs",
+    "peak_memory_bytes": 476603392,
+    "scope": "development_refit_training_only",
+    "selected_epoch": 30,
+    "teacher_test_evaluated": false,
+    "train_mixed_loss": 0.3439075712512302,
+    "train_seconds": 559.7897134490004,
+    "training_rows": 32773,
+    "validation_rows": 0,
+    "validation_used": false
+  },
+  "teacher_test_evaluated": false,
+  "scored_at_utc": "2026-09-11T05:34:53.186247+00:00",
+  "inference_seconds_including_image_preprocessing": 11.817415605999997
+}
