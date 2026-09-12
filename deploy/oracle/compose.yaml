@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: deploy/oracle/Dockerfile
+    restart: unless-stopped
+    # Browsers fetch gallery photos in parallel; idle proxy connections count too.
+    command: [python, -m, uvicorn, 'fashion_api.hosted:create_hosted_app', --factory, --host, 0.0.0.0, --port, '8000', --workers, '1', --limit-concurrency, '128']
+    mem_limit: 3g
+    cpus: 2
+    ports:
+      - '127.0.0.1:8000:8000'
+    volumes:
+      - ${FASHION_ARTIFACT_DIR:?Set the absolute artifact directory}/core/models/task1_article_type.pt:/app/core/models/task1_article_type.pt:ro
+      - ${FASHION_ARTIFACT_DIR}/core/models/task2_season.pt:/app/core/models/task2_season.pt:ro
+      - ${FASHION_ARTIFACT_DIR}/core/model-weight:/app/core/model-weight:ro
+      - ${FASHION_ARTIFACT_DIR}/core/data/train/images_train:/app/core/data/train/images_train:ro
+    tmpfs:
+      - /app/runtime/uploads:size=256m,uid=10001,gid=10001,mode=0700
+      - /app/core/tmp:size=256m,uid=10001,gid=10001,mode=0700
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
