@@ -19,7 +19,7 @@ export function ModelDetails({ metadata, analysis, search, imageUrl }: {
     <div className="technical-grid">
       <details open className="technical-panel"><summary>Model configuration <span>VERIFIED PACKAGES</span></summary>
         <div className="technical-content"><table className="model-config-table"><caption className="visually-hidden">Loaded model settings</caption><thead><tr><th>Model</th><th>Input W × H</th><th>Parameters</th></tr></thead><tbody>
-          {metadata ? Object.entries(metadata.models).map(([target, model]) => <tr key={target}><td title={model.run_id}>{model.name}<br /><small>{model.status === 'ready' ? 'Ready' : model.error || 'Unavailable'}</small></td><td>{model.width} × {model.height}</td><td>{model.parameters.toLocaleString()}</td></tr>) : <tr><td colSpan={3}>Waiting for the local model server.</td></tr>}
+          {metadata ? Object.entries(metadata.models).map(([target, model]) => <tr key={target}><td title={model.run_id}>{model.name}<br /><small>{model.status === 'ready' ? 'Ready' : model.error || 'Unavailable'}</small></td><td>{model.width} × {model.height}</td><td>{model.parameters.toLocaleString()}</td></tr>) : <tr><td colSpan={3}>Waiting for the model server.</td></tr>}
         </tbody></table><div className="config-foot"><span>Compute device</span><span>CPU</span></div><div className="config-foot"><span>Image preparation</span><span>Saved settings · No random changes</span></div></div>
       </details>
       <details open className="technical-panel"><summary>Input & timing <span>THIS IMAGE</span></summary><div className="technical-content">
