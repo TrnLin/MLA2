@@ -85,8 +85,44 @@ def test_metadata_uses_saved_scores_and_discloses_different_gallery(runtime):
     values = {item['target']: item for item in runtime.evaluation}
     assert values['articleType']['metrics']['Accuracy'] == '84.93%'
     assert values['season']['metrics']['Accuracy'] == '76.43%'
-    assert values['gender']['metrics']['Accuracy'] == '90.00%'
+    assert values['gender']['metrics']['Accuracy'] == '90.46%'
+    assert values['gender']['metrics']['Macro F1'] == '78.74%'
     assert values['usage']['metrics']['Macro F1'] == '42.26%'
     assert '32,773' in values['retrieval']['note']
     assert '26,217' in values['retrieval']['note']
-    assert 'after holdout review' in values['gender']['note']
+    assert 'selected using development data' in values['gender']['note']
+
+
+def test_gender_uses_selected_mixup_checkpoint(runtime):
+    assert runtime.adapters['gender'].run_id == (
+        't3_gender_name_truth_mixup_alpha020_refit_20260911T041436Z_3af0b94e')
+    assert runtime.adapters['gender'].parameters == 390181
+
+
+def test_gender_rejects_wrong_package_run(monkeypatch):
+    from fashion import demo
+    read_json = demo.read_json
+
+    def wrong_run(path):
+        data = read_json(path)
+        if path == ROOT / 'model-weight/task3/gender_model/package_manifest.json':
+            data['run_id'] = 'old-gender-run'
+        return data
+
+    monkeypatch.setattr(demo, 'read_json', wrong_run)
+    with pytest.raises(ValueError, match='accepted run_id differs'):
+        demo._task3(ROOT, 'gender')
+
+
+def test_gender_omits_scores_from_another_run(runtime, monkeypatch):
+    from fashion import demo
+    read_json = demo.read_json
+
+    def stale_scores(path):
+        data = read_json(path)
+        if path.name == 'evaluation.json':
+            data['run_id'] = 'old-gender-run'
+        return data
+
+    monkeypatch.setattr(demo, 'read_json', stale_scores)
+    assert demo.load_evaluation(ROOT, {'gender': runtime.adapters['gender']}) == []
