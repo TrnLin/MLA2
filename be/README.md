@@ -23,6 +23,10 @@ All of these paths are inside `core/`:
 - `model-weight/task4_r5/` and `models/task4_teacher_gallery/`.
 - `data/train/images_train/<id>.jpg` and `data/processed/splits.csv`.
 
+Gender uses the selected 30-epoch MixUp package. Its files must match
+`reports/task3/gender_mixup_selection_20260911/development_selection.json`.
+Its displayed scores come from `reports/task3/gender_mixup_refit_holdout_20260911/`.
+
 Uploads are retained in `be/tmp/demo-api/uploads/`. Set `FASHION_UPLOAD_DIR` to
 an absolute path to use another folder. Verified model snapshots are retained
 in `core/tmp/demo-api/snapshots/`. Clearing the page does not delete these files.
