@@ -1,0 +1,7 @@
+fashion-demo.140.245.124.14.sslip.io {
+    encode gzip
+    request_body {
+        max_size 12MB
+    }
+    reverse_proxy 127.0.0.1:8000
+}
