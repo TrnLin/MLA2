@@ -162,14 +162,17 @@ def _task3(root, target):
     from fashion.train.task3_gender_precision import ieee_precision
 
     package = root / 'model-weight/task3' / f'{target}_model'
-    accepted_name = ('gender_final_sam25_refit_20260907' if target == 'gender'
-                     else 'usage_final_e8_refit_20260907')
-    accepted_path = root / 'reports/task3' / accepted_name / 'model_manifest.json'
+    accepted_path = root / 'reports/task3' / (
+        'gender_mixup_selection_20260911/development_selection.json' if target == 'gender'
+        else 'usage_final_e8_refit_20260907/model_manifest.json')
     manifest_path = package / 'package_manifest.json'
     accepted = read_json(accepted_path)
     manifest = read_json(manifest_path)
-    if (accepted['status'] != 'accepted_final' or accepted['scratch'] is not True
-            or accepted['target'] != target or manifest['target'] != target):
+    selected = (accepted['status'] == 'complete'
+                and accepted['selection_status'] == 'selected_from_development'
+                if target == 'gender' else
+                accepted['status'] == 'accepted_final' and accepted['target'] == target)
+    if (not selected or accepted['scratch'] is not True or manifest['target'] != target):
         raise ValueError('Task 3 package is not the accepted scratch model.')
     for key in ('run_id', 'selected_epoch', 'class_names'):
         if manifest[key] != accepted[key]:
@@ -185,9 +188,11 @@ def _task3(root, target):
                           ('normalization', 'normalization.json')]:
         if accepted[key]['sha256'] != manifest['files'][filename]['sha256']:
             raise ValueError(f'Task 3 accepted {key} identity differs.')
-    if digest(root / 'data/processed/splits.csv') != accepted['files']['data/processed/splits.csv']:
-        raise ValueError('Canonical splits differ from accepted Task 3 model.')
     config = read_json(package / 'config.json')
+    split_sha256 = (config['gender_label_variant']['canonical_split_sha256']
+                    if target == 'gender' else accepted['files']['data/processed/splits.csv'])
+    if digest(root / 'data/processed/splits.csv') != split_sha256:
+        raise ValueError('Canonical splits differ from accepted Task 3 model.')
     stats = read_json(package / 'normalization.json')
     classes = read_json(package / 'class_names.json')
     checkpoint = torch.load(package / 'final_epoch.pt', map_location='cpu', weights_only=True)
@@ -221,7 +226,8 @@ def _task3(root, target):
             raise ValueError('Task 3 returned non-finite probabilities.')
         return {'label': classes[int(probabilities.argmax())],
                 'probabilities': dict(zip(classes, probabilities.tolist(), strict=True))}
-    return ModelAdapter('Task 3 · ' + ('Gender GeM CNN' if target == 'gender' else 'Usage E8 CNN'),
+    return ModelAdapter('Task 3 · ' + ('Gender MixUp GeM CNN' if target == 'gender'
+                                     else 'Usage E8 CNN'),
                         accepted['run_id'], 60, 80, parameters,
                         digest(manifest_path) + digest(accepted_path), predict, model)
 
@@ -325,7 +331,7 @@ def load_evaluation(root: Path, available_targets) -> list[dict]:
     sources = {
         'articleType': 'results/evidence/task1/final_evaluation/metrics.csv',
         'season': 'results/evidence/task2/final_evaluation/holdout_metrics.json',
-        'gender': 'reports/task3/gender_sam25_refit_holdout_20260907/evaluation.json',
+        'gender': 'reports/task3/gender_mixup_refit_holdout_20260911/evaluation.json',
         'usage': 'reports/task3/usage_e8_refit_holdout_20260907/evaluation.json',
         'retrieval': 'results/evidence/task4/final_evaluation/holdout_scorecard.csv',
     }
@@ -334,7 +340,8 @@ def load_evaluation(root: Path, available_targets) -> list[dict]:
                         'Macro F1 gives each class equal weight.'),
         'season': ('Saved reserved holdout results: 5,778 images, '
                    'with the frozen temperature calibration.'),
-        'gender': ('Accepted after holdout review; this was not a fresh blind selection. '
+        'gender': ('30-epoch MixUp model selected using development data. '
+                   'Saved holdout scores use original catalogue labels. '
                    'Unisex remains weak.'),
         'usage': ('Accepted after holdout review; this was not a fresh blind selection. '
                   'Rare usage classes remain weak.'),
@@ -367,9 +374,12 @@ def load_evaluation(root: Path, available_targets) -> list[dict]:
                 data = read_json(path)
                 if target == 'season':
                     row = data['I2_frozen_temperature']
+                elif target == 'gender':
+                    if data['run_id'] != available_targets[target].run_id:
+                        continue
+                    row = data['metrics']
                 else:
-                    key = 'Original labels: Single refit' if target == 'gender' else 'Single refit'
-                    row = data['metrics'][key]
+                    row = data['metrics']['Single refit']
                 scores = {'Accuracy': row['accuracy'], 'Macro F1': row['macro_f1']}
             if not all(np.isfinite(float(value)) for value in scores.values()):
                 continue
