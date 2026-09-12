@@ -95,7 +95,7 @@ export default function Landing() {
         ].map(([title, description], index) => <div className="landing-step landing-reveal" key={title}><span>0{index + 1}</span><div><h3>{title}</h3><p>{description}</p></div><Arrow /></div>)}</div>
       </section>
 
-      <section className="landing-about landing-reveal"><span>CURIOUS BY DESIGN.</span><p>A student project about fashion, machine learning, and the things a model notices. Sometimes insightful. Sometimes unexpected. <em>Always worth a closer look.</em></p><div><span>4 TASKS · 5 MODELS · ONE SHARED DATASET</span><p>Predictions are suggestions, not certainty. Gender refers to product categories. The demo uses a local model server.</p><a href="https://github.com/TrnLin/MLA2" target="_blank" rel="noreferrer">Explore the project <Arrow /></a></div></section>
+      <section className="landing-about landing-reveal"><span>CURIOUS BY DESIGN.</span><p>A student project about fashion, machine learning, and the things a model notices. Sometimes insightful. Sometimes unexpected. <em>Always worth a closer look.</em></p><div><span>4 TASKS · 5 MODELS · ONE SHARED DATASET</span><p>Predictions are suggestions, not certainty. Gender refers to product categories. The demo uses a model server.</p><a href="https://github.com/TrnLin/MLA2" target="_blank" rel="noreferrer">Explore the project <Arrow /></a></div></section>
 
       <section className="landing-outro"><div className="landing-reveal"><span>GOT SOMETHING IN MIND?</span><h2>Let’s find<br /><em>your thread.</em></h2><a className="landing-pill" href="/demo">Open the demo <Arrow /></a></div><span className="landing-outro-star" aria-hidden="true">✳</span></section>
     </main>
