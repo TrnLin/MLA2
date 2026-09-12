@@ -169,14 +169,14 @@ function App() {
           <div className="toolbar-controls"><LayoutPicker /><div className="mode-switch" role="group" aria-label="Display mode"><button aria-pressed={!advanced} className={!advanced ? 'active' : ''} onClick={() => setAdvanced(false)}>Standard</button><button aria-pressed={advanced} className={advanced ? 'active' : ''} onClick={() => setAdvanced(true)}><Icon name="code" size={16} /> Advanced</button></div></div>
         </section>
 
-        <div className="demo-notice compact-notice"><span className="demo-dot" /><strong>{metadata.isError ? 'Server offline' : degraded ? 'Some models unavailable' : metadata.data ? 'Live models' : 'Connecting'}</strong><span>{metadata.isError ? 'Start the local model server, then try again.' : metadata.data ? 'Real predictions · Local model server' : 'Connecting to the local model server…'}</span></div>
+        <div className="demo-notice compact-notice"><span className="demo-dot" /><strong>{metadata.isError ? 'Server offline' : degraded ? 'Some models unavailable' : metadata.data ? 'Live models' : 'Connecting'}</strong><span>{metadata.isError ? 'The model server is unavailable. Please try again later.' : metadata.data ? 'Real predictions · Model server' : 'Connecting to the model server…'}</span></div>
 
         <div className="demo-body">
         <section id="workspace" className="workspace" aria-label="Fashion demo">
           <aside className="upload-column">
             <div className="section-heading"><h2><span className="step">01</span> Start with a piece</h2><span className="small-label">YOUR IMAGE</span></div>
             <div className={`upload-frame ${dragging ? 'dragging' : ''} ${imageUrl ? 'has-image' : 'no-image'}`} onDragOver={event => { event.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={onDrop}>
-              {imageUrl ? <><div className="image-topline"><span><span className="status-dot" />{selected ? 'SAMPLE IMAGE' : 'YOUR UPLOAD'}</span><button className="icon-button" aria-label="Clear image" onClick={clearImage}><Icon name="close" size={17} /></button></div><img className="query-image" src={imageUrl} alt={selected?.name || 'Your uploaded fashion item'} /><span className="photo-corner corner-tl" /><span className="photo-corner corner-br" /><div className="image-caption"><span>{selected ? 'FROM THE SAMPLE COLLECTION' : 'PROCESSED ON THIS COMPUTER'}</span><span>↗</span></div></> : <button className="empty-upload" onClick={() => fileInput.current?.click()}><span className="upload-circle"><Icon name="upload" size={27} /></span><strong>A new discovery starts here.</strong><span>Drop a photo or click to browse</span><small>JPG, PNG or WebP · Up to 10 MB</small></button>}
+              {imageUrl ? <><div className="image-topline"><span><span className="status-dot" />{selected ? 'SAMPLE IMAGE' : 'YOUR UPLOAD'}</span><button className="icon-button" aria-label="Clear image" onClick={clearImage}><Icon name="close" size={17} /></button></div><img className="query-image" src={imageUrl} alt={selected?.name || 'Your uploaded fashion item'} /><span className="photo-corner corner-tl" /><span className="photo-corner corner-br" /><div className="image-caption"><span>{selected ? 'FROM THE SAMPLE COLLECTION' : 'PROCESSED BY MODEL SERVER'}</span><span>↗</span></div></> : <button className="empty-upload" onClick={() => fileInput.current?.click()}><span className="upload-circle"><Icon name="upload" size={27} /></span><strong>A new discovery starts here.</strong><span>Drop a photo or click to browse</span><small>JPG, PNG or WebP · Up to 10 MB</small></button>}
               {dragging && <div className="drop-overlay"><Icon name="upload" size={32} /><strong>Drop your image here</strong></div>}
             </div>
             {imageUrl && <div className="filename" title={filename}><Icon name="image" size={15} /><span>{filename}</span></div>}
@@ -189,7 +189,7 @@ function App() {
             <div className="sample-list">{samples.map((sample, index) => <button key={sample.id} aria-label={`Try ${sample.name}`} aria-pressed={selected?.id === sample.id} className={`sample-button ${selected?.id === sample.id ? 'selected' : ''}`} onClick={() => chooseSample(sample, index)}><img src={sample.image} alt="" /><span>0{index + 1}</span>{selected?.id === sample.id && <i><Icon name="check" size={10} /></i>}</button>)}</div>
             </div>
             {error && <div className="error-message" role="alert"><Icon name="info" size={18} /><span>{error}</span></div>}
-            <p className="privacy-note">Your photo is sent to the local model server and kept in its cache on this computer.</p>
+            <p className="privacy-note">Your photo is sent to the model server and kept in its cache.</p>
           </aside>
 
           <div className="results-column">
