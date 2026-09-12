@@ -70,12 +70,12 @@ async function request<T>(url: string, options: RequestInit): Promise<T> {
   try { response = await fetch(url, options); }
   catch (error) {
     if (options.signal?.aborted) throw error;
-    throw new Error('Cannot reach the local model server. Check that it is running, then try again.');
+    throw new Error('Cannot reach the model server. Check that it is running, then try again.');
   }
   if (!response.ok) {
     const body = await response.json().catch(() => null);
     throw new Error(typeof body?.detail === 'string' ? body.detail : response.status >= 500
-      ? 'The local model server is unavailable. Check that it is running, then try again.'
+      ? 'The model server is unavailable. Check that it is running, then try again.'
       : `The model server returned an error (${response.status}).`);
   }
   return response.json() as Promise<T>;
