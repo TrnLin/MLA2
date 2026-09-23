@@ -99,3 +99,54 @@ separately together with the original I2 `.pt`. Keep the manifest and evidence
 in Git so the receiver can check the transferred bytes. The new run is recorded
 in `results/runs.csv` under
 `postsubmit-i2-embedding-rf-full-development-fall-s2753-3f82275bfac9`.
+
+## Later controlled RF-head grid
+
+We then asked whether small changes to the **RF head only** could improve the
+earlier development result. The I2 encoder, its five fold-specific checkpoints,
+training IDs, 256-dimensional embeddings, 300 trees, class weighting, and
+random seeds stayed fixed. The original RF (`min_samples_leaf=2`,
+`max_features=sqrt`) was rerun as a parity control: all five folds reproduced
+the pinned earlier predictions and probabilities. Four variants changed only
+the minimum examples per leaf (1 or 4) and/or the fraction of features tested
+at a tree split (`0.25`, i.e. 64 of 256 features, versus `sqrt`, i.e. 16).
+
+Before training, we required an improvement of at least **+0.003 pooled OOF
+macro-F1**, no Spring F1 loss beyond 0.005, and a positive lower bound for a
+paired 95% product-family bootstrap interval. All candidates used the same
+32,753 canonical development IDs. The internal holdout was not used to choose
+the grid or inspect its candidates.
+
+| RF head | Pooled OOF macro-F1 | Change vs original | Spring F1 | Mean fold fit time |
+|---|---:|---:|---:|---:|
+| Original (`leaf=2`, `sqrt`) | **0.760959** | — | 0.769643 | 26.0 s |
+| `leaf=1`, `sqrt` | 0.759695 | −0.001264 | 0.770130 | 27.3 s |
+| `leaf=4`, `sqrt` | 0.760833 | −0.000125 | 0.772528 | 24.4 s |
+| `leaf=2`, `0.25` | 0.760277 | −0.000681 | 0.772968 | 105.5 s |
+| `leaf=4`, `0.25` | 0.760196 | −0.000763 | 0.772648 | 95.8 s |
+
+None passed the gain gate. Every paired 95% interval included zero; for the
+closest variant (`leaf=4`, `sqrt`) it was **[−0.002402, +0.002153]**. Some
+variants raised Spring F1 slightly but lowered overall macro-F1. Trying 64
+features per split took about four times longer to fit on these fold runs. The
+cost numbers measure the RF head, **not** image preprocessing plus CNN plus RF
+end-to-end. The exploratory grid therefore **retains the already fitted RF**;
+no new full-development refit, holdout evaluation, or official prediction was
+performed. The submitted I2 model is unchanged.
+
+The [zero-centred paired chart](../results/figures/task2/post_submission/rf_grid/paired_delta.png)
+shows the actual differences and intervals without exaggerating them on a
+truncated absolute-score axis. Exact metrics, per-class scores, fold scores,
+costs, run IDs, and hashes are in the
+[grid evidence](../results/evidence/task2/post_submission/rf_grid/summary.json).
+Re-run it with:
+
+```powershell
+.\.venv\Scripts\python.exe -m fashion.task2.post_submission_rf_grid
+```
+
+The figure can be rebuilt from verified evidence with
+`scripts/plot_task2_post_submission_rf_grid.py`. The bootstrap interval
+describes resampling uncertainty for these product families; because the same
+five folds were also used to compare variants, it is not independent proof of
+an improvement after model selection.
