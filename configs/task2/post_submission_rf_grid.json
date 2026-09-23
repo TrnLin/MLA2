@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "study_id": "postsubmit-i2-rf-grid",
+  "role": "post_submission_development_only",
+  "base_i2_config": "configs/task2/g4_i2_article_type_lambda_0_3_c1.json",
+  "baseline_summary": "results/evidence/task2/post_submission/boosting_summary.json",
+  "seed": 2753,
+  "folds": [0, 1, 2, 3, 4],
+  "embedding_batch_size": 256,
+  "fixed_parameters": {
+    "n_estimators": 300,
+    "criterion": "gini",
+    "class_weight": "balanced_subsample",
+    "bootstrap": true,
+    "oob_score": true,
+    "n_jobs": -1,
+    "random_state_policy": "seed_plus_fold"
+  },
+  "candidates": [
+    {"id": "r0_baseline", "min_samples_leaf": 2, "max_features": "sqrt"},
+    {"id": "r1_leaf1", "min_samples_leaf": 1, "max_features": "sqrt"},
+    {"id": "r2_leaf4", "min_samples_leaf": 4, "max_features": "sqrt"},
+    {"id": "r3_features025", "min_samples_leaf": 2, "max_features": 0.25},
+    {"id": "r4_leaf4_features025", "min_samples_leaf": 4, "max_features": 0.25}
+  ],
+  "selection": {
+    "minimum_macro_f1_gain": 0.003,
+    "minimum_spring_f1_delta": -0.005,
+    "require_positive_paired_lower_95": true,
+    "bootstrap_replicates": 10000
+  }
+}
