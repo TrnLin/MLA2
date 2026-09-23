@@ -1,0 +1,150 @@
+{
+  "artifacts": {
+    "cost": {
+      "path": "results/evidence/task2/post_submission/rf_grid/cost.csv",
+      "sha256": "002d2c1e6086f55df5f97d3cbb5c5c022fb15472cc1086d13bcb22bc9c46013f"
+    },
+    "figure": {
+      "path": "results/figures/task2/post_submission/rf_grid/model_comparison.png",
+      "sha256": "6336451434fda3f0f5851643c52c597f150a7183a5ee530f9654b11f811179f2"
+    },
+    "fold_comparison": {
+      "path": "results/evidence/task2/post_submission/rf_grid/fold_comparison.csv",
+      "sha256": "13aa860475ed73e9b9fe26d9f2994b1f98656253eebe4be17f3e54b72137bf01"
+    },
+    "model_comparison": {
+      "path": "results/evidence/task2/post_submission/rf_grid/model_comparison.csv",
+      "sha256": "7f12db7b84b2d6861ad7ed47c01289cb3a6416ad03449202f33b1cebadef9687"
+    },
+    "paired_bootstrap_intervals": {
+      "path": "results/evidence/task2/post_submission/rf_grid/paired_bootstrap_intervals.csv",
+      "sha256": "32fd63b67903539b84c72a20d4559049eb9bbb2f5eff2ff2c71317bbf68598c1"
+    },
+    "per_class": {
+      "path": "results/evidence/task2/post_submission/rf_grid/per_class.csv",
+      "sha256": "e98e5e1865709b6cb8df773467ae943b5a9419412bef736c384093232fec753f"
+    }
+  },
+  "baseline_macro_f1": 0.7609585319622465,
+  "decision": "retain_existing_full_development_rf",
+  "exploratory_winner": null,
+  "holdout_used_for_selection": false,
+  "post_submission": true,
+  "results": [
+    {
+      "accuracy": 0.7699752694409673,
+      "balanced_accuracy": 0.7282717630455107,
+      "brier": 0.3235479711258059,
+      "candidate": "r0_baseline",
+      "ci95_lower": null,
+      "delta_vs_r0": 0.0,
+      "ece": 0.014288702779939384,
+      "eligible_exploratory": false,
+      "macro_f1": 0.7609585319622465,
+      "n_oof": 32753,
+      "nll": 0.6243115789815585,
+      "spring_delta_vs_r0": 0.0,
+      "spring_f1": 0.7696428571428572
+    },
+    {
+      "accuracy": 0.7694867645711844,
+      "balanced_accuracy": 0.7218851150995456,
+      "brier": 0.32301856861288364,
+      "candidate": "r1_leaf1",
+      "ci95_lower": -0.003358280468435054,
+      "delta_vs_r0": -0.001263909367179683,
+      "ece": 0.0125044016324205,
+      "eligible_exploratory": false,
+      "macro_f1": 0.7596946225950668,
+      "n_oof": 32753,
+      "nll": 0.6630081620157033,
+      "spring_delta_vs_r0": 0.00048759719812352387,
+      "spring_f1": 0.7701304543409807
+    },
+    {
+      "accuracy": 0.7672884926571611,
+      "balanced_accuracy": 0.7366740906739528,
+      "brier": 0.32710241005876334,
+      "candidate": "r2_leaf4",
+      "ci95_lower": -0.002402376541651721,
+      "delta_vs_r0": -0.00012537196422512942,
+      "ece": 0.017928234505385394,
+      "eligible_exploratory": false,
+      "macro_f1": 0.7608331599980214,
+      "n_oof": 32753,
+      "nll": 0.6138272997045344,
+      "spring_delta_vs_r0": 0.002885576802899581,
+      "spring_f1": 0.7725284339457568
+    },
+    {
+      "accuracy": 0.7679907184074741,
+      "balanced_accuracy": 0.7289662969040603,
+      "brier": 0.32559797100426474,
+      "candidate": "r3_features025",
+      "ci95_lower": -0.0025578553558990636,
+      "delta_vs_r0": -0.0006811871991430074,
+      "ece": 0.01723194860700829,
+      "eligible_exploratory": false,
+      "macro_f1": 0.7602773447631035,
+      "n_oof": 32753,
+      "nll": 0.6635718384603262,
+      "spring_delta_vs_r0": 0.0033253407370015253,
+      "spring_f1": 0.7729681978798587
+    },
+    {
+      "accuracy": 0.7665252037981254,
+      "balanced_accuracy": 0.7359235689332806,
+      "brier": 0.3278646058351013,
+      "candidate": "r4_leaf4_features025",
+      "ci95_lower": -0.003177068464005922,
+      "delta_vs_r0": -0.0007628053385799749,
+      "ece": 0.017784180286312342,
+      "eligible_exploratory": false,
+      "macro_f1": 0.7601957266236665,
+      "n_oof": 32753,
+      "nll": 0.6393854489402684,
+      "spring_delta_vs_r0": 0.0030052264808362317,
+      "spring_f1": 0.7726480836236934
+    }
+  ],
+  "run_ids": {
+    "r0_baseline": [
+      "postsubmit-i2-rf-grid-r0_baseline-f0-s2753-ca78fee0c4db",
+      "postsubmit-i2-rf-grid-r0_baseline-f1-s2753-dafbceb946ac",
+      "postsubmit-i2-rf-grid-r0_baseline-f2-s2753-5311be1b2256",
+      "postsubmit-i2-rf-grid-r0_baseline-f3-s2753-055c35d23fb2",
+      "postsubmit-i2-rf-grid-r0_baseline-f4-s2753-36ac5ac7cbe1"
+    ],
+    "r1_leaf1": [
+      "postsubmit-i2-rf-grid-r1_leaf1-f0-s2753-a4faeaed65ca",
+      "postsubmit-i2-rf-grid-r1_leaf1-f1-s2753-c243ac1ac6ec",
+      "postsubmit-i2-rf-grid-r1_leaf1-f2-s2753-224a897a2f6a",
+      "postsubmit-i2-rf-grid-r1_leaf1-f3-s2753-ab2cac080ffb",
+      "postsubmit-i2-rf-grid-r1_leaf1-f4-s2753-2d9a3d0b80d7"
+    ],
+    "r2_leaf4": [
+      "postsubmit-i2-rf-grid-r2_leaf4-f0-s2753-ba28601d04c3",
+      "postsubmit-i2-rf-grid-r2_leaf4-f1-s2753-cc886c388cd4",
+      "postsubmit-i2-rf-grid-r2_leaf4-f2-s2753-9c69766fce16",
+      "postsubmit-i2-rf-grid-r2_leaf4-f3-s2753-0bcad68646cd",
+      "postsubmit-i2-rf-grid-r2_leaf4-f4-s2753-f5e3b6e0b68c"
+    ],
+    "r3_features025": [
+      "postsubmit-i2-rf-grid-r3_features025-f0-s2753-8ef2f058e66f",
+      "postsubmit-i2-rf-grid-r3_features025-f1-s2753-0b7980cd1f51",
+      "postsubmit-i2-rf-grid-r3_features025-f2-s2753-621c5d3f0d0c",
+      "postsubmit-i2-rf-grid-r3_features025-f3-s2753-5cc98ea7fc2d",
+      "postsubmit-i2-rf-grid-r3_features025-f4-s2753-b1a2aacf4c76"
+    ],
+    "r4_leaf4_features025": [
+      "postsubmit-i2-rf-grid-r4_leaf4_features025-f0-s2753-c317f7bd3b17",
+      "postsubmit-i2-rf-grid-r4_leaf4_features025-f1-s2753-27b48a45c4b8",
+      "postsubmit-i2-rf-grid-r4_leaf4_features025-f2-s2753-9fbdf59fe1e2",
+      "postsubmit-i2-rf-grid-r4_leaf4_features025-f3-s2753-d08cabe7c6d1",
+      "postsubmit-i2-rf-grid-r4_leaf4_features025-f4-s2753-1b3ff783ca7c"
+    ]
+  },
+  "schema_version": "1.0.0",
+  "selection_warning": "Candidate choice and reported OOF performance use the same five development folds; interval is descriptive, not independent post-selection proof.",
+  "study_id": "postsubmit-i2-rf-grid"
+}
