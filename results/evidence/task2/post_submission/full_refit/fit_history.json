@@ -1,0 +1,30 @@
+{
+  "class_counts": {
+    "Fall": 8928,
+    "Spring": 1329,
+    "Summer": 16235,
+    "Winter": 6261
+  },
+  "embedding_dimension": 256,
+  "embedding_dtype": "float32",
+  "forest_parameters": {
+    "bootstrap": true,
+    "class_weight": "balanced_subsample",
+    "criterion": "gini",
+    "max_features": "sqrt",
+    "min_samples_leaf": 2,
+    "n_estimators": 300,
+    "n_jobs": -1,
+    "oob_score": true,
+    "random_state": 2753
+  },
+  "holdout_used_for_fit": false,
+  "oob_accuracy_training_diagnostic_only": 0.8360455530791072,
+  "role": "post_submission_full_development_refit",
+  "run_id": "postsubmit-i2-embedding-rf-full-development-fall-s2753-3f82275bfac9",
+  "runtime_seconds": 192.13079719996313,
+  "selection": "five_fold_development_oof_only",
+  "training_id_sha256": "6f8540aff2511b2d63e23bea6d5aad24060cbbf3f352d40a8419248d4cdbcc54",
+  "training_rows": 32753,
+  "tree_node_count": 1553506
+}

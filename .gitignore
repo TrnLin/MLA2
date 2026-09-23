@@ -49,6 +49,7 @@ tmp/
 models/*.pt
 models/*.pth
 models/*.ckpt
+models/*.joblib
 /models/task4_r5/
 /models/task4_r5_portable.zip
 /scripts/task4/queue_gpu0_r5_stability.sh

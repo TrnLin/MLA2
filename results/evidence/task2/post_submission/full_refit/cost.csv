@@ -1,0 +1,3 @@
+model,device,clean_runtime_seconds,images_per_second,bundle_bytes
+I2 frozen,cpu,12.494505599999684,462.44326786328753,4856199
+I2 embedding + RF,cpu,45.694368499971461,126.44884237766868,51168654

@@ -1,0 +1,36 @@
+{
+  "artifacts": {
+    "clean": {
+      "bytes": 495907,
+      "path": "results/evidence/task2/post_submission/full_refit/holdout_rf_predictions.csv",
+      "sha256": "450ce7ffbc9dc770b0834e1ba697fcbc1aecf0bd156d1f6a439bd9ea91e92503"
+    },
+    "robustness": {
+      "bytes": 3014789,
+      "path": "results/evidence/task2/post_submission/full_refit/holdout_rf_robustness_predictions.csv",
+      "sha256": "f9d083ada66e136eadefc58c6490212848da6858ff220264ae332ee25380ba52"
+    },
+    "runtime": {
+      "bytes": 1435,
+      "path": "results/evidence/task2/post_submission/full_refit/prediction_runtime.json",
+      "sha256": "235820da1cc0d184a3d0c15749a6b47df6d9c3321a49066a57fe95c5811475e4"
+    }
+  },
+  "conditions": [
+    "clean",
+    "jpeg_quality_85",
+    "brightness_0_85",
+    "brightness_1_15",
+    "gaussian_blur_radius_1"
+  ],
+  "holdout_previously_opened": true,
+  "image_manifest": {
+    "bytes": 896656,
+    "path": "results/evidence/task2/final_evaluation/holdout_image_manifest.csv",
+    "sha256": "8750cc0608a56f72a72d811b58a90e8e39251c71300a6bcbbcf765ce501d8c53"
+  },
+  "labels_used_in_prediction": false,
+  "model_manifest_sha256": "0c2c6b23d7fb70a2285e385f3b1ec02b676401ad830c2159fd2673b090d0f51d",
+  "phase": "post_submission_rf_prediction_before_this_comparison",
+  "schema_version": "1.0.0"
+}

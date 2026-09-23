@@ -1,0 +1,13 @@
+{
+  "base_i2_config": "configs/task2/g4_i2_article_type_lambda_0_3_c1.json",
+  "class_weight": "balanced_subsample",
+  "embedding_batch_size": 256,
+  "experiment_id": "postsubmit-i2-embedding-random-forest",
+  "max_features": "sqrt",
+  "min_samples_leaf": 2,
+  "n_estimators": 300,
+  "n_jobs": -1,
+  "oob_score": true,
+  "random_state_policy": "seed_plus_fold",
+  "schema_version": "1.0.0"
+}

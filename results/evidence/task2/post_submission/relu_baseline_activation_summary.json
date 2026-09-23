@@ -1,0 +1,51 @@
+{
+  "by_fold": [
+    {
+      "channels": 960,
+      "exact_dead_rate": 0.0,
+      "fold": 0,
+      "mean_zero_rate": 0.5687964074238158,
+      "near_dead_rate": 0.0
+    },
+    {
+      "channels": 960,
+      "exact_dead_rate": 0.0,
+      "fold": 1,
+      "mean_zero_rate": 0.5700003896378204,
+      "near_dead_rate": 0.0
+    },
+    {
+      "channels": 960,
+      "exact_dead_rate": 0.0,
+      "fold": 2,
+      "mean_zero_rate": 0.5578151558666167,
+      "near_dead_rate": 0.0
+    },
+    {
+      "channels": 960,
+      "exact_dead_rate": 0.0,
+      "fold": 3,
+      "mean_zero_rate": 0.5671666734918364,
+      "near_dead_rate": 0.0
+    },
+    {
+      "channels": 960,
+      "exact_dead_rate": 0.0,
+      "fold": 4,
+      "mean_zero_rate": 0.5684453382166947,
+      "near_dead_rate": 0.0
+    }
+  ],
+  "definitions": {
+    "exact_dead": "max absolute postactivation <= 1e-12 over a complete validation fold",
+    "near_dead": "preactivation positive rate < 1% over a complete validation fold",
+    "zero_rate": "fraction of individual activation values equal to zero; not a dead-neuron rate"
+  },
+  "overall": {
+    "channels_scanned_across_folds": 4800,
+    "exact_dead_channel_rate": 0.0,
+    "mean_postactivation_zero_rate": 0.5664447929273567,
+    "near_dead_channel_rate": 0.0,
+    "validation_folds": 5
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "activation": "leaky_relu",
+  "base_i2_config": "configs/task2/g4_i2_article_type_lambda_0_3_c1.json",
+  "exact_dead_epsilon": 1e-12,
+  "experiment_id": "postsubmit-i2-leaky-relu-0-01",
+  "negative_slope": 0.01,
+  "near_dead_positive_rate": 0.01,
+  "schema_version": "1.0.0"
+}

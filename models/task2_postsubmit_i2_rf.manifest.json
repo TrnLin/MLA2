@@ -1,0 +1,74 @@
+{
+  "embedding_dimension": 256,
+  "experiment_id": "postsubmit-i2-embedding-rf-full-development",
+  "forest": {
+    "bytes": 46312455,
+    "path": "models/task2_postsubmit_i2_rf.joblib",
+    "sha256": "c58eb01c9d37cdb4453e1816d0e828a55719bc95bc64dac4d7e6f98e1760a603"
+  },
+  "history": {
+    "bytes": 903,
+    "path": "results/evidence/task2/post_submission/full_refit/fit_history.json",
+    "sha256": "8d700a1f0982d0c783c6407da3367eb88971917314eab8ebb4e25b7628780519"
+  },
+  "implementation_sha256": "ba311aac3376a8847cdb53a52b31eb75a0bf726176d675d7331eab063a1ca52d",
+  "inputs": {
+    "label_maps": {
+      "bytes": 10960,
+      "path": "data/processed/label_maps.json",
+      "sha256": "51b7623c3a2c1a8f9ebb9b0d8b4b8a50a24ea57522c1f8f4dd15b94c1996a327"
+    },
+    "rf_config": {
+      "bytes": 392,
+      "path": "configs/task2/post_submission_i2_embedding_random_forest.json",
+      "sha256": "338b03891558f7a28a3177d1c1fcffe2380861f476d2e7abcce2b78bf5a853e9"
+    },
+    "splits": {
+      "bytes": 15383827,
+      "path": "data/processed/splits.csv",
+      "sha256": "d76a49c6dc7999b4f286e94838a92c603d68c4f66179fde081028948f6a187db"
+    }
+  },
+  "labels": [
+    "Fall",
+    "Spring",
+    "Summer",
+    "Winter"
+  ],
+  "rf_parameters": {
+    "bootstrap": true,
+    "class_weight": "balanced_subsample",
+    "criterion": "gini",
+    "max_features": "sqrt",
+    "min_samples_leaf": 2,
+    "n_estimators": 300,
+    "n_jobs": -1,
+    "oob_score": true,
+    "random_state": 2753
+  },
+  "role": "post_submission_full_development_refit",
+  "run_id": "postsubmit-i2-embedding-rf-full-development-fall-s2753-3f82275bfac9",
+  "schema_version": "1.0.0",
+  "seed": 2753,
+  "selection_evidence": {
+    "bytes": 3174,
+    "path": "results/evidence/task2/post_submission/boosting_summary.json",
+    "sha256": "eb306766cd8c19d74e9ab127e07e248cf0ccecce532cca48a72fd67126a61fb8"
+  },
+  "source_encoder": {
+    "bundle": {
+      "bytes": 4856199,
+      "path": "models/task2_season.pt",
+      "sha256": "5927eff73130acedc8015199e1df5a6c6edf64c0b45023ebd91c48d7ed40f93c"
+    },
+    "manifest": {
+      "bytes": 6884,
+      "path": "models/task2_season.manifest.json",
+      "sha256": "25d918061dbd9b46501de9aa3671adabf951649862ce9613317983dadbac55d9"
+    },
+    "run_id": "task2-season-i2-refit-fall-s2753-637dd6378be9"
+  },
+  "status": "complete",
+  "training_id_sha256": "6f8540aff2511b2d63e23bea6d5aad24060cbbf3f352d40a8419248d4cdbcc54",
+  "training_rows": 32753
+}

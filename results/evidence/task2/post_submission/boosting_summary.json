@@ -1,0 +1,80 @@
+{
+  "artifacts": {
+    "bootstrap_figure": {
+      "path": "results/figures/task2/post_submission/boosted_paired_bootstrap_intervals.png",
+      "sha256": "f8f3803b24c3ed634465c77ba950dd3b7a30f03b6586bb913f7f921b9591adce"
+    },
+    "bootstrap_intervals": {
+      "path": "results/evidence/task2/post_submission/boosted_paired_bootstrap_intervals.csv",
+      "sha256": "f18b03cf71022329aac515a77ba7aec5bc19237ae83dc8ef7937cbc5b003e1f9"
+    },
+    "fold_comparison": {
+      "path": "results/evidence/task2/post_submission/boosted_fold_comparison.csv",
+      "sha256": "139c5743aa97cdc62a46b7dccbab32809a7783ee1b3e5f4e05c33548beea660b"
+    },
+    "model_comparison": {
+      "path": "results/evidence/task2/post_submission/boosted_model_comparison.csv",
+      "sha256": "bea47c81d8abe0c72d8f0a9b69d6b4ef70dfb668b4dbfd5453d3451e03559aaf"
+    },
+    "per_class_metrics": {
+      "path": "results/evidence/task2/post_submission/boosted_per_class_metrics.csv",
+      "sha256": "8ed513daa4c1b934ecaaa12a9b30e3af96092918fde10da9c1993d89e1c9acf5"
+    },
+    "performance_figure": {
+      "path": "results/figures/task2/post_submission/boosted_model_performance_comparison.png",
+      "sha256": "4f6af1213f5c9f142656460989634cba037c465825e7f8afa9cbc07b162fe764"
+    }
+  },
+  "changes_frozen_final_or_submission": false,
+  "comparisons": {
+    "I2 + HGB 50/50": {
+      "delta_vs_i2_relu": 0.003269175587233386,
+      "macro_f1": 0.7559561315453305
+    },
+    "I2 + RF 50/50": {
+      "delta_vs_i2_relu": 0.005332210358966916,
+      "macro_f1": 0.758019166317064
+    },
+    "I2 ReLU": {
+      "delta_vs_i2_relu": 0.0,
+      "macro_f1": 0.7526869559580971
+    },
+    "I2 embedding + HGB": {
+      "delta_vs_i2_relu": -0.003413058321275697,
+      "macro_f1": 0.7492738976368214
+    },
+    "I2 embedding + RF": {
+      "delta_vs_i2_relu": 0.008271576004149406,
+      "macro_f1": 0.7609585319622465
+    }
+  },
+  "gradient_boosting_runs": [
+    "postsubmit-i2-embedding-hist-gradient-boosting-f0-s2753-32f51d3180a2",
+    "postsubmit-i2-embedding-hist-gradient-boosting-f1-s2753-e304691c67ab",
+    "postsubmit-i2-embedding-hist-gradient-boosting-f2-s2753-84c5dfd177cc",
+    "postsubmit-i2-embedding-hist-gradient-boosting-f3-s2753-ed38fbfa8e36",
+    "postsubmit-i2-embedding-hist-gradient-boosting-f4-s2753-37ad09a0f762"
+  ],
+  "protocol": {
+    "embedding_dimension": 256,
+    "encoder": "frozen fold-specific I2 SmallCNN",
+    "ensemble_weight": 0.5,
+    "ensemble_weights_tuned": false,
+    "evaluation": "same 32753 development OOF IDs and canonical folds",
+    "gradient_boosting_grid_search_used": false
+  },
+  "random_forest_runs": [
+    "postsubmit-i2-embedding-random-forest-f0-s2753-d1b873ece531",
+    "postsubmit-i2-embedding-random-forest-f1-s2753-3317e9ba0550",
+    "postsubmit-i2-embedding-random-forest-f2-s2753-4e8c22a62898",
+    "postsubmit-i2-embedding-random-forest-f3-s2753-a01ca90682cf",
+    "postsubmit-i2-embedding-random-forest-f4-s2753-a7a1891376ff"
+  ],
+  "role": "post_submission_exploration_only",
+  "schema_version": "1.0.0",
+  "winner": {
+    "delta_vs_i2_relu": 0.008271576004149406,
+    "macro_f1": 0.7609585319622465,
+    "model": "I2 embedding + RF"
+  }
+}

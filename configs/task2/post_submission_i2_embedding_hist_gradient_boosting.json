@@ -1,0 +1,15 @@
+{
+  "base_i2_config": "configs/task2/g4_i2_article_type_lambda_0_3_c1.json",
+  "class_weight": "balanced",
+  "early_stopping": false,
+  "embedding_batch_size": 256,
+  "experiment_id": "postsubmit-i2-embedding-hist-gradient-boosting",
+  "l2_regularization": 1.0,
+  "learning_rate": 0.05,
+  "max_features": 0.75,
+  "max_iter": 200,
+  "max_leaf_nodes": 31,
+  "min_samples_leaf": 20,
+  "random_state_policy": "seed_plus_fold",
+  "schema_version": "1.0.0"
+}

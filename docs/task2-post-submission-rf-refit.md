@@ -1,0 +1,101 @@
+# Task 2 post-submission RF study
+
+This is a **separate experiment after submission**, not a replacement for the
+submitted Season model. The original `models/task2_season.pt`, its evaluation,
+and the official teacher-test predictions are unchanged.
+
+## What was fitted
+
+Before trying LeakyReLU as a remedy, the activation audit inspected the share
+of **whole channels** that never activated across each complete validation fold.
+It found zero dead and zero near-dead channels across 4,800 channel-fold
+observations. The roughly 56.6% zero-valued activations are ordinary sparsity,
+not 56.6% dead neurons. The incomplete LeakyReLU attempts were retained in the
+registry, but the dead-neuron hypothesis did not justify a full continuation;
+see [`summary.json`](../results/evidence/task2/post_submission/summary.json).
+
+The five-fold development comparison selected the fixed **I2 embedding + Random
+Forest (RF)** recipe: OOF macro-F1 was 0.76096, versus 0.75269 for I2 alone.
+HistGradientBoosting and the fixed 50/50 ensembles did not exceed the RF head.
+The selection evidence is
+[`boosting_summary.json`](../results/evidence/task2/post_submission/boosting_summary.json).
+
+The already-verified I2 CNN had itself been refitted on all 32,753 valid
+development Season rows. Its weights were **frozen** here. The new run extracted
+one 256-dimensional embedding per development image, then fitted a 300-tree RF
+with Gini splits, `max_features=sqrt`, `min_samples_leaf=2`,
+`class_weight=balanced_subsample`, and seed 2753. No holdout row or label entered
+this fit. The RF's out-of-bag accuracy in
+[`fit_history.json`](../results/evidence/task2/post_submission/full_refit/fit_history.json)
+is a **training diagnostic**, not an independent evaluation score.
+
+The new bundle consists of the original I2 `.pt` plus
+`models/task2_postsubmit_i2_rf.joblib`. The latter is a local ignored weight;
+its tracked manifest is
+[`task2_postsubmit_i2_rf.manifest.json`](../models/task2_postsubmit_i2_rf.manifest.json).
+Both weight files are required to replay inference. The manifest verifies their
+hashes, canonical split and class map, config, implementation, training ID set,
+and registry run ID. These local hashes do not prove the source is trusted:
+**do not load an untrusted `.joblib`**, because Joblib uses pickle. The run
+registry's `parameter_count` records total RF tree nodes here; it is not
+comparable to a neural network's trainable parameter count.
+
+## Retrospective internal-holdout evaluation
+
+The RF predicted the same 5,778 holdout IDs under the same five fixed image
+conditions as the original I2. Predictions and a hash receipt were saved before
+joining protected labels. On clean images:
+
+| Measure | Submitted I2 | I2 + RF |
+|---|---:|---:|
+| Macro-F1 | 0.75338 | **0.76567** |
+| Accuracy | 0.76428 | **0.77310** |
+| Balanced accuracy | 0.71971 | **0.73126** |
+| Spring F1 | 0.75773 | **0.77285** |
+| Negative log likelihood (lower is better) | **0.60454** | 0.63392 |
+| Recorded CPU clean throughput (images/s) | **462.44** | 126.45 |
+| Combined weight bytes | **4,856,199** | 51,168,654 |
+
+The paired macro-F1 difference is **+0.01228**. Resampling whole product
+families 10,000 times gives a middle-95% interval of **[+0.00625, +0.01864]**.
+That interval describes sampling variation within this dataset, not transfer to
+new retailers or cameras. Per-class metrics, accuracy intervals, and confusion
+counts are in the
+[`full_refit` evidence folder](../results/evidence/task2/post_submission/full_refit/).
+
+The I2 probabilities use its frozen temperature scaling; RF probabilities are
+uncalibrated. The log-loss row compares these deployed outputs, not models
+given the same calibration treatment. The throughput readings also come from
+separate CPU runs, so they are indicative rather than a controlled speed
+benchmark. The RF's recorded rate is about 3.6 times lower.
+
+The added head does **not** fix the main robustness failure: at brightness 0.85,
+RF macro-F1 falls to 0.37927 and Spring recall to 0.00429 (I2: 0.37122 and
+0.00429). Its probability log loss is also worse, so higher clean macro-F1 is
+not an all-round win.
+See the [scorecard](../results/figures/task2/post_submission/full_refit/holdout_scorecard.png),
+[paired interval](../results/figures/task2/post_submission/full_refit/holdout_bootstrap.png),
+and [fixed-condition plot](../results/figures/task2/post_submission/full_refit/holdout_robustness.png).
+
+**Claim boundary:** The internal holdout had already been opened for the
+submitted I2 before this post-submission study. This comparison is therefore
+retrospective and exploratory; it is not a fresh independent selection test,
+not a new assignment submission score, and not authority to replace the
+submitted model. No RF official teacher-test export was made.
+
+## Replay and handoff
+
+From the repository root, with the original I2 `.pt`, new RF `.joblib`, raw
+images, and tracked artifacts available:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/run_task2_post_submission_rf_refit.py --step all --mode run_or_load
+```
+
+`run_or_load` verifies existing artifacts instead of overwriting them. The
+refit and evaluation can also be run separately with `--step refit` and
+`--step evaluate`. The RF weight is intentionally ignored by Git; transfer it
+separately together with the original I2 `.pt`. Keep the manifest and evidence
+in Git so the receiver can check the transferred bytes. The new run is recorded
+in `results/runs.csv` under
+`postsubmit-i2-embedding-rf-full-development-fall-s2753-3f82275bfac9`.

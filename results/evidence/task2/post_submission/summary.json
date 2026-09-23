@@ -1,0 +1,160 @@
+{
+  "activation_gate": {
+    "decision": "do_not_continue_leaky_relu_as_a_dead_neuron_remedy",
+    "partial_attempts_retained_in_registry": [
+      {
+        "error_message": "non-finite refit gradients at epoch=23, batch=139",
+        "fold": "0",
+        "primary_metric_value": "",
+        "run_id": "postsubmit-i2-leaky-relu-0-01-f0-s2753-d7438eaaf0ea",
+        "status": "failed"
+      },
+      {
+        "error_message": "",
+        "fold": "0",
+        "primary_metric_value": "0.7463095342049901",
+        "run_id": "postsubmit-i2-leaky-relu-0-01-f0-s2753-8994ab8a0618",
+        "status": "completed"
+      },
+      {
+        "error_message": "",
+        "fold": "1",
+        "primary_metric_value": "0.7429928307758689",
+        "run_id": "postsubmit-i2-leaky-relu-0-01-f1-s2753-cfd8f4313054",
+        "status": "completed"
+      },
+      {
+        "error_message": "",
+        "fold": "2",
+        "primary_metric_value": "",
+        "run_id": "postsubmit-i2-leaky-relu-0-01-f2-s2753-ca045210308d",
+        "status": "interrupted"
+      }
+    ],
+    "question": "Does frozen I2 show dead ReLU channels within its layers?",
+    "reason": "Every layer in every fold had zero exact-dead and zero near-dead channels. Ordinary zero-valued ReLU activations are sparsity, not dead neurons.",
+    "result": {
+      "by_fold": [
+        {
+          "channels": 960,
+          "exact_dead_rate": 0.0,
+          "fold": 0,
+          "mean_zero_rate": 0.5687964074238158,
+          "near_dead_rate": 0.0
+        },
+        {
+          "channels": 960,
+          "exact_dead_rate": 0.0,
+          "fold": 1,
+          "mean_zero_rate": 0.5700003896378204,
+          "near_dead_rate": 0.0
+        },
+        {
+          "channels": 960,
+          "exact_dead_rate": 0.0,
+          "fold": 2,
+          "mean_zero_rate": 0.5578151558666167,
+          "near_dead_rate": 0.0
+        },
+        {
+          "channels": 960,
+          "exact_dead_rate": 0.0,
+          "fold": 3,
+          "mean_zero_rate": 0.5671666734918364,
+          "near_dead_rate": 0.0
+        },
+        {
+          "channels": 960,
+          "exact_dead_rate": 0.0,
+          "fold": 4,
+          "mean_zero_rate": 0.5684453382166947,
+          "near_dead_rate": 0.0
+        }
+      ],
+      "definitions": {
+        "exact_dead": "max absolute postactivation <= 1e-12 over a complete validation fold",
+        "near_dead": "preactivation positive rate < 1% over a complete validation fold",
+        "zero_rate": "fraction of individual activation values equal to zero; not a dead-neuron rate"
+      },
+      "overall": {
+        "channels_scanned_across_folds": 4800,
+        "exact_dead_channel_rate": 0.0,
+        "mean_postactivation_zero_rate": 0.5664447929273567,
+        "near_dead_channel_rate": 0.0,
+        "validation_folds": 5
+      }
+    }
+  },
+  "artifacts": {
+    "bootstrap_figure": {
+      "path": "results/figures/task2/post_submission/paired_bootstrap_intervals.png",
+      "sha256": "8ba60425a698c3a8436ac26ea172e1ad0d8c2af87cdd958966aedb7b38cc371c"
+    },
+    "bootstrap_intervals": {
+      "path": "results/evidence/task2/post_submission/paired_bootstrap_intervals.csv",
+      "sha256": "7899d1c1c3fd2b685f6d84e3571d4c0652008bb052c17358d4d138e0008d6e73"
+    },
+    "fold_comparison": {
+      "path": "results/evidence/task2/post_submission/fold_comparison.csv",
+      "sha256": "f462cbd17a24b64740ae1ab6abb4f26b6ce74bc1a75a6abb5a8f8c2f8c5af904"
+    },
+    "model_comparison": {
+      "path": "results/evidence/task2/post_submission/model_comparison.csv",
+      "sha256": "fdf82553b49f80ebfa6afe27f1fec27b724b38abfde061abf7c9858aaf03a99f"
+    },
+    "per_class_metrics": {
+      "path": "results/evidence/task2/post_submission/per_class_metrics.csv",
+      "sha256": "cc6a5d4ef158ad93162b5c45cdcc349f15fec282b71313f8154906988bff8fac"
+    },
+    "performance_figure": {
+      "path": "results/figures/task2/post_submission/model_performance_comparison.png",
+      "sha256": "5b3a07b5220ead1df0538ad836fe634ebd18e74de860ee374805a642439e55f9"
+    },
+    "relu_activation_by_layer": {
+      "path": "results/evidence/task2/post_submission/relu_baseline_activation_by_layer.csv",
+      "sha256": "16a2005a344602447bc38503e8e7ca58241894fb724e54a7689669e29fa8d05e"
+    },
+    "relu_activation_figure": {
+      "path": "results/figures/task2/post_submission/relu_baseline_dead_channels_by_layer.png",
+      "sha256": "242468903ab5efee973ab632aad3b7bd88c14ee66ee689c477464bf3d871bca1"
+    }
+  },
+  "changes_frozen_final_or_submission": false,
+  "random_forest_result": {
+    "delta_macro_f1": 0.008271576004149406,
+    "embedding_random_forest_macro_f1": 0.7609585319622465,
+    "improved": true,
+    "original_i2_macro_f1": 0.7526869559580971
+  },
+  "random_forest_runs": [
+    "postsubmit-i2-embedding-random-forest-f0-s2753-d1b873ece531",
+    "postsubmit-i2-embedding-random-forest-f1-s2753-3317e9ba0550",
+    "postsubmit-i2-embedding-random-forest-f2-s2753-4e8c22a62898",
+    "postsubmit-i2-embedding-random-forest-f3-s2753-a01ca90682cf",
+    "postsubmit-i2-embedding-random-forest-f4-s2753-a7a1891376ff"
+  ],
+  "role": "post_submission_exploration_only",
+  "schema_version": "1.0.0",
+  "source_runs": {
+    "0": {
+      "checkpoint_sha256": "8ac50fd5ad5083a2290407e3b56b97d5370982fd69fe031391ae4c19eb5f2c61",
+      "run_id": "g4-i2-article-type-lambda-0-3-c1-f0-s2753-902fcc852d5f"
+    },
+    "1": {
+      "checkpoint_sha256": "ffad535403298dd007734853b96c6e885835855b450ea056ebe8ffa2a9897429",
+      "run_id": "g4-i2-article-type-lambda-0-3-c1-f1-s2753-1e4b66c26b12"
+    },
+    "2": {
+      "checkpoint_sha256": "5398a95d48fab3dd4192557cbf2a5cea8f0a4869a73e4b37bbba512f31807fdf",
+      "run_id": "g4-i2-article-type-lambda-0-3-c1-f2-s2753-e4b6d5100cf8"
+    },
+    "3": {
+      "checkpoint_sha256": "305530343740ded6121bab8e8c38631c71fa559746230c674647092596321c6a",
+      "run_id": "g4-i2-article-type-lambda-0-3-c1-f3-s2753-bc2ebf436c6b"
+    },
+    "4": {
+      "checkpoint_sha256": "c121137657f070d5521f10f4a7ac7237cf827977cf92e41e712df99b7ecfce35",
+      "run_id": "g4-i2-article-type-lambda-0-3-c1-f4-s2753-8d210d54f01e"
+    }
+  }
+}
