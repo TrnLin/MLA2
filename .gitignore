@@ -89,3 +89,6 @@ results/evidence/task3/
 
 # Generated Task 1 model artifacts; compact evidence and figures stay trackable.
 /results/task1/
+
+# Local tutor notes and audit helper
+/docs/task2-tutor/
