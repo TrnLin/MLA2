@@ -1,0 +1,3 @@
+comparison,metric,median_delta,ci95_lower,ci95_upper,probability_delta_above_zero,replicates
+EmbeddingRF_minus_ReLU,macro_f1,0.008268929215528797,0.005457792651527074,0.011051478675068366,1.0,10000
+EmbeddingRF_minus_ReLU,accuracy,0.007453488431419464,0.0047671072328382335,0.010185813939131982,1.0,10000

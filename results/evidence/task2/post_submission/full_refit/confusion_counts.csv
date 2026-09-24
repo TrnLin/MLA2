@@ -1,0 +1,33 @@
+model,true_label,predicted_label,count
+I2 frozen,Fall,Fall,1035
+I2 frozen,Fall,Spring,1
+I2 frozen,Fall,Summer,463
+I2 frozen,Fall,Winter,76
+I2 frozen,Spring,Fall,21
+I2 frozen,Spring,Spring,147
+I2 frozen,Spring,Summer,48
+I2 frozen,Spring,Winter,17
+I2 frozen,Summer,Fall,294
+I2 frozen,Summer,Spring,7
+I2 frozen,Summer,Summer,2403
+I2 frozen,Summer,Winter,161
+I2 frozen,Winter,Fall,45
+I2 frozen,Winter,Spring,0
+I2 frozen,Winter,Summer,229
+I2 frozen,Winter,Winter,831
+I2 embedding + RF,Fall,Fall,1107
+I2 embedding + RF,Fall,Spring,0
+I2 embedding + RF,Fall,Summer,399
+I2 embedding + RF,Fall,Winter,69
+I2 embedding + RF,Spring,Fall,24
+I2 embedding + RF,Spring,Spring,148
+I2 embedding + RF,Spring,Summer,47
+I2 embedding + RF,Spring,Winter,14
+I2 embedding + RF,Summer,Fall,334
+I2 embedding + RF,Summer,Spring,2
+I2 embedding + RF,Summer,Summer,2374
+I2 embedding + RF,Summer,Winter,155
+I2 embedding + RF,Winter,Fall,46
+I2 embedding + RF,Winter,Spring,0
+I2 embedding + RF,Winter,Summer,221
+I2 embedding + RF,Winter,Winter,838

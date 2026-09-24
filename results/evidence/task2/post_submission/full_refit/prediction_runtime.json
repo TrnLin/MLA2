@@ -1,0 +1,54 @@
+{
+  "runs": [
+    {
+      "batch_size": 128,
+      "condition": "clean",
+      "device": "cpu",
+      "images_per_second": 126.44884237766868,
+      "rows": 5778,
+      "rss_after_bytes": 1078611968,
+      "rss_before_bytes": 1002041344,
+      "runtime_seconds": 45.69436849997146
+    },
+    {
+      "batch_size": 128,
+      "condition": "jpeg_quality_85",
+      "device": "cpu",
+      "images_per_second": 117.78705425235846,
+      "rows": 5778,
+      "rss_after_bytes": 1078677504,
+      "rss_before_bytes": 1061101568,
+      "runtime_seconds": 49.05462690000422
+    },
+    {
+      "batch_size": 128,
+      "condition": "brightness_0_85",
+      "device": "cpu",
+      "images_per_second": 127.5509384704659,
+      "rows": 5778,
+      "rss_after_bytes": 1078878208,
+      "rss_before_bytes": 1061203968,
+      "runtime_seconds": 45.29954910004744
+    },
+    {
+      "batch_size": 128,
+      "condition": "brightness_1_15",
+      "device": "cpu",
+      "images_per_second": 137.08801705521617,
+      "rows": 5778,
+      "rss_after_bytes": 1073680384,
+      "rss_before_bytes": 1061404672,
+      "runtime_seconds": 42.1481040000217
+    },
+    {
+      "batch_size": 128,
+      "condition": "gaussian_blur_radius_1",
+      "device": "cpu",
+      "images_per_second": 125.31692977952488,
+      "rows": 5778,
+      "rss_after_bytes": 1074253824,
+      "rss_before_bytes": 1053523968,
+      "runtime_seconds": 46.107098300009966
+    }
+  ]
+}

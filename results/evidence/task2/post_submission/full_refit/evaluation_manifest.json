@@ -1,0 +1,82 @@
+{
+  "artifacts": {
+    "confusion_counts.csv": {
+      "bytes": 1013,
+      "path": "results/evidence/task2/post_submission/full_refit/confusion_counts.csv",
+      "sha256": "39462fc85512a8ae7096c63827eb2c22098fc192eeb160ad8addb3c5360d0cab"
+    },
+    "cost.csv": {
+      "bytes": 195,
+      "path": "results/evidence/task2/post_submission/full_refit/cost.csv",
+      "sha256": "7f80e1a92f0e5df97809834e661870ce6011af6d7d6977e12f06ed37efbc381f"
+    },
+    "paired_bootstrap_draws.csv": {
+      "bytes": 3933318,
+      "path": "results/evidence/task2/post_submission/full_refit/paired_bootstrap_draws.csv",
+      "sha256": "b50db41bf1d4f9c0dee10667162c1fed686e510a2955767d7c875032e73acc01"
+    },
+    "paired_bootstrap_intervals.csv": {
+      "bytes": 435,
+      "path": "results/evidence/task2/post_submission/full_refit/paired_bootstrap_intervals.csv",
+      "sha256": "04151b4eefbc6a84d4f29fbcf8b28d157d21ac50ad2a6cf91f3b8773e3ca7bc0"
+    },
+    "paired_predictions.csv": {
+      "bytes": 146024,
+      "path": "results/evidence/task2/post_submission/full_refit/paired_predictions.csv",
+      "sha256": "f7fa577f6a72881341c0bc1562efff7a0d0354210540f8081c9ddb28015bc466"
+    },
+    "per_class.csv": {
+      "bytes": 721,
+      "path": "results/evidence/task2/post_submission/full_refit/per_class.csv",
+      "sha256": "29deebc6a100dc50aa8ce465a58431f3538123b15e290bef40a0e4617fbba62d"
+    },
+    "robustness.csv": {
+      "bytes": 2259,
+      "path": "results/evidence/task2/post_submission/full_refit/robustness.csv",
+      "sha256": "8e6ff160427e66424012b67e5cf4668b1348631cc2ac9d4ccc28f75a73c4548d"
+    },
+    "scorecard.csv": {
+      "bytes": 397,
+      "path": "results/evidence/task2/post_submission/full_refit/scorecard.csv",
+      "sha256": "6435439eaaaf857350f335e3ad66af451f12a561272a3b0fe324873409285000"
+    }
+  },
+  "claim_boundary": "The internal holdout was already opened for the submitted I2 model. This is a retrospective post-submission comparison, not a fresh independent model-selection test or a new submission claim.",
+  "figures": {
+    "holdout_bootstrap.png": {
+      "bytes": 41782,
+      "path": "results/figures/task2/post_submission/full_refit/holdout_bootstrap.png",
+      "sha256": "31a4994c8b966cdcb1067c41991ccdc8ca42cde911c90ca33da9f0a9fc015af4"
+    },
+    "holdout_robustness.png": {
+      "bytes": 86418,
+      "path": "results/figures/task2/post_submission/full_refit/holdout_robustness.png",
+      "sha256": "f21cc31b52c669e49a444827296b58acb7ef0602a058272fafe783d1cfdebd19"
+    },
+    "holdout_scorecard.png": {
+      "bytes": 45031,
+      "path": "results/figures/task2/post_submission/full_refit/holdout_scorecard.png",
+      "sha256": "a04a18dee26d197163ecd09e310dcfc2def900de0aadf51d78f5b53ff4cc2842"
+    }
+  },
+  "holdout_previously_opened": true,
+  "macro_f1": {
+    "I2": 0.7533847968563716,
+    "RF": 0.7656656424500782,
+    "RF_minus_I2": 0.012280845593706569
+  },
+  "original_evaluation_id": "g9-task2-season-final-evaluation",
+  "original_evaluation_sha256": "3a1e0921ca3592f9938df5df7f038d6dd8809f41de69894afccb22dbb6fc6667",
+  "prediction_phase": "post_submission_rf_prediction_before_this_comparison",
+  "prediction_receipt": {
+    "bytes": 1315,
+    "path": "results/evidence/task2/post_submission/full_refit/prediction_receipt.json",
+    "sha256": "5a95797287b83bfa74f2867229a9592285647ba1f0eb397504b378f7fbd7a55e"
+  },
+  "rf_manifest_sha256": "0c2c6b23d7fb70a2285e385f3b1ec02b676401ad830c2159fd2673b090d0f51d",
+  "role": "retrospective_post_submission_holdout_comparison",
+  "rows": 5778,
+  "schema_version": "1.0.0",
+  "status": "complete",
+  "used_for_training_or_tuning": false
+}
